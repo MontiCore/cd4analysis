@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-import java.util.lang.* ;
+import java.lang.* ;
 classdiagram STTest {
 
   class Car extends CarAbstract implements CarInterface, CarInterface2{

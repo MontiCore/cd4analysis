@@ -189,20 +189,20 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     }
   }
 
-  @Override
-  public boolean addCDElement(ASTCDElement element) {
-    return addCDElementToPackageWithName(element);
-  }
+//  @Override
+//  public boolean addCDElement(ASTCDElement element) {
+//    return addCDElementToPackageWithName(element);
+//  }
 
   public boolean addCDElementToPackage(ASTCDElement element, String packageName) {
     return addCDElementToPackageWithName(element, packageName);
   }
 
-  @Override
-  public boolean addAllCDElements(Collection<? extends ASTCDElement> collection) {
-    collection.forEach(this::addCDElementToPackageWithName);
-    return true;
-  }
+//  @Override
+//  public boolean addAllCDElements(Collection<? extends ASTCDElement> collection) {
+//    collection.forEach(this::addCDElementToPackageWithName);
+//    return true;
+//  }
 
   public boolean addCDElementToPackage(
       Collection<? extends ASTCDElement> collection, String packageName) {
@@ -216,19 +216,19 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     super.addCDElement(index, p);
   }
 
-  @Override
-  public void addCDElement(int index, ASTCDElement element) {
-    addCDElementToPackageWithName(index, element);
-  }
+//  @Override
+//  public void addCDElement(int index, ASTCDElement element) {
+//    addCDElementToPackageWithName(index, element);
+//  }
 
   public boolean addCDElementToPackage(int index, ASTCDElement element, String packageName) {
     return addCDElementToPackageWithName(index, element, packageName);
   }
 
-  @Override
-  public boolean addAllCDElements(int index, Collection<? extends ASTCDElement> collection) {
-    return addCDElementToPackage(index, collection, defaultPackageName);
-  }
+//  @Override
+//  public boolean addAllCDElements(int index, Collection<? extends ASTCDElement> collection) {
+//    return addCDElementToPackage(index, collection, defaultPackageName);
+//  }
 
   public boolean addCDElementToPackage(
       int index, Collection<? extends ASTCDElement> collection, String packageName) {

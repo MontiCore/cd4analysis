@@ -110,7 +110,7 @@ public class TestBasis {
     checkLogError();
   }
 
-  protected ICDBasisArtifactScope createST(ASTCDCompilationUnit astcdCompilationUnit) {
+  protected ICDBasisArtifactScope createSymTab(ASTCDCompilationUnit astcdCompilationUnit) {
     final ICD4AnalysisArtifactScope st =
         CD4AnalysisMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     checkLogError();

@@ -52,7 +52,7 @@ public class CDGeneratorToolTest {
           "target/generated/example/standard/",
           "-gen"
         });
-    assertTrue(new File("target/generated/example/standard/de/monticore/A.java").isFile());
+    assertTrue(new File("target/generated/example/standard/A.java").isFile());
   }
 
   @Test
@@ -68,7 +68,7 @@ public class CDGeneratorToolTest {
           "-ct",
           "de.monticore.cdgentool.NewCustomTemplate"
         });
-    assertTrue(new File("target/generated/example/ct/de/monticore/A.java").isFile());
+    assertTrue(new File("target/generated/example/ct/A.java").isFile());
   }
 
   @Test
@@ -84,7 +84,7 @@ public class CDGeneratorToolTest {
           "-tp",
           "src/test/resources/de/monticore/cdgentool/templates/"
         });
-    assertTrue(new File("target/generated/example/tp/de/monticore/A.java").isFile());
+    assertTrue(new File("target/generated/example/tp/A.java").isFile());
   }
 
   @Test
@@ -98,9 +98,9 @@ public class CDGeneratorToolTest {
           "target/generated/example/hwc/",
           "-gen",
           "-hwc",
-          "src/test/resources/de/monticore/cdgentool/hwc"
+          "src/test/resources/de/monticore/cdgentool/hwc/"
         });
-    assertTrue(new File("target/generated/example/hwc/de/monticore/ATOP.java").isFile());
+    assertTrue(new File("target/generated/example/hwc/ATOP.java").isFile());
   }
 
   @Test

@@ -82,7 +82,7 @@ public class CDAssociationUniqueInHierarchy implements CDBasisASTCDDefinitionCoC
   /** helper-method to find types by full-name */
   protected ASTCDType findTypeByFullName(ASTCDDefinition node, String fullName) {
 
-    Optional<CDTypeSymbol> optSymbol = node.getEnclosingScope().resolveCDTypeDown(fullName);
+    Optional<CDTypeSymbol> optSymbol = node.getEnclosingScope().resolveCDType(fullName);
     if (optSymbol.isPresent()) {
       return optSymbol.get().getAstNode();
     }

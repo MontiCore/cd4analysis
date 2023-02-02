@@ -1,56 +1,59 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
-import static org.junit.Assert.*;
-
 import com.google.common.collect.LinkedListMultimap;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
-import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import com.google.common.collect.Lists;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.testcdbasis.TestCDBasisMill;
+import de.monticore.testcdbasis._parser.TestCDBasisParser;
+import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class CDBasisSTCompleterTest {
 
   private static final String SYMBOL_PATH = "src/test/resources/";
-  CD4AnalysisParser parser;
-  CD4AnalysisSymbols2Json symbols2Json;
+  TestCDBasisParser parser;
+  TestCDBasisSymbols2Json symbols2Json;
 
   @Before
   public void setup() {
     // reset the GlobalScope
-    CD4AnalysisMill.reset();
-    CD4AnalysisMill.init();
-    CD4AnalysisMill.globalScope().clear();
-    CD4AnalysisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
+    TestCDBasisMill.reset();
+    TestCDBasisMill.init();
+    TestCDBasisMill.globalScope().clear();
+    TestCDBasisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
 
     // reset the logger
     Log.init();
     Log.enableFailQuick(false);
 
-    this.parser = CD4AnalysisMill.parser();
-    symbols2Json = new CD4AnalysisSymbols2Json();
+    this.parser = TestCDBasisMill.parser();
+    symbols2Json = new TestCDBasisSymbols2Json();
   }
 
   @Test
@@ -59,14 +62,26 @@ public class CDBasisSTCompleterTest {
 
     String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
-    new CD4AnalysisAfterParseTrafo().transform(ast);
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    ast.accept(new CD4AnalysisSymbolTableCompleter(ast).getTraverser());
 
-    assertEquals(1, artifactScope.getSubScopes().size());
-    ICD4AnalysisScope diagramScope = artifactScope.getSubScopes().get(0);
+    // after parse trafo
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
+    CDBasisDefaultPackageTrafo trafo = new CDBasisDefaultPackageTrafo();
+    t.add4CDBasis(trafo);
+    ast.accept(t);
 
-    LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = diagramScope.getCDTypeSymbols();
+    // create symbol table
+    ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+
+    // complete symbol table
+    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    CDBasisSymbolTableCompleter symTabComp =
+      new CDBasisSymbolTableCompleter();
+    t2.add4CDBasis(symTabComp);
+    t2.add4OOSymbols(symTabComp);
+    ast.accept(t2);
+
+    assertEquals(2, artifactScope.getSubScopes().size());
+    LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = artifactScope.getCDTypeSymbols();
     assertEquals(2, cdTypeSymbols.size());
     assertTrue(cdTypeSymbols.containsKey("C"));
     assertTrue(cdTypeSymbols.containsKey("D"));
@@ -78,11 +93,11 @@ public class CDBasisSTCompleterTest {
     assertEquals(2, dFields.size());
 
     FieldSymbol cField = dFields.get(0);
-    assertEquals("de.monticore.cdbasis.symboltable.D.c", cField.getFullName());
+    assertEquals("D.c", cField.getFullName());
     assertEquals("C", cField.getType().getTypeInfo().getName());
 
     FieldSymbol someImportedTypeField = dFields.get(1);
-    assertEquals("de.monticore.cdbasis.symboltable.D.x", someImportedTypeField.getFullName());
+    assertEquals("D.x", someImportedTypeField.getFullName());
     assertEquals("SomeImportedType", someImportedTypeField.getType().getTypeInfo().getName());
 
     assertEquals(0, Log.getErrorCount());
@@ -92,7 +107,7 @@ public class CDBasisSTCompleterTest {
   public void resolvingTest() {
     String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+    ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
     List<TypeSymbol> resolvedTypes1 = artifactScope.resolveTypeMany("SomeImportedType");
     assertEquals(1, resolvedTypes1.size());
@@ -103,19 +118,19 @@ public class CDBasisSTCompleterTest {
     List<DiagramSymbol> resolvedDiagram = artifactScope.resolveDiagramMany("MyTypes");
     assertEquals(1, resolvedDiagram.size());
 
-    CD4AnalysisMill.globalScope().addSubScope(artifactScope);
-    assertSame(artifactScope, CD4AnalysisMill.globalScope().getSubScopes().get(0));
+    TestCDBasisMill.globalScope().addSubScope(artifactScope);
+    assertSame(artifactScope, TestCDBasisMill.globalScope().getSubScopes().get(0));
 
     List<TypeSymbol> resolvedTypesGS =
-        CD4AnalysisMill.globalScope().resolveTypeMany("SomeImportedType");
+        TestCDBasisMill.globalScope().resolveTypeMany("SomeImportedType");
     assertEquals(1, resolvedTypesGS.size());
 
     List<TypeSymbol> resolvedTypesGS2 =
-        CD4AnalysisMill.globalScope().resolveTypeMany("NOTEXISTING");
+        TestCDBasisMill.globalScope().resolveTypeMany("NOTEXISTING");
     assertEquals(0, resolvedTypesGS2.size());
 
     List<DiagramSymbol> resolvedDiagramGS =
-        CD4AnalysisMill.globalScope().resolveDiagramMany("MyTypes");
+        TestCDBasisMill.globalScope().resolveDiagramMany("MyTypes");
     assertEquals(1, resolvedDiagramGS.size());
 
     assertEquals(0, Log.getErrorCount());
@@ -125,8 +140,14 @@ public class CDBasisSTCompleterTest {
   public void serializationTest() {
     String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
-    new CD4AnalysisAfterParseTrafo().transform(ast);
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+
+    // after parse trafo
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
+    CDBasisDefaultPackageTrafo trafo = new CDBasisDefaultPackageTrafo();
+    t.add4CDBasis(trafo);
+    ast.accept(t);
+
+    ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
     String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
@@ -138,7 +159,7 @@ public class CDBasisSTCompleterTest {
 
     String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+    ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
     {
       // RESOLVE
@@ -161,11 +182,11 @@ public class CDBasisSTCompleterTest {
     artifactScope = symbols2Json.deserialize(serialized);
     assertEquals(0, Log.getErrorCount());
 
-    CD4AnalysisMill.reset();
-    CD4AnalysisMill.init();
-    CD4AnalysisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
+    TestCDBasisMill.reset();
+    TestCDBasisMill.init();
+    TestCDBasisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
 
-    CD4AnalysisMill.globalScope().addSubScope(artifactScope);
+    TestCDBasisMill.globalScope().addSubScope(artifactScope);
 
     {
       // RESOLVE
@@ -192,12 +213,13 @@ public class CDBasisSTCompleterTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
-    ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
-    List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-
-    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(imports, packageDecl);
-
-    ast.accept(c.getTraverser());
+    // complete symbol table
+    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    CDBasisSymbolTableCompleter symTabComp =
+      new CDBasisSymbolTableCompleter();
+    t2.add4CDBasis(symTabComp);
+    t2.add4OOSymbols(symTabComp);
+    ast.accept(t2);
 
     assertEquals(0, Log.getErrorCount());
   }
@@ -211,8 +233,8 @@ public class CDBasisSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter c = new CDBasisSymbolTableCompleter(imports, packageDecl);
-    CD4AnalysisTraverser t = CD4AnalysisMill.traverser();
+    CDBasisSymbolTableCompleter c = new CDBasisSymbolTableCompleter();
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
     t.add4CDBasis(c);
     t.add4OOSymbols(c);
 
@@ -220,6 +242,74 @@ public class CDBasisSTCompleterTest {
 
     assertEquals(1, Log.getErrorCount());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
+  }
+
+  @Test
+  public void modifiersTest() {
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/Modifiers.cd";
+    ASTCDCompilationUnit ast = loadModel(artifact);
+
+    ASTCDDefinition cd = ast.getCDDefinition();
+
+    assertEquals(2, cd.getCDElementList().size());
+    ASTCDClass c1 = (ASTCDClass) cd.getCDElement(0);
+    ASTCDClass c2 = (ASTCDClass) cd.getCDElement(1);
+    assertEquals(1, c2.getCDAttributeList().size());
+    ASTCDAttribute a = c2.getCDAttributeList().get(0);
+
+    // check ast modifiers
+    assertTrue(c1.getModifier().isPrivate());
+    assertFalse(c1.getModifier().isProtected());
+    assertFalse(c1.getModifier().isPublic());
+
+    assertFalse(c2.getModifier().isPrivate());
+    assertFalse(c2.getModifier().isProtected());
+    assertTrue(c2.getModifier().isPublic());
+
+    assertFalse(a.getModifier().isPrivate());
+    assertTrue(a.getModifier().isProtected());
+    assertFalse(a.getModifier().isPublic());
+
+    // create symbol table
+    createSymbolTableFromAST(ast);
+
+    // check symbol table modifiers before completion
+    assertFalse(c1.getSymbol().isIsPrivate());
+    assertFalse(c1.getSymbol().isIsProtected());
+    assertFalse(c1.getSymbol().isIsPublic());
+
+    assertFalse(c2.getSymbol().isIsPrivate());
+    assertFalse(c2.getSymbol().isIsProtected());
+    assertFalse(c2.getSymbol().isIsPublic());
+
+    assertFalse(a.getSymbol().isIsPrivate());
+    assertFalse(a.getSymbol().isIsProtected());
+    assertFalse(a.getSymbol().isIsPublic());
+
+    // complete symbol table
+    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    CDBasisSymbolTableCompleter symTabComp =
+      new CDBasisSymbolTableCompleter();
+    t2.add4CDBasis(symTabComp);
+    t2.add4OOSymbols(symTabComp);
+    ast.accept(t2);
+
+
+    // check symbol table modifiers after completion
+
+    assertTrue(c1.getSymbol().isIsPrivate());
+    assertFalse(c1.getSymbol().isIsProtected());
+    assertFalse(c1.getSymbol().isIsPublic());
+
+    assertFalse(c2.getSymbol().isIsPrivate());
+    assertFalse(c2.getSymbol().isIsProtected());
+    assertTrue(c2.getSymbol().isIsPublic());
+
+    assertFalse(a.getSymbol().isIsPrivate());
+    assertTrue(a.getSymbol().isIsProtected());
+    assertFalse(a.getSymbol().isIsPublic());
+
+    assertEquals(0, Log.getErrorCount());
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {
@@ -234,7 +324,14 @@ public class CDBasisSTCompleterTest {
     throw new IllegalStateException("Something went wrong..");
   }
 
-  protected ICD4AnalysisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
-    return CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+  protected ITestCDBasisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
+    ITestCDBasisArtifactScope as = TestCDBasisMill.scopesGenitorDelegator().createFromAST(ast);
+
+    // add imports
+    List<ImportStatement> imports = Lists.newArrayList();
+    ast.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    as.setImportsList(imports);
+
+    return as;
   }
 }

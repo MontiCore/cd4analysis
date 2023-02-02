@@ -23,10 +23,8 @@ public class CD4AnalysisAfterParseTrafo {
   }
 
   public static void init(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisTraverser traverser) {
-    final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo(cdAfterParseHelper);
+    final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
     traverser.add4CDBasis(cdBasis);
-    traverser.setCDBasisHandler(cdBasis);
-    cdBasis.setTraverser(traverser);
 
     CD4AnalysisDirectCompositionTrafo.init(cdAfterParseHelper, traverser);
   }

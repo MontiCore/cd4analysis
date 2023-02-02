@@ -676,7 +676,6 @@ The method body definition is exactly the same.
 [SymTypeExpression]: https://github.com/MontiCore/monticore/blob/HEAD/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
 [SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
-[STHelper]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd/_symboltable/CDSymbolTableHelper.java
 [reporting]: https://github.com/MontiCore/cd4analysis/tree/HEAD/src/main/java/de/monticore/cd4analysis/reporting
 [CDTool]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/tool/java/de/monticore/CD4CodeTool.java
 [LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd

@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd4codebasis.symboltable;
+
+classdiagram SerializationCD {
+  class A {
+    A();
+    A(SomeType st);
+    SomeType foo(SomeType st);
+  }
+
+  package b {
+    class C {
+      C();
+      C(SomeType st);
+      SomeType bar(SomeType st);
+    }
+  }
+
+  class SomeType;
+
+}

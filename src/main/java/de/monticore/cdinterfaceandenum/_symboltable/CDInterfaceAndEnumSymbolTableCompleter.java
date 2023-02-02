@@ -1,57 +1,40 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
+import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumFullPrettyPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.types.check.TypeCheckResult;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.check.*;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
-  protected CDSymbolTableHelper symbolTableHelper;
 
-  public CDInterfaceAndEnumSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
-    this.symbolTableHelper = symbolTableHelper;
+  protected ISynthesize typeSynthesizer;
+  protected CDInterfaceAndEnumFullPrettyPrinter prettyPrinter;
+
+  public CDInterfaceAndEnumSymbolTableCompleter(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+    prettyPrinter = new CDInterfaceAndEnumFullPrettyPrinter();
   }
 
-  public CDInterfaceAndEnumSymbolTableCompleter(
-      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper().setPackageDeclaration(packageDeclaration);
-  }
-
-  @Override
-  public void visit(ASTCDInterface node) {
-    CDInterfaceAndEnumVisitor2.super.visit(node);
-    symbolTableHelper.addToCDTypeStack(node.getName());
+  public CDInterfaceAndEnumSymbolTableCompleter() {
+    this(new FullSynthesizeFromMCBasicTypes());
   }
 
   @Override
   public void endVisit(ASTCDInterface node) {
-    CDInterfaceAndEnumVisitor2.super.endVisit(node);
-    symbolTableHelper.removeFromCDTypeStack();
     initialize_CDInterface(node);
   }
 
   @Override
-  public void visit(ASTCDEnum node) {
-    CDInterfaceAndEnumVisitor2.super.visit(node);
-    symbolTableHelper.addToCDTypeStack(node.getName());
-  }
-
-  @Override
   public void endVisit(ASTCDEnum node) {
-    CDInterfaceAndEnumVisitor2.super.endVisit(node);
-    symbolTableHelper.removeFromCDTypeStack();
     initialize_CDEnum(node);
   }
 
@@ -64,7 +47,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     CDTypeSymbol symbol = ast.getSymbol();
     symbol.setIsInterface(true);
 
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    setupModifiers(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(
@@ -73,12 +56,12 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
               .map(
                   s -> {
                     final TypeCheckResult result =
-                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                        getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
                               "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
-                              symbolTableHelper.getPrettyPrinter().prettyprint(s)),
+                              getPrettyPrinter().prettyprint(s)),
                           s.get_SourcePositionStart());
                     }
                     return result;
@@ -93,7 +76,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     CDTypeSymbol symbol = ast.getSymbol();
     symbol.setIsEnum(true);
 
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    setupModifiers(ast.getModifier(), symbol);
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(
@@ -102,7 +85,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
               .map(
                   s -> {
                     final TypeCheckResult result =
-                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                        getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -128,7 +111,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     symbol.setIsPublic(true);
 
     // create a SymType for the enum, because the type of the enum constant is the enum itself
-    final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
+    final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, to achieve the correct package name
     final SymTypeOfObject typeObject =
         SymTypeExpressionFactory.createTypeObject(
@@ -137,4 +120,30 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
 
     // Don't store the arguments in the ST
   }
+
+  public void setupModifiers(ASTModifier modifier, CDTypeSymbol typeSymbol) {
+    typeSymbol.setIsPublic(modifier.isPublic());
+    typeSymbol.setIsPrivate(modifier.isPrivate());
+    typeSymbol.setIsProtected(modifier.isProtected());
+    typeSymbol.setIsStatic(modifier.isStatic());
+    typeSymbol.setIsAbstract(modifier.isAbstract());
+    typeSymbol.setIsDerived(modifier.isDerived());
+  }
+
+  public ISynthesize getTypeSynthesizer() {
+    return typeSynthesizer;
+  }
+
+  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+  }
+
+  public CDInterfaceAndEnumFullPrettyPrinter getPrettyPrinter() {
+    return prettyPrinter;
+  }
+
+  public void setPrettyPrinter(CDInterfaceAndEnumFullPrettyPrinter prettyPrinter) {
+    this.prettyPrinter = prettyPrinter;
+  }
+
 }

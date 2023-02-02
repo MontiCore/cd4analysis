@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdinterfaceandenum.symboltable;
+
+classdiagram EnumConstants {
+
+  class Car {
+    DrivingState s;
+  }
+
+  enum DrivingState {
+    IDLE,
+    DRIVING;
+  }
+}

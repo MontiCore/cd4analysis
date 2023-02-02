@@ -5,7 +5,7 @@ import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisScopesGenitorDelegator;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 

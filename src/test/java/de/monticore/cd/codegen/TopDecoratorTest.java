@@ -78,7 +78,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
                 GeneratorEngine.existsHandwrittenClass(
                     Mockito.any(MCPath.class), Mockito.any(String.class)))
         .thenReturn(true);
-    this.topDecorator.decoratePackage(this.topCD);
+    this.topDecorator.decorate(this.topCD);
     ASTCDDefinition ast = topCD.getCDDefinition();
 
     assertEquals(1, ast.getCDClassesList().size());

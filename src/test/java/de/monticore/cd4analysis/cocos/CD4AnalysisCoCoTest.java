@@ -11,7 +11,7 @@ import org.junit.Test;
 public class CD4AnalysisCoCoTest extends CD4AnalysisTestBasis {
 
   @Test
-  public void checkMaCoCO() throws IOException {
+  public void checkMaCoCo() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit =
         parse("cd4analysis/examples/industrial_strength_models/MaCoCo.cd");
     prepareST(astcdCompilationUnit);

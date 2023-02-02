@@ -243,15 +243,6 @@ public class ASTCDHelper {
     if (cdPackage.isPresent()) {
       return Optional.of(cdPackage.get().getMCQualifiedName().getQName());
     }
-    // if the type exists in this CD, we return the default package;
-    /*
-    if (this.cdFile.getCDDefinition().getCDElementList().stream()
-        .filter(el -> el.deepEquals(element))
-        .findAny()
-        .isPresent()) {
-      return getDefaultCDPackageName();
-    }
-    */
     return Optional.empty();
   }
 

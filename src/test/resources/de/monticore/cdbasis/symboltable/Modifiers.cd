@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdbasis.symboltable;
+
+classdiagram Modifierrs {
+  private class C;
+  public class D {
+    protected C c;
+  }
+}

@@ -2,6 +2,7 @@
 package de.monticore.cd.codegen;
 
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -10,6 +11,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class CDGenerator {
 
   protected static final String JAVA_EXTENSION = ".java";
+  protected final ASTCDPackage emptyPKG;
 
   protected final GeneratorEngine generatorEngine;
   protected GeneratorSetup setup;
@@ -29,10 +32,18 @@ public class CDGenerator {
     this.setup = generatorSetup;
     CD4C.init(setup);
     CD4C.getInstance().setEmptyBodyTemplate("cd2java.EmptyBody");
+    emptyPKG = CD4CodeMill.cDPackageBuilder()
+      .setMCQualifiedName(
+        CD4CodeMill.mCQualifiedNameBuilder()
+          .addParts("")
+          .build())
+      .build();
   }
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
+
+    // generate packages
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
       String packageAsPath =
           String.join(File.separator, astPackage.getMCQualifiedName().getPartsList())
@@ -62,6 +73,37 @@ public class CDGenerator {
               .map(e -> ((ASTCDEnum) e))
               .collect(Collectors.toList()));
     }
+
+    String packageAsPath =
+      String.join(File.separator, emptyPKG.getMCQualifiedName().getPartsList())
+        .toLowerCase(Locale.ROOT);
+
+    // generate classes
+    this.generateCDClasses(
+      packageAsPath,
+      emptyPKG,
+      definition.getCDElementList().stream()
+        .filter(ASTCDClass.class::isInstance)
+        .map(e -> ((ASTCDClass) e))
+        .collect(Collectors.toList()));
+
+    // generate interfaces
+    this.generateCDInterfaces(
+      packageAsPath,
+      emptyPKG,
+      definition.getCDElementList().stream()
+        .filter(ASTCDInterface.class::isInstance)
+        .map(e -> ((ASTCDInterface) e))
+        .collect(Collectors.toList()));
+
+    // generate enums
+    this.generateCDEnums(
+      packageAsPath,
+      emptyPKG,
+      definition.getCDElementList().stream()
+        .filter(ASTCDEnum.class::isInstance)
+        .map(e -> ((ASTCDEnum) e))
+        .collect(Collectors.toList()));
   }
 
   protected Path getAsPath(String packageAsPath, String name) {
@@ -92,4 +134,5 @@ public class CDGenerator {
       this.generatorEngine.generate(CD2JavaTemplates.ENUM, filePath, cdEnum, astcdPackage);
     }
   }
+
 }

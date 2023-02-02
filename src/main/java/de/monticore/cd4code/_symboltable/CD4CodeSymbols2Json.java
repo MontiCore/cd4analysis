@@ -19,8 +19,8 @@ public class CD4CodeSymbols2Json extends CD4CodeSymbols2JsonTOP implements CD4Co
   public void traverse(ICD4CodeScope node) {
     CD4CodeHandler.super.traverse(node);
 
-    for (de.monticore.cdbasis._symboltable.CDPackageSymbol s : node.getLocalCDPackageSymbols()) {
-      getTraverser().traverse((ICD4CodeScope) s.getSpannedScope());
-    }
+//    for (de.monticore.cdbasis._symboltable.CDPackageSymbol s : node.getLocalCDPackageSymbols()) {
+//      getTraverser().traverse((ICD4CodeScope) s.getSpannedScope());
+//    }
   }
 }

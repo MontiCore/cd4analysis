@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdinterfaceenum.symboltable;
+
+classdiagram SerializationCD {
+  interface A;
+  enum B {
+    FOO,
+    BAR;
+  }
+
+  package c {
+    interface D;
+    enum E {
+      FOO2,
+      BAR2;
+    }
+    class F {
+      A g;
+    }
+  }
+}

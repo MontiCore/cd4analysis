@@ -8,11 +8,6 @@ import de.monticore.cdbasis._symboltable.CDBasisDeSer;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
 public class CD4CodeDeSer extends CD4CodeDeSerTOP {
-  @Override
-  protected void deserializeSymbols(ICD4CodeScope scope, JsonObject scopeJson) {
-    super.deserializeSymbols(scope, scopeJson);
-    CDBasisDeSer.moveCDTypeSymbolsToPackage(scope);
-  }
 
   @Override
   public void serializeAddons(ICD4CodeArtifactScope toSerialize, CD4CodeSymbols2Json s2j) {

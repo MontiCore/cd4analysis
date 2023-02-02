@@ -3,6 +3,7 @@ package de.monticore.cdassociation._symboltable;
 
 import java.util.Optional;
 
+@Deprecated
 public class SymAssociationBuilder {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   protected Optional<CDAssociationSymbol> association = Optional.empty();

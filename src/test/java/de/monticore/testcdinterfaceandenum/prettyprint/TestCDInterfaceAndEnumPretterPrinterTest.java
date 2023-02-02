@@ -8,6 +8,8 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import java.io.IOException;
 import java.util.Optional;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -27,5 +29,6 @@ public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
         p.parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
+    Assert.assertTrue(astcdCompilationUnit.get().deepEquals(astcdCompilationUnitReParsed.get()));
   }
 }

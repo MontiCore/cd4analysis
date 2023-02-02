@@ -67,7 +67,7 @@ component grammar CDBasis extends
   /** CDType are all of the CDElements, which can be used to describe a
       type for e.g. variables, method arguments, ...
   */
-  interface symbol CDType extends CDElement, OOType;
+  interface symbol scope CDType extends CDElement, OOType;
 
   symbolrule CDType =
     isDerived: boolean;
