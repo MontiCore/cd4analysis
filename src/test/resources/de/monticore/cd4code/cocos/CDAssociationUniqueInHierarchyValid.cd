@@ -1,4 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
+
+import CDAssociationUniqueInHierarchyValid.p1.*;
+import CDAssociationUniqueInHierarchyValid.p2.*;
+
 classdiagram CDAssociationUniqueInHierarchyValid {
 
   package p1 {
@@ -30,8 +34,8 @@ classdiagram CDAssociationUniqueInHierarchyValid {
           class superclass3;
           class subclass3 extends superclass3;
 
-          association superclass3 -> (foo) A3;
-          association subclass3 (foo) <- B3;
+          association p3.superclass3 -> (foo) A3;
+          association p3.subclass3 (foo) <- B3;
     }
 
 }

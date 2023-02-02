@@ -6,7 +6,7 @@ classdiagram CDAssociationNameLowerCaseInvalid{
       class A {
         int foo;
         int bar;
-        int[] field;
+        int field;
       }
       class B extends A;
     }

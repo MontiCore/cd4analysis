@@ -23,11 +23,13 @@ public class CD4CodeBasisTestBasis extends TestBasis {
     LogStub.enableFailQuick(false);
     TestCD4CodeBasisMill.reset();
     TestCD4CodeBasisMill.init();
-    BasicSymbolsMill.initializePrimitives();
-    p = new TestCD4CodeBasisParser();
-
     final ITestCD4CodeBasisGlobalScope globalScope = TestCD4CodeBasisMill.globalScope();
-    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
+    globalScope.clear();
+    BasicSymbolsMill.initializePrimitives();
+    p = TestCD4CodeBasisMill.parser();
+
+
+//    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
     cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos(new FullDeriveFromTestCD4CodeBasis());
     coCoChecker = new TestCD4CodeBasisCoCoChecker();

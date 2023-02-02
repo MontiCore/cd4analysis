@@ -16,6 +16,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
@@ -139,7 +140,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorld.java");
     generatorEngine.generate(
-        "cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
+        "cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
   @Test
@@ -174,7 +175,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorldWithConstructor.java");
     generatorEngine.generate(
-        "cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
+        "cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
   @Test
@@ -203,7 +204,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java");
     generatorEngine.generate(
-        "cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
+        "cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
   @Test
@@ -340,5 +341,15 @@ public class CD4CTest extends CD4CodeTestBasis {
         "0xA0324 Cannot find symbol UnknownAttributeType", Log.getFindings().get(0).getMsg());
 
     Log.clearFindings();
+  }
+
+  protected ASTCDPackage createDeafaultPkg() {
+    return CD4CodeMill.cDPackageBuilder()
+      .setMCQualifiedName(CD4CodeMill
+        .mCQualifiedNameBuilder()
+        .addParts("de")
+        .addParts("monticore")
+        .build())
+      .build();
   }
 }

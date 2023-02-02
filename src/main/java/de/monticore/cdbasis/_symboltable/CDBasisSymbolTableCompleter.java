@@ -1,37 +1,42 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
-  protected CDSymbolTableHelper symbolTableHelper;
 
-  public CDBasisSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
-    this.symbolTableHelper = symbolTableHelper;
+  protected CDBasisTraverser traverser;
+
+  protected ISynthesize typeSynthesizer;
+  protected CDBasisFullPrettyPrinter prettyPrinter;
+
+  public CDBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+    prettyPrinter = new CDBasisFullPrettyPrinter();
   }
 
-  public CDBasisSymbolTableCompleter(
-      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper().setPackageDeclaration(packageDeclaration);
+  public CDBasisSymbolTableCompleter() {
+    this(new FullSynthesizeFromMCBasicTypes());
   }
 
   @Override
   public void visit(ASTCDCompilationUnit node) {
-    CDBasisVisitor2.super.visit(node);
     final ICDBasisScope artifactScope = node.getCDDefinition().getEnclosingScope();
     if (artifactScope instanceof ICD4AnalysisArtifactScope) {
       ((ICD4AnalysisArtifactScope) artifactScope)
@@ -44,7 +49,6 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
 
   @Override
   public void visit(ASTCDClass node) {
-    symbolTableHelper.addToCDTypeStack(node.getName());
 
     final CDTypeSymbol symbol = node.getSymbol();
 
@@ -55,12 +59,12 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
               .map(
                   s -> {
                     final TypeCheckResult result =
-                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                        getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
                               "0xCDA00: The type of the extended classes (%s) could not be calculated",
-                              symbolTableHelper.getPrettyPrinter().prettyprint(s)),
+                              getPrettyPrinter().prettyprint(s)),
                           s.get_SourcePositionStart());
                     }
                     return result;
@@ -77,7 +81,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
               .map(
                   s -> {
                     final TypeCheckResult result =
-                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                        getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -97,14 +101,13 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
   public void endVisit(ASTCDClass node) {
     assert node.getSymbol() != null;
     initialize_CDClass(node);
-    symbolTableHelper.removeFromCDTypeStack();
     CDBasisVisitor2.super.endVisit(node);
   }
 
   protected void initialize_CDClass(ASTCDClass ast) {
     CDTypeSymbol symbol = ast.getSymbol();
     symbol.setIsClass(true);
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    setupModifiers(ast.getModifier(), symbol);
   }
 
   @Override
@@ -113,12 +116,12 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
 
     // Compute the !final! SymTypeExpression for the type of the field
     final TypeCheckResult typeResult =
-        symbolTableHelper.getTypeSynthesizer().synthesizeType(node.getMCType());
+        getTypeSynthesizer().synthesizeType(node.getMCType());
     if (!typeResult.isPresentResult()) {
       Log.error(
           String.format(
               "0xCDA02: The type (%s) of the attribute (%s) could not be calculated",
-              symbolTableHelper.getPrettyPrinter().prettyprint(node.getMCType()), node.getName()),
+              getPrettyPrinter().prettyprint(node.getMCType()), node.getName()),
           node.getMCType().get_SourcePositionStart());
     } else {
       symbol.setType(typeResult.getResult());
@@ -134,22 +137,49 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
 
   protected void initialize_CDAttribute(ASTCDAttribute ast) {
     FieldSymbol symbol = ast.getSymbol();
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    setupModifiers(ast.getModifier(), symbol);
   }
 
-  /*
-  The following visit methods must be overriden because both implemented interface
-  provide default methods for the visit methods.
-   */
-  public void visit(de.monticore.symboltable.ISymbol node) {}
+  public void setupModifiers(ASTModifier modifier, CDTypeSymbol typeSymbol) {
+    typeSymbol.setIsPublic(modifier.isPublic());
+    typeSymbol.setIsPrivate(modifier.isPrivate());
+    typeSymbol.setIsProtected(modifier.isProtected());
+    typeSymbol.setIsStatic(modifier.isStatic());
+    typeSymbol.setIsAbstract(modifier.isAbstract());
+    typeSymbol.setIsDerived(modifier.isDerived());
+  }
 
-  public void endVisit(de.monticore.symboltable.ISymbol node) {}
+  public void setupModifiers(ASTModifier modifier, FieldSymbol fieldSymbol) {
+    fieldSymbol.setIsPublic(modifier.isPublic());
+    fieldSymbol.setIsPrivate(modifier.isPrivate());
+    fieldSymbol.setIsProtected(modifier.isProtected());
+    fieldSymbol.setIsStatic(modifier.isStatic());
+    fieldSymbol.setIsFinal(modifier.isFinal());
+    fieldSymbol.setIsDerived(modifier.isDerived());
+  }
 
-  public void endVisit(de.monticore.ast.ASTNode node) {}
+  public ISynthesize getTypeSynthesizer() {
+    return typeSynthesizer;
+  }
 
-  public void visit(de.monticore.ast.ASTNode node) {}
+  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+  }
 
-  public void visit(de.monticore.symboltable.IScope node) {}
+  public CDBasisFullPrettyPrinter getPrettyPrinter() {
+    return prettyPrinter;
+  }
 
-  public void endVisit(de.monticore.symboltable.IScope node) {}
+  public void setPrettyPrinter(CDBasisFullPrettyPrinter prettyPrinter) {
+    this.prettyPrinter = prettyPrinter;
+  }
+
+  public CDBasisTraverser getTraverser() {
+    return traverser;
+  }
+
+  public void setTraverser(CDBasisTraverser traverser) {
+    this.traverser = traverser;
+  }
+
 }

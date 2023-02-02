@@ -4,27 +4,29 @@ package de.monticore.cd4analysis.trafo;
 import static org.junit.Assert.*;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
-import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 
-public class CDAssociationTrafoTest extends CDAssociationTestBasis {
+public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
   @Test
-  public void genitorTest() {
-    final ASTCDCompilationUnit astcdCompilationUnit = parseModel("cdassociation/parser/Simple.cd");
+  public void genitorTest() throws IOException {
+    final ASTCDCompilationUnit astcdCompilationUnit = parse("cdassociation/parser/Simple.cd");
     new CD4AnalysisAfterParseTrafo().transform(astcdCompilationUnit);
-    final ICDBasisArtifactScope artifactScope = createST(astcdCompilationUnit);
+    final ICDBasisArtifactScope artifactScope = createSymTab(astcdCompilationUnit);
 
     {
       final CD4AnalysisTraverser traverser =
@@ -76,11 +78,11 @@ public class CDAssociationTrafoTest extends CDAssociationTestBasis {
   }
 
   @Test
-  public void roleWithSameNameAsAttribute() {
+  public void roleWithSameNameAsAttribute() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit =
-        parseModel("cdassociation/parser/RoleNameExistsAsAttributeName.cd");
+        parse("cdassociation/parser/RoleNameExistsAsAttributeName.cd");
     new CD4AnalysisAfterParseTrafo().transform(astcdCompilationUnit);
-    final ICDBasisArtifactScope artifactScope = createST(astcdCompilationUnit);
+    final ICDBasisArtifactScope artifactScope = createSymTab(astcdCompilationUnit);
 
     {
       final CD4AnalysisTraverser traverser =
@@ -111,10 +113,10 @@ public class CDAssociationTrafoTest extends CDAssociationTestBasis {
       cdAssociationCreateFieldsFromAllRoles.transform(astcdCompilationUnit);
       assertEquals(2, Log.getErrorCount());
       assertEquals(
-          "0xCD0B7: a FieldSymbol with the name 'b' already exists in 'de.monticore.A' (defined in RoleNameExistsAsAttributeName.cd:<6,4>)",
+          "0xCD0B7: a FieldSymbol with the name 'b' already exists in 'A' (defined in RoleNameExistsAsAttributeName.cd:<6,4>)",
           Log.getFindings().get(0).getMsg());
       assertEquals(
-          "0xCD0B7: a FieldSymbol with the name 'value' already exists in 'de.monticore.B' (defined in RoleNameExistsAsAttributeName.cd:<10,4>)",
+          "0xCD0B7: a FieldSymbol with the name 'value' already exists in 'B' (defined in RoleNameExistsAsAttributeName.cd:<10,4>)",
           Log.getFindings().get(1).getMsg());
 
       Log.getFindings().clear();

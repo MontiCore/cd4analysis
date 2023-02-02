@@ -20,8 +20,8 @@ classdiagram MyLife {
     }
     class Grade;
     enum StudentStatus { ENROLLED, FINISHED; }
-    composition Student -> Grade [*];
-    association phonebook uni.Student [String] -> PhoneNumber;
+    composition uni.Student -> uni.Grade [*];
+    association phonebook uni.Student [java.lang.String] -> PhoneNumber;
   }
-  association [0..1] Person (parent) <-> (child) monticore.Person [*];
+  association [0..1] Person (parent) <-> (child) Person [*];
 }

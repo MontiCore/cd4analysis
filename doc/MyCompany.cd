@@ -11,7 +11,7 @@ classdiagram MyCompany {
     class Person extends Entity {
       Date birthday;
       List<String> nickNames;
-      -> Address [*] {ordered};
+      -> people.Address [*] {ordered};
     }
     class Address {
       String city;

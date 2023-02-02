@@ -73,43 +73,6 @@ public class TopDecorator {
     return constructQualifiedName(packagesNames, astcdtype.getName());
   }
 
-  public void decoratePackage(final ASTCDCompilationUnit compUnit) {
-    for (ASTCDPackage p : compUnit.getCDDefinition().getCDPackagesList()) {
-      p.getCDElementList().stream()
-          .filter(e -> e instanceof ASTCDClass)
-          .map(e -> (ASTCDClass) e)
-          .filter(
-              cdClass ->
-                  existsHandwrittenClass(
-                      hwPath,
-                      constructQualifiedName(
-                          p.getMCQualifiedName().getPartsList(), cdClass.getName())))
-          .forEach(this::applyTopMechanism);
-
-      p.getCDElementList().stream()
-          .filter(e -> e instanceof ASTCDInterface)
-          .map(e -> (ASTCDInterface) e)
-          .filter(
-              cdInterface ->
-                  existsHandwrittenClass(
-                      hwPath,
-                      constructQualifiedName(
-                          p.getMCQualifiedName().getPartsList(), cdInterface.getName())))
-          .forEach(this::applyTopMechanism);
-
-      p.getCDElementList().stream()
-          .filter(e -> e instanceof ASTCDEnum)
-          .map(e -> (ASTCDEnum) e)
-          .filter(
-              cdEnum ->
-                  existsHandwrittenClass(
-                      hwPath,
-                      constructQualifiedName(
-                          p.getMCQualifiedName().getPartsList(), cdEnum.getName())))
-          .forEach(this::applyTopMechanism);
-    }
-  }
-
   protected void applyTopMechanism(ASTCDClass cdClass) {
     makeAbstract(cdClass);
     cdClass.setName(cdClass.getName() + TOP_SUFFIX);

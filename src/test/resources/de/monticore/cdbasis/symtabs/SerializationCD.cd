@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdbasis.symtabs;
+
+classdiagram SerializationCD {
+  class A;
+  class B {
+    A a;
+  }
+  package c {
+    class D;
+    class E {
+      A a1;
+    }
+  }
+
+  package f.g.h {
+    class I;
+    class J {
+      A a2;
+    }
+  }
+}

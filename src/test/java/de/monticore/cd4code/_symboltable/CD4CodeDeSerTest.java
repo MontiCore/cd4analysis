@@ -57,7 +57,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
         b.get().getMethodSignatureList("getX").stream().distinct().findAny();
 
     assertTrue(getXMethodSymbol.isPresent());
-    assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());
+    assertEquals("B.getX", getXMethodSymbol.get().getFullName());
 
     final String path = getTmpFilePath(scope.getName() + ".cdsym");
     symbols2Json.store(scope, path);
@@ -72,7 +72,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     assertFalse(cdMethodSignatureSymbol.get().isIsConstructor());
     assertEquals("bs", cdMethodSignatureSymbol.get().getParameterList().get(1).getName());
 
-    assertEquals(scope.getRealPackageName(), deserialize.getRealPackageName());
+    assertEquals(scope.getPackageName(), deserialize.getPackageName());
     assertEquals(getXMethodSymbol.get().getFullName(), cdMethodSignatureSymbol.get().getFullName());
   }
 

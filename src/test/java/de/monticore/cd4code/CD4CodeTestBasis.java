@@ -15,7 +15,7 @@ import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.Log;
@@ -38,7 +38,7 @@ public class CD4CodeTestBasis extends TestBasis {
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
-    p = new CD4CodeParser();
+    p = CD4CodeMill.parser();
 
     final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();

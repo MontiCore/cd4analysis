@@ -1,52 +1,39 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
+import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
+import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-import java.util.List;
+
 import java.util.Optional;
 
 public class CDAssociationSymbolTableCompleter
     implements CDAssociationVisitor2, CDAssociationHandler {
-  protected CDSymbolTableHelper symbolTableHelper;
   protected CDAssociationTraverser traverser;
 
-  public CDAssociationSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
-    this.symbolTableHelper = symbolTableHelper;
+  protected ISynthesize typeSynthesizer;
+  protected CDAssociationFullPrettyPrinter prettyPrinter;
+
+  public CDAssociationSymbolTableCompleter(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+    prettyPrinter = new CDAssociationFullPrettyPrinter();
   }
 
-  public CDAssociationSymbolTableCompleter(
-      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper().setPackageDeclaration(packageDeclaration);
-  }
-
-  @Override
-  public CDAssociationTraverser getTraverser() {
-    return traverser;
-  }
-
-  @Override
-  public void setTraverser(CDAssociationTraverser traverser) {
-    this.traverser = traverser;
-  }
-
-  public CDSymbolTableHelper getSymbolTableHelper() {
-    return symbolTableHelper;
-  }
-
-  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
-    this.symbolTableHelper = cdSymbolTableHelper;
+  public CDAssociationSymbolTableCompleter() {
+    this(new FullSynthesizeFromMCBasicTypes());
   }
 
   @Override
@@ -70,15 +57,11 @@ public class CDAssociationSymbolTableCompleter
     }
     symbol.setType(typeResult.get());
 
-    symbolTableHelper.getModifierHandler().handle(side.getModifier(), symbol);
+    setupModifiers(side.getModifier(), symbol);
 
-    CDAssociationTraverser t = CDAssociationMill.traverser();
-    t.add4CDAssociation(symbolTableHelper.getNavigableVisitor());
-    ast.getCDAssocDir().accept(t);
     symbol.setIsDefinitiveNavigable(
-        isLeft
-            ? symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableLeft()
-            : symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableRight());
+      isLeft ? ast.getCDAssocDir().isDefinitiveNavigableLeft()
+        : ast.getCDAssocDir().isDefinitiveNavigableRight());
 
     if (side.isPresentCDCardinality()) {
       symbol.setCardinality(side.getCDCardinality());
@@ -92,12 +75,12 @@ public class CDAssociationSymbolTableCompleter
   protected Optional<SymTypeExpression> getSymTypeExpression(
       ASTCDAssociation ast, ASTCDAssocSide side) {
     final TypeCheckResult typeResult =
-        symbolTableHelper.getTypeSynthesizer().synthesizeType(side.getMCQualifiedType());
+        getTypeSynthesizer().synthesizeType(side.getMCQualifiedType());
     if (!typeResult.isPresentResult()) {
       Log.error(
           String.format(
               "0xCDA62: The type %s of the role (%s) could not be calculated",
-              symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
+              getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
               side.getName(ast)),
           side.getMCQualifiedType().get_SourcePositionStart());
       return Optional.empty();
@@ -112,9 +95,7 @@ public class CDAssociationSymbolTableCompleter
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
         final TypeCheckResult result =
-            symbolTableHelper
-                .getTypeSynthesizer()
-                .synthesizeType(side.getCDQualifier().getByType());
+            getTypeSynthesizer().synthesizeType(side.getCDQualifier().getByType());
         if (!result.isPresentResult()) {
           Log.error(
               String.format(
@@ -145,9 +126,7 @@ public class CDAssociationSymbolTableCompleter
       leftType = leftSide.getSymbol().getType().getTypeInfo();
     } else {
       final TypeCheckResult result =
-          symbolTableHelper
-              .getTypeSynthesizer()
-              .synthesizeType(leftSide.getMCQualifiedType().getMCQualifiedName());
+          getTypeSynthesizer().synthesizeType(leftSide.getMCQualifiedType().getMCQualifiedName());
       leftType = result.getResult().getTypeInfo();
     }
 
@@ -156,9 +135,7 @@ public class CDAssociationSymbolTableCompleter
       rightType = rightSide.getSymbol().getType().getTypeInfo();
     } else {
       final TypeCheckResult result =
-          symbolTableHelper
-              .getTypeSynthesizer()
-              .synthesizeType(rightSide.getMCQualifiedType().getMCQualifiedName());
+          getTypeSynthesizer().synthesizeType(rightSide.getMCQualifiedType().getMCQualifiedName());
       rightType = result.getResult().getTypeInfo();
     }
 
@@ -168,6 +145,15 @@ public class CDAssociationSymbolTableCompleter
     if (rightSide.isPresentSymbol()) {
       CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftType);
     }
+  }
+
+  public void setupModifiers(ASTModifier modifier, CDRoleSymbol roleSymbol) {
+    roleSymbol.setIsPublic(modifier.isPublic());
+    roleSymbol.setIsPrivate(modifier.isPrivate());
+    roleSymbol.setIsProtected(modifier.isProtected());
+    roleSymbol.setIsStatic(modifier.isStatic());
+    roleSymbol.setIsFinal(modifier.isFinal());
+    roleSymbol.setIsDerived(modifier.isDerived());
   }
 
   public static void addRoleToTheirType(CDRoleSymbol symbol, TypeSymbol otherType) {
@@ -183,19 +169,30 @@ public class CDAssociationSymbolTableCompleter
     }
   }
 
-  /*
-  The following visit methods must be overriden because both implemented interface
-  provide default methods for the visit methods.
-   */
-  public void visit(de.monticore.symboltable.ISymbol node) {}
+  public ISynthesize getTypeSynthesizer() {
+    return typeSynthesizer;
+  }
 
-  public void endVisit(de.monticore.symboltable.ISymbol node) {}
+  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+  }
 
-  public void endVisit(de.monticore.ast.ASTNode node) {}
+  public CDAssociationFullPrettyPrinter getPrettyPrinter() {
+    return prettyPrinter;
+  }
 
-  public void visit(de.monticore.ast.ASTNode node) {}
+  public void setPrettyPrinter(CDAssociationFullPrettyPrinter prettyPrinter) {
+    this.prettyPrinter = prettyPrinter;
+  }
 
-  public void visit(de.monticore.symboltable.IScope node) {}
+  @Override
+  public CDAssociationTraverser getTraverser() {
+    return traverser;
+  }
 
-  public void endVisit(de.monticore.symboltable.IScope node) {}
+  @Override
+  public void setTraverser(CDAssociationTraverser traverser) {
+    this.traverser = traverser;
+  }
+
 }

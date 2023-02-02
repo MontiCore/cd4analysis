@@ -1,19 +1,23 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.parser;
 
-import de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssocType;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
 import java.io.IOException;
 import java.util.Optional;
+
+import de.monticore.testcdassociation.TestCDAssociationMill;
+import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 
@@ -72,11 +76,25 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 
     final ASTCDCompilationUnit node = parse.get();
 
-    new CD4AnalysisDirectCompositionTrafo().transform(node);
+    // class B has 2 direct compositions
+    assertEquals(2, ((ASTCDClass) node.getCDDefinition().getCDElement(2)).sizeCDMembers());
+    // the cd has 7 associations or compositions
+    assertEquals(7, node.getCDDefinition().getCDAssociationsList().size());
 
-    CD4CodeMill.init();
-    final ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    TestCDAssociationTraverser t = TestCDAssociationMill.traverser();
+    CDAssociationDirectCompositionTrafo trafo = new CDAssociationDirectCompositionTrafo();
+    t.add4CDAssociation(trafo);
+    t.add4CDBasis(trafo);
+    node.accept(t);
+
+    TestCDAssociationMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
+
+    // class B has 0 direct compositions
+    assertEquals(0, ((ASTCDClass) node.getCDDefinition().getCDElement(2)).sizeCDMembers());
+    // the cd has 9 associations or compositions
+    assertEquals(9, node.getCDDefinition().getCDAssociationsList().size());
+    // make sure the transformation did not add a package
+    assertEquals(0, node.getCDDefinition().getCDPackagesList().size());
   }
 }

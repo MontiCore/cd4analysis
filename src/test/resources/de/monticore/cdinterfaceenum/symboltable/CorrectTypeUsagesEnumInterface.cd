@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum.symboltable;
 
-import de.monticore.cdbasis.symtabs.MyTypesSerialized1;
-import de.monticore.cdinterfaceenum.symboltable.EnumAndInterface;
+import de.monticore.cdbasis.symtabs.MyTypesSerialized1.*;
+import de.monticore.cdinterfaceenum.symboltable.EnumAndInterface.*;
 
 classdiagram CorrectTypeUsagesEnumInterface {
   class C;

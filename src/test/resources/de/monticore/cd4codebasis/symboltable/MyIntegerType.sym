@@ -1,6 +1,7 @@
 {
   "generated-using": "www.MontiCore.de technology",
   "name": "MyIntegerType",
+  "package":"de.monticore.cd4codebasis.symboltable",
   "symbols": [
     {
       "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
@@ -12,7 +13,7 @@
     },
     {
       "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "de.monticore.cdinterfaceandenum.symboltable.MyInteger",
+      "name": "MyInteger",
       "isClass": true
     }
   ]
