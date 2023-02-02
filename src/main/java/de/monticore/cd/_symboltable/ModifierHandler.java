@@ -9,6 +9,8 @@ import de.monticore.symbols.oosymbols._symboltable.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
 public class ModifierHandler {
+
+  // used multiple times
   public void handle(ASTModifier modifier, CDTypeSymbolBuilder typeSymbol) {
     typeSymbol.setIsPublic(modifier.isPublic());
     typeSymbol.setIsPrivate(modifier.isPrivate());
@@ -18,6 +20,7 @@ public class ModifierHandler {
     typeSymbol.setIsDerived(modifier.isDerived());
   }
 
+  // used
   public void handle(ASTModifier modifier, FieldSymbolBuilder fieldSymbol) {
     fieldSymbol.setIsPublic(modifier.isPublic());
     fieldSymbol.setIsPrivate(modifier.isPrivate());
@@ -27,6 +30,7 @@ public class ModifierHandler {
     fieldSymbol.setIsDerived(modifier.isDerived());
   }
 
+  // used
   public void handle(ASTModifier modifier, CDRoleSymbolBuilder roleSymbol) {
     roleSymbol.setIsPublic(modifier.isPublic());
     roleSymbol.setIsPrivate(modifier.isPrivate());
@@ -86,6 +90,7 @@ public class ModifierHandler {
    * @param modifier
    * @param methodSymbol
    */
+  // used
   public void handle(ASTModifier modifier, MethodSymbol methodSymbol) {
     methodSymbol.setIsPublic(modifier.isPublic());
     methodSymbol.setIsPrivate(modifier.isPrivate());

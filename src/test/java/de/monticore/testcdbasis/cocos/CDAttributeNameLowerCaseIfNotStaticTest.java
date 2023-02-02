@@ -5,16 +5,16 @@ import static de.monticore.cd.TestBasis.getFilePath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeNameLowerCaseIfNotStatic;
+import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.After;
 import org.junit.Test;
 
-public class CDAttributeNameLowerCaseIfNotStaticTest extends CD4AnalysisTestBasis {
+public class CDAttributeNameLowerCaseIfNotStaticTest extends CDBasisTestBasis {
 
   @Test
   public void testValid() throws IOException {

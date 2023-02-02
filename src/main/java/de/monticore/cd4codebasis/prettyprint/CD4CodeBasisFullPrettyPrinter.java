@@ -27,13 +27,17 @@ public class CD4CodeBasisFullPrettyPrinter {
   protected IndentPrinter printer;
   protected boolean printComments = true;
 
+  public CD4CodeBasisFullPrettyPrinter() {
+    this(new IndentPrinter());
+  }
+
   public CD4CodeBasisFullPrettyPrinter(IndentPrinter printer) {
     this.traverser = CD4CodeBasisMill.traverser();
     this.printer = printer;
 
-    CD4CodeBasisPrettyPrinter cd4aCode = new CD4CodeBasisPrettyPrinter(printer);
-    traverser.add4CD4CodeBasis(cd4aCode);
-    traverser.setCD4CodeBasisHandler(cd4aCode);
+    CD4CodeBasisPrettyPrinter cdCode = new CD4CodeBasisPrettyPrinter(printer);
+    traverser.add4CD4CodeBasis(cdCode);
+    traverser.setCD4CodeBasisHandler(cdCode);
 
     MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer);
     traverser.add4MCCommonLiterals(commonLiterals);

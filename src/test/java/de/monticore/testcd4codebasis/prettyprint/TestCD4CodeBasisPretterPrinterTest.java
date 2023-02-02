@@ -7,14 +7,14 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
 import de.monticore.testcd4codebasis._parser.TestCD4CodeBasisParser;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class TestCD4CodeBasisPretterPrinterTest extends TestBasis {
-  final TestCD4CodeBasisParser p = new TestCD4CodeBasisParser();
+public class TestCD4CodeBasisPretterPrinterTest extends CD4CodeBasisTestBasis {
   final CD4CodeBasisFullPrettyPrinter printer =
       new CD4CodeBasisFullPrettyPrinter(new IndentPrinter());
 

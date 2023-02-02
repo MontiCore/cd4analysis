@@ -2,15 +2,15 @@
 package de.monticore.cdinterfaceandenum._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
+import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumFullPrettyPrinter;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
-  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter();
+  protected final CDInterfaceAndEnumFullPrettyPrinter printer = new CDInterfaceAndEnumFullPrettyPrinter();
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {

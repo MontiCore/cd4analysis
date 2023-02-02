@@ -1,38 +1,31 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4codebasis._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
+import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisFullPrettyPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.types.check.*;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-import java.util.List;
+
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
-  protected CDSymbolTableHelper symbolTableHelper;
+  protected ISynthesize typeSynthesizer;
+  protected CD4CodeBasisFullPrettyPrinter prettyPrinter;
 
-  public CD4CodeBasisSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
-    this.symbolTableHelper = symbolTableHelper;
+  public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+    prettyPrinter = new CD4CodeBasisFullPrettyPrinter();
   }
 
-  public CD4CodeBasisSymbolTableCompleter(
-      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper().setPackageDeclaration(packageDeclaration);
-  }
-
-  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
-    this.symbolTableHelper = cdSymbolTableHelper;
-  }
-
-  public CDSymbolTableHelper getSymbolTableHelper() {
-    return symbolTableHelper;
+  public CD4CodeBasisSymbolTableCompleter() {
+    this(new FullSynthesizeFromMCCollectionTypes());
   }
 
   @Override
@@ -64,7 +57,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     symbol.setIsMethod(true);
 
     final TypeCheckResult typeResult =
-        symbolTableHelper.getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
+        getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
     if (!typeResult.isPresentResult()) {
       Log.error(
           String.format(
@@ -85,7 +78,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               .map(
                   s -> {
                     final TypeCheckResult result =
-                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                        getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -100,7 +93,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               .collect(Collectors.toList()));
     }
 
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    setupModifiers(ast.getModifier(), symbol);
   }
 
   protected void initialize_CDConstructor(ASTCDConstructor ast) {
@@ -110,7 +103,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
 
     symbol.setType(
         SymTypeExpressionFactory.createTypeObject(
-            symbolTableHelper.getCurrentCDTypeOnStack(), symbol.getEnclosingScope()));
+            symbol.getName(), symbol.getEnclosingScope()));
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(
@@ -119,7 +112,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               .map(
                   s -> {
                     final TypeCheckResult result =
-                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                        getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -134,19 +127,19 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               .collect(Collectors.toList()));
     }
 
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    setupModifiers(ast.getModifier(), symbol);
   }
 
   protected void initialize_CDParameter(ASTCDParameter ast) {
     FieldSymbol symbol = ast.getSymbol();
     TypeCheckResult typeResult =
-        symbolTableHelper.getTypeSynthesizer().synthesizeType(ast.getMCType());
+        getTypeSynthesizer().synthesizeType(ast.getMCType());
 
     if (!typeResult.isPresentResult()) {
       Log.error(
           String.format(
               "0xCDA93: The type (%s) of the attribute (%s) could not be calculated",
-              symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()), ast.getName()),
+              getPrettyPrinter().prettyprint(ast.getMCType()), ast.getName()),
           ast.getMCType().get_SourcePositionStart());
     } else {
 
@@ -154,7 +147,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       if (ast.isEllipsis()) {
         finalTypeResult =
             SymTypeExpressionFactory.createTypeArray(
-                symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()),
+                getPrettyPrinter().prettyprint(ast.getMCType()),
                 symbol.getEnclosingScope(),
                 1,
                 typeResult.getResult());
@@ -166,6 +159,9 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     }
   }
 
+  /*
+    duplicate of CDInterfaceAndEnumSymbolTableCompleter.initialize_CDEnumConstant
+   */
   protected void initialize_CD4CodeEnumConstant(ASTCD4CodeEnumConstant ast) {
     FieldSymbol symbol = ast.getSymbol();
 
@@ -175,7 +171,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     symbol.setIsPublic(true);
 
     // create a SymType for the enum, because the type of the enum constant is the enum itself
-    final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
+    final String enumName = ast.getEnclosingScope().getName();
     // call getEnclosingScope() twice, so the full name of the type evaluates to the correct package
     final SymTypeOfObject typeObject =
         SymTypeExpressionFactory.createTypeObject(
@@ -185,19 +181,26 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     // Don't store the arguments in the ST
   }
 
-  /*
-   The following visit methods must be overriden because both implemented interface
-   provide default methods for the visit methods.
-  */
-  public void visit(de.monticore.symboltable.ISymbol node) {}
+  public void setupModifiers(ASTModifier modifier, MethodSymbol methodSymbol) {
+    methodSymbol.setIsPublic(modifier.isPublic());
+    methodSymbol.setIsPrivate(modifier.isPrivate());
+    methodSymbol.setIsProtected(modifier.isProtected());
+    methodSymbol.setIsStatic(modifier.isStatic());
+  }
 
-  public void endVisit(de.monticore.symboltable.ISymbol node) {}
+  public ISynthesize getTypeSynthesizer() {
+    return typeSynthesizer;
+  }
 
-  public void endVisit(de.monticore.ast.ASTNode node) {}
+  public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+  }
 
-  public void visit(de.monticore.ast.ASTNode node) {}
+  public CD4CodeBasisFullPrettyPrinter getPrettyPrinter() {
+    return prettyPrinter;
+  }
 
-  public void visit(de.monticore.symboltable.IScope node) {}
-
-  public void endVisit(de.monticore.symboltable.IScope node) {}
+  public void setPrettyPrinter(CD4CodeBasisFullPrettyPrinter prettyPrinter) {
+    this.prettyPrinter = prettyPrinter;
+  }
 }

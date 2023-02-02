@@ -1,48 +1,80 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.trafo;
 
-import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cd4analysis.CD4AnalysisMill;
+import com.google.common.collect.Lists;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
-import de.monticore.cdassociation._visitor.CDAssociationHandler;
-import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
+import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier.UMLModifierMill;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
-import java.util.Collections;
+import de.se_rwth.commons.logging.Log;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
- * transforms any CDDirectComposition to a CDAssociation only works, when {@link
- * de.monticore.cdbasis.trafo.CDBasisDirectCompositionTrafo} and {@link
- * de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumDirectCompositionTrafo} are also used.
- *
- * <p>use {@link de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo} or {@link
- * de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo}
+ * Transforms any CDDirectComposition to a CDAssociation.
+ * Intended to be used before symbol table creation.
  */
-public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
-    implements CDAssociationVisitor2, CDAssociationHandler {
-  protected CDAssociationTraverser traverser;
+public class CDAssociationDirectCompositionTrafo implements CDBasisVisitor2, CDAssociationVisitor2 {
 
-  public CDAssociationDirectCompositionTrafo() {
-    this(new CDAfterParseHelper());
-  }
+  protected List<String> typeParts = new ArrayList<>();
+  protected Optional<ASTCDDefinition> cd = Optional.empty();
+  protected Optional<ASTCDType> type = Optional.empty();
 
-  public CDAssociationDirectCompositionTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    super(cdAfterParseHelper);
+  protected Map<ASTCDType, List<ASTCDMember>> toRemove = new HashMap<>();
+  protected List<ASTCDElement> toAdd = new ArrayList<>();
+
+  @Override
+  public void endVisit(ASTCDCompilationUnit node) {
+    // after traversal is finished remove obsolete direct compositions
+    // and add their replacement, the corresponding general compositions
+    // this cannot be done earlier, as we cannot modify lists while
+    // iterating over their elements
+
+    // remove the CDDirectComposition from the type
+    for (Map.Entry<ASTCDType, List<ASTCDMember>> entry : toRemove.entrySet()) {
+      entry.getKey().removeAllCDMembers(entry.getValue());
+    }
+
+    // add the newly created association
+    if (cd.isPresent()) {
+      cd.get().addAllCDElements(toAdd);
+    } else {
+      Log.error("0xCDA04: Transforming direct comoposition failed. Class diagram missing.");
+    }
   }
 
   @Override
-  public CDAssociationTraverser getTraverser() {
-    return traverser;
+  public void visit(ASTCDDefinition node) {
+    cd = Optional.of(node);
   }
 
   @Override
-  public void setTraverser(CDAssociationTraverser traverser) {
-    this.traverser = traverser;
+  public void visit(ASTCDPackage node) {
+    typeParts.add(node.getName());
+  }
+
+  @Override
+  public void endVisit(ASTCDPackage node) {
+    typeParts.remove(typeParts.size() - 1);
+  }
+
+  @Override
+  public void visit(ASTCDClass node) {
+    typeParts.add(node.getName());
+    type = Optional.of(node);
+  }
+
+  @Override
+  public void endVisit(ASTCDClass node) {
+    typeParts.remove(typeParts.size() - 1);
+    type = Optional.empty();
   }
 
   /**
@@ -64,7 +96,7 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
         MCBasicTypesMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(
                 MCBasicTypesMill.mCQualifiedNameBuilder()
-                    .setPartsList(Collections.singletonList(typeStack.peek().getName()))
+                    .setPartsList(typeParts.stream().collect(Collectors.toList())) //.setPartsList(Collections.singletonList(typeStack.peek().getName()))
                     .build())
             .build();
     ASTCDAssocLeftSide leftSide =
@@ -89,11 +121,23 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
 
     createASTCDRoleIfAbsent(assoc);
 
+    // only store elements to be removed and added, as we cannot
+    // alter the elements, we are currently iterating over
+
     // remove the CDDirectComposition from the type
-    removedDirectCompositions.add(node);
+    if (type.isPresent()) {
+      ASTCDType key = type.get();
+      if (toRemove.containsKey(key)) {
+        toRemove.get(key).add(node);
+      } else {
+        toRemove.put(key, Lists.newArrayList(node));
+      }
+    } else {
+      Log.error("0xCDA03: Transforming direct comoposition failed. Surrounding type missing.");
+    }
 
     // add the newly created association
-    createdAssociations.add(assoc);
+    toAdd.add(assoc);
   }
 
   public static void createASTCDRoleIfAbsent(ASTCDAssociation assoc) {
@@ -104,7 +148,7 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
   public static void createASTCDRoleIfAbsent(ASTCDAssociation assoc, ASTCDAssocSide side) {
     if (!side.isPresentCDRole()) {
       ASTCDRole role =
-          CD4AnalysisMill.cDRoleBuilder()
+          CDAssociationMill.cDRoleBuilder()
               .setName(getRoleName(assoc, side))
               .set_SourcePositionStart(side.get_SourcePositionStart())
               .set_SourcePositionEnd(side.get_SourcePositionEnd())

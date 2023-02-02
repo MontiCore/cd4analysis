@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.testcdbasis._ast;
+package de.monticore.cd4code._ast;
 
 import static org.junit.Assert.assertEquals;
 

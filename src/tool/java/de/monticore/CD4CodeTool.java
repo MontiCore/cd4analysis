@@ -27,7 +27,7 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
@@ -157,8 +157,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           final CD4CodeTraverser traverser = CD4CodeMill.traverser();
           final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
           traverser.add4CDBasis(cdBasis);
-          traverser.setCDBasisHandler(cdBasis);
-          cdBasis.setTraverser(traverser);
 
           ast.accept(traverser);
         }
@@ -264,7 +262,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             } else {
               symbolPath =
                   Paths.get(
-                      Names.getPathFromPackage(artifactScope.getRealPackageName())
+                      Names.getPathFromPackage(artifactScope.getPackageName())
                           + File.separator
                           + modelName
                           + ".cdsym");

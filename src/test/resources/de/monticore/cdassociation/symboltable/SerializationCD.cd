@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdassociation.symboltable;
+
+classdiagram SerializationCD {
+  class A;
+  class B;
+
+  association A -> B;
+  association namedAssoc A -> B;
+  association namedAssocWithRoles A (myA) <-> (myB) B;
+
+  class D {
+    -> A;
+    -> (directWithRole) B;
+  }
+}

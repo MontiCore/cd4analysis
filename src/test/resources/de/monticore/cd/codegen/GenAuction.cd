@@ -8,7 +8,7 @@ classdiagram GenAuction {
       public long auctionIdent;
       protected java.lang.String title;
       public int getNumberOfBids();
-      public boolean bid(Person p, java.util.Date t);
+      public boolean bid(person.Person p, java.util.Date t);
     }
 
     interface BiddingPolicy;

@@ -10,7 +10,7 @@ import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
-import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import java.io.IOException;
@@ -38,18 +38,19 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
 
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
+    // ToDo: not needed? This trafo leads to errors. Without, everything seems to be ok.
     // first add roles if they don't exist
-    CDAssociationRoleNameTrafo associationRoleNameTrafo = new CDAssociationRoleNameTrafo();
-    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
-    traverser.add4CDAssociation(associationRoleNameTrafo);
-    traverser.setCDAssociationHandler(associationRoleNameTrafo);
-    associationRoleNameTrafo.setTraverser(traverser);
-    associationRoleNameTrafo.transform(node);
+//    CDAssociationRoleNameTrafo associationRoleNameTrafo = new CDAssociationRoleNameTrafo();
+//    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+//    traverser.add4CDAssociation(associationRoleNameTrafo);
+//    traverser.setCDAssociationHandler(associationRoleNameTrafo);
+//    associationRoleNameTrafo.setTraverser(traverser);
+//    associationRoleNameTrafo.transform(node);
 
     // then add roles as fields
     CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromAllRoles =
         new CDAssociationCreateFieldsFromNavigableRoles();
-    traverser = CD4AnalysisMill.traverser();
+    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.setTraverser(traverser);

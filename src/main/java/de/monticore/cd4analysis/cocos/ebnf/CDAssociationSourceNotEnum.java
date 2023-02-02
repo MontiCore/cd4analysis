@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdassociation.cocos.ebnf;
+package de.monticore.cd4analysis.cocos.ebnf;
 
 import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;

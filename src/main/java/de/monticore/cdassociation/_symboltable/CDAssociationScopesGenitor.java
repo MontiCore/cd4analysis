@@ -17,15 +17,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
   @Override
   public void visit(ASTCDDirectComposition node) {
     throw new IllegalStateException(
-        "0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CD4AnalysisDirectCompositionTrafo or CD4CodeDirectCompositionTrafo.");
-  }
-
-  protected CDAssociationSymbolBuilder create_CDAssociation(ASTCDAssociation ast) {
-    if (ast.isPresentName()) {
-      return CDAssociationMill.cDAssociationSymbolBuilder().setName(ast.getName());
-    } else {
-      return null;
-    }
+        "0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CDAssociationDirectCompositionTrafo.");
   }
 
   public void endVisit(ASTCDAssociation node) {

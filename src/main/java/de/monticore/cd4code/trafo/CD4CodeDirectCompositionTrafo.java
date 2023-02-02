@@ -6,8 +6,8 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.trafo.CDBasisDirectCompositionTrafo;
-import de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumDirectCompositionTrafo;
+import de.monticore.cd.misc.CDBasisDirectCompositionTrafo;
+import de.monticore.cd4analysis.trafo.CDInterfaceAndEnumDirectCompositionTrafo;
 
 public class CD4CodeDirectCompositionTrafo {
   protected CD4CodeTraverser traverser;
@@ -32,10 +32,9 @@ public class CD4CodeDirectCompositionTrafo {
     cdBasisDirectCompositionTrafo.setTraverser(traverser);
 
     final CDAssociationDirectCompositionTrafo cdAssociation =
-        new CDAssociationDirectCompositionTrafo(cdAfterParseHelper);
+        new CDAssociationDirectCompositionTrafo();
     traverser.add4CDAssociation(cdAssociation);
-    traverser.setCDAssociationHandler(cdAssociation);
-    cdAssociation.setTraverser(traverser);
+    traverser.add4CDBasis(cdAssociation);
 
     final CDInterfaceAndEnumDirectCompositionTrafo cDInterfaceAndEnum =
         new CDInterfaceAndEnumDirectCompositionTrafo(cdAfterParseHelper);

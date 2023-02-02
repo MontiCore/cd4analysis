@@ -4,16 +4,16 @@ package de.monticore.testcdbasis.cocos;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
+import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.After;
 import org.junit.Test;
 
-public class CDPackageNotContainingCDPackageTest extends CD4AnalysisTestBasis {
+public class CDPackageNotContainingCDPackageTest extends CDBasisTestBasis {
 
   @Test
   public void testValid() throws IOException {

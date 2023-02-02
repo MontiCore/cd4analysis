@@ -29,6 +29,10 @@ public class CDAssociationFullPrettyPrinter {
   protected CDBasisPrettyPrinter cdBasis;
   protected CDAssociationPrettyPrinter cdAssoc;
 
+  public CDAssociationFullPrettyPrinter() {
+    this(new IndentPrinter());
+  }
+
   public CDAssociationFullPrettyPrinter(IndentPrinter printer) {
     this.traverser = CDAssociationMill.traverser();
     this.printer = printer;

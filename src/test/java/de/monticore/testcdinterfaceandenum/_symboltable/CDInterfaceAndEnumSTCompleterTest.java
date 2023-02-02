@@ -1,70 +1,44 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
-import static org.junit.Assert.*;
-
 import com.google.common.collect.LinkedListMultimap;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
+import de.monticore.testcdinterfaceandenum.TestCDInterfaceAndEnumMill;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.NoSuchElementException;
-import org.junit.Before;
 import org.junit.Test;
 
-public class CDInterfaceAndEnumSTCompleterTest {
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
+
+public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBasis {
 
   private static final String SYMBOL_PATH = "src/test/resources/";
-  CD4AnalysisParser parser;
-  CD4AnalysisSymbols2Json symbols2Json;
-
-  @Before
-  public void setup() {
-    // reset the GlobalScope
-    CD4AnalysisMill.reset();
-    CD4AnalysisMill.init();
-    CD4CodeMill.globalScope().clear();
-    CD4AnalysisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
-
-    // reset the logger
-    Log.init();
-    Log.enableFailQuick(false);
-
-    this.parser = CD4AnalysisMill.parser();
-    symbols2Json = new CD4AnalysisSymbols2Json();
-  }
+  TestCDInterfaceAndEnumSymbols2Json symbols2Json;
 
   @Test
   public void genitorTest() {
-    // reset the GlobalScope
-
+    TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     String artifact =
         SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
-    ASTCDCompilationUnit ast = loadModel(artifact);
-    new CD4AnalysisAfterParseTrafo().transform(ast);
+    ASTCDCompilationUnit ast = parseModel(artifact);
+    ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
+    addPkgAndImports(artifactScope, ast);
+    completeSymTab(ast);
 
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    ast.accept(new CD4AnalysisSymbolTableCompleter(ast).getTraverser());
-    assertEquals(1, artifactScope.getSubScopes().size());
-    ICD4AnalysisScope diagramScope = artifactScope.getSubScopes().get(0);
+    assertEquals(3, artifactScope.getSubScopes().size());
 
-    LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = diagramScope.getCDTypeSymbols();
+    LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = artifactScope.getCDTypeSymbols();
     assertEquals(3, cdTypeSymbols.size());
     assertTrue(cdTypeSymbols.containsKey("C"));
     assertTrue(cdTypeSymbols.containsKey("D"));
@@ -103,11 +77,13 @@ public class CDInterfaceAndEnumSTCompleterTest {
 
   @Test
   public void resolvingTest() {
+    TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     String artifact =
         SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
-    ASTCDCompilationUnit ast = loadModel(artifact);
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    ast.accept(new CD4AnalysisSymbolTableCompleter(ast).getTraverser());
+    ASTCDCompilationUnit ast = parseModel(artifact);
+    ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
+    addPkgAndImports(artifactScope, ast);
+    completeSymTab(ast);
 
     List<TypeSymbol> resolvedTypes1 = artifactScope.resolveTypeMany("C");
     assertEquals(1, resolvedTypes1.size());
@@ -130,24 +106,25 @@ public class CDInterfaceAndEnumSTCompleterTest {
         artifactScope.resolveDiagramMany("CorrectTypeUsagesEnumInterface");
     assertEquals(1, resolvedDiagram.size());
 
-    CD4AnalysisMill.globalScope().addSubScope(artifactScope);
-    assertSame(artifactScope, CD4AnalysisMill.globalScope().getSubScopes().get(0));
+    TestCDInterfaceAndEnumMill.globalScope().addSubScope(artifactScope);
+    assertSame(artifactScope, TestCDInterfaceAndEnumMill.globalScope().getSubScopes().get(0));
 
-    List<TypeSymbol> resolvedTypesGS1 = CD4AnalysisMill.globalScope().resolveTypeMany("C");
+    String asPkg = "de.monticore.cdinterfaceandenum.symboltable.";
+    List<TypeSymbol> resolvedTypesGS1 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "C");
     assertEquals(1, resolvedTypesGS1.size());
 
-    List<TypeSymbol> resolvedTypesGS2 = CD4AnalysisMill.globalScope().resolveTypeMany("D");
+    List<TypeSymbol> resolvedTypesGS2 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "D");
     assertEquals(1, resolvedTypesGS2.size());
 
-    List<TypeSymbol> resolvedTypesGS3 = CD4AnalysisMill.globalScope().resolveTypeMany("E");
+    List<TypeSymbol> resolvedTypesGS3 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "E");
     assertEquals(0, resolvedTypesGS3.size());
 
     List<TypeSymbol> resolvedTypesGS4 =
-        CD4AnalysisMill.globalScope().resolveTypeMany("MyInterface");
+      TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "MyInterface");
     assertEquals(1, resolvedTypesGS4.size());
 
     List<DiagramSymbol> resolvedDiagramGS =
-        CD4AnalysisMill.globalScope().resolveDiagramMany("CorrectTypeUsagesEnumInterface");
+      TestCDInterfaceAndEnumMill.globalScope().resolveDiagramMany(asPkg + "CorrectTypeUsagesEnumInterface");
     assertEquals(1, resolvedDiagramGS.size());
 
     assertEquals(0, Log.getErrorCount());
@@ -155,10 +132,11 @@ public class CDInterfaceAndEnumSTCompleterTest {
 
   @Test
   public void serializationTest() {
+    symbols2Json = new TestCDInterfaceAndEnumSymbols2Json();
     String artifact = SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/EnumAndInterface.cd";
-    ASTCDCompilationUnit ast = loadModel(artifact);
-    new CD4AnalysisAfterParseTrafo().transform(ast);
-    ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+    ASTCDCompilationUnit ast = parseModel(artifact);
+    ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
+    completeSymTab(ast);
     String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
@@ -167,33 +145,42 @@ public class CDInterfaceAndEnumSTCompleterTest {
 
   @Test
   public void symbolTableCompleterNoErrorTest() {
+    TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     String artifact =
         SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
-    ASTCDCompilationUnit ast = loadModel(artifact);
-    createSymbolTableFromAST(ast);
+    ASTCDCompilationUnit ast = parseModel(artifact);
+    ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
 
-    ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
-    List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-
-    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(imports, packageDecl);
-    ast.accept(c.getTraverser());
+    addPkgAndImports(artifactScope, ast);
+    completeSymTab(ast);
 
     assertEquals(0, Log.getErrorCount());
   }
 
-  private ASTCDCompilationUnit loadModel(String pathToArtifact) {
-    try {
-      return parser
-          .parse(Paths.get(pathToArtifact).toString())
-          .orElseThrow(NoSuchElementException::new);
-    } catch (IOException | NoSuchElementException e) {
-      System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
-      fail();
-    }
-    throw new IllegalStateException("Something went wrong..");
+  @Test
+  public void constantsTest() {
+    String artifact =
+      SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/EnumConstants.cd";
+    ASTCDCompilationUnit ast = parseModel(artifact);
+
+    ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
+    completeSymTab(ast);
+
+    Optional<FieldSymbol> idleSym = artifactScope.resolveField("DrivingState.IDLE");
+    Optional<FieldSymbol> drivingSym = artifactScope.resolveField("DrivingState.DRIVING");
+
+    assertTrue(idleSym.isPresent());
+    assertTrue(drivingSym.isPresent());
+
+    assertEquals("DrivingState", idleSym.get().getType().getTypeInfo().getName());
+    assertEquals("DrivingState", drivingSym.get().getType().getTypeInfo().getName());
   }
 
-  protected ICD4AnalysisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
-    return CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+  protected void addPkgAndImports(ITestCDInterfaceAndEnumArtifactScope artifactScope, ASTCDCompilationUnit ast){
+    artifactScope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
+    artifactScope.addAllImports(
+      ast.getMCImportStatementList().stream()
+        .map(i -> new ImportStatement(i.getQName(), i.isStar()))
+        .collect(Collectors.toList()));
   }
 }

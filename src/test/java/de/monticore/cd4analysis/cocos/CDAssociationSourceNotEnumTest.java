@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.testcdassociation.cocos;
+package de.monticore.cd4analysis.cocos;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -7,9 +7,8 @@ import static org.junit.Assert.assertTrue;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cd4analysis.cocos.ebnf.CDAssociationSourceNotEnum;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation.cocos.ebnf.CDAssociationSourceNotEnum;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
@@ -28,8 +27,10 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
         p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
+    roleNameTrafo(ast);
     Log.getFindings().clear();
     createSymTab(ast);
+    completeSymTab(ast);
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
@@ -41,26 +42,27 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
         p.parse(getFilePath("cdassociation/cocos/CDAssociationSourceNotEnumInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
+    roleNameTrafo(ast);
     Log.getFindings().clear();
     createSymTab(ast);
+    completeSymTab(ast);
     coCoChecker.checkAll(ast);
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC67"));
   }
 
-  private ICD4AnalysisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
-    ICD4AnalysisArtifactScope as = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+  protected void roleNameTrafo(ASTCDCompilationUnit ast) {
+    CDAssociationRoleNameTrafo trafo = new CDAssociationRoleNameTrafo();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(trafo);
+    ast.accept(traverser);
+  }
+
+  protected void completeSymTab(ASTCDCompilationUnit ast) {
     CD4AnalysisSymbolTableCompleter c =
         new CD4AnalysisSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
-    CDAssociationRoleNameTrafo trafo = new CDAssociationRoleNameTrafo();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
-    traverser.add4CDAssociation(trafo);
-    traverser.setCDAssociationHandler(trafo);
-    trafo.transform(ast);
-
-    return as;
   }
 
   @After
