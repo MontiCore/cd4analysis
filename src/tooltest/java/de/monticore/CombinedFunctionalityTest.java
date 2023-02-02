@@ -19,13 +19,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-<<<<<<< HEAD
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-=======
 import java.util.stream.Stream;
 
 import de.monticore.odbasis._ast.ASTODArtifact;
