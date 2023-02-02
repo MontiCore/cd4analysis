@@ -1,0 +1,61 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.*;
+
+classdiagram CD1 {
+
+  enum E1 {e11, e12, e13;}
+
+  abstract class A {
+    String s;
+  }
+
+  class A1 extends A {
+    E1 e;
+  }
+
+  class A2 {
+    Integer i;
+  }
+
+  class A3 extends A2 {
+    String s;
+  }
+
+  class A4 {
+    Double d;
+  }
+
+  association [1] A <-> A4 [1..*];
+  association [1..*] A1 -> A2 [0..1];
+  association [1] A2 <-> A3 [1..*];
+  association [*] A4 <- A2 [0..1];
+  association [1] A4 -> A3 [1..*];
+
+  abstract class B1 {
+    int n;
+  }
+
+  abstract class B2 {
+    int n;
+  }
+
+  class B3 extends B1 {
+    String b3;
+  }
+
+  class B4 extends B3 {
+    String b4;
+  }
+
+  class B5 {
+    Double b5;
+  }
+
+  association [1] A1 <- B2 [*];
+  association [0..1] B5 <-> B1 [0..1];
+  association [1..*] B2 -> A3 [1..*];
+  association [0..1] B5 -> A4 [0..1];
+  association [1..*] B4 -> B2 [1];
+
+}
