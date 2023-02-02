@@ -5,7 +5,6 @@ import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,5 +34,4 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
                 .findFirst()
                 .ifPresent(pa -> pa.addAllCDElements(e.getCDElementList())));
   }
-
 }

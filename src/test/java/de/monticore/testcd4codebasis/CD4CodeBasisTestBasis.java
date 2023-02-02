@@ -3,13 +3,11 @@ package de.monticore.testcd4codebasis;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4codebasis.cocos.CD4CodeBasisCoCos;
-import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.testcd4codebasis._cocos.TestCD4CodeBasisCoCoChecker;
 import de.monticore.testcd4codebasis._parser.TestCD4CodeBasisParser;
 import de.monticore.testcd4codebasis._symboltable.ITestCD4CodeBasisGlobalScope;
 import de.se_rwth.commons.logging.LogStub;
-import java.nio.file.Paths;
 import org.junit.Before;
 
 public class CD4CodeBasisTestBasis extends TestBasis {
@@ -28,8 +26,7 @@ public class CD4CodeBasisTestBasis extends TestBasis {
     BasicSymbolsMill.initializePrimitives();
     p = TestCD4CodeBasisMill.parser();
 
-
-//    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
+    //    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
     cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos(new FullDeriveFromTestCD4CodeBasis());
     coCoChecker = new TestCD4CodeBasisCoCoChecker();

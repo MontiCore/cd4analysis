@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum;
 
+import static org.junit.Assert.fail;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -10,16 +12,12 @@ import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTabl
 import de.monticore.cdinterfaceandenum._symboltable.ICDInterfaceAndEnumGlobalScope;
 import de.monticore.io.paths.MCPath;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
-
+import de.monticore.testcdinterfaceandenum._symboltable.ITestCDInterfaceAndEnumArtifactScope;
+import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraverser;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import de.monticore.testcdinterfaceandenum._symboltable.ITestCDInterfaceAndEnumArtifactScope;
-import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraverser;
 import org.junit.Before;
-
-import static org.junit.Assert.fail;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {
   protected TestCDInterfaceAndEnumParser p;
@@ -51,9 +49,10 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
     return astcdCompilationUnit.get();
   }
 
-  protected ITestCDInterfaceAndEnumArtifactScope createSymTab(ASTCDCompilationUnit astcdCompilationUnit) {
+  protected ITestCDInterfaceAndEnumArtifactScope createSymTab(
+      ASTCDCompilationUnit astcdCompilationUnit) {
     final ITestCDInterfaceAndEnumArtifactScope st =
-      TestCDInterfaceAndEnumMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+        TestCDInterfaceAndEnumMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     checkLogError();
     return st;
   }
@@ -67,10 +66,10 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
     t.add4OOSymbols(symTabCompBasis);
 
     // add 4 cd interface and enum
-    CDInterfaceAndEnumSymbolTableCompleter symTabCompIntEnum = new CDInterfaceAndEnumSymbolTableCompleter();
+    CDInterfaceAndEnumSymbolTableCompleter symTabCompIntEnum =
+        new CDInterfaceAndEnumSymbolTableCompleter();
     t.add4CDInterfaceAndEnum(symTabCompIntEnum);
 
     ast.accept(t);
   }
-
 }

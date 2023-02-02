@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -21,18 +24,14 @@ import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CDBasisSTCompleterTest {
 
@@ -74,8 +73,7 @@ public class CDBasisSTCompleterTest {
 
     // complete symbol table
     TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
-    CDBasisSymbolTableCompleter symTabComp =
-      new CDBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
     ast.accept(t2);
@@ -215,8 +213,7 @@ public class CDBasisSTCompleterTest {
 
     // complete symbol table
     TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
-    CDBasisSymbolTableCompleter symTabComp =
-      new CDBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
     ast.accept(t2);
@@ -288,12 +285,10 @@ public class CDBasisSTCompleterTest {
 
     // complete symbol table
     TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
-    CDBasisSymbolTableCompleter symTabComp =
-      new CDBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
     ast.accept(t2);
-
 
     // check symbol table modifiers after completion
 
@@ -329,7 +324,8 @@ public class CDBasisSTCompleterTest {
 
     // add imports
     List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    ast.getMCImportStatementList()
+        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
     as.setImportsList(imports);
 
     return as;

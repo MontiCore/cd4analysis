@@ -8,7 +8,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import java.io.IOException;
 import java.util.Optional;
-
 import org.junit.Assert;
 import org.junit.Test;
 

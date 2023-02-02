@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
-  protected final CDInterfaceAndEnumFullPrettyPrinter printer = new CDInterfaceAndEnumFullPrettyPrinter();
+  protected final CDInterfaceAndEnumFullPrettyPrinter printer =
+      new CDInterfaceAndEnumFullPrettyPrinter();
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {

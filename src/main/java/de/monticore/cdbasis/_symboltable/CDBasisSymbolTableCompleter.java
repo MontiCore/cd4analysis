@@ -16,7 +16,6 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.stream.Collectors;
 
 public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
@@ -58,8 +57,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
               .streamSuperclass()
               .map(
                   s -> {
-                    final TypeCheckResult result =
-                        getTypeSynthesizer().synthesizeType(s);
+                    final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -80,8 +78,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
               .streamInterface()
               .map(
                   s -> {
-                    final TypeCheckResult result =
-                        getTypeSynthesizer().synthesizeType(s);
+                    final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -115,8 +112,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     final FieldSymbol symbol = node.getSymbol();
 
     // Compute the !final! SymTypeExpression for the type of the field
-    final TypeCheckResult typeResult =
-        getTypeSynthesizer().synthesizeType(node.getMCType());
+    final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(node.getMCType());
     if (!typeResult.isPresentResult()) {
       Log.error(
           String.format(
@@ -181,5 +177,4 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
   public void setTraverser(CDBasisTraverser traverser) {
     this.traverser = traverser;
   }
-
 }

@@ -4,8 +4,8 @@ package de.monticore.cdbasis._symboltable;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 
 /**
- * Extends the generated genitor to set the name of the created
- * artifact scope to the name of the class diagram.
+ * Extends the generated genitor to set the name of the created artifact scope to the name of the
+ * class diagram.
  */
 public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
 

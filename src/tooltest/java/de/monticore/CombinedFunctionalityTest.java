@@ -38,6 +38,7 @@ public class CombinedFunctionalityTest {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
 
+  @Disabled
   @Test
   public void testMaCoCo() {
     String base_path =

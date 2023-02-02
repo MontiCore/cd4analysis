@@ -3,6 +3,7 @@ package de.monticore.cd4analysis;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
@@ -13,7 +14,6 @@ import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symboltable.ImportStatement;

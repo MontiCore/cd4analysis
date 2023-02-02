@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation;
 
+import static org.junit.Assert.fail;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cdassociation._cocos.CDAssociationCoCoChecker;
@@ -14,13 +16,10 @@ import de.monticore.testcdassociation._parser.TestCDAssociationParser;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactScope;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationGlobalScope;
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.fail;
+import org.junit.Before;
 
 public class CDAssociationTestBasis extends TestBasis {
   protected TestCDAssociationParser p;
@@ -68,9 +67,10 @@ public class CDAssociationTestBasis extends TestBasis {
     ast.accept(t2);
   }
 
-  protected ITestCDAssociationArtifactScope createSymTab(ASTCDCompilationUnit astcdCompilationUnit) {
+  protected ITestCDAssociationArtifactScope createSymTab(
+      ASTCDCompilationUnit astcdCompilationUnit) {
     final ITestCDAssociationArtifactScope st =
-      TestCDAssociationMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+        TestCDAssociationMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     checkLogError();
     return st;
   }

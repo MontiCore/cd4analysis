@@ -2,11 +2,7 @@
 
 package de.monticore.cdassociation._ast;
 
-import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
-import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-
-public  class ASTCDBiDir extends ASTCDBiDirTOP {
+public class ASTCDBiDir extends ASTCDBiDirTOP {
 
   public boolean isBidirectional() {
     return true;
@@ -20,5 +16,3 @@ public  class ASTCDBiDir extends ASTCDBiDirTOP {
     return true;
   }
 }
-
-

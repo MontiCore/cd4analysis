@@ -1,36 +1,25 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
-import com.google.common.collect.LinkedListMultimap;
+import static org.junit.Assert.*;
+
 import com.google.common.collect.Lists;
-import de.monticore.cdbasis.CDBasisMill;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.io.paths.MCPath;
-import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
-
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CDBasisDeSerTest {
 
@@ -71,8 +60,7 @@ public class CDBasisDeSerTest {
 
     // complete symbol table
     TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
-    CDBasisSymbolTableCompleter symTabComp =
-      new CDBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
     ast.accept(t2);
@@ -109,7 +97,8 @@ public class CDBasisDeSerTest {
     // resolve for class B
     Optional<CDTypeSymbol> b = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.B");
     assertTrue(b.isPresent());
-    Optional<FieldSymbol> a_field = gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.B.a");
+    Optional<FieldSymbol> a_field =
+        gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.B.a");
     assertTrue(a_field.isPresent());
 
     // resolve for class D
@@ -119,20 +108,23 @@ public class CDBasisDeSerTest {
     // resolve for class D
     Optional<CDTypeSymbol> e = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.c.E");
     assertTrue(e.isPresent());
-    Optional<FieldSymbol> a1_field = gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.c.E.a1");
+    Optional<FieldSymbol> a1_field =
+        gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.c.E.a1");
     assertTrue(a1_field.isPresent());
 
     // resolve for class I
-    Optional<CDTypeSymbol> i = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.I");
+    Optional<CDTypeSymbol> i =
+        gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.I");
     assertTrue(i.isPresent());
 
     // resolve for class J
-    Optional<CDTypeSymbol> j = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J");
+    Optional<CDTypeSymbol> j =
+        gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J");
     assertTrue(j.isPresent());
-    Optional<FieldSymbol> a2_field = gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J.a2");
+    Optional<FieldSymbol> a2_field =
+        gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J.a2");
     assertTrue(a2_field.isPresent());
   }
-
 
   protected ASTCDCompilationUnit loadModel(String pathToArtifact) {
     try {
@@ -151,7 +143,8 @@ public class CDBasisDeSerTest {
 
     // add imports
     List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    ast.getMCImportStatementList()
+        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
     as.setImportsList(imports);
 
     return as;

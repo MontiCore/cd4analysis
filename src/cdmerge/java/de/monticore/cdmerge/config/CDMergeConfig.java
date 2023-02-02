@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
@@ -355,8 +356,8 @@ public class CDMergeConfig {
     for (ASTCDCompilationUnit inputCD : inputCDs) {
       CDUtils.RefreshSymbolTable(inputCD);
       // Ensure every CDElement is in a package and perform default AST Trafos
-      // final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
-      // afterParseTrafo.transform(inputCD);
+      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
+      afterParseTrafo.transform(inputCD);
 
       CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
       checker.checkAll(inputCD);

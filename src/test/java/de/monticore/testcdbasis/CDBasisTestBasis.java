@@ -2,7 +2,6 @@
 package de.monticore.testcdbasis;
 
 import de.monticore.cd.TestBasis;
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.io.paths.MCPath;
@@ -47,8 +46,7 @@ public class CDBasisTestBasis extends TestBasis {
 
   protected void completeSymTab(ASTCDCompilationUnit ast) {
     TestCDBasisTraverser t = TestCDBasisMill.traverser();
-    CDBasisSymbolTableCompleter symTabComp =
-      new CDBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t.add4CDBasis(symTabComp);
     t.add4OOSymbols(symTabComp);
     ast.accept(t);

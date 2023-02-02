@@ -11,7 +11,6 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
@@ -55,8 +54,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
               .streamSuperclass()
               .map(
                   s -> {
-                    final TypeCheckResult result =
-                        getTypeSynthesizer().synthesizeType(s);
+                    final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -84,8 +82,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
               .streamInterface()
               .map(
                   s -> {
-                    final TypeCheckResult result =
-                        getTypeSynthesizer().synthesizeType(s);
+                    final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -145,5 +142,4 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
   public void setPrettyPrinter(CDInterfaceAndEnumFullPrettyPrinter prettyPrinter) {
     this.prettyPrinter = prettyPrinter;
   }
-
 }

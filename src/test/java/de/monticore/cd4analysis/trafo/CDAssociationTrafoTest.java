@@ -3,19 +3,18 @@ package de.monticore.cd4analysis.trafo;
 
 import static org.junit.Assert.*;
 
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;

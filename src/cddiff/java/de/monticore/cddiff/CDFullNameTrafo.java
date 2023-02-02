@@ -7,6 +7,7 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
@@ -24,7 +25,7 @@ import java.util.Set;
 public class CDFullNameTrafo {
 
   public void transform(ASTCDCompilationUnit cd) {
-    // new CD4CodeAfterParseTrafo().transform(cd);
+    new CD4CodeAfterParseTrafo().transform(cd);
     new CD4CodeDirectCompositionTrafo().transform(cd);
     cd.getCDDefinition()
         .getCDAssociationsList()

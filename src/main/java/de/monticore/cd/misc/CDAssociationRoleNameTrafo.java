@@ -74,7 +74,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   public void visit(ASTCDAssocLeftSide node) {
     if (node.isPresentCDRole() && !node.isPresentSymbol()) {
       final ASTCDAssociation assoc = assocStack.peek();
-      node.accept(symbolTableCreator.getTraverser());  // removed
+      node.accept(symbolTableCreator.getTraverser()); // removed
 
       // complete the types for the newly created CDRoleSymbols
       symbolTableCompleter.initialize_CDRole(node.getSymbol(), assoc, true);
@@ -85,7 +85,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   public void visit(ASTCDAssocRightSide node) {
     if (node.isPresentCDRole() && !node.isPresentSymbol()) {
       final ASTCDAssociation assoc = assocStack.peek();
-      node.accept(symbolTableCreator.getTraverser());  // removed
+      node.accept(symbolTableCreator.getTraverser()); // removed
 
       // complete the types for the newly created CDRoleSymbols
       symbolTableCompleter.initialize_CDRole(node.getSymbol(), assoc, false);

@@ -2,10 +2,8 @@
 
 package de.monticore.cdassociation._ast;
 
-public  class ASTCDRightToLeftDir extends ASTCDRightToLeftDirTOP {
+public class ASTCDRightToLeftDir extends ASTCDRightToLeftDirTOP {
   public boolean isDefinitiveNavigableLeft() {
     return true;
   }
 }
-
-

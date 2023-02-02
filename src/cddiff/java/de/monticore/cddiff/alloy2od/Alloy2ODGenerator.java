@@ -296,8 +296,7 @@ public class Alloy2ODGenerator {
     try {
       od = odParser.parse_String(odString);
     } catch (IOException e1) {
-      System.out.println("Unable to parse:");
-      System.out.println(odString);
+      Log.warn("Unable to parse: " + odString);
     }
 
     //    System.out.println(odString);

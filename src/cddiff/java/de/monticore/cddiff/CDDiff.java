@@ -49,7 +49,8 @@ public class CDDiff {
     if (toDir) {
       CDDiff.printODs2Dir(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics), outputPath);
     } else {
-      Log.print(CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics)));
+      System.out.println(
+          CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics)));
     }
   }
 
@@ -111,7 +112,7 @@ public class CDDiff {
       CDDiff.printODs2Dir(
           CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics), outputPath);
     } else {
-      Log.print(
+      System.out.println(
           CDDiff.printWitnesses2stdout(
               CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics)));
     }

@@ -10,6 +10,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.*;
@@ -425,8 +426,8 @@ public class CDUtils {
       // Always ensure clean Symboltable for each model
       RefreshSymbolTable(cd);
       // Ensure every CDElement is in a package and perform default AST Trafos
-      // final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
-      // afterParseTrafo.transform(cd);
+      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
+      afterParseTrafo.transform(cd);
 
       if (checkCoCos) {
         if (checkCoCos) {

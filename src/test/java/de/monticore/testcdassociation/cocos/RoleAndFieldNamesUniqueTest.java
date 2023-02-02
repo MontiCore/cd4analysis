@@ -1,18 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.cocos;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdassociation.cocos.ebnf.RoleAndFieldNamesUnique;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.se_rwth.commons.logging.Log;
-import org.junit.After;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Test;
 
 public class RoleAndFieldNamesUniqueTest extends CDAssociationTestBasis {
 

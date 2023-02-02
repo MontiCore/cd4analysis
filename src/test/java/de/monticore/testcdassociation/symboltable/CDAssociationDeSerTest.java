@@ -1,29 +1,23 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.symboltable;
 
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotEquals;
+
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.io.paths.MCPath;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.monticore.testcdassociation.TestCDAssociationMill;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactScope;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationGlobalScope;
 import de.monticore.testcdassociation._symboltable.TestCDAssociationSymbols2Json;
-import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Test;
-
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.Test;
 
 public class CDAssociationDeSerTest extends CDAssociationTestBasis {
 
@@ -68,41 +62,54 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
     assertEquals(1, gs.getSubScopes().size());
 
     // resolve for class A
-    Optional<CDTypeSymbol> a = gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.A");
+    Optional<CDTypeSymbol> a =
+        gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.A");
     assertTrue(a.isPresent());
-    Optional<CDRoleSymbol> a_role1 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.b");
+    Optional<CDRoleSymbol> a_role1 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.b");
     assertTrue(a_role1.isPresent());
-    Optional<CDRoleSymbol> a_role2 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.myB");
+    Optional<CDRoleSymbol> a_role2 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.myB");
     assertTrue(a_role2.isPresent());
-    Optional<CDRoleSymbol> a_role3 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.d");
+    Optional<CDRoleSymbol> a_role3 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.d");
     assertTrue(a_role3.isPresent());
 
     // resolve for class B
-    Optional<CDTypeSymbol> b = gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.B");
+    Optional<CDTypeSymbol> b =
+        gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.B");
     assertTrue(b.isPresent());
-    Optional<CDRoleSymbol> b_role1 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.a");
+    Optional<CDRoleSymbol> b_role1 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.a");
     assertTrue(b_role1.isPresent());
-    Optional<CDRoleSymbol> b_role2 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.myA");
+    Optional<CDRoleSymbol> b_role2 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.myA");
     assertTrue(b_role2.isPresent());
-    Optional<CDRoleSymbol> b_role3 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.d");
+    Optional<CDRoleSymbol> b_role3 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.d");
     assertTrue(b_role3.isPresent());
 
     // resolve for class D
-    Optional<CDTypeSymbol> d = gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.D");
+    Optional<CDTypeSymbol> d =
+        gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.D");
     assertTrue(d.isPresent());
-    Optional<CDRoleSymbol> d_role1 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.D.a");
+    Optional<CDRoleSymbol> d_role1 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.D.a");
     assertTrue(d_role1.isPresent());
-    Optional<CDRoleSymbol> d_role2 = gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.D.directWithRole");
+    Optional<CDRoleSymbol> d_role2 =
+        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.D.directWithRole");
     assertTrue(d_role2.isPresent());
 
     // resolve for assoc namedAssoc
-    Optional<CDAssociationSymbol> assoc1 = gs.resolveCDAssociation("de.monticore.cdassociation.symboltable.SerializationCD.namedAssoc");
+    Optional<CDAssociationSymbol> assoc1 =
+        gs.resolveCDAssociation(
+            "de.monticore.cdassociation.symboltable.SerializationCD.namedAssoc");
     assertTrue(assoc1.isPresent());
 
     // resolve for assoc namedAssocWithRoles
-    Optional<CDAssociationSymbol> assoc2 = gs.resolveCDAssociation("de.monticore.cdassociation.symboltable.SerializationCD.namedAssocWithRoles");
+    Optional<CDAssociationSymbol> assoc2 =
+        gs.resolveCDAssociation(
+            "de.monticore.cdassociation.symboltable.SerializationCD.namedAssocWithRoles");
     assertTrue(assoc2.isPresent());
-
   }
-
 }

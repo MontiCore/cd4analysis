@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.Lists;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -14,16 +16,13 @@ import de.monticore.testcdinterfaceandenum.TestCDInterfaceAndEnumMill;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraverser;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CDInterfaceAndEnumDeSerTest {
 
@@ -63,11 +62,11 @@ public class CDInterfaceAndEnumDeSerTest {
 
     // complete symbol table
     TestCDInterfaceAndEnumTraverser t2 = TestCDInterfaceAndEnumMill.traverser();
-    CDBasisSymbolTableCompleter symTabCompCdBasis =
-      new CDBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter symTabCompCdBasis = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabCompCdBasis);
     t2.add4OOSymbols(symTabCompCdBasis);
-    CDInterfaceAndEnumSymbolTableCompleter symTabCompCdIAE = new CDInterfaceAndEnumSymbolTableCompleter();
+    CDInterfaceAndEnumSymbolTableCompleter symTabCompCdIAE =
+        new CDInterfaceAndEnumSymbolTableCompleter();
     t2.add4CDInterfaceAndEnum(symTabCompCdIAE);
     ast.accept(t2);
 
@@ -100,41 +99,51 @@ public class CDInterfaceAndEnumDeSerTest {
     assertEquals(1, gs.getSubScopes().size());
 
     // resolve for interface A
-    Optional<CDTypeSymbol> a = gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.A");
+    Optional<CDTypeSymbol> a =
+        gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.A");
     assertTrue(a.isPresent());
 
     // resolve for enum B
-    Optional<CDTypeSymbol> b = gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.B");
+    Optional<CDTypeSymbol> b =
+        gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.B");
     assertTrue(b.isPresent());
-    Optional<FieldSymbol> foo = gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.B.FOO");
+    Optional<FieldSymbol> foo =
+        gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.B.FOO");
     assertTrue(foo.isPresent());
-    Optional<FieldSymbol> bar = gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.B.BAR");
+    Optional<FieldSymbol> bar =
+        gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.B.BAR");
     assertTrue(bar.isPresent());
 
     // resolve for interface D
-    Optional<CDTypeSymbol> d = gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.D");
+    Optional<CDTypeSymbol> d =
+        gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.D");
     assertTrue(d.isPresent());
 
     // resolve for enum E
-    Optional<CDTypeSymbol> e = gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.E");
+    Optional<CDTypeSymbol> e =
+        gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.E");
     assertTrue(e.isPresent());
-    Optional<FieldSymbol> foo2 = gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.E.FOO2");
+    Optional<FieldSymbol> foo2 =
+        gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.E.FOO2");
     assertTrue(foo2.isPresent());
-    Optional<FieldSymbol> bar2 = gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.E.BAR2");
+    Optional<FieldSymbol> bar2 =
+        gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.E.BAR2");
     assertTrue(bar2.isPresent());
 
     // resolve for class F
-    Optional<CDTypeSymbol> f = gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.F");
+    Optional<CDTypeSymbol> f =
+        gs.resolveCDType("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.F");
     assertTrue(f.isPresent());
-    Optional<FieldSymbol> g = gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.F.g");
+    Optional<FieldSymbol> g =
+        gs.resolveField("de.monticore.cdinterfaceenum.symboltable.SerializationCD.c.F.g");
     assertTrue(g.isPresent());
   }
 
   protected ASTCDCompilationUnit loadModel(String pathToArtifact) {
     try {
       return parser
-        .parse(Paths.get(pathToArtifact).toString())
-        .orElseThrow(NoSuchElementException::new);
+          .parse(Paths.get(pathToArtifact).toString())
+          .orElseThrow(NoSuchElementException::new);
     } catch (IOException | NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
@@ -142,16 +151,17 @@ public class CDInterfaceAndEnumDeSerTest {
     throw new IllegalStateException("Something went wrong..");
   }
 
-  protected ITestCDInterfaceAndEnumArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
-    ITestCDInterfaceAndEnumArtifactScope as = TestCDInterfaceAndEnumMill.scopesGenitorDelegator().createFromAST(ast);
+  protected ITestCDInterfaceAndEnumArtifactScope createSymbolTableFromAST(
+      ASTCDCompilationUnit ast) {
+    ITestCDInterfaceAndEnumArtifactScope as =
+        TestCDInterfaceAndEnumMill.scopesGenitorDelegator().createFromAST(ast);
 
     // add imports
     List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    ast.getMCImportStatementList()
+        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
     as.setImportsList(imports);
 
     return as;
   }
-
-
 }

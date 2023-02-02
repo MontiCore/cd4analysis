@@ -139,8 +139,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorld.java");
-    generatorEngine.generate(
-        "cd2java.Class", output, clazz, createDeafaultPkg());
+    generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
   @Test
@@ -174,8 +173,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorldWithConstructor.java");
-    generatorEngine.generate(
-        "cd2java.Class", output, clazz, createDeafaultPkg());
+    generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
   @Test
@@ -203,8 +201,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java");
-    generatorEngine.generate(
-        "cd2java.Class", output, clazz, createDeafaultPkg());
+    generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
   @Test
@@ -345,11 +342,8 @@ public class CD4CTest extends CD4CodeTestBasis {
 
   protected ASTCDPackage createDeafaultPkg() {
     return CD4CodeMill.cDPackageBuilder()
-      .setMCQualifiedName(CD4CodeMill
-        .mCQualifiedNameBuilder()
-        .addParts("de")
-        .addParts("monticore")
-        .build())
-      .build();
+        .setMCQualifiedName(
+            CD4CodeMill.mCQualifiedNameBuilder().addParts("de").addParts("monticore").build())
+        .build();
   }
 }
