@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -12,14 +14,11 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import de.monticore.testcdinterfaceandenum.TestCDInterfaceAndEnumMill;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Test;
-
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBasis {
 
@@ -110,21 +109,25 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     assertSame(artifactScope, TestCDInterfaceAndEnumMill.globalScope().getSubScopes().get(0));
 
     String asPkg = "de.monticore.cdinterfaceandenum.symboltable.";
-    List<TypeSymbol> resolvedTypesGS1 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "C");
+    List<TypeSymbol> resolvedTypesGS1 =
+        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "C");
     assertEquals(1, resolvedTypesGS1.size());
 
-    List<TypeSymbol> resolvedTypesGS2 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "D");
+    List<TypeSymbol> resolvedTypesGS2 =
+        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "D");
     assertEquals(1, resolvedTypesGS2.size());
 
-    List<TypeSymbol> resolvedTypesGS3 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "E");
+    List<TypeSymbol> resolvedTypesGS3 =
+        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "E");
     assertEquals(0, resolvedTypesGS3.size());
 
     List<TypeSymbol> resolvedTypesGS4 =
-      TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "MyInterface");
+        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "MyInterface");
     assertEquals(1, resolvedTypesGS4.size());
 
     List<DiagramSymbol> resolvedDiagramGS =
-      TestCDInterfaceAndEnumMill.globalScope().resolveDiagramMany(asPkg + "CorrectTypeUsagesEnumInterface");
+        TestCDInterfaceAndEnumMill.globalScope()
+            .resolveDiagramMany(asPkg + "CorrectTypeUsagesEnumInterface");
     assertEquals(1, resolvedDiagramGS.size());
 
     assertEquals(0, Log.getErrorCount());
@@ -159,8 +162,7 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
 
   @Test
   public void constantsTest() {
-    String artifact =
-      SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/EnumConstants.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdinterfaceenum/symboltable/EnumConstants.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
 
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
@@ -176,11 +178,12 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     assertEquals("DrivingState", drivingSym.get().getType().getTypeInfo().getName());
   }
 
-  protected void addPkgAndImports(ITestCDInterfaceAndEnumArtifactScope artifactScope, ASTCDCompilationUnit ast){
+  protected void addPkgAndImports(
+      ITestCDInterfaceAndEnumArtifactScope artifactScope, ASTCDCompilationUnit ast) {
     artifactScope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
     artifactScope.addAllImports(
-      ast.getMCImportStatementList().stream()
-        .map(i -> new ImportStatement(i.getQName(), i.isStar()))
-        .collect(Collectors.toList()));
+        ast.getMCImportStatementList().stream()
+            .map(i -> new ImportStatement(i.getQName(), i.isStar()))
+            .collect(Collectors.toList()));
   }
 }

@@ -10,7 +10,6 @@ import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.List;
 
 public class CD4AnalysisSymbolTableCompleter {
@@ -28,8 +27,7 @@ public class CD4AnalysisSymbolTableCompleter {
       List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
     this.traverser = CD4CodeMill.traverser();
 
-    final CDBasisSymbolTableCompleter cDBasisVisitor =
-        new CDBasisSymbolTableCompleter();
+    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter();
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =

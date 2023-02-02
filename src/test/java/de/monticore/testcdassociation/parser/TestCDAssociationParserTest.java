@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.parser;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssocType;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -10,14 +12,11 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
-import java.io.IOException;
-import java.util.Optional;
-
 import de.monticore.testcdassociation.TestCDAssociationMill;
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
+import java.io.IOException;
+import java.util.Optional;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 

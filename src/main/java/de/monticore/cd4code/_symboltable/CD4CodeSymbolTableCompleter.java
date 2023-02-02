@@ -10,10 +10,8 @@ import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
-import de.monticore.types.check.FullSynthesizeFromMCCollectionTypes;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.List;
 
 public class CD4CodeSymbolTableCompleter {

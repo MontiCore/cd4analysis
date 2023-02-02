@@ -6,7 +6,6 @@ import static de.se_rwth.commons.Names.constructQualifiedName;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDPackageSymbol;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;

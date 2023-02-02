@@ -12,7 +12,6 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.types.check.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
@@ -56,8 +55,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     CDMethodSignatureSymbol symbol = ast.getSymbol();
     symbol.setIsMethod(true);
 
-    final TypeCheckResult typeResult =
-        getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
+    final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
     if (!typeResult.isPresentResult()) {
       Log.error(
           String.format(
@@ -77,8 +75,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               .streamException()
               .map(
                   s -> {
-                    final TypeCheckResult result =
-                        getTypeSynthesizer().synthesizeType(s);
+                    final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -102,8 +99,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
 
     symbol.setType(
-        SymTypeExpressionFactory.createTypeObject(
-            symbol.getName(), symbol.getEnclosingScope()));
+        SymTypeExpressionFactory.createTypeObject(symbol.getName(), symbol.getEnclosingScope()));
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(
@@ -111,8 +107,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               .streamException()
               .map(
                   s -> {
-                    final TypeCheckResult result =
-                        getTypeSynthesizer().synthesizeType(s);
+                    final TypeCheckResult result = getTypeSynthesizer().synthesizeType(s);
                     if (!result.isPresentResult()) {
                       Log.error(
                           String.format(
@@ -132,8 +127,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
 
   protected void initialize_CDParameter(ASTCDParameter ast) {
     FieldSymbol symbol = ast.getSymbol();
-    TypeCheckResult typeResult =
-        getTypeSynthesizer().synthesizeType(ast.getMCType());
+    TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(ast.getMCType());
 
     if (!typeResult.isPresentResult()) {
       Log.error(
@@ -160,8 +154,8 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
   }
 
   /*
-    duplicate of CDInterfaceAndEnumSymbolTableCompleter.initialize_CDEnumConstant
-   */
+   duplicate of CDInterfaceAndEnumSymbolTableCompleter.initialize_CDEnumConstant
+  */
   protected void initialize_CD4CodeEnumConstant(ASTCD4CodeEnumConstant ast) {
     FieldSymbol symbol = ast.getSymbol();
 

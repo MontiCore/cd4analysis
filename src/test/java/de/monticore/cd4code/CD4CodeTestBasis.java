@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -15,7 +16,6 @@ import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.Log;

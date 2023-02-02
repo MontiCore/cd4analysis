@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.resolving;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,8 +18,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisResolvingTest extends TestBasis {

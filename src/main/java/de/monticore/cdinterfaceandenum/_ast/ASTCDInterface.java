@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
-  protected final CDInterfaceAndEnumFullPrettyPrinter printer = new CDInterfaceAndEnumFullPrettyPrinter();
+  protected final CDInterfaceAndEnumFullPrettyPrinter printer =
+      new CDInterfaceAndEnumFullPrettyPrinter();
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {

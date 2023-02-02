@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.trafo;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -9,13 +11,10 @@ import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CDBasisTrafoTest extends TestBasis {
 

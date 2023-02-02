@@ -17,7 +17,6 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 
 public class CDAssociationSymbolTableCompleter
@@ -60,8 +59,9 @@ public class CDAssociationSymbolTableCompleter
     setupModifiers(side.getModifier(), symbol);
 
     symbol.setIsDefinitiveNavigable(
-      isLeft ? ast.getCDAssocDir().isDefinitiveNavigableLeft()
-        : ast.getCDAssocDir().isDefinitiveNavigableRight());
+        isLeft
+            ? ast.getCDAssocDir().isDefinitiveNavigableLeft()
+            : ast.getCDAssocDir().isDefinitiveNavigableRight());
 
     if (side.isPresentCDCardinality()) {
       symbol.setCardinality(side.getCDCardinality());
@@ -80,8 +80,7 @@ public class CDAssociationSymbolTableCompleter
       Log.error(
           String.format(
               "0xCDA62: The type %s of the role (%s) could not be calculated",
-              getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
-              side.getName(ast)),
+              getPrettyPrinter().prettyprint(side.getMCQualifiedType()), side.getName(ast)),
           side.getMCQualifiedType().get_SourcePositionStart());
       return Optional.empty();
     }
@@ -194,5 +193,4 @@ public class CDAssociationSymbolTableCompleter
   public void setTraverser(CDAssociationTraverser traverser) {
     this.traverser = traverser;
   }
-
 }

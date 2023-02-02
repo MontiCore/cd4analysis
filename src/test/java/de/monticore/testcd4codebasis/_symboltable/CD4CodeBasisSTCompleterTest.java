@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis._symboltable;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
@@ -17,19 +19,15 @@ import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisTraverser;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
 
   private static final String SYMBOL_PATH = "src/test/resources/";
-
 
   @Test
   public void genitorTest() {
@@ -115,10 +113,8 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter cdBasisCompleter =
-        new CDBasisSymbolTableCompleter();
-    CD4CodeBasisSymbolTableCompleter cd4codeCompleter =
-      new CD4CodeBasisSymbolTableCompleter();
+    CDBasisSymbolTableCompleter cdBasisCompleter = new CDBasisSymbolTableCompleter();
+    CD4CodeBasisSymbolTableCompleter cd4codeCompleter = new CD4CodeBasisSymbolTableCompleter();
     TestCD4CodeBasisTraverser t = TestCD4CodeBasisMill.traverser();
     t.add4CDBasis(cdBasisCompleter);
     t.add4OOSymbols(cdBasisCompleter);
@@ -132,9 +128,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {
     try {
-      return p
-          .parse(Paths.get(pathToArtifact).toString())
-          .orElseThrow(NoSuchElementException::new);
+      return p.parse(Paths.get(pathToArtifact).toString()).orElseThrow(NoSuchElementException::new);
     } catch (IOException | NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
@@ -143,14 +137,16 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
   }
 
   private ITestCD4CodeBasisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
-    ITestCD4CodeBasisArtifactScope as = TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
+    ITestCD4CodeBasisArtifactScope as =
+        TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
 
     // set package
     as.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
 
     // add imports
     List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    ast.getMCImportStatementList()
+        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
     as.setImportsList(imports);
 
     return as;

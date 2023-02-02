@@ -1,21 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDClassExtendsNotCyclic;
 import de.monticore.testcdbasis.CDBasisTestBasis;
-import de.monticore.testcdbasis.TestCDBasisMill;
-import de.monticore.testcdbasis._symboltable.ITestCDBasisArtifactScope;
 import de.se_rwth.commons.logging.Log;
-import org.junit.After;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Test;
 
 public class CDClassExtendsNotCyclicTest extends CDBasisTestBasis {
 

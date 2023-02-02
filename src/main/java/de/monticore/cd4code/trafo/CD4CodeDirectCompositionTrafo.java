@@ -2,12 +2,12 @@
 package de.monticore.cd4code.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
+import de.monticore.cd.misc.CDBasisDirectCompositionTrafo;
+import de.monticore.cd4analysis.trafo.CDInterfaceAndEnumDirectCompositionTrafo;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cd.misc.CDBasisDirectCompositionTrafo;
-import de.monticore.cd4analysis.trafo.CDInterfaceAndEnumDirectCompositionTrafo;
 
 public class CD4CodeDirectCompositionTrafo {
   protected CD4CodeTraverser traverser;

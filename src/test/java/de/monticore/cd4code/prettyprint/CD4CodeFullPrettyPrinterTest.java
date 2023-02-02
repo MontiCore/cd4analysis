@@ -8,12 +8,11 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.symboltable.ImportStatement;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import de.monticore.symboltable.ImportStatement;
 import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
@@ -44,9 +43,10 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
 
   protected void createSymTabWithImports(ASTCDCompilationUnit ast) {
     ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    List<ImportStatement> imports = ast.getMCImportStatementList().stream()
-      .map(i -> new ImportStatement(i.getMCQualifiedName().getQName(), i.isStar()))
-      .collect(Collectors.toList());
+    List<ImportStatement> imports =
+        ast.getMCImportStatementList().stream()
+            .map(i -> new ImportStatement(i.getMCQualifiedName().getQName(), i.isStar()))
+            .collect(Collectors.toList());
     as.setImportsList(imports);
   }
 }

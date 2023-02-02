@@ -13,13 +13,12 @@ import de.monticore.umlmodifier.UMLModifierMill;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Transforms any CDDirectComposition to a CDAssociation.
- * Intended to be used before symbol table creation.
+ * Transforms any CDDirectComposition to a CDAssociation. Intended to be used before symbol table
+ * creation.
  */
 public class CDAssociationDirectCompositionTrafo implements CDBasisVisitor2, CDAssociationVisitor2 {
 
@@ -96,7 +95,11 @@ public class CDAssociationDirectCompositionTrafo implements CDBasisVisitor2, CDA
         MCBasicTypesMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(
                 MCBasicTypesMill.mCQualifiedNameBuilder()
-                    .setPartsList(typeParts.stream().collect(Collectors.toList())) //.setPartsList(Collections.singletonList(typeStack.peek().getName()))
+                    .setPartsList(
+                        typeParts.stream()
+                            .collect(
+                                Collectors
+                                    .toList())) // .setPartsList(Collections.singletonList(typeStack.peek().getName()))
                     .build())
             .build();
     ASTCDAssocLeftSide leftSide =

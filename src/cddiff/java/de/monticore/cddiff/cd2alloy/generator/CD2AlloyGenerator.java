@@ -1641,8 +1641,6 @@ public class CD2AlloyGenerator {
     // Generate Standard module
     String module = generate(asts, newSemantics);
 
-    System.out.println(module);
-
     // Save the module in the output Directory
     saveModule(module, moduleName, outputDirectory);
   }

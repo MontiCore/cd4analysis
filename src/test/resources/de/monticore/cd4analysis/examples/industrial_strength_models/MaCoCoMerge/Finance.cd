@@ -1,0 +1,219 @@
+classdiagram Finance {
+
+  //------------------------------------------------------------
+  // =============== Finanz-Datenstruktur ======================
+  //------------------------------------------------------------
+
+  abstract class Konto {
+    String name;
+    Optional<String> pspElement;
+    Optional<String> kontotyp;
+    Optional<ZonedDateTime> sapDatum;
+    Optional<String> internesAktenzeichen;
+    boolean istPlanKonto;
+    boolean istVerbuchungsKonto;
+    boolean istAktiv;
+    /Optional<ZonedDateTime> optStartDatum;
+    /Optional<ZonedDateTime> optEndDatum;
+    /Geschaeftsvorgang gueltigerGeschaeftsvorgang;
+  }
+
+  association [1] Konto (konto) <-> (gesamtBudget) Budget [0..1];
+  association [1] Konto -> (kommentare) Freitext [*];
+  association [1] Konto -> (notiz) Freitext [0..1];
+  association [1] Konto <-> MailAlert [*];
+  association [1] Konto -> (abgleichsKonto) ExternKonto [0..1];
+
+  abstract class ErweitertesKonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<ZonedDateTime> bewilligungsdatum;
+    Optional<String> aktenzeichen;
+    Optional<Long> programmpauschale;
+    Optional<Long> gemeinkostensatz;
+    Optional<Long> finanzierteKomplettsumme;
+    Optional<String> referenzSponsor;
+    boolean hatProgrammpauschale;
+  }
+
+  class Drittmittelprojekt extends ErweitertesKonto {
+  }
+
+  association [*] Drittmittelprojekt (drittmittelKonten) <-> (externesKonto) Konto [0..1]; // -> Verbuchungskonto
+
+  class Haushaltskonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+  }
+
+  class Industrieprojekt extends ErweitertesKonto {
+    Optional<String> auftraggeber;
+    boolean istSammelkonto;
+    Optional<Long> mehrwertsteuer;
+  }
+  association [*] Industrieprojekt (industrieKonten) <-> (externesKonto) Konto [0..1]; // -> Verbuchungskonto
+
+  class Sonstiges extends ErweitertesKonto {
+    Optional<String> auftraggeber;
+    Geschaeftsvorgang geschaeftsvorgang;
+    Optional<Long> mehrwertsteuer;
+    boolean istSammelkonto;
+  }
+
+  association [*] Sonstiges (sonstigeKonten) <-> (externesKonto) Konto [0..1]; // -> Verbuchungskonto
+
+  enum AbrechnungsInterval {
+    JAEHRLICH,
+    HALBJAEHRLICH,
+    QUARTALSWEISE,
+    MONATLICH;
+  }
+
+  //----------------------------------------------
+  // Budget
+
+  class Budget {
+    String typ;
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<String> kommentar;
+    Optional<long> budgetRahmenCent;
+    List<long> jahresBudgets;
+    boolean proportionaleVerteilung;
+    boolean forOverheads;
+    /int budgetDepth;
+  }
+
+  association [0..1] Budget (elternBudget) <-> (unterBudget) Budget [*];
+  association [1] Budget (budget) <-> (buchungseintrag) Buchungseintrag [*];
+  association [1] Budget (budget) <-> (stellenzuweisung) Stellenzuweisung [*];
+
+  //----------------------------------------------
+  // Buchung
+
+  abstract class Buchungseintrag {
+    ZonedDateTime datum;
+    Optional<String> buchungseintragText;
+    long betragCent;
+    boolean istAktiv;
+    /Geschaeftsvorgang gueltigerGeschaeftsvorgang;
+    /String lfdeNummer;
+  }
+
+  class Buchung extends Buchungseintrag {
+    ZonedDateTime belegdatum;
+    String zahlungsgrund;
+    Optional<String> kreditorDebitor;
+    List<String> sachkonto;
+    Optional<ZonedDateTime> buchungsdatum;
+    BuchungsStatus status;
+    List<String> belegnummern;
+    List<String> auftragsnummer;
+    Optional<String> bereich;
+    Optional<String> projekt;
+    Optional<ZonedDateTime> geschaeftsjahr;
+    Optional<Long> steuer;
+    Optional<Long> skonto;
+    Optional<Long> gez_Skonto;
+    Optional<String> erfasser;
+    Optional<String> belegart;
+    Optional<String> referenz;
+    Optional<String> stornonummer;
+    Optional<String> stkz;
+    Optional<ZonedDateTime> erfassungsdatum;
+    Optional<ZonedDateTime> ausgleichsdatum;
+    long betragCentOriginal;
+    boolean budgetChangedManually;
+  }
+
+  class Rechnungsstellung extends Buchungseintrag {
+    Optional<ZonedDateTime> rechnungsdatum;
+    Optional<String> rechnungsnummer;
+    RechnungsstellungStatus status;
+    List<String> belegnummern;
+    Optional<Long> gemeinkosten;
+    Optional<Long> honorierung;
+    Optional<String> projekt;
+    Optional<String> debitor;
+    Optional<Long> mehrwertsteuer;
+    Optional<ZonedDateTime> zahlungsziel;
+  }
+
+  class Mittelzuweisung extends Buchungseintrag {
+    Optional<ZonedDateTime> verfallDatum;
+    Optional<String> kennung;
+    MittelzuweisungStatus status;
+  }
+
+  class Mittelabruf extends Buchungseintrag {
+    ZonedDateTime abrufdatum;
+    MittelabrufStatus status;
+    String zeitraum;
+  }
+
+  //----------------------------------------------
+  // Stellenzuweisung
+
+  class Stellenzuweisung {
+    ZonedDateTime erstellDatum;
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    long wert;
+    String kennung;
+    StellenzuweisungStatus status;
+    ZahlenWert stellenumfang;
+    boolean istAktiv;
+  }
+
+  enum Geschaeftsvorgang {
+    NONE,
+    MITTELABRUF,
+    ZUWEISUNG,
+    RECHNUNG;
+  }
+
+  enum BuchungsStatus {
+    EINGEREICHT,
+    SAP,
+    SAP_STORNIERT,
+    PLANUNG,
+    FEHLERHAFT;
+  }
+
+  enum RechnungsstellungStatus {
+    OFFENE_RECHNUNG,
+    SAP,
+    SAP_STORNIERT,
+    PLANUNG;
+  }
+
+  enum MittelzuweisungStatus {
+    BESCHEID_ERHALTEN,
+    SAP,
+    SAP_STORNIERT,
+    PLANUNG,
+    FEHLERHAFT;
+  }
+
+  enum MittelabrufStatus {
+    ABGERUFEN,
+    SAP,
+    SAP_STORNIERT,
+    PLANUNG;
+  }
+
+  enum StellenzuweisungStatus {
+    BESETZT,
+    TEILBESETZT,
+    UNBESETZT,
+    PLANUNG;
+  }
+
+  enum VertragStatus {
+    AKTIV,
+    PLANUNG,
+    AENDERUNGSVERTRAG,
+    ABGELAUFEN;
+  }
+
+}

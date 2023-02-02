@@ -10,12 +10,11 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
-import java.util.List;
-import java.util.Optional;
-
 import de.monticore.testcdassociation.TestCDAssociationMill;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactScope;
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 
 public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
@@ -36,7 +35,7 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     assertTrue(cdRoleList.stream().anyMatch(r -> r.getName().equals("s2")));
 
     final Optional<CDRoleSymbol> s =
-      cdRoleList.stream().filter(r -> r.getName().equals("s")).findFirst();
+        cdRoleList.stream().filter(r -> r.getName().equals("s")).findFirst();
     assertTrue(s.isPresent());
     assertEquals("B.s", s.get().getFullName());
 
@@ -59,12 +58,11 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     assertTrue(cdRoleList.stream().anyMatch(r -> r.getName().equals("s2")));
 
     final Optional<CDRoleSymbol> s =
-      cdRoleList.stream().filter(r -> r.getName().equals("s")).findFirst();
+        cdRoleList.stream().filter(r -> r.getName().equals("s")).findFirst();
     assertTrue(s.isPresent());
     assertEquals("de.monticore.B.s", s.get().getFullName());
 
     checkLogError();
-
   }
 
   public ICDBasisArtifactScope processModel(String model) {
