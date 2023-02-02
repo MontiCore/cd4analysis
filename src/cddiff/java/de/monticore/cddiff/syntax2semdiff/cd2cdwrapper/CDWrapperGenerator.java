@@ -181,6 +181,7 @@ public class CDWrapperGenerator {
     currentAssoc.setCDWrapperLeftClass(
         getCDTypeWrapper4OriginalClassName(
             cDTypeWrapperGroup, currentAssoc.getLeftOriginalClassName()));
+    assert currentAssoc.getRightOriginalClassName() != null;
     currentAssoc.setCDWrapperRightClass(
         getCDTypeWrapper4OriginalClassName(
             cDTypeWrapperGroup, currentAssoc.getRightOriginalClassName()));

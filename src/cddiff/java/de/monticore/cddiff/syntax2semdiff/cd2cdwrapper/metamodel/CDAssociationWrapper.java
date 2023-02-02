@@ -83,6 +83,9 @@ public class CDAssociationWrapper implements Cloneable {
   }
 
   public void setCDWrapperRightClass(CDTypeWrapper cDWrapperRightClass) {
+    if (cDWrapperRightClass == null) {
+      System.out.println(this.getOriginalElement().getRightQualifiedName().getQName());
+    }
     this.cDWrapperRightClass = cDWrapperRightClass;
   }
 

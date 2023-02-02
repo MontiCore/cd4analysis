@@ -661,9 +661,9 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     String filePath2;
     for (int i = 1; i <= 6; i++) {
 
-      filePath1 = path + 20*i + "A.cd";
-      filePath2 = path + 20*i + "B.cd";
-      System.out.println("*******  Test for " +20*i+ "  *******");
+      filePath1 = path + 20 * i + "A.cd";
+      filePath2 = path + 20 * i + "B.cd";
+      System.out.println("*******  Test for " + 20 * i + "  *******");
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
       ASTCDCompilationUnit ast1_old = parseModel(filePath1);
@@ -706,9 +706,9 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     String filePath2;
     for (int i = 1; i <= 6; i++) {
 
-      filePath1 = path + 20*i + "A_NoLink.cd";
-      filePath2 = path + 20*i + "B_NoLink.cd";
-      System.out.println("*******  Test for " +20*i+ "  *******");
+      filePath1 = path + 20 * i + "A_NoLink.cd";
+      filePath2 = path + 20 * i + "B_NoLink.cd";
+      System.out.println("*******  Test for " + 20 * i + "  *******");
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
       ASTCDCompilationUnit ast1_old = parseModel(filePath1);
@@ -751,9 +751,9 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     String filePath2;
     for (int i = 1; i <= 6; i++) {
 
-      filePath1 = path + "100A_"+i+".cd";
-      filePath2 = path + "100B_"+i+".cd";
-      System.out.println("*******  Test for " +i+ "  *******");
+      filePath1 = path + "100A_" + i + ".cd";
+      filePath2 = path + "100B_" + i + ".cd";
+      System.out.println("*******  Test for " + i + "  *******");
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
       ASTCDCompilationUnit ast1_old = parseModel(filePath1);

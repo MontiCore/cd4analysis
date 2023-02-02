@@ -1,3 +1,6 @@
 classdiagram Other {
 // TODO: Delete whole file!
+  class Freitext;
+  class MailAlert;
+  class ExternKonto;
 }
