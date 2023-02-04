@@ -1,23 +1,27 @@
 package de.monticore;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cdmerge.CDMerge;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +31,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CombinedFunctionalityTest {
 
@@ -38,45 +44,44 @@ public class CombinedFunctionalityTest {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
 
-  @Disabled
+
+   protected static ASTCDCompilationUnit parseCDModel(String cdFilePath) {
+    CD4CodeParser cdParser = CD4CodeMill.parser();
+    final Optional<ASTCDCompilationUnit> optCdAST;
+    try {
+      optCdAST = cdParser.parse(cdFilePath);
+    } catch (IOException e) {
+      fail();
+      throw new RuntimeException(e);
+    }
+    assert (optCdAST.isPresent());
+    return optCdAST.get();
+  }
+
   @Test
+  @Disabled
   public void testMaCoCo() {
     String base_path =
         "src/test/resources/de/monticore/cd4analysis/examples/industrial_strength_models/";
-    try {
-      CD4CodeParser parser = CD4CodeMill.parser();
 
       Set<ASTCDCompilationUnit> mergeSet =
           Arrays.stream(new File(base_path + "MaCoCoMerge/").listFiles())
-              .map(
-                  file -> {
-                    try {
-                      return parser.parse(file.getAbsolutePath());
-                    } catch (IOException e) {
-                      fail();
-                      return Optional.<ASTCDCompilationUnit>empty();
-                    }
-                  })
-              .peek(optional -> assertTrue(optional.isPresent()))
-              .map(Optional::get)
-              .collect(Collectors.toUnmodifiableSet());
+              .map(f -> parseCDModel(f.getAbsolutePath()))
+              .collect(Collectors.toCollection(LinkedHashSet::new));
 
       ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", new HashSet<>());
+      assertNotEquals(null, merged);
 
-      Optional<ASTCDCompilationUnit> expected = parser.parse(base_path + "MaCoCo.cd");
-      Assertions.assertTrue(expected.isPresent());
+/*      ASTCDCompilationUnit expected = parser.parse(base_path + "MaCoCo.cd").get();
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(expected);
+*/
+      ASTCDCompilationUnit expected = parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
 
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(expected.get());
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(merged);
+      // CD4CodeMill.scopesGenitorDelegator().createFromAST(merged);
 
-      Assertions.assertTrue(
-          CDDiff.computeSyntax2SemDiff(
-                  merged, expected.get(), CDSemantics.MULTI_INSTANCE_CLOSED_WORLD)
-              .isEmpty());
+      assertEquals(new ArrayList<>(), CDDiff.computeSyntax2SemDiff(
+        merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
 
-    } catch (IOException e) {
-      Assertions.fail(e.getMessage());
-    }
   }
 
   @Disabled

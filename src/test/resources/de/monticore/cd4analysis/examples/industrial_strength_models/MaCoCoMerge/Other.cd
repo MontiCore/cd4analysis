@@ -1,6 +1,350 @@
 classdiagram Other {
-// TODO: Delete whole file!
-  class Freitext;
-  class MailAlert;
-  class ExternKonto;
+
+  class BeschaeftigungsArt;
+
+
+  //----------------------------------------------
+  // Reports
+
+  class EventReport {
+    ZonedDateTime eventStart;
+    Optional<ZonedDateTime> eventEnd;
+    /EventStatus status;
+    String message;
+  }
+
+  class EventReportEntry {
+    EventType type;
+    Optional<Long> targetId;
+    Optional<Integer> count;
+    String message;
+    EventStatus status;
+  }
+  association [1] EventReport -> (entries) EventReportEntry [*];
+
+  class ImportReport extends EventReport {
+  }
+
+  class ImportReportEntry extends EventReportEntry {
+  }
+
+  enum EventStatus {
+    // Import
+    SUCCESS,
+    ERROR,
+    IN_DEFINITION,
+    CREATED,
+    UPDATED,
+    IGNORED,
+    IN_PROGRESS,
+
+    // Personal Export
+    SENT,
+    CORRECT;
+  }
+
+  enum EventType {
+    IMPORT_KONTO,
+    IMPORT_BUCHUNG,
+    IMPORT_PERSON,
+    IMPORT_INSTITUT,
+    IMPORT_NUTZER,
+    IMPORT_VERTRAG,
+    EXPORT_FINANZEN_KONTO,
+    EXPORT_FINANZEN_PLANSTELLE,
+    EXPORT_FINANZEN_VERTRAG;
+  }
+
+  //----------------------------------------------
+  // Personal Export
+
+  class PersonalExportData {
+  }
+  association [1] PersonalExportData -> (entries) PersonalExportDataEntry [*];
+
+  class PersonalExportDataEntry {
+    String personalnummer;
+    String nachname;
+    String vorname;
+    ZonedDateTime von;
+    ZonedDateTime bis;
+    String pspElement;
+    Long prozentsatz;
+  }
+
+  class PersonalExportReport extends EventReport {
+    Long dataId;
+    ZonedDateTime datenStart;
+    ZonedDateTime datenEnd;
+    Long countData;
+    /Long countError;
+    EventStatus exportStatus;
+  }
+
+  class PersonalExportReportEntry extends EventReportEntry {
+    String vorname;
+    String nachname;
+    BeschaeftigungsArt beschaeftigungsArt;
+    ZonedDateTime monat;
+  }
+
+  //----------------------------------------------
+  // ============= Faculty Use Case =============
+  //----------------------------------------------
+
+  class F1Konto extends Haushaltskonto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    long originalBudgetCent;
+    long sonstigeZuweisungenCent;
+    long resteCent;
+    long aktuellerKontostandCent;
+    long kontoRahmenCent;
+    KommunikationsStatus kommunikationsStatus;
+    StrafsteuerStatus strafsteuerStatus;
+    long strafsteuerBasisCent;
+    long strafsteuerSAPCent;
+    long strafsteuerCent;
+    long strafsteuerBerechnungsGrundlageCent;
+  }
+
+  class Institut {
+    String institutsKennZiffer;
+    String institutsName;
+    String professorName;
+    boolean relevantFuerAbgleich;
+  }
+
+  enum Fachgruppe {
+    MATHEMATIK,
+    INFORMATIK,
+    PHYSIK,
+    CHEMIE,
+    BIOLOGIE;
+  }
+
+  class Begruendung {
+    String text;
+    ZonedDateTime erstellung;
+    Optional<ZonedDateTime> letzteBearbeitung;
+    Optional<StrafsteuerGeschaeftsjahr> geschaeftsjahr;
+  }
+
+  association [1] Buchung -> (begruendung) Begruendung [0..1];
+  association [1] Begruendung -> (akzeptanz) Akzeptanz [0..1];
+
+  //----------------------------------------------
+  // Konto -> 1Budget (->*Budget)* -> *Buchung -> ?Begruendung -> ?Akzeptanz
+
+  class Akzeptanz {
+    Akzeptanzstatus akzeptanzstatus;
+    Optional<long> teilbetragCent;
+    Optional<ZonedDateTime> bearbeitung;
+    boolean istAktiv;
+    Optional<String> kommentar;
+  }
+
+  //----------------------------------------------
+  // KommunikationsStatus
+
+  enum KommunikationsStatus {
+    KOM_STAT_NO_ACTION_NEEDED,
+    KOM_STAT_BEGR_FEHLT,
+    KOM_STAT_ANTW_FEHLT,
+    KOM_STAT_ANTW_CHANGED,
+    KOM_STAT_BEGR_CHANGED,
+    KOM_STAT_ANTW_BEGR_CHANGED,
+    KOM_STAT_ANTW_FEHLT_CHANGED;
+  }
+
+  enum StrafsteuerStatus {
+    NONE,
+    SOME,
+    ALL;
+  }
+
+  enum Akzeptanzstatus {
+    OFFEN,
+    OK,
+    TEILOK,
+    NOTOK;
+  }
+
+  //----------------------------------------------
+  // Settings
+
+  class StrafsteuerGeschaeftsjahr {
+    ZonedDateTime jahr;
+    boolean current;
+  }
+
+  class StrafsteuerSperrDatum {
+    ZonedDateTime sperrDatum;
+  }
+
+  //----------------------------------------------
+  // =============== DomainUser ===============
+  //----------------------------------------------
+
+  class DomainUser {
+    String username;
+    Optional<String> encodedPassword;
+    String passwordSaltBase64;
+    ZonedDateTime registrationDate;
+    Optional<String> initials;
+    DomainUserActivationStatus activated;
+    boolean enabled;
+    String email;
+    boolean authentifiziert;
+    Optional<String> timID;
+    Optional<String> sapAccessToken;
+    Optional<String> sapRefreshToKen;
+  }
+
+  association  [*] DomainUser -> (institute) Institut [*];
+
+  enum DomainUserActivationStatus {
+    AKTIVIERT,
+    MAIL_NICHT_GESENDET,
+    MAIL_FEHLERHAFT,
+    MAIL_GESENDET;
+  }
+
+  class RoleAssignment {
+    String role;
+    Optional<Long> objId;
+  }
+
+  association  [*] RoleAssignment -> (user) DomainUser [1];
+
+  //----------------------------------------------
+  class Favorite {
+    String title;
+    String url;
+  }
+
+  association [1] DomainUser -> (favorite) Favorite [*];
+
+  //----------------------------------------------
+  class BlacklistedToken {
+    String token;
+    ZonedDateTime addedAt;
+    ZonedDateTime expiresAt;
+  }
+
+  class RefreshToken {
+    long userId;
+    String token;
+  }
+
+  //----------------------------------------------
+  // =============== Settings ===============
+  //----------------------------------------------
+
+  class TabellenEigenschaft {
+    String seite;
+    TabellenIdentifierTyp typ;
+    String identifier;
+    String konfiguration;
+  }
+
+  association [*] TabellenEigenschaft -> (benutzer) DomainUser [0..1];
+
+  enum TabellenIdentifierTyp {
+    DEFAULT,
+    USER,
+    INSTITUT;
+  }
+
+  // Druckeinstellungen
+  class DruckEinstellungenProjekt {
+    Long projektId;
+    Integer jahr;
+    Integer monat;
+    Optional<String> mittelabrufnummer;
+    Optional<String> belegnummer;
+  }
+
+  association [1] DruckEinstellungenProjekt -> (druckEinstellungenPersonen) DruckEinstellungenPerson [*];
+
+  class DruckEinstellungenPerson {
+    Long personId;
+    Optional<ZahlenWert> stundensatz;
+  }
+
+  class CardSetting {
+    String page;
+    String identifier;
+    String configuration;
+  }
+
+  association [*] CardSetting -> (benutzer) DomainUser [0..1];
+
+  //----------------------------------------------
+  // =============== Notification ===============
+  //----------------------------------------------
+
+  class UserNotification {
+    UserNotificationType notificationType;
+    String title;
+    String message;
+    ZonedDateTime timeStamp;
+    Optional<String> link;
+    boolean seen;
+    boolean pinned;
+  }
+
+  association [1] DomainUser -> (notification) UserNotification [*];
+
+  enum UserNotificationType {
+    SUCCESS,
+    INFO,
+    WARNING,
+    DANGER;
+  }
+
+  //----------------------------------------------
+  // Konto -> *MailAlert
+
+  class MailAlert {
+    String name;
+    String alertCondition;
+    String mailBody;
+    int repetitions;
+    ZonedDateTime firstAlert;
+    ZonedDateTime lastAlert;
+    Optional<String> receipients;
+    Optional<String> ccs;
+    Optional<String> bccs;
+    long a1;
+    long a2;
+    boolean flag1;
+    boolean flag2;
+    String s1;
+    String s2;
+  }
+
+  //----------------------------------------------
+  // Zahlenwert
+
+  class ZahlenWert {
+    ZahlenTyp zahlenTyp;
+    long wert;
+  }
+
+  enum ZahlenTyp {
+    EURO,
+    STUNDE,
+    PROZENT,
+    NONE;
+  }
+
+  //----------------------------------------------
+  // Freitext
+
+  class Freitext {
+    Optional<ZonedDateTime> erstellDatum;
+    Optional<ZonedDateTime> bearbeitetDatum;
+    Optional<String> text;
+  }
 }
