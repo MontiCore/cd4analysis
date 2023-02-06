@@ -1,6 +1,11 @@
-classdiagram Other {
+/* (c) https://github.com/MontiCore/monticore */
+/* Originated by MontiCore/RWTH Aachen (CC BY 4.0)*/
 
-  class BeschaeftigungsArt;
+package de.monticore.be.domain;
+
+import java.time.ZonedDateTime;
+
+classdiagram Other {
 
 
   //----------------------------------------------
