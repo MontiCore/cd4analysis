@@ -5,7 +5,7 @@ import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 
 public class CD4CodeAfterParseTrafo {
   protected CD4CodeTraverser traverser;
@@ -23,7 +23,7 @@ public class CD4CodeAfterParseTrafo {
   }
 
   public static void init(CDAfterParseHelper cdAfterParseHelper, CD4CodeTraverser traverser) {
-    final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
+    final CDBasisCombinePackagesTrafo cdBasis = new CDBasisCombinePackagesTrafo();
     traverser.add4CDBasis(cdBasis);
 
     CD4CodeDirectCompositionTrafo.init(cdAfterParseHelper, traverser);

@@ -30,7 +30,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
@@ -155,7 +155,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
                 && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
         if (defaultPackage) {
           final CD4CodeTraverser traverser = CD4CodeMill.traverser();
-          final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
+          final CDBasisCombinePackagesTrafo cdBasis = new CDBasisCombinePackagesTrafo();
           traverser.add4CDBasis(cdBasis);
 
           ast.accept(traverser);

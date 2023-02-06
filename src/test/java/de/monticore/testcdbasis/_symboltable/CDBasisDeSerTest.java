@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ImportStatement;
@@ -50,7 +50,7 @@ public class CDBasisDeSerTest {
 
     // after parse trafo
     TestCDBasisTraverser t = TestCDBasisMill.traverser();
-    CDBasisDefaultPackageTrafo trafo = new CDBasisDefaultPackageTrafo();
+    CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     ast.accept(t);
 

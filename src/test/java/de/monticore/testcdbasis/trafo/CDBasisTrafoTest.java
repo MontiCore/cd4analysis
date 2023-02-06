@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
@@ -45,7 +45,7 @@ public class CDBasisTrafoTest extends TestBasis {
 
     // after parse trafo
     TestCDBasisTraverser t = TestCDBasisMill.traverser();
-    CDBasisDefaultPackageTrafo trafo = new CDBasisDefaultPackageTrafo();
+    CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     astOpt.get().accept(t);
 
