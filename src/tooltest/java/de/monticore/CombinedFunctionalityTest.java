@@ -1,22 +1,17 @@
 package de.monticore;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cdmerge.CDMerge;
-import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.cdmerge.config.MergeParameter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -32,8 +27,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class CombinedFunctionalityTest {
 
   @BeforeEach
@@ -44,8 +37,7 @@ public class CombinedFunctionalityTest {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
 
-
-   protected static ASTCDCompilationUnit parseCDModel(String cdFilePath) {
+  protected static ASTCDCompilationUnit parseCDModel(String cdFilePath) {
     CD4CodeParser cdParser = CD4CodeMill.parser();
     final Optional<ASTCDCompilationUnit> optCdAST;
     try {
@@ -59,25 +51,23 @@ public class CombinedFunctionalityTest {
   }
 
   @Test
-  @Disabled
   public void testMaCoCo() {
     String base_path =
         "src/test/resources/de/monticore/cd4analysis/examples/industrial_strength_models/";
 
-      Set<ASTCDCompilationUnit> mergeSet =
-          Arrays.stream(new File(base_path + "MaCoCoMerge/").listFiles())
-              .map(f -> parseCDModel(f.getAbsolutePath()))
-              .collect(Collectors.toCollection(LinkedHashSet::new));
+    Set<ASTCDCompilationUnit> mergeSet =
+        Arrays.stream(new File(base_path + "MaCoCoMerge/").listFiles())
+            .map(f -> parseCDModel(f.getAbsolutePath()))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
-      ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", new HashSet<>());
-      assertNotEquals(null, merged);
+    Set<MergeParameter> paramSet = new HashSet<>();
+    paramSet.add(MergeParameter.LOG_TO_CONSOLE);
 
-/*      ASTCDCompilationUnit expected = parser.parse(base_path + "MaCoCo.cd").get();
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(expected);
-*/
-      ASTCDCompilationUnit expected = parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
+    ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", paramSet);
+    assertNotEquals(null, merged);
 
-      // CD4CodeMill.scopesGenitorDelegator().createFromAST(merged);
+    ASTCDCompilationUnit expected =
+        parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
 
       assertEquals(new ArrayList<>(), CDDiff.computeSyntax2SemDiff(
         merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
