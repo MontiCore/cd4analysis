@@ -35,10 +35,10 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
     illegalSymbols.add("'");
 
     // check the default package's full-qualified name
-    if (node.getDefaultPackage().isPresent()) {
+    if (node.isPresentDefaultPackage()) {
       checkIllegalSymbol(
-          node.getDefaultPackage().get().get_SourcePositionStart(),
-          node.getDefaultPackage().get().getMCQualifiedName().getQName(),
+          node.getDefaultPackage().get_SourcePositionStart(),
+          node.getDefaultPackage().getMCQualifiedName().getQName(),
           illegalSymbols);
     }
 

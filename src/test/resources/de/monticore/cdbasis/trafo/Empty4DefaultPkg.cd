@@ -1,0 +1,6 @@
+/* (c) https://github.com/MontiCore/monticore */
+package some.artifact.pkg;
+
+classdiagram Empty4DefaultPkg {
+  // this cd is intentionally empty to check adding behavior
+}

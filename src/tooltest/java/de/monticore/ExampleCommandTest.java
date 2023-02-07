@@ -14,10 +14,14 @@ import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.monticore.symboltable.IArtifactScope;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -217,7 +221,7 @@ public class ExampleCommandTest extends OutTestBasis {
                         Paths.get(
                             outputPath
                                 + "out/"
-                                + c.getSymbol().getFullName().replaceAll("\\.", "/")
+                                + retrieveRelativeGenPath(c, cd)
                                 + ".java"))));
     assertTrue(getErr(), getErr().isEmpty());
   }
@@ -244,7 +248,7 @@ public class ExampleCommandTest extends OutTestBasis {
                         Paths.get(
                             outputPath
                                 + "out/"
-                                + c.getSymbol().getFullName().replaceAll("\\.", "/")
+                                + retrieveRelativeGenPath(c, cd)
                                 + ".java"))));
     assertTrue(getErr(), getErr().isEmpty());
   }
@@ -360,5 +364,16 @@ public class ExampleCommandTest extends OutTestBasis {
       fail(e.getMessage());
     }
     return null;
+  }
+
+  protected String retrieveRelativeGenPath(ASTCDClass c, ASTCDCompilationUnit cd) {
+    String res = "";
+    if (cd.isPresentMCPackageDeclaration()) {
+      res = cd.getMCPackageDeclaration().getMCQualifiedName().getQName() + ".";
+    }
+    res += cd.getCDDefinition().getName().toLowerCase() + ".";
+    res += c.getSymbol().getFullName();
+    res = res.replaceAll("\\.", "/");
+    return res;
   }
 }

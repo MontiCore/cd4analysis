@@ -70,37 +70,6 @@ public class CDGenerator {
               .map(e -> ((ASTCDEnum) e))
               .collect(Collectors.toList()));
     }
-
-    String packageAsPath =
-        String.join(File.separator, emptyPKG.getMCQualifiedName().getPartsList())
-            .toLowerCase(Locale.ROOT);
-
-    // generate classes
-    this.generateCDClasses(
-        packageAsPath,
-        emptyPKG,
-        definition.getCDElementList().stream()
-            .filter(ASTCDClass.class::isInstance)
-            .map(e -> ((ASTCDClass) e))
-            .collect(Collectors.toList()));
-
-    // generate interfaces
-    this.generateCDInterfaces(
-        packageAsPath,
-        emptyPKG,
-        definition.getCDElementList().stream()
-            .filter(ASTCDInterface.class::isInstance)
-            .map(e -> ((ASTCDInterface) e))
-            .collect(Collectors.toList()));
-
-    // generate enums
-    this.generateCDEnums(
-        packageAsPath,
-        emptyPKG,
-        definition.getCDElementList().stream()
-            .filter(ASTCDEnum.class::isInstance)
-            .map(e -> ((ASTCDEnum) e))
-            .collect(Collectors.toList()));
   }
 
   protected Path getAsPath(String packageAsPath, String name) {

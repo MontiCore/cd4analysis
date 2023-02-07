@@ -13,6 +13,7 @@ import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.MCPath;
+import de.monticore.symboltable.IArtifactScope;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.ArrayList;
@@ -63,6 +64,9 @@ public class TopDecorator {
         if (symbol instanceof CDPackageSymbol) {
           packagesNames.add(0, symbol.getName());
         }
+      } else if (scope instanceof IArtifactScope) {
+        packagesNames.add(0, scope.getName().toLowerCase());
+        packagesNames.add(0, ((IArtifactScope) scope).getPackageName());
       }
       scope = scope.getEnclosingScope();
     }

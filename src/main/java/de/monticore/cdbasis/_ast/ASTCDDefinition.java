@@ -15,6 +15,8 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.ImmutableCollectors;
+import de.se_rwth.commons.logging.Log;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ASTCDDefinition extends ASTCDDefinitionTOP {
+  protected Optional<ASTCDPackage> defaultPackage = Optional.empty();
   protected String defaultPackageName = "";
 
   public <T extends ASTCDElement> List<T> getCDElementListBy(CDElementVisitor.Options... options) {
@@ -136,16 +139,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
         .findAny();
   }
 
-  public Optional<ASTCDPackage> getDefaultPackage() {
-    return getDefaultPackage(getCDPackagesList());
-  }
-
   public Optional<ASTCDPackage> getDefaultPackage(List<ASTCDPackage> packages) {
     return getPackageWithName(packages, getDefaultPackageName());
-  }
-
-  public ASTCDPackage getOrCreateDefaultPackage() {
-    return getOrCreatePackage(defaultPackageName);
   }
 
   public ASTCDPackage getOrCreatePackage(String packageName) {
@@ -189,58 +184,58 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     }
   }
 
-  //  @Override
-  //  public boolean addCDElement(ASTCDElement element) {
-  //    return addCDElementToPackageWithName(element);
-  //  }
-
   public boolean addCDElementToPackage(ASTCDElement element, String packageName) {
     return addCDElementToPackageWithName(element, packageName);
   }
 
-  //  @Override
-  //  public boolean addAllCDElements(Collection<? extends ASTCDElement> collection) {
-  //    collection.forEach(this::addCDElementToPackageWithName);
-  //    return true;
-  //  }
-
-  public boolean addCDElementToPackage(
-      Collection<? extends ASTCDElement> collection, String packageName) {
-    // returns the result, if all elements have been added
-    return collection.stream()
-        .map(e -> addCDElementToPackageWithName(e, packageName))
-        .anyMatch(e -> !e);
-  }
-
-  public void addCDPackage(int index, ASTCDPackage p) {
-    super.addCDElement(index, p);
-  }
-
-  //  @Override
-  //  public void addCDElement(int index, ASTCDElement element) {
-  //    addCDElementToPackageWithName(index, element);
-  //  }
-
-  public boolean addCDElementToPackage(int index, ASTCDElement element, String packageName) {
-    return addCDElementToPackageWithName(index, element, packageName);
-  }
-
-  //  @Override
-  //  public boolean addAllCDElements(int index, Collection<? extends ASTCDElement> collection) {
-  //    return addCDElementToPackage(index, collection, defaultPackageName);
-  //  }
-
-  public boolean addCDElementToPackage(
-      int index, Collection<? extends ASTCDElement> collection, String packageName) {
-    // count index up, because every element will be inserted separately and
-    // therefore the latest element would be at place index
-    int i = index;
-    for (ASTCDElement element : collection) {
-      if (!addCDElementToPackageWithName(i, element, packageName)) {
-        return false;
-      }
-      ++i;
+  @Override
+  public void addCDElement(int index, ASTCDElement element) {
+    if (isPresentDefaultPackage()) {
+      getDefaultPackage().addCDElement(index, element);
+    } else {
+      super.addCDElement(index, element);
     }
-    return true;
+  }
+
+  @Override
+  public boolean addCDElement(de.monticore.cdbasis._ast.ASTCDElement element) {
+    if (isPresentDefaultPackage()) {
+      return getDefaultPackage().addCDElement(element);
+    } else {
+      return super.addCDElement(element);
+    }
+  }
+
+  @Override
+  public boolean addAllCDElements(int index, Collection<? extends ASTCDElement> collection) {
+    if (isPresentDefaultPackage()) {
+      return getDefaultPackage().addAllCDElements(index, collection);
+    } else {
+      return super.addAllCDElements(index, collection);
+    }
+  }
+
+  @Override
+  public boolean addAllCDElements(Collection<? extends ASTCDElement> collection) {
+    if (isPresentDefaultPackage()) {
+      return getDefaultPackage().addAllCDElements(collection);
+    } else {
+      return super.addAllCDElements(collection);
+    }
+  }
+
+  public boolean isPresentDefaultPackage() {
+    return defaultPackage.isPresent();
+  }
+
+  public ASTCDPackage getDefaultPackage() {
+    if (!isPresentDefaultPackage()) {
+      Log.error("0xA7106 Could not get default package as it is not specified.");
+    }
+    return defaultPackage.get();
+  }
+
+  public void setDefaultPackage(ASTCDPackage pkg) {
+    defaultPackage = Optional.of(pkg);
   }
 }

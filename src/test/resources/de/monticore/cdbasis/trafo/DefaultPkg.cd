@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+package some.artifact.pkg;
+
+classdiagram DefaultPkg {
+
+  package a.b {
+    class X;
+  }
+
+  package a {
+    class Y;
+  }
+
+  package a {
+    class Z;
+  }
+
+  class W;
+
+}

@@ -11,9 +11,11 @@ import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -103,6 +105,11 @@ public class CDGeneratorTool extends CD4CodeTool {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
+
+        // setup default package when generating
+        CD4CodeTraverser t = CD4CodeMill.traverser();
+        t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+        ast.accept(t);
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(

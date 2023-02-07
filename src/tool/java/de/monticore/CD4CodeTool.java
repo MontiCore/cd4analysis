@@ -31,6 +31,7 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
@@ -296,6 +297,11 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
           GeneratorSetup generatorSetup = new GeneratorSetup();
+
+          // setup default package when generating
+          CD4CodeTraverser t = CD4CodeMill.traverser();
+          t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+          ast.accept(t);
 
           if (cmd.hasOption("fp")) { // Template path
             generatorSetup.setAdditionalTemplatePaths(
