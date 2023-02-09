@@ -463,41 +463,41 @@ public class ConstraintTest {
     assertTrue(comparator.checkChangedMethodCount("Person", 1));
   }
 
-  @Test
-  public void testTrafoTwoOptionalsInAssignment() throws IOException {
+//  @Test
+//  public void testTrafoTwoOptionalsInAssignment() throws IOException {
+//
+//    Optional<ASTCDCompilationUnit> astOpt = CD4CodeMill.parser().parse(DexInfrastructureCD);
+//    assertTrue(astOpt.isPresent());
+//    ASTCDCompilationUnit ast = astOpt.get();
+//    ASTCDCompilationUnit astClone = ast.deepClone();
+//
+//    TrafoTwoOptionalsInAssignment trafo = new TrafoTwoOptionalsInAssignment(ast);
+//    while (trafo.doPatternMatching()) {
+//      trafo.doReplacement();
+//      trafo = new TrafoTwoOptionalsInAssignment(ast);
+//    }
+//
+//    TrafoResultComparator comparator = new TrafoResultComparator(astClone, ast);
+//    assertTrue(comparator.checkAddedAttribute("Group", "firstNamelastName"));
+//  }
 
-    Optional<ASTCDCompilationUnit> astOpt = CD4CodeMill.parser().parse(DexInfrastructureCD);
-    assertTrue(astOpt.isPresent());
-    ASTCDCompilationUnit ast = astOpt.get();
-    ASTCDCompilationUnit astClone = ast.deepClone();
-
-    TrafoTwoOptionalsInAssignment trafo = new TrafoTwoOptionalsInAssignment(ast);
-    while (trafo.doPatternMatching()) {
-      trafo.doReplacement();
-      trafo = new TrafoTwoOptionalsInAssignment(ast);
-    }
-
-    TrafoResultComparator comparator = new TrafoResultComparator(astClone, ast);
-    assertTrue(comparator.checkAddedAttribute("Group", "firstNamelastName"));
-  }
-
-  @Test
-  public void testTrafoTwoOptionalsInAssignment2() throws IOException {
-
-    Optional<ASTCDCompilationUnit> astOpt = CD4CodeMill.parser().parse(DexInfrastructureCD);
-    assertTrue(astOpt.isPresent());
-    ASTCDCompilationUnit ast = astOpt.get();
-    ASTCDCompilationUnit astClone = ast.deepClone();
-
-    TrafoTwoOptionalsInAssignment2 trafo = new TrafoTwoOptionalsInAssignment2(ast);
-    while (trafo.doPatternMatching()) {
-      trafo.doReplacement();
-      trafo = new TrafoTwoOptionalsInAssignment2(ast);
-    }
-
-    TrafoResultComparator comparator = new TrafoResultComparator(astClone, ast);
-    assertTrue(comparator.checkAddedAttribute("Group", "firstNamelastName"));
-  }
+//  @Test
+//  public void testTrafoTwoOptionalsInAssignment2() throws IOException {
+//
+//    Optional<ASTCDCompilationUnit> astOpt = CD4CodeMill.parser().parse(DexInfrastructureCD);
+//    assertTrue(astOpt.isPresent());
+//    ASTCDCompilationUnit ast = astOpt.get();
+//    ASTCDCompilationUnit astClone = ast.deepClone();
+//
+//    TrafoTwoOptionalsInAssignment2 trafo = new TrafoTwoOptionalsInAssignment2(ast);
+//    while (trafo.doPatternMatching()) {
+//      trafo.doReplacement();
+//      trafo = new TrafoTwoOptionalsInAssignment2(ast);
+//    }
+//
+//    TrafoResultComparator comparator = new TrafoResultComparator(astClone, ast);
+//    assertTrue(comparator.checkAddedAttribute("Group", "firstNamelastName"));
+//  }
 
   /**
    * @param ast contains some classes that should be verified

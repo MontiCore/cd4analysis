@@ -72,16 +72,19 @@ def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
 
 sourceSets {
   main {
-    java.srcDirs += ["$genDir", "$trGrammarOutDir"]
+    java.srcDirs += ["$genDir"]
   }
   test {
     java.srcDirs += ["$testGenDir"]
   }
   grammars {
     resources {
-      srcDirs([grammarDir, grammarOutDir, trGrammarOutDir])
+      srcDirs([grammarDir, grammarOutDir])
       include "**/*.mc4"
     }
+  }
+  trafo {
+    java.srcDirs = [trGrammarOutDir]
   }
   cd2plantuml {
     java {}
@@ -134,6 +137,8 @@ configurations {
   tooltestImplementation.extendsFrom(cdmergetestImplementation)
   grammar
   cli
+  trafoImplementation.extendsFrom implementation
+  trafoCompileOnly.extendsFrom compileOnly
 }
 
 dependencies {
@@ -145,7 +150,6 @@ dependencies {
   implementation "$var_path:monticore-grammar:${project.properties['mc_version']}"
   implementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
   implementation "$var_path:class2mc:${project.properties['mc_version']}"
-  implementation "de.monticore:monticore-grammar-trafo:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementation "com.google.guava:guava:$guava_version"
@@ -161,6 +165,8 @@ dependencies {
     requireCapability("de.monticore:monticore-runtime-tests") }
   testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
+  testImplementation(sourceSets.trafo.output.classesDirs)
+  testImplementation "de.monticore:monticore-grammar-trafo:$mc_version:trafo"
 
   // dependencies for cd2plantuml
   cd2plantumlImplementation(sourceSets.main.output.classesDirs)
@@ -188,6 +194,10 @@ dependencies {
 
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
   cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
+
+  //dependencies for trafo
+  trafoImplementation project(path)
+  trafoImplementation "de.monticore:monticore-grammar-trafo:$mc_version:trafo"
 
   toolImplementation(sourceSets.cd2plantuml.output.classesDirs)
   toolImplementation(sourceSets.cddiff.output.classesDirs)
@@ -278,12 +288,11 @@ grammarDependencies.each {
     dependsOn dependsOnTRGrammars
     dependsOn(project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } })
     templatePath("$projectDir/src/main/grammars")
-    def grammarFile = file(grammarOutDir + "/" + de.monticore.dstlgen.util.DSTLPathUtil.getTRGrammar([file("src/main/grammars").toString()], file (g))) // Replace with getTRFile(file (g)) once the plugin is updated and in the upstream
-    grammar = grammarFile
+    grammar = getTRFile(file (g), file (grammarOutDir))
     outputDir = file trGrammarOutDir
     handcodedPath "$projectDir/src/main/java"
     isDSTL = true // Generate DST infrastructure
-    def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(grammarFile.toURI()).toString()
+    def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(file(grammar).toURI()).toString()
 
     def uptoDate = incCheck(grammarIncludingPackage)
 
@@ -335,7 +344,7 @@ fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each
   def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
   task "$taskname"(type: MontiTransExec) {
     dependsOn(generateTest)
-    getClassPath().setFrom(sourceSets.test.compileClasspath)
+    getClassPath().setFrom(sourceSets.trafo.runtimeClasspath)
     TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
     input = file(g)
     outputDir = file(testGrammarOutDir)
@@ -471,6 +480,18 @@ task cd2smtJar(type: Jar) {
     archiveClassifier = "cd2smt"
 }
 
+// build trafo in addition
+task trafoJar(type: Jar) {
+  from sourceSets.trafo.output
+  archiveClassifier = "trafo"
+}
+
+// build trafo sources in addition
+task trafoSourcesJar(type: Jar) {
+  from sourceSets.trafo.allSource
+  archiveClassifier = "trafo-sources"
+}
+
 
 // build test sources jar in addition
 task toolJar(type: Jar) {
@@ -547,6 +568,7 @@ artifacts {
   archives cd2smtJar
   archives toolJar
   archives mainJar
+  archives trafoJar
 }
 // configure deployment
 publishing {
@@ -563,6 +585,12 @@ publishing {
         artifact cd2smtJar
         artifact toolJar
       }
+      "trafo"(MavenPublication) {
+        artifactId = project.name + "-trafo"
+        artifact trafoJar
+        artifact trafoSourcesJar { classifier 'source' }
+      }
+
     }else{
       mavenJava(MavenPublication) {
         suppressPomMetadataWarningsFor('grammarsApiElements')
