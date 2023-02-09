@@ -44,6 +44,7 @@ dependencies {
 
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: version
   grammar group: 'de.monticore.lang', name: 'cd4analysis', version: version, classifier: 'grammars'
+  implementation group: 'de.monticore.lang', name: 'cd4analysis', version: version, classifier: 'trafo'
 
   implementation group: 'de.se_rwth.commons', name: 'se-commons-utilities', version: se_commons_version
   implementation group: 'de.se_rwth.commons', name: 'se-commons-groovy', version: se_commons_version
