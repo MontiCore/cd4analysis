@@ -7,6 +7,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -114,6 +118,24 @@ public class CDGeneratorToolTest {
     CDGeneratorTool.main(
         new String[] {"-i", "src/test/resources/de/monticore/cdgentool/Example.cd", "-c2mc", "-v"});
     assertTrue(true);
+  }
+
+  @Test
+  public void testGeneratorToolWithPkgSymTab() throws IOException {
+    CDGeneratorTool.main(
+      new String[] {
+        "-i",
+        "src/test/resources/de/monticore/cdgentool/pkg/ExampleWithPkg.cd",
+        "-c2mc",
+        "-o",
+        "target/generated/examplewithpkg/",
+        "-s",
+        "exp.cdsym"
+      });
+    File symtab = new File("target/generated/examplewithpkg/exp.cdsym");
+    assertTrue(symtab.isFile());
+    String contents = Files.readString(Path.of(symtab.toURI()));
+    assertTrue(contents.contains("veryUniquePkGNameZBSJKEBV"));
   }
 
   @After
