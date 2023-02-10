@@ -107,9 +107,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         GeneratorSetup setup = new GeneratorSetup();
 
         // setup default package when generating
-        CD4CodeTraverser t = CD4CodeMill.traverser();
-        t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-        ast.accept(t);
+        new CDBasisDefaultPackageTrafo().transform(ast);
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(

@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDPackage;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
@@ -64,5 +65,11 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
     node.addCDElement(0, defPkg);
     node.setDefaultPackage(defPkg);
 
+  }
+
+  public void transform(ASTCDCompilationUnit ast) {
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(this);
+    ast.accept(t);
   }
 }
