@@ -143,8 +143,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
         List<Object> configTemplateArgs = Arrays.asList(glex, generator);
 
-        CD4C cd4C = CD4C.init(setup);
-        addGettersAndSetters(ast, cd4C);
+        addGettersAndSetters(ast);
 
         hpp.processValue(tc, ast, configTemplateArgs);
       }
@@ -284,7 +283,10 @@ public class CDGeneratorTool extends CD4CodeTool {
    *
    * @param ast the input ast
    */
-  public void addGettersAndSetters(ASTCDCompilationUnit ast, CD4C cd4C) {
+  public void addGettersAndSetters(ASTCDCompilationUnit ast) {
+
+    CD4C cd4C = CD4C.getInstance();
+
     for(ASTCDClass c: ast.getCDDefinition().getCDClassesList()) {
       for(ASTCDAttribute attribute: c.getCDAttributeList()) {
 
