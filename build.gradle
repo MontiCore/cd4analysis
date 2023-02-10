@@ -166,7 +166,7 @@ dependencies {
   testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
   testImplementation(sourceSets.trafo.output.classesDirs)
-  testImplementation "de.monticore:monticore-grammar-trafo:$mc_version:trafo"
+  testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
 
   // dependencies for cd2plantuml
   cd2plantumlImplementation(sourceSets.main.output.classesDirs)
@@ -197,7 +197,7 @@ dependencies {
 
   //dependencies for trafo
   trafoImplementation project(path)
-  trafoImplementation "de.monticore:monticore-grammar-trafo:$mc_version:trafo"
+  trafoImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
 
   toolImplementation(sourceSets.cd2plantuml.output.classesDirs)
   toolImplementation(sourceSets.cddiff.output.classesDirs)
