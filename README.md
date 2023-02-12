@@ -15,7 +15,7 @@ for *language engineers* using or
 extending one of the CD languages.
 
 The CD languages are mainly intended for  
-1. analysis modeling (i.e. structures of the system context 
+1. analysis modeling (i.e., structures of the system context 
    as well as data structures of the system),
 2. (implementation-oriented) code modeling, including method signatures,
 3. generating code, data tables, transport functions and more.
