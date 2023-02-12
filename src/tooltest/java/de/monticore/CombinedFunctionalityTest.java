@@ -31,6 +31,7 @@ public class CombinedFunctionalityTest {
 
   @BeforeEach
   public void init() {
+    Log.init();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().init();
