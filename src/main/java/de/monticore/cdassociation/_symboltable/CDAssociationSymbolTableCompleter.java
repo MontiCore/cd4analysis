@@ -139,9 +139,15 @@ public class CDAssociationSymbolTableCompleter
     }
 
     if (leftSide.isPresentSymbol()) {
+      if (rightType == null) {
+        Log.error("0xCDCD1 Right type for role symbol " + leftSide.getSymbol().getName() + " not available.");
+      }
       CDAssociationSymbolTableCompleter.addRoleToTheirType(leftSide.getSymbol(), rightType);
     }
     if (rightSide.isPresentSymbol()) {
+      if (leftType == null) {
+        Log.error("0xCDCD1 Left type for role symbol " + rightSide.getSymbol().getName() + " not available.");
+      }
       CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftType);
     }
   }
