@@ -146,7 +146,7 @@ public class CDAssociationSymbolTableCompleter
     }
     if (rightSide.isPresentSymbol()) {
       if (leftType == null) {
-        Log.error("0xCDCD1 Left type for role symbol " + rightSide.getSymbol().getName() + " not available.");
+        Log.error("0xCDCD2 Left type for role symbol " + rightSide.getSymbol().getName() + " not available.");
       }
       CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftType);
     }
