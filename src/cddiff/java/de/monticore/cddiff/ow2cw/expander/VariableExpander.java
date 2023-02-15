@@ -18,15 +18,14 @@ import java.util.Set;
 public class VariableExpander extends BasicExpander {
 
   public static final String VAR_TAG = "complete";
-  /** @param cd Used for checking if adding/etc is allowed */
+
   public VariableExpander(ASTCDCompilationUnit cd) {
     super(cd);
   }
 
   @Override
   public Optional<ASTCDClass> addDummyClass(String dummyName) {
-    if (getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (checkCD(VAR_TAG)) {
       return Optional.empty();
     }
     return super.addDummyClass(dummyName);
@@ -34,8 +33,7 @@ public class VariableExpander extends BasicExpander {
 
   @Override
   public Optional<ASTCDClass> addDummyClass(ASTCDType srcType) {
-    if (getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (checkCD(VAR_TAG)) {
       return Optional.empty();
     }
     return super.addDummyClass(srcType);
@@ -43,8 +41,7 @@ public class VariableExpander extends BasicExpander {
 
   @Override
   public Optional<ASTCDInterface> addDummyInterface(String dummyName) {
-    if (getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (checkCD(VAR_TAG)) {
       return Optional.empty();
     }
     return super.addDummyInterface(dummyName);
@@ -52,8 +49,7 @@ public class VariableExpander extends BasicExpander {
 
   @Override
   public Optional<ASTCDInterface> addDummyInterface(ASTCDInterface srcInterface) {
-    if (getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (checkCD(VAR_TAG)) {
       return Optional.empty();
     }
     return super.addDummyInterface(srcInterface);
@@ -61,8 +57,7 @@ public class VariableExpander extends BasicExpander {
 
   @Override
   public Optional<ASTCDType> addClone(ASTCDType srcType) {
-    if (getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (checkCD(VAR_TAG)) {
       return Optional.empty();
     }
     return super.addClone(srcType);
@@ -70,48 +65,42 @@ public class VariableExpander extends BasicExpander {
 
   @Override
   public void addNewSubClass(String name, ASTCDClass superclass) {
-    if (!(getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG)) {
       super.addNewSubClass(name, superclass);
     }
   }
 
   @Override
   public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
-    if (!(getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG)) {
       super.addNewSubClass(name, astcdInterface);
     }
   }
 
   @Override
   public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet) {
-    if (!(targetClass.getModifier().isPresentStereotype()
-        && targetClass.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG) && !checkType(targetClass, VAR_TAG)) {
       super.updateExtends(targetClass, extendsSet);
     }
   }
 
   @Override
   public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet) {
-    if (!(targetClass.getModifier().isPresentStereotype()
-        && targetClass.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG) && !checkType(targetClass, VAR_TAG)) {
       super.updateImplements(targetClass, implementsSet);
     }
   }
 
   @Override
   public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet) {
-    if (!(targetInterface.getModifier().isPresentStereotype()
-        && targetInterface.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG) && !checkType(targetInterface, VAR_TAG)) {
       super.updateExtends(targetInterface, extendsSet);
     }
   }
 
   @Override
   public void addAssociation(ASTCDAssociation assoc) {
-    if (getCD().getCDDefinition().getModifier().isPresentStereotype()
-        && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (checkCD(VAR_TAG)) {
       return;
     }
 
@@ -121,9 +110,7 @@ public class VariableExpander extends BasicExpander {
     if (assoc.getCDAssocDir().isDefinitiveNavigableRight()) {
       Optional<CDTypeSymbol> symbol =
           artifactScope.resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
-      if (symbol.isPresent()
-          && symbol.get().getAstNode().getModifier().isPresentStereotype()
-          && symbol.get().getAstNode().getModifier().getStereotype().contains(VAR_TAG)) {
+      if (symbol.isPresent() && checkType(symbol.get().getAstNode(), VAR_TAG)) {
         return;
       }
     }
@@ -131,9 +118,7 @@ public class VariableExpander extends BasicExpander {
     if (assoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
       Optional<CDTypeSymbol> symbol =
           artifactScope.resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
-      if (symbol.isPresent()
-          && symbol.get().getAstNode().getModifier().isPresentStereotype()
-          && symbol.get().getAstNode().getModifier().getStereotype().contains(VAR_TAG)) {
+      if (symbol.isPresent() && checkType(symbol.get().getAstNode(), VAR_TAG)) {
         return;
       }
     }
@@ -143,17 +128,25 @@ public class VariableExpander extends BasicExpander {
 
   @Override
   public void addAttribute(ASTCDType type, ASTCDAttribute attribute) {
-    if (!(type.getModifier().isPresentStereotype()
-        && type.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG) && !checkType(type, VAR_TAG)) {
       super.addAttribute(type, attribute);
     }
   }
 
   @Override
   public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant) {
-    if (!(targetEnum.getModifier().isPresentStereotype()
-        && targetEnum.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!checkCD(VAR_TAG) && !checkType(targetEnum, VAR_TAG)) {
       super.addEnumConstant(targetEnum, constant);
     }
+  }
+
+  protected boolean checkCD(String stereotype) {
+    return getCD().getCDDefinition().getModifier().isPresentStereotype()
+        && getCD().getCDDefinition().getModifier().getStereotype().contains(stereotype);
+  }
+
+  protected boolean checkType(ASTCDType type, String stereotype) {
+    return type.getModifier().isPresentStereotype()
+        && type.getModifier().getStereotype().contains(stereotype);
   }
 }

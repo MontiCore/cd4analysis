@@ -58,7 +58,8 @@ public class CDBasisTrafoTest extends TestBasis {
   @Test
   public void trafoTestWithDefaultPkg() throws IOException {
     TestCDBasisParser parser = TestCDBasisMill.parser();
-    Optional<ASTCDCompilationUnit> astOpt = parser.parse(getFilePath("cdbasis/trafo/DefaultPkg.cd"));
+    Optional<ASTCDCompilationUnit> astOpt =
+        parser.parse(getFilePath("cdbasis/trafo/DefaultPkg.cd"));
 
     assertFalse(parser.hasErrors());
     assertTrue(astOpt.isPresent());
@@ -82,8 +83,10 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(3, cd.getCDElementList().size());
 
     assertEquals(cd.getCDElement(0), cd.getDefaultPackage());
-    String expectedDefPkgName = astOpt.get().getMCPackageDeclaration().getMCQualifiedName().getQName()
-      + "." + cd.getName().toLowerCase();
+    String expectedDefPkgName =
+        astOpt.get().getMCPackageDeclaration().getMCQualifiedName().getQName()
+            + "."
+            + cd.getName().toLowerCase();
     assertEquals(expectedDefPkgName, cd.getDefaultPackage().getMCQualifiedName().getQName());
 
     for (ASTCDElement e : cd.getCDElementList()) {
@@ -96,7 +99,8 @@ public class CDBasisTrafoTest extends TestBasis {
   @Test
   public void testAddingBahavior() throws IOException {
     TestCDBasisParser parser = TestCDBasisMill.parser();
-    Optional<ASTCDCompilationUnit> astOpt = parser.parse(getFilePath("cdbasis/trafo/Empty4DefaultPkg.cd"));
+    Optional<ASTCDCompilationUnit> astOpt =
+        parser.parse(getFilePath("cdbasis/trafo/Empty4DefaultPkg.cd"));
 
     assertFalse(parser.hasErrors());
     assertTrue(astOpt.isPresent());
@@ -108,10 +112,11 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(0, cd.getCDElementList().size());
 
     // before trafo, everything is added the the cd directly
-    ASTCDClass classA = TestCDBasisMill.cDClassBuilder()
-      .setName("A")
-      .setModifier(CDModifier.PUBLIC.build())
-      .build();
+    ASTCDClass classA =
+        TestCDBasisMill.cDClassBuilder()
+            .setName("A")
+            .setModifier(CDModifier.PUBLIC.build())
+            .build();
     cd.addCDElement(classA);
     assertEquals(1, cd.getCDElementList().size());
     assertEquals(classA, cd.getCDElement(0));
@@ -134,10 +139,11 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(classA, cd.getDefaultPackage().getCDElement(0));
 
     // every element is now directly added to default pkg
-    ASTCDClass classB = TestCDBasisMill.cDClassBuilder()
-      .setName("B")
-      .setModifier(CDModifier.PUBLIC.build())
-      .build();
+    ASTCDClass classB =
+        TestCDBasisMill.cDClassBuilder()
+            .setName("B")
+            .setModifier(CDModifier.PUBLIC.build())
+            .build();
     cd.addCDElement(classB);
     assertEquals(1, cd.getCDElementList().size());
     assertEquals(2, cd.getDefaultPackage().getCDElementList().size());

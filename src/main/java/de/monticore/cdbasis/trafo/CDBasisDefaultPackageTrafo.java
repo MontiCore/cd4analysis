@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.trafo;
 
-import de.monticore.cd.cocos.CoCoHelper;
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -11,10 +9,8 @@ import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
 
@@ -26,7 +22,8 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
 
     // set artifact package parts to the default package
     if (node.isPresentMCPackageDeclaration()) {
-      artifactPackageParts.addAll(node.getMCPackageDeclaration().getMCQualifiedName().getPartsList());
+      artifactPackageParts.addAll(
+          node.getMCPackageDeclaration().getMCQualifiedName().getPartsList());
     }
   }
 
@@ -36,16 +33,13 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
     artifactPackageParts.add(node.getName().toLowerCase());
 
     // create the default package
-    ASTMCQualifiedName qualName = CDBasisMill.mCQualifiedNameBuilder()
-      .addAllParts(artifactPackageParts)
-      .build();
-    ASTCDPackage defPkg = CDBasisMill.cDPackageBuilder()
-      .setMCQualifiedName(qualName)
-      .build();
+    ASTMCQualifiedName qualName =
+        CDBasisMill.mCQualifiedNameBuilder().addAllParts(artifactPackageParts).build();
+    ASTCDPackage defPkg = CDBasisMill.cDPackageBuilder().setMCQualifiedName(qualName).build();
 
     // add elements (that are not packages themselves) to the default package
     for (ASTCDElement e : node.getCDElementList()) {
-      if(!(e instanceof ASTCDPackage)) {
+      if (!(e instanceof ASTCDPackage)) {
         defPkg.addCDElement(e);
       }
     }
@@ -64,7 +58,6 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
     // explicitly set the link towards the default package
     node.addCDElement(0, defPkg);
     node.setDefaultPackage(defPkg);
-
   }
 
   public void transform(ASTCDCompilationUnit ast) {

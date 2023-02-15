@@ -16,7 +16,6 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.ImmutableCollectors;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;

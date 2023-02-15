@@ -29,7 +29,7 @@ public class CD4AnalysisSymbolTableCompleter {
     this.traverser = CD4CodeMill.traverser();
 
     final CDBasisSymbolTableCompleter cDBasisVisitor =
-      new CDBasisSymbolTableCompleter(new FullSynthesizeFromCD4Code());
+        new CDBasisSymbolTableCompleter(new FullSynthesizeFromCD4Code());
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
     final CDAssociationSymbolTableCompleter cDAssociationVisitor =

@@ -7,7 +7,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cdmerge.CDMerge;
@@ -71,9 +70,9 @@ public class CombinedFunctionalityTest {
     ASTCDCompilationUnit expected =
         parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
 
-      assertEquals(new ArrayList<>(), CDDiff.computeSyntax2SemDiff(
-        merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
-
+    assertEquals(
+        new ArrayList<>(),
+        CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
   }
 
   @Disabled

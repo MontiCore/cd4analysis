@@ -16,12 +16,9 @@ import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
-import de.monticore.symboltable.IArtifactScope;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -219,10 +216,7 @@ public class ExampleCommandTest extends OutTestBasis {
                 assertTrue(
                     Files.exists(
                         Paths.get(
-                            outputPath
-                                + "out/"
-                                + retrieveRelativeGenPath(c, cd)
-                                + ".java"))));
+                            outputPath + "out/" + retrieveRelativeGenPath(c, cd) + ".java"))));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -246,10 +240,7 @@ public class ExampleCommandTest extends OutTestBasis {
                 assertTrue(
                     Files.exists(
                         Paths.get(
-                            outputPath
-                                + "out/"
-                                + retrieveRelativeGenPath(c, cd)
-                                + ".java"))));
+                            outputPath + "out/" + retrieveRelativeGenPath(c, cd) + ".java"))));
     assertTrue(getErr(), getErr().isEmpty());
   }
 

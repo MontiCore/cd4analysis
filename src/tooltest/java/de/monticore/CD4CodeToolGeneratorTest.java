@@ -40,7 +40,8 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     Assert.assertTrue(
         "Did not find via templatepath provided template content ",
         Files.readLines(
-                new File("target/generated/auctionTP/de/monticore/cd4code/parser/auction/auction/Auction.java"),
+                new File(
+                    "target/generated/auctionTP/de/monticore/cd4code/parser/auction/auction/Auction.java"),
                 Charset.defaultCharset())
             .contains("// empty body provided by the templatePath arg"));
   }
@@ -96,7 +97,8 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     Assert.assertTrue(
         "Did not find via templatepath provided template content ",
         Files.readLines(
-                new File("target/generated/auctionTPDCT/de/monticore/cd4code/parser/auction/auction/Auction.java"),
+                new File(
+                    "target/generated/auctionTPDCT/de/monticore/cd4code/parser/auction/auction/Auction.java"),
                 Charset.defaultCharset())
             .contains("// empty body provided and configured by the config template"));
   }
@@ -122,7 +124,8 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     Assert.assertTrue(
         "Did not find via templatepath provided template content ",
         Files.readLines(
-                new File("target/generated/auctionTPCT/de/monticore/cd4code/parser/auction/auction/Auction.java"),
+                new File(
+                    "target/generated/auctionTPCT/de/monticore/cd4code/parser/auction/auction/Auction.java"),
                 Charset.defaultCharset())
             .contains("// empty body provided and configured by the config template"));
   }
@@ -149,7 +152,8 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     Assert.assertTrue(
         "Did not find via templatepath provided template content ",
         Files.readLines(
-                new File("target/generated/auctionTPCTSep/de/monticore/cd4code/parser/auction/auction/Auction.java"),
+                new File(
+                    "target/generated/auctionTPCTSep/de/monticore/cd4code/parser/auction/auction/Auction.java"),
                 Charset.defaultCharset())
             .contains("// empty body provided and configured by the config template"));
   }
