@@ -4,7 +4,6 @@ package de.monticore;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
-import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTool;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
@@ -15,13 +14,8 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -30,8 +24,8 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.MCTypeFacade;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -40,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.cli.*;
 
 public class CDGeneratorTool extends CD4CodeTool {
 
@@ -116,7 +109,9 @@ public class CDGeneratorTool extends CD4CodeTool {
         GeneratorSetup setup = new GeneratorSetup();
 
         // setup default package when generating
-        new CDBasisDefaultPackageTrafo().transform(ast);
+        CD4CodeTraverser t = CD4CodeMill.traverser();
+        t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+        ast.accept(t);
 
         if(cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
@@ -135,13 +130,11 @@ public class CDGeneratorTool extends CD4CodeTool {
         setup.setGlex(glex);
         setup.setOutputDirectory(new File(outputPath));
 
-        String configTemplate = cmd.getOptionValue("ct", "cd2java.CD2Java");
         CDGenerator generator = new CDGenerator(setup);
+        String configTemplate = cmd.getOptionValue("ct", "cd2java.CD2Java");
         TemplateController tc = setup.getNewTemplateController(configTemplate);
         TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
         List<Object> configTemplateArgs = Arrays.asList(glex, generator);
-
-        addGettersAndSetters(ast);
 
         hpp.processValue(tc, ast, configTemplateArgs);
       }
@@ -265,7 +258,7 @@ public class CDGeneratorTool extends CD4CodeTool {
   public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast, boolean java) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
-    if (ast.isPresentMCPackageDeclaration()) {
+    if(ast.isPresentMCPackageDeclaration()) {
       scope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
     }
     this.addDefaultImports(scope, java);
@@ -278,34 +271,4 @@ public class CDGeneratorTool extends CD4CodeTool {
     CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
   }
 
-  /**
-   * adds default getter and setter methods to a class for every attribute in case if none have been
-   * added so far
-   *
-   * @param ast the input ast
-   */
-  public void addGettersAndSetters(ASTCDCompilationUnit ast) {
-
-    CD4C cd4C = CD4C.getInstance();
-
-    for(ASTCDClass c: ast.getCDDefinition().getCDClassesList()) {
-      for(ASTCDAttribute attribute: c.getCDAttributeList()) {
-
-        if(c.getCDMethodList().stream()
-          .map(ASTCDMethod::getName)
-          .noneMatch(n -> n.equalsIgnoreCase(
-            (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType()))
-              ? "is" + attribute.getName()
-              : "get" + attribute.getName()))) {
-          cd4C.addMethods(c,attribute, true, false);
-        }
-
-        if(c.getCDMethodList().stream()
-          .map(ASTCDMethod::getName)
-          .noneMatch(n -> n.equalsIgnoreCase("set" + attribute.getName()))) {
-          cd4C.addMethods(c,attribute, false, true);
-        }
-      }
-    }
-  }
 }

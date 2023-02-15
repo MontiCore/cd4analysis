@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram SimpleCD {
+
+  class Foo {
+    int x;
+    boolean isTrue;
+    char c;
+    Bar bar;
+  }
+
+  class Bar;
+
+}
