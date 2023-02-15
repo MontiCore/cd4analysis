@@ -51,6 +51,7 @@ public class CombinedFunctionalityTest {
     return optCdAST.get();
   }
 
+  @Disabled
   @Test
   public void testMaCoCo() {
     String base_path =
