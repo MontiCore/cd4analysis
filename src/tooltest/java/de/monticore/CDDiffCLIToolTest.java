@@ -516,9 +516,9 @@ public class CDDiffCLIToolTest {
   @Test
   public void testValidityOfOW2CWReduction2() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwins3.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwins2.cd";
-    final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction";
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd";
+    final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction2";
 
     // when CD4CodeTool is used to compute the semantic difference
     String[] args = {
@@ -542,14 +542,23 @@ public class CDDiffCLIToolTest {
     Assert.assertNotNull(odFiles);
 
     try {
+      ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
+      ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
           Assert.assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
+                      CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
+                      ast1,
+                      ast2,
+                      CDDiffUtil.loadODModel(odFile.getPath())));
+          Assert.assertTrue(
+              new OD2CDMatcher()
+                  .checkIfDiffWitness(
                       CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
-                      Paths.get(output + "/Employees7.cd").toFile(),
-                      Paths.get(output + "/Employees8.cd").toFile(),
+                      Paths.get(output + "/DigitalTwin3.cd").toFile(),
+                      Paths.get(output + "/DigitalTwin2.cd").toFile(),
                       odFile));
         }
       }

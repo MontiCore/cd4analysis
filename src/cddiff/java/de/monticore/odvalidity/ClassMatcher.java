@@ -72,6 +72,25 @@ public class ClassMatcher {
                 obj.getName(), optClass.get().getName()));
         return false;
       }
+
+      if (semantics.equals(CDSemantics.MULTI_INSTANCE_OPEN_WORLD)) {
+        Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(obj);
+        if (optSuper.isPresent()) {
+          for (String type : optSuper.get()){
+            Optional<ASTCDClass> optType = getCDClassOfType(type);
+            if (optType.isPresent()){
+              if (optClass.isPresent() && !optType.equals(optClass) && CDInheritanceHelper.isSuperOf(objectType,
+                  type, scope)){
+                return false;
+              }
+              if (!isObjectValid4Class(obj, optType.get(), semantics)){
+                return false;
+              }
+            }
+          }
+        }
+      }
+
     }
 
     return true;
