@@ -771,7 +771,7 @@ public class CD2AlloyGenerator {
    * Translation rule to translate type names from a CD to corresponding Alloy functions or
    * signatures.
    */
-  private String executeRuleH1(String type, ASTCDCompilationUnit cd) {
+  protected String executeRuleH1(String type, ASTCDCompilationUnit cd) {
     StringBuilder result = new StringBuilder();
 
     // CD Definition

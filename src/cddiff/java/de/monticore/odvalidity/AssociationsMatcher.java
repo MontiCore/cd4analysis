@@ -154,8 +154,21 @@ public class AssociationsMatcher {
             .collect(Collectors.toSet());
     ASTCDAssocSide targetSide = getTargetSide4Object(object, assoc);
 
+    if ((assoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            == assoc.getCDAssocDir().isDefinitiveNavigableRight())
+        && isInstanceOf(object, assoc.getLeftQualifiedName().getQName())
+        && isInstanceOf(object, assoc.getRightQualifiedName().getQName())) {
+      Log.println(object.getName());
+      return checkBidirLoop(object, assoc, outgoingLinks);
+    }
+
     String targetType = targetSide.getMCQualifiedType().getMCQualifiedName().getQName();
     String targetRole = CDDiffUtil.inferRole(targetSide);
+
+    if (object.getODAttributeList().stream().anyMatch(attr -> attr.getName().equals(targetRole))) {
+      return false;
+    }
+
     if (outgoingLinks.stream()
         .anyMatch(
             link ->
@@ -169,11 +182,84 @@ public class AssociationsMatcher {
     if (targetSide.isPresentCDCardinality()) {
       long numberOfTargets = 0;
       for (ASTODLink link : outgoingLinks) {
-        if (matchLinkAgainstAssociation(link, assoc)) {
+        if (matchLinkAgainstAssociation(link, assoc)
+            && link.getODLinkRightSide().getRole().equals(targetRole)) {
           numberOfTargets += link.getRightReferenceNames().size();
         }
       }
       return checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets);
+    }
+    return true;
+  }
+
+  private boolean checkBidirLoop(
+      ASTODNamedObject object, ASTCDAssociation assoc, Collection<ASTODLink> outgoingLinks) {
+
+    if (object.getODAttributeList().stream()
+        .anyMatch(
+            attr ->
+                (attr.getName().equals(CDDiffUtil.inferRole(assoc.getRight()))
+                    || attr.getName().equals(CDDiffUtil.inferRole(assoc.getLeft()))))) {
+      return false;
+    }
+
+    Set<ASTODLink> rlinks =
+        outgoingLinks.stream()
+            .filter(
+                link ->
+                    link.getODLinkRightSide()
+                        .getRole()
+                        .equals(CDDiffUtil.inferRole(assoc.getRight())))
+            .collect(Collectors.toSet());
+    if (rlinks.stream()
+        .anyMatch(
+            link ->
+                !link.getRightReferenceNames().stream()
+                    .allMatch(
+                        objName ->
+                            isInstanceOf(
+                                getObject(objName).get(),
+                                assoc.getRightQualifiedName().getQName())))) {
+      return false;
+    }
+    Set<ASTODLink> llinks =
+        outgoingLinks.stream()
+            .filter(
+                link ->
+                    link.getODLinkRightSide()
+                        .getRole()
+                        .equals(CDDiffUtil.inferRole(assoc.getLeft())))
+            .collect(Collectors.toSet());
+    if (llinks.stream()
+        .anyMatch(
+            link ->
+                !link.getRightReferenceNames().stream()
+                    .allMatch(
+                        objName ->
+                            isInstanceOf(
+                                getObject(objName).get(),
+                                assoc.getLeftQualifiedName().getQName())))) {
+      return false;
+    }
+    if (assoc.getRight().isPresentCDCardinality()) {
+      long numberOfTargets = 0;
+      for (ASTODLink link : rlinks) {
+        if (matchLinkAgainstAssociation(link, assoc)) {
+          numberOfTargets += link.getRightReferenceNames().size();
+        }
+      }
+      if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
+        return false;
+      }
+    }
+    if (assoc.getLeft().isPresentCDCardinality()) {
+      long numberOfTargets = 0;
+      for (ASTODLink link : llinks) {
+        if (matchLinkAgainstAssociation(link, assoc)) {
+          numberOfTargets += link.getRightReferenceNames().size();
+        }
+      }
+      return checkIfObjectNumberIsValid(assoc.getLeft().getCDCardinality(), numberOfTargets);
     }
     return true;
   }
@@ -295,7 +381,7 @@ public class AssociationsMatcher {
         return optSuper.get().contains(type);
       }
     }
-    return CDInheritanceHelper.isSuperOf(type, object.getMCObjectType().printType(pp), scope);
+    return CDInheritanceHelper.isSuperOf(type, object.getMCObjectType().printType(), scope);
   }
 
   /** Checks if link matches association. */

@@ -1,10 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.generator;
 
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -46,14 +43,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
         + System.lineSeparator()
         + "fact GetConsistency {"
         + System.lineSeparator()
-        + " all src: Obj | all q : FName | {#src.get[q] > 0 and src.get[q] in EnumVal} => {some e:Enum | "
-        + "ObjAttrib[src.type.inst,q,e.values]}"
-        + System.lineSeparator()
-        + " all src: Obj | all q : FName | {#src.get[q] > 0 and src.get[q] in Val} => {some v:Val"
-        + " | ObjAttrib[src.type.inst,q,v]}"
-        + System.lineSeparator()
-        + " all src: Obj | all q : FName | {#src.get[q] > 0 and src.get[q] in Obj}  => {some "
-        + "target : Type | all o : src.type.inst | o.get[q] in target.inst}"
+        + "all src: Obj | all q : FName | some src.get[q]  => {{src.get[q] in EnumVal and {one e:Enum | ObjAttrib[src.type.inst,q,e.values]}} or { src.get[q] in Val and {one v:Val | ObjAttrib[src.type.inst,q,v]}} or {src.get[q] in Obj and {some target : Type | all o : src.type.inst | o.get[q] in target.inst}}}"
         + System.lineSeparator()
         + "}"
         + System.lineSeparator()
@@ -192,6 +182,43 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     }
 
     return classFunctions.toString();
+  }
+
+  /**
+   * Rule P1 uses predicate ObjAttrib to declare the attributes of every class in the class diagram
+   * cd.
+   */
+  @Override
+  public String executeRuleP1(ASTCDCompilationUnit cd) {
+    StringBuilder predicate = new StringBuilder();
+
+    // Definition of the cd
+    ASTCDDefinition cdDefinition = cd.getCDDefinition();
+
+    // All classes of the cd
+    Set<ASTCDType> cdTypes = new HashSet<>(cdDefinition.getCDClassesList());
+    cdTypes.addAll(cdDefinition.getCDInterfacesList());
+
+    // Comment
+    predicate.append("// P1: Attribute declaration").append(System.lineSeparator());
+    for (ASTCDType type : cdTypes) {
+      // Compute the attribute union of all superclasses
+      // Generate Alloy predicate
+      for (ASTCDAttribute astcdAttribute : type.getCDAttributeList()) {
+        predicate
+            .append("ObjAttrib[")
+            .append(CDDiffUtil.escape2Alloy(type.getSymbol().getFullName()))
+            .append("SubsCD")
+            .append(cd.getCDDefinition().getName())
+            .append(", ");
+        predicate.append(astcdAttribute.getName()).append(", ");
+        predicate
+            .append(executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute.printType()), cd))
+            .append("]")
+            .append(System.lineSeparator());
+      }
+    }
+    return predicate.toString();
   }
 
   @Override

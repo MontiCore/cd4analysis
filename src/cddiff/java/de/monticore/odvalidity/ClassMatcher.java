@@ -59,7 +59,7 @@ public class ClassMatcher {
     // Check all objects from OD if they can exist in the CD
     for (ASTODObject obj : odObjects) {
 
-      String objectType = obj.getMCObjectType().printType(pp);
+      String objectType = obj.getMCObjectType().printType();
       Optional<ASTCDClass> optClass = getCDClassOfType(objectType);
 
       if (Semantic.isClosedWorld(semantics) && optClass.isEmpty()) {
@@ -71,6 +71,25 @@ public class ClassMatcher {
                 "[CONFLICT] Object %s is not valid for Class %s",
                 obj.getName(), optClass.get().getName()));
         return false;
+      }
+
+      if (semantics.equals(CDSemantics.MULTI_INSTANCE_OPEN_WORLD)) {
+        Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(obj);
+        if (optSuper.isPresent()) {
+          for (String type : optSuper.get()) {
+            Optional<ASTCDClass> optType = getCDClassOfType(type);
+            if (optType.isPresent()) {
+              if (optClass.isPresent()
+                  && !optType.equals(optClass)
+                  && CDInheritanceHelper.isSuperOf(objectType, type, scope)) {
+                return false;
+              }
+              if (!isObjectValid4Class(obj, optType.get(), semantics)) {
+                return false;
+              }
+            }
+          }
+        }
       }
     }
 
@@ -183,7 +202,7 @@ public class ClassMatcher {
       return false;
     }
     // Check if they have the same name and type
-    String cdAttrType = cdAttr.getMCType().printType(pp);
+    String cdAttrType = cdAttr.getMCType().printType();
     String odAttrType = getObjectAttributeType(odAttr);
 
     // Handle enums and another objects
@@ -207,8 +226,7 @@ public class ClassMatcher {
         return false;
       }
       // Check if all list elements have the same type
-      String listElementType =
-          ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType(pp);
+      String listElementType = ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType();
       for (var element : ((ASTODList) odAttr.getODValue()).getODValueList()) {
         // Compare list element type to with type of all elements in object list attribute
         if (!listElementType.equals(getObjectAttributeTypeByAST(element))) {
@@ -467,7 +485,7 @@ public class ClassMatcher {
    */
   private String getObjectAttributeType(ASTODAttribute odAttr) {
     if (odAttr.isPresentMCType() && odAttr.getMCType() != null) {
-      String type = odAttr.getMCType().printType(pp);
+      String type = odAttr.getMCType().printType();
       if (type != null && !type.equals("")) {
         return type;
       }
