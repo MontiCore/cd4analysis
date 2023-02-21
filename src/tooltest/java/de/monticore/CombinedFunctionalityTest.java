@@ -127,7 +127,8 @@ public class CombinedFunctionalityTest {
 
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(
-              cd1.get(), cd2.get(), diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+              cd1.get(), cd2.get(), diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+      Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
         Assertions.assertTrue(
@@ -161,7 +162,8 @@ public class CombinedFunctionalityTest {
       trafo.transform(cd1.get(), cd2.get());
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(
-              cd1.get(), cd2.get(), diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+              cd1.get(), cd2.get(), diffsize, 5, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
         Assertions.assertTrue(
