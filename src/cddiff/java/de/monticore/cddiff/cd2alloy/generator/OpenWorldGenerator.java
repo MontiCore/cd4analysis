@@ -184,7 +184,6 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     return classFunctions.toString();
   }
 
-
   /**
    * Rule P1 uses predicate ObjAttrib to declare the attributes of every class in the class diagram
    * cd.

@@ -41,13 +41,11 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testDigitalTwin() {
     final ASTCDCompilationUnit ast1 =
-        parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
     assertNotNull(ast1);
 
     final ASTCDCompilationUnit ast2 =
-        parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
     assertNotNull(ast2);
 
     // Create Output Path
@@ -65,13 +63,11 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testEmployees() {
     final ASTCDCompilationUnit ast1 =
-        parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees0.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees0.cd");
     assertNotNull(ast1);
 
     final ASTCDCompilationUnit ast2 =
-        parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     assertNotNull(ast2);
 
     // Create Output Path
