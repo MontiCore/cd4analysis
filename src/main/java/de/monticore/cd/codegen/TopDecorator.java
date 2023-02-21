@@ -4,20 +4,21 @@ package de.monticore.cd.codegen;
 import static de.monticore.generating.GeneratorEngine.existsHandwrittenClass;
 import static de.se_rwth.commons.Names.constructQualifiedName;
 
+import com.google.common.collect.Lists;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdbasis._symboltable.CDPackageSymbol;
-import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.ICDBasisScope;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.io.paths.MCPath;
-import de.monticore.symboltable.IArtifactScope;
-import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.umlmodifier._ast.ASTModifier;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TopDecorator {
 
@@ -30,11 +31,18 @@ public class TopDecorator {
 
   protected final MCPath hwPath;
 
+  protected Map<ASTCDType, String> nameMap = new HashMap();
+
   public TopDecorator(MCPath hwPath) {
     this.hwPath = hwPath;
   }
 
   public ASTCDCompilationUnit decorate(final ASTCDCompilationUnit compUnit) {
+    CD4CodeTraverser traverser = CD4CodeMill.traverser();
+    DetermineNameVisitor nameVisitor = new DetermineNameVisitor();
+    traverser.add4CDBasis(nameVisitor);
+    traverser.add4CDInterfaceAndEnum(nameVisitor);
+    compUnit.accept(traverser);
     compUnit.getCDDefinition().getCDClassesList().stream()
         .filter(
             cdClass -> existsHandwrittenClass(hwPath, determineQualifiedName(cdClass, compUnit)))
@@ -55,25 +63,11 @@ public class TopDecorator {
 
   protected String determineQualifiedName(
       ASTCDType astcdtype, ASTCDCompilationUnit astcdCompilationUnit) {
-    List<String> packagesNames = new ArrayList<>();
-    CDTypeSymbol typeSymbol = astcdtype.getSymbol();
-    ICDBasisScope scope = typeSymbol.getEnclosingScope();
-    while (scope != null) {
-      if (scope.isPresentSpanningSymbol()) {
-        IScopeSpanningSymbol symbol = scope.getSpanningSymbol();
-        if (symbol instanceof CDPackageSymbol) {
-          packagesNames.add(0, symbol.getName());
-        }
-      } else if (scope instanceof IArtifactScope) {
-        packagesNames.add(0, scope.getName().toLowerCase());
-        packagesNames.add(0, ((IArtifactScope) scope).getPackageName());
-      }
-      scope = scope.getEnclosingScope();
-    }
-    if (packagesNames.isEmpty()) {
+    String packageName = nameMap.get(astcdtype);
+    if (packageName.isEmpty()) {
       return constructQualifiedName(astcdCompilationUnit.getCDPackageList(), astcdtype.getName());
     }
-    return constructQualifiedName(packagesNames, astcdtype.getName());
+    return constructQualifiedName(Lists.newArrayList(packageName), astcdtype.getName());
   }
 
   protected void applyTopMechanism(ASTCDClass cdClass) {
@@ -99,5 +93,35 @@ public class TopDecorator {
 
   protected void makeAbstract(ASTModifier modifier) {
     modifier.setAbstract(true);
+  }
+
+  protected class DetermineNameVisitor implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
+
+    protected String packageName = "";
+
+    @Override
+    public void visit(ASTCDPackage node) {
+      packageName = node.getName();
+    }
+
+    @Override
+    public void endVisit(ASTCDPackage node) {
+      packageName = "";
+    }
+
+    @Override
+    public void visit(ASTCDClass node) {
+      nameMap.put(node, packageName);
+    }
+
+    @Override
+    public void visit(ASTCDInterface node) {
+      nameMap.put(node, packageName);
+    }
+
+    @Override
+    public void visit(ASTCDEnum node) {
+      nameMap.put(node, packageName);
+    }
   }
 }
