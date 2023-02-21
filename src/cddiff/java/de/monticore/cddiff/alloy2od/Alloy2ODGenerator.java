@@ -422,13 +422,13 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Get left name
-    String lObj = CDDiffUtil.unescape2Name(sourceName.replaceAll("[$]", ""));
+    String lObj = CDDiffUtil.unescape2Name(sourceName.replaceAll("[$]", "__"));
 
     // Get link name
     String link = a.replaceAll("[$.*]\\d*", "");
 
     // Get right name
-    String rObj = CDDiffUtil.unescape2Name(targetName.replaceAll("[$]", ""));
+    String rObj = CDDiffUtil.unescape2Name(targetName.replaceAll("[$]", "__"));
 
     // Generate output
     od.append("link ");
@@ -510,7 +510,7 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove $ from o to get name
-    String name = CDDiffUtil.unescape2Name(o.toString().replaceAll("[$]", ""));
+    String name = CDDiffUtil.unescape2Name(o.toString().replaceAll("[$]", "__"));
 
     // Remove $ and numbers after it to get type
     String type = CDDiffUtil.unescape2Type(o.toString().replaceAll("[$]\\d*", ""));

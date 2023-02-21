@@ -5,8 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,12 +12,9 @@ import java.util.Optional;
 
 public class OD2CDMatcher {
 
-  protected final MCCollectionTypesFullPrettyPrinter typesPrinter =
-      new MCCollectionTypesFullPrettyPrinter(new IndentPrinter());
+  protected final ClassMatcher classMatcher = new ClassMatcher();
 
-  protected final ClassMatcher classMatcher = new ClassMatcher(typesPrinter);
-
-  protected final AssociationsMatcher associationsMatcher = new AssociationsMatcher(typesPrinter);
+  protected final AssociationsMatcher associationsMatcher = new AssociationsMatcher();
 
   /**
    * Returns true if the od is within the baseCD semantics but not within the compareCD semantics.

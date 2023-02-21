@@ -11,6 +11,8 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -105,6 +107,74 @@ public class CombinedFunctionalityTest {
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("performanceSet")
+  public void testAlloyBasedOWDiff(String file1, String file2) {
+    String path = "src/tooltest/resources/Performance/";
+    CD4CodeParser parser = CD4CodeMill.parser();
+    try {
+      Optional<ASTCDCompilationUnit> cd1 = parser.parse(path + file1);
+      Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
+      Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
+
+      int diffsize = 5;
+
+      List<ASTODArtifact> witnesses =
+          CDDiff.computeAlloySemDiff(
+              cd1.get(), cd2.get(), diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+
+      for (ASTODArtifact od : witnesses) {
+        Assertions.assertTrue(
+            new OD2CDMatcher()
+                .checkIfDiffWitness(
+                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od));
+      }
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("performanceSet")
+  public void testReductionBasedOWDiff(String file1, String file2) {
+    String path = "src/tooltest/resources/Performance/";
+    CD4CodeParser parser = CD4CodeMill.parser();
+    try {
+      Optional<ASTCDCompilationUnit> cd1 = parser.parse(path + file1);
+      Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
+      Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
+
+      int diffsize = 5;
+
+      ASTCDCompilationUnit original1 = cd1.get().deepClone();
+      ASTCDCompilationUnit original2 = cd2.get().deepClone();
+
+      // reduction-based
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(cd1.get(), cd2.get());
+      List<ASTODArtifact> witnesses =
+          CDDiff.computeAlloySemDiff(
+              cd1.get(), cd2.get(), diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+
+      for (ASTODArtifact od : witnesses) {
+        Assertions.assertTrue(
+            new OD2CDMatcher()
+                .checkIfDiffWitness(
+                    CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od));
+      }
+      for (ASTODArtifact od : witnesses) {
+        Assertions.assertTrue(
+            new OD2CDMatcher()
+                .checkIfDiffWitness(
+                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od));
+      }
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());

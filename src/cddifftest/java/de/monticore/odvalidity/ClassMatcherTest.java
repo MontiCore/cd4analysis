@@ -4,8 +4,6 @@ package de.monticore.odvalidity;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -37,8 +35,7 @@ public class ClassMatcherTest {
 
   final ModelLoader loader = new ModelLoader();
 
-  final ClassMatcher classMatcher =
-      new ClassMatcher(new MCCollectionTypesFullPrettyPrinter(new IndentPrinter()));
+  final ClassMatcher classMatcher = new ClassMatcher();
 
   @Before
   public void initTests() {

@@ -6,6 +6,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -14,15 +15,11 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AssociationsMatcher {
-
-  MCBasicTypesFullPrettyPrinter pp;
-
   private final Map<String, Set<ASTCDAssociation>> srcMap;
 
   private final Map<String, Set<ASTCDAssociation>> targetMap;
@@ -35,8 +32,7 @@ public class AssociationsMatcher {
 
   private CDSemantics semantics;
 
-  public AssociationsMatcher(MCBasicTypesFullPrettyPrinter prettyPrinter) {
-    this.pp = prettyPrinter;
+  public AssociationsMatcher() {
     srcMap = new HashMap<>();
     targetMap = new HashMap<>();
   }
@@ -148,6 +144,10 @@ public class AssociationsMatcher {
    * constraints iff they are an instance of assoc.
    */
   private boolean checkTargetTypeAndCardinality(ASTODNamedObject object, ASTCDAssociation assoc) {
+
+    CDAssociationFullPrettyPrinter pp = new CDAssociationFullPrettyPrinter();
+    assoc.accept(pp.getTraverser());
+
     Set<ASTODLink> outgoingLinks =
         links.stream()
             .filter(link -> link.getLeftReferenceNames().contains(object.getName()))
@@ -187,13 +187,23 @@ public class AssociationsMatcher {
           numberOfTargets += link.getRightReferenceNames().size();
         }
       }
-      return checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets);
+      if (!checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets)) {
+        Log.println(
+            "[TARGET]: "
+                + numberOfTargets
+                + " violates "
+                + pp.prettyprint(targetSide.getCDCardinality()));
+        return false;
+      }
     }
     return true;
   }
 
   private boolean checkBidirLoop(
       ASTODNamedObject object, ASTCDAssociation assoc, Collection<ASTODLink> outgoingLinks) {
+
+    CDAssociationFullPrettyPrinter pp = new CDAssociationFullPrettyPrinter();
+    assoc.accept(pp.getTraverser());
 
     if (object.getODAttributeList().stream()
         .anyMatch(
@@ -249,6 +259,8 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
+        Log.println(
+            "[Right]: " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
         return false;
       }
     }
@@ -259,7 +271,10 @@ public class AssociationsMatcher {
           numberOfTargets += link.getRightReferenceNames().size();
         }
       }
-      return checkIfObjectNumberIsValid(assoc.getLeft().getCDCardinality(), numberOfTargets);
+      if (!checkIfObjectNumberIsValid(assoc.getLeft().getCDCardinality(), numberOfTargets)) {
+        Log.println("[Left]: " + numberOfTargets + " violates " + pp.prettyprint(assoc.getLeft()));
+        return false;
+      }
     }
     return true;
   }
@@ -269,6 +284,9 @@ public class AssociationsMatcher {
    * constraints.
    */
   private boolean checkSourceCardinality(ASTODNamedObject object, ASTCDAssociation assoc) {
+    CDAssociationFullPrettyPrinter pp = new CDAssociationFullPrettyPrinter();
+    assoc.accept(pp.getTraverser());
+
     Set<ASTODLink> incomingLinks =
         links.stream()
             .filter(
@@ -276,6 +294,14 @@ public class AssociationsMatcher {
                     link.getRightReferenceNames().contains(object.getName())
                         && matchLinkAgainstAssociation(link, assoc))
             .collect(Collectors.toSet());
+
+    if ((assoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            == assoc.getCDAssocDir().isDefinitiveNavigableRight())
+        && isInstanceOf(object, assoc.getLeftQualifiedName().getQName())
+        && isInstanceOf(object, assoc.getRightQualifiedName().getQName())) {
+      Log.println(object.getName());
+      return true;
+    }
 
     ASTCDAssocSide srcSide = getSourceSide4Object(object, assoc);
     if (srcSide.isPresentCDCardinality()) {
@@ -285,7 +311,10 @@ public class AssociationsMatcher {
           numberOfTargets += link.getLeftReferenceNames().size();
         }
       }
-      return checkIfObjectNumberIsValid(srcSide.getCDCardinality(), numberOfTargets);
+      if (!checkIfObjectNumberIsValid(srcSide.getCDCardinality(), numberOfTargets)) {
+        Log.println("[SRC]: " + numberOfTargets + " violates " + pp.prettyprint(srcSide));
+        return false;
+      }
     }
     return true;
   }

@@ -7,8 +7,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,7 +43,7 @@ public class AssociationsMatcherTest {
     CD4CodeMill.reset();
     CD4CodeMill.init();
 
-    matcher = new AssociationsMatcher(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()));
+    matcher = new AssociationsMatcher();
   }
 
   void loadModels(String odName, String cdName) throws FileNotFoundException {

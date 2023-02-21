@@ -19,7 +19,6 @@ import de.monticore.literals.mccommonliterals._ast.ASTStringLiteral;
 import de.monticore.odattribute._ast.ASTODList;
 import de.monticore.odbasis._ast.*;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
-import de.monticore.types.prettyprint.MCCollectionTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -28,17 +27,11 @@ public class ClassMatcher {
   // TODO ODMapElement in attributes https://github
   // .com/MontiCore/object-diagram/blob/dev/src/main/grammars/de/monticore/ODAttribute.mc4
 
-  private final MCCollectionTypesFullPrettyPrinter pp;
-
   protected ASTODArtifact od;
 
   protected ASTCDCompilationUnit cd;
 
   protected ICD4CodeArtifactScope scope;
-
-  public ClassMatcher(MCCollectionTypesFullPrettyPrinter pp) {
-    this.pp = pp;
-  }
 
   /**
    * Checks whether all objects are valid in CD

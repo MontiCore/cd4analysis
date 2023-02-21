@@ -43,7 +43,14 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
         + System.lineSeparator()
         + "fact GetConsistency {"
         + System.lineSeparator()
-        + "all src: Obj | all q : FName | some src.get[q]  => {{src.get[q] in EnumVal and {one e:Enum | ObjAttrib[src.type.inst,q,e.values]}} or { src.get[q] in Val and {one v:Val | ObjAttrib[src.type.inst,q,v]}} or {src.get[q] in Obj and {some target : Type | all o : src.type.inst | o.get[q] in target.inst}}}"
+        + "all src: Obj | all q : FName | some src.get[q]  => {"
+        + System.lineSeparator()
+        + "  {src.get[q] in EnumVal and {one e:Enum | ObjAttrib[src.type.inst,q,e.values]}} "
+        + System.lineSeparator()
+        + "  or { src.get[q] in Val and {one v:Val | ObjAttrib[src.type.inst,q,v]}} "
+        + System.lineSeparator()
+        + "  or {src.get[q] in Obj and {some target : Type | all o : src.type.inst | o.get[q] in "
+        + "target.inst}}}"
         + System.lineSeparator()
         + "}"
         + System.lineSeparator()
