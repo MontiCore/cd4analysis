@@ -52,6 +52,9 @@ public class CombinedFunctionalityTest {
     return optCdAST.get();
   }
 
+  /**
+   * Fails in GitLab pipeline for unknown reason; could not reproduce failure locally.
+   */
   @Disabled
   @Test
   public void testMaCoCo() {
@@ -77,6 +80,9 @@ public class CombinedFunctionalityTest {
         CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
   }
 
+  /**
+   * Disabled for GitLab pipeline.
+   */
   @Disabled
   @ParameterizedTest
   @MethodSource("performanceSet")

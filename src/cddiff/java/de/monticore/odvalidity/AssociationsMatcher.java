@@ -77,7 +77,7 @@ public class AssociationsMatcher {
             .noneMatch(assoc -> matchLinkAgainstAssociation(link, assoc))) {
           Log.println(
               String.format(
-                  "[Conflict] No association found for link "
+                  "[CONFLICT] No association found for link "
                       + link.getLeftReferenceNames()
                       + " -> ("
                       + link.getODLinkRightSide().getRole()
@@ -130,7 +130,7 @@ public class AssociationsMatcher {
                         && matchLinkAgainstAssociation(otherLink, assoc))) {
           Log.println(
               String.format(
-                  "[Conflict] No counterpart found for link %s -> (%s) %s",
+                  "[CONFLICT] No counterpart found for link %s -> (%s) %s",
                   leftObject, link.getODLinkRightSide().getRole(), rightObject));
           return false;
         }
@@ -158,7 +158,6 @@ public class AssociationsMatcher {
             == assoc.getCDAssocDir().isDefinitiveNavigableRight())
         && isInstanceOf(object, assoc.getLeftQualifiedName().getQName())
         && isInstanceOf(object, assoc.getRightQualifiedName().getQName())) {
-      Log.println(object.getName());
       return checkBidirLoop(object, assoc, outgoingLinks);
     }
 
@@ -176,7 +175,8 @@ public class AssociationsMatcher {
                     && !link.getRightReferenceNames().stream()
                         .allMatch(objName -> isInstanceOf(getObject(objName).get(), targetType)))) {
       Log.println(
-          String.format("[Type Conflict] %s -> (%s) %s", object.getName(), targetRole, targetType));
+          String.format("[TYPE CONFLICT]: %s -> (%s) %s", object.getName(), targetRole,
+              targetType));
       return false;
     }
     if (targetSide.isPresentCDCardinality()) {
@@ -189,7 +189,7 @@ public class AssociationsMatcher {
       }
       if (!checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets)) {
         Log.println(
-            "[TARGET]: "
+            "[TARGET] "
                 + numberOfTargets
                 + " violates "
                 + pp.prettyprint(targetSide.getCDCardinality()));
@@ -260,7 +260,7 @@ public class AssociationsMatcher {
       }
       if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
         Log.println(
-            "[Right]: " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
+            "[RIGHT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
         return false;
       }
     }
@@ -272,7 +272,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getLeft().getCDCardinality(), numberOfTargets)) {
-        Log.println("[Left]: " + numberOfTargets + " violates " + pp.prettyprint(assoc.getLeft()));
+        Log.println("[LEFT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getLeft()));
         return false;
       }
     }
@@ -299,7 +299,6 @@ public class AssociationsMatcher {
             == assoc.getCDAssocDir().isDefinitiveNavigableRight())
         && isInstanceOf(object, assoc.getLeftQualifiedName().getQName())
         && isInstanceOf(object, assoc.getRightQualifiedName().getQName())) {
-      Log.println(object.getName());
       return true;
     }
 
@@ -312,7 +311,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(srcSide.getCDCardinality(), numberOfTargets)) {
-        Log.println("[SRC]: " + numberOfTargets + " violates " + pp.prettyprint(srcSide));
+        Log.println("[SRC] " + numberOfTargets + " violates " + pp.prettyprint(srcSide));
         return false;
       }
     }
