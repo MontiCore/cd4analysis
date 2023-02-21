@@ -1,10 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
-import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP {
+
+  // TODO: eigentlich sollte das hier überflüssig sein
   @Override
   public void setEnclosingScope(ICDBasisScope enclosingScope) {
     super.setEnclosingScope(enclosingScope);
@@ -16,7 +18,8 @@ public class ASTCDAttribute extends ASTCDAttributeTOP {
    *
    * @return The attribute type as String
    */
+  @Deprecated
   public String printType() {
-    return new CDBasisFullPrettyPrinter().prettyprint(mCType);
+    return new CD4CodeFullPrettyPrinter().prettyprint(mCType);
   }
 }
