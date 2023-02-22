@@ -1,0 +1,11 @@
+package examples.cd;
+
+classdiagram EAv1 {
+	
+	class Employee;
+	
+	class Address;
+	
+	association livesIn [1] Employee (liver) -- (address) Address [1];
+  
+}

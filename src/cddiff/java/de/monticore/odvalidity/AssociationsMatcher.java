@@ -175,24 +175,23 @@ public class AssociationsMatcher {
                     && !link.getRightReferenceNames().stream()
                         .allMatch(objName -> isInstanceOf(getObject(objName).get(), targetType)))) {
       Log.println(
-          String.format("[TYPE CONFLICT]: %s -> (%s) %s", object.getName(), targetRole,
-              targetType));
+          String.format(
+              "[TYPE CONFLICT]: %s -> (%s) %s", object.getName(), targetRole, targetType));
       return false;
     }
     if (targetSide.isPresentCDCardinality()) {
       long numberOfTargets = 0;
       for (ASTODLink link : outgoingLinks) {
-        if (matchLinkAgainstAssociation(link, assoc)
-            && link.getODLinkRightSide().getRole().equals(targetRole)) {
+        if (matchLinkAgainstAssociation(link, assoc)) {
           numberOfTargets += link.getRightReferenceNames().size();
         }
       }
       if (!checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets)) {
         Log.println(
             "[TARGET] "
-                + numberOfTargets
+                + numberOfTargets + " of " + outgoingLinks.size()
                 + " violates "
-                + pp.prettyprint(targetSide.getCDCardinality()));
+                + pp.prettyprint(targetSide));
         return false;
       }
     }
@@ -259,8 +258,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
-        Log.println(
-            "[RIGHT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
+        Log.println("[RIGHT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
         return false;
       }
     }
@@ -466,20 +464,21 @@ public class AssociationsMatcher {
   private boolean matchTypesAndRoles(
       ASTODLink link, String srcType, String srcRole, String targetRole, String targetType) {
 
-
     if (link.getLeftReferenceNames().stream()
-        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(),srcType))){
+        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(), srcType))) {
       return false;
     }
 
+    /*
     // if left role-name of link is present it should match srcRole
     if (link.getODLinkLeftSide().isPresentRole()
         && !link.getODLinkLeftSide().getRole().equals(srcRole)) {
       return false;
     }
+     */
 
     if (link.getRightReferenceNames().stream()
-        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(),targetType))) {
+        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(), targetType))) {
       return false;
     }
 

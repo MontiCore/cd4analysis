@@ -11,8 +11,10 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -52,9 +54,7 @@ public class CombinedFunctionalityTest {
     return optCdAST.get();
   }
 
-  /**
-   * Fails in GitLab pipeline for unknown reason; could not reproduce failure locally.
-   */
+  /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
   @Disabled
   @Test
   public void testMaCoCo() {
@@ -80,9 +80,7 @@ public class CombinedFunctionalityTest {
         CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
   }
 
-  /**
-   * Disabled for GitLab pipeline.
-   */
+  /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
   @MethodSource("performanceSet")
@@ -137,10 +135,11 @@ public class CombinedFunctionalityTest {
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
 
     } catch (IOException e) {
@@ -172,16 +171,91 @@ public class CombinedFunctionalityTest {
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
+      }
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("cddiffSet")
+  public void testAlloyBasedOWDiff2(String file1, String file2) {
+    String path = "src/tooltest/resources/cddiff/";
+    CD4CodeParser parser = CD4CodeMill.parser();
+    try {
+      Optional<ASTCDCompilationUnit> cd1 = parser.parse(path + file1);
+      Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
+      Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
+
+      int diffsize = 3;
+
+      List<ASTODArtifact> witnesses =
+          CDDiff.computeAlloySemDiff(
+              cd1.get(), cd2.get(), diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+
+      for (ASTODArtifact od : witnesses) {
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
+      }
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("cddiffSet")
+  public void testReductionBasedOWDiff2(String file1, String file2) {
+    String path = "src/tooltest/resources/cddiff/";
+    CD4CodeParser parser = CD4CodeMill.parser();
+    try {
+      Optional<ASTCDCompilationUnit> cd1 = parser.parse(path + file1);
+      Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
+      Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
+
+      int diffsize = 5;
+
+      ASTCDCompilationUnit original1 = cd1.get().deepClone();
+      ASTCDCompilationUnit original2 = cd2.get().deepClone();
+
+      // reduction-based
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(cd1.get(), cd2.get());
+      List<ASTODArtifact> witnesses =
+          CDDiff.computeAlloySemDiff(
+              cd1.get(), cd2.get(), diffsize, 5, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+
+      for (ASTODArtifact od : witnesses) {
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(
+                CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
+      }
+
+      for (ASTODArtifact od : witnesses) {
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
 
     } catch (IOException e) {
@@ -196,5 +270,16 @@ public class CombinedFunctionalityTest {
         Arguments.of("15A.cd", "15B.cd"),
         Arguments.of("20A.cd", "20B.cd"),
         Arguments.of("25A.cd", "25B.cd"));
+  }
+
+  public static Stream<Arguments> cddiffSet() {
+    return Stream.of(
+        Arguments.of("DEv2.cd", "DEv1.cd"),
+        Arguments.of("EAv2.cd", "EAv1.cd"),
+        Arguments.of("EMTv1.cd", "EMTv2.cd"),
+        Arguments.of("LibraryV2.cd", "LibraryV1.cd"),
+        Arguments.of("LibraryV3.cd", "LibraryV2.cd"),
+        Arguments.of("LibraryV4.cd", "LibraryV3.cd"),
+        Arguments.of("LibraryV5.cd", "LibraryV4.cd"));
   }
 }

@@ -1,0 +1,23 @@
+package examples.cd;
+
+import java.util.Date;
+
+classdiagram EMTv1 {
+	
+	class Emp {
+		PosKnd kind;
+	}
+  
+	class Mgr;
+	
+	class Tsk {
+		Date startDate;
+	}
+	
+	enum PosKnd { fullTime, partTime; }
+	
+	association Management [*] Emp (mng) -> (mngBy) Mgr [0..1];
+
+	association Tasking [1] Emp (doneBy) -- (worksOn) Tsk [*];
+	
+}
