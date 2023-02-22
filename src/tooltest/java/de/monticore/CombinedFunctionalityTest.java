@@ -55,9 +55,7 @@ public class CombinedFunctionalityTest {
     return optCdAST.get();
   }
 
-  /**
-   * Fails in GitLab pipeline for unknown reason; could not reproduce failure locally.
-   */
+  /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
   @Disabled
   @Test
   public void testMaCoCo() {
@@ -83,9 +81,7 @@ public class CombinedFunctionalityTest {
         CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
   }
 
-  /**
-   * Disabled for GitLab pipeline.
-   */
+  /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
   @MethodSource("performanceSet")
@@ -209,10 +205,8 @@ public class CombinedFunctionalityTest {
               cd1.get(), cd2.get(), diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
 
       for (ASTODArtifact od : witnesses) {
-        if(!
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od)){
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -246,10 +240,9 @@ public class CombinedFunctionalityTest {
               cd1.get(), cd2.get(), diffsize, 5, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
 
       for (ASTODArtifact od : witnesses) {
-        if (!
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)){
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(
+                CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
           cd2.get().accept(pp.getTraverser());

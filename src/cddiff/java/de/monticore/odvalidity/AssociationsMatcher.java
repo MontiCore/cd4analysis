@@ -175,8 +175,8 @@ public class AssociationsMatcher {
                     && !link.getRightReferenceNames().stream()
                         .allMatch(objName -> isInstanceOf(getObject(objName).get(), targetType)))) {
       Log.println(
-          String.format("[TYPE CONFLICT]: %s -> (%s) %s", object.getName(), targetRole,
-              targetType));
+          String.format(
+              "[TYPE CONFLICT]: %s -> (%s) %s", object.getName(), targetRole, targetType));
       return false;
     }
     if (targetSide.isPresentCDCardinality()) {
@@ -259,8 +259,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
-        Log.println(
-            "[RIGHT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
+        Log.println("[RIGHT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
         return false;
       }
     }
@@ -466,9 +465,8 @@ public class AssociationsMatcher {
   private boolean matchTypesAndRoles(
       ASTODLink link, String srcType, String srcRole, String targetRole, String targetType) {
 
-
     if (link.getLeftReferenceNames().stream()
-        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(),srcType))){
+        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(), srcType))) {
       return false;
     }
 
@@ -479,7 +477,7 @@ public class AssociationsMatcher {
     }
 
     if (link.getRightReferenceNames().stream()
-        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(),targetType))) {
+        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(), targetType))) {
       return false;
     }
 

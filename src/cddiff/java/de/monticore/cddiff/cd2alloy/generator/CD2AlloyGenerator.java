@@ -470,7 +470,6 @@ public class CD2AlloyGenerator {
       commonSigs.append(" => some Type_");
       commonSigs.append(className);
       commonSigs.append(".inst}").append(System.lineSeparator());
-
     }
 
     // Union of all type names
@@ -850,12 +849,22 @@ public class CD2AlloyGenerator {
       classFunctions.append(")]").append(System.lineSeparator());
 
       String name = CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName());
-      classFunctions.append("{ some ").append(name).append(" => some Type_").append(name).append(
-          "}").append(System.lineSeparator());
-      for (ASTCDType superType : superList){
+      classFunctions
+          .append("{ some ")
+          .append(name)
+          .append(" => some Type_")
+          .append(name)
+          .append("}")
+          .append(System.lineSeparator());
+      for (ASTCDType superType : superList) {
         String superName = CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName());
-        classFunctions.append("{ some ").append(name).append(" => some Type_").append(superName).append(
-            "}").append(System.lineSeparator());
+        classFunctions
+            .append("{ some ")
+            .append(name)
+            .append(" => some Type_")
+            .append(superName)
+            .append("}")
+            .append(System.lineSeparator());
       }
       classFunctions.append(System.lineSeparator());
     }
@@ -1055,7 +1064,7 @@ public class CD2AlloyGenerator {
     }
 
     // Alloy predicates for singleton classes
-    //todo: needs to be fixed
+    // todo: needs to be fixed
     for (ASTCDClass astcdClass : singletonClasses) {
       predicate
           .append("one ")

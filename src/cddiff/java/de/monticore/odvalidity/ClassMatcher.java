@@ -61,9 +61,9 @@ public class ClassMatcher {
       if (Semantic.isClosedWorld(semantics) && optClass.isEmpty()) {
         Log.println("[CONFLICT] Could not find class: " + objectType);
         return false;
-      } else if (optClass.isPresent() && (optClass.get().getModifier().isAbstract() || !isObjectValid4Class(obj,
-          optClass.get(),
-          semantics))) {
+      } else if (optClass.isPresent()
+          && (optClass.get().getModifier().isAbstract()
+              || !isObjectValid4Class(obj, optClass.get(), semantics))) {
         Log.println(
             String.format(
                 "[CONFLICT] Object %s is not valid for Class %s",
