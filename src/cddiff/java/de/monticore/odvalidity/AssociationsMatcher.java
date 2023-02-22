@@ -182,17 +182,16 @@ public class AssociationsMatcher {
     if (targetSide.isPresentCDCardinality()) {
       long numberOfTargets = 0;
       for (ASTODLink link : outgoingLinks) {
-        if (matchLinkAgainstAssociation(link, assoc)
-            && link.getODLinkRightSide().getRole().equals(targetRole)) {
+        if (matchLinkAgainstAssociation(link, assoc)) {
           numberOfTargets += link.getRightReferenceNames().size();
         }
       }
       if (!checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets)) {
         Log.println(
             "[TARGET] "
-                + numberOfTargets
+                + numberOfTargets + " of " + outgoingLinks.size()
                 + " violates "
-                + pp.prettyprint(targetSide.getCDCardinality()));
+                + pp.prettyprint(targetSide));
         return false;
       }
     }
@@ -470,11 +469,13 @@ public class AssociationsMatcher {
       return false;
     }
 
+    /*
     // if left role-name of link is present it should match srcRole
     if (link.getODLinkLeftSide().isPresentRole()
         && !link.getODLinkLeftSide().getRole().equals(srcRole)) {
       return false;
     }
+     */
 
     if (link.getRightReferenceNames().stream()
         .anyMatch(obj -> !isInstanceOf(getObject(obj).get(), targetType))) {

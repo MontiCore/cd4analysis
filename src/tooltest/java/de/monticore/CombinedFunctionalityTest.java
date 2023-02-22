@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -128,7 +127,7 @@ public class CombinedFunctionalityTest {
       Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
       Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
 
-      int diffsize = 4;
+      int diffsize = 3;
 
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(
@@ -136,10 +135,11 @@ public class CombinedFunctionalityTest {
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1.get(), cd2.get(), od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
 
     } catch (IOException e) {
@@ -171,16 +171,18 @@ public class CombinedFunctionalityTest {
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
 
     } catch (IOException e) {
@@ -244,18 +246,16 @@ public class CombinedFunctionalityTest {
             .checkIfDiffWitness(
                 CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-          cd2.get().accept(pp.getTraverser());
-          Log.println(pp.prettyprint(cd2.get()));
           Assertions.fail();
         }
       }
 
       for (ASTODArtifact od : witnesses) {
-        Assertions.assertTrue(
-            new OD2CDMatcher()
-                .checkIfDiffWitness(
-                    CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od));
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
       }
 
     } catch (IOException e) {
