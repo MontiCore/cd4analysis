@@ -1,0 +1,11 @@
+package examples.cd;
+
+classdiagram DEv2 {
+	
+	class Department;
+  
+	class Employee;
+	
+	association Workplace [*] Department (department) -> (has) Employee [*];
+
+}

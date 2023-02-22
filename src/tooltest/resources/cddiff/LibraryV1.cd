@@ -1,0 +1,77 @@
+package examples.cd;
+
+import java.util.Date;
+import java.lang.String;
+
+classdiagram LibraryV1 {
+
+	abstract class Item {
+		String title;
+		//Publisher publisher;
+		Date published;
+		Language lang;
+	}
+	
+	class Book extends Item {
+		int numOfPages;
+		String isbn;
+		int edition;
+	}
+	
+	class Map extends Item {
+		String area;
+		Date date;
+		//Publisher publisher;
+	}
+	
+	class NewsPaper extends Book {
+		
+	}
+	
+	class Publisher {
+		String name;
+		String address;
+		Date estDate;
+		String phoneNumber;
+	}
+	
+	class Copy {
+		int id;
+		BookCondition cond;
+		AvailabilityState state;
+		Medium medium; 		
+	}
+	
+	enum BookCondition { new, used, broken; }
+	enum Medium {HardCover, PaperBack, EBook, AudioCD;}
+	enum AvailabilityState {available, taken, missing; }
+	enum Language {German, English, French, Italian, Arabic, Russian, Dutch; }
+	
+	class Library;
+	
+	abstract class Person {
+		String name;
+		String address;
+	}
+	
+	class Reader extends Person;
+	
+	class Author extends Person;
+  
+	class Loan {
+		Date startDate;
+		Date returnDate;
+		int numOfExtensions;
+		List<String> comment;
+	}
+	
+	association Copies [*] Book (isOf) -> (hasCopy) Copy [1..*];
+	association Loans [1] Copy (borrowedCopy) <-> (loaned) Loan [*];
+	association Loaner [1] Reader (loans) <-> (readersLoan) Loan [*];
+	association AuthorsOfBook [1..*] Author (writtenBy) <-> (authorOf) Book [1..*];
+	
+	association ReaderOfLibrary [*] Reader (readers) <-> (knownLibraries) Library [1..*];
+	association CopiesOfLibrary [*] Copy (ownedCopies) <-> (copiesHome) Library [1];
+	
+	association Publishing [*] Item (publish) -> (publishedBy) Publisher [1];
+}

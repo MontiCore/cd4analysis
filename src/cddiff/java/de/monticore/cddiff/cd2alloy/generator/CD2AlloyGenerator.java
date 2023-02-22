@@ -462,9 +462,15 @@ public class CD2AlloyGenerator {
     // Output generation
     commonSigs.append("// U5: Common types ").append(System.lineSeparator());
     for (String className : classNameUnion) {
-      commonSigs.append("one sig Type_");
+      commonSigs.append("lone sig Type_");
       commonSigs.append(className);
       commonSigs.append(" extends Type {}").append(System.lineSeparator());
+      commonSigs.append("fact{some Type_");
+      commonSigs.append(className);
+      commonSigs.append(" => some Type_");
+      commonSigs.append(className);
+      commonSigs.append(".inst}").append(System.lineSeparator());
+
     }
 
     // Union of all type names
@@ -842,6 +848,16 @@ public class CD2AlloyGenerator {
       // Remove last '+'
       classFunctions.delete(classFunctions.length() - 3, classFunctions.length());
       classFunctions.append(")]").append(System.lineSeparator());
+
+      String name = CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName());
+      classFunctions.append("{ some ").append(name).append(" => some Type_").append(name).append(
+          "}").append(System.lineSeparator());
+      for (ASTCDType superType : superList){
+        String superName = CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName());
+        classFunctions.append("{ some ").append(name).append(" => some Type_").append(superName).append(
+            "}").append(System.lineSeparator());
+      }
+      classFunctions.append(System.lineSeparator());
     }
 
     return classFunctions.toString();
@@ -1039,6 +1055,7 @@ public class CD2AlloyGenerator {
     }
 
     // Alloy predicates for singleton classes
+    //todo: needs to be fixed
     for (ASTCDClass astcdClass : singletonClasses) {
       predicate
           .append("one ")

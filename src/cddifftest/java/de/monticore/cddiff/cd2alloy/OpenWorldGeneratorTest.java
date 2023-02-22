@@ -81,4 +81,26 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
     // Call generator
     OpenWorldGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile(), true);
   }
+
+  @Test
+  public void testLibraryV4V3() {
+    final ASTCDCompilationUnit ast1 =
+        parseModel("src/tooltest/resources/cddiff/LibraryV4.cd");
+    assertNotNull(ast1);
+
+    final ASTCDCompilationUnit ast2 =
+        parseModel("src/tooltest/resources/cddiff/LibraryV3.cd");
+    assertNotNull(ast2);
+
+    // Create Output Path
+    final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy4");
+
+    // Initialize set of asts
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    asts.add(ast1);
+    asts.add(ast2);
+
+    // Call generator
+    OpenWorldGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile(), true);
+  }
 }

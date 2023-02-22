@@ -150,11 +150,15 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
         classFunctions
-            .append("Type_")
+            .append("{ some Type_")
+            .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+            .append(" => some Type_")
+            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
+            .append(" and Type_")
             .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
             .append(" in Type_")
             .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
-            .append(".super")
+            .append(".super}")
             .append(System.lineSeparator());
       }
     }
@@ -179,11 +183,15 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
         classFunctions
-            .append("Type_")
+            .append("{ some Type_")
+            .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+            .append(" => some Type_")
+            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
+            .append(" and Type_")
             .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
             .append(" in Type_")
             .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
-            .append(".super")
+            .append(".super}")
             .append(System.lineSeparator());
       }
     }

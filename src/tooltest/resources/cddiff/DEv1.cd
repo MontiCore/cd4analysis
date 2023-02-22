@@ -1,0 +1,11 @@
+package examples.cd;
+
+classdiagram DEv1 {
+	
+	class Department;
+  
+	class Employee;
+	
+	composition Workplace [1] Department (department) -> (has) Employee [*];
+
+}

@@ -1,0 +1,12 @@
+package examples.cd;
+
+classdiagram EAv2 {
+	
+	abstract class Person;
+	
+	class Employee extends Person;
+	
+	class Address;
+	
+	association livesIn [1] Person (liver) -- (address) Address [1];
+}
