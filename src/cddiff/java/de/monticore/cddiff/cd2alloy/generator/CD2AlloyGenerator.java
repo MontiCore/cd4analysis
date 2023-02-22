@@ -1069,6 +1069,8 @@ public class CD2AlloyGenerator {
       predicate
           .append("one ")
           .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+          .append("SubsCD")
+          .append(cdDefinition.getName())
           .append(System.lineSeparator());
     }
 

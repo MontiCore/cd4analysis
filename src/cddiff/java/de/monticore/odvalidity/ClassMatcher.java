@@ -52,6 +52,16 @@ public class ClassMatcher {
     // Set all parameters
     List<ASTODObject> odObjects = ODHelper.getAllObjects(od.getObjectDiagram());
 
+    Set<ASTODObject> objectSet = new HashSet<>(odObjects);
+
+    if (cd.getCDDefinition().getCDClassesList().stream().filter(c -> c.getModifier().isPresentStereotype()).filter(c -> c.getModifier().getStereotype().contains("singleton")).anyMatch(c -> objectSet.stream().filter(o -> isInstanceOf(o,c)).count()!=1)){
+      return false;
+    }
+
+    if (cd.getCDDefinition().getCDInterfacesList().stream().filter(i -> i.getModifier().isPresentStereotype()).filter(i -> i.getModifier().getStereotype().contains("singleton")).anyMatch(i -> objectSet.stream().filter(o -> isInstanceOf(o,i)).count()!=1)){
+      return false;
+    }
+
     // Check all objects from OD if they can exist in the CD
     for (ASTODObject obj : odObjects) {
 
@@ -92,6 +102,20 @@ public class ClassMatcher {
     }
 
     return true;
+  }
+
+  /** Check if object is instance of type. */
+  private boolean isInstanceOf(ASTODObject object, ASTCDType type) {
+
+    // check the intanceof-stereotype iff semantics is multi-instance open-world
+    if (Semantic.isMultiInstance(semantics)) {
+      Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(object);
+      if (optSuper.isPresent()) {
+        return optSuper.get().contains(type.getSymbol().getFullName());
+      }
+    }
+    return CDInheritanceHelper.isSuperOf(type.getSymbol().getFullName(), object.getMCObjectType().printType(),
+        scope);
   }
 
   /**

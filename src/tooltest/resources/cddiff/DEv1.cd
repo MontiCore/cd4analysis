@@ -2,7 +2,7 @@ package examples.cd;
 
 classdiagram DEv1 {
 	
-	class Department;
+	<<singleton>> class Department;
   
 	class Employee;
 	
