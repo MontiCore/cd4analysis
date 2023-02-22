@@ -189,7 +189,9 @@ public class AssociationsMatcher {
       if (!checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets)) {
         Log.println(
             "[TARGET] "
-                + numberOfTargets + " of " + outgoingLinks.size()
+                + numberOfTargets
+                + " of "
+                + outgoingLinks.size()
                 + " violates "
                 + pp.prettyprint(targetSide));
         return false;

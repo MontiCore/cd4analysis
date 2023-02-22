@@ -210,7 +210,8 @@ public class CombinedFunctionalityTest {
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
+            .checkIfDiffWitness(
+                CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1.get(), cd2.get(), od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -312,8 +313,7 @@ public class CombinedFunctionalityTest {
       int diffsize = 3;
 
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(
-              cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
@@ -351,8 +351,7 @@ public class CombinedFunctionalityTest {
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(
-                CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1, cd2, od)) {
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }

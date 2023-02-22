@@ -54,11 +54,17 @@ public class ClassMatcher {
 
     Set<ASTODObject> objectSet = new HashSet<>(odObjects);
 
-    if (cd.getCDDefinition().getCDClassesList().stream().filter(c -> c.getModifier().isPresentStereotype()).filter(c -> c.getModifier().getStereotype().contains("singleton")).anyMatch(c -> objectSet.stream().filter(o -> isInstanceOf(o,c)).count()!=1)){
+    if (cd.getCDDefinition().getCDClassesList().stream()
+        .filter(c -> c.getModifier().isPresentStereotype())
+        .filter(c -> c.getModifier().getStereotype().contains("singleton"))
+        .anyMatch(c -> objectSet.stream().filter(o -> isInstanceOf(o, c)).count() != 1)) {
       return false;
     }
 
-    if (cd.getCDDefinition().getCDInterfacesList().stream().filter(i -> i.getModifier().isPresentStereotype()).filter(i -> i.getModifier().getStereotype().contains("singleton")).anyMatch(i -> objectSet.stream().filter(o -> isInstanceOf(o,i)).count()!=1)){
+    if (cd.getCDDefinition().getCDInterfacesList().stream()
+        .filter(i -> i.getModifier().isPresentStereotype())
+        .filter(i -> i.getModifier().getStereotype().contains("singleton"))
+        .anyMatch(i -> objectSet.stream().filter(o -> isInstanceOf(o, i)).count() != 1)) {
       return false;
     }
 
@@ -114,8 +120,8 @@ public class ClassMatcher {
         return optSuper.get().contains(type.getSymbol().getFullName());
       }
     }
-    return CDInheritanceHelper.isSuperOf(type.getSymbol().getFullName(), object.getMCObjectType().printType(),
-        scope);
+    return CDInheritanceHelper.isSuperOf(
+        type.getSymbol().getFullName(), object.getMCObjectType().printType(), scope);
   }
 
   /**
