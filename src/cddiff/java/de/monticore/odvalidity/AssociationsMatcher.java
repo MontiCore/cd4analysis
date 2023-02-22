@@ -415,17 +415,19 @@ public class AssociationsMatcher {
   /** Checks if link matches association. */
   private boolean matchLinkAgainstAssociation(ASTODLink link, ASTCDAssociation association) {
     String leftRole = CDDiffUtil.inferRole(association.getLeft());
+    String leftType = association.getLeftQualifiedName().getQName();
     String rightRole = CDDiffUtil.inferRole(association.getRight());
+    String rightType = association.getRightQualifiedName().getQName();
 
     if (association.getCDAssocDir().isDefinitiveNavigableRight()
         && !association.getCDAssocDir().isDefinitiveNavigableLeft()) {
-      return matchTypesAndRoles(link, association, leftRole, rightRole);
+      return matchTypesAndRoles(link, leftType, leftRole, rightRole, rightType);
     } else if (association.getCDAssocDir().isDefinitiveNavigableLeft()
         && !association.getCDAssocDir().isDefinitiveNavigableRight()) {
-      return matchTypesAndRoles(link, association, rightRole, leftRole);
+      return matchTypesAndRoles(link, rightType, rightRole, leftRole, leftType);
     } else {
-      return matchTypesAndRoles(link, association, leftRole, rightRole)
-          || matchTypesAndRoles(link, association, rightRole, leftRole);
+      return matchTypesAndRoles(link, leftType, leftRole, rightRole, rightType)
+          || matchTypesAndRoles(link, rightType, rightRole, leftRole, leftType);
     }
   }
 
@@ -449,6 +451,35 @@ public class AssociationsMatcher {
 
     if (link.getRightReferenceNames().stream()
         .anyMatch(obj -> !targetMap.get(obj).contains(association))) {
+      return false;
+    }
+
+    // right role-name of link should match targetRole
+    return link.getODLinkRightSide().isPresentRole()
+        && link.getODLinkRightSide().getRole().equals(targetRole);
+  }
+
+  /**
+   * Check if link-objects are instances of association types && srcRole == link.leftRole &&
+   * targetRole == link.rightRole.
+   */
+  private boolean matchTypesAndRoles(
+      ASTODLink link, String srcType, String srcRole, String targetRole, String targetType) {
+
+
+    if (link.getLeftReferenceNames().stream()
+        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(),srcType))){
+      return false;
+    }
+
+    // if left role-name of link is present it should match srcRole
+    if (link.getODLinkLeftSide().isPresentRole()
+        && !link.getODLinkLeftSide().getRole().equals(srcRole)) {
+      return false;
+    }
+
+    if (link.getRightReferenceNames().stream()
+        .anyMatch(obj -> !isInstanceOf(getObject(obj).get(),targetType))) {
       return false;
     }
 

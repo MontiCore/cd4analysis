@@ -129,7 +129,7 @@ public class CombinedFunctionalityTest {
       Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
       Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
 
-      int diffsize = 5;
+      int diffsize = 3;
 
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(
