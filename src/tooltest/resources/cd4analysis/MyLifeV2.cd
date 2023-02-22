@@ -1,0 +1,27 @@
+package monticore;
+
+import MyBasics;
+import java.lang.String;
+import java.util.List;
+import java.util.Date;
+
+classdiagram MyLife {
+  abstract class Person {
+    int age;
+    Date birthday;
+    List<String> nickNames;
+  }
+  class PhoneNumber;
+  class Address;
+  package uni {
+    class Student extends Person {
+      StudentStatus status;
+      -> Address [1..*] {ordered};
+    }
+    class Grade;
+    enum StudentStatus { ENROLLED, FINISHED; }
+    composition Student -> Grade [*];
+    association phonebook uni.Student [String] -> PhoneNumber;
+  }
+  association [0..1] Person (parent) <-> (child) Person [*];
+}

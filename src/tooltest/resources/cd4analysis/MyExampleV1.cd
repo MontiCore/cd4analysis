@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram MyExample {
+  class Person {
+    int age;
+    java.lang.String surname;
+  }
+
+  association Person -> (friends) Person [*];
+}
