@@ -33,6 +33,8 @@ public class ClassMatcher {
 
   protected ICD4CodeArtifactScope scope;
 
+  protected CDSemantics semantics;
+
   /**
    * Checks whether all objects are valid in CD
    *
@@ -45,6 +47,7 @@ public class ClassMatcher {
     this.od = od;
     this.cd = cd;
     this.scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    this.semantics = semantics;
 
     // Set all parameters
     List<ASTODObject> odObjects = ODHelper.getAllObjects(od.getObjectDiagram());
@@ -413,12 +416,16 @@ public class ClassMatcher {
    * @param value Enumeration value
    */
   private boolean validateEnumValue(ASTCDEnum cdEnum, String value) {
-    for (var cdEnumMember : cdEnum.getCDEnumConstantList()) {
-      if (cdEnumMember.getName().equals(value)) {
-        return true;
+    if (Semantic.isClosedWorld(semantics)) {
+      for (var cdEnumMember : cdEnum.getCDEnumConstantList()) {
+        if (cdEnumMember.getName().equals(value)) {
+          return true;
+        }
       }
+      return false;
+    } else {
+      return true;
     }
-    return false;
   }
 
   /**

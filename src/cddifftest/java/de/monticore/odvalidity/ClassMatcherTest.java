@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -39,7 +40,7 @@ public class ClassMatcherTest {
 
   @Before
   public void initTests() {
-
+    CD4CodeMill.init();
     Log.enableFailQuick(false);
   }
 
@@ -48,7 +49,9 @@ public class ClassMatcherTest {
 
     reloadCD(classMatcherCDModelPath);
 
-    closedOpenWorldAssertion(enumFailingODModelPath, false);
+    simpleAssertion(enumFailingODModelPath, false, CDSemantics.SIMPLE_CLOSED_WORLD);
+
+    simpleAssertion(enumFailingODModelPath, true, CDSemantics.SIMPLE_OPEN_WORLD);
 
     closedOpenWorldAssertion(failingListODModelPath, false);
 
