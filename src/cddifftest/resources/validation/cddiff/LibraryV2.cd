@@ -4,6 +4,7 @@ import java.util.Date;
 import java.lang.String;
 
 /**
+    Library is not a singleton anymore.
     Bug was fixed where each Copy could previously belong 
     to * Books. It now belongs to exactly one Book.
 **/
@@ -51,7 +52,7 @@ classdiagram LibraryV2 {
     enum AvailabilityState {available, taken, missing; }
     enum Language {German, English, French, Italian, Arabic, Russian, Dutch; }
     
-    <<singleton>> class Library;
+    class Library;
     
     abstract class Person {
         String name;

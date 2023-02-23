@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import java.util.Optional;
 import java.util.Set;
 
@@ -56,4 +57,6 @@ public interface CDExpander {
   void matchDir(ASTCDAssociation src, ASTCDAssociation target);
 
   void matchDirInReverse(ASTCDAssociation src, ASTCDAssociation target);
+
+  void addImportStatement(ASTMCImportStatement imp);
 }

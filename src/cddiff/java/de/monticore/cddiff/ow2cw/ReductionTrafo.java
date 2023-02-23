@@ -18,6 +18,7 @@ import de.monticore.cddiff.ow2cw.expander.BasicExpander;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,8 @@ public class ReductionTrafo {
 
     new CD4CodeDirectCompositionTrafo().transform(first);
     new CD4CodeDirectCompositionTrafo().transform(second);
+
+    copyImportStatements(first, second);
 
     // handle association directions
     handleAssocDirections(first, second);
@@ -117,6 +120,14 @@ public class ReductionTrafo {
     noConflictSet.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
 
     expander2.addAssociationClones(noConflictSet);
+  }
+
+  private void copyImportStatements(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
+    Set<ASTMCImportStatement> imports = new HashSet<>(first.getMCImportStatementList());
+    imports.addAll(second.getMCImportStatementList());
+
+    FullExpander expander1 = new FullExpander(new VariableExpander(first));
+    FullExpander expander2 = new FullExpander(new VariableExpander(second));
   }
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {

@@ -12,12 +12,6 @@ classdiagram MyCompany {
     class Person extends Entity {
       Date birthday;
       List<String> nickNames;
-      -> Address [*] {ordered};
-    }
-    class Address {
-      String city;
-      String street;
-      int number;
     }
   }
   class Company extends Entity {

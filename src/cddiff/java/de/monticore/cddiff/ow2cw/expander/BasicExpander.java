@@ -16,6 +16,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
 import java.util.Set;
@@ -31,6 +32,14 @@ public class BasicExpander implements CDExpander {
 
   public ASTCDCompilationUnit getCD() {
     return cd;
+  }
+
+  @Override
+  public void addImportStatement(ASTMCImportStatement imp) {
+    if (cd.getMCImportStatementList().stream()
+        .noneMatch(i -> i.getQName().equals(imp.getQName()))) {
+      cd.getMCImportStatementList().add(imp);
+    }
   }
 
   /** add newClass as subclass to superclass */

@@ -12,11 +12,7 @@ classdiagram MyLife {
     List<String> nickNames;
   }
   class PhoneNumber;
-  class Address{
-    String city;
-    String street;
-    int number;
-  }
+  class Address;
   package uni {
     class Student extends Person {
       StudentStatus status;
@@ -25,7 +21,7 @@ classdiagram MyLife {
     class Grade;
     enum StudentStatus { ENROLLED, FINISHED; }
     composition Student -> Grade [*];
-    association phonebook uni.Student [String] -> PhoneNumber;
+    association phonebook uni.Student -> PhoneNumber;
   }
   association [0..1] Person (parent) <-> (child) Person [*];
 }

@@ -84,10 +84,12 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testLibraryV4V3() {
-    final ASTCDCompilationUnit ast1 = parseModel("src/tooltest/resources/cddiff/LibraryV4.cd");
+    final ASTCDCompilationUnit ast1 =
+        parseModel("src/cddifftest/resources/validation/cddiff/LibraryV4.cd");
     assertNotNull(ast1);
 
-    final ASTCDCompilationUnit ast2 = parseModel("src/tooltest/resources/cddiff/LibraryV3.cd");
+    final ASTCDCompilationUnit ast2 =
+        parseModel("src/cddifftest/resources/validation/cddiff/LibraryV3.cd");
     assertNotNull(ast2);
 
     // Create Output Path

@@ -11,6 +11,7 @@ import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import java.util.*;
 
 public class FullExpander implements CDExpander {
@@ -19,6 +20,10 @@ public class FullExpander implements CDExpander {
   /** @param expander checking if adding/etc is allowed */
   public FullExpander(CDExpander expander) {
     this.expander = expander;
+  }
+
+  public void updateImportStatements(Collection<ASTMCImportStatement> imports) {
+    imports.forEach(this::addImportStatement);
   }
 
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
@@ -211,6 +216,10 @@ public class FullExpander implements CDExpander {
 
   public ASTCDCompilationUnit getCD() {
     return expander.getCD();
+  }
+
+  public void addImportStatement(ASTMCImportStatement imp) {
+    expander.addImportStatement(imp);
   }
 
   /** add newClass as subclass to superclass */

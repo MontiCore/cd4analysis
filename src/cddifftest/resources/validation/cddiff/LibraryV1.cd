@@ -47,7 +47,7 @@ classdiagram LibraryV1 {
 	enum AvailabilityState {available, taken, missing; }
 	enum Language {German, English, French, Italian, Arabic, Russian, Dutch; }
 	
-	class Library;
+	<<singleton>> class Library;
 	
 	abstract class Person {
 		String name;
