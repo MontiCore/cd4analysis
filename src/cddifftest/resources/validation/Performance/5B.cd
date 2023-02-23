@@ -25,13 +25,10 @@ classdiagram CD2 {
   }
 
   association [1] A5 <-> A4 [1..*];
-
   association [*] A1 -> A2 [0..1];
-
   association [1] A2 <-> A3 [1];
-
   association [1..*] A4 <-> A2 [*];
-
   association [1] A5 <- A3 [1..*];
+
 }
 

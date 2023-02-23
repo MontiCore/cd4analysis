@@ -91,6 +91,9 @@ public class ClassMatcher {
         Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(obj);
         if (optSuper.isPresent()) {
           for (String type : optSuper.get()) {
+            if (!optSuper.get().containsAll(MultiInstanceMatcher.getSuperSet(type, scope))) {
+              return false;
+            }
             Optional<ASTCDClass> optType = getCDClassOfType(type);
             if (optType.isPresent()) {
               if (optClass.isPresent()

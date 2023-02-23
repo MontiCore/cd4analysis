@@ -7,11 +7,15 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODObject;
+import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.odvalidity.MultiInstanceMatcher;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +73,7 @@ public class ValidationAndPerformanceTest {
   @ParameterizedTest
   @MethodSource("cddiffSet")
   public void testOWDiffPerformance2(String file1, String file2) {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/cddifftest/resources/validation/cddiff/";
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
@@ -100,7 +104,7 @@ public class ValidationAndPerformanceTest {
   @ParameterizedTest
   @MethodSource("cd4analysisSet")
   public void testOWDiffPerformance3(String file1, String file2) {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/cddifftest/resources/validation/cd4analysis/";
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
@@ -204,17 +208,31 @@ public class ValidationAndPerformanceTest {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
 
+      ASTCDCompilationUnit original1 = cd1.deepClone();
+      ASTCDCompilationUnit original2 = cd2.deepClone();
+
+      // add subclasses to interfaces and abstract classes
+      ReductionTrafo.addSubClasses4Diff(cd1);
+
+      // add dummy-class for associations
+      String dummyClassName = "Dummy4Diff";
+      ReductionTrafo.addDummyClass4Associations(cd1, dummyClassName);
+      ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
+
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1, cd2, od)) {
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
       }
+      System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
+      System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
+      System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -254,6 +272,9 @@ public class ValidationAndPerformanceTest {
           Assertions.fail();
         }
       }
+      System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
+      System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
+      System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -268,6 +289,17 @@ public class ValidationAndPerformanceTest {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
 
+      ASTCDCompilationUnit original1 = cd1.deepClone();
+      ASTCDCompilationUnit original2 = cd2.deepClone();
+
+      // add subclasses to interfaces and abstract classes
+      ReductionTrafo.addSubClasses4Diff(cd1);
+
+      // add dummy-class for associations
+      String dummyClassName = "Dummy4Diff";
+      ReductionTrafo.addDummyClass4Associations(cd1, dummyClassName);
+      ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
+
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
       if (diff) {
@@ -276,11 +308,14 @@ public class ValidationAndPerformanceTest {
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1, cd2, od)) {
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
       }
+      System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
+      System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
+      System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -323,6 +358,9 @@ public class ValidationAndPerformanceTest {
           Assertions.fail();
         }
       }
+      System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
+      System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
+      System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -337,6 +375,17 @@ public class ValidationAndPerformanceTest {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
 
+      ASTCDCompilationUnit original1 = cd1.deepClone();
+      ASTCDCompilationUnit original2 = cd2.deepClone();
+
+      // add subclasses to interfaces and abstract classes
+      ReductionTrafo.addSubClasses4Diff(cd1);
+
+      // add dummy-class for associations
+      String dummyClassName = "Dummy4Diff";
+      ReductionTrafo.addDummyClass4Associations(cd1, dummyClassName);
+      ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
+
       List<ASTODArtifact> witnesses =
           CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
       if (diff) {
@@ -345,11 +394,14 @@ public class ValidationAndPerformanceTest {
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, cd1, cd2, od)) {
+            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
       }
+      System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
+      System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
+      System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -392,10 +444,52 @@ public class ValidationAndPerformanceTest {
           Assertions.fail();
         }
       }
+      System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
+      System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
+      System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
+  }
+
+  protected float getMeanNumberOfObjects(Collection<ASTODArtifact> ods) {
+    float i = 0;
+    for (ASTODArtifact od : ods) {
+      i +=
+          od.getObjectDiagram().getODElementList().stream()
+              .filter(e -> e instanceof ASTODObject)
+              .count();
+    }
+    return i / ods.size();
+  }
+
+  protected float getMeanNumberOfLinks(Collection<ASTODArtifact> ods) {
+    float i = 0;
+    for (ASTODArtifact od : ods) {
+      i +=
+          od.getObjectDiagram().getODElementList().stream()
+              .filter(e -> e instanceof ASTODLink)
+              .count();
+    }
+    return i / ods.size();
+  }
+
+  protected float getMeanNumberOfTypePerObject(Collection<ASTODArtifact> ods) {
+    float i = 0;
+    for (ASTODArtifact od : ods) {
+      float j = 0;
+      Set<ASTODObject> objects =
+          od.getObjectDiagram().getODElementList().stream()
+              .filter(e -> e instanceof ASTODObject)
+              .map(e -> (ASTODObject) e)
+              .collect(Collectors.toSet());
+      for (ASTODObject object : objects) {
+        j += MultiInstanceMatcher.getSuperSetFromStereotype(object).get().size();
+      }
+      i += j / objects.size();
+    }
+    return i / ods.size();
   }
 
   public static Stream<Arguments> performanceSet() {
@@ -442,7 +536,7 @@ public class ValidationAndPerformanceTest {
         Arguments.of("cddiff/DEv1.cd"),
         Arguments.of("cddiff/DEv2.cd"),
         Arguments.of("cddiff/EAv1.cd"),
-        Arguments.of("cddiff/EAv1.cd"),
+        Arguments.of("cddiff/EAv2.cd"),
         Arguments.of("cddiff/EMTv1.cd"),
         Arguments.of("cddiff/EMTv2.cd"),
         Arguments.of("cddiff/LibraryV1.cd"),

@@ -22,8 +22,6 @@ import org.junit.jupiter.api.Test;
 
 public class CombinedFunctionalityTest {
 
-  private static final int diffsize = 3;
-
   @BeforeEach
   public void init() {
     Log.init();
