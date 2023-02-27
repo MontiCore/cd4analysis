@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package a.b;
+
+classdiagram clower {
+  package d {
+    class E;
+  }
+}
