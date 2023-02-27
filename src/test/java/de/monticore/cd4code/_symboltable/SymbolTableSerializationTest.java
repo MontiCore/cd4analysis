@@ -136,7 +136,7 @@ public class SymbolTableSerializationTest {
   public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
-    if(ast.isPresentMCPackageDeclaration()) {
+    if (ast.isPresentMCPackageDeclaration()) {
       scope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
     }
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
