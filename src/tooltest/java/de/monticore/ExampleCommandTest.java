@@ -362,7 +362,7 @@ public class ExampleCommandTest extends OutTestBasis {
     if (cd.isPresentMCPackageDeclaration()) {
       res = cd.getMCPackageDeclaration().getMCQualifiedName().getQName() + ".";
     }
-    res += cd.getCDDefinition().getName().toLowerCase() + ".";
+    res += cd.getCDDefinition().getName() + ".";
     res += c.getSymbol().getFullName();
     res = res.replaceAll("\\.", "/");
     return res;
