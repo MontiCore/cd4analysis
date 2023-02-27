@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package example;
+package Example;
 
 public class A extends ATOP {
   int foo;

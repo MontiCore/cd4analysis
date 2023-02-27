@@ -30,7 +30,7 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
   @Override
   public void visit(ASTCDDefinition node) {
     // add cd name (lower case) to the default package
-    artifactPackageParts.add(node.getName().toLowerCase());
+    artifactPackageParts.add(node.getName());
 
     // create the default package
     ASTMCQualifiedName qualName =

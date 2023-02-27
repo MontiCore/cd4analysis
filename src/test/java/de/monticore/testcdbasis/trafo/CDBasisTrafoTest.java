@@ -86,7 +86,7 @@ public class CDBasisTrafoTest extends TestBasis {
     String expectedDefPkgName =
         astOpt.get().getMCPackageDeclaration().getMCQualifiedName().getQName()
             + "."
-            + cd.getName().toLowerCase();
+            + cd.getName();
     assertEquals(expectedDefPkgName, cd.getDefaultPackage().getMCQualifiedName().getQName());
 
     for (ASTCDElement e : cd.getCDElementList()) {

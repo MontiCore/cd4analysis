@@ -43,8 +43,7 @@ public class CDGenerator {
     // generate packages
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
       String packageAsPath =
-          String.join(File.separator, astPackage.getMCQualifiedName().getPartsList())
-              .toLowerCase(Locale.ROOT);
+          String.join(File.separator, astPackage.getMCQualifiedName().getPartsList());
 
       this.generateCDClasses(
           packageAsPath,
