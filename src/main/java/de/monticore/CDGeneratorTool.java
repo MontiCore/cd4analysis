@@ -289,7 +289,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         result.stream()
             .filter(
                 m ->
-                    c.getCDMethodList().stream()
+                    !c.getCDMethodList().stream()
                         .map(ASTCDMethod::getName)
                         .collect(Collectors.toList())
                         .contains(m.getName()))
