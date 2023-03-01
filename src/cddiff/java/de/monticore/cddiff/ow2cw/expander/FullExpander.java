@@ -29,7 +29,7 @@ public class FullExpander implements CDExpander {
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     for (ASTCDType type : typeList) {
-      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(type.getSymbol().getFullName());
+      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(type.getSymbol().getInternalQualifiedName());
       if (opt.isEmpty()) {
         if (type instanceof ASTCDInterface) {
           addDummyInterface((ASTCDInterface) type)
@@ -49,7 +49,7 @@ public class FullExpander implements CDExpander {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     // add enums and enum constants exclusive to first
     for (ASTCDEnum astcdEnum : enumCol) {
-      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
+      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdEnum.getSymbol().getInternalQualifiedName());
       if (opt.isEmpty()) {
         addClone(astcdEnum);
       } else {
@@ -60,7 +60,7 @@ public class FullExpander implements CDExpander {
           if (!found) {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
             for (ASTCDEnum someEnum : getCD().getCDDefinition().getCDEnumsList()) {
-              if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())) {
+              if (astcdEnum.getSymbol().getInternalQualifiedName().equals(someEnum.getSymbol().getInternalQualifiedName())) {
                 addEnumConstant(someEnum, constant.deepClone());
               }
             }
@@ -177,14 +177,14 @@ public class FullExpander implements CDExpander {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     Set<ASTCDAssociation> newAssocs = new HashSet<>();
     for (ASTCDType srcType : typeCol) {
-      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(srcType.getSymbol().getFullName());
+      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(srcType.getSymbol().getInternalQualifiedName());
       if (opt.isEmpty()) {
         addDummyClass(srcType);
       }
       if (srcType.getModifier().isPresentStereotype()
           && srcType.getModifier().getStereotype().contains(VariableExpander.VAR_TAG)) {
         buildDummyAssociation(
-                srcType.getSymbol().getFullName(), "myNew" + assocTargetName, assocTargetName)
+                srcType.getSymbol().getInternalQualifiedName(), "myNew" + assocTargetName, assocTargetName)
             .ifPresent(newAssocs::add);
       }
     }
@@ -196,7 +196,7 @@ public class FullExpander implements CDExpander {
       if (srcEnum.getModifier().isPresentStereotype()
           && srcEnum.getModifier().getStereotype().contains(VariableExpander.VAR_TAG)) {
         for (ASTCDEnum targetEnum : getCD().getCDDefinition().getCDEnumsList()) {
-          if (srcEnum.getSymbol().getFullName().equals(targetEnum.getSymbol().getFullName())) {
+          if (srcEnum.getSymbol().getInternalQualifiedName().equals(targetEnum.getSymbol().getInternalQualifiedName())) {
             addEnumConstant(
                 targetEnum,
                 CD4CodeMill.cD4CodeEnumConstantBuilder()

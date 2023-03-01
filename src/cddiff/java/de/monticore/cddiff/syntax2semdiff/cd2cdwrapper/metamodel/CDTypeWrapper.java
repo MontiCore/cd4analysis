@@ -46,7 +46,7 @@ public class CDTypeWrapper implements Cloneable {
   public String getName() {
     return getCDTypeWrapperKindStrHelper(getCDWrapperKind())
         + "_"
-        + this.originalElement.getSymbol().getFullName();
+        + this.originalElement.getSymbol().getInternalQualifiedName();
   }
 
   public CDTypeWrapperKind getCDWrapperKind() {
@@ -54,7 +54,7 @@ public class CDTypeWrapper implements Cloneable {
   }
 
   public String getOriginalClassName() {
-    return this.originalElement.getSymbol().getFullName();
+    return this.originalElement.getSymbol().getInternalQualifiedName();
   }
 
   public Set<String> getCDWrapperLink4EnumClass() {

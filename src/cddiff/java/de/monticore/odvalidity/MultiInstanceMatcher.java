@@ -244,7 +244,7 @@ public class MultiInstanceMatcher {
 
       // transform set of AST nodes to a set of their full qualified names
       for (ASTCDType cdType : astSuperSet) {
-        superSet.add(cdType.getSymbol().getFullName());
+        superSet.add(cdType.getSymbol().getInternalQualifiedName());
       }
     } else {
       // print warning if symbol does not exist
@@ -270,7 +270,7 @@ public class MultiInstanceMatcher {
     // the set contains the class "objType" itself
     Set<ASTCDClass> astSubClasses = new HashSet<>();
     for (ASTCDClass astClass : astClasses) {
-      if (CDInheritanceHelper.isSuperOf(objType, astClass.getSymbol().getFullName(), scope)) {
+      if (CDInheritanceHelper.isSuperOf(objType, astClass.getSymbol().getInternalQualifiedName(), scope)) {
         astSubClasses.add(astClass);
       }
     }
@@ -280,12 +280,12 @@ public class MultiInstanceMatcher {
 
     // transform set of AST nodes to a set of their full qualified names
     for (ASTCDType cdType : astSubClasses) {
-      subClasses.add(cdType.getSymbol().getFullName());
+      subClasses.add(cdType.getSymbol().getInternalQualifiedName());
     }
 
     // remove the class "objType" from the set of its subclasses
     if (classSymbol.isPresent()) {
-      subClasses.remove(classSymbol.get().getFullName());
+      subClasses.remove(classSymbol.get().getInternalQualifiedName());
     } else {
       // print warning if symbol does not exist
       // does not affect the correctness of the overall output

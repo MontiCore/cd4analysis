@@ -345,8 +345,8 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
         && !cd1Name
             .get()
             .getSymbol()
-            .getFullName()
-            .equals(cd2Name.get().getSymbol().getFullName())) {
+            .getInternalQualifiedName()
+            .equals(cd2Name.get().getSymbol().getInternalQualifiedName())) {
       interpretation
           .append("Package")
           .append(": ")

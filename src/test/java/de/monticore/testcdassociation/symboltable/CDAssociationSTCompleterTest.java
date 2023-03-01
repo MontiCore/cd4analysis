@@ -37,7 +37,7 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     final Optional<CDRoleSymbol> s =
         cdRoleList.stream().filter(r -> r.getName().equals("s")).findFirst();
     assertTrue(s.isPresent());
-    assertEquals("B.s", s.get().getFullName());
+    assertEquals("Simple.B.s", s.get().getFullName());
 
     checkLogError();
   }
@@ -60,7 +60,7 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     final Optional<CDRoleSymbol> s =
         cdRoleList.stream().filter(r -> r.getName().equals("s")).findFirst();
     assertTrue(s.isPresent());
-    assertEquals("de.monticore.B.s", s.get().getFullName());
+    assertEquals("Simple.de.monticore.B.s", s.get().getFullName());
 
     checkLogError();
   }
