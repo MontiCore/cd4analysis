@@ -21,7 +21,7 @@ public class CDInheritanceHelper {
   public static boolean isNewSuper(
       ASTMCObjectType newSuper, ASTCDType targetNode, ICD4CodeArtifactScope artifactScope) {
     for (ASTCDType oldSuper : getAllSuper(targetNode, artifactScope)) {
-      if (oldSuper.getSymbol().getFullName().contains(newSuper.printType(pp))) {
+      if (oldSuper.getSymbol().getInternalQualifiedName().contains(newSuper.printType(pp))) {
         return false;
       }
     }
@@ -35,7 +35,7 @@ public class CDInheritanceHelper {
     for (ASTCDType superSuper :
         getAllSuper(
             resolveClosestType(targetNode, newSuper.printType(pp), artifactScope), artifactScope)) {
-      if (superSuper.getSymbol().getFullName().equals(targetNode.getSymbol().getFullName())) {
+      if (superSuper.getSymbol().getInternalQualifiedName().equals(targetNode.getSymbol().getInternalQualifiedName())) {
         return false;
       }
     }
@@ -86,7 +86,8 @@ public class CDInheritanceHelper {
       ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     Set<ASTCDType> extendsSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
-      extendsSet.add(resolveClosestType(cdType, superType.printType(pp), artifactScope));
+      String internalName = internalQualifiedName(superType.printType(pp), artifactScope);
+      extendsSet.add(resolveClosestType(cdType, internalName, artifactScope));
     }
     return extendsSet;
   }
@@ -124,12 +125,12 @@ public class CDInheritanceHelper {
 
     CDTypeSymbol current = symbolList.get(0);
     int currentMatch =
-        getPositionWhereTextDiffer(current.getFullName(), srcNode.getSymbol().getFullName());
+        getPositionWhereTextDiffer(current.getInternalQualifiedName(), srcNode.getSymbol().getInternalQualifiedName());
     int nextMatch;
 
     for (CDTypeSymbol symbol : symbolList) {
       nextMatch =
-          getPositionWhereTextDiffer(symbol.getFullName(), srcNode.getSymbol().getFullName());
+          getPositionWhereTextDiffer(symbol.getInternalQualifiedName(), srcNode.getSymbol().getInternalQualifiedName());
       if (currentMatch < nextMatch) {
         current = symbol;
       }
@@ -158,5 +159,19 @@ public class CDInheritanceHelper {
           .contains(optSrc.get().getAstNode());
     }
     return false;
+  }
+
+  protected static String internalQualifiedName(String fullName, ICD4CodeArtifactScope artifactScope) {
+    String artifactName = "";
+    if (!artifactScope.getPackageName().isEmpty()) {
+      artifactName += artifactScope.getPackageName() + ".";
+    }
+    if (artifactScope.isPresentName()) {
+      artifactName += artifactScope.getName() + ".";
+    }
+    if (fullName.startsWith(artifactName)) {
+      return fullName.substring(artifactName.length());
+    }
+    return fullName;
   }
 }

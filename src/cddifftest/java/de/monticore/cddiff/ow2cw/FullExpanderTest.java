@@ -30,12 +30,12 @@ public class FullExpanderTest extends CDDiffTestBasis {
     FullExpander fullExpander = new FullExpander(new BasicExpander(machines));
 
     for (ASTCDClass superClass : machines.getCDDefinition().getCDClassesList()) {
-      if (superClass.getSymbol().getFullName().equals("future.FlyingCar")) {
+      if (superClass.getSymbol().getInternalQualifiedName().equals("future.FlyingCar")) {
         fullExpander.addNewSubClass("SpaceCar", superClass);
       }
     }
     for (ASTCDInterface astcdInterface : machines.getCDDefinition().getCDInterfacesList()) {
-      if (astcdInterface.getSymbol().getFullName().equals("UI")) {
+      if (astcdInterface.getSymbol().getInternalQualifiedName().equals("UI")) {
         fullExpander.addNewSubClass("WeirdUI", astcdInterface);
       }
     }
@@ -140,7 +140,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     FullExpander fullExpander = new FullExpander(new BasicExpander(machines3));
 
     for (ASTCDClass astcdClass : machines4.getCDDefinition().getCDClassesList()) {
-      if (astcdClass.getSymbol().getFullName().equals("future.FutureThing")) {
+      if (astcdClass.getSymbol().getInternalQualifiedName().equals("future.FutureThing")) {
         fullExpander.addDummyClass(astcdClass);
       }
     }

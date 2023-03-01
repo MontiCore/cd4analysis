@@ -112,10 +112,10 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
       cdAssociationCreateFieldsFromAllRoles.transform(astcdCompilationUnit);
       assertEquals(2, Log.getErrorCount());
       assertEquals(
-          "0xCD0B7: a FieldSymbol with the name 'b' already exists in 'A' (defined in RoleNameExistsAsAttributeName.cd:<6,4>)",
+          "0xCD0B7: a FieldSymbol with the name 'b' already exists in 'RoleNameExistsAsAttributeName.A' (defined in RoleNameExistsAsAttributeName.cd:<6,4>)",
           Log.getFindings().get(0).getMsg());
       assertEquals(
-          "0xCD0B7: a FieldSymbol with the name 'value' already exists in 'B' (defined in RoleNameExistsAsAttributeName.cd:<10,4>)",
+          "0xCD0B7: a FieldSymbol with the name 'value' already exists in 'RoleNameExistsAsAttributeName.B' (defined in RoleNameExistsAsAttributeName.cd:<10,4>)",
           Log.getFindings().get(1).getMsg());
 
       Log.getFindings().clear();

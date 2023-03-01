@@ -120,11 +120,11 @@ public class ClassMatcher {
     if (Semantic.isMultiInstance(semantics)) {
       Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(object);
       if (optSuper.isPresent()) {
-        return optSuper.get().contains(type.getSymbol().getFullName());
+        return optSuper.get().contains(type.getSymbol().getInternalQualifiedName());
       }
     }
     return CDInheritanceHelper.isSuperOf(
-        type.getSymbol().getFullName(), object.getMCObjectType().printType(), scope);
+        type.getSymbol().getInternalQualifiedName(), object.getMCObjectType().printType(), scope);
   }
 
   /**
@@ -403,7 +403,7 @@ public class ClassMatcher {
    */
   private Optional<ASTCDClass> getCDClassOfType(String name) {
     return cd.getCDDefinition().getCDClassesList().stream()
-        .filter(cdClass -> cdClass.getSymbol().getFullName().equals(name))
+        .filter(cdClass -> cdClass.getSymbol().getInternalQualifiedName().equals(name))
         .findAny();
   }
 
@@ -415,7 +415,7 @@ public class ClassMatcher {
   private boolean isNameClassInCD(String className) {
     for (var cdClass : cd.getCDDefinition().getCDClassesList()) {
       // Check if we can find
-      if (cdClass.getSymbol().getFullName().contains(className)) {
+      if (cdClass.getSymbol().getInternalQualifiedName().contains(className)) {
         return true;
       }
     }
@@ -430,7 +430,7 @@ public class ClassMatcher {
   private boolean isNameEnumInCD(String name) {
     for (var cdEnum : cd.getCDDefinition().getCDEnumsList()) {
       // Check if we can find
-      if (cdEnum.getSymbol().getFullName().equals(name)) {
+      if (cdEnum.getSymbol().getInternalQualifiedName().equals(name)) {
         return true;
       }
     }
@@ -440,7 +440,7 @@ public class ClassMatcher {
   /** Returns AST enum node for given name */
   private Optional<ASTCDEnum> getEnum(String enumName) {
     return cd.getCDDefinition().getCDEnumsList().stream()
-        .filter(cdEnum -> cdEnum.getSymbol().getFullName().equals(enumName))
+        .filter(cdEnum -> cdEnum.getSymbol().getInternalQualifiedName().equals(enumName))
         .findAny();
   }
 

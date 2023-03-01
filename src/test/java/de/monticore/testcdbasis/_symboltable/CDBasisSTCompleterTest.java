@@ -91,11 +91,11 @@ public class CDBasisSTCompleterTest {
     assertEquals(2, dFields.size());
 
     FieldSymbol cField = dFields.get(0);
-    assertEquals("D.c", cField.getFullName());
+    assertEquals("CorrectTypeUsages.D.c", cField.getFullName());
     assertEquals("C", cField.getType().getTypeInfo().getName());
 
     FieldSymbol someImportedTypeField = dFields.get(1);
-    assertEquals("D.x", someImportedTypeField.getFullName());
+    assertEquals("CorrectTypeUsages.D.x", someImportedTypeField.getFullName());
     assertEquals("SomeImportedType", someImportedTypeField.getType().getTypeInfo().getName());
 
     assertEquals(0, Log.getErrorCount());

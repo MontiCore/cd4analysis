@@ -46,11 +46,11 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
                 rAssoc ->
                     reference
                             .getSymbol()
-                            .getFullName()
+                            .getInternalQualifiedName()
                             .contains(rAssoc.getLeftQualifiedName().getQName())
                         || reference
                             .getSymbol()
-                            .getFullName()
+                            .getInternalQualifiedName()
                             .contains(rAssoc.getRightQualifiedName().getQName()))
             .allMatch(
                 rAssoc ->
@@ -59,11 +59,11 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
                             cAssoc ->
                                 concrete
                                         .getSymbol()
-                                        .getFullName()
+                                        .getInternalQualifiedName()
                                         .contains(cAssoc.getLeftQualifiedName().getQName())
                                     || concrete
                                         .getSymbol()
-                                        .getFullName()
+                                        .getInternalQualifiedName()
                                         .contains(cAssoc.getRightQualifiedName().getQName()))
                         .anyMatch(cAssoc -> assocInc.getRefElements(cAssoc).contains(rAssoc)));
     boolean superTypes =

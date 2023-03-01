@@ -106,7 +106,7 @@ public class CDWrapperGenerator {
       // add attributes
       for (ASTCDAttribute astcdAttribute : astcdType.getCDAttributeList()) {
         if (astCDEnumList.stream()
-            .anyMatch(s -> s.getSymbol().getFullName().equals(astcdAttribute.printType()))) {
+            .anyMatch(s -> s.getSymbol().getInternalQualifiedName().equals(astcdAttribute.printType()))) {
           cDTypeWrapper.addAttribute(astcdAttribute);
           creatEnumClassMapHelper(
               "CDWrapperEnum_" + astcdAttribute.printType(), cDTypeWrapper.getName());
@@ -138,14 +138,14 @@ public class CDWrapperGenerator {
     String childClass =
         getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(child))
             + "_"
-            + child.getSymbol().getFullName();
+            + child.getSymbol().getInternalQualifiedName();
     inheritanceGraph.addNode(childClass);
     directSuperList.forEach(
         parent -> {
           String parentClass =
               getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(parent))
                   + "_"
-                  + parent.getSymbol().getFullName();
+                  + parent.getSymbol().getInternalQualifiedName();
           inheritanceGraph.putEdge(childClass, parentClass);
         });
   }
@@ -155,7 +155,7 @@ public class CDWrapperGenerator {
     String enumClass =
         getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(astcdType))
             + "_"
-            + astcdType.getSymbol().getFullName();
+            + astcdType.getSymbol().getInternalQualifiedName();
     inheritanceGraph.addNode(enumClass);
   }
 

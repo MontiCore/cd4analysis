@@ -15,8 +15,11 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.HashSet;
@@ -79,7 +82,7 @@ public class CDFullNameTrafo {
       Set<String> extendsList = new HashSet<>();
       for (ASTMCObjectType type : cdClass.getCDExtendUsage().getSuperclassList()) {
         assert type.getDefiningSymbol().isPresent();
-        type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(symbol.getFullName()));
+        type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(retrieveFullName(symbol)));
       }
       cdClass.setCDExtendUsage(
           CDExtendUsageFacade.getInstance()
@@ -89,7 +92,7 @@ public class CDFullNameTrafo {
       Set<String> implementsList = new HashSet<>();
       for (ASTMCObjectType type : cdClass.getCDInterfaceUsage().getInterfaceList()) {
         assert type.getDefiningSymbol().isPresent();
-        type.getDefiningSymbol().ifPresent(symbol -> implementsList.add(symbol.getFullName()));
+        type.getDefiningSymbol().ifPresent(symbol -> implementsList.add(retrieveFullName(symbol)));
       }
       cdClass.setCDInterfaceUsage(
           CDInterfaceUsageFacade.getInstance()
@@ -102,7 +105,7 @@ public class CDFullNameTrafo {
       Set<String> extendsList = new HashSet<>();
       for (ASTMCObjectType type : cdInterface.getCDExtendUsage().getSuperclassList()) {
         assert type.getDefiningSymbol().isPresent();
-        type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(symbol.getFullName()));
+        type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(retrieveFullName(symbol)));
       }
       cdInterface.setCDExtendUsage(
           CDExtendUsageFacade.getInstance()
@@ -127,7 +130,7 @@ public class CDFullNameTrafo {
                 side.setMCQualifiedType(
                     CD4CodeMill.mCQualifiedTypeBuilder()
                         .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(symbol.getFullName()))
+                            MCQualifiedNameFacade.createQualifiedName(retrieveFullName(symbol)))
                         .build()));
     /*
     Optional<CDTypeSymbol> optSymbol;
@@ -159,7 +162,7 @@ public class CDFullNameTrafo {
                 attribute.setMCType(
                     CD4CodeMill.mCQualifiedTypeBuilder()
                         .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(symbol.getFullName()))
+                            MCQualifiedNameFacade.createQualifiedName(retrieveFullName(symbol)))
                         .build()));
 
     /*
@@ -180,5 +183,12 @@ public class CDFullNameTrafo {
         .build()));
 
      */
+  }
+
+  protected String retrieveFullName(ISymbol t) {
+    if (t instanceof CDTypeSymbol) {
+      return ((CDTypeSymbol) t).getInternalQualifiedName();
+    }
+    return t.getFullName();
   }
 }

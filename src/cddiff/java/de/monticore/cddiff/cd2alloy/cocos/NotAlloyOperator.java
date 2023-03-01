@@ -46,7 +46,7 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
     for (ASTCDClass astcdClass : node.getCDClassesList()) {
       checkIllegalSymbol(
           astcdClass.get_SourcePositionStart(),
-          astcdClass.getSymbol().getFullName(),
+          astcdClass.getSymbol().getInternalQualifiedName(),
           illegalSymbols);
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()) {
         checkIllegalSymbol(
@@ -62,7 +62,7 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
     for (ASTCDInterface astcdInterface : node.getCDInterfacesList()) {
       checkIllegalSymbol(
           astcdInterface.get_SourcePositionStart(),
-          astcdInterface.getSymbol().getFullName(),
+          astcdInterface.getSymbol().getInternalQualifiedName(),
           illegalSymbols);
       for (ASTCDAttribute attribute : astcdInterface.getCDAttributeList()) {
         checkIllegalSymbol(
@@ -77,7 +77,7 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
     // check enums
     for (ASTCDEnum astcdEnum : node.getCDEnumsList()) {
       checkIllegalSymbol(
-          astcdEnum.get_SourcePositionStart(), astcdEnum.getSymbol().getFullName(), illegalSymbols);
+          astcdEnum.get_SourcePositionStart(), astcdEnum.getSymbol().getInternalQualifiedName(), illegalSymbols);
       for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
         checkIllegalSymbol(constant.get_SourcePositionStart(), constant.getName(), illegalSymbols);
       }

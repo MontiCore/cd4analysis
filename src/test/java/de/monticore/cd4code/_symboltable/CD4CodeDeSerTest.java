@@ -57,7 +57,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
         b.get().getMethodSignatureList("getX").stream().distinct().findAny();
 
     assertTrue(getXMethodSymbol.isPresent());
-    assertEquals("B.getX", getXMethodSymbol.get().getFullName());
+    assertEquals("Complete.B.getX", getXMethodSymbol.get().getFullName());
 
     final String path = getTmpFilePath(scope.getName() + ".cdsym");
     symbols2Json.store(scope, path);

@@ -183,7 +183,7 @@ public class ReductionTrafo {
             && (!current.getName().equals(commonInterface))) {
           Set<String> implementsSet =
               CDInheritanceHelper.getDirectInterfaces(current, scope).stream()
-                  .map(i -> i.getSymbol().getFullName())
+                  .map(i -> i.getSymbol().getInternalQualifiedName())
                   .collect(Collectors.toSet());
           implementsSet.add(commonInterface);
           current.setCDInterfaceUsage(
@@ -198,7 +198,7 @@ public class ReductionTrafo {
             && (!current.getName().equals(commonInterface))) {
           Set<String> extendsSet =
               CDInheritanceHelper.getDirectInterfaces(current, scope).stream()
-                  .map(i -> i.getSymbol().getFullName())
+                  .map(i -> i.getSymbol().getInternalQualifiedName())
                   .collect(Collectors.toSet());
           extendsSet.add(commonInterface);
           current.setCDExtendUsage(
@@ -233,12 +233,12 @@ public class ReductionTrafo {
 
     for (ASTCDType type : typeSet) {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, targetScope)));
-      Optional<CDTypeSymbol> optType = srcScope.resolveCDTypeDown(type.getSymbol().getFullName());
+      Optional<CDTypeSymbol> optType = srcScope.resolveCDTypeDown(type.getSymbol().getInternalQualifiedName());
       if (optType.isPresent()) {
         for (ASTCDType superType :
             CDInheritanceHelper.getAllSuper(optType.get().getAstNode(), srcScope)) {
           targetScope
-              .resolveCDTypeDown(superType.getSymbol().getFullName())
+              .resolveCDTypeDown(superType.getSymbol().getInternalQualifiedName())
               .ifPresent(cdTypeSymbol -> inheritanceGraph.get(type).add(cdTypeSymbol.getAstNode()));
         }
       }
@@ -281,7 +281,7 @@ public class ReductionTrafo {
       Set<String> extendsSet = new HashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (interfaces.contains(superType)) {
-          extendsSet.add(superType.getSymbol().getFullName());
+          extendsSet.add(superType.getSymbol().getInternalQualifiedName());
         }
       }
       expander.updateExtends(current, extendsSet);
@@ -291,9 +291,9 @@ public class ReductionTrafo {
       Set<String> implementsSet = new HashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (classes.contains(superType)) {
-          extendsSet.add(superType.getSymbol().getFullName());
+          extendsSet.add(superType.getSymbol().getInternalQualifiedName());
         } else if (interfaces.contains(superType)) {
-          implementsSet.add(superType.getSymbol().getFullName());
+          implementsSet.add(superType.getSymbol().getInternalQualifiedName());
         }
       }
       expander.updateExtends(current, extendsSet);

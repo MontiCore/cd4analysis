@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -159,10 +160,10 @@ public class CDDiffUtil {
       if (currentClass.isPresentCDExtendUsage()) {
         for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
           assert objectType.getDefiningSymbol().isPresent();
-          superName = objectType.getDefiningSymbol().get().getFullName();
+          superName = ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
 
           for (ASTCDClass astClass : classes) {
-            if (superName.equals(astClass.getSymbol().getFullName())) {
+            if (superName.equals(astClass.getSymbol().getInternalQualifiedName())) {
               toProcess.add(astClass);
             }
           }
@@ -188,10 +189,10 @@ public class CDDiffUtil {
     String interfaceName;
     for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
       assert objectType.getDefiningSymbol().isPresent();
-      interfaceName = objectType.getDefiningSymbol().get().getFullName();
+      interfaceName = ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
 
       for (ASTCDInterface allowedInterface : allowedInterfaces) {
-        if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
+        if (interfaceName.equals(allowedInterface.getSymbol().getInternalQualifiedName())) {
           toProcess.add(allowedInterface);
           break;
         }
@@ -209,10 +210,10 @@ public class CDDiffUtil {
       // processing list
       for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
         assert objectType.getDefiningSymbol().isPresent();
-        interfaceName = objectType.getDefiningSymbol().get().getFullName();
+        interfaceName = ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
 
         for (ASTCDInterface allowedInterface : allowedInterfaces) {
-          if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
+          if (interfaceName.equals(allowedInterface.getSymbol().getInternalQualifiedName())) {
             toProcess.add(allowedInterface);
             break;
           }
@@ -233,7 +234,7 @@ public class CDDiffUtil {
 
     for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
       for (ASTCDInterface superInterface : allowedInterfaces) {
-        if (typeExp.getTypeInfo().getFullName().equals(superInterface.getSymbol().getFullName())) {
+        if (((CDTypeSymbol) typeExp.getTypeInfo()).getInternalQualifiedName().equals(superInterface.getSymbol().getInternalQualifiedName())) {
           interfaces.add(superInterface);
           remaining.remove(superInterface);
           interfaces.addAll(getAllInterfaces(superInterface, remaining));

@@ -71,7 +71,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     // Union of all Enum Names
     Set<String> enumNameUnion = new HashSet<>();
     for (ASTCDEnum astcdEnum : enumUnion) {
-      enumNameUnion.add(CDDiffUtil.escape2Alloy(astcdEnum.getSymbol().getFullName()));
+      enumNameUnion.add(CDDiffUtil.escape2Alloy(astcdEnum.getSymbol().getInternalQualifiedName()));
     }
     Set<String> enumTypeNameUnion = new HashSet<>();
     for (ASTCDEnum e : enumUnion) {
@@ -79,7 +79,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       for (ASTCDEnumConstant astcdEnumConstant : v) {
         enumTypeNameUnion.add(
             CDDiffUtil.escape2Alloy(
-                e.getSymbol().getFullName() + "." + astcdEnumConstant.getName()));
+                e.getSymbol().getInternalQualifiedName() + "." + astcdEnumConstant.getName()));
       }
     }
 
@@ -142,22 +142,22 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       // Functions + Names
       classFunctions
           .append("all c: ")
-          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getInternalQualifiedName()))
           .append(" | c.type=Type_")
-          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getInternalQualifiedName()))
           .append(System.lineSeparator());
 
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
         classFunctions
             .append("{ some Type_")
-            .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getInternalQualifiedName()))
             .append(" => some Type_")
-            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getInternalQualifiedName()))
             .append(" and Type_")
-            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getInternalQualifiedName()))
             .append(" in Type_")
-            .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getInternalQualifiedName()))
             .append(".super}")
             .append(System.lineSeparator());
       }
@@ -175,22 +175,22 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       // Functions + Names
       classFunctions
           .append("all i: ")
-          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getInternalQualifiedName()))
           .append(" | i.type=Type_")
-          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getInternalQualifiedName()))
           .append(System.lineSeparator());
 
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
         classFunctions
             .append("{ some Type_")
-            .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getInternalQualifiedName()))
             .append(" => some Type_")
-            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getInternalQualifiedName()))
             .append(" and Type_")
-            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(superType.getSymbol().getInternalQualifiedName()))
             .append(" in Type_")
-            .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getInternalQualifiedName()))
             .append(".super}")
             .append(System.lineSeparator());
       }
@@ -222,7 +222,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       for (ASTCDAttribute astcdAttribute : type.getCDAttributeList()) {
         predicate
             .append("ObjAttrib[")
-            .append(CDDiffUtil.escape2Alloy(type.getSymbol().getFullName()))
+            .append(CDDiffUtil.escape2Alloy(type.getSymbol().getInternalQualifiedName()))
             .append("SubsCD")
             .append(cd.getCDDefinition().getName())
             .append(", ");
@@ -261,12 +261,12 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       // Functions + Names
       classFunctions
           .append("fun ")
-          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getInternalQualifiedName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
           .append(": set Obj { ")
           .append("Type_")
-          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdClass.getSymbol().getInternalQualifiedName()))
           .append(".inst")
           .append("}")
           .append(System.lineSeparator());
@@ -298,12 +298,12 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       // Functions + Names
       interfaceFunctions
           .append("fun ")
-          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getInternalQualifiedName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
           .append(": set Obj { ")
           .append("Type_")
-          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol().getInternalQualifiedName()))
           .append(".inst")
           .append("}")
           .append(System.lineSeparator());
@@ -335,11 +335,11 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     for (ASTCDEnum e : enums) {
       classFunctions
           .append("fun ")
-          .append(CDDiffUtil.escape2Alloy(e.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(e.getSymbol().getInternalQualifiedName()))
           .append("EnumCD")
           .append(cdDefinition.getName())
           .append(": set EnumVal { ")
-          .append(CDDiffUtil.escape2Alloy(e.getSymbol().getFullName()))
+          .append(CDDiffUtil.escape2Alloy(e.getSymbol().getInternalQualifiedName()))
           .append(".values }")
           .append(System.lineSeparator());
     }
