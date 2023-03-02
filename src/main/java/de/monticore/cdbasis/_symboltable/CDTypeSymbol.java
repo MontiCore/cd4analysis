@@ -9,7 +9,6 @@ import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IArtifactScope;
 import de.monticore.symboltable.IScope;
-
 import java.util.List;
 
 public class CDTypeSymbol extends CDTypeSymbolTOP {

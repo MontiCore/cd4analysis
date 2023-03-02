@@ -77,7 +77,9 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
     // check enums
     for (ASTCDEnum astcdEnum : node.getCDEnumsList()) {
       checkIllegalSymbol(
-          astcdEnum.get_SourcePositionStart(), astcdEnum.getSymbol().getInternalQualifiedName(), illegalSymbols);
+          astcdEnum.get_SourcePositionStart(),
+          astcdEnum.getSymbol().getInternalQualifiedName(),
+          illegalSymbols);
       for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
         checkIllegalSymbol(constant.get_SourcePositionStart(), constant.getName(), illegalSymbols);
       }

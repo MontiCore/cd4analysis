@@ -29,13 +29,13 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
         .allMatch(ref -> checkConformance(concrete, ref));
   }
 
-  public boolean checkConformance(ASTCDClass concrete, ASTCDType reference) {
+  public boolean checkConformance(ASTCDClass concrete, ASTCDType ref) {
     // todo: check modifier, attributes, associations, interfaces, etc...
-    if (reference.getModifier().isAbstract() && !concrete.getModifier().isAbstract()) {
+    if (ref.getModifier().isAbstract() && !concrete.getModifier().isAbstract()) {
       return false;
     }
     boolean attributes =
-        reference.getCDAttributeList().stream()
+        ref.getCDAttributeList().stream()
             .allMatch(
                 rAttr ->
                     concrete.getCDAttributeList().stream()
@@ -44,12 +44,10 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
         refCD.getCDDefinition().getCDAssociationsList().stream()
             .filter(
                 rAssoc ->
-                    reference
-                            .getSymbol()
+                    ref.getSymbol()
                             .getInternalQualifiedName()
                             .contains(rAssoc.getLeftQualifiedName().getQName())
-                        || reference
-                            .getSymbol()
+                        || ref.getSymbol()
                             .getInternalQualifiedName()
                             .contains(rAssoc.getRightQualifiedName().getQName()))
             .allMatch(
@@ -67,7 +65,7 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
                                         .contains(cAssoc.getRightQualifiedName().getQName()))
                         .anyMatch(cAssoc -> assocInc.getRefElements(cAssoc).contains(rAssoc)));
     boolean superTypes =
-        CDDiffUtil.getAllSuperTypes(reference, refCD.getCDDefinition()).stream()
+        CDDiffUtil.getAllSuperTypes(ref, refCD.getCDDefinition()).stream()
             .allMatch(
                 refSuper ->
                     CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()

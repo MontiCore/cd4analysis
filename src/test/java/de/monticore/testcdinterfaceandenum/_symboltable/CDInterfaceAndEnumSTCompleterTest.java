@@ -50,20 +50,27 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     assertEquals(4, dFields.size());
 
     FieldSymbol cField = dFields.get(0);
-    assertEquals("de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.c", cField.getFullName());
+    assertEquals(
+        "de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.c",
+        cField.getFullName());
     assertEquals("C", cField.getType().getTypeInfo().getName());
 
     FieldSymbol someImportedTypeField = dFields.get(1);
     assertEquals(
-        "de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.x", someImportedTypeField.getFullName());
+        "de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.x",
+        someImportedTypeField.getFullName());
     assertEquals("SomeImportedType", someImportedTypeField.getType().getTypeInfo().getName());
 
     FieldSymbol iField = dFields.get(2);
-    assertEquals("de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.i", iField.getFullName());
+    assertEquals(
+        "de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.i",
+        iField.getFullName());
     assertEquals("MyOtherInterface", iField.getType().getTypeInfo().getName());
 
     FieldSymbol eField = dFields.get(3);
-    assertEquals("de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.e", eField.getFullName());
+    assertEquals(
+        "de.monticore.cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.e",
+        eField.getFullName());
     assertEquals("MyEnum", eField.getType().getTypeInfo().getName());
 
     assertEquals(1, cdTypeSymbols.get("MyInterface").size());

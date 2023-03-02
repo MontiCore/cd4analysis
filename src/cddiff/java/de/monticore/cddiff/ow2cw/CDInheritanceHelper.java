@@ -35,7 +35,10 @@ public class CDInheritanceHelper {
     for (ASTCDType superSuper :
         getAllSuper(
             resolveClosestType(targetNode, newSuper.printType(pp), artifactScope), artifactScope)) {
-      if (superSuper.getSymbol().getInternalQualifiedName().equals(targetNode.getSymbol().getInternalQualifiedName())) {
+      if (superSuper
+          .getSymbol()
+          .getInternalQualifiedName()
+          .equals(targetNode.getSymbol().getInternalQualifiedName())) {
         return false;
       }
     }
@@ -125,12 +128,14 @@ public class CDInheritanceHelper {
 
     CDTypeSymbol current = symbolList.get(0);
     int currentMatch =
-        getPositionWhereTextDiffer(current.getInternalQualifiedName(), srcNode.getSymbol().getInternalQualifiedName());
+        getPositionWhereTextDiffer(
+            current.getInternalQualifiedName(), srcNode.getSymbol().getInternalQualifiedName());
     int nextMatch;
 
     for (CDTypeSymbol symbol : symbolList) {
       nextMatch =
-          getPositionWhereTextDiffer(symbol.getInternalQualifiedName(), srcNode.getSymbol().getInternalQualifiedName());
+          getPositionWhereTextDiffer(
+              symbol.getInternalQualifiedName(), srcNode.getSymbol().getInternalQualifiedName());
       if (currentMatch < nextMatch) {
         current = symbol;
       }
@@ -161,7 +166,8 @@ public class CDInheritanceHelper {
     return false;
   }
 
-  protected static String internalQualifiedName(String fullName, ICD4CodeArtifactScope artifactScope) {
+  protected static String internalQualifiedName(
+      String fullName, ICD4CodeArtifactScope artifactScope) {
     String artifactName = "";
     if (!artifactScope.getPackageName().isEmpty()) {
       artifactName += artifactScope.getPackageName() + ".";

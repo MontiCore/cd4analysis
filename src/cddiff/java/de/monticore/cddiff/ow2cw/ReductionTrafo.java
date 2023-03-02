@@ -233,7 +233,8 @@ public class ReductionTrafo {
 
     for (ASTCDType type : typeSet) {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, targetScope)));
-      Optional<CDTypeSymbol> optType = srcScope.resolveCDTypeDown(type.getSymbol().getInternalQualifiedName());
+      Optional<CDTypeSymbol> optType =
+          srcScope.resolveCDTypeDown(type.getSymbol().getInternalQualifiedName());
       if (optType.isPresent()) {
         for (ASTCDType superType :
             CDInheritanceHelper.getAllSuper(optType.get().getAstNode(), srcScope)) {

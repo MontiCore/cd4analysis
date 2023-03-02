@@ -106,7 +106,8 @@ public class CDWrapperGenerator {
       // add attributes
       for (ASTCDAttribute astcdAttribute : astcdType.getCDAttributeList()) {
         if (astCDEnumList.stream()
-            .anyMatch(s -> s.getSymbol().getInternalQualifiedName().equals(astcdAttribute.printType()))) {
+            .anyMatch(
+                s -> s.getSymbol().getInternalQualifiedName().equals(astcdAttribute.printType()))) {
           cDTypeWrapper.addAttribute(astcdAttribute);
           creatEnumClassMapHelper(
               "CDWrapperEnum_" + astcdAttribute.printType(), cDTypeWrapper.getName());

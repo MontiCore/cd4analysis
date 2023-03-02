@@ -14,6 +14,7 @@ public class STTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
 
   public STTypeIncStrategy(ASTCDCompilationUnit refCD, Set<String> mappings) {
     this.refCD = refCD;
+    this.mappings = mappings;
   }
 
   @Override
@@ -33,5 +34,21 @@ public class STTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
                       .collect(Collectors.toSet())));
     }
     return refTypes;
+  }
+
+  @Override
+  public boolean isInstance(ASTCDType concrete, ASTCDType ref) {
+    if (concrete.getModifier().isPresentStereotype()) {
+      Set<String> refNames =
+          mappings.stream()
+              .filter(mapping -> concrete.getModifier().getStereotype().contains(mapping))
+              .map(mapping -> concrete.getModifier().getStereotype().getValue(mapping))
+              .collect(Collectors.toSet());
+      return refNames.stream()
+          .anyMatch(
+              name ->
+                  refCD.getEnclosingScope().resolveCDTypeDownMany(name).contains(ref.getSymbol()));
+    }
+    return false;
   }
 }

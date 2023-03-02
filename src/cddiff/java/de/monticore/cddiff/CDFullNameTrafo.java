@@ -18,7 +18,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;

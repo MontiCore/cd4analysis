@@ -2,12 +2,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.symboltable.IArtifactScope;
-import de.monticore.symboltable.IGlobalScope;
 import de.monticore.symboltable.IScope;
-import de.se_rwth.commons.Names;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 public class CDPackageSymbol extends CDPackageSymbolTOP {
 
@@ -45,5 +40,4 @@ public class CDPackageSymbol extends CDPackageSymbolTOP {
     }
     return internalName;
   }
-
 }

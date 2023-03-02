@@ -270,7 +270,8 @@ public class MultiInstanceMatcher {
     // the set contains the class "objType" itself
     Set<ASTCDClass> astSubClasses = new HashSet<>();
     for (ASTCDClass astClass : astClasses) {
-      if (CDInheritanceHelper.isSuperOf(objType, astClass.getSymbol().getInternalQualifiedName(), scope)) {
+      if (CDInheritanceHelper.isSuperOf(
+          objType, astClass.getSymbol().getInternalQualifiedName(), scope)) {
         astSubClasses.add(astClass);
       }
     }

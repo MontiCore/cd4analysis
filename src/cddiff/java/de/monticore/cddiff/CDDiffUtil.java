@@ -160,7 +160,8 @@ public class CDDiffUtil {
       if (currentClass.isPresentCDExtendUsage()) {
         for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
           assert objectType.getDefiningSymbol().isPresent();
-          superName = ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
+          superName =
+              ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
 
           for (ASTCDClass astClass : classes) {
             if (superName.equals(astClass.getSymbol().getInternalQualifiedName())) {
@@ -189,7 +190,8 @@ public class CDDiffUtil {
     String interfaceName;
     for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
       assert objectType.getDefiningSymbol().isPresent();
-      interfaceName = ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
+      interfaceName =
+          ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
 
       for (ASTCDInterface allowedInterface : allowedInterfaces) {
         if (interfaceName.equals(allowedInterface.getSymbol().getInternalQualifiedName())) {
@@ -210,7 +212,8 @@ public class CDDiffUtil {
       // processing list
       for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
         assert objectType.getDefiningSymbol().isPresent();
-        interfaceName = ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
+        interfaceName =
+            ((CDTypeSymbol) objectType.getDefiningSymbol().get()).getInternalQualifiedName();
 
         for (ASTCDInterface allowedInterface : allowedInterfaces) {
           if (interfaceName.equals(allowedInterface.getSymbol().getInternalQualifiedName())) {
@@ -234,7 +237,9 @@ public class CDDiffUtil {
 
     for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
       for (ASTCDInterface superInterface : allowedInterfaces) {
-        if (((CDTypeSymbol) typeExp.getTypeInfo()).getInternalQualifiedName().equals(superInterface.getSymbol().getInternalQualifiedName())) {
+        if (((CDTypeSymbol) typeExp.getTypeInfo())
+            .getInternalQualifiedName()
+            .equals(superInterface.getSymbol().getInternalQualifiedName())) {
           interfaces.add(superInterface);
           remaining.remove(superInterface);
           interfaces.addAll(getAllInterfaces(superInterface, remaining));

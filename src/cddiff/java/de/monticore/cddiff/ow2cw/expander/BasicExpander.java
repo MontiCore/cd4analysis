@@ -201,13 +201,17 @@ public class BasicExpander implements CDExpander {
    * is always an empty String
    */
   public String determinePackageName(ASTCDType astcdType) {
-    int start = astcdType.getSymbol().getInternalQualifiedName().length() - astcdType.getName().length() - 1;
+    int start =
+        astcdType.getSymbol().getInternalQualifiedName().length()
+            - astcdType.getName().length()
+            - 1;
 
     if (start < 0) {
       return "";
     }
 
-    StringBuilder packageName = new StringBuilder().append(astcdType.getSymbol().getInternalQualifiedName());
+    StringBuilder packageName =
+        new StringBuilder().append(astcdType.getSymbol().getInternalQualifiedName());
     return packageName.delete(start, packageName.length()).toString();
   }
 

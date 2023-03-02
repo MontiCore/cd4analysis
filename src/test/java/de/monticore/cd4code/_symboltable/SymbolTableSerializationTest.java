@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -9,15 +11,11 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+import java.io.IOException;
+import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class SymbolTableSerializationTest {
 
@@ -33,7 +31,8 @@ public class SymbolTableSerializationTest {
   @Test
   public void testLowerDirectly() throws IOException {
     CD4CodeParser parser = CD4CodeMill.parser();
-    Optional<ASTCDCompilationUnit> optCd = parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/clower.cd");
+    Optional<ASTCDCompilationUnit> optCd =
+        parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/clower.cd");
     assertFalse(parser.hasErrors());
     assertTrue(optCd.isPresent());
 
@@ -52,7 +51,8 @@ public class SymbolTableSerializationTest {
   @Test
   public void testUpperDirectly() throws IOException {
     CD4CodeParser parser = CD4CodeMill.parser();
-    Optional<ASTCDCompilationUnit> optCd = parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/CUpper.cd");
+    Optional<ASTCDCompilationUnit> optCd =
+        parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/CUpper.cd");
     assertFalse(parser.hasErrors());
     assertTrue(optCd.isPresent());
 
@@ -71,7 +71,8 @@ public class SymbolTableSerializationTest {
   @Test
   public void testLowerStoreAndLoad() throws IOException {
     CD4CodeParser parser = CD4CodeMill.parser();
-    Optional<ASTCDCompilationUnit> optCd = parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/clower.cd");
+    Optional<ASTCDCompilationUnit> optCd =
+        parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/clower.cd");
     assertFalse(parser.hasErrors());
     assertTrue(optCd.isPresent());
 
@@ -104,7 +105,8 @@ public class SymbolTableSerializationTest {
   @Test
   public void testUpperStoreAndLoad() throws IOException {
     CD4CodeParser parser = CD4CodeMill.parser();
-    Optional<ASTCDCompilationUnit> optCd = parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/CUpper.cd");
+    Optional<ASTCDCompilationUnit> optCd =
+        parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/a/b/CUpper.cd");
     assertFalse(parser.hasErrors());
     assertTrue(optCd.isPresent());
 
@@ -137,7 +139,8 @@ public class SymbolTableSerializationTest {
   @Test
   public void testSerializedTypeRef() throws IOException {
     CD4CodeParser parser = CD4CodeMill.parser();
-    Optional<ASTCDCompilationUnit> optCd = parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/Use.cd");
+    Optional<ASTCDCompilationUnit> optCd =
+        parser.parse("src/test/resources/de/monticore/cd4code/_symboltable/Use.cd");
     assertFalse(parser.hasErrors());
     assertTrue(optCd.isPresent());
 
@@ -173,5 +176,4 @@ public class SymbolTableSerializationTest {
   public void after() {
     assertTrue(Log.getFindings().isEmpty());
   }
-
 }

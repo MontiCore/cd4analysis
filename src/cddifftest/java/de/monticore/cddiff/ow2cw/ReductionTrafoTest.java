@@ -146,7 +146,8 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     trafo.removeRedundantAttributes(employees8);
 
     for (ASTCDType type : typeList) {
-      if (subList.stream().anyMatch(sub -> sub.equals(type.getSymbol().getInternalQualifiedName()))) {
+      if (subList.stream()
+          .anyMatch(sub -> sub.equals(type.getSymbol().getInternalQualifiedName()))) {
         Assert.assertFalse(
             type.getCDAttributeList().stream()
                 .anyMatch(attribute -> attribute.getName().equals("test")));
