@@ -1,10 +1,12 @@
-package de.monticore.conformance;
+package de.monticore.conformance.basic;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.conformance.ConformanceStrategy;
+import de.monticore.conformance.inc.IncarnationStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 

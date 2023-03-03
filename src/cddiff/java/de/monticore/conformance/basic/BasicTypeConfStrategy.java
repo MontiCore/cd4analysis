@@ -1,18 +1,21 @@
-package de.monticore.conformance;
+package de.monticore.conformance.basic;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.conformance.ConformanceStrategy;
+import de.monticore.conformance.inc.IncarnationStrategy;
 
-public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
+public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
   protected ASTCDCompilationUnit conCD;
   protected IncarnationStrategy<ASTCDType> typeInc;
   protected IncarnationStrategy<ASTCDAssociation> assocInc;
 
-  public BasicClassConfStrategy(
+  public BasicTypeConfStrategy(
       ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
       IncarnationStrategy<ASTCDType> typeInc,
@@ -24,22 +27,46 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
   }
 
   @Override
-  public boolean checkConformance(ASTCDClass concrete) {
+  public boolean checkConformance(ASTCDType concrete) {
     return typeInc.getRefElements(concrete).stream()
         .allMatch(ref -> checkConformance(concrete, ref));
   }
 
-  public boolean checkConformance(ASTCDClass concrete, ASTCDType ref) {
-    // todo: check modifier, attributes, associations, interfaces, etc...
-    if (ref.getModifier().isAbstract() && !concrete.getModifier().isAbstract()) {
+  public boolean checkConformance(ASTCDType concrete, ASTCDType ref) {
+
+    // an enum must be incarnated as an enum
+    if (ref instanceof ASTCDEnum) {
+      if (concrete instanceof ASTCDEnum) {
+        return checkConformance((ASTCDEnum) concrete, (ASTCDEnum) ref);
+      }
       return false;
+    } else {
+      // if ref is not an enum, then concrete should not be an enum, either
+      if (concrete instanceof ASTCDEnum) {
+        return false;
+      }
     }
+
+    // a class must be incarnated as a class
+    if (ref instanceof ASTCDClass) {
+      if (!(concrete instanceof ASTCDClass)) {
+        return false;
+      }
+      // abstract classes must be incarnated as abstract classes
+      if (ref.getModifier().isAbstract() && !concrete.getModifier().isAbstract()) {
+        return false;
+      }
+    }
+
+    // check if all necessary attributes are present
     boolean attributes =
         ref.getCDAttributeList().stream()
             .allMatch(
                 rAttr ->
                     concrete.getCDAttributeList().stream()
                         .anyMatch(cAttr -> cAttr.deepEquals(rAttr)));
+
+    // check if reference associations are incarnated
     boolean associations =
         refCD.getCDDefinition().getCDAssociationsList().stream()
             .filter(
@@ -64,6 +91,8 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
                                         .getInternalQualifiedName()
                                         .contains(cAssoc.getRightQualifiedName().getQName()))
                         .anyMatch(cAssoc -> assocInc.getRefElements(cAssoc).contains(rAssoc)));
+
+    // check if all reference super-types are incarnated
     boolean superTypes =
         CDDiffUtil.getAllSuperTypes(ref, refCD.getCDDefinition()).stream()
             .allMatch(
@@ -71,5 +100,10 @@ public class BasicClassConfStrategy implements ConformanceStrategy<ASTCDClass> {
                     CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()
                         .anyMatch(conSuper -> typeInc.getRefElements(conSuper).contains(refSuper)));
     return attributes && associations && superTypes;
+  }
+
+  public boolean checkConformance(ASTCDEnum concrete, ASTCDEnum ref) {
+    return concrete.getCDEnumConstantList().stream()
+        .allMatch(conConst -> ref.getCDEnumConstantList().stream().anyMatch(conConst::deepEquals));
   }
 }

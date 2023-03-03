@@ -10,6 +10,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class ConformanceChecker {
 
   // todo: (1) Strategy Pattern, (2) Mapping concrete -> reference, (3) Resolve?

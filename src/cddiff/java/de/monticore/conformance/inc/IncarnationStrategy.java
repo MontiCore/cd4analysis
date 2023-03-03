@@ -1,4 +1,4 @@
-package de.monticore.conformance;
+package de.monticore.conformance.inc;
 
 import java.util.Set;
 

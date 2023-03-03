@@ -1,4 +1,4 @@
-package de.monticore.conformance;
+package de.monticore.conformance.inc;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
