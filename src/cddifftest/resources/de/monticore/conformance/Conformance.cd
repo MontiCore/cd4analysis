@@ -1,0 +1,18 @@
+import java.lang.String;
+
+classdiagram Concrete {
+  <<Account>> class BankAccount {
+    String username;
+    String password;
+  }
+
+  <<Item>> abstract class Item {
+    String id;
+  }
+
+  class Transaction extends Item;
+
+  class Deposit extends Item;
+
+  <<hasItems>> association [1..*] BankAccount <-> Item [1..*];
+}

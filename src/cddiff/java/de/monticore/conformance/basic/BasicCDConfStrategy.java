@@ -30,14 +30,15 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
 
   @Override
   public boolean checkConformance(ASTCDCompilationUnit concrete) {
-    return checkAssocIncarnation(concrete)
-        && checkTypeIncarnation(concrete)
+    return checkTypeIncarnation(concrete)
+        && checkAssocIncarnation(concrete)
         && checkTypeConformance(concrete)
         && checkAssocConformance(concrete);
   }
 
   protected boolean checkAssocConformance(ASTCDCompilationUnit concrete) {
-    return false;
+    return concrete.getCDDefinition().getCDAssociationsList().stream()
+        .allMatch(conAssoc -> assocChecker.checkConformance(conAssoc));
   }
 
   protected boolean checkTypeConformance(ASTCDCompilationUnit concrete) {
