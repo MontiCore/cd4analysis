@@ -1,5 +1,6 @@
 package de.monticore.conformance.basic;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -99,7 +100,23 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
                 refSuper ->
                     CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()
                         .anyMatch(conSuper -> typeInc.getRefElements(conSuper).contains(refSuper)));
-    return attributes && associations && superTypes;
+    if (attributes && associations && superTypes) {
+      return true;
+    }
+    System.out.println(
+        CD4CodeMill.prettyPrint(concrete, false)
+            + " does not conform to "
+            + CD4CodeMill.prettyPrint(ref, false));
+    if (!attributes) {
+      System.out.println("Attributes do not match!");
+    }
+    if (!associations) {
+      System.out.println("Associations do not match!");
+    }
+    if (!superTypes) {
+      System.out.println("Super-types do not match!");
+    }
+    return false;
   }
 
   public boolean checkConformance(ASTCDEnum concrete, ASTCDEnum ref) {

@@ -1,10 +1,12 @@
 package de.monticore.conformance.basic;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.ConformanceStrategy;
 import de.monticore.conformance.inc.IncarnationStrategy;
+import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,16 +65,24 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     conTypes.addAll(concrete.getCDDefinition().getCDInterfacesList());
     conTypes.addAll(concrete.getCDDefinition().getCDEnumsList());
 
-    return refTypes.stream()
-        .allMatch(
-            refType -> conTypes.stream().anyMatch(conType -> typeInc.isInstance(conType, refType)));
+    for (ASTCDType refType : refTypes) {
+      if (conTypes.stream().noneMatch(conType -> typeInc.isInstance(conType, refType))) {
+        Log.println(refType.getName() + " has no incarnation!");
+        return false;
+      }
+    }
+    return true;
   }
 
   protected boolean checkAssocIncarnation(ASTCDCompilationUnit concrete) {
-    return refCD.getCDDefinition().getCDAssociationsList().stream()
-        .allMatch(
-            refAssoc ->
-                concrete.getCDDefinition().getCDAssociationsList().stream()
-                    .anyMatch(conAssoc -> assocInc.isInstance(conAssoc, refAssoc)));
+
+    for (ASTCDAssociation refAssoc : refCD.getCDDefinition().getCDAssociationsList()) {
+      if (concrete.getCDDefinition().getCDAssociationsList().stream()
+          .noneMatch(conAssoc -> assocInc.isInstance(conAssoc, refAssoc))) {
+        Log.println(CD4CodeMill.prettyPrint(refAssoc, false) + " has no incarnation!");
+        return false;
+      }
+    }
+    return true;
   }
 }

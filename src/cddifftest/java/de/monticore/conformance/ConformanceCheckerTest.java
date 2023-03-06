@@ -6,10 +6,11 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConformanceCheckerTest {
@@ -19,14 +20,12 @@ public class ConformanceCheckerTest {
   @Before
   public void setup() {
     Log.init();
-    Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
 
-  @Ignore
   @Test
   public void testConformanceCheck() {
     try {
@@ -38,9 +37,13 @@ public class ConformanceCheckerTest {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(refCD.get());
         conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
         refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
-        // todo: needs to be fixed
+
+        //We use the mapping "ref"!
+        Set<String> mappings = new HashSet<>();
+        mappings.add("ref");
+
         Assert.assertTrue(
-            ConformanceChecker.checkBasicStereotypeConformance(conCD.get(), refCD.get()));
+            ConformanceChecker.checkBasicStereotypeConformance(conCD.get(), refCD.get(), mappings));
       } else {
         Assert.fail("Could not parse CDs.");
       }

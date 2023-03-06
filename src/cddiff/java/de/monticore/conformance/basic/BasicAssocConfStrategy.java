@@ -1,5 +1,6 @@
 package de.monticore.conformance.basic;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -35,14 +36,22 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
   }
 
   public boolean checkConformance(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    return check(concrete, ref) || checkReverse(concrete, ref);
+    if (check(concrete, ref) || checkReverse(concrete, ref)) {
+      return true;
+    } else {
+      System.out.println(
+          CD4CodeMill.prettyPrint(concrete, false)
+              + " does not conform to "
+              + CD4CodeMill.prettyPrint(ref, false));
+      return false;
+    }
   }
 
   protected boolean check(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    if ((!concrete.getCDAssocDir().isDefinitiveNavigableRight()
-            || ref.getCDAssocDir().isDefinitiveNavigableRight())
-        && (!concrete.getCDAssocDir().isDefinitiveNavigableLeft()
-            || ref.getCDAssocDir().isDefinitiveNavigableLeft())) {
+    if ((!ref.getCDAssocDir().isDefinitiveNavigableRight()
+            || concrete.getCDAssocDir().isDefinitiveNavigableRight())
+        && (!ref.getCDAssocDir().isDefinitiveNavigableLeft()
+            || concrete.getCDAssocDir().isDefinitiveNavigableLeft())) {
       return checkReference(
               concrete.getLeftQualifiedName().getQName(), ref.getLeftQualifiedName().getQName())
           && checkCardinality(concrete.getLeft(), ref.getLeft())
@@ -50,15 +59,19 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
               concrete.getRightQualifiedName().getQName(), ref.getRightQualifiedName().getQName())
           && checkCardinality(concrete.getRight(), ref.getRight());
     }
-
+    System.out.println(
+        CD4CodeMill.prettyPrint(concrete, false)
+            + " does not refine the association "
+            + "directions of "
+            + CD4CodeMill.prettyPrint(ref, false));
     return false;
   }
 
   public boolean checkReverse(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    if ((!concrete.getCDAssocDir().isDefinitiveNavigableRight()
-            || ref.getCDAssocDir().isDefinitiveNavigableLeft())
-        && (!concrete.getCDAssocDir().isDefinitiveNavigableLeft()
-            || ref.getCDAssocDir().isDefinitiveNavigableRight())) {
+    if ((!ref.getCDAssocDir().isDefinitiveNavigableRight()
+            || concrete.getCDAssocDir().isDefinitiveNavigableLeft())
+        && (!ref.getCDAssocDir().isDefinitiveNavigableLeft()
+            || concrete.getCDAssocDir().isDefinitiveNavigableRight())) {
       return checkReference(
               concrete.getLeftQualifiedName().getQName(), ref.getRightQualifiedName().getQName())
           && checkCardinality(concrete.getLeft(), ref.getRight())
@@ -99,7 +112,7 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
       ASTCDType refType = refTypeSymbol.get().getAstNode();
       return typeInc.isInstance(conType, refType);
     }
-    Log.error("0xCDD21");
+    Log.error("0xCDD17: Could not resolve association reference!");
     return false;
   }
 }
