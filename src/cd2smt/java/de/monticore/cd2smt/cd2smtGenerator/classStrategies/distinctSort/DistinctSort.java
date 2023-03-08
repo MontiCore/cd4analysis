@@ -8,8 +8,13 @@ import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
 public class DistinctSort implements ClassStrategy {
@@ -54,14 +59,43 @@ public class DistinctSort implements ClassStrategy {
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     this.ast = ast;
     ctx = context;
-    ast.getCDDefinition().getCDClassesList().forEach(Class -> declareCDType(Class, context, false));
-    ast.getCDDefinition()
-        .getCDInterfacesList()
-        .forEach(Interface -> declareCDType(Interface, context, true));
+    ast.getCDDefinition().getCDEnumsList().forEach(this::declareEnum);
+    ast.getCDDefinition().getCDClassesList().forEach(this::declareClass);
+    ast.getCDDefinition().getCDInterfacesList().forEach(this::declareInterface);
   }
 
-  private void declareCDType(ASTCDType astcdType, Context ctx, boolean isInterface) {
-    SMTType smtType = new SMTType(isInterface, astcdType);
+  // enum = uninterpreted sort   , value computed with a function declaration
+  private void declareEnum(ASTCDEnum astcdEnum) {
+    SMTType smtType = SMTType.mkEnum(astcdEnum);
+    List<Constructor<Sort>> constructorList = new ArrayList<>();
+
+    // create constant for the attributes values  and saves im smtType
+    for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
+      Constructor<Sort> constructor =
+          ctx.mkConstructor(constant.getName(), constant.getName(), null, null, null);
+      constructorList.add(constructor);
+      smtType.addConstant(constant, constructor);
+    }
+
+    DatatypeSort<Sort> sort =
+        ctx.mkDatatypeSort(astcdEnum.getName(), constructorList.toArray(new Constructor[0]));
+
+    smtType.setSort(sort);
+
+    smtTypesMap.put(astcdEnum, smtType);
+  }
+
+  private void declareInterface(ASTCDInterface astcdInterface) {
+    SMTType smtType = SMTType.mkInterface(astcdInterface);
+    declareCDType(astcdInterface, smtType);
+  }
+
+  private void declareClass(ASTCDClass astcdClass) {
+    SMTType smtType = SMTType.mkClass(astcdClass);
+    declareCDType(astcdClass, smtType);
+  }
+
+  private void declareCDType(ASTCDType astcdType, SMTType smtType) {
 
     // (declare-sort A_obj 0)
     UninterpretedSort typeSort =
@@ -70,7 +104,27 @@ public class DistinctSort implements ClassStrategy {
 
     // (declare-fun a_attrib_something (A_obj) String) declare all attributes
     for (ASTCDAttribute myAttribute : astcdType.getCDAttributeList()) {
-      Sort sort = CDHelper.parseAttribType2SMT(ctx, myAttribute);
+      Sort sort;
+      if (CDHelper.isPrimitiveType(myAttribute.getMCType())) {
+        sort = CDHelper.mcType2Sort(ctx, myAttribute.getMCType());
+      } else if (CDHelper.isEnumType(ast.getCDDefinition(), myAttribute.getMCType().printType())) {
+        sort =
+            smtTypesMap
+                .get(CDHelper.getEnum(myAttribute.getMCType().printType(), ast.getCDDefinition()))
+                .getSort();
+      } else {
+        Log.info(
+            "conversion of  Attribute "
+                + myAttribute.getName()
+                + " of the ASTCDType  "
+                + astcdType.getName()
+                + " skiped because his type  "
+                + myAttribute.getMCType().printType()
+                + " is not supported yet ",
+            "Warning");
+        return;
+      }
+
       FuncDecl<Sort> attributeFunc =
           ctx.mkFuncDecl(SMTHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
       smtType.addAttribute(myAttribute, attributeFunc);
@@ -88,8 +142,9 @@ public class DistinctSort implements ClassStrategy {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
         SMTType smtType = getSMTType(symbol2CDTypeName(mySort.getName())).orElse(null);
         assert smtType != null;
-        boolean isAbstract = smtType.isInterface();
-        MinObject obj = new MinObject(isAbstract, smtExpr, smtType.getAstcdType());
+
+        MinObject obj =
+            new MinObject(CDHelper.mkType(smtType.getType()), smtExpr, smtType.getAstcdType());
 
         for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
             smtType.getAttributesMap().entrySet()) {
@@ -98,6 +153,7 @@ public class DistinctSort implements ClassStrategy {
             obj.addAttribute(attribute.getKey(), attrExpr);
           }
         }
+
         objectSet.add(obj);
       }
     }

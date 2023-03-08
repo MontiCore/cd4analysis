@@ -6,8 +6,9 @@ import static org.junit.Assert.fail;
 import com.microsoft.z3.Context;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,7 +29,7 @@ public class CD2SMTAbstractTest {
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter().prettyprint(od),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
           Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
@@ -73,6 +74,7 @@ public class CD2SMTAbstractTest {
         Arguments.of("car17.cd", "17"),
         Arguments.of("car18.cd", "18"),
         Arguments.of("car19.cd", "19"),
+        Arguments.of("car20.cd", "20"),
         Arguments.of("car.cd", ""));
   }
 }

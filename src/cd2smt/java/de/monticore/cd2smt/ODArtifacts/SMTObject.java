@@ -12,7 +12,7 @@ public class SMTObject extends MinObject {
   private SMTObject superClass;
 
   public SMTObject(MinObject minObject) {
-    super(minObject.isAbstract(), minObject.getSmtExpr(), minObject.getASTCDType());
+    super(minObject.getType(), minObject.getSmtExpr(), minObject.getASTCDType());
     this.attributes = minObject.getAttributes();
     linkedObjects = new ArrayList<>();
     superInterfaceList = new ArrayList<>();

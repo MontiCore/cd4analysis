@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies;
 
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Model;
+import com.microsoft.z3.*;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.Set;

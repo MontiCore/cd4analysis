@@ -15,6 +15,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -69,19 +70,24 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   public Set<SMTObject> smt2od(Model model, Set<SMTObject> objectSet) {
 
     for (SMTObject obj : objectSet) {
-      Map<ASTCDType, FuncDecl<Sort>> convert2SuperInterfaceList =
-          inheritanceFeaturesMap.get(obj.getASTCDType()).getConvert2SuperTypeFuncMap();
+      if (!(obj.getASTCDType() instanceof ASTCDEnum)) {
+        Map<ASTCDType, FuncDecl<Sort>> convert2SuperInterfaceList =
+            inheritanceFeaturesMap.get(obj.getASTCDType()).getConvert2SuperTypeFuncMap();
 
-      for (FuncDecl<Sort> convert2SuperInterface : convert2SuperInterfaceList.values()) {
-        Expr<? extends Sort> superObj =
-            model.eval(convert2SuperInterface.apply(obj.getSmtExpr()), true);
+        for (FuncDecl<Sort> convert2SuperInterface : convert2SuperInterfaceList.values()) {
+          Expr<? extends Sort> superObj =
+              model.eval(convert2SuperInterface.apply(obj.getSmtExpr()), true);
 
-        SMTObject superSMTObj =
-            objectSet.stream().filter(o -> o.getSmtExpr().equals(superObj)).findAny().orElse(null);
+          SMTObject superSMTObj =
+              objectSet.stream()
+                  .filter(o -> o.getSmtExpr().equals(superObj))
+                  .findAny()
+                  .orElse(null);
 
-        assert superSMTObj != null;
-        obj.addSuperInterfaceList(superSMTObj);
-        superSMTObj.setAbstract();
+          assert superSMTObj != null;
+          obj.addSuperInterfaceList(superSMTObj);
+          superSMTObj.setType(CDHelper.ObjType.ABSTRACT_OBJ);
+        }
       }
     }
     return objectSet;
@@ -156,10 +162,8 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
         Optional<ASTCDClass> superClass =
             Optional.ofNullable(
                 CDHelper.getClass(
-                    myClass
-                        .getSuperclassList()
-                        .get(0)
-                        .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+                    new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+                        .prettyprint(myClass.getSuperclassList().get(0)),
                     cd));
         assert superClass.isPresent();
         constraints.addAll(
@@ -171,7 +175,8 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
         Optional<ASTCDInterface> superInterface =
             Optional.ofNullable(
                 CDHelper.getInterface(
-                    superC.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd));
+                    new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superC),
+                    cd));
         assert superInterface.isPresent();
         constraints.addAll(
             buildCDTypeInheritanceConstraint(myClass, superInterface.get(), classData, ctx));
@@ -183,7 +188,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
         Optional<ASTCDInterface> superInterface =
             Optional.ofNullable(
                 CDHelper.getInterface(
-                    superInterf.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+                    new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superInterf),
                     cd));
         assert superInterface.isPresent();
 

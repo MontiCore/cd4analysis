@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper;
 
+import static de.monticore.cd2smt.Helper.CDHelper.ClassType.*;
+import static de.monticore.cd2smt.Helper.CDHelper.ObjType.*;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -13,16 +16,17 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumTOP;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class CDHelper {
@@ -32,13 +36,13 @@ public class CDHelper {
     List<ASTCDClass> subclasses = new LinkedList<>();
     for (ASTCDClass entry : cd.getCDClassesList()) {
       for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
-        if (entry2
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+        if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+            .prettyprint(entry2)
             .equals(astcdType.getName())) subclasses.add(entry);
       }
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
-        if (entry2
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+        if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+            .prettyprint(entry2)
             .equals(astcdType.getName())) subclasses.add(entry);
       }
     }
@@ -50,8 +54,8 @@ public class CDHelper {
     List<ASTCDInterface> subInterfaces = new LinkedList<>();
     for (ASTCDInterface entry : cd.getCDInterfacesList()) {
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
-        if (entry2
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+        if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+            .prettyprint(entry2)
             .equals(astcdInterface.getName())) subInterfaces.add(entry);
       }
     }
@@ -67,6 +71,12 @@ public class CDHelper {
     for (ASTCDInterface astcdInterface : cd.getCDInterfacesList()) {
       if (astcdInterface.getName().equals(className)) {
         return astcdInterface;
+      }
+    }
+
+    for (ASTCDEnum astcdEnum : cd.getCDEnumsList()) {
+      if (astcdEnum.getName().equals(className)) {
+        return astcdEnum;
       }
     }
     Log.error(" class " + className + " not found in classdiagram " + cd.getName());
@@ -93,6 +103,16 @@ public class CDHelper {
     return null;
   }
 
+  public static ASTCDEnum getEnum(String enumName, ASTCDDefinition cd) {
+    for (ASTCDEnum astcdEnum : cd.getCDEnumsList()) {
+      if (astcdEnum.getName().equals(enumName)) {
+        return astcdEnum;
+      }
+    }
+    Log.error(" Enumeration " + enumName + " not found in classdiagram " + cd.getName());
+    return null;
+  }
+
   public static void createCDSymTab(ASTCDCompilationUnit ast) {
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
     BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
@@ -112,8 +132,8 @@ public class CDHelper {
     cdAssociationRoleNameTrafo.transform(ast);
   }
 
-  public static Sort parseAttribType2SMT(Context ctx, ASTCDAttribute myAttribute) {
-    String att = myAttribute.printType();
+  public static Sort mcType2Sort(Context ctx, ASTMCType astmcType) {
+    String att = new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(astmcType);
     Sort res = null;
     switch (att) {
       case "boolean":
@@ -130,30 +150,45 @@ public class CDHelper {
         res = ctx.mkStringSort();
         break;
       default:
-        Log.error("the type " + myAttribute.printType() + " is not supported for Attributes");
+        Log.error("the type " + att + " is not supported for Attributes");
     }
     return res;
   }
 
+  public static boolean isPrimitiveType(ASTMCType type) {
+    return Set.of("int", "double", "Double", "Integer", "boolean", "Boolean", "String")
+        .contains(type.printType());
+  }
+
+  public static boolean isEnumType(ASTCDDefinition ast, String type) {
+
+    return ast.getCDEnumsList().stream()
+        .map(ASTCDEnumTOP::getName)
+        .collect(Collectors.toSet())
+        .contains(type);
+  }
+
   public static ASTMCType sort2MCType(Sort mySort) {
-    if (!javaTypeMap.containsKey(mySort.toString())) {
-      Log.error("the type" + mySort + "is not supported for attributes");
+    if (javaTypeMap.containsKey(mySort.toString())) {
+      return javaTypeMap.get(mySort.toString());
     }
-    return javaTypeMap.get(mySort.toString());
+    return OD4ReportMill.mCQualifiedTypeBuilder()
+        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(mySort.toString()))
+        .build();
   }
 
   protected static Map<String, ASTMCType> buildJavaTypeMap() {
-    Map<String, ASTMCType> typeMap_temp = new HashMap<>();
-    typeMap_temp.put("Int", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build());
-    typeMap_temp.put("Real", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build());
-    typeMap_temp.put("Bool", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build());
-    typeMap_temp.put(
+    return Map.of(
+        "Int",
+        OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build(),
+        "Real",
+        OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build(),
+        "Bool",
+        OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build(),
         "String",
         OD4ReportMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String"))
             .build());
-    Map<String, ASTMCType> typeMap = Collections.unmodifiableMap(typeMap_temp);
-    return typeMap;
   }
 
   public static ASTCDAssociation getAssociation(
@@ -211,7 +246,7 @@ public class CDHelper {
             .map(
                 mcType ->
                     getASTCDType(
-                        mcType.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+                        new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(mcType),
                         cd))
             .collect(Collectors.toList());
 
@@ -220,7 +255,7 @@ public class CDHelper {
             .map(
                 mcType ->
                     getASTCDType(
-                        mcType.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+                        new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(mcType),
                         cd))
             .collect(Collectors.toList()));
 
@@ -260,5 +295,27 @@ public class CDHelper {
 
   public static ASTCDType getRightType(ASTCDAssociation association, ASTCDDefinition cd) {
     return getASTCDType(association.getRightQualifiedName().getQName(), cd);
+  }
+
+  public enum ClassType {
+    INTERFACE,
+    NORMAL_CLASS,
+    ABSTRACT_CLASS,
+    ENUMERATION
+  }
+
+  public enum ObjType {
+    ABSTRACT_OBJ,
+    NORMAL_OBJ
+  }
+
+  public static ObjType mkType(ClassType type) {
+    ObjType res;
+    if (type == NORMAL_CLASS) {
+      res = NORMAL_OBJ;
+    } else {
+      res = ABSTRACT_OBJ;
+    }
+    return res;
   }
 }

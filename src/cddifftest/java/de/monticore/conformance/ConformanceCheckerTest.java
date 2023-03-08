@@ -38,7 +38,7 @@ public class ConformanceCheckerTest {
         conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
         refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
 
-        //We use the mapping "ref"!
+        // We use the mapping "ref"!
         Set<String> mappings = new HashSet<>();
         mappings.add("ref");
 

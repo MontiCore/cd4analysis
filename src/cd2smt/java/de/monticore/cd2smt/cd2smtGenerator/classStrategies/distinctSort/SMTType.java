@@ -1,25 +1,47 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort;
 
+import com.microsoft.z3.Constructor;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import com.microsoft.z3.UninterpretedSort;
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.HashMap;
 import java.util.Map;
 
 class SMTType {
-  private final boolean isInterface;
-  private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributes;
+  private CDHelper.ClassType type;
+  private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributes = new HashMap<>();
+  private final Map<ASTCDEnumConstant, Constructor<Sort>> constantMap = new HashMap<>();
   private Sort sort;
 
-  private final ASTCDType astcdType;
+  private ASTCDType astcdType;
 
-  public SMTType(boolean isInterface, ASTCDType astcdType) {
-    this.isInterface = isInterface;
-    this.astcdType = astcdType;
-    attributes = new HashMap<>();
+  public static SMTType mkClass(ASTCDClass astcdClass) {
+    SMTType smtType = new SMTType();
+    smtType.type = CDHelper.ClassType.NORMAL_CLASS;
+    smtType.astcdType = astcdClass;
+    return smtType;
+  }
+
+  public static SMTType mkInterface(ASTCDInterface astcdInterface) {
+    SMTType smtType = new SMTType();
+    smtType.type = CDHelper.ClassType.INTERFACE;
+    smtType.astcdType = astcdInterface;
+    return smtType;
+  }
+
+  public static SMTType mkEnum(ASTCDEnum astcdEnum) {
+    SMTType smtType = new SMTType();
+    smtType.type = CDHelper.ClassType.ENUMERATION;
+    smtType.astcdType = astcdEnum;
+    return smtType;
   }
 
   public FuncDecl<? extends Sort> getAttribute(ASTCDAttribute attribute) {
@@ -28,6 +50,10 @@ class SMTType {
 
   public void addAttribute(ASTCDAttribute attribute, FuncDecl<? extends Sort> attrFunc) {
     attributes.put(attribute, attrFunc);
+  }
+
+  public void addConstant(ASTCDEnumConstant constant, Constructor<Sort> attrFunc) {
+    constantMap.put(constant, attrFunc);
   }
 
   public Sort getSort() {
@@ -42,12 +68,8 @@ class SMTType {
     this.sort = sort;
   }
 
-  public boolean isInterface() {
-    return isInterface;
-  }
-
-  public boolean isClass() {
-    return !isInterface;
+  public CDHelper.ClassType getType() {
+    return type;
   }
 
   public ASTCDType getAstcdType() {
