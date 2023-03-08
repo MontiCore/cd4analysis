@@ -8,7 +8,7 @@ plugins {
   id "monticore" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
   id "com.github.johnrengelman.shadow" version "6.0.0" apply false
-  id "io.github.themrmilchmann.ecj" version "0.1.0" // Eclipse compiler as it's much faster than javac
+  id "io.github.themrmilchmann.ecj" version "0.2.0" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
   id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
