@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.* ;
+classdiagram Enumeration {
+class Car {
+  String name ;
+  Color color;
+  Country provenance ;
+}
+
+class Wheel ;
+
+ enum Color { RED,BLACK, WHITE , BLUE, YELLOW ; }
+
+ enum Country {DE,US , UK, FR ,CMR;}
+
+ association  [1] Car --  Wheel [1..*]  ;
+
+
+}

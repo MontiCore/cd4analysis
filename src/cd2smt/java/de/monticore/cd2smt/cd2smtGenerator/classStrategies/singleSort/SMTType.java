@@ -3,6 +3,7 @@ package de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort;
 import com.microsoft.z3.Constructor;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ class SMTType {
   private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributes;
   private Constructor<Sort> type;
 
+  CDHelper.ClassType classType;
   private final ASTCDType astcdType;
 
   public ASTCDType getAstcdType() {
@@ -51,6 +53,10 @@ class SMTType {
 
   public ASTCDType getAsCdType() {
     return astcdType;
+  }
+
+  public CDHelper.ClassType getClassType() {
+    return classType;
   }
 
   public Map<ASTCDAttribute, FuncDecl<? extends Sort>> getAttributesMap() {

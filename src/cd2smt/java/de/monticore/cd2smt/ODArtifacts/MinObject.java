@@ -3,6 +3,7 @@ package de.monticore.cd2smt.ODArtifacts;
 
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.HashMap;
@@ -13,16 +14,15 @@ public class MinObject {
   private final Expr<? extends Sort> smtExpr;
   private final ASTCDType astcdType;
   public Map<ASTCDAttribute, Expr<? extends Sort>> attributes = new HashMap<>();
-  private boolean isAbstract;
+  private CDHelper.ObjType type;
 
   /**
-   * @param isAbstract is true when the object will be merged with his sub instance e.g
-   *     interface-obj
+   * @param type the type of the object (interface_obj, abstract_obj...)
    * @param smtExpr the SMT-representation of the object
    * @param astcdType the ASTCDType of the object
    */
-  public MinObject(boolean isAbstract, Expr<? extends Sort> smtExpr, ASTCDType astcdType) {
-    this.isAbstract = isAbstract;
+  public MinObject(CDHelper.ObjType type, Expr<? extends Sort> smtExpr, ASTCDType astcdType) {
+    this.type = type;
     this.smtExpr = smtExpr;
     this.astcdType = astcdType;
   }
@@ -43,12 +43,12 @@ public class MinObject {
     return attributes;
   }
 
-  public boolean isAbstract() {
-    return isAbstract;
+  public CDHelper.ObjType getType() {
+    return type;
   }
 
-  public void setAbstract() {
-    isAbstract = true;
+  public void setType(CDHelper.ObjType type) {
+    this.type = type;
   }
 
   public boolean hasSort(Sort sort) {

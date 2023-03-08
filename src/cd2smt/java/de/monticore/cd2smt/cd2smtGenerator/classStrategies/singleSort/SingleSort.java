@@ -1,6 +1,6 @@
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort;
 
-import static de.monticore.cd2smt.Helper.CDHelper.parseAttribType2SMT;
+import static de.monticore.cd2smt.Helper.CDHelper.mcType2Sort;
 
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
@@ -144,7 +144,7 @@ public class SingleSort implements ClassStrategy {
           ctx.mkFuncDecl(
               SMTHelper.printAttributeNameSMT(astcdType, myAttribute),
               sort,
-              parseAttribType2SMT(ctx, myAttribute));
+              mcType2Sort(ctx, myAttribute.getMCType()));
       smtType.addAttribute(myAttribute, attributeFunc);
     }
 
@@ -165,8 +165,9 @@ public class SingleSort implements ClassStrategy {
           if (hasType(smtExpr, astcdType, model)) {
             SMTType smtType = smtTypesMap.get(astcdType);
 
-            boolean isAbstract = smtType.isInterface();
-            MinObject obj = new MinObject(isAbstract, smtExpr, smtType.getAstcdType());
+            MinObject obj =
+                new MinObject(
+                    CDHelper.mkType(smtType.getClassType()), smtExpr, smtType.getAstcdType());
 
             for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
                 smtType.getAttributesMap().entrySet()) {

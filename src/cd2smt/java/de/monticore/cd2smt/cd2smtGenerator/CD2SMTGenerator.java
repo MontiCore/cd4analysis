@@ -164,7 +164,7 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
     // remove the subclass instances and their links and Interface  objects
     Set<SMTObject> objectSet = new HashSet<>();
     for (SMTObject entry : objectSet2) {
-      if (!entry.isAbstract()) {
+      if (!(entry.getType() == CDHelper.ObjType.ABSTRACT_OBJ)) {
         objectSet.add(entry);
       }
     }
