@@ -15,7 +15,7 @@ classdiagram STTest {
 
   }
 
-  class CarAbstract{
+ abstract class CarAbstract{
      int numberOfWheel ;
      double price ;
   }

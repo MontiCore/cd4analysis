@@ -91,7 +91,12 @@ public class DistinctSort implements ClassStrategy {
   }
 
   private void declareClass(ASTCDClass astcdClass) {
-    SMTType smtType = SMTType.mkClass(astcdClass);
+    SMTType smtType;
+    if (astcdClass.getModifier().isAbstract()) {
+      smtType = SMTType.mkAbstractClass(astcdClass);
+    } else {
+      smtType = SMTType.mkClass(astcdClass);
+    }
     declareCDType(astcdClass, smtType);
   }
 

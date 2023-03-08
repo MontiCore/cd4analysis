@@ -24,6 +24,7 @@ import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class DefaultInhrStrategy implements InheritanceStrategy {
   private final Set<IdentifiableBoolExpr> inheritanceConstraints;
@@ -120,11 +121,11 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
 
   protected Map<ASTCDType, Constructor<Sort>> buildSubclassConstructorList(
       ASTCDType astcdType, ASTCDDefinition cd, Context ctx) {
-    List<ASTCDClass> subClassList = CDHelper.getSubclassList(cd, astcdType);
+    List<ASTCDType> subClassList = CDHelper.getSubclassList(cd, astcdType);
     Map<ASTCDType, Constructor<Sort>> res = new HashMap<>();
 
     // add Constructor for subclasses
-    for (ASTCDClass entry : subClassList) {
+    for (ASTCDType entry : subClassList) {
       Constructor<Sort> constructor =
           ctx.mkConstructor("TT_" + entry.getName(), "IS_TT" + entry.getName(), null, null, null);
       res.put(entry, constructor);
@@ -132,7 +133,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
 
     // add constructor for subInterfaces
     if (astcdType instanceof ASTCDInterface) {
-      for (ASTCDInterface entry : CDHelper.getSubInterfaceList(cd, (ASTCDInterface) astcdType)) {
+      for (ASTCDType entry : CDHelper.getSubInterfaceList(cd, (ASTCDInterface) astcdType)) {
         Constructor<Sort> constructor =
             ctx.mkConstructor("TT_" + entry.getName(), "IS_TT" + entry.getName(), null, null, null);
         res.put(entry, constructor);
@@ -197,48 +198,70 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
       }
     }
     // asset each Interface Obj muss have a super instance Object
-    constraints.addAll(mkConstrExistSubclass4Interf(cd, classData, ctx));
+    constraints.addAll(mkExistSubInstance4Interfaces(cd, classData, ctx));
+    constraints.addAll(mkExistSubInstance4AbstClass(cd, classData, ctx));
     return constraints;
   }
 
-  protected List<IdentifiableBoolExpr> mkConstrExistSubclass4Interf(
+  /** ensure that each interface expression are inherited */
+  protected List<IdentifiableBoolExpr> mkExistSubInstance4Interfaces(
       ASTCDDefinition cd, ClassData classData, Context ctx) {
     List<IdentifiableBoolExpr> constraints = new ArrayList<>();
     for (ASTCDInterface myInterface : cd.getCDInterfacesList()) {
-      // make constraint for existence of super Instance of each Interface instance
-      Expr<? extends Sort> interfObj =
-          ctx.mkConst(myInterface.getName(), classData.getSort(myInterface));
-      BoolExpr helpConstr = ctx.mkFalse();
-      for (ASTCDType subInstance :
-          inheritanceFeaturesMap.get(myInterface).getSubClassConstructorList().keySet()) {
-
-        InheritanceFeatures subSMTInstance = inheritanceFeaturesMap.get(subInstance);
-        Expr<Sort> subInstanceObj =
-            ctx.mkConst(subInstance.getName(), classData.getSort(subInstance));
-
-        helpConstr =
-            ctx.mkOr(
-                helpConstr,
-                mkExists(
-                    ctx,
-                    Set.of(new ImmutablePair<>(subInstance, subInstanceObj)),
-                    ctx.mkEq(
-                        ctx.mkApp(
-                            subSMTInstance.getConvert2SuperTypeFuncMap().get(myInterface),
-                            subInstanceObj),
-                        interfObj),
-                    classData));
-      }
-
-      BoolExpr superInstanceConstraint =
-          mkForAll(ctx, Set.of(new ImmutablePair<>(myInterface, interfObj)), helpConstr, classData);
-      constraints.add(
-          IdentifiableBoolExpr.buildIdentifiable(
-              superInstanceConstraint,
-              myInterface.get_SourcePositionStart(),
-              Optional.of(myInterface.getName() + "Exist_super")));
+      constraints.add(mkExistSubInstance(myInterface, cd, classData, ctx));
     }
     return constraints;
+  }
+
+  /** ensure that each abstract class expression is inherited */
+  protected List<IdentifiableBoolExpr> mkExistSubInstance4AbstClass(
+      ASTCDDefinition cd, ClassData classData, Context ctx) {
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
+    List<ASTCDClass> abstractClassList = CDHelper.getAbstractClassList(cd);
+
+    for (ASTCDClass abstractClass : abstractClassList) {
+      constraints.add(mkExistSubInstance(abstractClass, cd, classData, ctx));
+    }
+    return constraints;
+  }
+
+  /** ensure each expression of the type astcdType are inherited */
+  protected IdentifiableBoolExpr mkExistSubInstance(
+      ASTCDType astcdType, ASTCDDefinition cd, ClassData classData, Context ctx) {
+
+    Expr<? extends Sort> abstrObj = ctx.mkConst(astcdType.getName(), classData.getSort(astcdType));
+
+    List<ASTCDType> subTypeList = CDHelper.getSubclassList(cd, astcdType);
+    if (astcdType instanceof ASTCDInterface) {
+      subTypeList.addAll(CDHelper.getSubInterfaceList(cd, (ASTCDInterface) astcdType));
+    }
+
+    BoolExpr helpConstr = ctx.mkFalse();
+    for (ASTCDType subType : subTypeList) {
+
+      InheritanceFeatures subSMTInstance = inheritanceFeaturesMap.get(subType);
+      Expr<Sort> subInstanceObj = ctx.mkConst(subType.getName(), classData.getSort(subType));
+      FuncDecl<Sort> convert2Sub = subSMTInstance.getConvert2SuperTypeFuncMap().get(astcdType);
+      Set<Pair<ASTCDType, Expr<? extends Sort>>> quanParams =
+          Set.of(new ImmutablePair<>(subType, subInstanceObj));
+      helpConstr =
+          ctx.mkOr(
+              helpConstr,
+              mkExists(
+                  ctx,
+                  quanParams,
+                  ctx.mkEq(ctx.mkApp(convert2Sub, subInstanceObj), abstrObj),
+                  classData));
+    }
+    Set<Pair<ASTCDType, Expr<? extends Sort>>> quanParams =
+        Set.of(new ImmutablePair<>(astcdType, abstrObj));
+
+    BoolExpr superInstanceConstraint = mkForAll(ctx, quanParams, helpConstr, classData);
+
+    return IdentifiableBoolExpr.buildIdentifiable(
+        superInstanceConstraint,
+        astcdType.get_SourcePositionStart(),
+        Optional.of(astcdType.getName() + "Exist_sub"));
   }
 
   List<IdentifiableBoolExpr> buildCDTypeInheritanceConstraint(

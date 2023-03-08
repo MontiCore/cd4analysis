@@ -32,8 +32,8 @@ import java.util.stream.Collectors;
 public class CDHelper {
   public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
 
-  public static List<ASTCDClass> getSubclassList(ASTCDDefinition cd, ASTCDType astcdType) {
-    List<ASTCDClass> subclasses = new LinkedList<>();
+  public static List<ASTCDType> getSubclassList(ASTCDDefinition cd, ASTCDType astcdType) {
+    List<ASTCDType> subclasses = new LinkedList<>();
     for (ASTCDClass entry : cd.getCDClassesList()) {
       for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
         if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
@@ -49,9 +49,9 @@ public class CDHelper {
     return subclasses;
   }
 
-  public static List<ASTCDInterface> getSubInterfaceList(
+  public static List<ASTCDType> getSubInterfaceList(
       ASTCDDefinition cd, ASTCDInterface astcdInterface) {
-    List<ASTCDInterface> subInterfaces = new LinkedList<>();
+    List<ASTCDType> subInterfaces = new LinkedList<>();
     for (ASTCDInterface entry : cd.getCDInterfacesList()) {
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
         if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
@@ -240,6 +240,24 @@ public class CDHelper {
     return false;
   }
 
+  public static boolean containsAttribute(
+      ASTCDType astCdType, String attributeName, ASTCDDefinition cd) {
+    if (CDHelper.containsProperAttribute(astCdType, attributeName)) {
+      return true;
+    }
+    List<ASTCDType> superclassList = CDHelper.getSuperTypeList(astCdType, cd);
+
+    for (ASTCDType superType : superclassList) {
+      boolean res = containsAttribute(superType, attributeName, cd);
+
+      if (res) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   public static List<ASTCDType> getSuperTypeList(ASTCDType astcdType, ASTCDDefinition cd) {
     List<ASTCDType> res =
         astcdType.getSuperclassList().stream()
@@ -295,6 +313,12 @@ public class CDHelper {
 
   public static ASTCDType getRightType(ASTCDAssociation association, ASTCDDefinition cd) {
     return getASTCDType(association.getRightQualifiedName().getQName(), cd);
+  }
+
+  public static List<ASTCDClass> getAbstractClassList(ASTCDDefinition cd) {
+    return cd.getCDClassesList().stream()
+        .filter(x -> x.getModifier().isAbstract())
+        .collect(Collectors.toList());
   }
 
   public enum ClassType {

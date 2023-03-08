@@ -52,6 +52,11 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
     checkODValidity(CDFileName, "SS" + targetNumber, ClassStrategy.Strategy.SS);
   }
 
+  @Test
+  public void testAbstract() {
+    checkODValidity("car3.cd", "300000", ClassStrategy.Strategy.DS);
+  }
+
   public void checkODValidity(
       String CDFileName, String targetNumber, ClassStrategy.Strategy strategy) {
 
