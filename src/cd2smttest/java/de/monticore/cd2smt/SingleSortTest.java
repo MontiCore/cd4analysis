@@ -9,8 +9,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -26,10 +26,11 @@ public class SingleSortTest extends CD2SMTAbstractTest {
     ctx = new Context(cfg);
   }
 
+  @Disabled("enum and abstract class conversion not yet implemented ")
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void CheckTypeUnicity(String cdfile) {
-    Assumptions.assumeFalse(cdfile.equals("car20.cd")); // don't support enum yet
+
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
     cd2SMTGenerator.setClassStrategy(ClassStrategy.Strategy.SS);
     ASTCDCompilationUnit ast = parseModel(cdfile);

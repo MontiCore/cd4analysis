@@ -30,6 +30,13 @@ class SMTType {
     return smtType;
   }
 
+  public static SMTType mkAbstractClass(ASTCDClass astcdClass) {
+    SMTType smtType = new SMTType();
+    smtType.type = CDHelper.ClassType.ABSTRACT_CLASS;
+    smtType.astcdType = astcdClass;
+    return smtType;
+  }
+
   public static SMTType mkInterface(ASTCDInterface astcdInterface) {
     SMTType smtType = new SMTType();
     smtType.type = CDHelper.ClassType.INTERFACE;

@@ -75,6 +75,7 @@ public class CD2SMTAbstractTest {
         Arguments.of("car18.cd", "18"),
         Arguments.of("car19.cd", "19"),
         Arguments.of("car20.cd", "20"),
+        Arguments.of("car21.cd", "21"),
         Arguments.of("car.cd", ""));
   }
 }
