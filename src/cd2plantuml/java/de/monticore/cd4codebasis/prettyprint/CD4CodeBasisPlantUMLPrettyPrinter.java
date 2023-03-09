@@ -75,6 +75,7 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDParameter node) {
+    node.getAnnotation().ifPresent(annotation -> print(annotation + " "));
     node.getMCType().accept(getTraverser());
     if (node.isEllipsis()) {
       print("...");
