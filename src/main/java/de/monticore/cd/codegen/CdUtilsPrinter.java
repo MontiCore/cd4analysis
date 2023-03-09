@@ -114,7 +114,8 @@ public class CdUtilsPrinter {
     return Joiner.on(",")
         .join(
             Collections2.transform(
-                parameterList, arg0 -> printType(arg0.getMCType()) + " " + arg0.getName()));
+                parameterList, arg0 -> arg0.getAnnotation().map(a -> a + " ").orElse("") +
+                printType(arg0.getMCType()) + " " + arg0.getName()));
   }
 
   /**
