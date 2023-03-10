@@ -70,14 +70,14 @@ public class CDGeneratorTool extends CD4CodeTool {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
-      if(!cmd.hasOption("i") || cmd.hasOption("h")) {
+      if (!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
       }
 
       Log.init();
       CD4CodeMill.init();
-      if(cmd.hasOption("c2mc")) {
+      if (cmd.hasOption("c2mc")) {
         initializeClass2MC();
       } else {
         BasicSymbolsMill.initializePrimitives();
@@ -89,35 +89,35 @@ public class CDGeneratorTool extends CD4CodeTool {
 
       ast = transform(ast);
 
-      if(cmd.hasOption("sym")) {
+      if (cmd.hasOption("sym")) {
         MCPath path = new MCPath(cmd.getOptionValue("sym"));
         CD4CodeMill.globalScope().setSymbolPath(path);
       }
 
       ICD4CodeArtifactScope scope = createSymbolTable(ast, cmd.hasOption("c2mc"));
 
-      if(cmd.hasOption("v")) {
+      if (cmd.hasOption("v")) {
         printVersion();
       }
 
-      if(cmd.hasOption("c")) {
+      if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         runCoCos(ast);
         Log.enableFailQuick(true);
       }
 
       String outputPath = (cmd.hasOption("o")) ? cmd.getOptionValue("o") : "";
-      if(cmd.hasOption("s")) {
+      if (cmd.hasOption("s")) {
         storeSymTab(scope, cmd.getOptionValue("s") +
-            (ast.isPresentMCPackageDeclaration()
-              ? ast.getMCPackageDeclaration().getMCQualifiedName().getQName().replaceAll("\\.", "/")
-              : "") +
+          (ast.isPresentMCPackageDeclaration()
+            ? ast.getMCPackageDeclaration().getMCQualifiedName().getQName().replaceAll("\\.", "/")
+            : "") +
           "/" +
-            ast.getCDDefinition().getName() +
-            ".cdsym");
+          ast.getCDDefinition().getName() +
+          ".cdsym");
       }
 
-      if(cmd.hasOption("gen")) {
+      if (cmd.hasOption("gen")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
@@ -127,7 +127,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         t.add4CDBasis(new CDBasisDefaultPackageTrafo());
         ast.accept(t);
 
-        if(cmd.hasOption("tp")) {
+        if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
             Arrays.stream(cmd.getOptionValues("tp"))
               .map(Paths::get)
@@ -135,7 +135,7 @@ public class CDGeneratorTool extends CD4CodeTool {
               .collect(Collectors.toList()));
         }
 
-        if(cmd.hasOption("hwc")) {
+        if (cmd.hasOption("hwc")) {
           setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
           TopDecorator topDecorator = new TopDecorator(setup.getHandcodedPath());
           ast = topDecorator.decorate(ast);
@@ -157,14 +157,14 @@ public class CDGeneratorTool extends CD4CodeTool {
         hpp.processValue(tc, ast, configTemplateArgs);
       }
 
-    } catch(ParseException e) {
+    } catch (ParseException e) {
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
   }
 
 
   public void addDefaultImports(ICD4CodeArtifactScope scope, boolean java) {
-    if(java) scope.addImports(new ImportStatement("java.lang", true));
+    if (java) scope.addImports(new ImportStatement("java.lang", true));
   }
 
   /**
@@ -249,7 +249,7 @@ public class CDGeneratorTool extends CD4CodeTool {
    * prints the symboltable of the given ast out to a file
    *
    * @param scope symboltable of the current ast
-   * @param path location of the file containing the printed table
+   * @param path  location of the file containing the printed table
    */
   protected void storeSymTab(ICD4CodeArtifactScope scope, String path) {
     CD4CodeSymbols2Json s2j = new CD4CodeSymbols2Json();
@@ -277,7 +277,7 @@ public class CDGeneratorTool extends CD4CodeTool {
   public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast, boolean java) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
-    if(ast.isPresentMCPackageDeclaration()) {
+    if (ast.isPresentMCPackageDeclaration()) {
       scope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
     }
     this.addDefaultImports(scope, java);
@@ -298,8 +298,8 @@ public class CDGeneratorTool extends CD4CodeTool {
    */
   public void addGettersAndSetters(ASTCDCompilationUnit ast, GlobalExtensionManagement glex) {
     MethodDecorator methodDecorator = new MethodDecorator(glex);
-    for(ASTCDClass c: ast.getCDDefinition().getCDClassesList()) {
-      for(ASTCDAttribute attribute: c.getCDAttributeList()) {
+    for (ASTCDClass c : ast.getCDDefinition().getCDClassesList()) {
+      for (ASTCDAttribute attribute : c.getCDAttributeList()) {
         List<ASTCDMethod> result = methodDecorator.decorate(attribute);
         result.stream()
           .filter(
@@ -322,19 +322,19 @@ public class CDGeneratorTool extends CD4CodeTool {
   protected void getImportStatements(ASTCDCompilationUnit ast) {
     CD4C cd4c = CD4C.getInstance();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-    for(ASTCDClass cdClass: ast.getCDDefinition().getCDClassesList()) {
-      for(ASTMCImportStatement i: imports) {
+    for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
+      for (ASTMCImportStatement i : imports) {
         String qName = i.getQName();
         cd4c.addImport(cdClass, i.isStar() ? qName + ".*" : qName);
       }
     }
-    for(ASTCDInterface cdInterface: ast.getCDDefinition().getCDInterfacesList()) {
-      for(ASTMCImportStatement i: imports) {
+    for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTMCImportStatement i : imports) {
         cd4c.addImport(cdInterface, i.getQName());
       }
     }
-    for(ASTCDEnum cdEnum: ast.getCDDefinition().getCDEnumsList()) {
-      for(ASTMCImportStatement i: imports) {
+    for (ASTCDEnum cdEnum : ast.getCDDefinition().getCDEnumsList()) {
+      for (ASTMCImportStatement i : imports) {
         cd4c.addImport(cdEnum, i.getQName());
       }
     }
