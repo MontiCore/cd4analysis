@@ -1,5 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
+package model;
+
 classdiagram Example {
 
   class A extends B {
