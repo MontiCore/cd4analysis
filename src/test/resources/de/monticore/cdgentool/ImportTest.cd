@@ -1,0 +1,13 @@
+import java.lang.String;
+import java.io.*;
+import model.Example.A;
+
+classdiagram ImportTest {
+
+  class Blub {
+    A a;
+    File f;
+    int test = 4;
+  }
+
+}
