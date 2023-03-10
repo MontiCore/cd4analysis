@@ -150,7 +150,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
         List<Object> configTemplateArgs = Arrays.asList(glex, generator);
 
-        getImportStatements(ast);
+        mapCD4CImports(CD4C.getInstance(), ast);
 
         addGettersAndSetters(ast, glex);
 
@@ -314,13 +314,14 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   /**
-   * adds the import statements of the current model to the cd4c-object to be able to print them
-   * out during the java clas generation
+   Updates the map of cd types to import statement in the given cd4c object,
+   adding the imports for each cd type (classes, enums, and interfaces)
+   defined in the given ast.
    *
+   * @param cd4c the cd4c object to update
    * @param ast the input ast
    */
-  protected void getImportStatements(ASTCDCompilationUnit ast) {
-    CD4C cd4c = CD4C.getInstance();
+  protected void mapCD4CImports(CD4C cd4c, ASTCDCompilationUnit ast) {
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
     for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTMCImportStatement i : imports) {
