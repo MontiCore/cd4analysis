@@ -1,14 +1,26 @@
 /* (c) https://github.com/MontiCore/monticore */
 pluginManagement {
   repositories {
+    if(("true").equals(getProperty('useLocalRepo'))){
+      mavenLocal()
+    }
     maven {
       credentials.username mavenUser
       credentials.password mavenPassword
       url repo
     }
     gradlePluginPortal()
-    mavenLocal()
   }
 }
 
-rootProject.name = 'cd4a-library'
+rootProject.name = 'cd4a-library-integration-test'
+
+include(':gradle-plugin')
+
+// Include the current CD4A from this branch
+include ':cd4analysis'
+project(':cd4analysis').projectDir = file("../")
+// And also the cd4a-library
+include ':trafo-library'
+project(':trafo-library').projectDir = file("./trafolibrary")
+
