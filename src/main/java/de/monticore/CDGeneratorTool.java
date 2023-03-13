@@ -34,7 +34,6 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +41,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import org.apache.commons.cli.*;
 
 public class CDGeneratorTool extends CD4CodeTool {
@@ -111,13 +109,18 @@ public class CDGeneratorTool extends CD4CodeTool {
 
       String outputPath = (cmd.hasOption("o")) ? cmd.getOptionValue("o") : "";
       if (cmd.hasOption("s")) {
-        storeSymTab(scope, cmd.getOptionValue("s") +
-          (ast.isPresentMCPackageDeclaration()
-            ? ast.getMCPackageDeclaration().getMCQualifiedName().getQName().replaceAll("\\.", "/")
-            : "") +
-          "/" +
-          ast.getCDDefinition().getName() +
-          ".cdsym");
+        storeSymTab(
+            scope,
+            cmd.getOptionValue("s")
+                + (ast.isPresentMCPackageDeclaration()
+                    ? ast.getMCPackageDeclaration()
+                        .getMCQualifiedName()
+                        .getQName()
+                        .replaceAll("\\.", "/")
+                    : "")
+                + "/"
+                + ast.getCDDefinition().getName()
+                + ".cdsym");
       }
 
       if (cmd.hasOption("o")) {
@@ -132,10 +135,10 @@ public class CDGeneratorTool extends CD4CodeTool {
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
-            Arrays.stream(cmd.getOptionValues("tp"))
-              .map(Paths::get)
-              .map(Path::toFile)
-              .collect(Collectors.toList()));
+              Arrays.stream(cmd.getOptionValues("tp"))
+                  .map(Paths::get)
+                  .map(Path::toFile)
+                  .collect(Collectors.toList()));
         }
 
         if (cmd.hasOption("hwc")) {
@@ -177,48 +180,48 @@ public class CDGeneratorTool extends CD4CodeTool {
   public Options addAdditionalOptions(Options options) {
 
     options.addOption(
-      Option.builder("c")
-        .longOpt("checkcococs")
-        .desc("Checks all CoCos on the given mode.")
-        .build());
+        Option.builder("c")
+            .longOpt("checkcococs")
+            .desc("Checks all CoCos on the given mode.")
+            .build());
 
     options.addOption(
-      Option.builder("o")
-        .longOpt("output")
-        .argName("dir")
-        .hasArg()
-        .desc("Sets the output path.")
-        .build());
+        Option.builder("o")
+            .longOpt("output")
+            .argName("dir")
+            .hasArg()
+            .desc("Sets the output path.")
+            .build());
 
     options.addOption(
-      Option.builder("ct")
-        .longOpt("configtemplate")
-        .hasArg()
-        .argName("template")
-        .desc("Sets a template for configuration.")
-        .build());
+        Option.builder("ct")
+            .longOpt("configtemplate")
+            .hasArg()
+            .argName("template")
+            .desc("Sets a template for configuration.")
+            .build());
 
     options.addOption(
-      Option.builder("tp")
-        .longOpt("template")
-        .hasArg()
-        .argName("path")
-        .desc("Sets the path for additional templates.")
-        .build());
+        Option.builder("tp")
+            .longOpt("template")
+            .hasArg()
+            .argName("path")
+            .desc("Sets the path for additional templates.")
+            .build());
 
     options.addOption(
-      Option.builder("hwc")
-        .longOpt("handwrittencode")
-        .hasArg()
-        .argName("hwcpath")
-        .desc("Sets the path for additional, handwritten classes.")
-        .build());
+        Option.builder("hwc")
+            .longOpt("handwrittencode")
+            .hasArg()
+            .argName("hwcpath")
+            .desc("Sets the path for additional, handwritten classes.")
+            .build());
 
     options.addOption(
-      Option.builder("c2mc")
-        .longOpt("class2mc")
-        .desc("Enables to resolve java classes in the model path")
-        .build());
+        Option.builder("c2mc")
+            .longOpt("class2mc")
+            .desc("Enables to resolve java classes in the model path")
+            .build());
 
     return options;
   }
@@ -286,17 +289,17 @@ public class CDGeneratorTool extends CD4CodeTool {
    */
   public void addGettersAndSetters(ASTCDCompilationUnit ast, GlobalExtensionManagement glex) {
     MethodDecorator methodDecorator = new MethodDecorator(glex);
-    for (ASTCDClass c: ast.getCDDefinition().getCDClassesList()) {
-      for (ASTCDAttribute attribute: c.getCDAttributeList()) {
+    for (ASTCDClass c : ast.getCDDefinition().getCDClassesList()) {
+      for (ASTCDAttribute attribute : c.getCDAttributeList()) {
         List<ASTCDMethod> result = methodDecorator.decorate(attribute);
         result.stream()
-          .filter(
-            m ->
-              !c.getCDMethodList().stream()
-                .map(ASTCDMethod::getName)
-                .collect(Collectors.toList())
-                .contains(m.getName()))
-          .forEach(c::addCDMember);
+            .filter(
+                m ->
+                    !c.getCDMethodList().stream()
+                        .map(ASTCDMethod::getName)
+                        .collect(Collectors.toList())
+                        .contains(m.getName()))
+            .forEach(c::addCDMember);
       }
     }
   }
@@ -310,35 +313,33 @@ public class CDGeneratorTool extends CD4CodeTool {
   protected final String[] splitPathEntries(String[] composedPaths) {
     Preconditions.checkNotNull(composedPaths);
     return Arrays.stream(composedPaths)
-      .map(this::splitPathEntries)
-      .flatMap(Arrays::stream)
-      .toArray(String[]::new);
+        .map(this::splitPathEntries)
+        .flatMap(Arrays::stream)
+        .toArray(String[]::new);
   }
 
-
   /**
-   * Updates the map of cd types to import statement in the given cd4c object,
-   * adding the imports for each cd type (classes, enums, and interfaces)
-   * defined in the given ast.
+   * Updates the map of cd types to import statement in the given cd4c object, adding the imports
+   * for each cd type (classes, enums, and interfaces) defined in the given ast.
    *
    * @param cd4c the cd4c object to update
    * @param ast the input ast
    */
   protected void mapCD4CImports(CD4C cd4c, ASTCDCompilationUnit ast) {
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-    for (ASTCDClass cdClass: ast.getCDDefinition().getCDClassesList()) {
-      for (ASTMCImportStatement i: imports) {
+    for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
+      for (ASTMCImportStatement i : imports) {
         String qName = i.getQName();
         cd4c.addImport(cdClass, i.isStar() ? qName + ".*" : qName);
       }
     }
-    for (ASTCDInterface cdInterface: ast.getCDDefinition().getCDInterfacesList()) {
-      for (ASTMCImportStatement i: imports) {
+    for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTMCImportStatement i : imports) {
         cd4c.addImport(cdInterface, i.getQName());
       }
     }
-    for (ASTCDEnum cdEnum: ast.getCDDefinition().getCDEnumsList()) {
-      for (ASTMCImportStatement i: imports) {
+    for (ASTCDEnum cdEnum : ast.getCDDefinition().getCDEnumsList()) {
+      for (ASTMCImportStatement i : imports) {
         cd4c.addImport(cdEnum, i.getQName());
       }
     }
