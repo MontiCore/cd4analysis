@@ -6,12 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.LogStub;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +27,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithCoCos() {
     CDGeneratorTool.main(
-      new String[] {"-i", "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-c"});
+        new String[] {"-i", "src/test/resources/de/monticore/cdgentool/model/Example.cd", "-c2mc", "-c"});
     assertTrue(true);
   }
 
@@ -55,7 +53,6 @@ public class CDGeneratorToolTest {
         "-c2mc",
         "-o",
         "target/generated/example/standard/",
-        "-gen"
       });
     assertTrue(new File("target/generated/example/standard/model/Example/A.java").isFile());
   }
@@ -69,7 +66,6 @@ public class CDGeneratorToolTest {
         "-c2mc",
         "-o",
         "target/generated/example/ct/",
-        "-gen",
         "-ct",
         "de.monticore.cdgentool.NewCustomTemplate"
       });
@@ -85,7 +81,6 @@ public class CDGeneratorToolTest {
         "-c2mc",
         "-o",
         "target/generated/example/tp/",
-        "-gen",
         "-tp",
         "src/test/resources/de/monticore/cdgentool/templates/"
       });
@@ -101,7 +96,6 @@ public class CDGeneratorToolTest {
         "-c2mc",
         "-o",
         "target/generated/example/hwc/",
-        "-gen",
         "-hwc",
         "src/test/resources/de/monticore/cdgentool/hwc/"
       });
@@ -150,7 +144,6 @@ public class CDGeneratorToolTest {
         "target/generated/example/defaultctor/",
         "-ct",
         "de.monticore.cdgentool.DefaultCtorTemplate",
-        "-gen"
       });
 
     assertTrue(new File("target/generated/example/defaultctor/model/Example/A.java").isFile());
@@ -165,7 +158,6 @@ public class CDGeneratorToolTest {
         "-o",
         "target/generated/example/imports",
         "-c2mc",
-        "-gen",
         "target/generated/example/imports/model/Example.cdsym"
       });
 
@@ -175,9 +167,8 @@ public class CDGeneratorToolTest {
         "src/test/resources/de/monticore/cdgentool/ImportTest.cd",
         "-o",
         "target/generated/example/imports/",
-        "-gen",
         "-c2mc",
-        "-sym",
+        "-path",
         "target/generated/example/model"
       });
 
