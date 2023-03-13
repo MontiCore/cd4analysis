@@ -6,7 +6,6 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Assert;
@@ -29,8 +28,7 @@ public class ConformanceCheckerTest {
   @Test
   public void testConformanceCheck() {
     try {
-      Optional<ASTCDCompilationUnit> conCD =
-          CD4CodeMill.parser().parse(dir + "Concrete" + ".cd");
+      Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parse(dir + "Concrete" + ".cd");
       Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parse(dir + "Reference" + ".cd");
       if (conCD.isPresent() && refCD.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
@@ -39,8 +37,8 @@ public class ConformanceCheckerTest {
         refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
 
         Assert.assertTrue(
-            ConformanceChecker.checkBasicStereotypeConformance(conCD.get(), refCD.get(), Set.of(
-                "ref")));
+            ConformanceChecker.checkBasicStereotypeConformance(
+                conCD.get(), refCD.get(), Set.of("ref")));
       } else {
         Assert.fail("Could not parse CDs.");
       }

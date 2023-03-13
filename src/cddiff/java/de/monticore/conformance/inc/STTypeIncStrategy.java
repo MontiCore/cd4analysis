@@ -20,18 +20,21 @@ public class STTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
   @Override
   public Set<ASTCDType> getRefElements(ASTCDType concrete) {
     Set<ASTCDType> refTypes = new HashSet<>();
-    if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype().contains(mapping)) {
+    if (concrete.getModifier().isPresentStereotype()
+        && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      refTypes.addAll(refCD.getEnclosingScope().resolveCDTypeDownMany(refName).stream()
-                      .map(CDTypeSymbolTOP::getAstNode)
-                      .collect(Collectors.toSet()));
+      refTypes.addAll(
+          refCD.getEnclosingScope().resolveCDTypeDownMany(refName).stream()
+              .map(CDTypeSymbolTOP::getAstNode)
+              .collect(Collectors.toSet()));
     }
     return refTypes;
   }
 
   @Override
   public boolean isIncarnation(ASTCDType concrete, ASTCDType ref) {
-    if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype().contains(mapping)) {
+    if (concrete.getModifier().isPresentStereotype()
+        && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
       return refCD.getEnclosingScope().resolveCDTypeDownMany(refName).contains(ref.getSymbol());
     }

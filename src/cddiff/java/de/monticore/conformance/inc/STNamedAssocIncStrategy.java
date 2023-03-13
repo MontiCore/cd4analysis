@@ -24,7 +24,9 @@ public class STNamedAssocIncStrategy implements IncarnationStrategy<ASTCDAssocia
 
   @Override
   public boolean isIncarnation(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype().contains(mapping) && ref.isPresentName()) {
+    if (concrete.getModifier().isPresentStereotype()
+        && concrete.getModifier().getStereotype().contains(mapping)
+        && ref.isPresentName()) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
       return ref.getName().equals(refName);
     }
