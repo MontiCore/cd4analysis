@@ -116,6 +116,7 @@ sourceSets {
 }
 
 configurations {
+  grammars
   cd2plantumlImplementation.extendsFrom(implementation)
 
   cddiffImplementation.extendsFrom(implementation)
@@ -137,6 +138,7 @@ configurations {
   tooltestImplementation.extendsFrom(cdmergetestImplementation)
   grammar
   cli
+  trafo
   trafoImplementation.extendsFrom implementation
   trafoCompileOnly.extendsFrom compileOnly
 }
@@ -569,6 +571,7 @@ artifacts {
   archives toolJar
   archives mainJar
   archives trafoJar
+  trafo trafoJar
 }
 // configure deployment
 publishing {
