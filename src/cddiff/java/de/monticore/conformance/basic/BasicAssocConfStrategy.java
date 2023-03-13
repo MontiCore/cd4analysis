@@ -59,11 +59,6 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
               concrete.getRightQualifiedName().getQName(), ref.getRightQualifiedName().getQName())
           && checkCardinality(concrete.getRight(), ref.getRight());
     }
-    System.out.println(
-        CD4CodeMill.prettyPrint(concrete, false)
-            + " does not refine the association "
-            + "directions of "
-            + CD4CodeMill.prettyPrint(ref, false));
     return false;
   }
 
@@ -110,7 +105,7 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
     if (conTypeSymbol.isPresent() && refTypeSymbol.isPresent()) {
       ASTCDType conType = conTypeSymbol.get().getAstNode();
       ASTCDType refType = refTypeSymbol.get().getAstNode();
-      return typeInc.isInstance(conType, refType);
+      return typeInc.isIncarnation(conType, refType);
     }
     Log.error("0xCDD17: Could not resolve association reference!");
     return false;

@@ -8,29 +8,25 @@ import java.util.stream.Collectors;
 public class STNamedAssocIncStrategy implements IncarnationStrategy<ASTCDAssociation> {
 
   protected ASTCDCompilationUnit refCD;
-  protected Set<String> mappings;
+  protected String mapping;
 
-  public STNamedAssocIncStrategy(ASTCDCompilationUnit refCD, Set<String> mappings) {
+  public STNamedAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
-    this.mappings = mappings;
+    this.mapping = mapping;
   }
 
   @Override
   public Set<ASTCDAssociation> getRefElements(ASTCDAssociation concrete) {
     return refCD.getCDDefinition().getCDAssociationsList().stream()
-        .filter(assoc -> isInstance(concrete, assoc))
+        .filter(assoc -> isIncarnation(concrete, assoc))
         .collect(Collectors.toSet());
   }
 
   @Override
-  public boolean isInstance(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    if (concrete.getModifier().isPresentStereotype() && ref.isPresentName()) {
-      Set<String> refNames =
-          mappings.stream()
-              .filter(mapping -> concrete.getModifier().getStereotype().contains(mapping))
-              .map(mapping -> concrete.getModifier().getStereotype().getValue(mapping))
-              .collect(Collectors.toSet());
-      return refNames.stream().anyMatch(name -> ref.getName().equals(name));
+  public boolean isIncarnation(ASTCDAssociation concrete, ASTCDAssociation ref) {
+    if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype().contains(mapping) && ref.isPresentName()) {
+      String refName = concrete.getModifier().getStereotype().getValue(mapping);
+      return ref.getName().equals(refName);
     }
     return false;
   }

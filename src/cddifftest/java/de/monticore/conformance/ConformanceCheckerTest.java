@@ -30,7 +30,7 @@ public class ConformanceCheckerTest {
   public void testConformanceCheck() {
     try {
       Optional<ASTCDCompilationUnit> conCD =
-          CD4CodeMill.parser().parse(dir + "Conformance" + ".cd");
+          CD4CodeMill.parser().parse(dir + "Concrete" + ".cd");
       Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parse(dir + "Reference" + ".cd");
       if (conCD.isPresent() && refCD.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
@@ -38,12 +38,9 @@ public class ConformanceCheckerTest {
         conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
         refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
 
-        // We use the mapping "ref"!
-        Set<String> mappings = new HashSet<>();
-        mappings.add("ref");
-
         Assert.assertTrue(
-            ConformanceChecker.checkBasicStereotypeConformance(conCD.get(), refCD.get(), mappings));
+            ConformanceChecker.checkBasicStereotypeConformance(conCD.get(), refCD.get(), Set.of(
+                "ref")));
       } else {
         Assert.fail("Could not parse CDs.");
       }

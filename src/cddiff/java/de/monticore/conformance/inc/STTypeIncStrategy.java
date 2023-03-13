@@ -10,44 +10,30 @@ import java.util.stream.Collectors;
 public class STTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
 
   protected ASTCDCompilationUnit refCD;
-  protected Set<String> mappings;
+  protected String mapping;
 
-  public STTypeIncStrategy(ASTCDCompilationUnit refCD, Set<String> mappings) {
+  public STTypeIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
-    this.mappings = mappings;
+    this.mapping = mapping;
   }
 
   @Override
   public Set<ASTCDType> getRefElements(ASTCDType concrete) {
     Set<ASTCDType> refTypes = new HashSet<>();
-    if (concrete.getModifier().isPresentStereotype()) {
-      Set<String> refNames =
-          mappings.stream()
-              .filter(mapping -> concrete.getModifier().getStereotype().contains(mapping))
-              .map(mapping -> concrete.getModifier().getStereotype().getValue(mapping))
-              .collect(Collectors.toSet());
-      refNames.forEach(
-          name ->
-              refTypes.addAll(
-                  refCD.getEnclosingScope().resolveCDTypeDownMany(name).stream()
+    if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype().contains(mapping)) {
+      String refName = concrete.getModifier().getStereotype().getValue(mapping);
+      refTypes.addAll(refCD.getEnclosingScope().resolveCDTypeDownMany(refName).stream()
                       .map(CDTypeSymbolTOP::getAstNode)
-                      .collect(Collectors.toSet())));
+                      .collect(Collectors.toSet()));
     }
     return refTypes;
   }
 
   @Override
-  public boolean isInstance(ASTCDType concrete, ASTCDType ref) {
-    if (concrete.getModifier().isPresentStereotype()) {
-      Set<String> refNames =
-          mappings.stream()
-              .filter(mapping -> concrete.getModifier().getStereotype().contains(mapping))
-              .map(mapping -> concrete.getModifier().getStereotype().getValue(mapping))
-              .collect(Collectors.toSet());
-      return refNames.stream()
-          .anyMatch(
-              name ->
-                  refCD.getEnclosingScope().resolveCDTypeDownMany(name).contains(ref.getSymbol()));
+  public boolean isIncarnation(ASTCDType concrete, ASTCDType ref) {
+    if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype().contains(mapping)) {
+      String refName = concrete.getModifier().getStereotype().getValue(mapping);
+      return refCD.getEnclosingScope().resolveCDTypeDownMany(refName).contains(ref.getSymbol());
     }
     return false;
   }

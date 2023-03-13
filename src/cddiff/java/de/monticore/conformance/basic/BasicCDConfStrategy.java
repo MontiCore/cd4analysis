@@ -66,7 +66,7 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     conTypes.addAll(concrete.getCDDefinition().getCDEnumsList());
 
     for (ASTCDType refType : refTypes) {
-      if (conTypes.stream().noneMatch(conType -> typeInc.isInstance(conType, refType))) {
+      if (conTypes.stream().noneMatch(conType -> typeInc.isIncarnation(conType, refType))) {
         Log.println(refType.getName() + " has no incarnation!");
         return false;
       }
@@ -78,7 +78,7 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
 
     for (ASTCDAssociation refAssoc : refCD.getCDDefinition().getCDAssociationsList()) {
       if (concrete.getCDDefinition().getCDAssociationsList().stream()
-          .noneMatch(conAssoc -> assocInc.isInstance(conAssoc, refAssoc))) {
+          .noneMatch(conAssoc -> assocInc.isIncarnation(conAssoc, refAssoc))) {
         Log.println(CD4CodeMill.prettyPrint(refAssoc, false) + " has no incarnation!");
         return false;
       }
