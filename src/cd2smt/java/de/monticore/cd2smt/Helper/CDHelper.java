@@ -1,21 +1,21 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper;
 
-import static de.monticore.cd2smt.Helper.CDHelper.ClassType.*;
-import static de.monticore.cd2smt.Helper.CDHelper.ObjType.*;
-
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cd2smt.Helper.visitor.RemoveAssocCardinality;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumTOP;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -26,8 +26,18 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static de.monticore.cd2smt.Helper.CDHelper.ClassType.NORMAL_CLASS;
+import static de.monticore.cd2smt.Helper.CDHelper.ObjType.ABSTRACT_OBJ;
+import static de.monticore.cd2smt.Helper.CDHelper.ObjType.NORMAL_OBJ;
 
 public class CDHelper {
   public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
@@ -120,16 +130,6 @@ public class CDHelper {
         new CD4AnalysisSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
-  }
-
-  public static void setAssociationsRoles(ASTCDCompilationUnit ast) {
-    // transformations that need an already created symbol table
-    createCDSymTab(ast);
-    final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
-    traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
-    traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
-    cdAssociationRoleNameTrafo.transform(ast);
   }
 
   public static Sort mcType2Sort(Context ctx, ASTMCType astmcType) {

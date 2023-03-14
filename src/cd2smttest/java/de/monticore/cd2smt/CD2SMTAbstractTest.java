@@ -4,7 +4,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.microsoft.z3.Context;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -39,12 +41,12 @@ public class CD2SMTAbstractTest {
 
   protected ASTCDCompilationUnit parseModel(String modelFile) {
     Path model = Paths.get(Paths.get(RELATIVE_MODEL_PATH, modelFile).toString());
-    CD4AnalysisParser parser = new CD4AnalysisParser();
+    CD4AnalysisParser parser = CD4AnalysisMill.parser();
     Optional<ASTCDCompilationUnit> optAutomaton;
     try {
       optAutomaton = parser.parse(model.toString());
       assertTrue(optAutomaton.isPresent());
-
+      (new CD4AnalysisAfterParseTrafo()).transform(optAutomaton.get());
       return optAutomaton.get();
     } catch (Exception e) {
       e.printStackTrace();

@@ -7,7 +7,6 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd.json.CD2JsonUtil;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -27,7 +26,6 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
@@ -48,15 +46,35 @@ import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import java.io.*;
+import org.apache.commons.cli.AmbiguousOptionException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.MissingOptionException;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.io.FileUtils;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
 
 public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
@@ -197,16 +215,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           BuiltInTypes.addBuiltInTypes(globalScope);
         }
         completeSymbolTable();
-
-        // transformations that need an already created symbol table
-        {
-          final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
-              new CDAssociationRoleNameTrafo();
-          final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
-          traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
-          traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
-          cdAssociationRoleNameTrafo.transform(ast);
-        }
 
         runDefaultCoCos(ast);
 

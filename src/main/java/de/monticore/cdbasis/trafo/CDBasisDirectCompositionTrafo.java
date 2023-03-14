@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd.misc;
+package de.monticore.cdbasis.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdbasis._ast.ASTCDClass;

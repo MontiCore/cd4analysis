@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4analysis.trafo;
+package de.monticore.cdinterfaceandenum.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;

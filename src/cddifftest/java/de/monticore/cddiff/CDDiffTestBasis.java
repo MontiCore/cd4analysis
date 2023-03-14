@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
@@ -45,7 +46,7 @@ public abstract class CDDiffTestBasis {
       optAutomaton = parser.parse(model.toString());
       // assertFalse(parser.hasErrors());
       assertTrue(optAutomaton.isPresent());
-
+      (new CD4AnalysisAfterParseTrafo()).transform(optAutomaton.get());
       return optAutomaton.get();
     } catch (Exception e) {
       e.printStackTrace();

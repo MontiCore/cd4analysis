@@ -1,16 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
-import de.monticore.cd4code.trafo.CD4CodeTrafo4Defaults;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -18,10 +14,14 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class CDSymbolTablesTest extends CD4CodeTestBasis {
 
@@ -101,7 +101,6 @@ public class CDSymbolTablesTest extends CD4CodeTestBasis {
 
     final ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
-    new CD4CodeTrafo4Defaults().transform(node);
     return scope;
   }
 }
