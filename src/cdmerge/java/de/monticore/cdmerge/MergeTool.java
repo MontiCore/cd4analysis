@@ -24,6 +24,7 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
 import de.monticore.cdmerge.refactor.PostMergeRefactoring;
+import de.monticore.cdmerge.util.CDMergeAfterParseTrafo;
 import de.monticore.cdmerge.util.CDMergeInheritanceHelper;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
@@ -472,7 +473,7 @@ public class MergeTool {
 
     this.postMergeRefactoring.execute(mergedCD);
 
-    new CD4CodeAfterParseTrafo().transform(mergedCD);
+    new CDMergeAfterParseTrafo().transform(mergedCD);
     // TODO this is likley not needed. Maybe Provide a paramater if default CD4A TraFos should be
     // applied on merged CD
     // CD4CodeMill.globalScope().clear();

@@ -1,19 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static org.junit.Assert.*;
-
 import de.monticore.cd.OutTestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd.misc.CDAssociationRoleNameTrafo;
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
-import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
@@ -21,15 +16,21 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ExampleCommandTest extends OutTestBasis {
 
@@ -342,12 +343,6 @@ public class ExampleCommandTest extends OutTestBasis {
       as.addImports(new ImportStatement("java.lang", true));
       CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(optCD.get());
       optCD.get().accept(c.getTraverser());
-      final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
-          new CDAssociationRoleNameTrafo();
-      final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
-      traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
-      traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
-      cdAssociationRoleNameTrafo.transform(optCD.get());
       new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(optCD.get());
       return optCD.get();
 

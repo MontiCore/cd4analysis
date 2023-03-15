@@ -1,14 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
-import de.monticore.cd4code.trafo.CD4CodeTrafo4Defaults;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -17,11 +13,15 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
@@ -59,8 +59,6 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     checkLogError();
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
 
-    new CD4CodeTrafo4Defaults().transform(node);
-
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());
 
@@ -84,8 +82,6 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     checkLogError();
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
     artifactScope.addImports(new ImportStatement("java.lang", true));
-
-    new CD4CodeTrafo4Defaults().transform(node);
 
     checkLogError();
 

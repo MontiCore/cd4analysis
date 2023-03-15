@@ -1,14 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._symboltable;
 
-import static org.junit.Assert.*;
-
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
-import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4Defaults;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis.CDBasisMill;
@@ -18,13 +15,18 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
@@ -67,7 +69,6 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ICD4AnalysisArtifactScope scope =
         CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
-    new CD4AnalysisTrafo4Defaults().transform(node);
 
     final String serializedST = symbols2Json.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);

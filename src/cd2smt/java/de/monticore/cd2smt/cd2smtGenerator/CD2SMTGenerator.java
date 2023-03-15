@@ -69,7 +69,6 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
    * @param astCd the class diagram to translate
    */
   public void cd2smt(ASTCDCompilationUnit astCd, Context ctx) {
-    CDHelper.setAssociationsRoles(astCd);
     this.ctx = ctx;
     // set All Associations Role
     dataWrapper = new DataWrapper(classStrategy, associationStrategy, inheritanceStrategy, astCd);
