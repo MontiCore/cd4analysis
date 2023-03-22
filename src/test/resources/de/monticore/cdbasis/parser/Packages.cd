@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdbasis.parser;
+package cdbasis.parser;
 
 classdiagram Packages {
   package a {

@@ -1,20 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
-//package cd4code.parser;
-
 classdiagram Packages {
   package a {
     class A;
   }
 
   package a2 {
-    class A2 extends a2.A;
-    class A;
+    class A2 extends A;
   }
 
   package a {
     class B { // NOTE: A and B are in same package a
       a2.A2 a1;
-      A a2;
+      A2 a2;
     }
   }
 
@@ -31,7 +28,7 @@ classdiagram Packages {
   }
 
   package d {
-    class D extends a.A, a.B, a.b.c.C; // Note wie darf A hier referenziert werden?
+    class D extends a.A, a.B, a.b.c.C;
   }
 
   package h {

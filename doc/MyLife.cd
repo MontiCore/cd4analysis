@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package monticore;
+// package monticore;
 
 import MyAddress;
 import java.lang.String;

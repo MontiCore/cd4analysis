@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -11,11 +9,16 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import java.io.IOException;
-import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SymbolTableSerializationTest {
 
@@ -165,9 +168,6 @@ public class SymbolTableSerializationTest {
   public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
-    if (ast.isPresentMCPackageDeclaration()) {
-      scope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
-    }
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
     return scope;
   }

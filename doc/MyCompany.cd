@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package corp;
+//package corp;
 import java.util.Date;
 
 classdiagram MyCompany {

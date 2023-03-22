@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdbasis.symboltable;
+package cdbasis.symboltable;
 
 classdiagram Modifierrs {
   private class C;

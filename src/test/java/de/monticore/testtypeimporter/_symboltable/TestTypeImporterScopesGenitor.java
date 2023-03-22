@@ -1,6 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testtypeimporter._symboltable;
 
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.testcdinterfaceandenum._symboltable.ITestCDInterfaceAndEnumArtifactScope;
+import de.monticore.testtypeimporter._ast.ASTCompilationUnit;
 import de.monticore.testtypeimporter._ast.ASTElement;
 import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
 import de.monticore.types.check.TypeCheckResult;
@@ -10,6 +14,17 @@ import de.se_rwth.commons.logging.Log;
 public class TestTypeImporterScopesGenitor extends TestTypeImporterScopesGenitorTOP {
 
   public TestTypeImporterScopesGenitor() {}
+
+  @Override
+  public ITestTypeImporterArtifactScope createFromAST(ASTCompilationUnit rootNode) {
+    ITestTypeImporterArtifactScope as = super.createFromAST(rootNode);
+
+    // add imports
+    rootNode.getMCImportStatementList()
+      .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
+
+    return as;
+  }
 
   @Override
   public void endVisit(ASTElement node) {

@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdinterfaceenum.symboltable;
+package cdinterfaceenum.symboltable;
 
 classdiagram SerializationCD {
   interface A;
