@@ -26,7 +26,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class TestCDBasisResolvingTest extends TestBasis {
+public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
   protected static ICDBasisGlobalScope globalScope;
   protected static ICDBasisArtifactScope artifactScope;
 
@@ -34,7 +34,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
   public static void parseCompleteModel() throws IOException {
     final TestCDBasisParser p = TestCDBasisMill.parser();
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parse(getFilePath("cdbasis/parser/Packages.cd"));
+        p.parse(getFilePath("cdbasis/parser/PackagesNoDecl.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit compilationUnit = astcdCompilationUnit.get();
@@ -56,7 +56,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
 
   @Test
   public void resolveCDType() {
-    final Optional<CDTypeSymbol> a = globalScope.resolveCDType("cdbasis.parser.Packages.A");
+    final Optional<CDTypeSymbol> a = globalScope.resolveCDType("Packages.A");
     assertFalse("CDType A could be resolved but shouldn't.", a.isPresent());
     checkLogError();
 
@@ -64,11 +64,11 @@ public class TestCDBasisResolvingTest extends TestBasis {
     assertFalse("CDType cdbasis.parser.Packages.A could be resolved but shouldn't.", a1.isPresent());
     checkLogError();
 
-    final Optional<CDTypeSymbol> a2 = globalScope.resolveCDType("cdbasis.parser.Packages.a.A");
+    final Optional<CDTypeSymbol> a2 = globalScope.resolveCDType("Packages.a.A");
     assertTrue("CDType cdbasis.parser.Packages.a.A could not be resolved:\n" + getJoinedErrors(), a2.isPresent());
     checkLogError();
 
-    final Optional<CDTypeSymbol> a3 = globalScope.resolveCDType("cdbasis.parser.Packages.a.b.c.C");
+    final Optional<CDTypeSymbol> a3 = globalScope.resolveCDType("Packages.a.b.c.C");
     assertTrue("CDType cdbasis.parser.Packages.a.b.c.C could not be resolved:\n" + getJoinedErrors(), a3.isPresent());
     checkLogError();
 
@@ -81,7 +81,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
     checkLogError();
 
     final Optional<CDTypeSymbol> a6 = artifactScope.resolveCDType("a.A");
-    assertTrue(a6.isPresent());
+    assertTrue("CDType a.A could not be resolved:\n" + getJoinedErrors(), a6.isPresent());
     checkLogError();
 
     final ICDBasisScope enclosingScopeA = a2.get().getEnclosingScope();
@@ -102,7 +102,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
     assertFalse("OOTypeSymbol A could be resolved but shouldn't.", a.isPresent());
     checkLogError();
 
-    final Optional<OOTypeSymbol> a2 = globalScope.resolveOOType("cdbasis.parser.Packages.a.A");
+    final Optional<OOTypeSymbol> a2 = globalScope.resolveOOType("Packages.a.A");
     assertTrue("OOTypeSymbol A could not be resolved:\n" + getJoinedErrors(), a2.isPresent());
     checkLogError();
   }
@@ -113,7 +113,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
     assertFalse("Field B.a1 could be resolved but shouldn't.", b.isPresent());
     checkLogError();
 
-    final Optional<FieldSymbol> b2 = globalScope.resolveField("cdbasis.parser.Packages.a.B.a1");
+    final Optional<FieldSymbol> b2 = globalScope.resolveField("Packages.a.B.a1");
     assertTrue("Field a.B.a1 could not be resolved:\n" + getJoinedErrors(), b2.isPresent());
     checkLogError();
 

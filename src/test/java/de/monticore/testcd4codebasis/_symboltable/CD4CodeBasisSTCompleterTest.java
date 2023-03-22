@@ -139,16 +139,6 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
   private ITestCD4CodeBasisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
     ITestCD4CodeBasisArtifactScope as =
         TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
-
-    // set package
-    as.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
-
-    // add imports
-    List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList()
-        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
-    as.setImportsList(imports);
-
     return as;
   }
 }

@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class CDBasisSTCompleterTest {
 
-  private static final String SYMBOL_PATH = "src/test/resources/";
+  private static final String SYMBOL_PATH = "src/test/resources/de/monticore/";
   TestCDBasisParser parser;
   TestCDBasisSymbols2Json symbols2Json;
 
@@ -59,7 +59,7 @@ public class CDBasisSTCompleterTest {
   public void genitorTest() {
     // reset the GlobalScope
 
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symboltable/CorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     // after parse trafo
@@ -91,11 +91,11 @@ public class CDBasisSTCompleterTest {
     assertEquals(2, dFields.size());
 
     FieldSymbol cField = dFields.get(0);
-    assertEquals("CorrectTypeUsages.D.c", cField.getFullName());
+    assertEquals("cdbasis.symboltable.CorrectTypeUsages.D.c", cField.getFullName());
     assertEquals("C", cField.getType().getTypeInfo().getName());
 
     FieldSymbol someImportedTypeField = dFields.get(1);
-    assertEquals("CorrectTypeUsages.D.x", someImportedTypeField.getFullName());
+    assertEquals("cdbasis.symboltable.CorrectTypeUsages.D.x", someImportedTypeField.getFullName());
     assertEquals("SomeImportedType", someImportedTypeField.getType().getTypeInfo().getName());
 
     assertEquals(0, Log.getErrorCount());
@@ -103,7 +103,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void resolvingTest() {
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
@@ -120,7 +120,7 @@ public class CDBasisSTCompleterTest {
     assertSame(artifactScope, TestCDBasisMill.globalScope().getSubScopes().get(0));
 
     List<TypeSymbol> resolvedTypesGS =
-        TestCDBasisMill.globalScope().resolveTypeMany("SomeImportedType");
+        artifactScope.resolveTypeMany("SomeImportedType");
     assertEquals(1, resolvedTypesGS.size());
 
     List<TypeSymbol> resolvedTypesGS2 =
@@ -128,7 +128,7 @@ public class CDBasisSTCompleterTest {
     assertEquals(0, resolvedTypesGS2.size());
 
     List<DiagramSymbol> resolvedDiagramGS =
-        TestCDBasisMill.globalScope().resolveDiagramMany("MyTypes");
+        TestCDBasisMill.globalScope().resolveDiagramMany("cdbasis.symtabs.MyTypes");
     assertEquals(1, resolvedDiagramGS.size());
 
     assertEquals(0, Log.getErrorCount());
@@ -136,7 +136,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void serializationTest() {
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     // after parse trafo
@@ -155,7 +155,7 @@ public class CDBasisSTCompleterTest {
   @Test
   public void resolveSerializeDeserializeResolveTest() {
 
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
@@ -207,7 +207,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterNoErrorTest() {
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symboltable/CorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
@@ -223,7 +223,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterTypeDoesNotExistTest() {
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeUsages.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symboltable/IncorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
@@ -243,7 +243,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void modifiersTest() {
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/Modifiers.cd";
+    String artifact = SYMBOL_PATH + "cdbasis/symboltable/Modifiers.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     ASTCDDefinition cd = ast.getCDDefinition();
@@ -321,12 +321,6 @@ public class CDBasisSTCompleterTest {
 
   protected ITestCDBasisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
     ITestCDBasisArtifactScope as = TestCDBasisMill.scopesGenitorDelegator().createFromAST(ast);
-
-    // add imports
-    List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList()
-        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
-    as.setImportsList(imports);
 
     return as;
   }

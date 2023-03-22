@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd.codegen;
+// TODO: Das sollte mit Paket funktionieren
+//package cd.codegen;
 
 classdiagram GenAuction {
 

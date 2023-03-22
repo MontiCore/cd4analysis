@@ -30,7 +30,6 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
     afterParseTrafo(ast);
 
     ITestCDAssociationArtifactScope artifactScope = createSymTab(ast);
-    artifactScope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
     completeSymTab(ast);
 
     // store symtab

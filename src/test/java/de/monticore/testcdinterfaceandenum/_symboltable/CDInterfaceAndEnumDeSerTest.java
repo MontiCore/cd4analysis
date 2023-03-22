@@ -58,7 +58,6 @@ public class CDInterfaceAndEnumDeSerTest {
 
     // create symbol table
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    artifactScope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
 
     // complete symbol table
     TestCDInterfaceAndEnumTraverser t2 = TestCDInterfaceAndEnumMill.traverser();

@@ -56,7 +56,6 @@ public class CDBasisDeSerTest {
 
     // create symbol table
     ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    artifactScope.setPackageName(ast.getMCPackageDeclaration().getMCQualifiedName().getQName());
 
     // complete symbol table
     TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
