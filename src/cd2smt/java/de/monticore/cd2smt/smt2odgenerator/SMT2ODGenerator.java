@@ -66,10 +66,12 @@ public class SMT2ODGenerator {
 
   protected ASTODAttribute buildAttribute(
       Map.Entry<ASTCDAttribute, Expr<? extends Sort>> smtAttribute) {
+    String value = smtAttribute.getValue().toString();
+    if (CDHelper.isDateType(smtAttribute.getKey().getMCType())) {
+      value = CDHelper.buildDate(Integer.parseInt(value));
+    }
     return ODHelper.buildAttribute(
-        smtAttribute.getKey().getName(),
-        CDHelper.sort2MCType(smtAttribute.getValue().getSort()),
-        smtAttribute.getValue().toString());
+        smtAttribute.getKey().getName(), smtAttribute.getKey().getMCType(), value);
   }
 
   protected List<LinkedSMTObject> getSuperInstanceLinks(

@@ -117,13 +117,15 @@ public class DistinctSort implements ClassStrategy {
             smtTypesMap
                 .get(CDHelper.getEnum(myAttribute.getMCType().printType(), ast.getCDDefinition()))
                 .getSort();
+      } else if (CDHelper.isDateType(myAttribute.getMCType())) {
+        sort = ctx.mkIntSort();
       } else {
         Log.info(
             "conversion of  Attribute "
                 + myAttribute.getName()
                 + " of the ASTCDType  "
                 + astcdType.getName()
-                + " skiped because his type  "
+                + " skipped because his type  "
                 + myAttribute.getMCType().printType()
                 + " is not supported yet ",
             "Warning");

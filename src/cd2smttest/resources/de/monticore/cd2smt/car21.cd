@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 import java.lang.* ;
+import java.util.Date ;
 classdiagram Enumeration {
 
 abstract class AbstractCar{
@@ -7,6 +8,7 @@ abstract class AbstractCar{
 }
 class Car extends AbstractCar {
   Color color;
+  Date productionDate ;
 }
 
 class Wheel ;

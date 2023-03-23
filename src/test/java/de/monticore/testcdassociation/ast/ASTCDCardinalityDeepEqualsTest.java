@@ -1,17 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.ast;
 
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdassociation._ast.ASTCDCardAtLeastOne;
 import de.monticore.cdassociation._ast.ASTCDCardMult;
 import de.monticore.cdassociation._ast.ASTCDCardOne;
 import de.monticore.cdassociation._ast.ASTCDCardOpt;
 import de.monticore.testcdassociation.TestCDAssociationMill;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class ASTCDCardinalityDeepEqualsTest {
 
@@ -35,7 +34,8 @@ public class ASTCDCardinalityDeepEqualsTest {
 
   @Test
   public void testDeepEqualsAtLeastOne() throws IOException {
-    Optional<ASTCDCardAtLeastOne> optCard = TestCDAssociationMill.parser().parse_StringCDCardAtLeastOne("[1..*]");
+    Optional<ASTCDCardAtLeastOne> optCard =
+        TestCDAssociationMill.parser().parse_StringCDCardAtLeastOne("[1..*]");
     assertTrue(optCard.isPresent());
     ASTCDCardAtLeastOne card1 = optCard.get();
     ASTCDCardAtLeastOne cardClone = card1.deepClone();
@@ -50,6 +50,4 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardMult cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
-
 }

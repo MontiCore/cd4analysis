@@ -4,7 +4,7 @@ package de.monticore.testcdassociation._symboltable;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
 
-public  class TestCDAssociationScopesGenitor extends TestCDAssociationScopesGenitorTOP {
+public class TestCDAssociationScopesGenitor extends TestCDAssociationScopesGenitorTOP {
 
   @Override
   public ITestCDAssociationArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
@@ -15,8 +15,9 @@ public  class TestCDAssociationScopesGenitor extends TestCDAssociationScopesGeni
       as.setPackageName(rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName());
     }
     // add imports
-    rootNode.getMCImportStatementList()
-      .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
+    rootNode
+        .getMCImportStatementList()
+        .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
 
     return as;
   }

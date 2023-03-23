@@ -3,9 +3,8 @@ package de.monticore.testcdinterfaceandenum._symboltable;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.testcdbasis._symboltable.ITestCDBasisArtifactScope;
 
-public  class TestCDInterfaceAndEnumScopesGenitor extends TestCDInterfaceAndEnumScopesGenitorTOP {
+public class TestCDInterfaceAndEnumScopesGenitor extends TestCDInterfaceAndEnumScopesGenitorTOP {
 
   @Override
   public ITestCDInterfaceAndEnumArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
@@ -16,8 +15,9 @@ public  class TestCDInterfaceAndEnumScopesGenitor extends TestCDInterfaceAndEnum
       as.setPackageName(rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName());
     }
     // add imports
-    rootNode.getMCImportStatementList()
-      .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
+    rootNode
+        .getMCImportStatementList()
+        .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
 
     return as;
   }

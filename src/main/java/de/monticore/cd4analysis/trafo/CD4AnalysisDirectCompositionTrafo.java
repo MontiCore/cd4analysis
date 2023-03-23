@@ -2,11 +2,11 @@
 package de.monticore.cd4analysis.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cdbasis.trafo.CDBasisDirectCompositionTrafo;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.trafo.CDBasisDirectCompositionTrafo;
 import de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumDirectCompositionTrafo;
 
 public class CD4AnalysisDirectCompositionTrafo {

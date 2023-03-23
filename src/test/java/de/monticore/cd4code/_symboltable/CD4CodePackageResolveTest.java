@@ -1,31 +1,27 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
-import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
-import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
@@ -39,8 +35,10 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
   @Test
   public void completeModel() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Packages.cd");
-    ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
-    astcdCompilationUnit.accept(new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+    ICD4CodeArtifactScope artifactScope =
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    astcdCompilationUnit.accept(
+        new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
     checkLogError();
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
 
@@ -72,28 +70,30 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
   @Test
   public void resolvingTests() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cdassociation/parser/Simple.cd");
-    ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
-    astcdCompilationUnit.accept(new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+    ICD4CodeArtifactScope artifactScope =
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    astcdCompilationUnit.accept(
+        new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
 
     // Test Resolving CDTypeSymbol
     // TODO
     /*
-    final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("Simple.A");
-    assertTrue(aType1.isPresent());
+        final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("Simple.A");
+        assertTrue(aType1.isPresent());
 
-    final Optional<CDTypeSymbol> aType2 = artifactScope.resolveCDType("A");
-    assertTrue(aType2.isPresent());
+        final Optional<CDTypeSymbol> aType2 = artifactScope.resolveCDType("A");
+        assertTrue(aType2.isPresent());
 
-    final Optional<CDTypeSymbol> aType3 = gs.resolveCDType("A");
-    assertFalse(aType3.isPresent());
+        final Optional<CDTypeSymbol> aType3 = gs.resolveCDType("A");
+        assertFalse(aType3.isPresent());
 
-    Optional<CDTypeSymbol> c1Type1 = artifactScope.resolveCDType("C1");
-    assertTrue(c1Type1.isPresent());
+        Optional<CDTypeSymbol> c1Type1 = artifactScope.resolveCDType("C1");
+        assertTrue(c1Type1.isPresent());
 
-    Optional<CDTypeSymbol> c1Type2 = aType2.get().getEnclosingScope().resolveCDType("C1");
-    assertTrue(c1Type2.isPresent());
-*/
+        Optional<CDTypeSymbol> c1Type2 = aType2.get().getEnclosingScope().resolveCDType("C1");
+        assertTrue(c1Type2.isPresent());
+    */
     // Test resolving CDRole
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());

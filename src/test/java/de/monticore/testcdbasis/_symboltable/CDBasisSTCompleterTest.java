@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -17,7 +16,6 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symboltable.ImportStatement;
 import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
@@ -119,8 +117,7 @@ public class CDBasisSTCompleterTest {
     TestCDBasisMill.globalScope().addSubScope(artifactScope);
     assertSame(artifactScope, TestCDBasisMill.globalScope().getSubScopes().get(0));
 
-    List<TypeSymbol> resolvedTypesGS =
-        artifactScope.resolveTypeMany("SomeImportedType");
+    List<TypeSymbol> resolvedTypesGS = artifactScope.resolveTypeMany("SomeImportedType");
     assertEquals(1, resolvedTypesGS.size());
 
     List<TypeSymbol> resolvedTypesGS2 =

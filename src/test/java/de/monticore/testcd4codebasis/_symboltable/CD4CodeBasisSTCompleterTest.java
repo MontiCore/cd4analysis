@@ -4,7 +4,6 @@ package de.monticore.testcd4codebasis._symboltable;
 import static org.junit.Assert.*;
 
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -12,7 +11,6 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.symboltable.ImportStatement;
 import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
 import de.monticore.testcd4codebasis.TestCD4CodeBasisMill;
 import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisTraverser;
