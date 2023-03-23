@@ -3,10 +3,9 @@ package de.monticore.cd4code.prettyprint;
 
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
@@ -26,6 +25,4 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit nodeReparsed = astcdCompilationUnitReParsed.get();
     node.deepEquals(nodeReparsed);
   }
-
-
 }

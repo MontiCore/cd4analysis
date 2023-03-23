@@ -14,6 +14,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.*;
 import java.util.stream.Collectors;
+// TODO: Date to smt
+// TODO: Enum 2 SMT
+// TODO : abstract class 2smt
 
 /**
  * This class creates a unique Sort "Object" as the Sort of all objects in SMT and a dataType

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
-import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
@@ -16,7 +15,6 @@ import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactSco
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.Ignore;
 import org.junit.Test;
 

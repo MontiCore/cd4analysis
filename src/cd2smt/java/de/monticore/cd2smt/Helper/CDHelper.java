@@ -1,6 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper;
 
+import static de.monticore.cd2smt.Helper.CDHelper.ClassType.NORMAL_CLASS;
+import static de.monticore.cd2smt.Helper.CDHelper.ObjType.ABSTRACT_OBJ;
+import static de.monticore.cd2smt.Helper.CDHelper.ObjType.NORMAL_OBJ;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -26,18 +30,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.ClassType.NORMAL_CLASS;
-import static de.monticore.cd2smt.Helper.CDHelper.ObjType.ABSTRACT_OBJ;
-import static de.monticore.cd2smt.Helper.CDHelper.ObjType.NORMAL_OBJ;
 
 public class CDHelper {
   public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
@@ -158,6 +154,10 @@ public class CDHelper {
   public static boolean isPrimitiveType(ASTMCType type) {
     return Set.of("int", "double", "Double", "Integer", "boolean", "Boolean", "String")
         .contains(type.printType());
+  }
+
+  public static boolean isDateType(ASTMCType type) {
+    return type.printType().equals("Date");
   }
 
   public static boolean isEnumType(ASTCDDefinition ast, String type) {
@@ -319,6 +319,24 @@ public class CDHelper {
     return cd.getCDClassesList().stream()
         .filter(x -> x.getModifier().isAbstract())
         .collect(Collectors.toList());
+  }
+
+  public static String buildDate(int time) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.set(2023, Calendar.JANUARY, 1, 0, 0, 0);
+    calendar.add(Calendar.SECOND, time);
+
+    LocalDateTime times =
+        LocalDateTime.of(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH) + 1,
+            calendar.get(Calendar.DAY_OF_MONTH),
+            calendar.get(Calendar.HOUR_OF_DAY),
+            calendar.get(Calendar.MINUTE),
+            calendar.get(Calendar.SECOND));
+    return times.format(DateTimeFormatter.ISO_DATE)
+        + "|"
+        + times.format(DateTimeFormatter.ISO_LOCAL_TIME);
   }
 
   public enum ClassType {

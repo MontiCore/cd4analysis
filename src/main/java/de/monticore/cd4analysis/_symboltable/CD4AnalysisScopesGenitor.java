@@ -4,7 +4,7 @@ package de.monticore.cd4analysis._symboltable;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
 
-public  class CD4AnalysisScopesGenitor extends CD4AnalysisScopesGenitorTOP {
+public class CD4AnalysisScopesGenitor extends CD4AnalysisScopesGenitorTOP {
 
   @Override
   public ICD4AnalysisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
@@ -15,8 +15,9 @@ public  class CD4AnalysisScopesGenitor extends CD4AnalysisScopesGenitorTOP {
       as.setPackageName(rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName());
     }
     // add imports
-    rootNode.getMCImportStatementList()
-      .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
+    rootNode
+        .getMCImportStatementList()
+        .forEach(i -> as.addImports(new ImportStatement(i.getQName(), i.isStar())));
 
     return as;
   }

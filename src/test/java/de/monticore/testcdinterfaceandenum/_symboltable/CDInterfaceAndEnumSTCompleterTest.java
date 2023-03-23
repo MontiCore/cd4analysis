@@ -1,6 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -11,17 +17,10 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import de.monticore.testcdinterfaceandenum.TestCDInterfaceAndEnumMill;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Test;
-
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBasis {
 
@@ -30,8 +29,7 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
   @Test
   public void genitorTest() {
     TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(PATH)));
-    String artifact =
-        PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
+    String artifact = PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
@@ -52,8 +50,7 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
 
     FieldSymbol cField = dFields.get(0);
     assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.c",
-        cField.getFullName());
+        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.c", cField.getFullName());
     assertEquals("C", cField.getType().getTypeInfo().getName());
 
     FieldSymbol someImportedTypeField = dFields.get(1);
@@ -64,14 +61,12 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
 
     FieldSymbol iField = dFields.get(2);
     assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.i",
-        iField.getFullName());
+        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.i", iField.getFullName());
     assertEquals("MyOtherInterface", iField.getType().getTypeInfo().getName());
 
     FieldSymbol eField = dFields.get(3);
     assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.e",
-        eField.getFullName());
+        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.e", eField.getFullName());
     assertEquals("MyEnum", eField.getType().getTypeInfo().getName());
 
     assertEquals(1, cdTypeSymbols.get("MyInterface").size());
@@ -85,8 +80,7 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
   @Test
   public void resolvingTest() {
     TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(PATH)));
-    String artifact =
-        PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
+    String artifact = PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
@@ -156,8 +150,7 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
   @Test
   public void symbolTableCompleterNoErrorTest() {
     TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(PATH)));
-    String artifact =
-        PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
+    String artifact = PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
 
@@ -183,5 +176,4 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     assertEquals("DrivingState", idleSym.get().getType().getTypeInfo().getName());
     assertEquals("DrivingState", drivingSym.get().getType().getTypeInfo().getName());
   }
-
 }

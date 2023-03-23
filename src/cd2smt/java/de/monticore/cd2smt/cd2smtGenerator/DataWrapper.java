@@ -44,10 +44,10 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
 
     ASTCDType type1 =
         CDHelper.getASTCDType(
-            association.getRightQualifiedName().getQName(), astcdCompilationUnit.getCDDefinition());
+            association.getLeftQualifiedName().getQName(), astcdCompilationUnit.getCDDefinition());
     ASTCDType type2 =
         CDHelper.getASTCDType(
-            association.getLeftQualifiedName().getQName(), astcdCompilationUnit.getCDDefinition());
+            association.getRightQualifiedName().getQName(), astcdCompilationUnit.getCDDefinition());
 
     List<ASTCDType> supertypeList1 = new ArrayList<>();
     supertypeList1.add(subType1);

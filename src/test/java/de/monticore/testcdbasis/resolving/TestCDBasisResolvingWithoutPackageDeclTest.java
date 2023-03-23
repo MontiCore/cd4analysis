@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.resolving;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -15,15 +18,11 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testcdbasis.TestCDBasisMill;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
@@ -61,15 +60,20 @@ public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
     checkLogError();
 
     final Optional<CDTypeSymbol> a1 = globalScope.resolveCDType("A");
-    assertFalse("CDType cdbasis.parser.Packages.A could be resolved but shouldn't.", a1.isPresent());
+    assertFalse(
+        "CDType cdbasis.parser.Packages.A could be resolved but shouldn't.", a1.isPresent());
     checkLogError();
 
     final Optional<CDTypeSymbol> a2 = globalScope.resolveCDType("Packages.a.A");
-    assertTrue("CDType cdbasis.parser.Packages.a.A could not be resolved:\n" + getJoinedErrors(), a2.isPresent());
+    assertTrue(
+        "CDType cdbasis.parser.Packages.a.A could not be resolved:\n" + getJoinedErrors(),
+        a2.isPresent());
     checkLogError();
 
     final Optional<CDTypeSymbol> a3 = globalScope.resolveCDType("Packages.a.b.c.C");
-    assertTrue("CDType cdbasis.parser.Packages.a.b.c.C could not be resolved:\n" + getJoinedErrors(), a3.isPresent());
+    assertTrue(
+        "CDType cdbasis.parser.Packages.a.b.c.C could not be resolved:\n" + getJoinedErrors(),
+        a3.isPresent());
     checkLogError();
 
     final Optional<CDTypeSymbol> a4 = artifactScope.resolveCDType("A");
@@ -93,7 +97,6 @@ public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
     final Optional<CDTypeSymbol> c0 = enclosingScopeA.resolveCDType("a.b.c.C");
     assertTrue(c0.isPresent());
     checkLogError();
-
   }
 
   @Test

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static org.junit.Assert.fail;
+
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
@@ -10,12 +12,9 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.fail;
+import org.junit.Before;
 
 public abstract class DecoratorTestCase {
 
