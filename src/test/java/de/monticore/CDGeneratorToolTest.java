@@ -41,7 +41,7 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/model/Example.cd",
           "-c2mc",
           "-s",
-          "target/generated/example/symboltable/"
+          "target/generated/example/symboltable"
         });
     assertTrue(new File("target/generated/example/symboltable/model/Example.cdsym").isFile());
   }
@@ -54,7 +54,7 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/model/Example.cd",
           "-c2mc",
           "-o",
-          "target/generated/example/standard/",
+          "target/generated/example/standard",
         });
     assertTrue(new File("target/generated/example/standard/model/Example/A.java").isFile());
   }
@@ -67,7 +67,7 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/model/Example.cd",
           "-c2mc",
           "-o",
-          "target/generated/example/ct/",
+          "target/generated/example/ct",
           "-ct",
           "de.monticore.cdgentool.NewCustomTemplate"
         });
@@ -82,9 +82,9 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/model/Example.cd",
           "-c2mc",
           "-o",
-          "target/generated/example/tp/",
+          "target/generated/example/tp",
           "-tp",
-          "src/test/resources/de/monticore/cdgentool/templates/"
+          "src/test/resources/de/monticore/cdgentool/templates"
         });
     assertTrue(new File("target/generated/example/tp/model/Example/A.java").isFile());
   }
@@ -97,9 +97,9 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/model/Example.cd",
           "-c2mc",
           "-o",
-          "target/generated/example/hwc/",
+          "target/generated/example/hwc",
           "-hwc",
-          "src/test/resources/de/monticore/cdgentool/hwc/"
+          "src/test/resources/de/monticore/cdgentool/hwc"
         });
     assertTrue(new File("target/generated/example/hwc/model/Example/ATOP.java").isFile());
   }
@@ -127,9 +127,9 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/pkg/ExampleWithPkg.cd",
           "-c2mc",
           "-o",
-          "target/generated/example/examplewithpkg/",
+          "target/generated/example/examplewithpkg",
           "-s",
-          "target/generated/example/examplewithpkg/"
+          "target/generated/example/examplewithpkg"
         });
     File symtab =
         new File(
@@ -147,7 +147,7 @@ public class CDGeneratorToolTest {
           "src/test/resources/de/monticore/cdgentool/model/Example.cd",
           "-c2mc",
           "-o",
-          "target/generated/example/defaultctor/",
+          "target/generated/example/defaultctor",
           "-ct",
           "de.monticore.cdgentool.DefaultCtorTemplate",
         });
@@ -172,7 +172,7 @@ public class CDGeneratorToolTest {
           "-i",
           "src/test/resources/de/monticore/cdgentool/ImportTest.cd",
           "-o",
-          "target/generated/example/imports/",
+          "target/generated/example/imports",
           "-c2mc",
           "-path",
           "target/generated/example/model"
