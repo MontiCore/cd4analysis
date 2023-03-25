@@ -106,10 +106,10 @@ public class CDGeneratorTool extends CD4CodeTool {
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
 
-      Collection<ICD4CodeArtifactScope> scopes =
-        asts.stream()
+      Collection<ICD4CodeArtifactScope> scopes = asts.stream()
           .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
           .collect(Collectors.toList());
+      asts.forEach(this::completeSymbolTable);
 
       if (cmd.hasOption("v")) {
         printVersion();
@@ -270,17 +270,26 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   /**
-   * creates a symboltable for the current ast using the CD4CodeScopesGenitor
+   * creates the symboltable for the given ast
    *
    * @param ast the input ast
-   * @return the symboltable of the ast
+   * @param java whether to add java default imports
+   * @return the symbol-table of the ast
    */
   public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast, boolean java) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
     this.addDefaultImports(scope, java);
-    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
     return scope;
+  }
+
+  /**
+   * completes the symboltable for the given ast
+   *
+   * @param ast the input ast
+   */
+  public void completeSymbolTable(ASTCDCompilationUnit ast) {
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
 
   public void initializeClass2MC() {
