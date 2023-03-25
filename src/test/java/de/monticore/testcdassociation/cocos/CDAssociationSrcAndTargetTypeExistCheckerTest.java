@@ -33,14 +33,13 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CDAssociation
   @Test
   public void testInvalid() throws IOException {
     final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(
-            getFilePath("cdassociation/cocos/CDAssociationSrcAndTargetTypeExistCheckerInvalid.cd"));
+      p.parse(getFilePath("cdassociation/cocos/CDAssociationSrcAndTargetTypeExistCheckerInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     createSymTab(ast);
     completeSymTab(ast);
-    assertEquals(1, Log.getFindings().size());
+    assertEquals(Log.getFindings().toString(), 1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 

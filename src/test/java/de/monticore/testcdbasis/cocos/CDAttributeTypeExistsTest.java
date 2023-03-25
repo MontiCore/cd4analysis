@@ -39,7 +39,7 @@ public class CDAttributeTypeExistsTest extends CDBasisTestBasis {
     createSymTab(ast);
     completeSymTab(ast);
     coCoChecker.checkAll(ast);
-    assertEquals(1, Log.getFindings().size());
+    assertEquals(Log.getFindings().toString(), 1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 

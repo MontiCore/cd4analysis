@@ -117,44 +117,33 @@ public class CDAssociationSymbolTableCompleter
 
   @Override
   public void endVisit(ASTCDAssociation node) {
-    final ASTCDAssocLeftSide leftSide = node.getLeft();
-    final ASTCDAssocRightSide rightSide = node.getRight();
+    final ASTCDAssocLeftSide l = node.getLeft();
+    final ASTCDAssocRightSide r = node.getRight();
 
-    final TypeSymbol leftType;
-    if (leftSide.isPresentSymbol()) {
-      leftType = leftSide.getSymbol().getType().getTypeInfo();
-    } else {
-      final TypeCheckResult result =
-          getTypeSynthesizer().synthesizeType(leftSide.getMCQualifiedType().getMCQualifiedName());
-      leftType = result.getResult().getTypeInfo();
-    }
+    final TypeCheckResult rType = getTypeSynthesizer().synthesizeType(r.getMCQualifiedType().getMCQualifiedName());
+    final TypeCheckResult lType = getTypeSynthesizer().synthesizeType(l.getMCQualifiedType().getMCQualifiedName());
 
-    final TypeSymbol rightType;
-    if (rightSide.isPresentSymbol()) {
-      rightType = rightSide.getSymbol().getType().getTypeInfo();
-    } else {
-      final TypeCheckResult result =
-          getTypeSynthesizer().synthesizeType(rightSide.getMCQualifiedType().getMCQualifiedName());
-      rightType = result.getResult().getTypeInfo();
-    }
-
-    if (leftSide.isPresentSymbol()) {
-      if (rightType == null) {
+    if (l.isPresentSymbol()) {
+      if (rType.isPresentResult() && !rType.getResult().isObscureType() && rType.getResult().hasTypeInfo()) {
+        CDAssociationSymbolTableCompleter.addRoleToTheirType(l.getSymbol(), rType.getResult().getTypeInfo());
+      } else {
         Log.error(
             "0xCDCD1 Right type for role symbol "
-                + leftSide.getSymbol().getName()
-                + " not available.");
+              + l.getSymbol().getName()
+              + " not available."
+        );
       }
-      CDAssociationSymbolTableCompleter.addRoleToTheirType(leftSide.getSymbol(), rightType);
     }
-    if (rightSide.isPresentSymbol()) {
-      if (leftType == null) {
+    if (r.isPresentSymbol()) {
+      if (lType.isPresentResult() && !lType.getResult().isObscureType() && lType.getResult().hasTypeInfo()) {
+        CDAssociationSymbolTableCompleter.addRoleToTheirType(r.getSymbol(), lType.getResult().getTypeInfo());
+      } else {
         Log.error(
             "0xCDCD2 Left type for role symbol "
-                + rightSide.getSymbol().getName()
-                + " not available.");
+              + r.getSymbol().getName()
+              + " not available."
+        );
       }
-      CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftType);
     }
   }
 
