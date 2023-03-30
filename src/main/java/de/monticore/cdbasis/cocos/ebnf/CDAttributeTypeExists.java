@@ -9,7 +9,9 @@ public class CDAttributeTypeExists implements CDBasisASTCDAttributeCoCo {
 
   @Override
   public void check(ASTCDAttribute node) {
-    if (node.isPresentSymbol() && node.getSymbol().getType() != null && !node.getSymbol().getType().isObscureType()) {
+    if (node.isPresentSymbol()
+        && node.getSymbol().getType() != null
+        && !node.getSymbol().getType().isObscureType()) {
       node.getSymbol().getType().getTypeInfo();
     }
   }
