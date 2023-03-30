@@ -120,29 +120,31 @@ public class CDAssociationSymbolTableCompleter
     final ASTCDAssocLeftSide l = node.getLeft();
     final ASTCDAssocRightSide r = node.getRight();
 
-    final TypeCheckResult rType = getTypeSynthesizer().synthesizeType(r.getMCQualifiedType().getMCQualifiedName());
-    final TypeCheckResult lType = getTypeSynthesizer().synthesizeType(l.getMCQualifiedType().getMCQualifiedName());
+    final TypeCheckResult rType =
+        getTypeSynthesizer().synthesizeType(r.getMCQualifiedType().getMCQualifiedName());
+    final TypeCheckResult lType =
+        getTypeSynthesizer().synthesizeType(l.getMCQualifiedType().getMCQualifiedName());
 
     if (l.isPresentSymbol()) {
-      if (rType.isPresentResult() && !rType.getResult().isObscureType() && rType.getResult().hasTypeInfo()) {
-        CDAssociationSymbolTableCompleter.addRoleToTheirType(l.getSymbol(), rType.getResult().getTypeInfo());
+      if (rType.isPresentResult()
+          && !rType.getResult().isObscureType()
+          && rType.getResult().hasTypeInfo()) {
+        CDAssociationSymbolTableCompleter.addRoleToTheirType(
+            l.getSymbol(), rType.getResult().getTypeInfo());
       } else {
         Log.error(
-            "0xCDCD1 Right type for role symbol "
-              + l.getSymbol().getName()
-              + " not available."
-        );
+            "0xCDCD1 Right type for role symbol " + l.getSymbol().getName() + " not available.");
       }
     }
     if (r.isPresentSymbol()) {
-      if (lType.isPresentResult() && !lType.getResult().isObscureType() && lType.getResult().hasTypeInfo()) {
-        CDAssociationSymbolTableCompleter.addRoleToTheirType(r.getSymbol(), lType.getResult().getTypeInfo());
+      if (lType.isPresentResult()
+          && !lType.getResult().isObscureType()
+          && lType.getResult().hasTypeInfo()) {
+        CDAssociationSymbolTableCompleter.addRoleToTheirType(
+            r.getSymbol(), lType.getResult().getTypeInfo());
       } else {
         Log.error(
-            "0xCDCD2 Left type for role symbol "
-              + r.getSymbol().getName()
-              + " not available."
-        );
+            "0xCDCD2 Left type for role symbol " + r.getSymbol().getName() + " not available.");
       }
     }
   }

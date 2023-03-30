@@ -24,11 +24,9 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumTOP;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report.OD4ReportMill;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,14 +40,10 @@ public class CDHelper {
     List<ASTCDType> subclasses = new LinkedList<>();
     for (ASTCDClass entry : cd.getCDClassesList()) {
       for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
-        if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
-            .prettyprint(entry2)
-            .equals(astcdType.getName())) subclasses.add(entry);
+        if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
       }
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
-        if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
-            .prettyprint(entry2)
-            .equals(astcdType.getName())) subclasses.add(entry);
+        if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
       }
     }
     return subclasses;
@@ -60,9 +54,7 @@ public class CDHelper {
     List<ASTCDType> subInterfaces = new LinkedList<>();
     for (ASTCDInterface entry : cd.getCDInterfacesList()) {
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
-        if (new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
-            .prettyprint(entry2)
-            .equals(astcdInterface.getName())) subInterfaces.add(entry);
+        if (entry2.printType().equals(astcdInterface.getName())) subInterfaces.add(entry);
       }
     }
     return subInterfaces;
@@ -129,7 +121,7 @@ public class CDHelper {
   }
 
   public static Sort mcType2Sort(Context ctx, ASTMCType astmcType) {
-    String att = new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(astmcType);
+    String att = astmcType.printType();
     Sort res = null;
     switch (att) {
       case "boolean":
@@ -261,20 +253,12 @@ public class CDHelper {
   public static List<ASTCDType> getSuperTypeList(ASTCDType astcdType, ASTCDDefinition cd) {
     List<ASTCDType> res =
         astcdType.getSuperclassList().stream()
-            .map(
-                mcType ->
-                    getASTCDType(
-                        new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(mcType),
-                        cd))
+            .map(mcType -> getASTCDType(mcType.printType(), cd))
             .collect(Collectors.toList());
 
     res.addAll(
         astcdType.getInterfaceList().stream()
-            .map(
-                mcType ->
-                    getASTCDType(
-                        new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(mcType),
-                        cd))
+            .map(mcType -> getASTCDType(mcType.printType(), cd))
             .collect(Collectors.toList()));
 
     return res;
