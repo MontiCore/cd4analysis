@@ -5,14 +5,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import de.monticore.cd.TestBasis;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.io.paths.MCPath;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testcdbasis.TestCDBasisMill;
@@ -46,10 +49,19 @@ public class TestCDBasisResolvingTest extends TestBasis {
     TestCDBasisMill.reset();
     TestCDBasisMill.init();
 
-    globalScope = CDBasisMill.globalScope();
+    globalScope = TestCDBasisMill.globalScope();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
+    BuiltInTypes.addBuiltInTypes(globalScope);
 
     artifactScope = TestCDBasisMill.scopesGenitorDelegator().createFromAST(compilationUnit);
+
+    // complete symbol table
+    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
+    t2.add4CDBasis(symTabComp);
+    t2.add4OOSymbols(symTabComp);
+    compilationUnit.accept(t2);
+
     checkLogError();
   }
 
@@ -112,16 +124,45 @@ public class TestCDBasisResolvingTest extends TestBasis {
 
   @Test
   public void resolveField() {
-    final Optional<FieldSymbol> b = globalScope.resolveField("B.a1");
-    assertFalse("Field B.a1 could be resolved but shouldn't.", b.isPresent());
+    final Optional<FieldSymbol> a1 = globalScope.resolveField("B.a1");
+    assertFalse("Field B.a1 could be resolved but shouldn't.", a1.isPresent());
     checkLogError();
 
-    final Optional<FieldSymbol> b2 = globalScope.resolveField("cdbasis.parser.Packages.a.B.a1");
-    assertTrue("Field a.B.a1 could not be resolved:\n" + getJoinedErrors(), b2.isPresent());
+    final Optional<FieldSymbol> a1_2 = globalScope.resolveField("cdbasis.parser.Packages.a.B.a1");
+    assertTrue("Field a.B.a1 could not be resolved:\n" + getJoinedErrors(), a1_2.isPresent());
     checkLogError();
 
-    final Optional<FieldSymbol> b3 = artifactScope.resolveField("a.B.a1");
-    assertTrue("Field a.B.a1 could not be resolved:\n" + getJoinedErrors(), b2.isPresent());
+    final Optional<FieldSymbol> a1_3 = artifactScope.resolveFieldDown("a.B.a1");
+    assertTrue("Field a.B.a1 could not be resolved:\n" + getJoinedErrors(), a1_3.isPresent());
     checkLogError();
+
+    final Optional<FieldSymbol> a1_4 = artifactScope.resolveFieldDown("d.D.a1");
+    assertTrue("Field d.D.a1 could not be resolved:\n" + getJoinedErrors(), a1_4.isPresent());
+    checkLogError();
+
+    final Optional<OOTypeSymbol> b = globalScope.resolveOOType("cdbasis.parser.Packages.a.B");
+    assertTrue("OOTypeSymbol a.B could not be resolved:\n" + getJoinedErrors(), b.isPresent());
+    checkLogError();
+
+    final Optional<FieldSymbol> a1_5 = b.get().getSpannedScope().resolveField("a1");
+    assertTrue("Field a1 could not be resolved:\n" + getJoinedErrors(), a1_5.isPresent());
+    checkLogError();
+
+    final Optional<VariableSymbol> a1_6 = b.get().getSpannedScope().resolveVariable("a1");
+    assertTrue("Field a1 could not be resolved:\n" + getJoinedErrors(), a1_6.isPresent());
+    checkLogError();
+
+    final Optional<OOTypeSymbol> d = globalScope.resolveOOType("cdbasis.parser.Packages.d.D");
+    assertTrue("OOTypeSymbol d.D could not be resolved:\n" + getJoinedErrors(), d.isPresent());
+    checkLogError();
+
+    final Optional<FieldSymbol> a1_7 = d.get().getSpannedScope().resolveField("a1");
+    assertTrue("Field a1 could not be resolved:\n" + getJoinedErrors(), a1_7.isPresent());
+    checkLogError();
+
+    final Optional<VariableSymbol> a1_8 = d.get().getSpannedScope().resolveVariable("a1");
+    assertTrue("Field a1 could not be resolved:\n" + getJoinedErrors(), a1_8.isPresent());
+    checkLogError();
+
   }
 }

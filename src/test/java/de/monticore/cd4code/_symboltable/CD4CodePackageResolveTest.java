@@ -1,10 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -12,16 +8,23 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
@@ -33,7 +36,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void completeModel() throws IOException {
+  public void resolvingWithPackages() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Packages.cd");
     ICD4CodeArtifactScope artifactScope =
         CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
@@ -77,23 +80,18 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
 
     // Test Resolving CDTypeSymbol
-    // TODO
-    /*
-        final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("Simple.A");
-        assertTrue(aType1.isPresent());
+    final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("Simple.A");
+    assertTrue(aType1.isPresent());
 
-        final Optional<CDTypeSymbol> aType2 = artifactScope.resolveCDType("A");
-        assertTrue(aType2.isPresent());
+    final Optional<CDTypeSymbol> aType2 = artifactScope.resolveCDType("A");
+    assertTrue(aType2.isPresent());
 
-        final Optional<CDTypeSymbol> aType3 = gs.resolveCDType("A");
-        assertFalse(aType3.isPresent());
+    Optional<CDTypeSymbol> c1Type1 = artifactScope.resolveCDType("C1");
+    assertTrue(c1Type1.isPresent());
 
-        Optional<CDTypeSymbol> c1Type1 = artifactScope.resolveCDType("C1");
-        assertTrue(c1Type1.isPresent());
+    Optional<CDTypeSymbol> c1Type2 = aType2.get().getEnclosingScope().resolveCDType("C1");
+    assertTrue(c1Type2.isPresent());
 
-        Optional<CDTypeSymbol> c1Type2 = aType2.get().getEnclosingScope().resolveCDType("C1");
-        assertTrue(c1Type2.isPresent());
-    */
     // Test resolving CDRole
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());
@@ -140,10 +138,42 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
     final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
     assertTrue(opt.isPresent());
+   }
 
-    // TODO: Code ist (1) sinnlos und (2) fehlerhaft
-    // String s = new OOSymbolsSymbols2Json().serialize(str1.get().getSpannedScope());
-    // String s2 = symbols2Json.serialize(artifactScope);
-    // System.out.println(s2);
+  @Test
+  public void resolving() throws IOException {
+    final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Complete.cd");
+    ICD4CodeArtifactScope artifactScope =
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    astcdCompilationUnit.accept(
+      new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+    checkLogError();
+    ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
+
+    final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("cd4code.parser.Complete.A");
+    assertTrue(aType1.isPresent());
+
+    final Optional<MethodSymbol> meth1 = aType1.get().getSpannedScope().resolveMethod("getName");
+    assertTrue(meth1.isPresent());
+
+    final Optional<MethodSymbol> meth2 = aType1.get().getSpannedScope().resolveMethod("getX");
+    assertFalse(meth2.isPresent());
+
+    final Optional<CDTypeSymbol> bType1 = gs.resolveCDType("cd4code.parser.Complete.B");
+    assertTrue(aType1.isPresent());
+
+    final Optional<MethodSymbol> meth3 = bType1.get().getSpannedScope().resolveMethod("getName");
+    assertTrue(meth3.isPresent());
+
+    final Optional<MethodSymbol> meth4 = bType1.get().getSpannedScope().resolveMethod("getX");
+    assertTrue(meth4.isPresent());
+
+    final Optional<VariableSymbol> field1 = meth4.get().getSpannedScope().resolveVariable("a");
+    assertTrue(field1.isPresent());
+
+    final Optional<VariableSymbol> field2 = meth4.get().getEnclosingScope().resolveVariable("a");
+    assertFalse(field2.isPresent());
+
   }
-}
+
+  }
