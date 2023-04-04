@@ -7,13 +7,13 @@ classdiagram Packages {
   }
 
   package a2 {
-    class A2 extends A;
+    class A2 extends a.A;
   }
 
   package a {
     class B { // NOTE: A and B are in same package a
       a2.A2 a1;
-      A2 a2;
+      a2.A2 a2;
     }
   }
 
