@@ -91,6 +91,7 @@ deploy:
   stage: deploy
   only:
     - develop
+    - release4teaching
   dependencies:
     - build
   script:
