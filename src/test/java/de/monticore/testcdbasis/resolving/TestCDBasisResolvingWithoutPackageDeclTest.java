@@ -163,6 +163,5 @@ public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
     final Optional<VariableSymbol> a1_8 = d.get().getSpannedScope().resolveVariable("a1");
     assertTrue("Field a1 could not be resolved:\n" + getJoinedErrors(), a1_8.isPresent());
     checkLogError();
-
   }
 }

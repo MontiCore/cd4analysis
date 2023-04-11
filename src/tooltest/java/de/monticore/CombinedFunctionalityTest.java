@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CombinedFunctionalityTest {
@@ -45,7 +44,6 @@ public class CombinedFunctionalityTest {
   }
 
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
-  @Disabled
   @Test
   public void testMaCoCo() {
     String base_path =
@@ -60,7 +58,7 @@ public class CombinedFunctionalityTest {
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);
 
     ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", paramSet);
-    assertNotEquals(null, merged);
+    assertNotNull(merged);
 
     ASTCDCompilationUnit expected =
         parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());

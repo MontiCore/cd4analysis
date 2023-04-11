@@ -6,13 +6,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
 import de.monticore.cdmerge.refactor.CleanAttributesInheritedFromSuperclass;
 import de.monticore.cdmerge.refactor.ModelRefactoringBase.ModelRefactoringBuilder;
 import de.monticore.cdmerge.refactor.RemoveRedundantInterfaces;
+import de.monticore.cdmerge.util.CDMergeAfterParseTrafo;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.cdmerge.validation.AssociationChecker;
 import de.monticore.cdmerge.validation.AttributeChecker;
@@ -355,7 +355,7 @@ public class CDMergeConfig {
     this.inputCDs = new ArrayList<>();
     for (ASTCDCompilationUnit inputCD : inputCDs) {
       // Ensure every CDElement is in a package and perform default AST Trafos
-      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
+      final CDMergeAfterParseTrafo afterParseTrafo = new CDMergeAfterParseTrafo();
       afterParseTrafo.transform(inputCD);
 
       CDUtils.RefreshSymbolTable(inputCD);

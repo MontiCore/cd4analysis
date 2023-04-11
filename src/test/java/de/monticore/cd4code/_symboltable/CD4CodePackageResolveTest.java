@@ -1,6 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -15,16 +19,11 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
@@ -138,15 +137,15 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
     final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
     assertTrue(opt.isPresent());
-   }
+  }
 
   @Test
   public void resolving() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Complete.cd");
     ICD4CodeArtifactScope artifactScope =
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     astcdCompilationUnit.accept(
-      new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+        new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
     checkLogError();
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
 
@@ -173,7 +172,5 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
     final Optional<VariableSymbol> field2 = meth4.get().getEnclosingScope().resolveVariable("a");
     assertFalse(field2.isPresent());
-
   }
-
-  }
+}

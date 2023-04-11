@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -163,6 +162,5 @@ public class TestCDBasisResolvingTest extends TestBasis {
     final Optional<VariableSymbol> a1_8 = d.get().getSpannedScope().resolveVariable("a1");
     assertTrue("Field a1 could not be resolved:\n" + getJoinedErrors(), a1_8.isPresent());
     checkLogError();
-
   }
 }

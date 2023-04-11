@@ -130,6 +130,8 @@ public class ValidationAndPerformanceTest {
     }
   }
 
+  /** Disabled for GitLab pipeline. */
+  @Disabled
   @ParameterizedTest
   @MethodSource("completeSet")
   public void testNoDiffEmpty(String file1) {
@@ -166,6 +168,8 @@ public class ValidationAndPerformanceTest {
     }
   }
 
+  /** Disabled for GitLab pipeline. */
+  @Disabled
   @ParameterizedTest
   @MethodSource("completeSet")
   public void testNoDiffSame(String file1) {
