@@ -14,10 +14,8 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.LogStub;
 import java.util.List;
 import org.junit.Before;
@@ -198,9 +196,7 @@ public class ListAccessorDecoratorTest {
   public void testHashCodeMethod() {
     ASTCDMethod method = getMethodBy("hashCodeA", this.methods);
     assertTrue(method.getCDParameterList().isEmpty());
-    assertEquals(
-        "int",
-        method.getMCReturnType().printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())));
+    assertEquals("int", method.getMCReturnType().printType());
     assertDeepEquals(PUBLIC, method.getModifier());
   }
 

@@ -6,7 +6,6 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill;
 import de.se_rwth.commons.StringTransformations;
 import java.util.Arrays;
 import java.util.List;
@@ -37,10 +36,7 @@ public class CDParameterFacade {
   }
 
   public ASTCDParameter createParameter(final ASTMCType type) {
-    return createParameter(
-        type,
-        StringTransformations.uncapitalize(
-            type.printType(MCFullGenericTypesMill.mcFullGenericTypesPrettyPrinter())));
+    return createParameter(type, StringTransformations.uncapitalize(type.printType()));
   }
 
   public ASTCDParameter createParameter(final String type, final String name) {

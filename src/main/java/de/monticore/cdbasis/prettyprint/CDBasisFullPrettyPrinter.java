@@ -18,6 +18,7 @@ import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
 import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
 /** this class can be used to print the underlying elements used in the CDs */
+@Deprecated(forRemoval = true)
 public class CDBasisFullPrettyPrinter {
 
   protected CDBasisTraverser traverser;

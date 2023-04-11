@@ -6,22 +6,17 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
 public class CDInheritanceHelper {
 
-  protected static MCBasicTypesFullPrettyPrinter pp =
-      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
-
   /** check if newSuper is not already a superclass/interface of targetNode */
   public static boolean isNewSuper(
       ASTMCObjectType newSuper, ASTCDType targetNode, ICD4CodeArtifactScope artifactScope) {
     for (ASTCDType oldSuper : getAllSuper(targetNode, artifactScope)) {
-      if (oldSuper.getSymbol().getInternalQualifiedName().contains(newSuper.printType(pp))) {
+      if (oldSuper.getSymbol().getInternalQualifiedName().contains(newSuper.printType())) {
         return false;
       }
     }
@@ -34,7 +29,7 @@ public class CDInheritanceHelper {
 
     for (ASTCDType superSuper :
         getAllSuper(
-            resolveClosestType(targetNode, newSuper.printType(pp), artifactScope), artifactScope)) {
+            resolveClosestType(targetNode, newSuper.printType(), artifactScope), artifactScope)) {
       if (superSuper
           .getSymbol()
           .getInternalQualifiedName()
@@ -89,7 +84,7 @@ public class CDInheritanceHelper {
       ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     Set<ASTCDType> extendsSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
-      String internalName = internalQualifiedName(superType.printType(pp), artifactScope);
+      String internalName = internalQualifiedName(superType.printType(), artifactScope);
       extendsSet.add(resolveClosestType(cdType, internalName, artifactScope));
     }
     return extendsSet;
@@ -100,7 +95,7 @@ public class CDInheritanceHelper {
       ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     Set<ASTCDType> interfaceSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getInterfaceList()) {
-      interfaceSet.add(resolveClosestType(cdType, superType.printType(pp), artifactScope));
+      interfaceSet.add(resolveClosestType(cdType, superType.printType(), artifactScope));
     }
     return interfaceSet;
   }

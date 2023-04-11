@@ -22,6 +22,7 @@ import de.monticore.types.prettyprint.MCArrayTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 
+@Deprecated(forRemoval = true)
 public class CD4AnalysisFullPrettyPrinter {
 
   protected CD4AnalysisTraverser traverser;

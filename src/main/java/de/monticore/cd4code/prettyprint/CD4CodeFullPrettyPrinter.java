@@ -30,6 +30,7 @@ import de.monticore.types.prettyprint.*;
 import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
 import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
+@Deprecated(forRemoval = true)
 public class CD4CodeFullPrettyPrinter {
 
   protected CD4CodeTraverser traverser;

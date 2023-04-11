@@ -13,8 +13,6 @@ import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLeftToRightDir;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODRightToLeftDir;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.Optional;
@@ -25,9 +23,6 @@ public class JoinLinksTrafo {
   protected ASTCDCompilationUnit cd;
 
   protected ICD4CodeArtifactScope scope;
-
-  protected final MCBasicTypesFullPrettyPrinter pp =
-      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
   public JoinLinksTrafo(ASTCDCompilationUnit cd) {
     this.cd = cd;
@@ -89,14 +84,14 @@ public class JoinLinksTrafo {
 
     if (!CDInheritanceHelper.isSuperOf(
         assoc.getLeftQualifiedName().getQName(),
-        leftObj.get().getMCObjectType().printType(pp),
+        leftObj.get().getMCObjectType().printType(),
         scope)) {
       return false;
     }
 
     if (!CDInheritanceHelper.isSuperOf(
         assoc.getRightQualifiedName().getQName(),
-        rightObj.get().getMCObjectType().printType(pp),
+        rightObj.get().getMCObjectType().printType(),
         scope)) {
       return false;
     }
@@ -123,14 +118,14 @@ public class JoinLinksTrafo {
 
     if (!CDInheritanceHelper.isSuperOf(
         assoc.getRightQualifiedName().getQName(),
-        leftObj.get().getMCObjectType().printType(pp),
+        leftObj.get().getMCObjectType().printType(),
         scope)) {
       return false;
     }
 
     if (!CDInheritanceHelper.isSuperOf(
         assoc.getLeftQualifiedName().getQName(),
-        rightObj.get().getMCObjectType().printType(pp),
+        rightObj.get().getMCObjectType().printType(),
         scope)) {
       return false;
     }

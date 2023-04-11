@@ -11,6 +11,7 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import java.util.Iterator;
 
+@Deprecated(forRemoval = true)
 public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
   protected CDInterfaceAndEnumTraverser traverser;

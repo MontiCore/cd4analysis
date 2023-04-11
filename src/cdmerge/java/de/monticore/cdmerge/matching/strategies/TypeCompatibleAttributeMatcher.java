@@ -5,8 +5,6 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.JPrimitiveType;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 
 /** Matches only Attributes with same name and compatible type */
 public class TypeCompatibleAttributeMatcher extends AttributeMatcherBase {
@@ -25,10 +23,8 @@ public class TypeCompatibleAttributeMatcher extends AttributeMatcherBase {
       return false;
     }
 
-    String type1 =
-        attribute1.getMCType().printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()));
-    String type2 =
-        attribute2.getMCType().printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()));
+    String type1 = attribute1.getMCType().printType();
+    String type2 = attribute2.getMCType().printType();
     if (type1.equals(type2)) {
       return true;
     }

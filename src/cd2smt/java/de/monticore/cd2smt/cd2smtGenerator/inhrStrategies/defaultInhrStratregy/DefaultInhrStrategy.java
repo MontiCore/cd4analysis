@@ -17,9 +17,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
@@ -162,10 +160,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
       if (!myClass.getSuperclassList().isEmpty()) {
         Optional<ASTCDClass> superClass =
             Optional.ofNullable(
-                CDHelper.getClass(
-                    new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
-                        .prettyprint(myClass.getSuperclassList().get(0)),
-                    cd));
+                CDHelper.getClass(myClass.getSuperclassList().get(0).printType(), cd));
         assert superClass.isPresent();
         constraints.addAll(
             buildCDTypeInheritanceConstraint(myClass, superClass.get(), classData, ctx));
@@ -174,10 +169,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
       // add constraint for  classes that  inherit  from interfacees
       for (ASTMCObjectType superC : myClass.getInterfaceList()) {
         Optional<ASTCDInterface> superInterface =
-            Optional.ofNullable(
-                CDHelper.getInterface(
-                    new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superC),
-                    cd));
+            Optional.ofNullable(CDHelper.getInterface(superC.printType(), cd));
         assert superInterface.isPresent();
         constraints.addAll(
             buildCDTypeInheritanceConstraint(myClass, superInterface.get(), classData, ctx));
@@ -187,10 +179,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
     for (ASTCDInterface myInterface : cd.getCDInterfacesList()) {
       for (ASTMCObjectType superInterf : myInterface.getInterfaceList()) {
         Optional<ASTCDInterface> superInterface =
-            Optional.ofNullable(
-                CDHelper.getInterface(
-                    new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superInterf),
-                    cd));
+            Optional.ofNullable(CDHelper.getInterface(superInterf.printType(), cd));
         assert superInterface.isPresent();
 
         constraints.addAll(

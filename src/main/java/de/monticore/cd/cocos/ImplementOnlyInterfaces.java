@@ -6,7 +6,6 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
@@ -28,11 +27,7 @@ public abstract class ImplementOnlyInterfaces {
     }
     final List<ASTMCObjectType> interfaceList = node.getCDInterfaceUsage().getInterfaceList();
     interfaceList.stream()
-        .map(
-            s ->
-                symbol
-                    .getEnclosingScope()
-                    .resolveOOType(s.printType(MCBasicTypesMill.mcBasicTypesPrettyPrinter())))
+        .map(s -> symbol.getEnclosingScope().resolveOOType(s.printType()))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .filter(e -> !e.isIsInterface())

@@ -6,7 +6,6 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.StringTransformations;
 
@@ -50,21 +49,13 @@ public class CDAttributeFacade {
 
   /** delegation methods for a more comfortable usage */
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type) {
-    return createAttribute(
-        modifier,
-        type,
-        StringTransformations.uncapitalize(
-            type.printType(MCCollectionTypesMill.mcCollectionTypesPrettyPrinter())));
+    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType()));
   }
 
   public ASTCDAttribute createAttribute(
       final ASTModifier modifier, final ASTMCType type, final ASTExpression initial) {
     return createAttribute(
-        modifier,
-        type,
-        StringTransformations.uncapitalize(
-            type.printType(MCCollectionTypesMill.mcCollectionTypesPrettyPrinter())),
-        initial);
+        modifier, type, StringTransformations.uncapitalize(type.printType()), initial);
   }
 
   public ASTCDAttribute createAttribute(

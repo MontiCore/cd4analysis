@@ -6,10 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.literals.prettyprint.MCCommonLiteralsFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.literals.mccommonliterals.MCCommonLiteralsMill;
 import de.monticore.tf.AddAttribute;
-import de.monticore.types.prettyprint.MCFullGenericTypesFullPrettyPrinter;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.BeforeClass;
@@ -43,16 +41,17 @@ public class AddAttributeTest {
             .getCDAttributeList()
             .get(1)
             .getMCType()
-            .printType(new MCFullGenericTypesFullPrettyPrinter(new IndentPrinter())));
-    IndentPrinter p = new IndentPrinter();
-    ast.get()
-        .getCDDefinition()
-        .getCDClassesList()
-        .get(0)
-        .getCDAttributeList()
-        .get(1)
-        .getInitial()
-        .accept(new MCCommonLiteralsFullPrettyPrinter(p).getTraverser());
-    assertEquals("true", p.getContent());
+            .printType());
+    String pp =
+        MCCommonLiteralsMill.prettyPrint(
+            ast.get()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(0)
+                .getCDAttributeList()
+                .get(1)
+                .getInitial(),
+            true);
+    assertEquals("true", pp);
   }
 }

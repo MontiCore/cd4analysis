@@ -13,13 +13,12 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.*;
@@ -192,8 +191,7 @@ public class CD2JsonTransform {
       Optional<CDTypeSymbol> superTypeSymbol =
           astcdClass
               .getEnclosingScope()
-              .resolveCDType(
-                  new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superClass));
+              .resolveCDType(MCBasicTypesMill.prettyPrint(superClass, false));
 
       if (superTypeSymbol.isPresent() && superTypeSymbol.get().getAstNode() instanceof ASTCDClass) {
         allSuperClasses.add((ASTCDClass) superTypeSymbol.get().getAstNode());

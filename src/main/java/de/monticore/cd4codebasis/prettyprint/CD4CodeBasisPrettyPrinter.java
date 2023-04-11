@@ -8,6 +8,7 @@ import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
+@Deprecated(forRemoval = true)
 public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
     implements CD4CodeBasisVisitor2, CD4CodeBasisHandler {
   protected CD4CodeBasisTraverser traverser;

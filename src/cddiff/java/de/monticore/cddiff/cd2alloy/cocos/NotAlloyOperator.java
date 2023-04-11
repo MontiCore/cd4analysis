@@ -8,8 +8,6 @@ import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
@@ -20,8 +18,6 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
 
   /** @see CDBasisASTCDDefinitionCoCo#check(de.monticore.cdbasis._ast.ASTCDDefinition) */
   public void check(ASTCDDefinition node) {
-
-    final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
     // Check if the used input contains illegal symbols, which are operators in
     // alloy
@@ -53,7 +49,7 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
             attribute.get_SourcePositionStart(), attribute.getName(), illegalSymbols);
         checkIllegalSymbol(
             attribute.getMCType().get_SourcePositionStart(),
-            attribute.getMCType().printType(pp),
+            attribute.getMCType().printType(),
             illegalSymbols);
       }
     }
@@ -69,7 +65,7 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
             attribute.get_SourcePositionStart(), attribute.getName(), illegalSymbols);
         checkIllegalSymbol(
             attribute.getMCType().get_SourcePositionStart(),
-            attribute.getMCType().printType(pp),
+            attribute.getMCType().printType(),
             illegalSymbols);
       }
     }
