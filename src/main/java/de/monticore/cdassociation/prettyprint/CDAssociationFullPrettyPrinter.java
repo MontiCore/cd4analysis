@@ -20,6 +20,7 @@ import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
 import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
+@Deprecated(forRemoval = true)
 public class CDAssociationFullPrettyPrinter {
 
   protected CDAssociationTraverser traverser;

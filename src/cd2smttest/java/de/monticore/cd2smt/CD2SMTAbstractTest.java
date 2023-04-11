@@ -8,9 +8,8 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.prettyprint.IndentPrinter;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,9 +29,7 @@ public class CD2SMTAbstractTest {
         Paths.get(RELATIVE_TARGET_PATH, od.getObjectDiagram().getName() + targetNumber + ".od");
     try {
       FileUtils.writeStringToFile(
-          outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
-          Charset.defaultCharset());
+          outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
       Assertions.fail();

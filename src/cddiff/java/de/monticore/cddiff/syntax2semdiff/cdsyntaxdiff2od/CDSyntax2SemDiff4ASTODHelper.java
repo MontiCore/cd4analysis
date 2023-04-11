@@ -16,14 +16,12 @@ import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.CDWrapperObj
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.od4report.OD4ReportMill;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odattribute._ast.ASTODList;
 import de.monticore.odattribute._ast.ASTODMap;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink.ODLinkMill;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODLinkDirection;
-import de.monticore.prettyprint.IndentPrinter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -567,7 +565,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
   /** using pretty printer to print OD */
   public static String printOD(ASTODArtifact astodArtifact) {
     // pretty print the AST
-    return new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(astodArtifact);
+    return OD4ReportMill.prettyPrint(astodArtifact, true);
   }
 
   /** using pretty printer to print OD */
@@ -575,7 +573,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
     // pretty print the AST
     List<String> result = new ArrayList<>();
     for (ASTODArtifact od : astODArtifacts) {
-      result.add(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      result.add(OD4ReportMill.prettyPrint(od, true));
     }
     return result;
   }

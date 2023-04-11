@@ -12,16 +12,11 @@ import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odbasis._ast.ASTObjectDiagram;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
 public class MultiInstanceMatcher {
-
-  private final MCBasicTypesFullPrettyPrinter pp =
-      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
   private final OD2CDMatcher matcher;
 
@@ -92,7 +87,7 @@ public class MultiInstanceMatcher {
           // object has not the same inheritance in both CDs
           // -> DiffWitness
           isWitness = true;
-          witnessingObjects.add(obj.getMCObjectType().printType(pp));
+          witnessingObjects.add(obj.getMCObjectType().printType());
         }
       }
       // for open world semantics call checkInheritanceOpenWorld()
@@ -101,7 +96,7 @@ public class MultiInstanceMatcher {
           // inheritance contradicts that both CDs have the same open world semantics
           // -> DiffWitness
           isWitness = true;
-          witnessingObjects.add(obj.getMCObjectType().printType(pp));
+          witnessingObjects.add(obj.getMCObjectType().printType());
         }
       }
     }
@@ -125,7 +120,7 @@ public class MultiInstanceMatcher {
       ASTODObject obj, ICD4CodeArtifactScope baseScope, ICD4CodeArtifactScope compScope) {
 
     // get object type
-    String objType = obj.getMCObjectType().printType(pp);
+    String objType = obj.getMCObjectType().printType();
 
     // get super set of base CD
     Set<String> baseSuperSet = getSuperSet(objType, baseScope);
@@ -167,7 +162,7 @@ public class MultiInstanceMatcher {
       ASTCDCompilationUnit compCD) {
 
     // get object type
-    String objType = obj.getMCObjectType().printType(pp);
+    String objType = obj.getMCObjectType().printType();
 
     // get super set of base CD
     Set<String> baseSuperSet = getSuperSet(objType, baseScope);
@@ -335,7 +330,7 @@ public class MultiInstanceMatcher {
 
   private boolean isClassInPackage(ASTODObject obj) {
 
-    String objType = obj.getMCObjectType().printType(pp);
+    String objType = obj.getMCObjectType().printType();
     return isClassInPackage(objType);
   }
 

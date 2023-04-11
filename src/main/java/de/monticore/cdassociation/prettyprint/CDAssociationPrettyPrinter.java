@@ -8,6 +8,7 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
+@Deprecated(forRemoval = true)
 public class CDAssociationPrettyPrinter extends PrettyPrintUtil
     implements CDAssociationVisitor2, CDAssociationHandler {
   protected CDAssociationTraverser traverser;

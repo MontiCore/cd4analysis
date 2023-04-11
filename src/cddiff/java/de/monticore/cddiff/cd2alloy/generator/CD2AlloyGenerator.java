@@ -14,8 +14,6 @@ import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -28,9 +26,6 @@ import org.apache.commons.io.FileUtils;
 /** Entry point for the CD2Alloy generator. */
 public class CD2AlloyGenerator {
   private final String LOGGER_NAME = CD2AlloyGenerator.class.getName();
-
-  private final MCBasicTypesFullPrettyPrinter pp =
-      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
   public static CD2AlloyGenerator getInstance() {
     return new CD2AlloyGenerator();

@@ -10,6 +10,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCPackageDeclaration;
 
+@Deprecated(forRemoval = true)
 public class CDBasisPrettyPrinter extends PrettyPrintUtil
     implements CDBasisVisitor2, CDBasisHandler {
 
