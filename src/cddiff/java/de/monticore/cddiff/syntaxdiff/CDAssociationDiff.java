@@ -2,13 +2,22 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cdassociation._ast.*;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cdassociation._ast.ASTCDAssocDir;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._ast.ASTCDAssocType;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDAssociationNode;
+import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdassociation._ast.ASTCDOrdered;
+import de.monticore.cdassociation._ast.ASTCDQualifier;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

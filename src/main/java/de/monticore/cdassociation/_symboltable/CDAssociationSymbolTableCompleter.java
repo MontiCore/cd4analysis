@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
@@ -8,7 +9,6 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
-import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
@@ -17,6 +17,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
 
 public class CDAssociationSymbolTableCompleter
@@ -24,11 +25,9 @@ public class CDAssociationSymbolTableCompleter
   protected CDAssociationTraverser traverser;
 
   protected ISynthesize typeSynthesizer;
-  protected CDAssociationFullPrettyPrinter prettyPrinter;
 
   public CDAssociationSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-    prettyPrinter = new CDAssociationFullPrettyPrinter();
   }
 
   public CDAssociationSymbolTableCompleter() {
@@ -80,7 +79,7 @@ public class CDAssociationSymbolTableCompleter
       Log.error(
           String.format(
               "0xCDA62: The type %s of the role (%s) could not be calculated",
-              getPrettyPrinter().prettyprint(side.getMCQualifiedType()), side.getName(ast)),
+              CDAssociationMill.prettyPrint(side.getMCQualifiedType(), false), side.getName(ast)),
           side.getMCQualifiedType().get_SourcePositionStart());
       return Optional.empty();
     }
@@ -177,14 +176,6 @@ public class CDAssociationSymbolTableCompleter
 
   public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-  }
-
-  public CDAssociationFullPrettyPrinter getPrettyPrinter() {
-    return prettyPrinter;
-  }
-
-  public void setPrettyPrinter(CDAssociationFullPrettyPrinter prettyPrinter) {
-    this.prettyPrinter = prettyPrinter;
   }
 
   @Override

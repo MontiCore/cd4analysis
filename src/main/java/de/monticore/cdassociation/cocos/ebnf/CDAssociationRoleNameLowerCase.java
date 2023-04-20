@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
@@ -10,9 +11,6 @@ import de.se_rwth.commons.logging.Log;
 
 /** Checks that role names start lower-case. */
 public class CDAssociationRoleNameLowerCase implements CDAssociationASTCDAssociationCoCo {
-
-  protected final CDAssociationFullPrettyPrinter prettyPrinter =
-      new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -34,7 +32,7 @@ public class CDAssociationRoleNameLowerCase implements CDAssociationASTCDAssocia
       Log.error(
           String.format(
               "0xCDC66: Role %s of association %s must start in lower-case.",
-              side.getCDRole().getName(), prettyPrinter.prettyprint(assoc)),
+              side.getCDRole().getName(), CDAssociationMill.prettyPrint(assoc, false)),
           assoc.get_SourcePositionStart());
     }
   }

@@ -1,19 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
-import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /** Checks that the cardinality of an ordered association is greater than 1. */
 public class CDAssociationOrderedCardinalityGreaterOne
     implements CDAssociationASTCDAssociationCoCo {
-
-  final CDAssociationFullPrettyPrinter prettyPrinter =
-      new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   /**
    * @see
@@ -40,7 +36,7 @@ public class CDAssociationOrderedCardinalityGreaterOne
       Log.error(
           String.format(
               "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
-              prettyPrinter.prettyprint(assoc)),
+            CDAssociationMill.prettyPrint(assoc, false)),
           assoc.get_SourcePositionStart());
     }
   }

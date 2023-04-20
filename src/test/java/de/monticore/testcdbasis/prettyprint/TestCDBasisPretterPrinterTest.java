@@ -3,7 +3,8 @@ package de.monticore.testcdbasis.prettyprint;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
+import de.monticore.cdbasis._prettyprint.CDBasisFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import java.io.IOException;
 import java.util.Optional;
@@ -12,7 +13,7 @@ import org.junit.Test;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisPretterPrinterTest extends TestBasis {
   final TestCDBasisParser p = new TestCDBasisParser();
-  final CDBasisFullPrettyPrinter printer = new CDBasisFullPrettyPrinter();
+  final CDBasisFullPrettyPrinter printer = new CDBasisFullPrettyPrinter(new IndentPrinter());
 
   @Test
   public void completeModel() throws IOException {

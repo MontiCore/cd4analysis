@@ -7,15 +7,16 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCos;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class CD4CodeTestBasis extends TestBasis {
     BuiltInTypes.addBuiltInTypes(globalScope);
 
     cd4CodeCoCos = new CD4CodeCoCos();
-    printer = new CD4CodeFullPrettyPrinter();
+    printer = new CD4CodeFullPrettyPrinter(new IndentPrinter(), true);
     symbols2Json = new CD4CodeSymbols2Json();
     coCoChecker = new CD4CodeCoCoChecker();
   }

@@ -2,12 +2,14 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
 import de.monticore.symboltable.ImportStatement;
@@ -16,6 +18,7 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.stream.Collectors;
 
 public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
@@ -27,7 +30,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
 
   public CDBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-    prettyPrinter = new CDBasisFullPrettyPrinter();
+    prettyPrinter = new CDBasisFullPrettyPrinter(new IndentPrinter());
   }
 
   public CDBasisSymbolTableCompleter() {
@@ -62,7 +65,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
                       Log.error(
                           String.format(
                               "0xCDA00: The type of the extended classes (%s) could not be calculated",
-                              getPrettyPrinter().prettyprint(s)),
+                              CDBasisMill.prettyPrint(s, false)),
                           s.get_SourcePositionStart());
                     }
                     return result;
@@ -117,7 +120,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
       Log.error(
           String.format(
               "0xCDA02: The type (%s) of the attribute (%s) could not be calculated",
-              getPrettyPrinter().prettyprint(node.getMCType()), node.getName()),
+              CDBasisMill.prettyPrint(node.getMCType(), false), node.getName()),
           node.getMCType().get_SourcePositionStart());
     } else {
       symbol.setType(typeResult.getResult());
@@ -160,14 +163,6 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
 
   public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-  }
-
-  public CDBasisFullPrettyPrinter getPrettyPrinter() {
-    return prettyPrinter;
-  }
-
-  public void setPrettyPrinter(CDBasisFullPrettyPrinter prettyPrinter) {
-    this.prettyPrinter = prettyPrinter;
   }
 
   public CDBasisTraverser getTraverser() {
