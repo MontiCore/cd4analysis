@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._ast;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 
 public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
   default String getName() {
@@ -10,7 +10,7 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
       return this.getCDRole().getName();
     }
 
-    return new CDBasisFullPrettyPrinter().prettyprint(this.getMCQualifiedType());
+    return CDAssociationMill.prettyPrint(this.getMCQualifiedType(), false);
   }
 
   /**
@@ -36,7 +36,7 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
       return assoc.getName();
     }
 
-    return new CDBasisFullPrettyPrinter().prettyprint(this.getMCQualifiedType());
+    return CDAssociationMill.prettyPrint(this.getMCQualifiedType(), false);
   }
 
   default boolean isPresentSymbol() {

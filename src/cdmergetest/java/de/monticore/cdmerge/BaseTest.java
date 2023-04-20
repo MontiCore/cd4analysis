@@ -47,7 +47,7 @@ public class BaseTest {
   }
 
   public BaseTest() {
-    parser = new CD4CodeParser();
+    parser = CD4CodeMill.parser();
   }
 
   @Before

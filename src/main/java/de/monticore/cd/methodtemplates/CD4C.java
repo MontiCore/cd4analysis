@@ -7,7 +7,7 @@ import com.google.common.collect.Sets;
 import de.monticore.cd.codegen.methods.AccessorDecorator;
 import de.monticore.cd.codegen.methods.MutatorDecorator;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -23,6 +23,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.AbstractSynthesize;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Joiners;
@@ -60,7 +61,7 @@ public class CD4C {
   protected final HashMap<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
 
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
-  protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter();
+  protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(new IndentPrinter(), true);
   protected AbstractSynthesize typesCalculator = new FullSynthesizeFromCD4Code();
 
   protected GeneratorSetup config;

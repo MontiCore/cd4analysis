@@ -9,15 +9,19 @@ import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.exceptions.MergingException;
 import java.io.IOException;
 import java.nio.file.Paths;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ASTCDHelperTest extends BaseTest {
 
   public static final String INPUT_MODEL_FILE = "General/university/Staff.cd";
 
-  public final ASTCDHelper testant;
+  public ASTCDHelper testant;
 
-  public ASTCDHelperTest() throws IOException, MergingException {
+  @Before
+  public void initHelper() throws IOException {
     ASTCDCompilationUnit cd = loadModel(Paths.get(MODEL_PATH, INPUT_MODEL_FILE).toString());
     this.testant = new ASTCDHelper(cd);
   }

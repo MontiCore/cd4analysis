@@ -2,25 +2,28 @@
 package de.monticore.cdinterfaceandenum._symboltable;
 
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
-import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumFullPrettyPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.*;
+import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
+import de.monticore.types.check.ISynthesize;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
 
   protected ISynthesize typeSynthesizer;
-  protected CDInterfaceAndEnumFullPrettyPrinter prettyPrinter;
 
   public CDInterfaceAndEnumSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-    prettyPrinter = new CDInterfaceAndEnumFullPrettyPrinter();
   }
 
   public CDInterfaceAndEnumSymbolTableCompleter() {
@@ -59,7 +62,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
                       Log.error(
                           String.format(
                               "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
-                              getPrettyPrinter().prettyprint(s)),
+                              CDInterfaceAndEnumMill.prettyPrint(s, false)),
                           s.get_SourcePositionStart());
                     }
                     return result;
@@ -135,11 +138,4 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
     this.typeSynthesizer = typeSynthesizer;
   }
 
-  public CDInterfaceAndEnumFullPrettyPrinter getPrettyPrinter() {
-    return prettyPrinter;
-  }
-
-  public void setPrettyPrinter(CDInterfaceAndEnumFullPrettyPrinter prettyPrinter) {
-    this.prettyPrinter = prettyPrinter;
-  }
 }

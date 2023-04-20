@@ -1,26 +1,30 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4codebasis._symboltable;
 
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
-import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisFullPrettyPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.types.check.*;
+import de.monticore.types.check.FullSynthesizeFromMCCollectionTypes;
+import de.monticore.types.check.ISynthesize;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
   protected ISynthesize typeSynthesizer;
-  protected CD4CodeBasisFullPrettyPrinter prettyPrinter;
 
   public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
-    prettyPrinter = new CD4CodeBasisFullPrettyPrinter();
   }
 
   public CD4CodeBasisSymbolTableCompleter() {
@@ -133,7 +137,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       Log.error(
           String.format(
               "0xCDA93: The type (%s) of the attribute (%s) could not be calculated",
-              getPrettyPrinter().prettyprint(ast.getMCType()), ast.getName()),
+              CD4CodeBasisMill.prettyPrint(ast.getMCType(), false), ast.getName()),
           ast.getMCType().get_SourcePositionStart());
     } else {
 
@@ -141,7 +145,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       if (ast.isEllipsis()) {
         finalTypeResult =
             SymTypeExpressionFactory.createTypeArray(
-                getPrettyPrinter().prettyprint(ast.getMCType()),
+              CD4CodeBasisMill.prettyPrint(ast.getMCType(), false),
                 symbol.getEnclosingScope(),
                 1,
                 typeResult.getResult());
@@ -190,11 +194,4 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     this.typeSynthesizer = typeSynthesizer;
   }
 
-  public CD4CodeBasisFullPrettyPrinter getPrettyPrinter() {
-    return prettyPrinter;
-  }
-
-  public void setPrettyPrinter(CD4CodeBasisFullPrettyPrinter prettyPrinter) {
-    this.prettyPrinter = prettyPrinter;
-  }
 }

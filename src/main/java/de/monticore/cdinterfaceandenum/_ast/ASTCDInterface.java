@@ -3,7 +3,8 @@ package de.monticore.cdinterfaceandenum._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
-import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumFullPrettyPrinter;
+import de.monticore.cdinterfaceandenum._prettyprint.CDInterfaceAndEnumFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
   protected final CDInterfaceAndEnumFullPrettyPrinter printer =
-      new CDInterfaceAndEnumFullPrettyPrinter();
+      new CDInterfaceAndEnumFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {
@@ -48,6 +49,6 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
     }
     printer.getPrinter().clearBuffer();
     printer.getTraverser().traverse(getCDExtendUsage());
-    return printer.getPrinter().getContent();
+    return printer.getPrinter().getContent().strip();
   }
 }

@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.prettyprint;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
@@ -13,8 +14,6 @@ import org.junit.Test;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDAssociationPrettyPrinterTest extends CDAssociationTestBasis {
   final TestCDAssociationParser p = new TestCDAssociationParser();
-  final CDAssociationFullPrettyPrinter printer =
-      new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   @Test
   public void completeModel() throws IOException {
@@ -22,7 +21,7 @@ public class TestCDAssociationPrettyPrinterTest extends CDAssociationTestBasis {
         p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
 
-    String output = printer.prettyprint(astcdCompilationUnit.get());
+    String output = CDAssociationMill.prettyPrint(astcdCompilationUnit.get(), true);
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
         p.parse_StringCDCompilationUnit(output);

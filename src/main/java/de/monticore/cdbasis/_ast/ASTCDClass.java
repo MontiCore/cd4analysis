@@ -2,13 +2,14 @@
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter();
+  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
@@ -30,7 +31,7 @@ public class ASTCDClass extends ASTCDClassTOP {
     }
     printer.getPrinter().clearBuffer();
     printer.getTraverser().traverse(getCDExtendUsage());
-    return printer.getPrinter().getContent();
+    return printer.getPrinter().getContent().strip();
   }
 
   @Override
@@ -53,6 +54,6 @@ public class ASTCDClass extends ASTCDClassTOP {
     }
     printer.getPrinter().clearBuffer();
     printer.getTraverser().traverse(getCDInterfaceUsage());
-    return printer.getPrinter().getContent();
+    return printer.getPrinter().getContent().strip();
   }
 }
