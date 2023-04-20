@@ -51,7 +51,7 @@ public class CDSymbolTablesTest extends CD4CodeTestBasis {
     assertTrue(type.isPresent());
     List<ASTCDClass> classes =
         CDSymbolTables.getTransitiveSuperClasses((ASTCDClass) type.get().getAstNode());
-    assertEquals(3, classes.size());
+    assertEquals(2, classes.size());
   }
 
   @Test
@@ -71,6 +71,12 @@ public class CDSymbolTablesTest extends CD4CodeTestBasis {
     assertTrue(type.isPresent());
     List<ASTCDType> types = CDSymbolTables.getTransitiveSuperTypes(type.get().getAstNode());
     assertEquals(5, types.size());
+
+    final Optional<CDTypeSymbol> gType = scope.resolveCDType("G");
+    assertTrue(gType.isPresent());
+    List<ASTCDType> gTypes = CDSymbolTables.getTransitiveSuperTypes(gType.get().getAstNode());
+    assertEquals(2, gTypes.size());
+
   }
 
   @Test

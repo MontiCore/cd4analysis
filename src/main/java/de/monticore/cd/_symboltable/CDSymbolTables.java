@@ -10,13 +10,14 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CDSymbolTables {
 
   public static List<ASTCDAttribute> getAttributesInHierarchy(ASTCDType ast) {
-    List<ASTCDAttribute> attributes = Lists.newArrayList();
+    List<ASTCDAttribute> attributes = Lists.newArrayList(ast.getCDAttributeList());
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
       attributes.addAll(sc.getCDAttributeList());
     }
@@ -37,7 +38,7 @@ public class CDSymbolTables {
   }
 
   public static List<ASTCDAssocSide> getAssociationsInHierarchy(ASTCDType ast) {
-    List<ASTCDAssocSide> assocs = Lists.newArrayList();
+    List<ASTCDAssocSide> assocs = Lists.newArrayList(getAssociations(ast));
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
       assocs.addAll(getAssociations(sc));
     }
@@ -45,7 +46,7 @@ public class CDSymbolTables {
   }
 
   public static List<ASTCDClass> getTransitiveSuperClasses(ASTCDClass ast) {
-    List<ASTCDClass> classes = Lists.newArrayList(ast);
+    List<ASTCDClass> classes = Lists.newArrayList();
     ASTType currentClass = ast;
     while (currentClass.getSymbol().isPresentSuperClass()) {
       ASTType node = currentClass.getSymbol().getSuperClass().getTypeInfo().getAstNode();
@@ -73,7 +74,13 @@ public class CDSymbolTables {
   public static List<ASTCDType> getTransitiveSuperTypes(ASTCDType ast) {
     List<ASTCDType> types = Lists.newArrayList();
     if (ast instanceof ASTCDClass) {
-      types.addAll(getTransitiveSuperClasses((ASTCDClass) ast));
+      if (ast.getSymbol().isPresentSuperClass()) {
+        ASTType superClass = ast.getSymbol().getSuperClass().getTypeInfo().getAstNode();
+        if (superClass instanceof ASTCDType) {
+          types.add((ASTCDType) superClass);
+          types.addAll(getTransitiveSuperTypes((ASTCDType) superClass));
+        }
+      }
     }
     types.addAll(getTransitiveSuperInterfaces(ast));
     return types;

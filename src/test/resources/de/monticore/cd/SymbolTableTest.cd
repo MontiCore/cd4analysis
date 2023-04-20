@@ -25,6 +25,10 @@ classdiagram SymbolTableTest{
     int k;
   }
 
+  class F implements D;
+
+  class G extends F;
+
   association A -> C;
 
   association B <-> C;
