@@ -17,9 +17,13 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class AssocInhertianceTest extends CDDiffTestBasis {
 
@@ -28,11 +32,6 @@ public class AssocInhertianceTest extends CDDiffTestBasis {
   protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
   protected Context ctx;
   protected ASTCDDefinition cd;
-
-  protected ASTCDClass Car;
-  protected ASTCDClass Person;
-  protected ASTCDClass Color;
-  protected ASTCDClass Auction;
 
   @BeforeEach
   public void setup() {
@@ -47,54 +46,48 @@ public class AssocInhertianceTest extends CDDiffTestBasis {
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     ctx = cd2SMTGenerator.getContext();
     cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    Car = CDHelper.getClass("Car", cd);
-    Person = CDHelper.getClass("Person", cd);
-    Auction = CDHelper.getClass("Auction", cd);
-    Color = CDHelper.getClass("Color", cd);
   }
 
-  public void checkLink(ASTCDAssociation association, ASTCDClass class1, ASTCDClass class2) {
-    Expr<? extends Sort> obj1 = ctx.mkConst("obj1", cd2SMTGenerator.getSort(class1));
-    Expr<? extends Sort> obj2 = ctx.mkConst("obj2", cd2SMTGenerator.getSort(class2));
+  public void checkLink(String left, String role, String right) {
+    ASTCDClass leftClass = CDHelper.getClass(left, cd);
+    ASTCDClass rightClass = CDHelper.getClass(right, cd);
+    ASTCDAssociation association = CDHelper.getAssociation(leftClass, role, cd);
+    Expr<? extends Sort> obj1 = ctx.mkConst("obj1", cd2SMTGenerator.getSort(leftClass));
+    Expr<? extends Sort> obj2 = ctx.mkConst("obj2", cd2SMTGenerator.getSort(rightClass));
 
-    Optional<Expr<? extends Sort>> link =
-        Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, class1, class2, obj1, obj2));
-    Assertions.assertTrue(link.isPresent());
+    Optional<Expr<? extends Sort>> link1 =
+        Optional.ofNullable(
+            cd2SMTGenerator.evaluateLink(association, leftClass, rightClass, obj1, obj2));
+    Assertions.assertTrue(link1.isPresent());
+    Optional<Expr<? extends Sort>> link2 =
+        Optional.ofNullable(
+            cd2SMTGenerator.evaluateLink(association, rightClass, leftClass, obj2, obj1));
+    Assertions.assertTrue(link2.isPresent());
   }
 
-  @Test
-  public void test_inheritance_AssocFrom_interface_right1() {
-    ASTCDAssociation association = CDHelper.getAssociation(Car, "color", cd);
-    checkLink(association, Car, Color);
+  @ParameterizedTest
+  @MethodSource("links")
+  public void testCarAssociations(String left, String role, String right) {
+    checkLink(left, role, right);
   }
 
   @Test
   public void test_inheritance_AssocFrom_interface_right2() {
-    ASTCDAssociation association = CDHelper.getAssociation(Car, "color", cd);
-    checkLink(association, Color, Car);
+    checkLink("BigCar", "abstractPerson", "Person");
   }
 
-  @Test
-  public void test_inheritance_AssocFrom_interface_left1() {
-    ASTCDAssociation association = CDHelper.getAssociation(Person, "auction", cd);
-    checkLink(association, Person, Auction);
-  }
-
-  @Test
-  public void test_inheritance_AssocFrom_interface_left2() {
-    ASTCDAssociation association = CDHelper.getAssociation(Person, "auction", cd);
-    checkLink(association, Auction, Person);
-  }
-
-  @Test
-  public void test_inheritance_AssocFrom_interface_both_Side1() {
-    ASTCDAssociation association = CDHelper.getAssociation(Car, "personInterface", cd);
-    checkLink(association, Car, Person);
-  }
-
-  @Test
-  public void test_inheritance_AssocFrom_interface_both_Side2() {
-    ASTCDAssociation association = CDHelper.getAssociation(Person, "carInterface", cd);
-    checkLink(association, Car, Person);
+  public static Stream<Arguments> links() {
+    return Stream.of(
+        Arguments.of("Car", "abstractPerson", "AbstractPerson"),
+        Arguments.of("Person", "abstractCar", "AbstractCar"),
+        Arguments.of("Car", "abstractPerson", "Person"),
+        Arguments.of("Person", "abstractCar", "Car"),
+        Arguments.of("Car", "color", "Color"),
+        Arguments.of("Person", "auction", "Auction"),
+        Arguments.of("BigCar", "person", "Person"),
+        Arguments.of("BigCar", "abstractPerson", "AbstractPerson"),
+        Arguments.of("BigCar", "abstractPerson", "Person"),
+        Arguments.of("AbstractPerson", "abstractCar", "Car"),
+        Arguments.of("AbstractPerson", "abstractCar", "BigCar"));
   }
 }

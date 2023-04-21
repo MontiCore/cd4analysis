@@ -253,7 +253,7 @@ public class DefaultAssocStrategy implements AssociationStrategy {
   }
 
   private boolean hasType(Expr<? extends Sort> expr, ASTCDType astcdType, Model model) {
-    BoolExpr hasType = (BoolExpr) model.evaluate(classData.isInstanceOf(expr, astcdType), true);
+    BoolExpr hasType = (BoolExpr) model.evaluate(classData.hasType(expr, astcdType), true);
     return hasType.getBoolValue() == Z3_lbool.Z3_L_TRUE;
   }
 }

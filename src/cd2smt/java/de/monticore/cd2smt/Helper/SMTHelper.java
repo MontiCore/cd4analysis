@@ -75,7 +75,7 @@ public class SMTHelper {
       Set<Pair<ASTCDType, Expr<? extends Sort>>> vars, Context ctx, ClassData classData) {
     BoolExpr constraint = ctx.mkTrue();
     for (Map.Entry<ASTCDType, Expr<? extends Sort>> entry : vars) {
-      constraint = ctx.mkAnd(constraint, classData.isInstanceOf(entry.getValue(), entry.getKey()));
+      constraint = ctx.mkAnd(constraint, classData.hasType(entry.getValue(), entry.getKey()));
     }
     return constraint;
   }

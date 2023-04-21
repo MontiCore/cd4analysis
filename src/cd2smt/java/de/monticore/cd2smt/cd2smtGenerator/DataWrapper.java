@@ -102,8 +102,8 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   }
 
   @Override
-  public BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType) {
-    return classData.isInstanceOf(expr, astCdType);
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
+    return classData.hasType(expr, astCdType);
   }
 
   @Override
@@ -165,6 +165,11 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
     }
     assert res.isPresent();
     return res.get();
+  }
+
+  @Override
+  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType) {
+    return inheritanceData.instanceOf(obj, objType, subType);
   }
 
   protected Optional<Expr<? extends Sort>> getSuperInstanceHelper(

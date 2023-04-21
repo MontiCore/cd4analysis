@@ -41,11 +41,11 @@ public class SingleSortTest extends CD2SMTAbstractTest {
             "Obj", cd2SMTGenerator.getSort(ast.getCDDefinition().getCDClassesList().get(0)));
     ast.getCDDefinition()
         .getCDClassesList()
-        .forEach(astcdclass -> constraints.add(cd2SMTGenerator.isInstanceOf(obj, astcdclass)));
+        .forEach(astcdclass -> constraints.add(cd2SMTGenerator.hasType(obj, astcdclass)));
 
     ast.getCDDefinition()
         .getCDInterfacesList()
-        .forEach(astcdclass -> constraints.add(cd2SMTGenerator.isInstanceOf(obj, astcdclass)));
+        .forEach(astcdclass -> constraints.add(cd2SMTGenerator.hasType(obj, astcdclass)));
 
     Set<IdentifiableBoolExpr> UNSATConstrList = new HashSet<>();
 
