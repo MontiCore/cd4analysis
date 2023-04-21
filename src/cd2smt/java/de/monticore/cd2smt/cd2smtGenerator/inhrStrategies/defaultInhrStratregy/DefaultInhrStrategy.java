@@ -48,6 +48,11 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   }
 
   @Override
+  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType) {
+    return null; // Fixme implement
+  }
+
+  @Override
   public Set<IdentifiableBoolExpr> getInheritanceConstraints() {
     return inheritanceConstraints;
   }

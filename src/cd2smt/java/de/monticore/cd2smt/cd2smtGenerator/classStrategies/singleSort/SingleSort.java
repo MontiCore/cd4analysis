@@ -61,7 +61,7 @@ public class SingleSort implements ClassStrategy {
   }
 
   @Override
-  public BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType) {
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
     return (BoolExpr)
         ctx.mkApp(
             hasTypeFunc, expr, ctx.mkConst(smtTypesMap.get(astCdType).getType().ConstructorDecl()));
@@ -111,10 +111,10 @@ public class SingleSort implements ClassStrategy {
     List<BoolExpr> typesConst = new ArrayList<>();
     ast.getCDDefinition()
         .getCDClassesList()
-        .forEach(astcdClass -> typesConst.add(isInstanceOf(obj, astcdClass)));
+        .forEach(astcdClass -> typesConst.add(hasType(obj, astcdClass)));
     ast.getCDDefinition()
         .getCDInterfacesList()
-        .forEach(astcdInterface -> typesConst.add(isInstanceOf(obj, astcdInterface)));
+        .forEach(astcdInterface -> typesConst.add(hasType(obj, astcdInterface)));
 
     BoolExpr body = ctx.mkTrue();
 
@@ -198,7 +198,7 @@ public class SingleSort implements ClassStrategy {
   }
 
   private boolean hasType(Expr<? extends Sort> expr, ASTCDType astcdType, Model model) {
-    BoolExpr hasType = (BoolExpr) model.evaluate(isInstanceOf(expr, astcdType), true);
+    BoolExpr hasType = (BoolExpr) model.evaluate(hasType(expr, astcdType), true);
     return hasType.getBoolValue() == Z3_lbool.Z3_L_TRUE;
   }
 }

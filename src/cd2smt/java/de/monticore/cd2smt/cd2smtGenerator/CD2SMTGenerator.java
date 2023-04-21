@@ -96,8 +96,8 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType) {
-    return dataWrapper.isInstanceOf(expr, astCdType);
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
+    return dataWrapper.hasType(expr, astCdType);
   }
 
   @Override
@@ -130,6 +130,11 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   public Expr<? extends Sort> getSuperInstance(
       ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
     return dataWrapper.getSuperInstance(objType, superType, objExpr);
+  }
+
+  @Override
+  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType) {
+    return dataWrapper.instanceOf(obj, objType, subType);
   }
 
   @Override

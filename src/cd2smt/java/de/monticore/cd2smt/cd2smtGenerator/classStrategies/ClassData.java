@@ -22,7 +22,7 @@ public interface ClassData {
    * @param astCdType the ASTCDType (class or interface)
    * @return true, iff expr represent an expression with the type astCdType
    */
-  BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType);
+  BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType);
 
   /**
    * this function calculate the value of an Expr that represent a ASTCDType Object .

@@ -32,7 +32,7 @@ public class DistinctSort implements ClassStrategy {
   }
 
   @Override
-  public BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType) {
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
     return ctx.mkTrue();
   }
 

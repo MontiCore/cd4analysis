@@ -207,7 +207,7 @@ public class CDHelper {
     Log.info(
         "Association with the other-role "
             + otherRole
-            + " not found for the ASTCDType"
+            + " not found for the ASTCDType "
             + objType.getName(),
         "Assoc Not Found");
     return null;
@@ -321,6 +321,25 @@ public class CDHelper {
     return times.format(DateTimeFormatter.ISO_DATE)
         + "|"
         + times.format(DateTimeFormatter.ISO_LOCAL_TIME);
+  }
+
+  public static List<ASTCDType> getClassHierarchy(
+      ASTCDType superType, ASTCDType subType, ASTCDDefinition cd) {
+    List<ASTCDType> classList = new ArrayList<>();
+    classList.add(subType);
+    for (ASTCDType currentSuper : getSuperTypeList(subType, cd)) {
+      if (currentSuper.getName().equals(superType.getName())) {
+        classList.add(superType);
+        return classList;
+      } else {
+        if (CDHelper.getSuperTypeList(currentSuper, cd).contains(superType)) {
+          classList.addAll(getClassHierarchy(superType, subType, cd));
+          return classList;
+        }
+      }
+    }
+    classList.add(superType);
+    return classList;
   }
 
   public enum ClassType {

@@ -1,18 +1,21 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram AssocInheritance {
 
-   class  Car implements CarInterface;
-   class  Person implements PersonInterface;
+   class  Car extends AbstractCar;
+   class  Person  extends AbstractPerson;
 
-   interface CarInterface ;
-   interface PersonInterface;
+   abstract class AbstractCar ;
+   abstract class AbstractPerson ;
 
    class Color;
    class Auction ;
+   class BigCar extends Car ;
 
-   association [1] CarInterface      --    PersonInterface[1];
-   association [1] CarInterface      --    Color[1];
-   association [1] Auction           --    PersonInterface[1];
+   association [1] AbstractCar  --  AbstractPerson[1];
+   association [1] Color  --  AbstractCar[1];
+   association [1] AbstractPerson  --  Auction[1];
+   association [1] Car  --  Person[1];
+
 
 
 }
