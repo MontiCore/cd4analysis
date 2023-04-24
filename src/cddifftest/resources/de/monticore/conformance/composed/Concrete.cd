@@ -6,7 +6,7 @@ classdiagram Concrete {
     String password;
   }
 
-  <<ref="Item">> abstract class Item {
+  abstract class Item {
     String id;
   }
 
@@ -14,5 +14,5 @@ classdiagram Concrete {
 
   class Deposit extends Item;
 
-  <<ref="hasItems">> association [1..*] BankAccount <-> Item [1..*];
+ association  hasItems  [1..*] BankAccount <-> Item [1..*];
 }

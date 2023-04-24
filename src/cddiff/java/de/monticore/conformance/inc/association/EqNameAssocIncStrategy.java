@@ -1,16 +1,17 @@
-package de.monticore.conformance.inc;
+package de.monticore.conformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.conformance.inc.IncarnationStrategy;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class STNamedAssocIncStrategy implements IncarnationStrategy<ASTCDAssociation> {
+public class EqNameAssocIncStrategy implements IncarnationStrategy<ASTCDAssociation> {
 
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
 
-  public STNamedAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
+  public EqNameAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
     this.mapping = mapping;
   }
@@ -24,11 +25,8 @@ public class STNamedAssocIncStrategy implements IncarnationStrategy<ASTCDAssocia
 
   @Override
   public boolean isIncarnation(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    if (concrete.getModifier().isPresentStereotype()
-        && concrete.getModifier().getStereotype().contains(mapping)
-        && ref.isPresentName()) {
-      String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return ref.getName().equals(refName);
+    if (concrete.isPresentName() && ref.isPresentName()) {
+      return ref.getName().equals(concrete.getName());
     }
     return false;
   }
