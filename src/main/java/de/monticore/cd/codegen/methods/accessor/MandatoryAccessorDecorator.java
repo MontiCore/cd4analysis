@@ -10,6 +10,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +39,8 @@ public class MandatoryAccessorDecorator extends AbstractMethodDecorator {
 
   protected ASTCDMethod createGetter(final ASTCDAttribute ast) {
     String getterPrefix;
-    if (getMCTypeFacade().isBooleanType(ast.getMCType())) {
+    if (getMCTypeFacade().isBooleanType(ast.getMCType()) ||
+      (ast.getMCType() instanceof ASTMCQualifiedType &&  ("Boolean".equals(ast.getMCType().printType()) || "java.lang.Boolean".equals(ast.getMCType().printType())))) {
       getterPrefix = IS;
     } else {
       getterPrefix = GET;
