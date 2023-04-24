@@ -1,8 +1,9 @@
-package de.monticore.conformance.inc;
+package de.monticore.conformance.inc.type;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
+import de.monticore.conformance.inc.IncarnationStrategy;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;

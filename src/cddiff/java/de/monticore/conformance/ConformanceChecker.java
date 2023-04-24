@@ -4,8 +4,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.conformance.basic.BasicAssocConfStrategy;
 import de.monticore.conformance.basic.BasicCDConfStrategy;
 import de.monticore.conformance.basic.BasicTypeConfStrategy;
-import de.monticore.conformance.inc.STNamedAssocIncStrategy;
-import de.monticore.conformance.inc.STTypeIncStrategy;
+import de.monticore.conformance.inc.association.CompAssocIncStrategy;
+import de.monticore.conformance.inc.association.STNamedAssocIncStrategy;
+import de.monticore.conformance.inc.type.CompTypeIncStrategy;
+import de.monticore.conformance.inc.type.STTypeIncStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Set;
 
@@ -33,6 +35,25 @@ public class ConformanceChecker {
     // create Incarnation Strategies
     STTypeIncStrategy typeInc = new STTypeIncStrategy(referenceCD, mapping);
     STNamedAssocIncStrategy assocInc = new STNamedAssocIncStrategy(referenceCD, mapping);
+
+    // create Conformance Strategies
+    BasicTypeConfStrategy typeChecker =
+        new BasicTypeConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+    BasicAssocConfStrategy assocChecker =
+        new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+    BasicCDConfStrategy cdChecker =
+        new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
+
+    // check conformance
+    return cdChecker.checkConformance(concreteCD);
+  }
+
+  public static boolean checkBasicComposedConformance(
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
+
+    // create Incarnation Strategies
+    CompTypeIncStrategy typeInc = new CompTypeIncStrategy(referenceCD, mapping);
+    CompAssocIncStrategy assocInc = new CompAssocIncStrategy(referenceCD, mapping);
 
     // create Conformance Strategies
     BasicTypeConfStrategy typeChecker =

@@ -16,6 +16,10 @@ public class ConformanceCheckerTest {
 
   public static final String dir = "src/cddifftest/resources/de/monticore/conformance/";
 
+  protected ASTCDCompilationUnit refCD;
+
+  protected ASTCDCompilationUnit conCD;
+
   @Before
   public void setup() {
     Log.init();
@@ -27,18 +31,28 @@ public class ConformanceCheckerTest {
 
   @Test
   public void testConformanceCheck() {
+    parseModels("Concrete.cd", "Reference.cd");
+    Assert.assertTrue(
+        ConformanceChecker.checkBasicStereotypeConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
+  public void testComposedConformanceCheck() {
+    parseModels("composed/Concrete.cd", "composed/Reference.cd");
+    Assert.assertTrue(ConformanceChecker.checkBasicComposedConformance(conCD, refCD, "ref"));
+  }
+
+  public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parse(dir + "Concrete" + ".cd");
-      Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parse(dir + "Reference" + ".cd");
+      Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parse(dir + concrete);
+      Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parse(dir + ref);
       if (conCD.isPresent() && refCD.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
         CD4CodeMill.scopesGenitorDelegator().createFromAST(refCD.get());
         conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
         refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
-
-        Assert.assertTrue(
-            ConformanceChecker.checkBasicStereotypeConformance(
-                conCD.get(), refCD.get(), Set.of("ref")));
+        this.refCD = refCD.get();
+        this.conCD = conCD.get();
       } else {
         Assert.fail("Could not parse CDs.");
       }
