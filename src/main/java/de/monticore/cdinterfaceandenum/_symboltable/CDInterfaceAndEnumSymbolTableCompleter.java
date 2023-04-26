@@ -15,7 +15,6 @@ import de.monticore.types.check.SymTypeOfObject;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
@@ -137,5 +136,4 @@ public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnu
   public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
   }
-
 }

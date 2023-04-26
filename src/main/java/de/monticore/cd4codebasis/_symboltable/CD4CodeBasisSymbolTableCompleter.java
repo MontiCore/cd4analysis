@@ -17,7 +17,6 @@ import de.monticore.types.check.SymTypeOfObject;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
@@ -145,7 +144,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       if (ast.isEllipsis()) {
         finalTypeResult =
             SymTypeExpressionFactory.createTypeArray(
-              CD4CodeBasisMill.prettyPrint(ast.getMCType(), false),
+                CD4CodeBasisMill.prettyPrint(ast.getMCType(), false),
                 symbol.getEnclosingScope(),
                 1,
                 typeResult.getResult());
@@ -193,5 +192,4 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
   public void setTypeSynthesizer(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
   }
-
 }

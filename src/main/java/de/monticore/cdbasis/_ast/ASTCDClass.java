@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+  private final CD4CodeFullPrettyPrinter printer =
+      new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {

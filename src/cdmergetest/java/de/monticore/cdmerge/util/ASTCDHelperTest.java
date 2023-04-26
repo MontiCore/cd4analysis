@@ -6,12 +6,9 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
-import de.monticore.cdmerge.exceptions.MergingException;
 import java.io.IOException;
 import java.nio.file.Paths;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ASTCDHelperTest extends BaseTest {

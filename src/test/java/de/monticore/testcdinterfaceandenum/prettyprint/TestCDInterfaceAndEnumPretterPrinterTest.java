@@ -5,11 +5,10 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.Assert;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {

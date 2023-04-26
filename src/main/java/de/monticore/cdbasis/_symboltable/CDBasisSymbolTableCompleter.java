@@ -18,7 +18,6 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.stream.Collectors;
 
 public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {

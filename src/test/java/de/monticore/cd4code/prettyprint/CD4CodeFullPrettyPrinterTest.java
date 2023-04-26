@@ -6,7 +6,6 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
 

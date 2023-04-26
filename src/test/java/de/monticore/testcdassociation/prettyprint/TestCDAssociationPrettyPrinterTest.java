@@ -2,9 +2,7 @@
 package de.monticore.testcdassociation.prettyprint;
 
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
 import java.io.IOException;

@@ -61,7 +61,8 @@ public class CD4C {
   protected final HashMap<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
 
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
-  protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(new IndentPrinter(), true);
+  protected CD4CodeFullPrettyPrinter prettyPrinter =
+      new CD4CodeFullPrettyPrinter(new IndentPrinter(), true);
   protected AbstractSynthesize typesCalculator = new FullSynthesizeFromCD4Code();
 
   protected GeneratorSetup config;

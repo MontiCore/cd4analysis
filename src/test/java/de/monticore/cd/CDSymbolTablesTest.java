@@ -76,7 +76,6 @@ public class CDSymbolTablesTest extends CD4CodeTestBasis {
     assertTrue(gType.isPresent());
     List<ASTCDType> gTypes = CDSymbolTables.getTransitiveSuperTypes(gType.get().getAstNode());
     assertEquals(2, gTypes.size());
-
   }
 
   @Test

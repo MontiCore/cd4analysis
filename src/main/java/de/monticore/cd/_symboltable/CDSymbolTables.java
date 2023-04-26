@@ -10,7 +10,6 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

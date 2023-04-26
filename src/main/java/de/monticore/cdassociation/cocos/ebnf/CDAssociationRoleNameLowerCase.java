@@ -5,8 +5,6 @@ import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
-import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /** Checks that role names start lower-case. */

@@ -17,7 +17,6 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 
 public class CDAssociationSymbolTableCompleter

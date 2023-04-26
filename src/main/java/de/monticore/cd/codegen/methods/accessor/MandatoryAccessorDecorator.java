@@ -39,8 +39,10 @@ public class MandatoryAccessorDecorator extends AbstractMethodDecorator {
 
   protected ASTCDMethod createGetter(final ASTCDAttribute ast) {
     String getterPrefix;
-    if (getMCTypeFacade().isBooleanType(ast.getMCType()) ||
-      (ast.getMCType() instanceof ASTMCQualifiedType &&  ("Boolean".equals(ast.getMCType().printType()) || "java.lang.Boolean".equals(ast.getMCType().printType())))) {
+    if (getMCTypeFacade().isBooleanType(ast.getMCType())
+        || (ast.getMCType() instanceof ASTMCQualifiedType
+            && ("Boolean".equals(ast.getMCType().printType())
+                || "java.lang.Boolean".equals(ast.getMCType().printType())))) {
       getterPrefix = IS;
     } else {
       getterPrefix = GET;

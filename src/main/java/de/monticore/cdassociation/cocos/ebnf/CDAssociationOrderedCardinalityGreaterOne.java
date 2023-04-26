@@ -36,7 +36,7 @@ public class CDAssociationOrderedCardinalityGreaterOne
       Log.error(
           String.format(
               "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
-            CDAssociationMill.prettyPrint(assoc, false)),
+              CDAssociationMill.prettyPrint(assoc, false)),
           assoc.get_SourcePositionStart());
     }
   }

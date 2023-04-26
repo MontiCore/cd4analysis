@@ -18,11 +18,10 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+import org.junit.Before;
 
 public class CD4AnalysisTestBasis extends TestBasis {
   protected CD4AnalysisCoCoChecker coCoChecker;

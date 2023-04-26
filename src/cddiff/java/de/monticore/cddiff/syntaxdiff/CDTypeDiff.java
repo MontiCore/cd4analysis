@@ -2,8 +2,8 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
