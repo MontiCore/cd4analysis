@@ -48,6 +48,7 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testExampleCommands1and3() {
     String fileName = "doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
+    CD4CodeMill.globalScope().clear();
     fileName = "doc/MyLife.cd";
     CD4CodeTool.main(
         new String[] {
@@ -63,6 +64,7 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testExampleCommands1and2() {
     String fileName = "doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
+    CD4CodeMill.globalScope().clear();
     fileName = "doc/MyLife.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "--path", outputPath + "symbols", "-pp"});
     assertTrue(getErr(), getErr().isEmpty());
@@ -195,6 +197,7 @@ public class ExampleCommandTest extends OutTestBasis {
     String fileName = "doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     assertTrue(getErr(), getErr().isEmpty());
+    CD4CodeMill.globalScope().clear();
     fileName = "doc/MyLife.cd";
     CD4CodeTool.main(
         new String[] {"-i", fileName, "--defaultpackage", "--path", outputPath + "symbols"});
