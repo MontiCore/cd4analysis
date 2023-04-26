@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 // package monticore;
 
-import MyAddress;
+import MyAddress.Address;
 import java.lang.String;
 import java.util.List;
 import java.util.Date;
