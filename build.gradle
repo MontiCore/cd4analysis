@@ -34,14 +34,13 @@ ext {
   testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
   findbugs_version = "3.0.2"
   guava_version = "31.1-jre"
-  antlr_version = "4.7-1"
+  antlr_version = "4.12.0"
   plantuml_version = "1.2020.15"
   jackson_version = "2.13.4"
   junit_version = "5.9.0"
   commons_cli_version = "1.5.0"
   commons_lang_version = "3.11"
   jupiter_version = "5.6.0"
-  antlr_version = '4.7.1'
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
   mockito_version = "3.11.1"
@@ -82,9 +81,6 @@ sourceSets {
       srcDirs([grammarDir, grammarOutDir])
       include "**/*.mc4"
     }
-  }
-  trafo {
-    java.srcDirs = [trGrammarOutDir]
   }
   cd2plantuml {
     java {}
@@ -138,9 +134,6 @@ configurations {
   tooltestImplementation.extendsFrom(cdmergetestImplementation)
   grammar
   cli
-  trafo
-  trafoImplementation.extendsFrom implementation
-  trafoCompileOnly.extendsFrom compileOnly
 }
 
 dependencies {
@@ -167,8 +160,6 @@ dependencies {
     requireCapability("de.monticore:monticore-runtime-tests") }
   testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-  testImplementation(sourceSets.trafo.output.classesDirs)
-  testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
 
   // dependencies for cd2plantuml
   cd2plantumlImplementation(sourceSets.main.output.classesDirs)
@@ -197,9 +188,6 @@ dependencies {
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
   cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
 
-  //dependencies for trafo
-  trafoImplementation project(path)
-  trafoImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
 
   toolImplementation(sourceSets.cd2plantuml.output.classesDirs)
   toolImplementation(sourceSets.cddiff.output.classesDirs)
@@ -281,32 +269,7 @@ task generate {
 }
 
 
-grammarDependencies.each {
-  def g = createGrammarName(it.key)
-  def grammarName = it.key
-  def dependencies = it.value
-  task "generateTRGrammar${grammarName}"(type: MCTask) {
-    def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
-    dependsOn dependsOnTRGrammars
-    dependsOn(project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } })
-    templatePath("$projectDir/src/main/grammars")
-    grammar = getTRFile(file (g), file (grammarOutDir))
-    outputDir = file trGrammarOutDir
-    handcodedPath "$projectDir/src/main/java"
-    isDSTL = true // Generate DST infrastructure
-    def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(file(grammar).toURI()).toString()
 
-    def uptoDate = incCheck(grammarIncludingPackage)
-
-    modelPath(grammarOutDir)
-    modelPath("$projectDir/$grammarDir")
-
-    outputs.upToDateWhen { uptoDate }
-  }
-}
-task generateTR {
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
-}
 
 // one task per test grammar file
 testGrammarDependencies.each {
@@ -316,7 +279,6 @@ testGrammarDependencies.each {
 
   task "generateTestGrammar${grammarName}"(type: MCTask) {
     // def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
-    dependsOn generateTR
     templatePath("$projectDir/src/main/grammars")
     def grammarFile = file g
     grammar = file g
@@ -340,29 +302,13 @@ task generateTest {
 }
 
 
-task generateTestTrafos {}
-fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
-  def g = it
-  def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
-  task "$taskname"(type: MontiTransExec) {
-    dependsOn(generateTest)
-    getClassPath().setFrom(sourceSets.trafo.runtimeClasspath)
-    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
-    input = file(g)
-    outputDir = file(testGrammarOutDir)
-  }
-  generateTestTrafos.dependsOn("$taskname")
-}
-
 
 compileJava {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
 }
 
 compileTestJava {
   dependsOn project.collect { it.tasks.withType(MCTask) }
-  dependsOn generateTestTrafos
 }
 
 task cddifftest(type: Test) {
@@ -482,17 +428,6 @@ task cd2smtJar(type: Jar) {
     archiveClassifier = "cd2smt"
 }
 
-// build trafo in addition
-task trafoJar(type: Jar) {
-  from sourceSets.trafo.output
-  archiveClassifier = "trafo"
-}
-
-// build trafo sources in addition
-task trafoSourcesJar(type: Jar) {
-  from sourceSets.trafo.allSource
-  archiveClassifier = "trafo-sources"
-}
 
 
 // build test sources jar in addition
@@ -520,7 +455,6 @@ if(("false").equals(getProperty('publishMain'))) {
   assemble.dependsOn(shadowJar)
 }
 
-processGrammarsResources.dependsOn(generateTR)
 processGrammarsResources.dependsOn(project.tasks.withType(MCTask))
 tasks.withType(Jar) {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -570,8 +504,6 @@ artifacts {
   archives cd2smtJar
   archives toolJar
   archives mainJar
-  archives trafoJar
-  trafo trafoJar
 }
 // configure deployment
 publishing {
@@ -587,11 +519,6 @@ publishing {
         artifact cdmergeJar
         artifact cd2smtJar
         artifact toolJar
-      }
-      "trafo"(MavenPublication) {
-        artifactId = project.name + "-trafo"
-        artifact trafoJar
-        artifact trafoSourcesJar { classifier 'source' }
       }
 
     }else{
