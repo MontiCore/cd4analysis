@@ -14,9 +14,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDPackage;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
@@ -173,6 +171,29 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorldWithConstructor.java");
+    generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
+  }
+
+  @Test
+  public void testGenerateAttributeFromTemplate(){
+    // Build class for testing
+    ASTCDClass clazz =
+      CD4CodeMill.cDClassBuilder()
+        .setName("AttributeFromTemplate")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+        .build();
+
+    node.getCDDefinition().addCDElement(clazz);
+    ASTCDAttribute a = CD4C.getInstance().addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.Attribute", "world");
+
+    checkLogError();
+
+    assertEquals(1, clazz.sizeCDMembers());
+    ASTCDMember member = clazz.getCDMember(0);
+    assertEquals(a, member);
+
+    GeneratorEngine generatorEngine = new GeneratorEngine(config);
+    final Path output = Paths.get("AttributeFromTemplate.java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
