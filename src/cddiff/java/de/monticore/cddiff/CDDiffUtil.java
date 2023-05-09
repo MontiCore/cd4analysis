@@ -266,4 +266,11 @@ public class CDDiffUtil {
     }
     return new HashSet<>();
   }
+
+  public static Set<ASTCDType> getAllTypes(ASTCDDefinition cd) {
+    Set<ASTCDType> typeSet = new HashSet<>();
+    typeSet.addAll(cd.getCDInterfacesList());
+    typeSet.addAll(cd.getCDClassesList());
+    return typeSet;
+  }
 }
