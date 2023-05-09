@@ -14,21 +14,34 @@ before_script:
 
 stages:
   - build
-  - test
-  - deploy
   - trigger
   - mirror
 
 build:
   stage: build
+  except:
+    - develop
   script:
-  - "gradle assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
+  - "gradle build --refresh-dependencies $GRADLE_OPT $ARGS1"
   - "cd library"
-  - "gradle :trafo-library:assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
+  - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
     - "."
     expire_in: 1 week
+
+buildAndDeploy:
+  stage: build
+  only:
+    - develop
+  script:
+    - "gradle build --refresh-dependencies $GRADLE_OPT $ARGS1"
+    - "cd library"
+    - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT $ARGS1"
+    - "cd .."
+    - "gradle publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+    - "cd library"
+    - "gradle :trafo-library:publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
 
 # Checks if the links in this repository's Markdown files are valid.
 #
@@ -47,17 +60,8 @@ check-links:
     - 'curl --location --header "PRIVATE-TOKEN: $secibuildinfstrtoken" "https://git.rwth-aachen.de/api/v4/projects/se%2Finfrastructure%2Fmdlinkchecker/jobs/artifacts/master/raw/target/libs/MDLinkCheckerCLI.jar?job=build" --output MDLinkChecker.jar'
     - 'java -jar MDLinkChecker.jar -t "$secibuildtoken" -r . -p'
 
-test:
-  stage: test
-  dependencies:
-    - build
-  script:
-  - "gradle check $GRADLE_OPT $ARGS2"
-  - "cd library"
-  - "gradle :trafo-library:check $GRADLE_OPT $ARGS2"
-
 check_format:
-  stage: test
+  stage: build
   allow_failure: true
   script:
     - echo "You can format the java files using <gradle fmt>"
@@ -86,17 +90,6 @@ trigger-umlp:
     branch: dev
   only:
     - develop
-
-deploy:
-  stage: deploy
-  only:
-    - develop
-  dependencies:
-    - build
-  script:
-    - "gradle publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
-    - "cd library"
-    - "gradle :trafo-library:publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
 
 # Mirrors this repository's `develop` and `master` branches to GitHub.
 #
