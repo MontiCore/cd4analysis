@@ -4,6 +4,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.conformance.basic.BasicAssocConfStrategy;
 import de.monticore.conformance.basic.BasicCDConfStrategy;
 import de.monticore.conformance.basic.BasicTypeConfStrategy;
+import de.monticore.conformance.basic.attribute.CompAttributeChecker;
+import de.monticore.conformance.basic.attribute.STNamedAttributeChecker;
 import de.monticore.conformance.inc.association.CompAssocIncStrategy;
 import de.monticore.conformance.inc.association.STNamedAssocIncStrategy;
 import de.monticore.conformance.inc.type.CompTypeIncStrategy;
@@ -35,10 +37,10 @@ public class ConformanceChecker {
     // create Incarnation Strategies
     STTypeIncStrategy typeInc = new STTypeIncStrategy(referenceCD, mapping);
     STNamedAssocIncStrategy assocInc = new STNamedAssocIncStrategy(referenceCD, mapping);
+    STNamedAttributeChecker attrChecker = new STNamedAttributeChecker(mapping);
 
-    // create Conformance Strategies
     BasicTypeConfStrategy typeChecker =
-        new BasicTypeConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+        new BasicTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
     BasicAssocConfStrategy assocChecker =
         new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
     BasicCDConfStrategy cdChecker =
@@ -54,10 +56,11 @@ public class ConformanceChecker {
     // create Incarnation Strategies
     CompTypeIncStrategy typeInc = new CompTypeIncStrategy(referenceCD, mapping);
     CompAssocIncStrategy assocInc = new CompAssocIncStrategy(referenceCD, mapping);
+    CompAttributeChecker attrChecker = new CompAttributeChecker(mapping);
 
     // create Conformance Strategies
     BasicTypeConfStrategy typeChecker =
-        new BasicTypeConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+        new BasicTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
     BasicAssocConfStrategy assocChecker =
         new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
     BasicCDConfStrategy cdChecker =

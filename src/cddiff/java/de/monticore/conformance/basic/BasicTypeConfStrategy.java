@@ -7,22 +7,27 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.conformance.AttributeChecker;
 import de.monticore.conformance.ConformanceStrategy;
 import de.monticore.conformance.inc.IncarnationStrategy;
 
 public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
   protected ASTCDCompilationUnit conCD;
+
+  protected AttributeChecker attributeChecker;
   protected IncarnationStrategy<ASTCDType> typeInc;
   protected IncarnationStrategy<ASTCDAssociation> assocInc;
 
   public BasicTypeConfStrategy(
       ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      AttributeChecker attributeChecker,
       IncarnationStrategy<ASTCDType> typeInc,
       IncarnationStrategy<ASTCDAssociation> assocInc) {
     this.refCD = refCD;
     this.conCD = conCD;
+    this.attributeChecker = attributeChecker;
     this.typeInc = typeInc;
     this.assocInc = assocInc;
   }
@@ -59,13 +64,12 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
       }
     }
 
+    // check
     // check if all necessary attributes are present
+    attributeChecker.setReferenceType(ref);
+    attributeChecker.setConcreteType(concrete);
     boolean attributes =
-        ref.getCDAttributeList().stream()
-            .allMatch(
-                rAttr ->
-                    concrete.getCDAttributeList().stream()
-                        .anyMatch(cAttr -> cAttr.deepEquals(rAttr)));
+        checkAttributeIncarnation(concrete, ref) && checkAttributeConformance(concrete);
 
     // check if reference associations are incarnated
     boolean associations =
@@ -122,5 +126,25 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   public boolean checkConformance(ASTCDEnum concrete, ASTCDEnum ref) {
     return concrete.getCDEnumConstantList().stream()
         .allMatch(conConst -> ref.getCDEnumConstantList().stream().anyMatch(conConst::deepEquals));
+  }
+
+  /***
+   *check if all attribute of the reference type are incarnated
+   */
+  private boolean checkAttributeIncarnation(ASTCDType concrete, ASTCDType ref) {
+    return ref.getCDAttributeList().stream()
+        .allMatch(
+            refAttr ->
+                concrete.getCDAttributeList().stream()
+                    .anyMatch(conAttr -> attributeChecker.isIncarnation(conAttr, refAttr)));
+  }
+
+  /** check if all attributes that are incarnations are conform to the references */
+  private boolean checkAttributeConformance(ASTCDType concrete) {
+    return concrete.getCDAttributeList().stream()
+        .allMatch(
+            conAttr ->
+                attributeChecker.getRefElements(conAttr).isEmpty()
+                    || attributeChecker.checkConformance(conAttr));
   }
 }

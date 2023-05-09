@@ -3,12 +3,7 @@ import java.lang.String;
 classdiagram Reference {
   class Account {
     String username;
-    String password;
+    boolean password;
   }
 
-  class Item {
-    String id;
-  }
-
-  association hasItems Account -> Item;
 }

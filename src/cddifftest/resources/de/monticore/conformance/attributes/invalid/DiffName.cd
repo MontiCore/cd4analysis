@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram Concrete {
+ class Account {
+    String  name;
+    boolean password;
+  }
+
+}

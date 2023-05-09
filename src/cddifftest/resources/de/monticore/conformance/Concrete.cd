@@ -2,12 +2,12 @@ import java.lang.String;
 
 classdiagram Concrete {
   <<ref="Account">> class BankAccount {
-    String username;
-    String password;
+    <<ref = "username">> String username;
+    <<ref = "password">> String password;
   }
 
   <<ref="Item">> abstract class Item {
-    String id;
+    <<ref="id">>String id;
   }
 
   class Transaction extends Item;
