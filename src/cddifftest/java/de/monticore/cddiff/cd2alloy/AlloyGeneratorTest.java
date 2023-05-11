@@ -121,11 +121,42 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     asts.add(astV1);
     asts.add(astV2);
 
-    // Assert.fail(CDDiffUtil.inferRole(astV1.getCDDefinition().getCDAssociationsList().get(0)
-    // .getRight()));
-
     // Call generator
     DiffModuleGenerator.generateDiffPredicateToFile(
         astV1, astV2, 20, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputDirectory.toFile());
+  }
+
+  @Test
+  public void testDigitalTwins() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 =
+        parseModel(
+            "doc/DigitalTwin3.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 =
+        parseModel(
+            "doc/DigitalTwin2.cd");
+    assertNotNull(astV2);
+
+    // Initialize set of asts
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    asts.add(astV1);
+    asts.add(astV2);
+
+    // Create Output Path
+
+    Path outputDirectory = Paths.get("target/generated/cddiff-example/closed_world");
+
+    // Call generator
+    DiffModuleGenerator.generateDiffPredicateToFile(
+        astV1, astV2, 7, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputDirectory.toFile());
+
+    outputDirectory = Paths.get("target/generated/cddiff-example/open_world");
+
+    // Call generator
+    DiffModuleGenerator.generateDiffPredicateToFile(
+        astV1, astV2, 7, CDSemantics.MULTI_INSTANCE_OPEN_WORLD, outputDirectory.toFile());
+
+
   }
 }

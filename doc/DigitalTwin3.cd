@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-<<complete>> classdiagram DigitalTwin3 {
+classdiagram DigitalTwin3 {
   abstract class System;
   class Machine extends System;
   class DigitalTwin {
