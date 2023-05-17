@@ -87,6 +87,11 @@ public class SingleSort implements ClassStrategy {
   }
 
   @Override
+  public Context getContext() {
+    return ctx;
+  }
+
+  @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     ctx = context;
     sort = ctx.mkUninterpretedSort("Object");
@@ -169,8 +174,7 @@ public class SingleSort implements ClassStrategy {
             SMTType smtType = smtTypesMap.get(astcdType);
 
             MinObject obj =
-                new MinObject(
-                    CDHelper.mkType(smtType.getClassType()), smtExpr, smtType.getAstcdType());
+                new MinObject(CDHelper.mkType(smtType.getClassType()), smtExpr, astcdType);
 
             for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
                 smtType.getAttributesMap().entrySet()) {

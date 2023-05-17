@@ -299,6 +299,11 @@ public class CDHelper {
     return getASTCDType(association.getRightQualifiedName().getQName(), cd);
   }
 
+  public static boolean isCardinalityOne2One(ASTCDAssociation association) {
+    return (association.getLeft().getCDCardinality().isOne()
+        && association.getRight().getCDCardinality().isOne());
+  }
+
   public static List<ASTCDClass> getAbstractClassList(ASTCDDefinition cd) {
     return cd.getCDClassesList().stream()
         .filter(x -> x.getModifier().isAbstract())

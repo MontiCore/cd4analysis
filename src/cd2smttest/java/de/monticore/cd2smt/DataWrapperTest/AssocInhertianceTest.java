@@ -49,19 +49,17 @@ public class AssocInhertianceTest extends CDDiffTestBasis {
   }
 
   public void checkLink(String left, String role, String right) {
-    ASTCDClass leftClass = CDHelper.getClass(left, cd);
-    ASTCDClass rightClass = CDHelper.getClass(right, cd);
-    ASTCDAssociation association = CDHelper.getAssociation(leftClass, role, cd);
-    Expr<? extends Sort> obj1 = ctx.mkConst("obj1", cd2SMTGenerator.getSort(leftClass));
-    Expr<? extends Sort> obj2 = ctx.mkConst("obj2", cd2SMTGenerator.getSort(rightClass));
+    ASTCDClass type1 = CDHelper.getClass(left, cd);
+    ASTCDClass type2 = CDHelper.getClass(right, cd);
+    ASTCDAssociation association = CDHelper.getAssociation(type1, role, cd);
+    Expr<? extends Sort> obj1 = ctx.mkConst("obj1", cd2SMTGenerator.getSort(type1));
+    Expr<? extends Sort> obj2 = ctx.mkConst("obj2", cd2SMTGenerator.getSort(type2));
 
     Optional<Expr<? extends Sort>> link1 =
-        Optional.ofNullable(
-            cd2SMTGenerator.evaluateLink(association, leftClass, rightClass, obj1, obj2));
+        Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, type1, type2, obj1, obj2));
     Assertions.assertTrue(link1.isPresent());
     Optional<Expr<? extends Sort>> link2 =
-        Optional.ofNullable(
-            cd2SMTGenerator.evaluateLink(association, rightClass, leftClass, obj2, obj1));
+        Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, type2, type1, obj2, obj1));
     Assertions.assertTrue(link2.isPresent());
   }
 

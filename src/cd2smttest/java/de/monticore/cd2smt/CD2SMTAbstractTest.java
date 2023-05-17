@@ -53,7 +53,7 @@ public class CD2SMTAbstractTest {
     return null;
   }
 
-  public static Stream<Arguments> modelTarget() {
+  public static Stream<Arguments> modelTargetDS() {
     return Stream.of(
         Arguments.of("car1.cd", "1"),
         Arguments.of("car2.cd", "2"),
@@ -76,5 +76,30 @@ public class CD2SMTAbstractTest {
         Arguments.of("car20.cd", "20"),
         Arguments.of("car21.cd", "21"),
         Arguments.of("car.cd", ""));
+  }
+
+  public static Stream<Arguments> modelTargetSS() {
+    return Stream.of(
+        Arguments.of("car1.cd", "1"),
+        Arguments.of("car2.cd", "2"),
+        //  Arguments.of("car3.cd", "3"),         // to much time
+        Arguments.of("car4.cd", "4"),
+        Arguments.of("car5.cd", "5"),
+        Arguments.of("car6.cd", "6"),
+        Arguments.of("car7.cd", "7"),
+        Arguments.of("car8.cd", "8"),
+        // Arguments.of("car9.cd", "9"),         // too much time
+        // Arguments.of("car10.cd", "10"),       // don't terminate
+        Arguments.of("car11.cd", "11"),
+        Arguments.of("car12.cd", "12"));
+    // Arguments.of("car14.cd", "14"),       // don't terminate
+    // Arguments.of("car15.cd", "15"),       // don't terminate
+    // Arguments.of("car16.cd", "116"),      // don't terminate
+    // Arguments.of("car17.cd", "17"),       // don't terminate
+    // Arguments.of("car18.cd", "18"),       // don't terminate
+    // Arguments.of("car19.cd", "19"),       // don't terminate
+    // Arguments.of("car20.cd", "20"),      // don't terminate
+    // Arguments.of("car21.cd", "21"),      // don't terminate
+    // Arguments.of("car.cd", ""));         // don't terminate
   }
 }

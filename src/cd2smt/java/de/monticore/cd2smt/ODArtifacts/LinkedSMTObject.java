@@ -1,20 +1,20 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.ODArtifacts;
 
-import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.FuncDecl;
+import com.microsoft.z3.Sort;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 
 public class LinkedSMTObject {
   protected SMTObject linkedObject;
   protected ASTCDAssociation association;
   protected boolean isLeft;
-  FuncDecl<BoolSort> assocFunc;
+  FuncDecl<? extends Sort> assocFunc;
 
   public LinkedSMTObject(
       ASTCDAssociation association,
       SMTObject linkedObject,
-      FuncDecl<BoolSort> assocFunc,
+      FuncDecl<? extends Sort> assocFunc,
       boolean isLeft) {
     this.isLeft = isLeft;
     this.assocFunc = assocFunc;
@@ -26,7 +26,7 @@ public class LinkedSMTObject {
     return association;
   }
 
-  public FuncDecl<BoolSort> getAssocFunc() {
+  public FuncDecl<? extends Sort> getAssocFunc() {
     return assocFunc;
   }
 

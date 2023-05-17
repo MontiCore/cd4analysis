@@ -2,6 +2,7 @@
 package de.monticore.cd2smt.cd2smtGenerator;
 
 import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class DataWrapper implements ClassData, AssociationsData, InheritanceData {
-  protected final ASTCDCompilationUnit astcdCompilationUnit;
+  protected final ASTCDCompilationUnit ast;
   private final ClassData classData;
   private final AssociationsData associationsData;
   private final InheritanceData inheritanceData;
@@ -28,11 +29,11 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
       ClassData classData,
       AssociationsData associationsData,
       InheritanceData inheritanceData,
-      ASTCDCompilationUnit astcdCompilationUnit) {
+      ASTCDCompilationUnit ast) {
     this.classData = classData;
     this.associationsData = associationsData;
     this.inheritanceData = inheritanceData;
-    this.astcdCompilationUnit = astcdCompilationUnit;
+    this.ast = ast;
   }
 
   public Optional<BoolExpr> evaluateLinkHelper(
@@ -43,32 +44,40 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
       Expr<? extends Sort> expr2) {
 
     ASTCDType type1 =
-        CDHelper.getASTCDType(
-            association.getLeftQualifiedName().getQName(), astcdCompilationUnit.getCDDefinition());
+        CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), ast.getCDDefinition());
     ASTCDType type2 =
         CDHelper.getASTCDType(
-            association.getRightQualifiedName().getQName(), astcdCompilationUnit.getCDDefinition());
+            association.getRightQualifiedName().getQName(), ast.getCDDefinition());
 
     List<ASTCDType> supertypeList1 = new ArrayList<>();
     supertypeList1.add(subType1);
     List<ASTCDType> supertypeList2 = new ArrayList<>();
     supertypeList2.add(subType2);
 
-    CDHelper.getAllSuperType(subType1, astcdCompilationUnit.getCDDefinition(), supertypeList1);
-    CDHelper.getAllSuperType(subType2, astcdCompilationUnit.getCDDefinition(), supertypeList2);
+    CDHelper.getAllSuperType(subType1, ast.getCDDefinition(), supertypeList1);
+    CDHelper.getAllSuperType(subType2, ast.getCDDefinition(), supertypeList2);
+    BoolExpr res;
+    if (supertypeList1.contains(type1) && supertypeList2.contains(type2)) {
+      res =
+          associationsData.evaluateLink(
+              association,
+              type1,
+              type2,
+              getSuperInstance(subType1, type1, expr1),
+              getSuperInstance(subType2, type2, expr2));
+    } else if (supertypeList1.contains(type2) && supertypeList2.contains(type1)) {
+      res =
+          associationsData.evaluateLink(
+              association,
+              type1,
+              type2,
+              getSuperInstance(subType2, type1, expr2),
+              getSuperInstance(subType1, type2, expr1));
+    } else {
+      res = null;
+    }
 
-    ASTCDType superType1 =
-        supertypeList1.contains(type1) || supertypeList2.contains(type2) ? type1 : type2;
-    assert superType1 != null;
-    ASTCDType superType2 = superType1.equals(type1) ? type2 : type1;
-
-    return Optional.of(
-        associationsData.evaluateLink(
-            association,
-            superType1,
-            superType2,
-            getSuperInstance(subType1, superType1, expr1),
-            getSuperInstance(subType2, superType2, expr2)));
+    return Optional.ofNullable(res);
   }
 
   @Override
@@ -129,13 +138,17 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
     return classData.getClassConstraints();
   }
 
+  @Override
+  public Context getContext() {
+    return classData.getContext();
+  }
+
   protected Optional<Expr<? extends Sort>> getAttributeHelper(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     if (CDHelper.containsProperAttribute(astCdType, attributeName)) {
       return Optional.of(classData.getAttribute(astCdType, attributeName, cDTypeExpr));
     }
-    List<ASTCDType> superclassList =
-        CDHelper.getSuperTypeList(astCdType, astcdCompilationUnit.getCDDefinition());
+    List<ASTCDType> superclassList = CDHelper.getSuperTypeList(astCdType, ast.getCDDefinition());
     for (ASTCDType superType : superclassList) {
       Optional<Expr<? extends Sort>> res =
           getAttributeHelper(
@@ -174,8 +187,7 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
 
   protected Optional<Expr<? extends Sort>> getSuperInstanceHelper(
       ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
-    List<ASTCDType> superClassList =
-        CDHelper.getSuperTypeList(objType, astcdCompilationUnit.getCDDefinition());
+    List<ASTCDType> superClassList = CDHelper.getSuperTypeList(objType, ast.getCDDefinition());
     for (ASTCDType newSuperType : superClassList) {
       if (newSuperType.equals(superType)) {
         return Optional.of(inheritanceData.getSuperInstance(objType, superType, objExpr));

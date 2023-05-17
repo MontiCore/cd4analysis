@@ -22,4 +22,9 @@ public interface AssociationStrategy extends AssociationsData {
    * @return set of linked SMTObjects
    */
   Set<SMTObject> smt2od(Model model, Set<SMTObject> objectSet);
+
+  public enum Strategy {
+    DEFAULT,
+    ONE2ONE
+  }
 }

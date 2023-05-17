@@ -23,13 +23,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class DefaultAssocStrategy implements AssociationStrategy {
-  ClassData classData;
-  private final Map<ASTCDAssociation, FuncDecl<BoolSort>> associationsFuncMap;
-  private final Set<IdentifiableBoolExpr> associationConstraints;
+  protected ClassData classData;
+  protected final Map<ASTCDAssociation, FuncDecl<? extends Sort>> assocFuncMap;
+  protected final Set<IdentifiableBoolExpr> assocConstraints;
 
   public DefaultAssocStrategy() {
-    associationsFuncMap = new HashMap<>();
-    associationConstraints = new HashSet<>();
+    assocFuncMap = new HashMap<>();
+    assocConstraints = new HashSet<>();
   }
 
   @Override
@@ -39,122 +39,116 @@ public class DefaultAssocStrategy implements AssociationStrategy {
       ASTCDType type2,
       Expr<? extends Sort> expr1,
       Expr<? extends Sort> expr2) {
-    FuncDecl<BoolSort> assocFunc = associationsFuncMap.get(association);
-    return association.getLeftQualifiedName().getQName().equals(type1.getName())
-        ? (BoolExpr) assocFunc.apply(expr1, expr2)
-        : (BoolExpr) assocFunc.apply(expr2, expr1);
+    FuncDecl<? extends Sort> assocFunc = assocFuncMap.get(association);
+    return (BoolExpr) assocFunc.apply(expr1, expr2);
   }
 
   @Override
   public Set<IdentifiableBoolExpr> getAssociationsConstraints() {
-    return associationConstraints;
+    return assocConstraints;
   }
 
   @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context ctx, ClassData classData) {
     this.classData = classData;
-    ast.getCDDefinition()
-        .getCDAssociationsList()
-        .forEach(assoc -> declareAssociation(ast.getCDDefinition(), assoc, classData, ctx));
-    associationConstraints.addAll(buildAssocConstraints(ast.getCDDefinition(), classData, ctx));
+    ASTCDDefinition cd = ast.getCDDefinition();
+    cd.getCDAssociationsList().forEach(assoc -> declareAssociation(cd, assoc, ctx));
   }
 
-  protected void declareAssociation(
-      ASTCDDefinition cd, ASTCDAssociation myAssociation, ClassData classData, Context ctx) {
-    String assocName = SMTHelper.printSMTAssociationName(myAssociation);
-    ASTCDType leftClass =
-        CDHelper.getASTCDType(myAssociation.getLeftQualifiedName().getQName(), cd);
-    ASTCDType rightClass =
-        CDHelper.getASTCDType(myAssociation.getRightQualifiedName().getQName(), cd);
+  protected void declareAssociation(ASTCDDefinition cd, ASTCDAssociation assoc, Context ctx) {
+
+    String assocName = SMTHelper.printSMTAssociationName(assoc);
+    ASTCDType leftClass = CDHelper.getASTCDType(assoc.getLeftQualifiedName().getQName(), cd);
+    ASTCDType rightClass = CDHelper.getASTCDType(assoc.getRightQualifiedName().getQName(), cd);
 
     // set the Association function
     Sort rightSort = classData.getSort(rightClass);
     Sort leftSort = classData.getSort(leftClass);
 
-    associationsFuncMap.put(
-        myAssociation,
-        ctx.mkFuncDecl(assocName, new Sort[] {leftSort, rightSort}, ctx.getBoolSort()));
+    assocFuncMap.put(
+        assoc, ctx.mkFuncDecl(assocName, new Sort[] {leftSort, rightSort}, ctx.getBoolSort()));
+
+    assocConstraints.addAll(buildAssocConstraints(assoc, ctx));
   }
 
-  List<IdentifiableBoolExpr> buildAssocConstraints(
-      ASTCDDefinition cd, ClassData classData, Context ctx) {
+  protected List<IdentifiableBoolExpr> buildAssocConstraints(
+      ASTCDAssociation myAssoc, Context ctx) {
     List<IdentifiableBoolExpr> constraints = new LinkedList<>();
+    ASTCDDefinition cd = classData.getClassDiagram().getCDDefinition();
+    // get the sort for the left and right objects
+    ASTCDType rightClass = CDHelper.getASTCDType(myAssoc.getRightQualifiedName().getQName(), cd);
+    ASTCDType leftClass = CDHelper.getASTCDType(myAssoc.getLeftQualifiedName().getQName(), cd);
+    assert rightClass != null;
+    assert leftClass != null;
+    Sort leftSort = classData.getSort(leftClass);
+    Sort rightSort = classData.getSort(rightClass);
+    FuncDecl<? extends Sort> assocFunc = assocFuncMap.get(myAssoc);
 
-    for (ASTCDAssociation myAssoc : cd.getCDAssociationsList()) {
-      // get the sort for the left and right objects
-      ASTCDType rightClass = CDHelper.getASTCDType(myAssoc.getRightQualifiedName().getQName(), cd);
-      ASTCDType leftClass = CDHelper.getASTCDType(myAssoc.getLeftQualifiedName().getQName(), cd);
-      assert rightClass != null;
-      assert leftClass != null;
-      Sort leftSort = classData.getSort(leftClass);
-      Sort rightSort = classData.getSort(rightClass);
-      FuncDecl<BoolSort> assocFunc = associationsFuncMap.get(myAssoc);
+    // build constants for quantifiers scope
+    Pair<ASTCDType, Expr<? extends Sort>> r1 =
+        new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "r1", rightSort));
+    Pair<ASTCDType, Expr<? extends Sort>> l1 =
+        new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "l1", leftSort));
+    Pair<ASTCDType, Expr<? extends Sort>> l2 =
+        new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "l2", leftSort));
+    Pair<ASTCDType, Expr<? extends Sort>> r2 =
+        new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "r2", rightSort));
 
-      // build constants for quantifiers scope
-      Pair<ASTCDType, Expr<? extends Sort>> r1 =
-          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "r1", rightSort));
-      Pair<ASTCDType, Expr<? extends Sort>> l1 =
-          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "l1", leftSort));
-      Pair<ASTCDType, Expr<? extends Sort>> l2 =
-          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "l2", leftSort));
-      Pair<ASTCDType, Expr<? extends Sort>> r2 =
-          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "r2", rightSort));
+    // position
+    SourcePosition srcPos = myAssoc.get_SourcePositionStart();
+    assert srcPos.getFileName().isPresent();
 
-      // position
-      SourcePosition srcPos = myAssoc.get_SourcePositionStart();
-      assert srcPos.getFileName().isPresent();
+    // Cardinality on the right side
+    if (myAssoc.getRight().isPresentCDCardinality()) {
+      BoolExpr atLeastOne = buildAtLeastOneConstraint(assocFunc, l1, r1, false, ctx);
+      BoolExpr optional = buildOptionalConstraint(assocFunc, l1, r1, r2, false, ctx);
 
-      // Cardinality on the right side
-      if (myAssoc.getRight().isPresentCDCardinality()) {
-        BoolExpr atLeastOne = buildAtLeastOneConstraint(assocFunc, l1, r1, false, ctx);
-        BoolExpr optional = buildOptionalConstraint(assocFunc, l1, r1, r2, false, ctx);
+      // get the source Position fo the cardinality
+      SourcePosition cardSrcPos = myAssoc.getRight().getCDCardinality().get_SourcePositionStart();
 
-        // get the source Position fo the cardinality
-        SourcePosition cardSrcPos = myAssoc.getRight().getCDCardinality().get_SourcePositionStart();
-
-        if (myAssoc.getRight().getCDCardinality().isAtLeastOne()) {
-          constraints.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  atLeastOne, cardSrcPos, Optional.of("Cardinality_right")));
-        } else if (myAssoc.getRight().getCDCardinality().isOpt()) {
-          constraints.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  optional, cardSrcPos, Optional.of("Cardinality_right")));
-        } else if (myAssoc.getRight().getCDCardinality().isOne()) {
-          constraints.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  ctx.mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_right")));
-        }
-      }
-
-      // Cardinality on the left side
-      if (myAssoc.getLeft().isPresentCDCardinality()) {
-        BoolExpr atLeastOne = buildAtLeastOneConstraint(assocFunc, r1, l1, true, ctx);
-        BoolExpr optional = buildOptionalConstraint(assocFunc, r1, l1, l2, true, ctx);
-
-        // get the source Position fo the cardinality
-        SourcePosition cardSrcPos = myAssoc.getLeft().getCDCardinality().get_SourcePositionStart();
-
-        if (myAssoc.getLeft().getCDCardinality().isAtLeastOne()) {
-          constraints.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  atLeastOne, cardSrcPos, Optional.of("Cardinality_left")));
-        } else if (myAssoc.getLeft().getCDCardinality().isOpt()) {
-          constraints.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  optional, cardSrcPos, Optional.of("Cardinality_left")));
-        } else if (myAssoc.getLeft().getCDCardinality().isOne()) {
-          constraints.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  ctx.mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_left")));
-        }
+      if (myAssoc.getRight().getCDCardinality().isAtLeastOne()) {
+        constraints.add(
+            IdentifiableBoolExpr.buildIdentifiable(
+                atLeastOne, cardSrcPos, Optional.of("Cardinality_right")));
+      } else if (myAssoc.getRight().getCDCardinality().isOpt()) {
+        constraints.add(
+            IdentifiableBoolExpr.buildIdentifiable(
+                optional, cardSrcPos, Optional.of("Cardinality_right")));
+      } else if (myAssoc.getRight().getCDCardinality().isOne()) {
+        constraints.add(
+            IdentifiableBoolExpr.buildIdentifiable(
+                ctx.mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_right")));
       }
     }
+
+    // Cardinality on the left side
+    if (myAssoc.getLeft().isPresentCDCardinality()) {
+      BoolExpr atLeastOne = buildAtLeastOneConstraint(assocFunc, r1, l1, true, ctx);
+      BoolExpr optional = buildOptionalConstraint(assocFunc, r1, l1, l2, true, ctx);
+
+      // get the source Position fo the cardinality
+      SourcePosition cardSrcPos = myAssoc.getLeft().getCDCardinality().get_SourcePositionStart();
+
+      if (myAssoc.getLeft().getCDCardinality().isAtLeastOne()) {
+        constraints.add(
+            IdentifiableBoolExpr.buildIdentifiable(
+                atLeastOne, cardSrcPos, Optional.of("Cardinality_left")));
+      } else if (myAssoc.getLeft().getCDCardinality().isOpt()) {
+        constraints.add(
+            IdentifiableBoolExpr.buildIdentifiable(
+                optional, cardSrcPos, Optional.of("Cardinality_left")));
+      } else if (myAssoc.getLeft().getCDCardinality().isOne()) {
+        constraints.add(
+            IdentifiableBoolExpr.buildIdentifiable(
+                ctx.mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_left")));
+      }
+    }
+
     return constraints;
   }
 
   protected BoolExpr buildAtLeastOneConstraint(
-      FuncDecl<BoolSort> assocFunc,
+      FuncDecl<? extends Sort> assocFunc,
       Pair<ASTCDType, Expr<? extends Sort>> obj,
       Pair<ASTCDType, Expr<? extends Sort>> otherObj,
       boolean isLeft,
@@ -175,7 +169,7 @@ public class DefaultAssocStrategy implements AssociationStrategy {
   }
 
   protected BoolExpr buildOptionalConstraint(
-      FuncDecl<BoolSort> assocFunc,
+      FuncDecl<? extends Sort> assocFunc,
       Pair<ASTCDType, Expr<? extends Sort>> obj1,
       Pair<ASTCDType, Expr<? extends Sort>> otherObj1,
       Pair<ASTCDType, Expr<? extends Sort>> otherObj2,
@@ -189,8 +183,8 @@ public class DefaultAssocStrategy implements AssociationStrategy {
               Set.of(obj1, otherObj1, otherObj2),
               ctx.mkImplies(
                   ctx.mkAnd(
-                      ctx.mkApp(assocFunc, otherObj1.getRight(), obj1.getRight()),
-                      ctx.mkApp(assocFunc, otherObj2.getRight(), obj1.getRight())),
+                      (BoolExpr) ctx.mkApp(assocFunc, otherObj1.getRight(), obj1.getRight()),
+                      (BoolExpr) ctx.mkApp(assocFunc, otherObj2.getRight(), obj1.getRight())),
                   ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
               classData);
     } else {
@@ -200,8 +194,8 @@ public class DefaultAssocStrategy implements AssociationStrategy {
               Set.of(obj1, otherObj1, otherObj2),
               ctx.mkImplies(
                   ctx.mkAnd(
-                      ctx.mkApp(assocFunc, obj1.getRight(), otherObj1.getRight()),
-                      ctx.mkApp(assocFunc, obj1.getRight(), otherObj2.getRight())),
+                      (BoolExpr) ctx.mkApp(assocFunc, obj1.getRight(), otherObj1.getRight()),
+                      (BoolExpr) ctx.mkApp(assocFunc, obj1.getRight(), otherObj2.getRight())),
                   ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
               classData);
     }
@@ -210,18 +204,18 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
   @Override
   public Set<SMTObject> smt2od(Model model, Set<SMTObject> objectSet) {
-    for (Map.Entry<ASTCDAssociation, FuncDecl<BoolSort>> assoc : associationsFuncMap.entrySet()) {
+    for (ASTCDAssociation assoc : assocFuncMap.keySet()) {
       for (SMTObject leftObj : objectSet) {
         for (SMTObject rightObj : objectSet) {
 
           if (hasLink(leftObj, rightObj, assoc, model)) {
             leftObj
                 .getLinkedObjects()
-                .add(new LinkedSMTObject(assoc.getKey(), rightObj, assoc.getValue(), false));
+                .add(new LinkedSMTObject(assoc, rightObj, assocFuncMap.get(assoc), false));
 
             rightObj
                 .getLinkedObjects()
-                .add(new LinkedSMTObject(assoc.getKey(), leftObj, assoc.getValue(), true));
+                .add(new LinkedSMTObject(assoc, leftObj, assocFuncMap.get(assoc), true));
           }
         }
       }
@@ -229,22 +223,19 @@ public class DefaultAssocStrategy implements AssociationStrategy {
     return objectSet;
   }
 
-  private boolean hasLink(
-      SMTObject leftObj,
-      SMTObject rightObj,
-      Map.Entry<ASTCDAssociation, FuncDecl<BoolSort>> assoc,
-      Model model) {
-    ASTCDDefinition cd = classData.getClassDiagram().getCDDefinition();
-    ASTCDType leftASTCDType = CDHelper.getLeftType(assoc.getKey(), cd);
-    ASTCDType rightASTCDType = CDHelper.getRightType(assoc.getKey(), cd);
-    Sort leftSort = assoc.getValue().getDomain()[0];
+  protected boolean hasLink(
+      SMTObject leftObj, SMTObject rightObj, ASTCDAssociation assoc, Model model) {
 
-    Sort rightSort = assoc.getValue().getDomain()[1];
-    if (leftObj.hasSort(leftSort)
-        && hasType(leftObj.getSmtExpr(), leftASTCDType, model)
-        && (rightObj.hasSort(rightSort) && hasType(rightObj.getSmtExpr(), rightASTCDType, model))) {
+    if (checkTypeConformance(assoc, leftObj, rightObj, model)) {
       return model
-              .eval(assoc.getValue().apply(leftObj.getSmtExpr(), rightObj.getSmtExpr()), true)
+              .eval(
+                  evaluateLink(
+                      assoc,
+                      leftObj.getASTCDType(),
+                      rightObj.getASTCDType(),
+                      leftObj.getSmtExpr(),
+                      rightObj.getSmtExpr()),
+                  true)
               .getBoolValue()
           == Z3_lbool.Z3_L_TRUE;
     } else {
@@ -252,8 +243,18 @@ public class DefaultAssocStrategy implements AssociationStrategy {
     }
   }
 
-  private boolean hasType(Expr<? extends Sort> expr, ASTCDType astcdType, Model model) {
-    BoolExpr hasType = (BoolExpr) model.evaluate(classData.hasType(expr, astcdType), true);
-    return hasType.getBoolValue() == Z3_lbool.Z3_L_TRUE;
+  protected boolean checkTypeConformance(
+      ASTCDAssociation assoc, SMTObject leftObj, SMTObject rightObj, Model model) {
+    ASTCDDefinition cd = classData.getClassDiagram().getCDDefinition();
+    ASTCDType leftType = CDHelper.getLeftType(assoc, cd);
+    ASTCDType rightType = CDHelper.getRightType(assoc, cd);
+
+    BoolExpr checkLeft =
+        (BoolExpr) model.evaluate(classData.hasType(leftObj.getSmtExpr(), leftType), true);
+    BoolExpr checkRight =
+        (BoolExpr) model.evaluate(classData.hasType(rightObj.getSmtExpr(), rightType), true);
+
+    return checkLeft.getBoolValue() == Z3_lbool.Z3_L_TRUE
+        && checkRight.getBoolValue() == Z3_lbool.Z3_L_TRUE;
   }
 }
