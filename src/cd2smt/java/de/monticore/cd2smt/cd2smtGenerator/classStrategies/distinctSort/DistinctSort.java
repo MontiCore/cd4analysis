@@ -33,7 +33,11 @@ public class DistinctSort implements ClassStrategy {
 
   @Override
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
-    return ctx.mkTrue();
+    String sortName = expr.getSort().getName().toString();
+    if (SMTHelper.printSMTCDTypeName(astCdType).equals(sortName)) {
+      return ctx.mkTrue();
+    }
+    return ctx.mkFalse();
   }
 
   @Override
@@ -53,6 +57,11 @@ public class DistinctSort implements ClassStrategy {
   @Override
   public Set<IdentifiableBoolExpr> getClassConstraints() {
     return new HashSet<>();
+  }
+
+  @Override
+  public Context getContext() {
+    return ctx;
   }
 
   @Override
@@ -160,7 +169,6 @@ public class DistinctSort implements ClassStrategy {
             obj.addAttribute(attribute.getKey(), attrExpr);
           }
         }
-
         objectSet.add(obj);
       }
     }

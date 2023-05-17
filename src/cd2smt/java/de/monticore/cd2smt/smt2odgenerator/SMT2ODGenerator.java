@@ -11,7 +11,9 @@ import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.LinkedSMTObject;
 import de.monticore.cd2smt.ODArtifacts.SMTLink;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
+import de.monticore.cd2smt.cd2smtGenerator.DataWrapper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
@@ -21,7 +23,8 @@ import java.util.*;
 
 public class SMT2ODGenerator {
 
-  public Optional<ASTODArtifact> buildOd(Set<SMTObject> objectSet, String ODName, Model model) {
+  public Optional<ASTODArtifact> buildOd(
+      Set<SMTObject> objectSet, String ODName, Model model, DataWrapper dataWrapper) {
     List<ASTODElement> elementList = new ArrayList<>();
     // add all Objects
     for (SMTObject obj : objectSet) {
@@ -29,7 +32,7 @@ public class SMT2ODGenerator {
     }
 
     // add all links
-    for (SMTLink smtLink : buildLinkSet(objectSet, model)) {
+    for (SMTLink smtLink : buildLinkSet(objectSet, model, dataWrapper)) {
       elementList.add(buildLink(smtLink));
     }
 
@@ -94,7 +97,8 @@ public class SMT2ODGenerator {
     return attributeList;
   }
 
-  protected Set<SMTLink> buildLinkSet(Set<SMTObject> objectMap, Model model) {
+  protected Set<SMTLink> buildLinkSet(
+      Set<SMTObject> objectMap, Model model, DataWrapper dataWrapper) {
     Set<SMTLink> links = new HashSet<>();
     // inherit links of sub instances
     for (SMTObject obj : objectMap) {
@@ -109,7 +113,7 @@ public class SMT2ODGenerator {
     // linked class whose superclasses are linked
     for (SMTObject obj1 : objectMap) {
       for (SMTObject obj2 : objectMap) {
-        Optional<SMTLink> isLink = haveLinkedSuperInstances(obj1, obj2, model);
+        Optional<SMTLink> isLink = haveLinkedSuperInstances(obj1, obj2, model, dataWrapper);
         if (isLink.isPresent() && !SMTLink.containsLink(links, isLink.get())) {
           links.add(isLink.get());
         }
@@ -120,18 +124,26 @@ public class SMT2ODGenerator {
   }
 
   protected Optional<SMTLink> haveLinkedSuperInstances(
-      SMTObject leftObj, SMTObject rightObj, Model model) {
+      SMTObject leftObj, SMTObject rightObj, Model model, DataWrapper dataWrapper) {
     for (LinkedSMTObject left : getSuperInstanceLinks(leftObj, new ArrayList<>())) {
       for (LinkedSMTObject right : getSuperInstanceLinks(rightObj, new ArrayList<>())) {
         if (left.getAssociation().equals(right.getAssociation())
             && left.isLeft()
             && right.isRight()) {
+          ASTCDType leftType =
+              CDHelper.getLeftType(
+                  left.getAssociation(), dataWrapper.getClassDiagram().getCDDefinition());
+          ASTCDType rightType =
+              CDHelper.getRightType(
+                  left.getAssociation(), dataWrapper.getClassDiagram().getCDDefinition());
           if (model
                   .evaluate(
-                      left.getAssocFunc()
-                          .apply(
-                              left.getLinkedObject().getSmtExpr(),
-                              right.getLinkedObject().getSmtExpr()),
+                      dataWrapper.evaluateLink(
+                          left.getAssociation(),
+                          leftType,
+                          rightType,
+                          left.getLinkedObject().getSmtExpr(),
+                          right.getLinkedObject().getSmtExpr()),
                       true)
                   .getBoolValue()
               == Z3_lbool.Z3_L_TRUE) {

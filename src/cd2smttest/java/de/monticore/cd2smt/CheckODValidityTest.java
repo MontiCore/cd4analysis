@@ -4,6 +4,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -15,7 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -34,36 +36,53 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("modelTarget")
-  public void checkODValidityTestDS(String CDFileName, String targetNumber) {
-    checkODValidity(CDFileName, "DS" + targetNumber, ClassStrategy.Strategy.DS);
+  @MethodSource("modelTargetDS")
+  public void checkODValidityTestDS_O2O(String CDFileName, String targetNumber) {
+    checkODValidity(
+        CDFileName,
+        "DS" + targetNumber,
+        ClassStrategy.Strategy.DS,
+        AssociationStrategy.Strategy.ONE2ONE);
   }
 
-  @Disabled("Test is flaky: Sometimes fails or takes too much time.")
   @ParameterizedTest
-  @MethodSource("modelTarget")
-  public void checkODValidityTestSS(String CDFileName, String targetNumber) {
-    Assumptions.assumeFalse(CDFileName.equals("car3.cd")); // too much time
-    Assumptions.assumeFalse(CDFileName.equals("car10.cd")); // too much time
-    Assumptions.assumeFalse(CDFileName.equals("car19.cd")); // too much time
-    Assumptions.assumeFalse(CDFileName.equals("car16.cd")); // too much time
-    Assumptions.assumeFalse(CDFileName.equals("car20.cd")); // don't support enum yet
-
-    checkODValidity(CDFileName, "SS" + targetNumber, ClassStrategy.Strategy.SS);
+  @MethodSource("modelTargetDS")
+  public void checkODValidityTestDS_DEFAULT(String CDFileName, String targetNumber) {
+    checkODValidity(
+        CDFileName,
+        "DS" + targetNumber,
+        ClassStrategy.Strategy.DS,
+        AssociationStrategy.Strategy.DEFAULT);
   }
 
-  @Test
-  public void testAbstract() {
-    checkODValidity("car3.cd", "300000", ClassStrategy.Strategy.DS);
+  @ParameterizedTest
+  @MethodSource("modelTargetSS")
+  public void checkODValidityTestSS_DEFAULT(String fileName, String targetNumber) {
+    checkODValidity(
+        fileName,
+        "SS" + targetNumber,
+        ClassStrategy.Strategy.SS,
+        AssociationStrategy.Strategy.DEFAULT);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTargetSS")
+  public void checkODValidityTestSS_O2O(String fileName, String target) {
+    checkODValidity(
+        fileName, "SS" + target, ClassStrategy.Strategy.SS, AssociationStrategy.Strategy.ONE2ONE);
   }
 
   public void checkODValidity(
-      String CDFileName, String targetNumber, ClassStrategy.Strategy strategy) {
+      String CDFileName,
+      String targetNumber,
+      ClassStrategy.Strategy cs,
+      AssociationStrategy.Strategy as) {
 
     ASTCDCompilationUnit ast = parseModel(CDFileName);
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
-    cd2SMTGenerator.setClassStrategy(strategy);
+    cd2SMTGenerator.setClassStrategy(cs);
+    cd2SMTGenerator.setAssociationStrategy(as);
     cd2SMTGenerator.cd2smt(ast, ctx);
 
     Solver solver = cd2SMTGenerator.makeSolver(new ArrayList<>());

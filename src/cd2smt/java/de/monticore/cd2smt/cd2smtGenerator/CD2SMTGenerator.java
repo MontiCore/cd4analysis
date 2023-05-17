@@ -9,6 +9,7 @@ import de.monticore.cd2smt.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationsData;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy.DefaultAssocStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one.One2OneAssocStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DistinctSort;
@@ -35,7 +36,7 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
 
   private ClassStrategy classStrategy = new DistinctSort();
   private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy();
-  private final AssociationStrategy associationStrategy = new DefaultAssocStrategy();
+  private AssociationStrategy associationStrategy = new DefaultAssocStrategy();
   private DataWrapper dataWrapper;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
@@ -86,6 +87,17 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
         break;
       case SS:
         this.classStrategy = new SingleSort();
+        break;
+    }
+  }
+
+  public void setAssociationStrategy(AssociationStrategy.Strategy strategy) {
+    switch (strategy) {
+      case ONE2ONE:
+        this.associationStrategy = new One2OneAssocStrategy();
+        break;
+      case DEFAULT:
+        this.associationStrategy = new DefaultAssocStrategy();
         break;
     }
   }
@@ -172,6 +184,6 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
         objectSet.add(entry);
       }
     }
-    return smt2ODGenerator.buildOd(objectSet, odName, model);
+    return smt2ODGenerator.buildOd(objectSet, odName, model, dataWrapper);
   }
 }

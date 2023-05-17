@@ -2,6 +2,7 @@
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies;
 
 import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -52,4 +53,7 @@ public interface ClassData {
 
   /** @return the class Constraints as Set of Bool-Expressions */
   Set<IdentifiableBoolExpr> getClassConstraints();
+
+  /** @return context where the class diagram elements are transformed */
+  Context getContext();
 }
