@@ -1,0 +1,77 @@
+
+objectdiagram Type_Diff_Multiple{
+<<instanceof="Person, Staff, Assistant">> alf:Assistant{
+    age = 21;
+    nationality = "German";
+    name = "Alf";
+    address = "InfoZentrum";
+    salary = 4321;
+    yearsOfExp = 4;
+    numberOfLectures = 2;
+  };
+
+  alfProfile:UniProfile{
+    id = 3;
+    Degree degree = Master;
+  };
+
+  <<instanceof="Person, Staff, Professor">>goodProf:Professor{
+    age = 43;
+    nationality = "German";
+    name = "GoodBoy";
+    address = "E2";
+    salary = 54321;
+    yearsOfExp = 43;
+    spec = "LinearEquations";
+    atRetAge = false;
+  };
+
+  profProfile:UniProfile{
+    id = 4;
+    degree = Master;
+  };
+
+  se:Faculty{
+    numberOfMembers = 2;
+  };
+
+  link goodProf (usedBy) -> (uses) profProfile;
+  link alf (usedBy) -> (uses) alfProfile;
+  composition se <-> alf;
+  composition se <-> goodProf;
+
+  <<instanceof="Person, Student">> alice:Student{
+      age = 21;
+      nationality = "German";
+      name = "Alice";
+      address = "InfoZentrum";
+      studiengang = "Informatik";
+      score = 3.5;
+      semester = 7;
+    };
+
+  <<instanceof="Person, Student">> bob:Student{
+        age = 23;
+        nationality = "German";
+        name = "Bob";
+        address = "InfoZentrum";
+        studiengang = "Informatik";
+        score = 4;
+        semester = 8;
+  };
+
+  aliceProfile:UniProfile{
+    id = 1;
+    Degree degree = Bachelor;
+  };
+
+  bobProfile:UniProfile{
+      id = 2;
+      Degree degree = Bachelor;
+  };
+
+  link bob (usedBy) -> (uses) bobProfile;
+  link alice (usedBy) -> (uses) aliceProfile;
+  link alf (supervisedBy) <-> (worksWith) alice;
+  link alf (supervisedBy) <-> (worksWith) alice;
+}

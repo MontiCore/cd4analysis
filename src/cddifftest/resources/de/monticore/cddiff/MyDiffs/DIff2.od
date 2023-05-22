@@ -1,0 +1,14 @@
+objectdiagram Type_Diff_UniId{
+  alice:Person{
+    age = 21;
+    nationality = "German";
+    name = "Alice";
+    address = "InformatikZentrum";
+  };
+  aliceProfile:UniProfile{
+    id = 1;
+    Degree degree = Bachelor;
+  };
+
+  link alice (usedBy) -> (uses) aliceProfile;
+}

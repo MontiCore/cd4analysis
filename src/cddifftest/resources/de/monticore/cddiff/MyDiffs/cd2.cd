@@ -1,0 +1,65 @@
+import java.lang.*;
+classdiagram CD2{
+
+   abstract class Person{
+     int age;
+     String name;
+     String address;
+   }
+
+   class Staff extends Person{
+     int salary;
+     int yearsOfExp;
+   }
+
+   class Professor extends Staff{
+     String spec;
+     boolean isAtRetAge;
+   }
+
+   class Assistant extends Staff{
+     int numOfLectures;
+   }
+
+   class Project{
+     String topic;
+   }
+
+   class Student{
+     String studiengang;
+     double score;
+     int semester;
+   }
+
+   class Course{
+    String name;
+    boolean hasReq;
+    boolean forBachelor;
+   }
+
+   class Faculty{
+    int numberOfMembers;
+   }
+
+   class UniProfile{
+     double id;
+     /*Degree degree;*/
+   }
+
+   /*enum Degree { BACHELOR, MASTER; }*/
+
+   association [1..*] Person (usedBy) -> (uses) UniProfile [*];
+   association [*] Student (usedBy) <-> (uses) UniProfile [1];
+   association [*] Staff (supervidesBy) <-> (worksWith) Student [*];
+   association [1] Assistant (supervidesBy) <-> (worksWith) Student [1];
+   association [*] Staff (heldBy) -> (worksOn) Course [*];
+   association [1] Professor (heldBy) -> (worksOn) Student [1..*];
+   association [*] Student -> (participates) Course [1..*];
+   composition [1] Faculty <-> Professor [1];
+   composition [1] Faculty <-> Assistant [1..*];
+   composition [*] Faculty <-> Student [1..*];
+   association [1] Assistant (researchedBy) -> (topic) Project [1];
+}
+
+
+

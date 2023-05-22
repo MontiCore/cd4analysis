@@ -1,0 +1,16 @@
+objectdiagram Type_Diff_Enum{
+  <<instanceof="Person, Staff, Assistant">> alice:Assistant{
+    age = 21;
+    nationality = "German";
+    name = "Alice";
+    address = "InfoZentrum";
+    salary = 4321;
+    yearsOfExp = 4;
+    numberOfLectures = 2;
+  };
+  aliceProfile:UniProfile{
+    id = 1;
+    Degree degree = PhD;
+  };
+  link alice (usedBy) -> (uses) aliceProfile;
+}

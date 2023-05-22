@@ -569,4 +569,54 @@ public class CDDiffCLIToolTest {
       Assert.fail();
     }
   }
+
+  @Test
+  public void testMyDiff() {
+    // given 2 CDs that are not semantically equivalent
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/cd1.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/cd2.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithDiff";
+
+    for (String cwDiffOption : cwDiffOptions) {
+      // when CD4CodeTool is used to compute the semantic difference
+      String[] args = {
+        "-i",
+        cd1,
+        "--semdiff",
+        cd2,
+        "--diffsize",
+        "21",
+        "-o",
+        output,
+        "--difflimit",
+        "20",
+        cwDiffOption
+      };
+      CD4CodeTool.main(args);
+
+      try {
+        ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
+        ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
+
+        for(int i = 1; i<=7; i++) {
+          Assert.assertTrue(
+            new OD2CDMatcher()
+              .checkIfDiffWitness(
+                CDSemantics.SIMPLE_CLOSED_WORLD,
+                ast1,
+                ast2,
+                CDDiffUtil.loadODModel("src/cddifftest/resources/de/monticore/cddiff/MyDiffs/Diff"+i+".od")));
+        }
+      } catch (NullPointerException | IOException e) {
+        fail(e.getMessage());
+      }
+
+      // clean-up
+      try {
+        PathUtils.delete(Paths.get(output));
+      } catch (IOException e) {
+        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+      }
+    }
+  }
 }

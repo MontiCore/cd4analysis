@@ -1,0 +1,9 @@
+objectdiagram Type_Diff_Person {
+
+  alice:Person {
+    int age = 21;
+    String nationality = "German";
+    String name = "Alice";
+    String address = "InformatikZentrum";
+  };
+}
