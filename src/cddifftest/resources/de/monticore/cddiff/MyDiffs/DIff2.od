@@ -5,9 +5,10 @@ objectdiagram Type_Diff_UniId{
     name = "Alice";
     address = "InformatikZentrum";
   };
+
   aliceProfile:UniProfile{
-    id = 1;
-    Degree degree = Bachelor;
+    int id = 1;
+    Degree degree = BACHELOR;
   };
 
   link alice (usedBy) -> (uses) aliceProfile;

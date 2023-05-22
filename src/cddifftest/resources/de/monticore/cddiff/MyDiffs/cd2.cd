@@ -1,4 +1,3 @@
-import java.lang.*;
 classdiagram CD2{
 
    abstract class Person{
@@ -25,7 +24,7 @@ classdiagram CD2{
      String topic;
    }
 
-   class Student{
+   class Student extends Person{
      String studiengang;
      double score;
      int semester;
@@ -43,10 +42,10 @@ classdiagram CD2{
 
    class UniProfile{
      double id;
-     /*Degree degree;*/
+     Degree degree;
    }
 
-   /*enum Degree { BACHELOR, MASTER; }*/
+   enum Degree { BACHELOR, MASTER; }
 
    association [1..*] Person (usedBy) -> (uses) UniProfile [*];
    association [*] Student (usedBy) <-> (uses) UniProfile [1];

@@ -14,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTBasicDoubleLiteral;
+import de.monticore.literals.mccommonliterals._ast.ASTBooleanLiteral;
 import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
 import de.monticore.literals.mccommonliterals._ast.ASTStringLiteral;
 import de.monticore.odattribute._ast.ASTODList;
@@ -149,12 +150,18 @@ public class ClassMatcher {
         if (cdAttribute.getName().equals(odAttribute.getName())) {
           if (!(isAttributeVisibilityEqual(odAttribute, cdAttribute)
               && areAttributesSemanticallyEqual(odAttribute, cdAttribute))) {
+            Log.println(
+                odAttribute.getName()
+                    + " does not instantiate "
+                    + cdAttribute.getName()
+                    + " correctly.");
             return false;
           }
           attributeMissing = false;
         }
       }
       if (attributeMissing) {
+        Log.println("Could not find: " + cdAttribute.getName());
         // TODO: find in link
         return false;
       }
@@ -367,7 +374,8 @@ public class ClassMatcher {
         || typeName.equals("int")
         || typeName.equals("float")
         || typeName.equals("double")
-        || typeName.equals("long");
+        || typeName.equals("long")
+        || typeName.equals("boolean");
   }
 
   /**
@@ -391,6 +399,8 @@ public class ClassMatcher {
         return cdAttrType.equals("String");
       } else if (odAttrValueLiteral instanceof ASTBasicDoubleLiteral) {
         return cdAttrType.equals("double") || cdAttrType.equals("float");
+      } else if (odAttrValueLiteral instanceof ASTBooleanLiteral) {
+        return cdAttrType.equals("boolean");
       }
     }
     return false;
@@ -526,7 +536,9 @@ public class ClassMatcher {
       }
     }
     if (odAttr.getODValue() != null) {
-      return getObjectAttributeTypeByAST(odAttr.getODValue());
+      String type = getObjectAttributeTypeByAST(odAttr.getODValue());
+      Log.println("Type of " + odAttr + " was inferred to be: " + type);
+      return type;
     }
     return null;
   }
@@ -575,6 +587,8 @@ public class ClassMatcher {
         // Can also be a float
         // TODO find out which AST is for float/double-type
         return "double";
+      } else if (odAttrValueLiteral instanceof ASTBooleanLiteral) {
+        return "boolean";
       }
     }
     return null;
