@@ -3,6 +3,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
 import java.util.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class TypeDiff {
   private static ASTCDClass findClassByName(ASTCDCompilationUnit compilationUnit, String className) {
@@ -45,6 +46,8 @@ public class TypeDiff {
   }
 
   //added classes
+  //idea - added classes are semantic differences
+  //if they are abstract and combine attributes from classes - they don't bring a semDiff
   private static List<ASTCDClass> realDiffs(List<ASTCDClass> classList){
     List<ASTCDClass> astcdClassList = new ArrayList<>();
     for (ASTCDClass astcdClass: classList) {
@@ -54,9 +57,36 @@ public class TypeDiff {
       else{
         //check if the abstract classes have all missing attributes from subclasses
         //superclasses can have new superclasses
+        if()
       }
     }
     return astcdClassList;
+  }
+
+  //2&3
+  private static boolean hasMoreAtt(ASTCDClass astcdClass, List<Pair<ASTCDClass, ASTCDClass>> pairs){
+    List<ASTCDClass> astcdClassList = new ArrayList<>();
+    for (ASTCDClass astcdClass1 :){}
+  }
+
+  //1
+  private static List<ASTCDClass> getAllExtendingNonAbsClasses(ASTCDCompilationUnit astcdCompilationUnit, ASTCDClass astcdClass){
+    List<ASTCDClass> subclassesNonAbs = new ArrayList<>();
+    List<ASTCDClass> classesToCheck = new ArrayList<>();
+    classesToCheck.add(astcdClass);
+
+    // Traverse the top-level class nodes in the compilation unit
+    while(!classesToCheck.isEmpty()) {
+      ASTCDClass currentClass = classesToCheck.get(0);
+      for (ASTCDClass astcdClass1 : getSubclasses(astcdCompilationUnit, currentClass)){
+        if (!astcdClass1.getModifier().isAbstract()){
+          subclassesNonAbs.add(astcdClass1);
+        }
+        else{
+          classesToCheck.add(astcdClass1);
+        }
+      }
+    }
   }
 
   private static List<ASTCDClass> getSubclasses(ASTCDCompilationUnit compilationUnit, ASTCDClass baseClass) {
