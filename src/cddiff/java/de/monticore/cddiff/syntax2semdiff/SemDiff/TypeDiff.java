@@ -1,9 +1,7 @@
 package de.monticore.cddiff.syntax2semdiff.SemDiff;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
 import java.util.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class TypeDiff {
   private static ASTCDClass findClassByName(ASTCDCompilationUnit compilationUnit, String className) {
@@ -33,7 +31,7 @@ public class TypeDiff {
       }
     }
   }
-
+/*
   public static boolean hasAttribute(List<ASTCDClass> classes, String attributeName) {
     for (ASTCDClass clazz : classes) {
       for (ASTCDAttribute attribute : clazz.getCDAttributeList()) {
@@ -43,7 +41,7 @@ public class TypeDiff {
       }
     }
     return false;
-  }
+  }*/
 
   //added classes
   //idea - added classes are semantic differences
@@ -64,9 +62,27 @@ public class TypeDiff {
   }
 
   //2&3
-  private static boolean hasMoreAtt(ASTCDClass astcdClass, List<Pair<ASTCDClass, ASTCDClass>> pairs){
-    List<ASTCDClass> astcdClassList = new ArrayList<>();
-    for (ASTCDClass astcdClass1 :){}
+  private static boolean hasMoreAtt(ASTCDClass astcdClass, List<ASTCDClass> astcdClassList, List<DataStructure.Pair<ASTCDClass>> dataStructureList){
+    int i = 0;
+    for (ASTCDClass astcdClass1 : astcdClassList){
+      for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
+        ASTCDClass class2 = searchPairByName(dataStructureList, astcdClass1.getName()).getSecond();
+        if (!class2.getCDAttributeList().contains(attribute)){
+          i = 1;
+          break;
+        }
+      }
+    }
+    return i == 1;
+  }
+
+  public static DataStructure.Pair<ASTCDClass> searchPairByName(List<DataStructure.Pair<ASTCDClass>> pairs, String name) {
+    for (DataStructure.Pair pair : pairs) {
+      if (pair.getFirst().getClass().getName().equals(name) || pair.getSecond().getClass().getName().equals(name)) {
+        return pair;
+      }
+    }
+    return null;
   }
 
   //1
@@ -87,6 +103,7 @@ public class TypeDiff {
         }
       }
     }
+    return subclassesNonAbs;
   }
 
   private static List<ASTCDClass> getSubclasses(ASTCDCompilationUnit compilationUnit, ASTCDClass baseClass) {
