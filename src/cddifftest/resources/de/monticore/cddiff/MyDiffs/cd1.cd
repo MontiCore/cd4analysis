@@ -51,9 +51,9 @@ classdiagram CD1{
    association [*] Person (usedBy) -> (uses) UniProfile [*];
    association [*] Student (usedBy) -> (uses) UniProfile [1];
    association [*] Staff (supervidesBy) <-> (worksWith) Student [*];
-   association [1] Assistant (supervidesBy) <-> (worksWith) Student [1..*];
+   association [1] Assistant (supervisedBy) <-> (worksWith) Student [*];
    association [*] Staff (heldBy) -> (worksOn) Course [*];
-   association [1] Professor (heldBy) -> (worksOn) Student [1..*];
+   association [*] Professor (heldBy) -> (worksOn) Student [1..*];
    association [*] Student -> (participates) Course [1..*];
    composition [1] Faculty <-> Professor [1];
    composition [*] Faculty <-> Assistant [*];
