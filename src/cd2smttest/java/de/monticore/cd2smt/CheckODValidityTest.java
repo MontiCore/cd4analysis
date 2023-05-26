@@ -37,39 +37,30 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
 
   @ParameterizedTest
   @MethodSource("modelTargetDS")
-  public void checkODValidityTestDS_O2O(String CDFileName, String targetNumber) {
+  public void checkODValidityTestDS_O2O(String CDFileName) {
     checkODValidity(
-        CDFileName,
-        "DS" + targetNumber,
-        ClassStrategy.Strategy.DS,
-        AssociationStrategy.Strategy.ONE2ONE);
+        CDFileName, "DS/one2one/", ClassStrategy.Strategy.DS, AssociationStrategy.Strategy.ONE2ONE);
   }
 
   @ParameterizedTest
   @MethodSource("modelTargetDS")
-  public void checkODValidityTestDS_DEFAULT(String CDFileName, String targetNumber) {
+  public void checkODValidityTestDS_DEFAULT(String CDFileName) {
     checkODValidity(
-        CDFileName,
-        "DS" + targetNumber,
-        ClassStrategy.Strategy.DS,
-        AssociationStrategy.Strategy.DEFAULT);
+        CDFileName, "DS/default/", ClassStrategy.Strategy.DS, AssociationStrategy.Strategy.DEFAULT);
   }
 
   @ParameterizedTest
   @MethodSource("modelTargetSS")
-  public void checkODValidityTestSS_DEFAULT(String fileName, String targetNumber) {
+  public void checkODValidityTestSS_DEFAULT(String fileName) {
     checkODValidity(
-        fileName,
-        "SS" + targetNumber,
-        ClassStrategy.Strategy.SS,
-        AssociationStrategy.Strategy.DEFAULT);
+        fileName, "SS/default", ClassStrategy.Strategy.SS, AssociationStrategy.Strategy.DEFAULT);
   }
 
   @ParameterizedTest
   @MethodSource("modelTargetSS")
-  public void checkODValidityTestSS_O2O(String fileName, String target) {
+  public void checkODValidityTestSS_O2O(String fileName) {
     checkODValidity(
-        fileName, "SS" + target, ClassStrategy.Strategy.SS, AssociationStrategy.Strategy.ONE2ONE);
+        fileName, "SS/one2one", ClassStrategy.Strategy.SS, AssociationStrategy.Strategy.ONE2ONE);
   }
 
   public void checkODValidity(
@@ -87,8 +78,8 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
 
     Solver solver = cd2SMTGenerator.makeSolver(new ArrayList<>());
     Assertions.assertEquals(Status.SATISFIABLE, solver.check());
-
-    Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(solver.getModel(), false, "MyOD");
+    String odName = CDFileName.split("\\.")[0];
+    Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(solver.getModel(), false, odName);
     Assertions.assertTrue(optOd.isPresent());
 
     printOD(optOd.get(), targetNumber);

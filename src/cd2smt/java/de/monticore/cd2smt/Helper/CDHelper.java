@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper;
 
-import static de.monticore.cd2smt.Helper.CDHelper.ClassType.NORMAL_CLASS;
 import static de.monticore.cd2smt.Helper.CDHelper.ObjType.ABSTRACT_OBJ;
 import static de.monticore.cd2smt.Helper.CDHelper.ObjType.NORMAL_OBJ;
 
@@ -347,25 +346,16 @@ public class CDHelper {
     return classList;
   }
 
-  public enum ClassType {
-    INTERFACE,
-    NORMAL_CLASS,
-    ABSTRACT_CLASS,
-    ENUMERATION
-  }
-
   public enum ObjType {
     ABSTRACT_OBJ,
     NORMAL_OBJ
   }
 
-  public static ObjType mkType(ClassType type) {
+  public static ObjType mkType(ASTCDType astcdType) {
     ObjType res;
-    if (type == NORMAL_CLASS) {
-      res = NORMAL_OBJ;
-    } else {
-      res = ABSTRACT_OBJ;
+    if (astcdType instanceof ASTCDClass && !astcdType.getModifier().isAbstract()) {
+      return NORMAL_OBJ;
     }
-    return res;
+    return ABSTRACT_OBJ;
   }
 }
