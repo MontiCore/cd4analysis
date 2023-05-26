@@ -1,0 +1,14 @@
+import java.lang.String;
+
+classdiagram Concrete {
+  class AccountTopTop{
+    String username ;
+  }
+
+  class AccountTop  extends AccountTopTop{
+      boolean password ;
+  }
+
+  class Account extends AccountTop;
+
+}

@@ -181,15 +181,16 @@ public class CD4C {
   }
 
   /**
-   * Creates an attribute from the given {@code template}.
-   * Different name to avoid overlap with {@link  this#createAttribute(ASTCDType, String)} when no arguments are given
+   * Creates an attribute from the given {@code template}. Different name to avoid overlap with
+   * {@link this#createAttribute(ASTCDType, String)} when no arguments are given
    *
    * @param astcdType the ASTCDType from which to read necessary information
    * @param template the name of the template that is executed to create the method signature
    * @param arguments the arguments to be provided to the template
    * @return the created method
    */
-  protected Optional<ASTCDAttribute> createAttributeFromTemplate(ASTCDType astcdType, String template, Object... arguments) {
+  protected Optional<ASTCDAttribute> createAttributeFromTemplate(
+      ASTCDType astcdType, String template, Object... arguments) {
     checkInitialized();
 
     final TemplateHookPoint templateHookPoint = new TemplateHookPoint(template, arguments);
@@ -228,18 +229,20 @@ public class CD4C {
   }
 
   /**
-   * Adds an attribute created from the given {@code template} to the given class.
-   * Different name to avoid overlap with {@link  this#addAttribute(ASTCDType, String)} when no arguments are given
+   * Adds an attribute created from the given {@code template} to the given class. Different name to
+   * avoid overlap with {@link this#addAttribute(ASTCDType, String)} when no arguments are given
    *
    * @param astcdType the ASTCDType to which the attribute should be added
    * @param template the name of the template that is executed to create the attribute signature
    * @param arguments the arguments to be provided to the template
    * @return the created attribute
    */
-  public ASTCDAttribute addAttributeFromTemplate(ASTCDType astcdType, String template, Object... arguments) {
+  public ASTCDAttribute addAttributeFromTemplate(
+      ASTCDType astcdType, String template, Object... arguments) {
     checkInitialized();
 
-    Optional<ASTCDAttribute> attribute = this.createAttributeFromTemplate(astcdType, template, arguments);
+    Optional<ASTCDAttribute> attribute =
+        this.createAttributeFromTemplate(astcdType, template, arguments);
     if (!attribute.isPresent()) {
       Log.error("0x11012: There was no attribute created in the template '" + template + "'");
       return null;
@@ -247,9 +250,9 @@ public class CD4C {
 
     if (this.classAttrPredicates.stream().anyMatch(p -> !p.test(astcdType, attribute.get()))) {
       Log.error(
-        "0x11013: A check for the class attribute failed for attribute '"
-          + attribute.get().getName()
-          + "'");
+          "0x11013: A check for the class attribute failed for attribute '"
+              + attribute.get().getName()
+              + "'");
     }
 
     astcdType.addCDMember(attribute.get());

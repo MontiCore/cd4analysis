@@ -1,10 +1,10 @@
-package de.monticore.conformance.basic;
+package de.monticore.conformance.conf.cd;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.conformance.ConformanceStrategy;
+import de.monticore.conformance.conf.ConformanceStrategy;
 import de.monticore.conformance.inc.IncarnationStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;

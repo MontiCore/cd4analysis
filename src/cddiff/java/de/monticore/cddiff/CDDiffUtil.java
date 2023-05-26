@@ -4,6 +4,7 @@ package de.monticore.cddiff;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -20,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
 public class CDDiffUtil {
@@ -267,10 +269,34 @@ public class CDDiffUtil {
     return new HashSet<>();
   }
 
-  public static Set<ASTCDType> getAllTypes(ASTCDDefinition cd) {
-    Set<ASTCDType> typeSet = new HashSet<>();
-    typeSet.addAll(cd.getCDInterfacesList());
-    typeSet.addAll(cd.getCDClassesList());
-    return typeSet;
+  public static Set<ASTCDAssociation> getReferencingAssociations(
+      ASTCDType astcdType, ASTCDCompilationUnit cd) {
+    return cd.getCDDefinition().getCDAssociationsList().stream()
+        .filter(
+            rAssoc ->
+                astcdType
+                        .getSymbol()
+                        .getInternalQualifiedName()
+                        .contains(rAssoc.getLeftQualifiedName().getQName())
+                    || astcdType
+                        .getSymbol()
+                        .getInternalQualifiedName()
+                        .contains(rAssoc.getRightQualifiedName().getQName()))
+        .collect(Collectors.toSet());
+  }
+
+  public static Set<ASTCDType> getAllStrictSubTypes(ASTCDType type, ASTCDDefinition cd) {
+    Set<ASTCDType> result = new HashSet<>();
+    Set<ASTCDType> allTypes = new HashSet<>();
+    allTypes.addAll(cd.getCDInterfacesList());
+    allTypes.addAll(cd.getCDClassesList());
+
+    for (ASTCDType astcdType : allTypes) {
+      if (getAllSuperTypes(astcdType, cd).contains(type)) {
+        result.add(astcdType);
+      }
+    }
+    result.remove(type);
+    return result;
   }
 }

@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram Reference {
+
+  class AccountTop;
+
+  class Account extends AccountTop;
+
+  class Person ;
+
+  association belongTo Account    -> Person[1];
+  association access   Person      -> AccountTop [*];
+}

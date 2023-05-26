@@ -1,8 +1,8 @@
-package de.monticore.conformance.basic.attribute;
+package de.monticore.conformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.conformance.AttributeChecker;
+import de.monticore.conformance.conf.AttributeChecker;
 import java.util.HashSet;
 import java.util.Set;
 

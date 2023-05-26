@@ -43,6 +43,7 @@ public class ConformanceCheckerTest {
   public void testAttributeConformanceValid(String concrete) {
     parseModels("attributes/valid/" + concrete, "attributes/Reference.cd");
     assertTrue(ConformanceChecker.checkBasicComposedConformance(conCD, refCD, "ref"));
+    assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
@@ -50,6 +51,35 @@ public class ConformanceCheckerTest {
   public void testAttributeConformanceInvalid(String concrete) {
     parseModels("attributes/invalid/" + concrete, "attributes/Reference.cd");
     assertFalse(ConformanceChecker.checkBasicComposedConformance(conCD, refCD, "ref"));
+    assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AttrInSuperClasses.cd"})
+  public void testDeepAttributeConformanceValid(String concrete) {
+    parseModels("attributes/valid/" + concrete, "attributes/Reference.cd");
+    assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AttrInSuperTypeNoMatch.cd", "AttrInSuperTypeNoMatch.cd"})
+  public void testDeepAttributeConformanceInvalid(String concrete) {
+    parseModels("attributes/invalid/" + concrete, "attributes/Reference.cd");
+    assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd","Valid1.cd"})
+  public void testDeepAssocConformanceValid(String concrete) {
+    parseModels("associations/valid/" + concrete, "associations/Reference.cd");
+    assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"FalseDirection.cd"})
+  public void testDeepAssocConformanceInvalid(String concrete) {
+    parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
+    assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
   }
 
   public void parseModels(String concrete, String ref) {

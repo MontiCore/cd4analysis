@@ -129,13 +129,9 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testDigitalTwins() {
     // Parse Test Modules
-    final ASTCDCompilationUnit astV1 =
-        parseModel(
-            "doc/DigitalTwin3.cd");
+    final ASTCDCompilationUnit astV1 = parseModel("doc/DigitalTwin3.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 =
-        parseModel(
-            "doc/DigitalTwin2.cd");
+    final ASTCDCompilationUnit astV2 = parseModel("doc/DigitalTwin2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
@@ -156,7 +152,5 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     // Call generator
     DiffModuleGenerator.generateDiffPredicateToFile(
         astV1, astV2, 7, CDSemantics.MULTI_INSTANCE_OPEN_WORLD, outputDirectory.toFile());
-
-
   }
 }

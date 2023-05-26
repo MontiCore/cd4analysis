@@ -1,6 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
+import static de.monticore.cd.facade.CDModifier.*;
+import static org.junit.Assert.*;
+
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,22 +20,16 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import de.se_rwth.commons.logging.MCFatalError;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.List;
-
-import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
-import static de.monticore.cd.facade.CDModifier.*;
-import static org.junit.Assert.*;
-
 public class TopDecoratorTest extends DecoratorTestCase {
 
-  @Mock
-  private MCPath targetPath;
+  @Mock private MCPath targetPath;
 
   private TopDecorator topDecorator;
 
@@ -47,22 +45,22 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
   @Test
   public void testTopNeededHwNotFound() {
-    //Replaces the log stub  with normal log to check for properly configured fail quick
+    // Replaces the log stub  with normal log to check for properly configured fail quick
     Log.init();
 
-    //Setup
+    // Setup
     String reasonString = "needStereoReason";
     ASTStereoValue stereoValue = TopDecorator.NEEDS_TOP_STEREO_BUILDER.apply(reasonString);
     ASTCDClass clazz = buildClassWithStereotype(stereoValue);
 
-    //Unit
+    // Unit
     try {
       this.topDecorator.checkNeedsHandwrittenClass(false, clazz);
       fail("No Exception thrown (should fail quick)");
     } catch (MCFatalError ignored) {
     }
 
-    //Check Logs
+    // Check Logs
     List<Finding> findings = Log.getFindings();
     assertTrue("Log messages empty", findings.size() > 0);
     Finding lastMsg = findings.get(findings.size() - 1);
@@ -72,32 +70,31 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
   @Test
   public void testTopNeededHwFound() {
-    //Replaces the log stub  with normal log to check for properly configured fail quick
+    // Replaces the log stub  with normal log to check for properly configured fail quick
     Log.init();
 
-    //Setup
+    // Setup
     String reasonString = "needStereoReason";
     ASTStereoValue stereoValue = TopDecorator.NEEDS_TOP_STEREO_BUILDER.apply(reasonString);
     ASTCDClass clazz = buildClassWithStereotype(stereoValue);
 
-    //Unit
+    // Unit
     this.topDecorator.checkNeedsHandwrittenClass(true, clazz);
 
-    //CheckLogs
+    // CheckLogs
     List<Finding> findings = Log.getFindings();
     assertFalse("Log messages not empty", findings.size() > 0);
   }
-
 
   @Test
   public void testHandWrittenClassFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
     engineMock
-      .when(
-        () ->
-          GeneratorEngine.existsHandwrittenClass(
-            Mockito.any(MCPath.class), Mockito.any(String.class)))
-      .thenReturn(true);
+        .when(
+            () ->
+                GeneratorEngine.existsHandwrittenClass(
+                    Mockito.any(MCPath.class), Mockito.any(String.class)))
+        .thenReturn(true);
     ASTCDDefinition ast = this.topDecorator.decorate(this.topCD).getCDDefinition();
 
     assertEquals(1, ast.getCDClassesList().size());
@@ -126,11 +123,11 @@ public class TopDecoratorTest extends DecoratorTestCase {
   public void testHandWrittenClassInLocalPackageFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
     engineMock
-      .when(
-        () ->
-          GeneratorEngine.existsHandwrittenClass(
-            Mockito.any(MCPath.class), Mockito.any(String.class)))
-      .thenReturn(true);
+        .when(
+            () ->
+                GeneratorEngine.existsHandwrittenClass(
+                    Mockito.any(MCPath.class), Mockito.any(String.class)))
+        .thenReturn(true);
     this.topDecorator.decorate(this.topCD);
     ASTCDDefinition ast = topCD.getCDDefinition();
 
@@ -160,11 +157,11 @@ public class TopDecoratorTest extends DecoratorTestCase {
   public void testHandWrittenClassNotFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
     engineMock
-      .when(
-        () ->
-          GeneratorEngine.existsHandwrittenClass(
-            Mockito.any(MCPath.class), Mockito.any(String.class)))
-      .thenReturn(false);
+        .when(
+            () ->
+                GeneratorEngine.existsHandwrittenClass(
+                    Mockito.any(MCPath.class), Mockito.any(String.class)))
+        .thenReturn(false);
     ASTCDDefinition ast = this.topDecorator.decorate(this.topCD).getCDDefinition();
 
     assertEquals(1, ast.getCDClassesList().size());
@@ -192,13 +189,9 @@ public class TopDecoratorTest extends DecoratorTestCase {
   private ASTCDClass buildClassWithStereotype(ASTStereoValue stereoValue) {
     ASTCDClass clazz = new ASTCDClass();
     clazz.setModifier(
-      UMLModifierMill.modifierBuilder()
-        .setStereotype(
-          UMLStereotypeMill.stereotypeBuilder()
-            .addValues(stereoValue)
-            .build()
-        ).build()
-    );
+        UMLModifierMill.modifierBuilder()
+            .setStereotype(UMLStereotypeMill.stereotypeBuilder().addValues(stereoValue).build())
+            .build());
     return clazz;
   }
 }
