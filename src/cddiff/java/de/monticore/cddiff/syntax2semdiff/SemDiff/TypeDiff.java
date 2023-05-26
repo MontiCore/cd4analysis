@@ -3,8 +3,6 @@ import de.monticore.cdbasis._ast.*;
 import java.util.*;
 
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import org.antlr.v4.runtime.misc.NotNull;
 
 public class TypeDiff {
   private static ASTCDClass findClassByName(ASTCDCompilationUnit compilationUnit, String className) {
@@ -54,7 +52,7 @@ public class TypeDiff {
   //added classes
   //idea - added classes are semantic differences
   //if they are abstract and combine attributes from classes - they don't bring a semDiff
-  private static List<ASTCDClass> realDiffs(List<ASTCDClass> addedClasses, ASTCDCompilationUnit astcdCompilationUnit, List<DataStructure.Pair<ASTCDClass>> dataStructureList){
+  private static List<ASTCDClass> realDiffs(List<ASTCDClass> addedClasses, ASTCDCompilationUnit astcdCompilationUnit, List<DataStructure.DiffPair<ASTCDClass>> dataStructureList){
     List<ASTCDClass> astcdClassList = new ArrayList<>();
     for (ASTCDClass astcdClass: addedClasses) {
       if (!astcdClass.getModifier().isAbstract()){
@@ -65,9 +63,9 @@ public class TypeDiff {
         //superclasses can have new superclasses
         List<ASTCDClass> absClasses = getAllExtendingNonAbsClasses(astcdCompilationUnit, astcdClass);
         if (!hasMoreAtt(astcdClass, absClasses, dataStructureList)){
-          for (DataStructure.Pair<ASTCDClass> pair : dataStructureList){
-            for (ASTCDAttribute attribute : pair.getSecond().getCDAttributeList())
-            if (!hasAttribute(getClassHierarchy(astcdCompilationUnit, pair.getFirst()), attribute)){
+          for (DataStructure.DiffPair<ASTCDClass> diffPair : dataStructureList){
+            for (ASTCDAttribute attribute : diffPair.getSecond().getCDAttributeList())
+            if (!hasAttribute(getClassHierarchy(astcdCompilationUnit, diffPair.getFirst()), attribute)){
               astcdClassList.add(astcdClass);
             }
           }
@@ -102,7 +100,7 @@ public class TypeDiff {
 
   //2&3
   //Check if all attributes of an added superclass are in the nodes in the other class diagram
-  private static boolean hasMoreAtt(ASTCDClass astcdClass, List<ASTCDClass> astcdClassList, List<DataStructure.Pair<ASTCDClass>> dataStructureList){
+  private static boolean hasMoreAtt(ASTCDClass astcdClass, List<ASTCDClass> astcdClassList, List<DataStructure.DiffPair<ASTCDClass>> dataStructureList){
     int i = 0;
     for (ASTCDClass astcdClass1 : astcdClassList){
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
@@ -116,10 +114,10 @@ public class TypeDiff {
     return i == 0;
   }
 
-  public static DataStructure.Pair<ASTCDClass> searchPairByName(List<DataStructure.Pair<ASTCDClass>> pairs, String name) {
-    for (DataStructure.Pair pair : pairs) {
-      if (pair.getFirst().getClass().getName().equals(name) || pair.getSecond().getClass().getName().equals(name)) {
-        return pair;
+  public static DataStructure.DiffPair<ASTCDClass> searchPairByName(List<DataStructure.DiffPair<ASTCDClass>> diffPairs, String name) {
+    for (DataStructure.DiffPair diffPair : diffPairs) {
+      if (diffPair.getFirst().getClass().getName().equals(name) || diffPair.getSecond().getClass().getName().equals(name)) {
+        return diffPair;
       }
     }
     return null;
