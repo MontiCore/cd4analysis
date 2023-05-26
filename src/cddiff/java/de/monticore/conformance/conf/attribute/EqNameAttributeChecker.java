@@ -1,41 +1,35 @@
-package de.monticore.conformance.basic.attribute;
+package de.monticore.conformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.conformance.AttributeChecker;
+import de.monticore.conformance.conf.AttributeChecker;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class STNamedAttributeChecker implements AttributeChecker {
-  protected String mapping;
+public class EqNameAttributeChecker implements AttributeChecker {
   protected ASTCDType refType;
   protected ASTCDType conType;
+  protected String mapping;
 
-  public STNamedAttributeChecker(String mapping) {
+  public EqNameAttributeChecker(String mapping) {
     this.mapping = mapping;
   }
 
   @Override
   public Set<ASTCDAttribute> getRefElements(ASTCDAttribute concrete) {
-
     return refType.getCDAttributeList().stream()
-        .filter(ref -> isIncarnation(concrete, ref))
+        .filter(attr -> isIncarnation(concrete, attr))
         .collect(Collectors.toSet());
   }
 
   @Override
   public boolean isIncarnation(ASTCDAttribute concrete, ASTCDAttribute ref) {
-    if (concrete.getModifier().isPresentStereotype()
-        && concrete.getModifier().getStereotype().contains(mapping)) {
-      String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return ref.getName().equals(refName);
-    }
-    return false;
+    return ref.getName().equals(concrete.getName());
   }
 
   @Override
   public ASTCDType getReferenceType() {
-    return this.refType;
+    return refType;
   }
 
   @Override

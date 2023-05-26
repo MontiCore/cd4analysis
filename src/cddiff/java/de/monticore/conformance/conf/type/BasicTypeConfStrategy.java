@@ -1,15 +1,18 @@
-package de.monticore.conformance.basic;
+package de.monticore.conformance.conf.type;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.conformance.AttributeChecker;
-import de.monticore.conformance.ConformanceStrategy;
+import de.monticore.conformance.conf.AttributeChecker;
+import de.monticore.conformance.conf.ConformanceStrategy;
 import de.monticore.conformance.inc.IncarnationStrategy;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
@@ -64,7 +67,6 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
       }
     }
 
-    // check
     // check if all necessary attributes are present
     attributeChecker.setReferenceType(ref);
     attributeChecker.setConcreteType(concrete);
@@ -72,30 +74,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
         checkAttributeIncarnation(concrete, ref) && checkAttributeConformance(concrete);
 
     // check if reference associations are incarnated
-    boolean associations =
-        refCD.getCDDefinition().getCDAssociationsList().stream()
-            .filter(
-                rAssoc ->
-                    ref.getSymbol()
-                            .getInternalQualifiedName()
-                            .contains(rAssoc.getLeftQualifiedName().getQName())
-                        || ref.getSymbol()
-                            .getInternalQualifiedName()
-                            .contains(rAssoc.getRightQualifiedName().getQName()))
-            .allMatch(
-                rAssoc ->
-                    conCD.getCDDefinition().getCDAssociationsList().stream()
-                        .filter(
-                            cAssoc ->
-                                concrete
-                                        .getSymbol()
-                                        .getInternalQualifiedName()
-                                        .contains(cAssoc.getLeftQualifiedName().getQName())
-                                    || concrete
-                                        .getSymbol()
-                                        .getInternalQualifiedName()
-                                        .contains(cAssoc.getRightQualifiedName().getQName()))
-                        .anyMatch(cAssoc -> assocInc.getRefElements(cAssoc).contains(rAssoc)));
+    boolean associations = checkAssocIncarnation(concrete, ref);
 
     // check if all reference super-types are incarnated
     boolean superTypes =
@@ -128,20 +107,41 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
         .allMatch(conConst -> ref.getCDEnumConstantList().stream().anyMatch(conConst::deepEquals));
   }
 
-  /***
-   *check if all attribute of the reference type are incarnated
-   */
-  private boolean checkAttributeIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return ref.getCDAttributeList().stream()
-        .allMatch(
-            refAttr ->
-                concrete.getCDAttributeList().stream()
-                    .anyMatch(conAttr -> attributeChecker.isIncarnation(conAttr, refAttr)));
+  /** check if all attributes of the reference type are incarnated */
+  protected boolean checkAttributeIncarnation(ASTCDType con, ASTCDType ref) {
+    return checkIncarnationAt(
+        (new HashSet<>(con.getCDAttributeList())), new HashSet<>(ref.getCDAttributeList()));
   }
 
-  /** check if all attributes that are incarnations are conform to the references */
-  private boolean checkAttributeConformance(ASTCDType concrete) {
-    return concrete.getCDAttributeList().stream()
+  /** check if all attributes that are incarnations are conformed to the references */
+  protected boolean checkAttributeConformance(ASTCDType con) {
+    return checkConformanceAt(new HashSet<>(con.getCDAttributeList()));
+  }
+
+  /** check if all associations of the reference type are incarnated */
+  protected boolean checkAssocIncarnation(ASTCDType conType, ASTCDType refType) {
+    return checkIncarnationAs(
+        CDDiffUtil.getReferencingAssociations(conType, conCD),
+        CDDiffUtil.getReferencingAssociations(refType, refCD));
+  }
+
+  protected boolean checkIncarnationAs(Set<ASTCDAssociation> con, Set<ASTCDAssociation> ref) {
+    return ref.stream()
+        .allMatch(
+            refAssoc ->
+                con.stream()
+                    .anyMatch(cAssoc -> assocInc.getRefElements(cAssoc).contains(refAssoc)));
+  }
+
+  protected boolean checkIncarnationAt(Set<ASTCDAttribute> con, Set<ASTCDAttribute> ref) {
+    return ref.stream()
+        .allMatch(
+            refAttr ->
+                con.stream().anyMatch(conAttr -> attributeChecker.isIncarnation(conAttr, refAttr)));
+  }
+
+  protected boolean checkConformanceAt(Set<ASTCDAttribute> concrete) {
+    return concrete.stream()
         .allMatch(
             conAttr ->
                 attributeChecker.getRefElements(conAttr).isEmpty()

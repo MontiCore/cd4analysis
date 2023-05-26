@@ -175,16 +175,18 @@ public class CD4CTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testGenerateAttributeFromTemplate(){
+  public void testGenerateAttributeFromTemplate() {
     // Build class for testing
     ASTCDClass clazz =
-      CD4CodeMill.cDClassBuilder()
-        .setName("AttributeFromTemplate")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+        CD4CodeMill.cDClassBuilder()
+            .setName("AttributeFromTemplate")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
 
     node.getCDDefinition().addCDElement(clazz);
-    ASTCDAttribute a = CD4C.getInstance().addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.Attribute", "world");
+    ASTCDAttribute a =
+        CD4C.getInstance()
+            .addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.Attribute", "world");
 
     checkLogError();
 
