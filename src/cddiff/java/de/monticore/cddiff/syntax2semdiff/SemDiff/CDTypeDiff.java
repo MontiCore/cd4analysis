@@ -2,7 +2,6 @@ package de.monticore.cddiff.syntax2semdiff.SemDiff;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
@@ -40,7 +39,7 @@ public interface CDTypeDiff {
    * Get all classes with an enum that containt the new constant.
    * @param astcdEnum
    * @return list of those classes.
-   * Similar function for added/deleted Enum-classes.
+   * This function is similar to the one for added/deleted Enum-classes.
    */
   List<ASTCDClass> getClassesForEnum(ASTCDEnum astcdEnum);
 }

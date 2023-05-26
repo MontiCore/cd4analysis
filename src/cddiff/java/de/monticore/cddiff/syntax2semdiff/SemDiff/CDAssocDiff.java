@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CDAssocDiff {
   List<DataStructure.DiffPair<ASTCDAssociation>> getChangedAssocs();
-  List<Pair> getMatchedAssocs();
+  List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs();
 
   /**
    *
@@ -43,8 +43,8 @@ public interface CDAssocDiff {
   List<Pair> findDiff(ASTCDClass target, ASTCDClass source);
 
   /**
-   * Compare ranges and attributes between classes that are using the.
-   * @param astcdAssociation as an inheritance association(deleted or added)
+   * Compare ranges and attributes between classes that are using the
+   * @param astcdAssociation as an inheritance association(deleted or added).
    * @return list of pairs of found differences.
    */
   List<DataStructure.DiffPair> compareAttAndRelations(ASTCDAssociation astcdAssociation);
@@ -52,10 +52,18 @@ public interface CDAssocDiff {
   /**
    * Compute all ranges for all classes.
    * @param astcdCompilationUnit
-   * @return multymap with list of pairs of associations and ranges for each class
+   * @return multymap with list of pairs of associations and ranges for each class.
    * Subfunctions: ConstraintSolver, add inheritance relations to subclasses, duplicated associations
    */
   ArrayListMultimap computeAllRanges(ASTCDCompilationUnit astcdCompilationUnit);
+
+  /**
+   * Get the two classes that are connected via an association.
+   * @param astcdCompilationUnit
+   * @param astcdAssociation
+   * @return pair of two classes.
+   */
+  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDCompilationUnit astcdCompilationUnit, ASTCDAssociation astcdAssociation);
 
 
 }

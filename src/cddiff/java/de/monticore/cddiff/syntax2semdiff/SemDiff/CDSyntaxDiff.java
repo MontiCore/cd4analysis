@@ -55,5 +55,11 @@ public interface CDSyntaxDiff {
    */
   List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum);
 
-
+  /**
+   * Compute the classes that extend a given class.
+   * @param astcdClass
+   * @return list of extending classes.
+   * This function is similar to getClassHierarchy().
+   */
+  List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass);
 }
