@@ -94,13 +94,24 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
                   ctx.mkEq(leftExpr2, leftExpr1)),
               classData);
 
+      // result must have the correct type
+      BoolExpr resultType =
+          mkForAll(
+              ctx,
+              Set.of(new ImmutablePair<>(left, leftExpr1)),
+              classData.hasType(assocFunc.apply(leftExpr1), right),
+              classData);
+
       SourcePosition srcPos = assoc.get_SourcePositionStart();
       assert srcPos.getFileName().isPresent();
       IdentifiableBoolExpr constraint =
           IdentifiableBoolExpr.buildIdentifiable(
-              ctx.mkAnd(injective, surjectiv), srcPos, Optional.of("cardinality-constraint"));
+              ctx.mkAnd(injective, surjectiv, resultType),
+              srcPos,
+              Optional.of("cardinality-constraint"));
 
       constraints.add(constraint);
+
     } else {
       constraints.addAll(super.buildAssocConstraints(assoc, ctx));
     }

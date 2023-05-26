@@ -1,7 +1,5 @@
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort;
 
-import static de.monticore.cd2smt.Helper.CDHelper.mcType2Sort;
-
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
@@ -12,8 +10,10 @@ import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import java.util.stream.Collectors;
 // TODO: Date to smt
 // TODO: Enum 2 SMT
 // TODO : abstract class 2smt
@@ -43,17 +43,17 @@ import java.util.stream.Collectors;
  */
 // @formatter:on
 public class SingleSort implements ClassStrategy {
-  protected Set<IdentifiableBoolExpr> classConstraints = new HashSet<>();
-  protected Map<ASTCDType, SMTType> smtTypesMap;
   protected Context ctx;
   protected DatatypeSort<? extends Sort> types;
   ASTCDCompilationUnit ast;
   private FuncDecl<BoolSort> hasTypeFunc;
   private Sort sort;
 
-  public SingleSort() {
-    smtTypesMap = new HashMap<>();
-  }
+  protected Set<IdentifiableBoolExpr> classConstraints = new HashSet<>();
+
+  protected Map<ASTCDType, Constructor<? extends Sort>> typeMap = new HashMap<>();
+  protected Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new HashMap<>();
+  protected Map<ASTCDEnum, SMTEnum> enumMap = new HashMap<>();
 
   @Override
   public Sort getSort(ASTCDType astCdType) {
@@ -63,17 +63,13 @@ public class SingleSort implements ClassStrategy {
   @Override
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
     return (BoolExpr)
-        ctx.mkApp(
-            hasTypeFunc, expr, ctx.mkConst(smtTypesMap.get(astCdType).getType().ConstructorDecl()));
+        ctx.mkApp(hasTypeFunc, expr, ctx.mkConst(typeMap.get(astCdType).ConstructorDecl()));
   }
 
   @Override
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
-    return smtTypesMap
-        .get(astCdType)
-        .getAttribute(CDHelper.getAttribute(astCdType, attributeName))
-        .apply(cDTypeExpr);
+    return attributeMap.get(CDHelper.getAttribute(astCdType, attributeName)).apply(cDTypeExpr);
   }
 
   @Override
@@ -93,14 +89,15 @@ public class SingleSort implements ClassStrategy {
 
   @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
-    ctx = context;
-    sort = ctx.mkUninterpretedSort("Object");
     this.ast = ast;
+    this.ctx = context;
 
-    ast.getCDDefinition().getCDClassesList().forEach(Class -> declareCDType(Class, context, false));
-    ast.getCDDefinition()
-        .getCDInterfacesList()
-        .forEach(Interface -> declareCDType(Interface, context, true));
+    // declare the unique sort (declare-sort Object 0)
+    this.sort = ctx.mkUninterpretedSort("Object");
+
+    ast.getCDDefinition().getCDEnumsList().forEach(this::declareEnum);
+    ast.getCDDefinition().getCDClassesList().forEach(this::declareCDType);
+    ast.getCDDefinition().getCDInterfacesList().forEach(this::declareCDType);
 
     types = ctx.mkDatatypeSort("CDType", collectTypeConstructors());
 
@@ -140,23 +137,63 @@ public class SingleSort implements ClassStrategy {
   }
 
   /** this function declared a "CDType" constructor for each ASTCDType */
-  private void declareCDType(ASTCDType astcdType, Context ctx, boolean isInterface) {
-    SMTType smtType = new SMTType(isInterface, astcdType);
-    smtType.setType(
+  private void declareCDType(ASTCDType astcdType) {
+
+    Constructor<? extends Sort> typeConstructor =
         ctx.mkConstructor(
-            "SS_" + astcdType.getName(), "SS_IS_" + astcdType.getName(), null, null, null));
+            "SS_" + astcdType.getName(), "SS_IS_" + astcdType.getName(), null, null, null);
+    typeMap.put(astcdType, typeConstructor);
 
     // (declare-fun a_attrib_something (A_obj) String) declare all attributes
     for (ASTCDAttribute myAttribute : astcdType.getCDAttributeList()) {
+      Sort attrSort;
+      if (CDHelper.isPrimitiveType(myAttribute.getMCType())) {
+        attrSort = CDHelper.mcType2Sort(ctx, myAttribute.getMCType());
+      } else if (CDHelper.isEnumType(ast.getCDDefinition(), myAttribute.getMCType().printType())) {
+        attrSort =
+            enumMap
+                .get(CDHelper.getEnum(myAttribute.getMCType().printType(), ast.getCDDefinition()))
+                .getSort();
+      } else if (CDHelper.isDateType(myAttribute.getMCType())) {
+        attrSort = ctx.mkIntSort();
+      } else {
+        Log.info(
+            "conversion of  Attribute "
+                + myAttribute.getName()
+                + " of the ASTCDType  "
+                + astcdType.getName()
+                + " skipped because his type  "
+                + myAttribute.getMCType().printType()
+                + " is not supported yet ",
+            "Warning");
+        return;
+      }
       FuncDecl<Sort> attributeFunc =
           ctx.mkFuncDecl(
-              SMTHelper.printAttributeNameSMT(astcdType, myAttribute),
-              sort,
-              mcType2Sort(ctx, myAttribute.getMCType()));
-      smtType.addAttribute(myAttribute, attributeFunc);
+              SMTHelper.printAttributeNameSMT(astcdType, myAttribute), this.sort, attrSort);
+      attributeMap.put(myAttribute, attributeFunc);
+    }
+    typeMap.put(astcdType, typeConstructor);
+  }
+
+  private void declareEnum(ASTCDEnum astcdEnum) {
+    SMTEnum smtEnum = new SMTEnum();
+    List<Constructor<Sort>> constructorList = new ArrayList<>();
+
+    // create constant for the attributes values  and saves im smtType
+    for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
+      Constructor<Sort> constructor =
+          ctx.mkConstructor(constant.getName(), constant.getName(), null, null, null);
+      constructorList.add(constructor);
+      smtEnum.enumConstantMap.put(constant, constructor);
     }
 
-    smtTypesMap.put(astcdType, smtType);
+    DatatypeSort<Sort> sort =
+        ctx.mkDatatypeSort(astcdEnum.getName(), constructorList.toArray(new Constructor[0]));
+
+    smtEnum.setSort(sort);
+
+    enumMap.put(astcdEnum, smtEnum);
   }
 
   @Override
@@ -171,17 +208,14 @@ public class SingleSort implements ClassStrategy {
         for (ASTCDType astcdType : CDHelper.getASTCDTypes(ast)) {
 
           if (hasType(smtExpr, astcdType, model)) {
-            SMTType smtType = smtTypesMap.get(astcdType);
 
-            MinObject obj =
-                new MinObject(CDHelper.mkType(smtType.getClassType()), smtExpr, astcdType);
+            MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
 
-            for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
-                smtType.getAttributesMap().entrySet()) {
+            for (ASTCDAttribute attr : astcdType.getCDAttributeList()) {
               Expr<? extends Sort> attrExpr =
-                  model.eval(attribute.getValue().apply(smtExpr), !partial);
+                  model.eval(attributeMap.get(attr).apply(smtExpr), !partial);
               if (attrExpr.getNumArgs() == 0) {
-                obj.addAttribute(attribute.getKey(), attrExpr);
+                obj.addAttribute(attr, attrExpr);
               }
             }
             objectSet.add(obj);
@@ -194,8 +228,8 @@ public class SingleSort implements ClassStrategy {
 
   /** collect the CDType constructor of each class and interface . */
   private Constructor<Sort>[] collectTypeConstructors() {
-    List<Constructor<? extends Sort>> constructors =
-        smtTypesMap.values().stream().map(SMTType::getType).collect(Collectors.toList());
+    Set<Constructor<? extends Sort>> constructors = new HashSet<>(typeMap.values());
+
     constructors.add(ctx.mkConstructor("SS_NO_TYPE", "SS_IS_" + "NO_TYPE", null, null, null));
 
     return (Constructor<Sort>[]) constructors.toArray(new Constructor[0]);
@@ -204,5 +238,18 @@ public class SingleSort implements ClassStrategy {
   private boolean hasType(Expr<? extends Sort> expr, ASTCDType astcdType, Model model) {
     BoolExpr hasType = (BoolExpr) model.evaluate(hasType(expr, astcdType), true);
     return hasType.getBoolValue() == Z3_lbool.Z3_L_TRUE;
+  }
+
+  private static class SMTEnum {
+    DatatypeSort<Sort> sort;
+    Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap = new HashMap<>();
+
+    public void setSort(DatatypeSort<Sort> sort) {
+      this.sort = sort;
+    }
+
+    public DatatypeSort<Sort> getSort() {
+      return sort;
+    }
   }
 }
