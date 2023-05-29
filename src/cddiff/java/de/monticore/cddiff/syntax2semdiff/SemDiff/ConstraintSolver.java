@@ -8,6 +8,8 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
 
@@ -28,29 +30,41 @@ public class ConstraintSolver {
       }
     }
   }
+*/
+private List<List<Integer>> mergeAssociations(ASTCDCompilationUnit astcdCompilationUnit) {
+  ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> map = ArrayListMultimap.create();
+  List<List<Integer>> forMatrix = new ArrayList<>();
+  for (ASTCDAssociation astcdAssociation : astcdCompilationUnit.getCDDefinition().getCDAssociationsList()) {
+    map.put(astcdAssociation, null);
+    for (ASTCDAssociation astcdAssociation1 : astcdCompilationUnit.getCDDefinition().getCDAssociationsList()) {
+      if (!astcdAssociation.equals(astcdAssociation1) && matchRoleNames(astcdAssociation.getLeft(), astcdAssociation1.getLeft()) && matchRoleNames(astcdAssociation
+        .getRight(), astcdAssociation1.getRight()) &&
+        astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))
+        && astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))) {
+        map.put(astcdAssociation, astcdAssociation1);
 
-  private void mergeAssociations(ASTCDCompilationUnit astcdCompilationUnit) {
-    ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> map = ArrayListMultimap.create();
-    for (ASTCDAssociation astcdAssociation : astcdCompilationUnit.getCDDefinition().getCDAssociationsList()) {
-      map.put(astcdAssociation, null);
-      for (ASTCDAssociation astcdAssociation1 : astcdCompilationUnit.getCDDefinition().getCDAssociationsList()) {
-        if (!astcdAssociation.equals(astcdAssociation1) && matchRoleNames(astcdAssociation.getLeft(), astcdAssociation1.getLeft()) && matchRoleNames(astcdAssociation
-          .getRight(), astcdAssociation1.getRight()) &&
-          astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))
-          && astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))) {
-          map.put(astcdAssociation, astcdAssociation1);
-        }
-      }
-    }
-    for (ASTCDAssociation astcdAssociation : map.keySet()) {
-      if (astcdAssociation.getLeft().getCDCardinality().isMult() || astcdAssociation.getRight().getCDCardinality().isMult()) {
-        for (ASTCDAssociation astcdAssociation1 : map.get(astcdAssociation)) {
-          astcdAssociation1.get
-        }
       }
     }
   }
-
+  for (ASTCDAssociation astcdAssociation : map.keySet()) {
+    List<Integer> innerListLeft = new ArrayList<>();
+    innerListLeft.add(astcdAssociation.getLeft().getCDCardinality().getLowerBound());
+    innerListLeft.add(astcdAssociation.getLeft().getCDCardinality().getUpperBound());
+    List<Integer> innerListRight = new ArrayList<>();
+    innerListRight.add(astcdAssociation.getRight().getCDCardinality().getLowerBound());
+    innerListRight.add(astcdAssociation.getRight().getCDCardinality().getUpperBound());
+    forMatrix.add(innerListLeft);
+    forMatrix.add(innerListRight);
+    for (ASTCDAssociation astcdAssociation1 : map.get(astcdAssociation)) {
+      innerListLeft.add(astcdAssociation1.getLeft().getCDCardinality().getLowerBound());
+      innerListLeft.add(astcdAssociation1.getLeft().getCDCardinality().getUpperBound());
+      innerListRight.add(astcdAssociation1.getRight().getCDCardinality().getLowerBound());
+      innerListRight.add(astcdAssociation1.getRight().getCDCardinality().getUpperBound());
+    }
+  }
+  return forMatrix;
+}
+/*
   private ArrayListMultimap computeRanges(ASTCDCompilationUnit astcdCompilationUnit) {
     ArrayListMultimap arrayListMultimap = ArrayListMultimap.create();
     for (ASTCDClass astcdClass : astcdCompilationUnit.getCDDefinition().getCDClassesList()) {
@@ -61,35 +75,49 @@ public class ConstraintSolver {
     return arrayListMultimap;
   }
 
-
-  private static void toMatrix() {
-    List<List<Integer>> ranges = new ArrayList<>();
-    int numRows = ranges.size();
-    int numCols = ranges.stream().mapToInt(List::size).sum();
-
-    int[][] A = new int[numRows][numCols];
-    int[][] B = new int[numRows][numCols];
-    int[] a = new int[numRows];
-    int[] b = new int[numRows];
-
-    int colIndex = 0;
-    for (int i = 0; i < numRows; i++) {
-      List<Integer> range = ranges.get(i);
-      int lowerRange = range.get(0);
-      int upperRange = range.get(1);
-
-      for (int j = colIndex; j < colIndex + range.size(); j++) {
-        A[i][j] = 1;
-        B[i][j] = 1;
-      }
-
-      a[i] = lowerRange;
-      b[i] = upperRange;
-
-      colIndex += range.size();
-    }
-  }
 */
+private static void toMatrix(List<List<Integer>> ranges) {
+
+  int evenCount = (int) ranges.stream()
+    .flatMapToInt(innerList -> IntStream.range(0, innerList.size()))
+    .filter(i -> i % 2 == 0)
+    .count();
+  int numCols = ranges.size();
+
+  int[][] A = new int[evenCount][numCols];
+  int[][] B = new int[evenCount][numCols];
+  int[] a = new int[numCols];
+  int[] b = new int[numCols];
+
+  int index = 0;
+  for (int i = 0; i < numCols; i++) {
+    List<Integer> range = ranges.get(i);
+    int k = 0;
+    for (int j = 0; i < range.size(); i += 2) {
+      Optional<Integer> optionalValue = Optional.ofNullable(range.get(i));
+      if (optionalValue.isPresent()) {
+        Integer value = optionalValue.get();
+        a[index+k] = value;
+        A[index+k][i] = 1;
+        k++;
+      }
+    }
+    k = 0;
+    for (int j = 1; i < range.size(); i += 2) {
+      Optional<Integer> optionalValue = Optional.ofNullable(range.get(i));
+      if (optionalValue.isPresent()) {
+        Integer value = optionalValue.get();
+        b[index+k] = value;
+        B[index+k][i] = 1;
+        k++;
+      }
+    }
+    k = 0;
+
+    index += range.size();
+  }
+}
+
   /*
    * Transform a system of inequalities Ax<=b
    * to a system of equalities Ax=b.
@@ -199,6 +227,21 @@ public class ConstraintSolver {
     return solution;
 }
     */
+  private void defineRanges(int[][] coefficients, int[] constants){
+    int[] solution = solve(coefficients, constants);
+    int[][] inverted = inverse(coefficients);
+    for (int i = 0; i < solution.length; i++) {
+      int min = (int)Math.ceil(solution[i]);
+      int max = Integer.MAX_VALUE;
+      for (int j = 0; j < inverted[i].length; j++) {
+        if (inverted[i][j] > 0) {
+          max = Math.min(max, (int)Math.floor((double)constants[j] / inverted[i][j]));
+        }
+      }
+      System.out.println("Variable " + (i+1) + " has a range of positive integer values from " +
+        min + " to " + max);
+    }
+  }
 
   /*
    * Gaussian elimination for Ax=b with partial pivoting
