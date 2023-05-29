@@ -113,11 +113,8 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
       InheritanceData.Strategy is) {
 
     ASTCDCompilationUnit ast = parseModel(CDFileName);
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator(cs, is, as);
 
-    cd2SMTGenerator.setClassStrategy(cs);
-    cd2SMTGenerator.setAssociationStrategy(as);
-    cd2SMTGenerator.setInheritanceStrategy(is);
     cd2SMTGenerator.cd2smt(ast, ctx);
     List<IdentifiableBoolExpr> constraints = new ArrayList<>();
 

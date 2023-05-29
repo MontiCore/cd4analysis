@@ -73,7 +73,6 @@ public class SEInheritanceStrategy extends SSClassStrategy implements Inheritanc
     inheritanceConstraints.add(noAbstractsObjects());
   }
 
-
   IdentifiableBoolExpr defineInstanceOfFunc() {
     Expr<? extends Sort> object = ctx.mkConst("object", sort);
     Expr<? extends Sort> type = ctx.mkConst("type", types);
@@ -156,9 +155,8 @@ public class SEInheritanceStrategy extends SSClassStrategy implements Inheritanc
     }
     BoolExpr noAbstractObject = mkForall(new Expr[] {object}, body);
 
-    return
-        IdentifiableBoolExpr.buildIdentifiable(
-            noAbstractObject, ast.get_SourcePositionStart(), Optional.of("No_abstract_objects"));
+    return IdentifiableBoolExpr.buildIdentifiable(
+        noAbstractObject, ast.get_SourcePositionStart(), Optional.of("No_abstract_objects"));
   }
 
   @Override

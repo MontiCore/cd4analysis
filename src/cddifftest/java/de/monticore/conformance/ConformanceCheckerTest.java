@@ -69,7 +69,7 @@ public class ConformanceCheckerTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd","Valid1.cd"})
+  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
   public void testDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
     assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));

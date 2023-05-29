@@ -116,13 +116,7 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     Optional<Expr<? extends Sort>> res = getAttributeHelper(astCdType, attributeName, cDTypeExpr);
-    if (res.isEmpty()) {
-      Log.info(
-          "the attribute " + attributeName + " not found for the ASTCDType " + astCdType.getName(),
-          "Attribute not found");
-      return null;
-    }
-    return res.get();
+    return res.orElse(null);
   }
 
   @Override
