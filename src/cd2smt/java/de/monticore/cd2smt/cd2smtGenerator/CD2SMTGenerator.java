@@ -22,6 +22,8 @@ import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
@@ -142,6 +144,12 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   @Override
   public Set<IdentifiableBoolExpr> getClassConstraints() {
     return dataWrapper.getClassConstraints();
+  }
+
+  @Override
+  public Expr<? extends Sort> getEnumConstant(
+      ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
+    return dataWrapper.getEnumConstant(enumeration, enumConstant);
   }
 
   @Override

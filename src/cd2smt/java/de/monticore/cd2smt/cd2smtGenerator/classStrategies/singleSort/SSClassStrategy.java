@@ -84,6 +84,13 @@ public class SSClassStrategy implements ClassStrategy {
   }
 
   @Override
+  public Expr<? extends Sort> getEnumConstant(
+      ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
+    return ctx.mkConst(
+        enumMap.get(enumeration).enumConstantMap.get(enumConstant).ConstructorDecl());
+  }
+
+  @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     this.ast = ast;
     this.ctx = context;
