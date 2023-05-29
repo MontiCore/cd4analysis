@@ -37,6 +37,7 @@ public class AttrInheritanceTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit ast =
         parseModel(Paths.get(RELATIVE_MODEL_PATH, "/attribute/AttrInheritance.cd").toString());
+    cd2SMTGenerator.initDefaultStrategies();
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     ctx = cd2SMTGenerator.getContext();
     cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();

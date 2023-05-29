@@ -53,7 +53,7 @@ public class CD2SMTAbstractTest {
     return null;
   }
 
-  public static Stream<Arguments> modelTargetDS() {
+  public static Stream<Arguments> modelTarget() {
     return Stream.of(
         Arguments.of("car1.cd"),
         Arguments.of("car2.cd"),
@@ -102,5 +102,4 @@ public class CD2SMTAbstractTest {
         Arguments.of("car21.cd")); // don't terminate
     // Arguments.of("car.cd"));         // don't terminate
   }
-
 }

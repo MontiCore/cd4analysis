@@ -1,21 +1,23 @@
 package de.monticore.cd2smt;
 
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Solver;
-import com.microsoft.z3.Status;
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
+
+import com.microsoft.z3.*;
+import de.monticore.cd2smt.Helper.CDHelper;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,54 +38,122 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("modelTargetDS")
+  @MethodSource("modelTarget")
   public void checkODValidityTestDS_O2O(String CDFileName) {
     checkODValidity(
-        CDFileName, "DS/one2one/", ClassStrategy.Strategy.DS, AssociationStrategy.Strategy.ONE2ONE);
+        CDFileName,
+        "ds/one2one/",
+        ClassStrategy.Strategy.DS,
+        AssociationStrategy.Strategy.ONE2ONE,
+        InheritanceData.Strategy.ME);
   }
 
   @ParameterizedTest
-  @MethodSource("modelTargetDS")
+  @MethodSource("modelTarget")
   public void checkODValidityTestDS_DEFAULT(String CDFileName) {
     checkODValidity(
-        CDFileName, "DS/default/", ClassStrategy.Strategy.DS, AssociationStrategy.Strategy.DEFAULT);
+        CDFileName,
+        "ds/default/",
+        ClassStrategy.Strategy.DS,
+        AssociationStrategy.Strategy.DEFAULT,
+        InheritanceData.Strategy.ME);
   }
 
   @ParameterizedTest
-  @MethodSource("modelTargetSS")
+  @MethodSource("modelTarget")
   public void checkODValidityTestSS_DEFAULT(String fileName) {
     checkODValidity(
-        fileName, "SS/default", ClassStrategy.Strategy.SS, AssociationStrategy.Strategy.DEFAULT);
+        fileName,
+        "ss/default",
+        ClassStrategy.Strategy.SS,
+        AssociationStrategy.Strategy.DEFAULT,
+        InheritanceData.Strategy.ME);
   }
 
   @ParameterizedTest
-  @MethodSource("modelTargetSS")
+  @MethodSource("modelTarget")
   public void checkODValidityTestSS_O2O(String fileName) {
     checkODValidity(
-        fileName, "SS/one2one", ClassStrategy.Strategy.SS, AssociationStrategy.Strategy.ONE2ONE);
+        fileName,
+        "ss/one2one",
+        ClassStrategy.Strategy.SS,
+        AssociationStrategy.Strategy.ONE2ONE,
+        InheritanceData.Strategy.ME);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void checkODValidityTestSECOMB_DEFAULT(String fileName) {
+
+    checkODValidity(
+        fileName,
+        "seComb/default",
+        ClassStrategy.Strategy.SSCOMB,
+        AssociationStrategy.Strategy.DEFAULT,
+        SE);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void checkODValidityTestSECOMB_O2O(String fileName) {
+
+    checkODValidity(
+        fileName,
+        "seComb/one2one",
+        ClassStrategy.Strategy.SSCOMB,
+        AssociationStrategy.Strategy.ONE2ONE,
+        SE);
   }
 
   public void checkODValidity(
       String CDFileName,
       String targetNumber,
       ClassStrategy.Strategy cs,
-      AssociationStrategy.Strategy as) {
+      AssociationStrategy.Strategy as,
+      InheritanceData.Strategy is) {
 
     ASTCDCompilationUnit ast = parseModel(CDFileName);
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     cd2SMTGenerator.setClassStrategy(cs);
     cd2SMTGenerator.setAssociationStrategy(as);
+    cd2SMTGenerator.setInheritanceStrategy(is);
     cd2SMTGenerator.cd2smt(ast, ctx);
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
 
-    Solver solver = cd2SMTGenerator.makeSolver(new ArrayList<>());
+    if (cs == ClassStrategy.Strategy.SS || cs == ClassStrategy.Strategy.SSCOMB) {
+      constraints.add(typeNotEmpty(cd2SMTGenerator, ast.getCDDefinition()));
+    }
+
+    Solver solver = cd2SMTGenerator.makeSolver(constraints);
     Assertions.assertEquals(Status.SATISFIABLE, solver.check());
     String odName = CDFileName.split("\\.")[0];
-    Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(solver.getModel(), false, odName);
+    Model model = solver.getModel();
+    Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(model, false, odName);
     Assertions.assertTrue(optOd.isPresent());
 
     printOD(optOd.get(), targetNumber);
     Assertions.assertTrue(
         matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
+  }
+
+  public IdentifiableBoolExpr typeNotEmpty(CD2SMTGenerator cd2SMTGenerator, ASTCDDefinition cd) {
+    Sort Object = cd2SMTGenerator.getSort(cd.getCDClassesList().get(0));
+    Expr<? extends Sort> expr = ctx.mkConst("obj", Object);
+    BoolExpr constr = ctx.mkTrue();
+    for (ASTCDType astcdType : CDHelper.getASTCDTypes(cd)) {
+      BoolExpr subRes =
+          ctx.mkExists(
+              new Expr[] {expr},
+              cd2SMTGenerator.filterObject(expr, astcdType),
+              0,
+              null,
+              null,
+              null,
+              null);
+      constr = ctx.mkAnd(subRes, constr);
+    }
+    return IdentifiableBoolExpr.buildIdentifiable(
+        constr, cd.get_SourcePositionStart(), Optional.of("Type_not_empty"));
   }
 }

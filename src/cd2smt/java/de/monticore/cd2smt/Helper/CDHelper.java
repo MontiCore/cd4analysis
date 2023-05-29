@@ -37,7 +37,7 @@ public class CDHelper {
 
   public static List<ASTCDType> getSubclassList(ASTCDDefinition cd, ASTCDType astcdType) {
     List<ASTCDType> subclasses = new LinkedList<>();
-    for (ASTCDClass entry : cd.getCDClassesList()) {
+    for (ASTCDType entry : cd.getCDClassesList()) {
       for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
         if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
       }
@@ -46,6 +46,39 @@ public class CDHelper {
       }
     }
     return subclasses;
+  }
+
+  public static List<ASTCDType> getSubTypeList(ASTCDDefinition cd, ASTCDType astcdType) {
+    List<ASTCDType> subclasses = new LinkedList<>();
+    for (ASTCDType entry : CDHelper.getASTCDTypes(cd)) {
+      for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
+        if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
+      }
+      for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
+        if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
+      }
+    }
+    return subclasses;
+  }
+
+  private static void getSubTypeAllDeepHelper(
+      ASTCDType astcdType, ASTCDDefinition cd, Set<ASTCDType> res) {
+    if (CDHelper.getSubTypeList(cd, astcdType).isEmpty()) {
+      return;
+    }
+    List<ASTCDType> subTypeList = getSubTypeList(cd, astcdType);
+    res.add(astcdType);
+    for (ASTCDType astcType1 : subTypeList) {
+      res.add(astcType1);
+      getSubTypeAllDeepHelper(astcType1, cd, res);
+    }
+  }
+
+  public static Set<ASTCDType> getSubTypeAllDeep(ASTCDType astcdType, ASTCDCompilationUnit ast) {
+    Set<ASTCDType> res = new HashSet<>();
+    getSubTypeAllDeepHelper(astcdType, ast.getCDDefinition(), res);
+    res.remove(astcdType);
+    return res;
   }
 
   public static List<ASTCDType> getSubInterfaceList(
@@ -184,9 +217,8 @@ public class CDHelper {
 
   public static ASTCDAssociation getAssociation(
       ASTCDType objType, String otherRole, ASTCDDefinition cd) {
-    List<ASTCDType> objTypes = new ArrayList<>();
+    Set<ASTCDType> objTypes = getSuperTypeAllDeep(objType, cd);
     objTypes.add(objType);
-    getAllSuperType(objType, cd, objTypes);
     ASTCDType leftType;
     ASTCDType rightType;
     String leftRole;
@@ -263,21 +295,29 @@ public class CDHelper {
     return res;
   }
 
-  public static void getAllSuperType(ASTCDType astcdType, ASTCDDefinition cd, List<ASTCDType> res) {
+  private static void getSuperTypeAllDeepHelper(
+      ASTCDType astcdType, ASTCDDefinition cd, Set<ASTCDType> res) {
     if (astcdType.getInterfaceList().isEmpty() && astcdType.getSuperclassList().isEmpty()) {
       return;
     }
     List<ASTCDType> superClassList = getSuperTypeList(astcdType, cd);
-    res.add(superClassList.get(0));
+    res.add(astcdType);
     for (ASTCDType astcType1 : superClassList) {
       res.add(astcType1);
-      getAllSuperType(astcType1, cd, res);
+      getSuperTypeAllDeepHelper(astcType1, cd, res);
     }
   }
 
-  public static List<ASTCDType> getASTCDTypes(ASTCDCompilationUnit ast) {
-    List<ASTCDType> res = new ArrayList<>(ast.getCDDefinition().getCDClassesList());
-    res.addAll(ast.getCDDefinition().getCDInterfacesList());
+  public static Set<ASTCDType> getSuperTypeAllDeep(ASTCDType astcdType, ASTCDDefinition cd) {
+    Set<ASTCDType> res = new HashSet<>();
+    getSuperTypeAllDeepHelper(astcdType, cd, res);
+    res.remove(astcdType);
+    return res;
+  }
+
+  public static List<ASTCDType> getASTCDTypes(ASTCDDefinition ast) {
+    List<ASTCDType> res = new ArrayList<>(ast.getCDClassesList());
+    res.addAll(ast.getCDInterfacesList());
     return res;
   }
 
