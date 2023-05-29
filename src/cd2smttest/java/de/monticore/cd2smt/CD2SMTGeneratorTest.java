@@ -28,6 +28,7 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
 
     astCD = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
     cd2SMTGenerator = new CD2SMTGenerator();
+    cd2SMTGenerator.initDefaultStrategies();
     cd2SMTGenerator.cd2smt(astCD, context);
   }
 

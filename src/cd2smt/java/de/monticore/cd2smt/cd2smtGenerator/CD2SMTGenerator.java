@@ -12,16 +12,18 @@ import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy.
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one.One2OneAssocStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DistinctSort;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort.SingleSort;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DSClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort.SSClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy.DefaultInhrStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.SExpression.SEInheritanceStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.multExpression.MEInheritanceStrategy;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +36,9 @@ import java.util.Set;
  */
 public class CD2SMTGenerator implements ClassData, AssociationsData, InheritanceData {
 
-  private ClassStrategy classStrategy = new DistinctSort();
-  private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy();
-  private AssociationStrategy associationStrategy = new DefaultAssocStrategy();
+  private ClassStrategy classStrategy = null;
+  private InheritanceStrategy inheritanceStrategy = null;
+  private AssociationStrategy associationStrategy = null;
   private DataWrapper dataWrapper;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
@@ -70,6 +72,7 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
    * @param astCd the class diagram to translate
    */
   public void cd2smt(ASTCDCompilationUnit astCd, Context ctx) {
+    CheckStrategies();
     this.ctx = ctx;
     // set All Associations Role
     dataWrapper = new DataWrapper(classStrategy, associationStrategy, inheritanceStrategy, astCd);
@@ -77,17 +80,46 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
 
     inheritanceStrategy.cd2smt(astCd, ctx, classStrategy);
 
-    associationStrategy.cd2smt(astCd, ctx, classStrategy);
+    associationStrategy.cd2smt(astCd, ctx, classStrategy, inheritanceStrategy);
   }
 
   public void setClassStrategy(ClassStrategy.Strategy strategy) {
     switch (strategy) {
       case DS:
-        this.classStrategy = new DistinctSort();
+        this.classStrategy = new DSClassStrategy();
         break;
       case SS:
-        this.classStrategy = new SingleSort();
+        this.classStrategy = new SSClassStrategy();
         break;
+      case SSCOMB:
+        if (this.inheritanceStrategy == null) {
+          this.classStrategy = new SEInheritanceStrategy();
+        } else if (this.inheritanceStrategy instanceof SEInheritanceStrategy) {
+          this.classStrategy = (SEInheritanceStrategy) inheritanceStrategy;
+        } else {
+          Log.error(
+              "The Class Strategy Single Sort Composed (SSComp) can only be combine with The inheritance Strategy"
+                  + " Single Sort Composed (SSComp) ");
+        }
+    }
+  }
+
+  public void setInheritanceStrategy(InheritanceStrategy.Strategy strategy) {
+    switch (strategy) {
+      case ME:
+        this.inheritanceStrategy = new MEInheritanceStrategy();
+        break;
+
+      case SE:
+        if (this.classStrategy == null) {
+          this.classStrategy = new SEInheritanceStrategy();
+        } else if (this.classStrategy instanceof SEInheritanceStrategy) {
+          this.inheritanceStrategy = (SEInheritanceStrategy) classStrategy;
+        } else {
+          Log.error(
+              "The Inheritance Strategy Single Sort Composed (SSComp) can only be combine with The Class  Strategy"
+                  + " Single Sort Composed (SSComp) ");
+        }
     }
   }
 
@@ -108,8 +140,8 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
-    return dataWrapper.hasType(expr, astCdType);
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType) {
+    return dataWrapper.hasType(expr, astcdType);
   }
 
   @Override
@@ -145,8 +177,13 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType) {
-    return dataWrapper.instanceOf(obj, objType, subType);
+  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType) {
+    return dataWrapper.instanceOf(obj, objType);
+  }
+
+  @Override
+  public BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type) {
+    return dataWrapper.filterObject(obj, type);
   }
 
   @Override
@@ -185,5 +222,25 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
       }
     }
     return smt2ODGenerator.buildOd(objectSet, odName, model, dataWrapper);
+  }
+
+  private void CheckStrategies() {
+    if (classStrategy == null) {
+      Log.error("Class Strategy muss be set to perform the CD2SMT-Operation");
+    }
+
+    if (associationStrategy == null) {
+      Log.error("Association Strategy muss be set to perform the CD2SMT-Operation");
+    }
+
+    if (inheritanceStrategy == null) {
+      Log.error("Inheritance Strategy muss be set to perform the CD2SMT-Operation");
+    }
+  }
+
+  public void initDefaultStrategies() {
+    classStrategy = new DSClassStrategy();
+    inheritanceStrategy = new MEInheritanceStrategy();
+    associationStrategy = new DefaultAssocStrategy();
   }
 }

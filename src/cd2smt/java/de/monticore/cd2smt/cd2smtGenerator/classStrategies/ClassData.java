@@ -13,36 +13,38 @@ import java.util.Set;
 
 public interface ClassData {
   /**
-   * @param astCdType the ASTCDType (class or Interface)
-   * @return the Sort declared for the ASTCDType
+   * @param astCdType the ASTCDType (class or Interface).
+   * @return the Sort declared for the ASTCDType.
    */
   Sort getSort(ASTCDType astCdType);
 
-  /**
-   * @param expr SMT Expression
-   * @param astCdType the ASTCDType (class or interface)
-   * @return true, iff expr represent an expression with the type astCdType
+  /***
+   * return a BoolExpr that check if the object "expr" has the type astcdtype (without taking inheritance into account).
+   *
+   * @param expr the object
+   * @param astcdType  the type
+   * @return a Boolexpr
    */
-  BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType);
+  BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType);
 
   /**
-   * this function calculate the value of an Expr that represent a ASTCDType Object .
+   * this function calculates the value of an Expr that represent a ASTCDType Object.
    *
-   * @param astCdType the ASTCDType (class or interface)
-   * @param attributeName an name of the Attribute of the ASTCDType
-   * @param cDTypeExpr the SMT Expr of the object
-   * @return the Attribute as SMT Expr
+   * @param astCdType the ASTCDType (class or interface).
+   * @param attributeName a name of the Attribute of the ASTCDType.
+   * @param cDTypeExpr the SMT Expr of the object.
+   * @return the Attribute as SMT Expr.
    */
   Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr);
 
   /**
-   * this function calculate the value of an Expr that represent a ASTCDType Object .
+   * this function calculates the value of an Expr that represent a ASTCDType Object.
    *
-   * @param astCdType the ASTCDType (class or interface)
-   * @param attribute ASTCDAttribute of the ASTCDType
-   * @param cDTypeExpr the SMT Expr of the object
-   * @return the Attribute as SMT Expr
+   * @param astCdType the ASTCDType (class or interface).
+   * @param attribute ASTCDAttribute of the ASTCDType.
+   * @param cDTypeExpr the SMT Expr of the object.
+   * @return the Attribute as SMT Expr.
    */
   default Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, ASTCDAttribute attribute, Expr<? extends Sort> cDTypeExpr) {
@@ -51,9 +53,9 @@ public interface ClassData {
 
   ASTCDCompilationUnit getClassDiagram();
 
-  /** @return the class Constraints as Set of Bool-Expressions */
+  /** @return the class Constraints as Set of Bool-Expressions. */
   Set<IdentifiableBoolExpr> getClassConstraints();
 
-  /** @return context where the class diagram elements are transformed */
+  /** @return context where the class diagram elements are transformed. */
   Context getContext();
 }

@@ -34,7 +34,7 @@ public class AssocStrategiesTest extends CDDiffTestBasis {
     Context ctx = new Context(cfg);
     ASTCDCompilationUnit ast = parseModel(RELATIVE_MODEL_PATH + "/assocStrategies/Optional.cd");
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
-
+    cd2SMTGenerator.initDefaultStrategies();
     cd2SMTGenerator.cd2smt(ast, ctx);
     ASTCDType ClassCar = CDHelper.getClass("Car", ast.getCDDefinition());
     ASTCDType MotorClass = CDHelper.getClass("Motor", ast.getCDDefinition());

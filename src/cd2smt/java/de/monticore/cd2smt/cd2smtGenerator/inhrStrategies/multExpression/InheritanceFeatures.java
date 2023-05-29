@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy;
+package de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.multExpression;
 
 import com.microsoft.z3.Constructor;
 import com.microsoft.z3.DatatypeSort;
@@ -9,6 +9,10 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.HashMap;
 import java.util.Map;
 
+/***
+ * this is a data class that saves the features declared in SMT for inheritance-relation
+ * of a class/interface with other ones
+ */
 public class InheritanceFeatures {
 
   private final Map<ASTCDType, Constructor<? extends Sort>> subClassConstructorList;

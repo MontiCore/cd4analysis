@@ -15,18 +15,28 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
-public class DistinctSort implements ClassStrategy {
-  protected Map<ASTCDType, SMTType> smtTypesMap;
+/***
+ * This class creates transform classes and interfaces of a class diagram in SMT.
+ *1- For each class and interface a new Sort is declared
+ *2- For each Enum a new datatype is defined
+ *3- For each Attribute a new function is declared
+ */
+public class DSClassStrategy implements ClassStrategy {
+  protected Map<ASTCDType, Sort> typeMap;
+  private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new HashMap<>();
+  protected Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap = new HashMap<>();
+
   protected Context ctx;
+
   protected ASTCDCompilationUnit ast;
 
-  public DistinctSort() {
-    smtTypesMap = new HashMap<>();
+  public DSClassStrategy() {
+    typeMap = new HashMap<>();
   }
 
   @Override
   public Sort getSort(ASTCDType astcdType) {
-    return smtTypesMap.get(astcdType).getSort();
+    return typeMap.get(astcdType);
   }
 
   @Override
@@ -41,10 +51,7 @@ public class DistinctSort implements ClassStrategy {
   @Override
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
-    return smtTypesMap
-        .get(astCdType)
-        .getAttribute(CDHelper.getAttribute(astCdType, attributeName))
-        .apply(cDTypeExpr);
+    return attributeMap.get(CDHelper.getAttribute(astCdType, attributeName)).apply(cDTypeExpr);
   }
 
   @Override
@@ -71,44 +78,56 @@ public class DistinctSort implements ClassStrategy {
     ast.getCDDefinition().getCDInterfacesList().forEach(this::declareCDType);
   }
 
-  // enum = uninterpreted sort   , value computed with a function declaration
+  /***
+   * Transform Enumeration in smt by defining a new datatype containing the enum's constant as constructor.
+   * CD:  enum Color {RED, YELLOW, GREEN}
+   * SMT: (declare-datatype ((RED) (YELLOW) (GREEN))
+   */
   private void declareEnum(ASTCDEnum astcdEnum) {
-    SMTType smtType = new SMTType(astcdEnum);
+
     List<Constructor<Sort>> constructorList = new ArrayList<>();
 
-    // create constant for the attributes values  and saves im smtType
+    // create a constructor for each enum constant
     for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
       Constructor<Sort> constructor =
           ctx.mkConstructor(constant.getName(), constant.getName(), null, null, null);
       constructorList.add(constructor);
-      smtType.addConstant(constant, constructor);
+      enumConstantMap.put(constant, constructor);
     }
 
     DatatypeSort<Sort> sort =
         ctx.mkDatatypeSort(astcdEnum.getName(), constructorList.toArray(new Constructor[0]));
 
-    smtType.setSort(sort);
-
-    smtTypesMap.put(astcdEnum, smtType);
+    typeMap.put(astcdEnum, sort);
   }
 
+  /***
+   * Convert a class or an interface in SMT
+   * CD:
+   * class Auction {
+   *      String name;
+   * }
+   * =====================================================
+   * SMT:
+   * (declare-sort Auction_obj 0)
+   * (declare-fun auction_attr_name (Auction_Obj) String)
+   */
   private void declareCDType(ASTCDType astcdType) {
-    SMTType smtType = new SMTType(astcdType);
-    // (declare-sort A_obj 0)
+
+    // declare the sort for the type
     UninterpretedSort typeSort =
         ctx.mkUninterpretedSort(ctx.mkSymbol(SMTHelper.printSMTCDTypeName(astcdType)));
-    smtType.setSort(typeSort);
+    typeMap.put(astcdType, typeSort);
 
-    // (declare-fun a_attrib_something (A_obj) String) declare all attributes
+    // declare a function for each attribute
     for (ASTCDAttribute myAttribute : astcdType.getCDAttributeList()) {
       Sort sort;
       if (CDHelper.isPrimitiveType(myAttribute.getMCType())) {
         sort = CDHelper.mcType2Sort(ctx, myAttribute.getMCType());
       } else if (CDHelper.isEnumType(ast.getCDDefinition(), myAttribute.getMCType().printType())) {
         sort =
-            smtTypesMap
-                .get(CDHelper.getEnum(myAttribute.getMCType().printType(), ast.getCDDefinition()))
-                .getSort();
+            typeMap.get(
+                CDHelper.getEnum(myAttribute.getMCType().printType(), ast.getCDDefinition()));
       } else if (CDHelper.isDateType(myAttribute.getMCType())) {
         sort = ctx.mkIntSort();
       } else {
@@ -126,51 +145,47 @@ public class DistinctSort implements ClassStrategy {
 
       FuncDecl<Sort> attributeFunc =
           ctx.mkFuncDecl(SMTHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
-      smtType.addAttribute(myAttribute, attributeFunc);
+      attributeMap.put(myAttribute, attributeFunc);
     }
 
-    smtTypesMap.put(astcdType, smtType);
+    typeMap.put(astcdType, typeSort);
   }
 
+  /**
+   * evaluate the model produce by the SMT-Solver to get the attribute values of Objects. if partial
+   * = true, on ly the attribute with non-trivial value will appear on the Object-diagram.
+   */
   @Override
   public Set<MinObject> smt2od(Model model, Boolean partial) {
     Set<MinObject> objectSet = new HashSet<>();
 
-    // interfaces , abstract and superInstance must be deleted
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
-        SMTType smtType = getSMTType(symbol2CDTypeName(mySort.getName())).orElse(null);
-        assert smtType != null;
 
-        MinObject obj =
-            new MinObject(CDHelper.mkType(smtType.getAstcdType()), smtExpr, smtType.getAstcdType());
+        ASTCDType astcdType =
+            CDHelper.getASTCDType(getType(mySort.getName()), ast.getCDDefinition());
+        assert astcdType != null;
+        MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
 
-        for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
-            smtType.getAttributesMap().entrySet()) {
-          Expr<? extends Sort> attrExpr = model.eval(attribute.getValue().apply(smtExpr), !partial);
+        // evaluate each attribute
+        for (ASTCDAttribute attribute : astcdType.getCDAttributeList()) {
+          FuncDecl<? extends Sort> attrFunc = attributeMap.get(attribute);
+          Expr<? extends Sort> attrExpr = model.eval(attrFunc.apply(smtExpr), !partial);
           if (attrExpr.getNumArgs() == 0) {
-            obj.addAttribute(attribute.getKey(), attrExpr);
+            obj.addAttribute(attribute, attrExpr);
           }
         }
+
         objectSet.add(obj);
       }
     }
     return objectSet;
   }
 
-  private Optional<SMTType> getSMTType(String className) {
-    for (Map.Entry<ASTCDType, SMTType> entry : smtTypesMap.entrySet()) {
-      if (entry.getKey().getName().equals(className)) {
-        return Optional.of(entry.getValue());
-      }
-    }
-    return Optional.empty();
-  }
-
-  private String symbol2CDTypeName(Symbol symbol) {
+  private String getType(Symbol symbol) {
     int length = symbol.toString().length();
     StringBuilder stringBuilder = new StringBuilder(symbol.toString());
-    stringBuilder.delete(length - 4, length); // remove the 4 last Characters
+    stringBuilder.delete(length - 4, length); // remove the 4 last Characters (_obj)
     return stringBuilder.toString();
   }
 }

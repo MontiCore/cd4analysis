@@ -10,10 +10,10 @@ import java.util.Set;
 
 public interface InheritanceData {
   /**
-   * this Function convert an object to one of his super instances
+   * this Function converts an object to one of his super instances
    *
    * @param objType the type of the object
-   * @param superType the supertype into which the object have to be converted
+   * @param superType the supertype into which the object has to be converted
    * @param objExpr the SMT Expr of the object
    * @return the Super instance as SMT Expr
    */
@@ -24,12 +24,23 @@ public interface InheritanceData {
    * this function check if the object obj is an instance of subType
    *
    * @param obj the object ins SMT
-   * @param objType the ASTCDType of the Object
-   * @param subType the subtype
+   * @param type the ASTCDType of the Object
    * @return a BoolExpr tha will be evaluated to true if the object is an instance of the subType
    */
-  BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType);
+  BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType type);
+
+  /***
+   * This function filter object for the association strategy according to the inheritance Strategy.
+   * - For ME, the function is "has_type" function which recognizes the type of object without taking inheritance into account.
+   * - For SEComb, the function is an "instance_of" function which recognizes the type of object taking into account inheritance
+   */
+  BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type);
 
   /** @return the inheritances' constraint as set identifiable Bool-expressions */
   Set<IdentifiableBoolExpr> getInheritanceConstraints();
+
+  enum Strategy {
+    ME,
+    SE
+  }
 }
