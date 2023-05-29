@@ -235,12 +235,6 @@ public class CDHelper {
         return association;
       }
     }
-    Log.info(
-        "Association with the other-role "
-            + otherRole
-            + " not found for the ASTCDType "
-            + objType.getName(),
-        "Assoc Not Found");
     return null;
   }
 
@@ -339,7 +333,9 @@ public class CDHelper {
   }
 
   public static boolean isCardinalityOne2One(ASTCDAssociation association) {
-    return (association.getLeft().getCDCardinality().isOne()
+    return (association.getLeft().isPresentCDCardinality()
+        && association.getLeft().getCDCardinality().isOne()
+        && association.getRight().isPresentCDCardinality()
         && association.getRight().getCDCardinality().isOne());
   }
 

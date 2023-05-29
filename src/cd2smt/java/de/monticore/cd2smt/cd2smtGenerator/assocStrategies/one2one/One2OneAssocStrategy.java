@@ -57,10 +57,10 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
       Sort rightSort = classData.getSort(rightType);
 
       assocFuncMap.put(assoc, ctx.mkFuncDecl(assocName, new Sort[] {leftSort}, rightSort));
+      assocConstraints.addAll(buildAssocConstraints(assoc, ctx));
     } else {
       super.declareAssociation(cd, assoc, ctx);
     }
-    assocConstraints.addAll(buildAssocConstraints(assoc, ctx));
   }
 
   @Override

@@ -5,6 +5,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -27,8 +28,8 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
     context = new Context(cfg);
 
     astCD = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
-    cd2SMTGenerator = new CD2SMTGenerator();
-    cd2SMTGenerator.initDefaultStrategies();
+    CD2SMTMill.initDefault();
+    cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(astCD, context);
   }
 

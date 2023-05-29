@@ -4,14 +4,15 @@ package de.monticore.cd2smt.DataWrapperTest;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.CD2SMTAbstractTest;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cddiff.CDDiffTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -25,11 +26,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class AssocInhertianceTest extends CDDiffTestBasis {
+public class AssocInhertianceTest extends CD2SMTAbstractTest {
 
-  protected final String RELATIVE_MODEL_PATH =
-      "src/cd2smttest/resources/de/monticore/cd2smt/DataWrapper/inheritance";
-  protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+  protected CD2SMTGenerator cd2SMTGenerator;
   protected Context ctx;
   protected ASTCDDefinition cd;
 
@@ -42,8 +41,10 @@ public class AssocInhertianceTest extends CDDiffTestBasis {
     cfg.put("model", "true");
 
     ASTCDCompilationUnit ast =
-        parseModel(Paths.get(RELATIVE_MODEL_PATH, "/association/AssocInheritance.cd").toString());
-    cd2SMTGenerator.initDefaultStrategies();
+        parseModel(Paths.get("DataWrapper/inheritance/association/AssocInheritance.cd").toString());
+    CD2SMTMill.initDefault();
+    ;
+    cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     ctx = cd2SMTGenerator.getContext();
     cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();

@@ -1,9 +1,12 @@
 package de.monticore.cd2smt;
 
+import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SS;
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
@@ -31,8 +34,7 @@ public class SingleSortTest extends CD2SMTAbstractTest {
   @MethodSource("modelTarget")
   public void CheckTypeUnicity(String cdfile) {
 
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
-    cd2SMTGenerator.setClassStrategy(ClassStrategy.Strategy.SS);
+    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator(SS, SE, DEFAULT);
     ASTCDCompilationUnit ast = parseModel(cdfile);
     cd2SMTGenerator.cd2smt(ast, ctx);
     List<BoolExpr> constraints = new ArrayList<>();
