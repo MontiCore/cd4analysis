@@ -36,10 +36,6 @@ public class SMTHelper {
     return SMTHelper.fCharToLowerCase(astcdType.getName()) + "_get_subclass";
   }
 
-  public static String printSMTCDTypeName(ASTCDType myClass) {
-    return myClass.getName() + "_obj";
-  }
-
   public static BoolExpr mkForAll(
       Context ctx,
       Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,

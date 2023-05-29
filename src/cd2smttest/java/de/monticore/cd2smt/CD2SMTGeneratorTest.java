@@ -4,16 +4,20 @@ package de.monticore.cd2smt;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
@@ -27,8 +31,8 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
     context = new Context(cfg);
 
     astCD = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
-    cd2SMTGenerator = new CD2SMTGenerator();
-    cd2SMTGenerator.initDefaultStrategies();
+    CD2SMTMill.initDefault();
+    cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(astCD, context);
   }
 
@@ -62,5 +66,15 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
           break;
       }
     }
+  }
+
+  @Test
+  public void EnumerationTest() {
+    setup("car21.cd");
+    ASTCDEnum astcdEnum = (ASTCDEnum) CDHelper.getASTCDType("Color", astCD.getCDDefinition());
+    Assertions.assertNotNull(astcdEnum);
+    Expr<? extends Sort> enumConstant =
+        cd2SMTGenerator.getEnumConstant(astcdEnum, astcdEnum.getCDEnumConstant(0));
+    Assertions.assertEquals("RED", enumConstant.toString());
   }
 }

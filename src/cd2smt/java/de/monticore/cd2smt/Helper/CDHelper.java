@@ -5,6 +5,8 @@ import static de.monticore.cd2smt.Helper.CDHelper.ObjType.ABSTRACT_OBJ;
 import static de.monticore.cd2smt.Helper.CDHelper.ObjType.NORMAL_OBJ;
 
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+import com.microsoft.z3.IntSort;
 import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
@@ -27,6 +29,7 @@ import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -235,12 +238,6 @@ public class CDHelper {
         return association;
       }
     }
-    Log.info(
-        "Association with the other-role "
-            + otherRole
-            + " not found for the ASTCDType "
-            + objType.getName(),
-        "Assoc Not Found");
     return null;
   }
 
@@ -339,7 +336,9 @@ public class CDHelper {
   }
 
   public static boolean isCardinalityOne2One(ASTCDAssociation association) {
-    return (association.getLeft().getCDCardinality().isOne()
+    return (association.getLeft().isPresentCDCardinality()
+        && association.getLeft().getCDCardinality().isOne()
+        && association.getRight().isPresentCDCardinality()
         && association.getRight().getCDCardinality().isOne());
   }
 
@@ -347,6 +346,14 @@ public class CDHelper {
     return cd.getCDClassesList().stream()
         .filter(x -> x.getModifier().isAbstract())
         .collect(Collectors.toList());
+  }
+
+  public static Expr<IntSort> date2smt(LocalDateTime dateTime, Context ctx) {
+    LocalDateTime originDate = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
+
+    Duration duration = Duration.between(originDate, dateTime);
+
+    return ctx.mkInt(duration.getSeconds());
   }
 
   public static String buildDate(int time) {
@@ -362,9 +369,11 @@ public class CDHelper {
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
             calendar.get(Calendar.SECOND));
-    return times.format(DateTimeFormatter.ISO_DATE)
-        + "|"
-        + times.format(DateTimeFormatter.ISO_LOCAL_TIME);
+    return '"'
+        + times.format(DateTimeFormatter.ISO_DATE)
+        + " "
+        + times.format(DateTimeFormatter.ISO_LOCAL_TIME)
+        + '"';
   }
 
   public static List<ASTCDType> getClassHierarchy(

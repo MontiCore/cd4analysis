@@ -13,6 +13,8 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -116,13 +118,7 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     Optional<Expr<? extends Sort>> res = getAttributeHelper(astCdType, attributeName, cDTypeExpr);
-    if (res.isEmpty()) {
-      Log.info(
-          "the attribute " + attributeName + " not found for the ASTCDType " + astCdType.getName(),
-          "Attribute not found");
-      return null;
-    }
-    return res.get();
+    return res.orElse(null);
   }
 
   @Override
@@ -138,6 +134,12 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   @Override
   public Context getContext() {
     return classData.getContext();
+  }
+
+  @Override
+  public Expr<? extends Sort> getEnumConstant(
+      ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
+    return classData.getEnumConstant(enumeration, enumConstant);
   }
 
   protected Optional<Expr<? extends Sort>> getAttributeHelper(

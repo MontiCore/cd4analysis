@@ -9,6 +9,8 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import java.util.Set;
 
 public interface ClassData {
@@ -58,4 +60,9 @@ public interface ClassData {
 
   /** @return context where the class diagram elements are transformed. */
   Context getContext();
+
+  /***
+   * get an enm Constant form the class declaration as SMTExpression
+   */
+  Expr<? extends Sort> getEnumConstant(ASTCDEnum enumeration, ASTCDEnumConstant enumConstant);
 }

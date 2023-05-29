@@ -42,7 +42,7 @@ public class DSClassStrategy implements ClassStrategy {
   @Override
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
     String sortName = expr.getSort().getName().toString();
-    if (SMTHelper.printSMTCDTypeName(astCdType).equals(sortName)) {
+    if (printSMTCDTypeName(astCdType).equals(sortName)) {
       return ctx.mkTrue();
     }
     return ctx.mkFalse();
@@ -67,6 +67,11 @@ public class DSClassStrategy implements ClassStrategy {
   @Override
   public Context getContext() {
     return ctx;
+  }
+
+  @Override
+  public Expr<? extends Sort> getEnumConstant(ASTCDEnum astcdEnum, ASTCDEnumConstant enumConstant) {
+    return ctx.mkConst(enumConstantMap.get(enumConstant).ConstructorDecl());
   }
 
   @Override
@@ -116,7 +121,7 @@ public class DSClassStrategy implements ClassStrategy {
 
     // declare the sort for the type
     UninterpretedSort typeSort =
-        ctx.mkUninterpretedSort(ctx.mkSymbol(SMTHelper.printSMTCDTypeName(astcdType)));
+        ctx.mkUninterpretedSort(ctx.mkSymbol(printSMTCDTypeName(astcdType)));
     typeMap.put(astcdType, typeSort);
 
     // declare a function for each attribute
@@ -185,7 +190,11 @@ public class DSClassStrategy implements ClassStrategy {
   private String getType(Symbol symbol) {
     int length = symbol.toString().length();
     StringBuilder stringBuilder = new StringBuilder(symbol.toString());
-    stringBuilder.delete(length - 4, length); // remove the 4 last Characters (_obj)
+    stringBuilder.delete(length - 4, length); // remove the 4 last Characters
     return stringBuilder.toString();
+  }
+
+  private String printSMTCDTypeName(ASTCDType myClass) {
+    return myClass.getName() + "_obj";
   }
 }
