@@ -14,24 +14,10 @@ import java.util.stream.IntStream;
 import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
 
 /*
- * A function to transform association into matrix must be implemented.
  * A function with a suitable datastructure for getting the values from the matrix needs to be implemented.
  * */
 public class ConstraintSolver {
-/*
-  private ASTCDAssociation mergeAssociations(List<ASTCDAssociation> astcdAssociationList, ASTCDCompilationUnit astcdCompilationUnit) {
-    List<ASTCDAssociation> assocsToMerge = new ArrayList<>();
-    for (ASTCDAssociation astcdAssociation : astcdAssociationList) {
-      for (ASTCDAssociation astcdAssociation1 : astcdAssociationList) {
-        if (!astcdAssociation.equals(astcdAssociation1) & matchRoleNames(astcdAssociation.getLeft(), astcdAssociation1.getLeft()) & matchRoleNames(astcdAssociation
-          .getRight(), astcdAssociation1.getRight()) & astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))) {
-
-        }
-      }
-    }
-  }
-*/
-private List<List<Integer>> mergeAssociations(ASTCDCompilationUnit astcdCompilationUnit) {
+private List<List<Integer>> cdToMatrix(ASTCDCompilationUnit astcdCompilationUnit) {
   ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> map = ArrayListMultimap.create();
   List<List<Integer>> forMatrix = new ArrayList<>();
   for (ASTCDAssociation astcdAssociation : astcdCompilationUnit.getCDDefinition().getCDAssociationsList()) {
@@ -42,7 +28,8 @@ private List<List<Integer>> mergeAssociations(ASTCDCompilationUnit astcdCompilat
         astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))
         && astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName()).equals(astcdCompilationUnit.getEnclosingScope().resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))) {
         map.put(astcdAssociation, astcdAssociation1);
-
+        //assocs1 needs to be deleted
+        //Can I change the ASTCdCompilationUnit?
       }
     }
   }
@@ -60,10 +47,26 @@ private List<List<Integer>> mergeAssociations(ASTCDCompilationUnit astcdCompilat
       innerListLeft.add(astcdAssociation1.getLeft().getCDCardinality().getUpperBound());
       innerListRight.add(astcdAssociation1.getRight().getCDCardinality().getLowerBound());
       innerListRight.add(astcdAssociation1.getRight().getCDCardinality().getUpperBound());
+      if (astcdAssociation1.getLeft().getCDCardinality().toCardinality().getLowerBoundLit().equals(Optional.empty())){
+        //[*]
+        //add optinal.empty() twice
+      }
+      else if (!astcdAssociation1.getLeft().getCDCardinality().toCardinality().getLowerBoundLit().equals(Optional.empty()) &
+        astcdAssociation1.getLeft().getCDCardinality().toCardinality().getUpperBoundLit().equals(Optional.empty())) {
+        //[x..*]
+        //add x and Optinal.empty() to the list
+      }
+      else if (!astcdAssociation1.getLeft().getCDCardinality().toCardinality().getLowerBoundLit().equals(Optional.empty()) &
+        !astcdAssociation1.getLeft().getCDCardinality().toCardinality().getUpperBoundLit().equals(Optional.empty())) {
+        //[x..y]
+        //add x and Optinal.empty() to the list
+      }
+
     }
   }
   return forMatrix;
 }
+
 /*
   private ArrayListMultimap computeRanges(ASTCDCompilationUnit astcdCompilationUnit) {
     ArrayListMultimap arrayListMultimap = ArrayListMultimap.create();
@@ -84,10 +87,10 @@ private static void toMatrix(List<List<Integer>> ranges) {
     .count();
   int numCols = ranges.size();
 
-  int[][] A = new int[evenCount][numCols];
-  int[][] B = new int[evenCount][numCols];
-  int[] a = new int[numCols];
-  int[] b = new int[numCols];
+  int[][] firstMat = new int[evenCount][numCols];//Matrix for >=
+  int[][] secondMat = new int[evenCount][numCols];//Matrix for <=
+  int[] firstVec = new int[numCols];
+  int[] secondVec = new int[numCols];
 
   int index = 0;
   for (int i = 0; i < numCols; i++) {
@@ -97,8 +100,13 @@ private static void toMatrix(List<List<Integer>> ranges) {
       Optional<Integer> optionalValue = Optional.ofNullable(range.get(i));
       if (optionalValue.isPresent()) {
         Integer value = optionalValue.get();
-        a[index+k] = value;
-        A[index+k][i] = 1;
+        firstVec[index+k] = value;
+        firstMat[index+k][i] = 1;
+        k++;
+      }
+      else {
+        firstVec[index+k] = 0;
+        firstMat[index+k][i] = 0;
         k++;
       }
     }
@@ -107,12 +115,15 @@ private static void toMatrix(List<List<Integer>> ranges) {
       Optional<Integer> optionalValue = Optional.ofNullable(range.get(i));
       if (optionalValue.isPresent()) {
         Integer value = optionalValue.get();
-        b[index+k] = value;
-        B[index+k][i] = 1;
+        secondVec[index + k] = value;
+        secondMat[index + k][i] = 1;
+        k++;
+      } else {
+        secondVec[index + k] = 0;
+        secondMat[index + k][i] = 0;
         k++;
       }
     }
-    k = 0;
 
     index += range.size();
   }
@@ -236,10 +247,9 @@ private static void toMatrix(List<List<Integer>> ranges) {
       for (int j = 0; j < inverted[i].length; j++) {
         if (inverted[i][j] > 0) {
           max = Math.min(max, (int)Math.floor((double)constants[j] / inverted[i][j]));
+          //to save in Multymap
         }
       }
-      System.out.println("Variable " + (i+1) + " has a range of positive integer values from " +
-        min + " to " + max);
     }
   }
 
