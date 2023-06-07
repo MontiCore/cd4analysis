@@ -1,27 +1,46 @@
 package de.monticore.conformance;
 
+import static de.monticore.conformance.ConfParameter.*;
+
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.conformance.conf.AttributeChecker;
 import de.monticore.conformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.conformance.conf.association.DeepAssocConfStrategy;
 import de.monticore.conformance.conf.association.StrictDeepAssocConfStrategy;
 import de.monticore.conformance.conf.attribute.CompAttributeChecker;
+import de.monticore.conformance.conf.attribute.EqNameAttributeChecker;
 import de.monticore.conformance.conf.attribute.STNamedAttributeChecker;
 import de.monticore.conformance.conf.cd.BasicCDConfStrategy;
 import de.monticore.conformance.conf.type.BasicTypeConfStrategy;
 import de.monticore.conformance.conf.type.DeepTypeConfStrategy;
+import de.monticore.conformance.inc.IncarnationStrategy;
 import de.monticore.conformance.inc.association.CompAssocIncStrategy;
+import de.monticore.conformance.inc.association.EqNameAssocIncStrategy;
 import de.monticore.conformance.inc.association.STNamedAssocIncStrategy;
 import de.monticore.conformance.inc.type.CompTypeIncStrategy;
+import de.monticore.conformance.inc.type.EqTypeIncStrategy;
 import de.monticore.conformance.inc.type.STTypeIncStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Set;
 
 // todo: needs to be fixed
 public class ConformanceChecker {
-  public static boolean checkBasicStereotypeConformance(
+  protected Set<ConfParameter> params;
+  protected IncarnationStrategy<ASTCDType> typeInc;
+  protected IncarnationStrategy<ASTCDAssociation> assocInc;
+  protected AttributeChecker attrInc;
+
+  public ConformanceChecker(Set<ConfParameter> params) {
+    this.params = params;
+  }
+
+  public boolean checkConformance(
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, Set<String> mappings) {
     for (String mapping : mappings) {
-      if (!checkBasicStereotypeConformance(concreteCD, referenceCD, mapping)) {
+      if (!checkConformance(concreteCD, referenceCD, mapping)) {
         Log.println(
             concreteCD.getCDDefinition().getName()
                 + " is not conform to "
@@ -34,18 +53,42 @@ public class ConformanceChecker {
     return true;
   }
 
-  public static boolean checkBasicStereotypeConformance(
+  public boolean checkConformance(
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
+    // init incarnation checker
 
-    // create Incarnation Strategies
-    STTypeIncStrategy typeInc = new STTypeIncStrategy(referenceCD, mapping);
-    STNamedAssocIncStrategy assocInc = new STNamedAssocIncStrategy(referenceCD, mapping);
-    STNamedAttributeChecker attrChecker = new STNamedAttributeChecker(mapping);
+    if (params.contains(STEREOTYPE_MAPPING) && !params.contains(NAME_MAPPING)) {
+      typeInc = new STTypeIncStrategy(referenceCD, mapping);
+      assocInc = new STNamedAssocIncStrategy(referenceCD, mapping);
+      attrInc = new STNamedAttributeChecker(mapping);
 
-    BasicTypeConfStrategy typeChecker =
-        new BasicTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
-    BasicAssocConfStrategy assocChecker =
-        new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+    } else if (!params.contains(STEREOTYPE_MAPPING) && params.contains(NAME_MAPPING)) {
+      typeInc = new EqTypeIncStrategy(referenceCD, mapping);
+      assocInc = new EqNameAssocIncStrategy(referenceCD, mapping);
+      attrInc = new EqNameAttributeChecker(mapping);
+    } else {
+      typeInc = new CompTypeIncStrategy(referenceCD, mapping);
+      assocInc = new CompAssocIncStrategy(referenceCD, mapping);
+      attrInc = new CompAttributeChecker(mapping);
+    }
+
+    // init conformance Checker
+    BasicTypeConfStrategy typeChecker;
+    BasicAssocConfStrategy assocChecker;
+    if (!params.contains(INHERITANCE) && !params.contains(STRICT_INHERITANCE)) {
+
+      typeChecker = new BasicTypeConfStrategy(referenceCD, concreteCD, attrInc, typeInc, assocInc);
+      assocChecker = new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+
+    } else {
+      typeChecker = new DeepTypeConfStrategy(referenceCD, concreteCD, attrInc, typeInc, assocInc);
+      if (params.contains(STRICT_INHERITANCE)) {
+        assocChecker = new StrictDeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+      } else {
+        assocChecker = new DeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+      }
+    }
+
     BasicCDConfStrategy cdChecker =
         new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
 
@@ -53,44 +96,16 @@ public class ConformanceChecker {
     return cdChecker.checkConformance(concreteCD);
   }
 
-  public static boolean checkBasicComposedConformance(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
-
-    // create Incarnation Strategies
-    CompTypeIncStrategy typeInc = new CompTypeIncStrategy(referenceCD, mapping);
-    CompAssocIncStrategy assocInc = new CompAssocIncStrategy(referenceCD, mapping);
-    CompAttributeChecker attrChecker = new CompAttributeChecker(mapping);
-
-    // create Conformance Strategies
-    BasicTypeConfStrategy typeChecker =
-        new BasicTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
-    BasicAssocConfStrategy assocChecker =
-        new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
-    BasicCDConfStrategy cdChecker =
-        new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
-
-    // check conformance
-    return cdChecker.checkConformance(concreteCD);
+  public Set<ASTCDType> getRefElements(ASTCDType con) {
+    return typeInc.getRefElements(con);
   }
 
-  public static boolean checkDeepComposedConformance(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
+  public Set<ASTCDAssociation> getRefElements(ASTCDAssociation con) {
+    return assocInc.getRefElements(con);
+  }
 
-    // create Incarnation Strategies
-    CompTypeIncStrategy typeInc = new CompTypeIncStrategy(referenceCD, mapping);
-    CompAssocIncStrategy assocInc = new CompAssocIncStrategy(referenceCD, mapping);
-    CompAttributeChecker attrChecker = new CompAttributeChecker(mapping);
-
-    // create Conformance Strategies
-    DeepTypeConfStrategy typeChecker =
-        new DeepTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
-    BasicAssocConfStrategy assocChecker =
-        new DeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
-    BasicCDConfStrategy cdChecker =
-        new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
-
-    // check conformance
-    return cdChecker.checkConformance(concreteCD);
+  public Set<ASTCDAttribute> getRefElements(ASTCDAttribute type) {
+    return attrInc.getRefElements(type);
   }
 
   public static boolean checkStrictDeepComposedConformance(
