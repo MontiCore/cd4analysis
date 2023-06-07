@@ -1,0 +1,11 @@
+import java.lang.String;
+
+classdiagram Source2 {
+  class Customer;
+
+  class Employer;
+
+  class Person;
+
+  association  CustomerService  [*] Customer (consults) -> (isConsultedBy) Person [1..*];
+}
