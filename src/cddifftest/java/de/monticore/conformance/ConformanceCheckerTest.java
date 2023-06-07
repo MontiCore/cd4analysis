@@ -82,6 +82,20 @@ public class ConformanceCheckerTest {
     assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
+  public void testStrengthDeepAssocConformanceValid(String concrete) {
+    parseModels("associations/valid/" + concrete, "associations/Reference.cd");
+    assertTrue(ConformanceChecker.checkStrictDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd"})
+  public void testStrengthDeepAssocConformanceInvalid(String concrete) {
+    parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
+    assertFalse(ConformanceChecker.checkStrictDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
   public void parseModels(String concrete, String ref) {
     try {
       Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parse(dir + concrete);

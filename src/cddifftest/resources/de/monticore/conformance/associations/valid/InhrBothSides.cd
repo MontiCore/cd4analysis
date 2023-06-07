@@ -2,8 +2,8 @@ import java.lang.String;
 
 classdiagram Reference {
 
-  class AccountTop;
-  class PersonTop;
+abstract  class AccountTop;
+abstract  class PersonTop;
 
   class Account extends AccountTop;
  <<ref="Account">> class BankAccount extends AccountTop;

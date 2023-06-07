@@ -3,6 +3,7 @@ package de.monticore.conformance;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.conformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.conformance.conf.association.DeepAssocConfStrategy;
+import de.monticore.conformance.conf.association.StrictDeepAssocConfStrategy;
 import de.monticore.conformance.conf.attribute.CompAttributeChecker;
 import de.monticore.conformance.conf.attribute.STNamedAttributeChecker;
 import de.monticore.conformance.conf.cd.BasicCDConfStrategy;
@@ -85,6 +86,26 @@ public class ConformanceChecker {
         new DeepTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
     BasicAssocConfStrategy assocChecker =
         new DeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+    BasicCDConfStrategy cdChecker =
+        new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
+
+    // check conformance
+    return cdChecker.checkConformance(concreteCD);
+  }
+
+  public static boolean checkStrictDeepComposedConformance(
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
+
+    // create Incarnation Strategies
+    CompTypeIncStrategy typeInc = new CompTypeIncStrategy(referenceCD, mapping);
+    CompAssocIncStrategy assocInc = new CompAssocIncStrategy(referenceCD, mapping);
+    CompAttributeChecker attrChecker = new CompAttributeChecker(mapping);
+
+    // create Conformance Strategies
+    DeepTypeConfStrategy typeChecker =
+        new DeepTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
+    BasicAssocConfStrategy assocChecker =
+        new StrictDeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
     BasicCDConfStrategy cdChecker =
         new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
 
