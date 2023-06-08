@@ -1,20 +1,24 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff;
+package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDAssocDiff;
+import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import org.sat4j.minisat.core.Pair;
 
 import java.util.List;
 
-public interface CDSyntaxDiff {
-  List<ASTCDClass> getAddedTypes();//class, enum, interface
-  List<ASTCDClass> getDeletedTypes();
-  //For now not needed
-  List<Pair> getMatchedTypes();
+public interface ICDSyntaxDiff {
+  List<ACDTypeDiff> getChangedClasses();
+  List<ACDAssocDiff> getChangedAssocs();
+  List<ASTCDClass> getAddedClasses();
+  List<ASTCDClass> getDeletedClasses();
+  List<ASTCDEnum> getAddedEnums();
+  List<ASTCDEnum> getDeletedEnums();
   List<ASTCDAssociation> getAddedAssocs();
   List<ASTCDAssociation> getDeletedAssocs();
+  List<ACDTypeDiff> getMatchedClasses();
+  List<ACDAssocDiff> getMatchedAssocs();
 
   //Is ASTCDCompilationUnit needed in all functions?
   /**

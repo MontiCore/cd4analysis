@@ -1,16 +1,15 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff;
+package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
 
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.syntax2semdiff.SemDiff.DataStructure;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.List;
 
-public interface CDAssocDiff {
-  List<DataStructure.DiffPair<ASTCDAssociation>> getChangedAssocs();
-  List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs();
+public interface ICDAssocDiff {
 
   /**
    *
@@ -23,13 +22,13 @@ public interface CDAssocDiff {
 
   /**
    *
-   * Based on the @param overlappingAssociations update the multymap with subclasses for each association.
+   * Based on the overlappingAssociations update the multymap with subclasses for each association.
    * Search for a full matching between the subclasses in cd1 and cd2.
    * If none is found, a semantic difference exists.
    * This function must be used before handling association
    * difference - possible inconsistent output.
    */
-  void createSubClass(List<ASTCDAssociation> overlappingAssociations);
+  void createSubClass();
 
   /**
    * Get the difference of two classes from cd1 and cd2.
