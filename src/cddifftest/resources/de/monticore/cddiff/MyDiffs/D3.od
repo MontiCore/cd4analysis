@@ -1,0 +1,16 @@
+objectdiagram D3{
+
+  <<instanceof="Person, Assistant">> bestAssistant:Assistant{
+    String name = "veryGoodAssistant";
+    int age = 28;
+    String add = "InformatikZentrum";
+    int workHours = 168;
+    Degree degree = MASTER;
+  };
+
+  diffProj:Project{
+    String name = "ClassDiagrams";
+  };
+
+  link bestAssistant (researchedBy) -> (topic) diffProj;
+}

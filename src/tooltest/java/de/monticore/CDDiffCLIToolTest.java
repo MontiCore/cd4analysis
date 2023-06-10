@@ -576,22 +576,22 @@ public class CDDiffCLIToolTest {
   @Test
   public void testMyDiff() {
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/cd1.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/cd2.cd";
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/CD12.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/CD11.cd";
 
     CD4CodeMill.init();
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
 
     try {
-      for (int i = 1; i <= 7; i++) {
+      for (int i = 1; i <= 5; i++) {
         Assert.assertTrue(
             new OD2CDMatcher()
                 .checkIfDiffWitness(
                     CDSemantics.SIMPLE_CLOSED_WORLD,
                     Path.of(cd1).toFile(),
                     Path.of(cd2).toFile(),
-                    Path.of("src/cddifftest/resources/de/monticore/cddiff/MyDiffs/Diff" + i + ".od")
+                    Path.of("src/cddifftest/resources/de/monticore/cddiff/MyDiffs/D" + i + ".od")
                         .toFile()));
       }
     } catch (NullPointerException | IOException e) {

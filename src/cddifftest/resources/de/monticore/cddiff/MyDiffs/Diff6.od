@@ -1,6 +1,0 @@
-objectdiagram Type_Diff_Att{
- swt:Course{
-   name = "SWT";
-   hasReq = false;
- };
-}

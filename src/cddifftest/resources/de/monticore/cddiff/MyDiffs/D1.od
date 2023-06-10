@@ -1,0 +1,12 @@
+objectdiagram D1{
+
+  <<instanceof="Person, Professor">> goodProf:Professor{
+    String name = "veryGoodProf";
+    int age = 50;
+    String add = "InformatikZentrum";
+    Degree degree = MASTER;
+    int officeNum = 101;
+    String dep = "MechEng";
+    boolean isAtRetAge = true;
+  };
+}

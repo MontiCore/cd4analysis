@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
 
+import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDAssocDiff;
@@ -17,6 +18,7 @@ public interface ICDSyntaxDiff {
   List<ASTCDEnum> getDeletedEnums();
   List<ASTCDAssociation> getAddedAssocs();
   List<ASTCDAssociation> getDeletedAssocs();
+  List<ACDTypeDiff> getChangedModifier();
   List<ACDTypeDiff> getMatchedClasses();
   List<ACDAssocDiff> getMatchedAssocs();
 
@@ -66,4 +68,37 @@ public interface ICDSyntaxDiff {
    * This function is similar to getClassHierarchy().
    */
   List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass);
+
+  /**
+   * Find if a change of a modifier has a meaning for a diagram.
+   * From abstract to non-abstract: semantic difference - class can be instantiated.
+   * From non-abstract to abstract: possible semantic difference - another class uses this abstract class.
+   * @return true if we have a semantic difference.
+   * This function kind of uses multiple others: inheritance hierarchy, comparison of associations.
+   */
+  void isClassNeeded();
+
+  /**
+   * Merge all duplicated associations that have the same role names @param duplicatedAssociations and put them in a multymap.
+   * This function must be used before handling association
+   * difference - possible inconsistent output.
+   * Must be done before overlappingAssocs.
+   *
+   * @return
+   */
+  ArrayListMultimap mergeAssociations();
+
+  /**
+   * Find all overlapping associations (same role name in target dir) and put them in a multymap.
+   * This function must be used before handling associations
+   * difference - possible inconsistent output.
+   */
+   ArrayListMultimap findOverlappingAssocs();
+
+  /**
+   * Get the type of difference between two ASTCDTypes or ASTCDAssociations
+   * @param diff object of type CDAssocDiff or CDTypeDIff
+   * @return difference between the two objects
+   */
+  String getTypeOfDiff(Object diff);
 }

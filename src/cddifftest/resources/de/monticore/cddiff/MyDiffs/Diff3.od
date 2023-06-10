@@ -1,6 +1,0 @@
-objectdiagram Type_Diff_Asso{
-  aliceProfile:UniProfile{
-    id = 1;
-    Degree degree = MASTER;
-  };
-}
