@@ -3,6 +3,7 @@ package de.monticore.cddiff.syntax2semdiff.SemDiff;
 public enum DiffTypes {
   ADDED_ATTRIBUTE,
   REMOVED_ATTRIBUTE,
+  CHANGED_ATTRIBUTE,
   ADDED_ASSOCIATION,
   REMOVED_ASSOCIATION,
   CHANGED_ASSOCIATION_MULTIPLICITY,
@@ -15,5 +16,5 @@ public enum DiffTypes {
   ADDED_INHERITANCE,
   REMOVED_INHERITANCE,
   STEREOTYPE_DIFFERENCE,//Do we need that?
-  NAME_DIFFERENCE
+
 }

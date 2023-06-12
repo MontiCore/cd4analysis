@@ -3,24 +3,29 @@ package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDAssocDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDTypeDiff;
+import de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations.CDAssocDiff;
+import de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations.CDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.List;
 
 public interface ICDSyntaxDiff {
-  List<ACDTypeDiff> getChangedClasses();
-  List<ACDAssocDiff> getChangedAssocs();
+  List<CDTypeDiff> getChangedTypes();
+  List<CDAssocDiff> getChangedAssocs();
   List<ASTCDClass> getAddedClasses();
   List<ASTCDClass> getDeletedClasses();
+  List<ASTCDInterface> getAddedInterfaces();
+  List<ASTCDInterface> getDeletedInterfaces();
   List<ASTCDEnum> getAddedEnums();
   List<ASTCDEnum> getDeletedEnums();
   List<ASTCDAssociation> getAddedAssocs();
   List<ASTCDAssociation> getDeletedAssocs();
-  List<ACDTypeDiff> getChangedModifier();
-  List<ACDTypeDiff> getMatchedClasses();
-  List<ACDAssocDiff> getMatchedAssocs();
+  List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses();
+  List<Pair<ASTCDEnum, ASTCDEnum>> getMatchedEnums();
+  List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces();
+  List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs();
 
   //Is ASTCDCompilationUnit needed in all functions?
   /**
@@ -42,7 +47,7 @@ public interface ICDSyntaxDiff {
 
   /**
    *
-   * Check if a deleted @param astcdAssociation was need in cd2, but not in cd1.
+   * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
   boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation);
@@ -86,19 +91,35 @@ public interface ICDSyntaxDiff {
    *
    * @return
    */
-  ArrayListMultimap mergeAssociations();
+  ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations();
 
   /**
    * Find all overlapping associations (same role name in target dir) and put them in a multymap.
    * This function must be used before handling associations
    * difference - possible inconsistent output.
    */
-   ArrayListMultimap findOverlappingAssocs();
+   ArrayListMultimap<ASTCDClass, Pair<ASTCDAssociation, ASTCDAssociation>> findOverlappingAssocs();
+
+   //  /**
+//   *
+//   * Based on the overlappingAssociations update the multymap with subclasses for each association.
+//   * Search for a full matching between the subclasses in cd1 and cd2.
+//   * If none is found, a semantic difference exists.
+//   * This function must be used before handling association
+//   * difference - possible inconsistent output.
+//   */
+//  void createSubClass();
 
   /**
    * Get the type of difference between two ASTCDTypes or ASTCDAssociations
    * @param diff object of type CDAssocDiff or CDTypeDIff
    * @return difference between the two objects
    */
-  String getTypeOfDiff(Object diff);
+  String findDiff(Object diff);
+
+  /**
+   * Get the two classes that are connected via the associations.
+   * @return pair of two classes.
+   */
+  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association);
 }

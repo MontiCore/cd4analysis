@@ -2,26 +2,21 @@ package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDMemberDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfacesNew.ACDTypeDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.DataStructure;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations.CDMemberDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
-import de.monticore.umlmodifier._ast.ASTModifier;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.List;
 
 public interface ICDTypeDiff {
-  List<ACDMemberDiff> getChangedMembers();
-  List<ACDMemberDiff> getChangedModifier();
-  //changed type
-  List<ACDMemberDiff> getChangedTypes();
+  List<CDMemberDiff> getChangedMembers();
   List<ASTCDAttribute> getAddedAttributes();
   List<ASTCDAttribute> getDeletedAttribute();
   List<ASTCDEnumConstant> getAddedConstants();
   List<ASTCDEnumConstant> getDeletedConstants();
 
+  List<Pair<ASTCDAttribute, ASTCDAttribute>> getMatchedAttributes();
+  List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
 
   /**
    * Check if attributes (added or deleted) change the semantic of a class.
@@ -31,18 +26,23 @@ public interface ICDTypeDiff {
   void changedAttribute();
 
   /**
-   * Get all classes with an enum that containt the new constant.
-   * @param astcdEnum
+   * Get all classes that use the ASTCDEnum as an attribute.
+   * We use this function when the typeDiff is between enums.
    * @return list of those classes.
-   * This function is similar to the one for added/deleted Enum-classes.
    */
-  List<ASTCDClass> getClassesForEnum(ASTCDEnum astcdEnum);
+  List<ASTCDClass> getClassesForEnum();
 
   /**
-   * Check if an attribute with a changed modifier is in some inheritance structures
-   * @param attribute
-   * @return true if it is found in the other class diagram
-   * Subfunctions: comparing attributes, computing inheritance hierarchy
+   * Check the difference in the modifier of the classes.
+   * It must also save the information for building the object diagrams.
+   * @return A String with the old and new roles.
    */
-  boolean isContained(ASTCDAttribute attribute);
+  String sterDiff();
+
+  /**
+   * Check the difference in the attribute types of the classes.
+   * It must also save the information for building the object diagrams.
+   * @return A String with the old and new types.
+   */
+  String attDiff();
 }
