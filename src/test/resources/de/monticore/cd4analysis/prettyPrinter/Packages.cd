@@ -1,0 +1,15 @@
+/* Dan-Tuong Le */
+
+package somePackage;
+
+  classdiagram Packages {
+
+    package someOtherPackage {
+      class A {
+        int a;
+      }
+    }
+
+  }
+
+

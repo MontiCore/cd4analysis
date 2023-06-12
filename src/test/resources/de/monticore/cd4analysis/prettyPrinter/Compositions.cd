@@ -1,0 +1,12 @@
+/* Dan-Tuong Le */
+
+classdiagramm Compostions {
+
+  class A;
+  class B;
+
+  class C {
+    A a;
+    B b;
+  }
+}

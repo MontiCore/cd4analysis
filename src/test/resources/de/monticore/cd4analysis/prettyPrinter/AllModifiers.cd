@@ -1,0 +1,22 @@
+/* Dan-Tuong Le */
+
+classdiagramm AllModifiers {
+
+  class A {
+    private int a;
+  }
+
+  class B {
+    protected int b;
+  }
+
+  class C {
+    public int c;
+  }
+
+  class D {
+    private int a;
+    protected int b;
+    public int c;
+  }
+}

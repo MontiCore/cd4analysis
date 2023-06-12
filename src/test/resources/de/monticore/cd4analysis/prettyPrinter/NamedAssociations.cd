@@ -1,0 +1,30 @@
+/* Yvonne Heimowski */
+import java.lang.String;
+
+classdiagram NamedAssociations {
+
+  class One {
+      String name;
+      int number;
+      boolean exists;
+  }
+
+  class Two {
+      String name;
+  }
+
+  class Three {
+       String name;
+   }
+
+ class Four {
+      String name;
+  }
+
+  association a One -> Two;
+  association Two (d) <-> (e) Three;
+  association b Three (f)  <- Four;
+  association c Four (g) -> ( h ) One;
+  association Two(i) -> ( j)One;
+
+}

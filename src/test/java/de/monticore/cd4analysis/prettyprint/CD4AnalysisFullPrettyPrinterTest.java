@@ -43,4 +43,5 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
 
     new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos().checkAll(node);
   }
+
 }
