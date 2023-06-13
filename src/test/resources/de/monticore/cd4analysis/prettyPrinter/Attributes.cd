@@ -1,0 +1,25 @@
+/* Yvonne Heimowski */
+import java.lang.String;
+
+classdiagram Attributes {
+
+    public class Person {
+      public String name;
+      protected int age;
+      private String adress;
+      final long id;
+      readonly String birthplace;
+      List<Person> children;
+      derived Person parent1;
+      derived Person parent2;
+      java.util.Date birthday;
+      boolean happy;
+      private double bankBalance;
+    }
+
+    public class Alphabet {
+        List<char> alphabet; int length = 26; List<String> umlaute;
+    }
+
+
+}

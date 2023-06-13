@@ -1,0 +1,11 @@
+/* Dan-Tuong Le */
+
+classdiagram Methods {
+
+  class A {
+    public A();
+    void doStuff();
+    void doStuffwithArguments(int a, int b);
+    int returnStuff();
+  }
+}

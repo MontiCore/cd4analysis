@@ -1,6 +1,6 @@
 /* Dan-Tuong Le */
 
-classdiagramm Extensions {
+classdiagram Extensions {
 
   abstract class A {
     int a;
@@ -8,10 +8,6 @@ classdiagramm Extensions {
 
   class B extends A {
     int b;
-
-    int add (int i) {
-      b = b+i;
-    }
   }
 
   class C extends A {

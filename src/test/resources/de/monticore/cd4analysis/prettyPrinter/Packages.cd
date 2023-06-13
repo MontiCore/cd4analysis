@@ -8,8 +8,17 @@ package somePackage;
       class A {
         int a;
       }
+
+      class B {
+
+      }
+
     }
 
-  }
+    class C {
+      public someOtherPackage.A c;
+    }
+
+}
 
 

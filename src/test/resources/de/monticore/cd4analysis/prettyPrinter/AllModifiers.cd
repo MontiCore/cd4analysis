@@ -1,6 +1,6 @@
 /* Dan-Tuong Le */
 
-classdiagramm AllModifiers {
+classdiagram AllModifiers {
 
   class A {
     private int a;
