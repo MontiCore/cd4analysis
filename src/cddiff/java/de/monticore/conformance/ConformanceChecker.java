@@ -16,21 +16,23 @@ import de.monticore.conformance.conf.attribute.STNamedAttributeChecker;
 import de.monticore.conformance.conf.cd.BasicCDConfStrategy;
 import de.monticore.conformance.conf.type.BasicTypeConfStrategy;
 import de.monticore.conformance.conf.type.DeepTypeConfStrategy;
-import de.monticore.conformance.inc.IncarnationStrategy;
 import de.monticore.conformance.inc.association.CompAssocIncStrategy;
 import de.monticore.conformance.inc.association.EqNameAssocIncStrategy;
 import de.monticore.conformance.inc.association.STNamedAssocIncStrategy;
 import de.monticore.conformance.inc.type.CompTypeIncStrategy;
 import de.monticore.conformance.inc.type.EqTypeIncStrategy;
 import de.monticore.conformance.inc.type.STTypeIncStrategy;
+import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.List;
 import java.util.Set;
 
 // todo: needs to be fixed
 public class ConformanceChecker {
   protected Set<ConfParameter> params;
-  protected IncarnationStrategy<ASTCDType> typeInc;
-  protected IncarnationStrategy<ASTCDAssociation> assocInc;
+  protected MatchingStrategy<ASTCDType> typeInc;
+  protected MatchingStrategy<ASTCDAssociation> assocInc;
   protected AttributeChecker attrInc;
 
   public ConformanceChecker(Set<ConfParameter> params) {
@@ -96,16 +98,16 @@ public class ConformanceChecker {
     return cdChecker.checkConformance(concreteCD);
   }
 
-  public Set<ASTCDType> getRefElements(ASTCDType con) {
-    return typeInc.getRefElements(con);
+  public List<ASTCDType> getRefElements(ASTCDType con) {
+    return typeInc.getMatchedElements(con);
   }
 
-  public Set<ASTCDAssociation> getRefElements(ASTCDAssociation con) {
-    return assocInc.getRefElements(con);
+  public List<ASTCDAssociation> getRefElements(ASTCDAssociation con) {
+    return assocInc.getMatchedElements(con);
   }
 
-  public Set<ASTCDAttribute> getRefElements(ASTCDAttribute type) {
-    return attrInc.getRefElements(type);
+  public List<ASTCDAttribute> getRefElements(ASTCDAttribute type) {
+    return attrInc.getMatchedElements(type);
   }
 
   public static boolean checkStrictDeepComposedConformance(

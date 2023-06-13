@@ -2,13 +2,13 @@ package de.monticore.conformance.conf;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.conformance.inc.IncarnationStrategy;
+import de.monticore.matcher.MatchingStrategy;
 
 public interface AttributeChecker
-    extends IncarnationStrategy<ASTCDAttribute>, ConformanceStrategy<ASTCDAttribute> {
+    extends MatchingStrategy<ASTCDAttribute>, ConformanceStrategy<ASTCDAttribute> {
   @Override
   default boolean checkConformance(ASTCDAttribute concrete) {
-    return getRefElements(concrete).stream()
+    return getMatchedElements(concrete).stream()
         .allMatch(ref -> ref.getMCType().deepEquals(concrete.getMCType()));
   }
 

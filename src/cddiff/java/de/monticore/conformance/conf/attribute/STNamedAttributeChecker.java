@@ -3,7 +3,8 @@ package de.monticore.conformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.conf.AttributeChecker;
-import java.util.Set;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class STNamedAttributeChecker implements AttributeChecker {
@@ -16,15 +17,15 @@ public class STNamedAttributeChecker implements AttributeChecker {
   }
 
   @Override
-  public Set<ASTCDAttribute> getRefElements(ASTCDAttribute concrete) {
+  public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
 
     return refType.getCDAttributeList().stream()
-        .filter(ref -> isIncarnation(concrete, ref))
-        .collect(Collectors.toSet());
+        .filter(ref -> isMatched(concrete, ref))
+        .collect(Collectors.toList());
   }
 
   @Override
-  public boolean isIncarnation(ASTCDAttribute concrete, ASTCDAttribute ref) {
+  public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
     if (concrete.getModifier().isPresentStereotype()
         && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);

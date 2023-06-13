@@ -5,7 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.conformance.inc.IncarnationStrategy;
+import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 import java.util.Set;
@@ -14,8 +14,8 @@ public class StrictDeepAssocConfStrategy extends BasicAssocConfStrategy {
   public StrictDeepAssocConfStrategy(
       ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
-      IncarnationStrategy<ASTCDType> typeInc,
-      IncarnationStrategy<ASTCDAssociation> assocInc) {
+      MatchingStrategy<ASTCDType> typeInc,
+      MatchingStrategy<ASTCDAssociation> assocInc) {
     super(refCD, conCD, typeInc, assocInc);
   }
 
@@ -47,7 +47,7 @@ public class StrictDeepAssocConfStrategy extends BasicAssocConfStrategy {
    * the concrete type incarnate the reference type.
    */
   protected boolean checkRule1(ASTCDType concrete, ASTCDType ref) {
-    return typeInc.isIncarnation(concrete, ref);
+    return typeInc.isMatched(concrete, ref);
   }
 
   /***
@@ -58,7 +58,7 @@ public class StrictDeepAssocConfStrategy extends BasicAssocConfStrategy {
   protected boolean checkRule2(ASTCDType concrete, ASTCDType ref) {
     return (concrete.getModifier().isAbstract() || ref.getSymbol().isIsInterface())
         && CDDiffUtil.getAllStrictSubTypes(concrete, conCD.getCDDefinition()).stream()
-            .anyMatch(subtype -> typeInc.isIncarnation(subtype, ref));
+            .anyMatch(subtype -> typeInc.isMatched(subtype, ref));
   }
 
   /***
@@ -66,6 +66,6 @@ public class StrictDeepAssocConfStrategy extends BasicAssocConfStrategy {
    */
   protected boolean checkRule3(ASTCDType concrete, ASTCDType ref) {
     return CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()
-        .anyMatch(superType -> typeInc.isIncarnation(concrete, ref));
+        .anyMatch(superType -> typeInc.isMatched(concrete, ref));
   }
 }

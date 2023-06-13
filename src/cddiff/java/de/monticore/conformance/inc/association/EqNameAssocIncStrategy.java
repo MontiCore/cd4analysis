@@ -2,11 +2,12 @@ package de.monticore.conformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.conformance.inc.IncarnationStrategy;
-import java.util.Set;
+import de.monticore.matcher.MatchingStrategy;
+
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class EqNameAssocIncStrategy implements IncarnationStrategy<ASTCDAssociation> {
+public class EqNameAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
 
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
@@ -17,14 +18,14 @@ public class EqNameAssocIncStrategy implements IncarnationStrategy<ASTCDAssociat
   }
 
   @Override
-  public Set<ASTCDAssociation> getRefElements(ASTCDAssociation concrete) {
+  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
     return refCD.getCDDefinition().getCDAssociationsList().stream()
-        .filter(assoc -> isIncarnation(concrete, assoc))
-        .collect(Collectors.toSet());
+        .filter(assoc -> isMatched(concrete, assoc))
+        .collect(Collectors.toList());
   }
 
   @Override
-  public boolean isIncarnation(ASTCDAssociation concrete, ASTCDAssociation ref) {
+  public boolean isMatched(ASTCDAssociation concrete, ASTCDAssociation ref) {
     if (concrete.isPresentName() && ref.isPresentName()) {
       return ref.getName().equals(concrete.getName());
     }

@@ -10,7 +10,8 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.conformance.conf.AttributeChecker;
 import de.monticore.conformance.conf.ConformanceStrategy;
-import de.monticore.conformance.inc.IncarnationStrategy;
+import de.monticore.matcher.MatchingStrategy;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,15 +20,15 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected ASTCDCompilationUnit conCD;
 
   protected AttributeChecker attributeChecker;
-  protected IncarnationStrategy<ASTCDType> typeInc;
-  protected IncarnationStrategy<ASTCDAssociation> assocInc;
+  protected MatchingStrategy<ASTCDType> typeInc;
+  protected MatchingStrategy<ASTCDAssociation> assocInc;
 
   public BasicTypeConfStrategy(
       ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
       AttributeChecker attributeChecker,
-      IncarnationStrategy<ASTCDType> typeInc,
-      IncarnationStrategy<ASTCDAssociation> assocInc) {
+      MatchingStrategy<ASTCDType> typeInc,
+      MatchingStrategy<ASTCDAssociation> assocInc) {
     this.refCD = refCD;
     this.conCD = conCD;
     this.attributeChecker = attributeChecker;
@@ -37,7 +38,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
 
   @Override
   public boolean checkConformance(ASTCDType concrete) {
-    return typeInc.getRefElements(concrete).stream()
+    return typeInc.getMatchedElements(concrete).stream()
         .allMatch(ref -> checkConformance(concrete, ref));
   }
 
@@ -82,7 +83,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
             .allMatch(
                 refSuper ->
                     CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()
-                        .anyMatch(conSuper -> typeInc.getRefElements(conSuper).contains(refSuper)));
+                        .anyMatch(conSuper -> typeInc.getMatchedElements(conSuper).contains(refSuper)));
     if (attributes && associations && superTypes) {
       return true;
     }
@@ -130,21 +131,21 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
         .allMatch(
             refAssoc ->
                 con.stream()
-                    .anyMatch(cAssoc -> assocInc.getRefElements(cAssoc).contains(refAssoc)));
+                    .anyMatch(cAssoc -> assocInc.getMatchedElements(cAssoc).contains(refAssoc)));
   }
 
   protected boolean checkIncarnationAt(Set<ASTCDAttribute> con, Set<ASTCDAttribute> ref) {
     return ref.stream()
         .allMatch(
             refAttr ->
-                con.stream().anyMatch(conAttr -> attributeChecker.isIncarnation(conAttr, refAttr)));
+                con.stream().anyMatch(conAttr -> attributeChecker.isMatched(conAttr, refAttr)));
   }
 
   protected boolean checkConformanceAt(Set<ASTCDAttribute> concrete) {
     return concrete.stream()
         .allMatch(
             conAttr ->
-                attributeChecker.getRefElements(conAttr).isEmpty()
+                attributeChecker.getMatchedElements(conAttr).isEmpty()
                     || attributeChecker.checkConformance(conAttr));
   }
 }
