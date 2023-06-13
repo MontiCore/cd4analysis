@@ -2,7 +2,6 @@ package de.monticore.matcher;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,8 +19,7 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
    * @return all elements which have been matched
    */
   @Override
-  public List<ASTCDAssociation> getMatchedElements(
-      ASTCDAssociation srcElem) {
+  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream()
         .filter(assoc -> isMatched(srcElem, assoc))
         .collect(Collectors.toList());
@@ -36,9 +34,7 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
    * @return true if both types have the same name
    */
   @Override
-  public boolean isMatched(
-    ASTCDAssociation srcElem,
-    ASTCDAssociation tgtElem) {
+  public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (tgtElem.isPresentName() && srcElem.isPresentName()) {
       if (tgtElem.getName().equals(srcElem.getName())) {
         return true;

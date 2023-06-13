@@ -3,7 +3,6 @@ package de.monticore.matcher;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +20,7 @@ public class NameTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @return all elements which have been matched
    */
   @Override
-  public List<ASTCDType> getMatchedElements(
-          ASTCDType srcElem) {
+  public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     return tgtCD.getEnclosingScope().resolveCDTypeDownMany(srcElem.getName()).stream()
         .map(CDTypeSymbolTOP::getAstNode)
         .collect(Collectors.toList());
@@ -37,9 +35,7 @@ public class NameTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @return true if both types have the same name
    */
   @Override
-  public boolean isMatched(
-    ASTCDType srcElem,
-    ASTCDType tgtElem) {
+  public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     if ((srcElem.getSymbol().getInternalQualifiedName())
         .equals(tgtElem.getSymbol().getInternalQualifiedName())) {
       return true;

@@ -11,7 +11,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.conformance.conf.AttributeChecker;
 import de.monticore.conformance.conf.ConformanceStrategy;
 import de.monticore.matcher.MatchingStrategy;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -83,7 +82,8 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
             .allMatch(
                 refSuper ->
                     CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream()
-                        .anyMatch(conSuper -> typeInc.getMatchedElements(conSuper).contains(refSuper)));
+                        .anyMatch(
+                            conSuper -> typeInc.getMatchedElements(conSuper).contains(refSuper)));
     if (attributes && associations && superTypes) {
       return true;
     }

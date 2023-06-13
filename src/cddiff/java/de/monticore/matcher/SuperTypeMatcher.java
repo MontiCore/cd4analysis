@@ -1,12 +1,10 @@
 package de.monticore.matcher;
 
-import de.monticore.cd4code._symboltable.CD4CodeScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,16 +14,17 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
   protected final ASTCDCompilationUnit srcCD;
   protected final ASTCDCompilationUnit tgtCD;
 
-
-  public SuperTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public SuperTypeMatcher(
+      MatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
   }
 
   @Override
-  public List<ASTCDType> getMatchedElements(
-          ASTCDType srcElem) {
+  public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     return tgtCD.getEnclosingScope().resolveCDTypeDownMany(srcElem.getName()).stream()
         .map(CDTypeSymbolTOP::getAstNode)
         .collect(Collectors.toList());
@@ -41,9 +40,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    *     associations are the same
    */
   @Override
-  public boolean isMatched(
-    ASTCDType srcElem,
-    ASTCDType tgtElem) {
+  public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     if (checkSuperClass(srcElem, tgtElem, tgtCD)) {
       return true;
     } else {
@@ -58,10 +55,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @param tgtElem element from tgtCD
    * @return true if srcClass from tgtCD is a Super Class of srcClass from srcCd
    */
-  public boolean checkSuperClass(
-      ASTCDType srcElem,
-      ASTCDType tgtElem,
-      ASTCDCompilationUnit tgtCD) {
+  public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
 
     boolean superType =
         CDDiffUtil.getAllSuperTypes(tgtElem, tgtCD.getCDDefinition()).stream()

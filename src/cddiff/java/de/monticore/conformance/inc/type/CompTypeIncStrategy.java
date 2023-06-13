@@ -3,7 +3,6 @@ package de.monticore.conformance.inc.type;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.matcher.MatchingStrategy;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -3,7 +3,6 @@ package de.monticore.conformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.conf.AttributeChecker;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +20,8 @@ public class CompAttributeChecker implements AttributeChecker {
 
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
-    List<ASTCDAttribute> refElements = new ArrayList<>(stNameAttrChecker.getMatchedElements(concrete));
+    List<ASTCDAttribute> refElements =
+        new ArrayList<>(stNameAttrChecker.getMatchedElements(concrete));
     if (refElements.isEmpty()) {
       refElements.addAll(eqNameAttrChecker.getMatchedElements(concrete));
     }

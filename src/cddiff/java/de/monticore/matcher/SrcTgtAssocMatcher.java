@@ -3,12 +3,10 @@ package de.monticore.matcher;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnitBuilder;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,7 +17,10 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
   protected final ASTCDCompilationUnit srcCD;
   protected final ASTCDCompilationUnit tgtCD;
 
-  public SrcTgtAssocMatcher(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public SrcTgtAssocMatcher(
+      MatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
@@ -31,8 +32,7 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
    * @return all elements which have been matched
    */
   @Override
-  public List<ASTCDAssociation> getMatchedElements(
-          ASTCDAssociation srcElem) {
+  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream()
         .filter(assoc -> isMatched(srcElem, assoc))
         .collect(Collectors.toList());
@@ -46,9 +46,7 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
    * @return true if the source classes and the role names on the side of the target class match
    */
   @Override
-  public boolean isMatched(
-    ASTCDAssociation srcElem,
-    ASTCDAssociation tgtElem) {
+  public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
 
     if (check(srcElem, tgtElem, srcCD, tgtCD) || checkReverse(srcElem, tgtElem, srcCD, tgtCD)) {
       return true;

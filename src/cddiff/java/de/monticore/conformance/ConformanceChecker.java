@@ -24,7 +24,6 @@ import de.monticore.conformance.inc.type.EqTypeIncStrategy;
 import de.monticore.conformance.inc.type.STTypeIncStrategy;
 import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.Set;
 

@@ -3,7 +3,6 @@ package de.monticore.conformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.conf.AttributeChecker;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
