@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.conformance.conf.ConformanceStrategy;
-import de.monticore.conformance.inc.IncarnationStrategy;
+import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
@@ -15,14 +15,14 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
 
   protected ASTCDCompilationUnit refCD;
   protected ASTCDCompilationUnit conCD;
-  protected IncarnationStrategy<ASTCDType> typeInc;
-  protected IncarnationStrategy<ASTCDAssociation> assocInc;
+  protected MatchingStrategy<ASTCDType> typeInc;
+  protected MatchingStrategy<ASTCDAssociation> assocInc;
 
   public BasicAssocConfStrategy(
       ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
-      IncarnationStrategy<ASTCDType> typeInc,
-      IncarnationStrategy<ASTCDAssociation> assocInc) {
+      MatchingStrategy<ASTCDType> typeInc,
+      MatchingStrategy<ASTCDAssociation> assocInc) {
     this.refCD = refCD;
     this.conCD = conCD;
     this.typeInc = typeInc;
@@ -31,7 +31,7 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
 
   @Override
   public boolean checkConformance(ASTCDAssociation concrete) {
-    return assocInc.getRefElements(concrete).stream()
+    return assocInc.getMatchedElements(concrete).stream()
         .allMatch(ref -> checkConformance(concrete, ref));
   }
 
@@ -105,7 +105,7 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
     if (conTypeSymbol.isPresent() && refTypeSymbol.isPresent()) {
       ASTCDType conType = conTypeSymbol.get().getAstNode();
       ASTCDType refType = refTypeSymbol.get().getAstNode();
-      return typeInc.isIncarnation(conType, refType);
+      return typeInc.isMatched(conType, refType);
     }
     Log.error("0xCDD17: Could not resolve association reference!");
     return false;

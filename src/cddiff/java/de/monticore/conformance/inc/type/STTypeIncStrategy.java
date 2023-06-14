@@ -3,12 +3,12 @@ package de.monticore.conformance.inc.type;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-import de.monticore.conformance.inc.IncarnationStrategy;
-import java.util.HashSet;
-import java.util.Set;
+import de.monticore.matcher.MatchingStrategy;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class STTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
+public class STTypeIncStrategy implements MatchingStrategy<ASTCDType> {
 
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
@@ -19,21 +19,21 @@ public class STTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
   }
 
   @Override
-  public Set<ASTCDType> getRefElements(ASTCDType concrete) {
-    Set<ASTCDType> refTypes = new HashSet<>();
+  public List<ASTCDType> getMatchedElements(ASTCDType concrete) {
+    List<ASTCDType> refTypes = new ArrayList<>();
     if (concrete.getModifier().isPresentStereotype()
         && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
       refTypes.addAll(
           refCD.getEnclosingScope().resolveCDTypeDownMany(refName).stream()
               .map(CDTypeSymbolTOP::getAstNode)
-              .collect(Collectors.toSet()));
+              .collect(Collectors.toList()));
     }
     return refTypes;
   }
 
   @Override
-  public boolean isIncarnation(ASTCDType concrete, ASTCDType ref) {
+  public boolean isMatched(ASTCDType concrete, ASTCDType ref) {
     if (concrete.getModifier().isPresentStereotype()
         && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);

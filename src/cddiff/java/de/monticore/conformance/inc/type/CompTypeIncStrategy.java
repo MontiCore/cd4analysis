@@ -2,11 +2,11 @@ package de.monticore.conformance.inc.type;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.conformance.inc.IncarnationStrategy;
-import java.util.HashSet;
-import java.util.Set;
+import de.monticore.matcher.MatchingStrategy;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CompTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
+public class CompTypeIncStrategy implements MatchingStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
 
@@ -21,16 +21,16 @@ public class CompTypeIncStrategy implements IncarnationStrategy<ASTCDType> {
   }
 
   @Override
-  public Set<ASTCDType> getRefElements(ASTCDType concrete) {
-    Set<ASTCDType> refElements = new HashSet<>(stTypeIncStrategy.getRefElements(concrete));
+  public List<ASTCDType> getMatchedElements(ASTCDType concrete) {
+    List<ASTCDType> refElements = new ArrayList<>(stTypeIncStrategy.getMatchedElements(concrete));
     if (refElements.isEmpty()) {
-      refElements.addAll(eqTypeIncStrategy.getRefElements(concrete));
+      refElements.addAll(eqTypeIncStrategy.getMatchedElements(concrete));
     }
     return refElements;
   }
 
   @Override
-  public boolean isIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return getRefElements(concrete).contains(ref);
+  public boolean isMatched(ASTCDType concrete, ASTCDType ref) {
+    return getMatchedElements(concrete).contains(ref);
   }
 }

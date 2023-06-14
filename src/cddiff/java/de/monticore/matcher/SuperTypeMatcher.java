@@ -5,23 +5,29 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.logging.Log;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
 
   protected MatchingStrategy<ASTCDType> typeMatcher;
+  protected final ASTCDCompilationUnit srcCD;
+  protected final ASTCDCompilationUnit tgtCD;
 
-  public SuperTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher) {
+  public SuperTypeMatcher(
+      MatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
+    this.srcCD = srcCD;
+    this.tgtCD = tgtCD;
   }
 
   @Override
-  public Set<ASTCDType> getMatchedElements(
-      ASTCDType srcElem, ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD) {
+  public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     return tgtCD.getEnclosingScope().resolveCDTypeDownMany(srcElem.getName()).stream()
         .map(CDTypeSymbolTOP::getAstNode)
-        .collect(Collectors.toSet());
+        .collect(Collectors.toList());
   }
 
   /**
@@ -30,18 +36,12 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    *
    * @param srcElem element from srcCD
    * @param tgtElem element from tgtCD
-   * @param srcCD target CD which has been improved
-   * @param tgtCD source CD which has not been improved
    * @return true if the source class of the tgtCD is a sub class of the tgt of the srcCD and if the
    *     associations are the same
    */
   @Override
-  public boolean isMatched(
-      ASTCDType srcElem,
-      ASTCDType tgtElem,
-      ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
-    if (checkSuperClass(srcElem, tgtElem, srcCD, tgtCD)) {
+  public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
+    if (checkSuperClass(srcElem, tgtElem, tgtCD)) {
       return true;
     } else {
       Log.error("There is a problem with isMatched() in MatchAssocSubSuperTyp!");
@@ -55,15 +55,11 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @param tgtElem element from tgtCD
    * @return true if srcClass from tgtCD is a Super Class of srcClass from srcCd
    */
-  public boolean checkSuperClass(
-      ASTCDType srcElem,
-      ASTCDType tgtElem,
-      ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
 
     boolean superType =
         CDDiffUtil.getAllSuperTypes(tgtElem, tgtCD.getCDDefinition()).stream()
-            .anyMatch(tgtSuper -> typeMatcher.isMatched(srcElem, tgtSuper, srcCD, tgtCD));
+            .anyMatch(tgtSuper -> typeMatcher.isMatched(srcElem, tgtSuper));
 
     if (superType) {
       return true;

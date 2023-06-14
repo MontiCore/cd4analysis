@@ -2,21 +2,27 @@ package de.monticore.matcher;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
+
+  private final ASTCDCompilationUnit tgtCD;
+
+  public NameAssocMatcher(ASTCDCompilationUnit tgtCD) {
+    this.tgtCD = tgtCD;
+  }
+
   /**
    * A set for the matched elements which can be per definition modified
    *
    * @return all elements which have been matched
    */
   @Override
-  public Set<ASTCDAssociation> getMatchedElements(
-      ASTCDAssociation srcElem, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream()
-        .filter(assoc -> isMatched(srcElem, assoc, srcCD, tgtCD))
-        .collect(Collectors.toSet());
+        .filter(assoc -> isMatched(srcElem, assoc))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -25,16 +31,10 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
    *
    * @param srcElem The assoc which we pick from the class diagram
    * @param tgtElem The assoc which we pick from the class diagram
-   * @param srcCD The class diagram is the new class diagram
-   * @param tgtCD The class diagram is the old class diagram
    * @return true if both types have the same name
    */
   @Override
-  public boolean isMatched(
-      ASTCDAssociation srcElem,
-      ASTCDAssociation tgtElem,
-      ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (tgtElem.isPresentName() && srcElem.isPresentName()) {
       if (tgtElem.getName().equals(srcElem.getName())) {
         return true;

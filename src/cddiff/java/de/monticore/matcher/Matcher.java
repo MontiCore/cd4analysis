@@ -11,8 +11,8 @@ public class Matcher {
       ASTCDAssociation tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
-    NameAssocMatcher associationNameMatch = new NameAssocMatcher();
-    return associationNameMatch.isMatched(srcElem, tgtElem, tgtCD, srcCD);
+    NameAssocMatcher associationNameMatch = new NameAssocMatcher(tgtCD);
+    return associationNameMatch.isMatched(srcElem, tgtElem);
   }
 
   public static boolean matchingNameTypeStrategy(
@@ -20,8 +20,8 @@ public class Matcher {
       ASTCDType tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher();
-    return nameTypeMatch.isMatched(srcElem, tgtElem, srcCD, tgtCD);
+    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
+    return nameTypeMatch.isMatched(srcElem, tgtElem);
   }
 
   public static boolean matchingAssocSubToSuperClass(
@@ -30,9 +30,9 @@ public class Matcher {
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
 
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher();
-    SuperTypeMatcher associationSubToSuperClass = new SuperTypeMatcher(nameTypeMatch);
-    return associationSubToSuperClass.isMatched(srcElem, tgtElem, srcCD, tgtCD);
+    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
+    SuperTypeMatcher associationSubToSuperClass = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    return associationSubToSuperClass.isMatched(srcElem, tgtElem);
   }
 
   public static boolean matchingAssocSrcClassTgtRoleName(
@@ -41,8 +41,8 @@ public class Matcher {
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
 
-    NameTypeMatcher typeMatcher = new NameTypeMatcher();
-    SrcTgtAssocMatcher associationSrcTgtMatch = new SrcTgtAssocMatcher(typeMatcher);
-    return associationSrcTgtMatch.isMatched(srcElem, tgtElem, srcCD, tgtCD);
+    NameTypeMatcher typeMatcher = new NameTypeMatcher(tgtCD);
+    SrcTgtAssocMatcher associationSrcTgtMatch = new SrcTgtAssocMatcher(typeMatcher, srcCD, tgtCD);
+    return associationSrcTgtMatch.isMatched(srcElem, tgtElem);
   }
 }

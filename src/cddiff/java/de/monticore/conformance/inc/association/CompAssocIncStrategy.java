@@ -2,11 +2,11 @@ package de.monticore.conformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.conformance.inc.IncarnationStrategy;
-import java.util.HashSet;
-import java.util.Set;
+import de.monticore.matcher.MatchingStrategy;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CompAssocIncStrategy implements IncarnationStrategy<ASTCDAssociation> {
+public class CompAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
 
@@ -21,17 +21,17 @@ public class CompAssocIncStrategy implements IncarnationStrategy<ASTCDAssociatio
   }
 
   @Override
-  public Set<ASTCDAssociation> getRefElements(ASTCDAssociation concrete) {
-    Set<ASTCDAssociation> refElements =
-        new HashSet<>(stNamedAssocIncStrategy.getRefElements(concrete));
+  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
+    List<ASTCDAssociation> refElements =
+        new ArrayList<>(stNamedAssocIncStrategy.getMatchedElements(concrete));
     if (refElements.isEmpty()) {
-      refElements.addAll(eqNameAssocIncStrategy.getRefElements(concrete));
+      refElements.addAll(eqNameAssocIncStrategy.getMatchedElements(concrete));
     }
     return refElements;
   }
 
   @Override
-  public boolean isIncarnation(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    return getRefElements(concrete).contains(ref);
+  public boolean isMatched(ASTCDAssociation concrete, ASTCDAssociation ref) {
+    return getMatchedElements(concrete).contains(ref);
   }
 }
