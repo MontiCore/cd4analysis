@@ -5,10 +5,8 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,15 +23,17 @@ public class CDAssociationHelper {
       Set<ASTCDAssociation> superAssociations = new HashSet<>();
       for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
         for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-          if (isSuperAssociation(srcAssoc, targetAssoc, targetScope) || isSuperAssociationInReverse(
-              srcAssoc, targetAssoc, targetScope)) {
+          if (isSuperAssociation(srcAssoc, targetAssoc, targetScope)
+              || isSuperAssociationInReverse(srcAssoc, targetAssoc, targetScope)) {
             superAssociations.add(srcAssoc);
           }
         }
       }
       for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
         superAssociations.removeIf(
-            srcAssoc -> isSuperAssociation(targetAssoc, srcAssoc, targetScope) || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
+            srcAssoc ->
+                isSuperAssociation(targetAssoc, srcAssoc, targetScope)
+                    || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
       }
       return superAssociations;
     }
