@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
+package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;

@@ -1,15 +1,15 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations;
+package de.monticore.cddiff.syndiff.imp;
 
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces.ICDSyntaxDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.DiffTypes;
+import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
+import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.ArrayList;
@@ -292,9 +292,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   @Override
   public Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association){
-    Optional<DiagramSymbol> astcdClass = getSrcCD().getEnclosingScope().resolveDiagramDown(association.getLeftQualifiedName().getQName());
-    Optional<DiagramSymbol> astcdClass1 = getSrcCD().getEnclosingScope().resolveDiagramDown(association.getRightQualifiedName().getQName());
-    return null;
+    Optional<CDTypeSymbol> astcdClass = getSrcCD().getEnclosingScope().resolveCDTypeDown(association.getLeftQualifiedName().getQName());
+    Optional<CDTypeSymbol> astcdClass1 = getSrcCD().getEnclosingScope().resolveCDTypeDown(association.getRightQualifiedName().getQName());
+    return new Pair<ASTCDClass, ASTCDClass>((ASTCDClass) astcdClass.get().getAstNode(), (ASTCDClass) astcdClass1.get().getAstNode());
   }
 
   /**

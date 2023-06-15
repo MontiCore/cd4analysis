@@ -1,9 +1,9 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations;
+package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces.ICDAssocDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.DiffTypes;
+import de.monticore.cddiff.syndiff.ICDAssocDiff;
+import de.monticore.cddiff.syndiff.DiffTypes;
 
 import java.util.List;
 import java.util.Optional;

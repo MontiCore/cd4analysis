@@ -1,10 +1,10 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations;
+package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces.ICDTypeDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.DiffTypes;
+import de.monticore.cddiff.syndiff.ICDTypeDiff;
+import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 

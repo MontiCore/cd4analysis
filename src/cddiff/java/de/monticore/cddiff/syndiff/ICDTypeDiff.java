@@ -1,8 +1,8 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
+package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations.CDMemberDiff;
+import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 

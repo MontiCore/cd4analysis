@@ -1,4 +1,7 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff;
+package de.monticore.cddiff.syndiff;
+
+import de.monticore.cddiff.syndiff.DiffTypes;
+
 public class DataStructure {
 
   public static class DiffPair<T> {

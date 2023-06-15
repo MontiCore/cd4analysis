@@ -1,10 +1,9 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff.CDInterfaces;
+package de.monticore.cddiff.syndiff;
 
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations.CDAssocDiff;
-import de.monticore.cddiff.syntax2semdiff.SemDiff.CDImplementations.CDTypeDiff;
+import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import edu.mit.csail.sdg.alloy4.Pair;

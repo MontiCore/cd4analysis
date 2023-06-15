@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syntax2semdiff.SemDiff;
+package de.monticore.cddiff.syndiff;
 
 public enum DiffTypes {
   ADDED_ATTRIBUTE,
