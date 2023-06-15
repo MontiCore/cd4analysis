@@ -13,9 +13,27 @@ import java.util.Set;
 public class CDAssociationHelper {
 
   /**
-   * Collect all associations in srcAST that are super-associations of an associations in targetAST
+   * Collect associations in srcAST that are strict super-associations of an associations in
+   * targetAST
    */
   public static Set<ASTCDAssociation> collectStrictSuperAssociations(
+      ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
+
+    Set<ASTCDAssociation> strictSuperAssociations = collectSuperAssociations(srcAST, targetAST);
+    ICD4CodeArtifactScope targetScope = (ICD4CodeArtifactScope) targetAST.getEnclosingScope();
+    for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+      strictSuperAssociations.removeIf(
+          srcAssoc ->
+              isSuperAssociation(targetAssoc, srcAssoc, targetScope)
+                  || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
+    }
+    return strictSuperAssociations;
+  }
+
+  /**
+   * Collect all associations in srcAST that are super-associations of an associations in targetAST
+   */
+  public static Set<ASTCDAssociation> collectSuperAssociations(
       ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
     if (targetAST.getEnclosingScope() instanceof ICD4CodeArtifactScope) {
@@ -28,12 +46,6 @@ public class CDAssociationHelper {
             superAssociations.add(srcAssoc);
           }
         }
-      }
-      for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-        superAssociations.removeIf(
-            srcAssoc ->
-                isSuperAssociation(targetAssoc, srcAssoc, targetScope)
-                    || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
       }
       return superAssociations;
     }
