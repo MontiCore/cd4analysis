@@ -1,10 +1,20 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import edu.mit.csail.sdg.alloy4.Pair;
 
+import java.util.List;
+
 public interface ICDAssocDiff {
+  ASTCDAssociation getElem1();
+
+  ASTCDAssociation getElem2();
+
+  List<DiffTypes> getBaseDiff();
+
+  void setBaseDiff(List<DiffTypes> baseDiff);
 
   /**
    * Check the difference in the roles of the associations

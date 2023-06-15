@@ -13,27 +13,23 @@ public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation elem2;
   private List<DiffTypes> baseDiff;
 
-  public ASTCDAssociation getElem1() {
-    return elem1;
-  }
-
-  public ASTCDAssociation getElem2() {
-    return elem2;
-  }
-
+  @Override
+  public ASTCDAssociation getElem1() { return elem1; }
+  @Override
+  public ASTCDAssociation getElem2() { return elem2; }
+  @Override
   public List<DiffTypes> getBaseDiff() {
     return baseDiff;
   }
-
+  @Override
   public void setBaseDiff(List<DiffTypes> baseDiff) {
     this.baseDiff = baseDiff;
   }
-
   protected CDAssocDiff(ASTCDAssociation elem1, ASTCDAssociation elem2) {
     this.elem1 = elem1;
     this.elem2 = elem2;
   }
-
+  @Override
   public String roleDiff(){
     ASTCDAssociation newAssoc = getElem1();
     ASTCDAssociation oldAssoc = getElem2();
@@ -46,6 +42,7 @@ public class CDAssocDiff implements ICDAssocDiff {
     }
     return diff.toString();
   }
+  @Override
   public String dirDiff() {
     ASTCDAssociation newAssoc = getElem1();
     ASTCDAssociation oldAssoc = getElem2();

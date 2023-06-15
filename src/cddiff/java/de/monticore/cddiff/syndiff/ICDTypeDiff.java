@@ -2,6 +2,7 @@ package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -14,9 +15,18 @@ public interface ICDTypeDiff {
   List<ASTCDAttribute> getDeletedAttribute();
   List<ASTCDEnumConstant> getAddedConstants();
   List<ASTCDEnumConstant> getDeletedConstants();
-
   List<Pair<ASTCDAttribute, ASTCDAttribute>> getMatchedAttributes();
   List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
+
+  ASTCDType getElem1();
+  ASTCDType getElem2();
+  void setChangedMembers(List<CDMemberDiff> changedMembers);
+  void setAddedAttributes(List<ASTCDAttribute> addedAttributes);
+  void setDeletedAttribute(List<ASTCDAttribute> deletedAttribute);
+  void setAddedConstants(List<ASTCDEnumConstant> addedConstants);
+  void setDeletedConstants(List<ASTCDEnumConstant> deletedConstants);
+  List<DiffTypes> getBaseDiffs();
+  public void setBaseDiffs(List<DiffTypes> baseDiffs);
 
   /**
    * Check if attributes (added or deleted) change the semantic of a class.

@@ -21,23 +21,6 @@ import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
 public class CDSyntaxDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
   private ASTCDCompilationUnit trgCD;
-
-  public ASTCDCompilationUnit getSrcCD() {
-    return srcCD;
-  }
-
-  public void setSrcCD(ASTCDCompilationUnit srcCD) {
-    this.srcCD = srcCD;
-  }
-
-  public ASTCDCompilationUnit getTrgCD() {
-    return trgCD;
-  }
-
-  public void setTrgCD(ASTCDCompilationUnit trgCD) {
-    this.trgCD = trgCD;
-  }
-
   private List<CDTypeDiff> changedClasses;
   private List<CDAssocDiff> changedAssocs;
   private List<ASTCDClass> addedClasses;
@@ -50,123 +33,128 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   private List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums;
   private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
   private List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs;
-
   private List<DiffTypes> baseDiff;
 
+  @Override
+  public ASTCDCompilationUnit getSrcCD() {
+    return srcCD;
+  }
+  @Override
+  public void setSrcCD(ASTCDCompilationUnit srcCD) {
+    this.srcCD = srcCD;
+  }
+  @Override
+  public ASTCDCompilationUnit getTrgCD() {
+    return trgCD;
+  }
+  @Override
+  public void setTrgCD(ASTCDCompilationUnit trgCD) {
+    this.trgCD = trgCD;
+  }
+  @Override
   public List<CDTypeDiff> getChangedClasses() {
     return changedClasses;
   }
-
+  @Override
   public void setChangedClasses(List<CDTypeDiff> changedCLasses) {
     this.changedClasses = changedCLasses;
   }
-
   @Override
   public List<CDTypeDiff> getChangedTypes() {
     return null;
   }
-
   @Override
   public List<CDAssocDiff> getChangedAssocs() {
     return changedAssocs;
   }
-
+  @Override
   public void setChangedAssocs(List<CDAssocDiff> changedAssocs) {
     this.changedAssocs = changedAssocs;
   }
-
   @Override
   public List<ASTCDClass> getAddedClasses() {
     return addedClasses;
   }
-
+  @Override
   public void setAddedClasses(List<ASTCDClass> addedClasses) {
     this.addedClasses = addedClasses;
   }
-
   @Override
   public List<ASTCDClass> getDeletedClasses() {
     return deletedClasses;
   }
-
   @Override
   public List<ASTCDInterface> getAddedInterfaces() {
     return null;
   }
-
   @Override
   public List<ASTCDInterface> getDeletedInterfaces() {
     return null;
   }
-
+  @Override
   public void setDeletedClasses(List<ASTCDClass> deletedClasses) {
     this.deletedClasses = deletedClasses;
   }
-
   @Override
   public List<ASTCDEnum> getAddedEnums() {
     return addedEnums;
   }
-
+  @Override
   public void setAddedEnums(List<ASTCDEnum> addedEnums) {
     this.addedEnums = addedEnums;
   }
-
   @Override
   public List<ASTCDEnum> getDeletedEnums() {
     return deletedEnums;
   }
-
+  @Override
   public void setDeletedEnums(List<ASTCDEnum> deletedEnums) {
     this.deletedEnums = deletedEnums;
   }
-
   @Override
   public List<ASTCDAssociation> getAddedAssocs() {
     return addedAssocs;
   }
-
+  @Override
   public void setAddedAssocs(List<ASTCDAssociation> addedAssocs) {
     this.addedAssocs = addedAssocs;
   }
-
   @Override
   public List<ASTCDAssociation> getDeletedAssocs() {
     return deletedAssocs;
   }
-
+  @Override
   public void setDeletedAssocs(List<ASTCDAssociation> deletedAssocs) {
     this.deletedAssocs = deletedAssocs;
   }
-
   @Override
   public List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses() {
     return matchedClasses;
   }
-
   @Override
   public List<Pair<ASTCDEnum, ASTCDEnum>> getMatchedEnums() {
-    return null;
+    return matchedEnums;
   }
-
   @Override
   public List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces() {
-    return null;
+    return matchedInterfaces;
   }
-
-  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) {
-    this.matchedClasses = matchedClasses;
-  }
-
+  @Override
+  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) { this.matchedClasses = matchedClasses; }
   @Override
   public List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs() {
     return matchedAssocs;
   }
-
-
-  public void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs) {
-    this.matchedAssocs = matchedAssocs;
-  }
+  @Override
+  public void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs) { this.matchedAssocs = matchedAssocs; }
+  @Override
+  public void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums) { this.matchedEnums = matchedEnums; }
+  @Override
+  public void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces) { this.matchedInterfaces = matchedInterfaces; }
+  @Override
+  public List<DiffTypes> getBaseDiff() { return baseDiff; }
+  @Override
+  public void setBaseDiff(List<DiffTypes> baseDiff) { this.baseDiff = baseDiff; }
 
   /**
    *
@@ -185,6 +173,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * is part of - all direct and indirect superclasses.
    * @return a list of the superclasses.
    */
+  @Override
   public List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass){
     return null;
   }
@@ -194,6 +183,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Check if a deleted @param astcdAssociation was need in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
+  @Override
   public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation){
     return false;
   }
@@ -203,6 +193,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Similar case - the association @param astcdAssociation is needed in cd1, but not in cd2.
    * @return true if a class instantiate another one by @param association.
    */
+  @Override
   public boolean isAlwaysNeededAssoc(ASTCDAssociation astcdAssociation){
     return false;
   }
@@ -212,6 +203,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Similar case for added ones.
    * @param astcdEnum
    */
+  @Override
   public List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum){
     return null;
   }
@@ -222,6 +214,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @return list of extending classes.
    * This function is similar to getClassHierarchy().
    */
+  @Override
   public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass){
     return null;
   }

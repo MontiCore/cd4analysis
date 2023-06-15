@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff;
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -12,6 +13,7 @@ import java.util.List;
 
 public interface ICDSyntaxDiff {
   List<CDTypeDiff> getChangedTypes();
+  List<CDTypeDiff> getChangedClasses();
   List<CDAssocDiff> getChangedAssocs();
   List<ASTCDClass> getAddedClasses();
   List<ASTCDClass> getDeletedClasses();
@@ -26,7 +28,44 @@ public interface ICDSyntaxDiff {
   List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces();
   List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs();
 
+  ASTCDCompilationUnit getSrcCD();
+
+  void setSrcCD(ASTCDCompilationUnit srcCD);
+
+  ASTCDCompilationUnit getTrgCD();
+
+  void setTrgCD(ASTCDCompilationUnit trgCD);
+
+  void setChangedClasses(List<CDTypeDiff> changedCLasses);
+
+  void setChangedAssocs(List<CDAssocDiff> changedAssocs);
+
+  void setAddedClasses(List<ASTCDClass> addedClasses);
+
+  public void setDeletedClasses(List<ASTCDClass> deletedClasses);
+
+  void setAddedEnums(List<ASTCDEnum> addedEnums);
+
+  void setDeletedEnums(List<ASTCDEnum> deletedEnums);
+
+  void setAddedAssocs(List<ASTCDAssociation> addedAssocs);
+
+  void setDeletedAssocs(List<ASTCDAssociation> deletedAssocs);
+
+  void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses);
+
+  void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs);
+
   //Is ASTCDCompilationUnit needed in all functions?
+
+  void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums);
+
+  void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces);
+
+  List<DiffTypes> getBaseDiff();
+
+  void setBaseDiff(List<DiffTypes> baseDiff);
+
   /**
    *
    * Checks if an added @param astcdClass refactors the old structure.
