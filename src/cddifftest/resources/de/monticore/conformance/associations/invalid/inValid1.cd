@@ -2,13 +2,15 @@ import java.lang.String;
 
 classdiagram Reference {
 
-
  abstract class AccountTop;
+ abstract class PersonTop;
 
   class Account extends AccountTop;
+  class BankAccount extends AccountTop;
 
-  class Person ;
+  class Person  extends PersonTop;
 
   association belongTo AccountTop    -> Person[1];
-  association access   Person        -> Account[*];
+  association access   PersonTop     -> Account[*];
 }
+

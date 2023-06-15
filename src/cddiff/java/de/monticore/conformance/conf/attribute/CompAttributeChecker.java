@@ -3,8 +3,8 @@ package de.monticore.conformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.conf.AttributeChecker;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CompAttributeChecker implements AttributeChecker {
   protected String mapping;
@@ -19,17 +19,18 @@ public class CompAttributeChecker implements AttributeChecker {
   }
 
   @Override
-  public Set<ASTCDAttribute> getRefElements(ASTCDAttribute concrete) {
-    Set<ASTCDAttribute> refElements = new HashSet<>(stNameAttrChecker.getRefElements(concrete));
+  public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
+    List<ASTCDAttribute> refElements =
+        new ArrayList<>(stNameAttrChecker.getMatchedElements(concrete));
     if (refElements.isEmpty()) {
-      refElements.addAll(eqNameAttrChecker.getRefElements(concrete));
+      refElements.addAll(eqNameAttrChecker.getMatchedElements(concrete));
     }
     return refElements;
   }
 
   @Override
-  public boolean isIncarnation(ASTCDAttribute concrete, ASTCDAttribute ref) {
-    return getRefElements(concrete).contains(ref);
+  public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
+    return getMatchedElements(concrete).contains(ref);
   }
 
   @Override

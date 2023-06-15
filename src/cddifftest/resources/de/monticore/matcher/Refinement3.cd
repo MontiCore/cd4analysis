@@ -1,0 +1,11 @@
+import java.lang.String;
+
+classdiagram Refinement3 {
+  class Customer;
+
+  class Employer;
+
+  class Person;
+
+  association  HelpingCustomers [1..*] Employer (isConsultedBy) <- (consult) Customer [*];
+}

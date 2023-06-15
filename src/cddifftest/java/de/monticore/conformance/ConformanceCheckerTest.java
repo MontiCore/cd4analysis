@@ -1,5 +1,6 @@
 package de.monticore.conformance;
 
+import static de.monticore.conformance.ConfParameter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -23,6 +24,8 @@ public class ConformanceCheckerTest {
 
   protected ASTCDCompilationUnit conCD;
 
+  protected ConformanceChecker checker;
+
   @BeforeEach
   public void setup() {
     Log.init();
@@ -35,51 +38,86 @@ public class ConformanceCheckerTest {
   @Test
   public void testConformanceCheck() {
     parseModels("Concrete.cd", "Reference.cd");
-    assertTrue(ConformanceChecker.checkBasicStereotypeConformance(conCD, refCD, Set.of("ref")));
+    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"EqName.cd", "STName.cd", "composed.cd"})
   public void testAttributeConformanceValid(String concrete) {
     parseModels("attributes/valid/" + concrete, "attributes/Reference.cd");
-    assertTrue(ConformanceChecker.checkBasicComposedConformance(conCD, refCD, "ref"));
-    assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"DiffName.cd", "DiffType.cd", "NumberAttr.cd"})
   public void testAttributeConformanceInvalid(String concrete) {
     parseModels("attributes/invalid/" + concrete, "attributes/Reference.cd");
-    assertFalse(ConformanceChecker.checkBasicComposedConformance(conCD, refCD, "ref"));
-    assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"AttrInSuperClasses.cd"})
   public void testDeepAttributeConformanceValid(String concrete) {
     parseModels("attributes/valid/" + concrete, "attributes/Reference.cd");
-    assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"AttrInSuperTypeNoMatch.cd", "AttrInSuperTypeNoMatch.cd"})
   public void testDeepAttributeConformanceInvalid(String concrete) {
     parseModels("attributes/invalid/" + concrete, "attributes/Reference.cd");
-    assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
   public void testDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
-    assertTrue(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"FalseDirection.cd"})
   public void testDeepAssocConformanceInvalid(String concrete) {
     parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
-    assertFalse(ConformanceChecker.checkDeepComposedConformance(conCD, refCD, "ref"));
+    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
+  public void testStrictDeepAssocConformanceValid(String concrete) {
+    parseModels("associations/valid/" + concrete, "associations/Reference.cd");
+    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd"})
+  public void testStrictDeepAssocConformanceInvalid(String concrete) {
+    parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
+    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
+  public void testStrengthDeepAssocConformanceValid(String concrete) {
+    parseModels("associations/valid/" + concrete, "associations/Reference.cd");
+    assertTrue(ConformanceChecker.checkStrictDeepComposedConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd"})
+  public void testStrengthDeepAssocConformanceInvalid(String concrete) {
+    parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
+    assertFalse(ConformanceChecker.checkStrictDeepComposedConformance(conCD, refCD, "ref"));
   }
 
   public void parseModels(String concrete, String ref) {

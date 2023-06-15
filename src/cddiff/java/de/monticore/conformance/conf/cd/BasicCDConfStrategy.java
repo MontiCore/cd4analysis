@@ -5,22 +5,22 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.conf.ConformanceStrategy;
-import de.monticore.conformance.inc.IncarnationStrategy;
+import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.Set;
 
 public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilationUnit> {
   protected ASTCDCompilationUnit refCD;
-  protected IncarnationStrategy<ASTCDType> typeInc;
-  protected IncarnationStrategy<ASTCDAssociation> assocInc;
+  protected MatchingStrategy<ASTCDType> typeInc;
+  protected MatchingStrategy<ASTCDAssociation> assocInc;
   protected ConformanceStrategy<ASTCDType> typeChecker;
   protected ConformanceStrategy<ASTCDAssociation> assocChecker;
 
   public BasicCDConfStrategy(
       ASTCDCompilationUnit refCD,
-      IncarnationStrategy<ASTCDType> typeInc,
-      IncarnationStrategy<ASTCDAssociation> assocInc,
+      MatchingStrategy<ASTCDType> typeInc,
+      MatchingStrategy<ASTCDAssociation> assocInc,
       ConformanceStrategy<ASTCDType> typeChecker,
       ConformanceStrategy<ASTCDAssociation> assocChecker) {
     this.refCD = refCD;
@@ -66,7 +66,7 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     conTypes.addAll(concrete.getCDDefinition().getCDEnumsList());
 
     for (ASTCDType refType : refTypes) {
-      if (conTypes.stream().noneMatch(conType -> typeInc.isIncarnation(conType, refType))) {
+      if (conTypes.stream().noneMatch(conType -> typeInc.isMatched(conType, refType))) {
         Log.println(refType.getName() + " has no incarnation!");
         return false;
       }
@@ -78,7 +78,7 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
 
     for (ASTCDAssociation refAssoc : refCD.getCDDefinition().getCDAssociationsList()) {
       if (concrete.getCDDefinition().getCDAssociationsList().stream()
-          .noneMatch(conAssoc -> assocInc.isIncarnation(conAssoc, refAssoc))) {
+          .noneMatch(conAssoc -> assocInc.isMatched(conAssoc, refAssoc))) {
         Log.println(CD4CodeMill.prettyPrint(refAssoc, false) + " has no incarnation!");
         return false;
       }

@@ -3,7 +3,7 @@ package de.monticore.conformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.conformance.conf.AttributeChecker;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EqNameAttributeChecker implements AttributeChecker {
@@ -16,14 +16,14 @@ public class EqNameAttributeChecker implements AttributeChecker {
   }
 
   @Override
-  public Set<ASTCDAttribute> getRefElements(ASTCDAttribute concrete) {
+  public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
     return refType.getCDAttributeList().stream()
-        .filter(attr -> isIncarnation(concrete, attr))
-        .collect(Collectors.toSet());
+        .filter(attr -> isMatched(concrete, attr))
+        .collect(Collectors.toList());
   }
 
   @Override
-  public boolean isIncarnation(ASTCDAttribute concrete, ASTCDAttribute ref) {
+  public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
     return ref.getName().equals(concrete.getName());
   }
 
