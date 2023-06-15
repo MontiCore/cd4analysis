@@ -1,12 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cddiff.CDDiffUtil;
+import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,45 +20,45 @@ public class CDAssociationHelper {
   public static Set<ASTCDAssociation> collectStrictSuperAssociations(
       ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
-    ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
-
-    Set<ASTCDAssociation> superAssociations = new HashSet<>();
-    for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
-      for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-        if (isSuperAssociation(srcAssoc, targetAssoc, targetScope)
-            || isSuperAssociationInReverse(srcAssoc, targetAssoc, targetScope)) {
-          superAssociations.add(srcAssoc);
+    if (targetAST.getEnclosingScope() instanceof ICD4CodeArtifactScope) {
+      ICD4CodeArtifactScope targetScope = (ICD4CodeArtifactScope) targetAST.getEnclosingScope();
+      Set<ASTCDAssociation> superAssociations = new HashSet<>();
+      for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
+        for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+          if (isSuperAssociation(srcAssoc, targetAssoc, targetScope) || isSuperAssociationInReverse(
+              srcAssoc, targetAssoc, targetScope)) {
+            superAssociations.add(srcAssoc);
+          }
         }
       }
+      for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+        superAssociations.removeIf(
+            srcAssoc -> isSuperAssociation(targetAssoc, srcAssoc, targetScope) || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
+      }
+      return superAssociations;
     }
-    for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-      superAssociations.removeIf(
-          srcAssoc ->
-              isSuperAssociation(targetAssoc, srcAssoc, targetScope)
-                  || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
-    }
-
-    return superAssociations;
+    Log.error("0xCDD18: Enclosing scope of CD4Code-artifact was not an ICD4CodeArtifactScope!");
+    return null;
   }
 
   /** Collect all associations in srcAST that are in conflict with associations in targetAST */
   public static Set<ASTCDAssociation> collectConflictingAssociations(
       ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
-    ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
-
-    Set<ASTCDAssociation> conflicts = new HashSet<>();
-    for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
-      for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-        if (inConflict(srcAssoc, targetAssoc, targetScope)) {
-          conflicts.add(srcAssoc);
+    if (targetAST.getEnclosingScope() instanceof ICD4CodeArtifactScope) {
+      ICD4CodeArtifactScope targetScope = (ICD4CodeArtifactScope) targetAST.getEnclosingScope();
+      Set<ASTCDAssociation> conflicts = new HashSet<>();
+      for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
+        for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+          if (inConflict(srcAssoc, targetAssoc, targetScope)) {
+            conflicts.add(srcAssoc);
+          }
         }
       }
+      return conflicts;
     }
-
-    return conflicts;
+    Log.error("0xCDD18: Enclosing scope of CD4Code-artifact was not an ICD4CodeArtifactScope!");
+    return null;
   }
 
   /**
