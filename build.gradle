@@ -574,7 +574,7 @@ artifacts {
   trafo trafoJar
 }
 // configure deployment
-publishing {
+/*publishing {
   // configure what artifacts to publish
   publications {
     if(("false").equals(getProperty('publishMain'))) {
@@ -610,7 +610,7 @@ publishing {
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
   }
-}
+}*/
 
 task testMain (type:Test) {
   group("verification")
@@ -625,4 +625,3 @@ task buildMain (type:GradleBuild){
   dependsOn(classes)
   dependsOn(testMain)
 }
-
