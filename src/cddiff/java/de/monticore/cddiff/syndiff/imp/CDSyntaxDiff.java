@@ -1,21 +1,28 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
-
 import com.google.common.collect.ArrayListMultimap;
+import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
+import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import edu.mit.csail.sdg.alloy4.Pair;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isNewSuper;
 
 public class CDSyntaxDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
@@ -165,15 +172,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   @Override
-  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) {
-    this.matchedClasses = matchedClasses;
-  }
-
+  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) { this.matchedClasses = matchedClasses; }
   @Override
   public List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs() {
     return matchedAssocs;
   }
-
   @Override
   public void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs) {
     this.matchedAssocs = matchedAssocs;
@@ -204,32 +207,91 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * its subclasses in the old CD need to have all of its attributes and it can't have new ones.
    */
   @Override
-  public boolean isSuperclass(ASTCDClass astcdClass) {
-    return false;
+  public boolean isSuperclass(ASTCDClass astcdClass){
+    List<ASTCDClass> subclassesToCheck = new ArrayList<>();
+    if (!astcdClass.getModifier().isAbstract()){
+      for (ASTCDClass classesToCheck : getSrcCD().getCDDefinition().getCDClassesList()){
+        ASTMCObjectType newSuper =
+          MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName()))
+            .build();
+        if (isNewSuper(newSuper, classesToCheck,
+          CD4CodeMill.scopesGenitorDelegator().createFromAST(getSrcCD()))){
+          subclassesToCheck.add(classesToCheck);
+        }
+      }
+    }
+    else {
+      return false;
+    }
+
+    if (!astcdClass.getCDAttributeList().isEmpty()){
+      for (ASTCDClass classToCheck : subclassesToCheck){
+        ASTCDClass matchedClass = findMatchedClass(classToCheck);
+        if (matchedClass != null){
+          for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
+            if (!matchedClass.getCDAttributeList().contains(attribute) || !isAttributInSuper(attribute, matchedClass,
+              CD4CodeMill.scopesGenitorDelegator().createFromAST(getTrgCD()))){
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  private ASTCDClass findMatchedClass(ASTCDClass astcdClass){
+    ASTCDClass matchedClass = null;
+    for (Pair<ASTCDClass, ASTCDClass> pair : getMatchedClasses()){
+      if(pair.a.equals(astcdClass)){
+        matchedClass = pair.b;;
+      }
+    }
+    return matchedClass;
   }
 
   /**
-   * Get the whole inheritance hierarchy that @param astcdClass. is part of - all direct and
-   * indirect superclasses.
    *
+   * Get the whole inheritance hierarchy that @param astcdClass.
+   * is part of - all direct and indirect superclasses.
    * @return a list of the superclasses.
    */
   @Override
-  public List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass) {
+  public List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass){
     return null;
+    //implemented
   }
 
   /**
-   * Check if a deleted @param astcdAssociation was need in cd2, but not in cd1.
    *
+   * Check if a deleted @param astcdAssociation was need in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
   @Override
-  public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation) {
+  public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation){
+    ASTCDCardinality leftCar;
+    ASTCDCardinality rightCar;
+    if (astcdAssociation.getLeft().isPresentCDCardinality()){
+      Optional<ASTNatLiteral> literal = Optional.ofNullable(astcdAssociation.getLeft().getCDCardinality().toCardinality().getLowerBoundLit());
+      if (!(literal.isPresent()) || astcdAssociation.getLeft().getCDCardinality().toCardinality().getLowerBound() == 0){
+        //add to Diff List
+        ASTCDClass astcdClass = getConnectedClasses(astcdAssociation).a;
+      }
+    }
+    if (astcdAssociation.getLeft().isPresentCDCardinality()){
+      Optional<ASTNatLiteral> literal = Optional.ofNullable(astcdAssociation.getRight().getCDCardinality().toCardinality().getLowerBoundLit());
+      if (literal.isPresent() || astcdAssociation.getRight().getCDCardinality().toCardinality().getLowerBound() == 0){
+        //add to Diff List
+        ASTCDClass astcdClass = getConnectedClasses(astcdAssociation).b;
+      }
+    }
     return false;
+    //not implemented
   }
 
   /**
+   *
    * Similar case - the association @param astcdAssociation is needed in cd1, but not in cd2.
    *
    * @return true if a class instantiate another one by @param association.
@@ -237,6 +299,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   @Override
   public boolean isAlwaysNeededAssoc(ASTCDAssociation astcdAssociation) {
     return false;
+    //not needed - isNotNeededAssoc does the same
   }
 
   /**
@@ -246,7 +309,15 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @param astcdEnum
    */
   @Override
-  public List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum) {
+  public List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum){
+    List<ASTCDClass> classesWithEnum = new ArrayList<>();
+    for (ASTCDClass classToCheck : getSrcCD().getCDDefinition().getCDClassesList()){
+      for (ASTCDAttribute attribute : classToCheck.getCDAttributeList()){
+        if (attribute.getMCType().printType().equals(astcdEnum.getName())){
+          classesWithEnum.add(classToCheck);
+        }
+      }
+    }
     return null;
   }
 
@@ -257,12 +328,15 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @return list of extending classes. This function is similar to getClassHierarchy().
    */
   @Override
-  public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass) {
+  public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass){
     return null;
+    //was impelemented in deleted commits
   }
 
   @Override
-  public void isClassNeeded() {}
+  public void isClassNeeded() {
+    //not implemented
+  }
 
   @Override
   public ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations() {
@@ -359,8 +433,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         }
       }
     }
-    ArrayListMultimap<ASTCDClass, Pair<ASTCDAssociation, ASTCDAssociation>> checkedForType1 =
-        getType1Conf(mapLeftToRight, mapRightToLeft);
+    ArrayListMultimap<ASTCDClass, Pair<ASTCDAssociation, ASTCDAssociation>> checkedForType1 = getType1Conf(mapLeftToRight, mapRightToLeft);
     return null;
   }
 
