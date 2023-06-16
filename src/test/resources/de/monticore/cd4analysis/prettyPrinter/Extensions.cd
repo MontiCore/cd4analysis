@@ -1,0 +1,24 @@
+/* Dan-Tuong Le */
+
+classdiagram Extensions {
+
+  abstract class A {
+    int a;
+  }
+
+  class B extends A {
+    int b;
+  }
+
+  class C extends A {
+      int c;
+  }
+
+  class D extends B {
+      int d;
+  }
+
+  class E extends B {
+      int e;
+  }
+}

@@ -1,0 +1,59 @@
+/* Yvonne Heimowski */
+
+classdiagram FullExample {
+
+public class Person {
+      public String name;
+      protected int age;
+      final long id;
+      readonly String birthplace;
+      protected derived boolean married;
+      List<Person> children;
+      derived Person parent1;
+      derived Person parent2;
+      java.util.Date birthday;
+      HappinessLevel happy;
+      private double bankBalance;
+    }
+
+public class Address {
+        String streetname;
+        int streetnumber;
+        int postalcode;
+        String country;
+}
+
+interface Pair {
+    Person person1;
+    Person person2;
+}
+
+class Couple implements Pair {
+  boolean married;
+}
+
+class Child extends Person {
+ -> (parent1) Person [1];
+}
+
+enum HappinessLevel { NONEXISTENT, LOW, MEDIUM, HIGH, EXTREM; }
+
+private readonly class Birthcertificate {
+    java.util.Date birthday;
+    final String ausstellungsdatum;
+
+
+-> Person [1];
+}
+
+
+class Hospital {
+    String name;
+}
+
+association address [*] Person <-> Address [1];
+association hires Hospital -> Person [1..*];
+association worksAt Person -> Hospital [1];
+association Hospital -> Address [1];
+
+}
