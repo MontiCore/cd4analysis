@@ -1,7 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDMember;
-
 import java.util.List;
 
 public interface ICDMemberDiff {

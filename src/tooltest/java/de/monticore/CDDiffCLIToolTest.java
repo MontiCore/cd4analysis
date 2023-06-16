@@ -1,24 +1,23 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.file.PathUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
-import static org.junit.Assert.*;
+import org.apache.commons.io.file.PathUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CDDiffCLIToolTest {
 
