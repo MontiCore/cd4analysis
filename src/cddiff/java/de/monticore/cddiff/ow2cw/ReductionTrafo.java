@@ -125,9 +125,6 @@ public class ReductionTrafo {
   private void copyImportStatements(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
     Set<ASTMCImportStatement> imports = new HashSet<>(first.getMCImportStatementList());
     imports.addAll(second.getMCImportStatementList());
-
-    FullExpander expander1 = new FullExpander(new VariableExpander(first));
-    FullExpander expander2 = new FullExpander(new VariableExpander(second));
   }
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {

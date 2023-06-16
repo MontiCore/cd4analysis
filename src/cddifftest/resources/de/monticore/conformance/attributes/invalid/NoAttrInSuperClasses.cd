@@ -1,0 +1,11 @@
+
+classdiagram Concrete {
+
+
+  class AccountTop  extends AccountTopTop{
+      boolean password ;
+  }
+
+  class Account extends AccountTop;
+
+}

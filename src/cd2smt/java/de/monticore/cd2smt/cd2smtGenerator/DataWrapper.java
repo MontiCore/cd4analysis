@@ -13,11 +13,10 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class DataWrapper implements ClassData, AssociationsData, InheritanceData {
   protected final ASTCDCompilationUnit ast;
@@ -49,13 +48,13 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
         CDHelper.getASTCDType(
             association.getRightQualifiedName().getQName(), ast.getCDDefinition());
 
-    List<ASTCDType> supertypeList1 = new ArrayList<>();
+    Set<ASTCDType> supertypeList1 = new HashSet<>();
     supertypeList1.add(subType1);
-    List<ASTCDType> supertypeList2 = new ArrayList<>();
+    Set<ASTCDType> supertypeList2 = new HashSet<>();
     supertypeList2.add(subType2);
 
-    CDHelper.getAllSuperType(subType1, ast.getCDDefinition(), supertypeList1);
-    CDHelper.getAllSuperType(subType2, ast.getCDDefinition(), supertypeList2);
+    supertypeList1.addAll(CDHelper.getSuperTypeAllDeep(subType1, ast.getCDDefinition()));
+    supertypeList2.addAll(CDHelper.getSuperTypeAllDeep(subType2, ast.getCDDefinition()));
     BoolExpr res;
     if (supertypeList1.contains(type1) && supertypeList2.contains(type2)) {
       res =
@@ -111,21 +110,15 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   }
 
   @Override
-  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
-    return classData.hasType(expr, astCdType);
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType) {
+    return classData.hasType(expr, astcdType);
   }
 
   @Override
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     Optional<Expr<? extends Sort>> res = getAttributeHelper(astCdType, attributeName, cDTypeExpr);
-    if (res.isEmpty()) {
-      Log.info(
-          "the attribute " + attributeName + " not found for the ASTCDType " + astCdType.getName(),
-          "Attribute not found");
-      return null;
-    }
-    return res.get();
+    return res.orElse(null);
   }
 
   @Override
@@ -141,6 +134,12 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   @Override
   public Context getContext() {
     return classData.getContext();
+  }
+
+  @Override
+  public Expr<? extends Sort> getEnumConstant(
+      ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
+    return classData.getEnumConstant(enumeration, enumConstant);
   }
 
   protected Optional<Expr<? extends Sort>> getAttributeHelper(
@@ -181,8 +180,13 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   }
 
   @Override
-  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType) {
-    return inheritanceData.instanceOf(obj, objType, subType);
+  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType) {
+    return inheritanceData.instanceOf(obj, objType);
+  }
+
+  @Override
+  public BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type) {
+    return inheritanceData.filterObject(obj, type);
   }
 
   protected Optional<Expr<? extends Sort>> getSuperInstanceHelper(

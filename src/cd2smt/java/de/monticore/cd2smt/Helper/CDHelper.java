@@ -1,11 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper;
 
-import static de.monticore.cd2smt.Helper.CDHelper.ClassType.NORMAL_CLASS;
 import static de.monticore.cd2smt.Helper.CDHelper.ObjType.ABSTRACT_OBJ;
 import static de.monticore.cd2smt.Helper.CDHelper.ObjType.NORMAL_OBJ;
 
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Expr;
+import com.microsoft.z3.IntSort;
 import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
@@ -28,6 +29,7 @@ import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -38,7 +40,7 @@ public class CDHelper {
 
   public static List<ASTCDType> getSubclassList(ASTCDDefinition cd, ASTCDType astcdType) {
     List<ASTCDType> subclasses = new LinkedList<>();
-    for (ASTCDClass entry : cd.getCDClassesList()) {
+    for (ASTCDType entry : cd.getCDClassesList()) {
       for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
         if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
       }
@@ -47,6 +49,39 @@ public class CDHelper {
       }
     }
     return subclasses;
+  }
+
+  public static List<ASTCDType> getSubTypeList(ASTCDDefinition cd, ASTCDType astcdType) {
+    List<ASTCDType> subclasses = new LinkedList<>();
+    for (ASTCDType entry : CDHelper.getASTCDTypes(cd)) {
+      for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
+        if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
+      }
+      for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
+        if (entry2.printType().equals(astcdType.getName())) subclasses.add(entry);
+      }
+    }
+    return subclasses;
+  }
+
+  private static void getSubTypeAllDeepHelper(
+      ASTCDType astcdType, ASTCDDefinition cd, Set<ASTCDType> res) {
+    if (CDHelper.getSubTypeList(cd, astcdType).isEmpty()) {
+      return;
+    }
+    List<ASTCDType> subTypeList = getSubTypeList(cd, astcdType);
+    res.add(astcdType);
+    for (ASTCDType astcType1 : subTypeList) {
+      res.add(astcType1);
+      getSubTypeAllDeepHelper(astcType1, cd, res);
+    }
+  }
+
+  public static Set<ASTCDType> getSubTypeAllDeep(ASTCDType astcdType, ASTCDCompilationUnit ast) {
+    Set<ASTCDType> res = new HashSet<>();
+    getSubTypeAllDeepHelper(astcdType, ast.getCDDefinition(), res);
+    res.remove(astcdType);
+    return res;
   }
 
   public static List<ASTCDType> getSubInterfaceList(
@@ -185,9 +220,8 @@ public class CDHelper {
 
   public static ASTCDAssociation getAssociation(
       ASTCDType objType, String otherRole, ASTCDDefinition cd) {
-    List<ASTCDType> objTypes = new ArrayList<>();
+    Set<ASTCDType> objTypes = getSuperTypeAllDeep(objType, cd);
     objTypes.add(objType);
-    getAllSuperType(objType, cd, objTypes);
     ASTCDType leftType;
     ASTCDType rightType;
     String leftRole;
@@ -204,12 +238,6 @@ public class CDHelper {
         return association;
       }
     }
-    Log.info(
-        "Association with the other-role "
-            + otherRole
-            + " not found for the ASTCDType "
-            + objType.getName(),
-        "Assoc Not Found");
     return null;
   }
 
@@ -264,21 +292,29 @@ public class CDHelper {
     return res;
   }
 
-  public static void getAllSuperType(ASTCDType astcdType, ASTCDDefinition cd, List<ASTCDType> res) {
+  private static void getSuperTypeAllDeepHelper(
+      ASTCDType astcdType, ASTCDDefinition cd, Set<ASTCDType> res) {
     if (astcdType.getInterfaceList().isEmpty() && astcdType.getSuperclassList().isEmpty()) {
       return;
     }
     List<ASTCDType> superClassList = getSuperTypeList(astcdType, cd);
-    res.add(superClassList.get(0));
+    res.add(astcdType);
     for (ASTCDType astcType1 : superClassList) {
       res.add(astcType1);
-      getAllSuperType(astcType1, cd, res);
+      getSuperTypeAllDeepHelper(astcType1, cd, res);
     }
   }
 
-  public static List<ASTCDType> getASTCDTypes(ASTCDCompilationUnit ast) {
-    List<ASTCDType> res = new ArrayList<>(ast.getCDDefinition().getCDClassesList());
-    res.addAll(ast.getCDDefinition().getCDInterfacesList());
+  public static Set<ASTCDType> getSuperTypeAllDeep(ASTCDType astcdType, ASTCDDefinition cd) {
+    Set<ASTCDType> res = new HashSet<>();
+    getSuperTypeAllDeepHelper(astcdType, cd, res);
+    res.remove(astcdType);
+    return res;
+  }
+
+  public static List<ASTCDType> getASTCDTypes(ASTCDDefinition ast) {
+    List<ASTCDType> res = new ArrayList<>(ast.getCDClassesList());
+    res.addAll(ast.getCDInterfacesList());
     return res;
   }
 
@@ -300,7 +336,9 @@ public class CDHelper {
   }
 
   public static boolean isCardinalityOne2One(ASTCDAssociation association) {
-    return (association.getLeft().getCDCardinality().isOne()
+    return (association.getLeft().isPresentCDCardinality()
+        && association.getLeft().getCDCardinality().isOne()
+        && association.getRight().isPresentCDCardinality()
         && association.getRight().getCDCardinality().isOne());
   }
 
@@ -308,6 +346,14 @@ public class CDHelper {
     return cd.getCDClassesList().stream()
         .filter(x -> x.getModifier().isAbstract())
         .collect(Collectors.toList());
+  }
+
+  public static Expr<IntSort> date2smt(LocalDateTime dateTime, Context ctx) {
+    LocalDateTime originDate = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
+
+    Duration duration = Duration.between(originDate, dateTime);
+
+    return ctx.mkInt(duration.getSeconds());
   }
 
   public static String buildDate(int time) {
@@ -323,9 +369,11 @@ public class CDHelper {
             calendar.get(Calendar.HOUR_OF_DAY),
             calendar.get(Calendar.MINUTE),
             calendar.get(Calendar.SECOND));
-    return times.format(DateTimeFormatter.ISO_DATE)
-        + "|"
-        + times.format(DateTimeFormatter.ISO_LOCAL_TIME);
+    return '"'
+        + times.format(DateTimeFormatter.ISO_DATE)
+        + " "
+        + times.format(DateTimeFormatter.ISO_LOCAL_TIME)
+        + '"';
   }
 
   public static List<ASTCDType> getClassHierarchy(
@@ -347,25 +395,16 @@ public class CDHelper {
     return classList;
   }
 
-  public enum ClassType {
-    INTERFACE,
-    NORMAL_CLASS,
-    ABSTRACT_CLASS,
-    ENUMERATION
-  }
-
   public enum ObjType {
     ABSTRACT_OBJ,
     NORMAL_OBJ
   }
 
-  public static ObjType mkType(ClassType type) {
+  public static ObjType mkType(ASTCDType astcdType) {
     ObjType res;
-    if (type == NORMAL_CLASS) {
-      res = NORMAL_OBJ;
-    } else {
-      res = ABSTRACT_OBJ;
+    if (astcdType instanceof ASTCDClass && !astcdType.getModifier().isAbstract()) {
+      return NORMAL_OBJ;
     }
-    return res;
+    return ABSTRACT_OBJ;
   }
 }

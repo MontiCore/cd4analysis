@@ -15,6 +15,11 @@ import de.se_rwth.commons.SourcePosition;
 import java.util.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+/***
+ * extend the DefaultAssocStrategy by handling One2One ([1]A--B[1]) cardinality constraints differently.
+ * for ([1]A--B[1]):
+ * declare a function (A => B).
+ * */
 public class One2OneAssocStrategy extends DefaultAssocStrategy {
 
   public One2OneAssocStrategy() {
@@ -52,10 +57,10 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
       Sort rightSort = classData.getSort(rightType);
 
       assocFuncMap.put(assoc, ctx.mkFuncDecl(assocName, new Sort[] {leftSort}, rightSort));
+      assocConstraints.addAll(buildAssocConstraints(assoc, ctx));
     } else {
       super.declareAssociation(cd, assoc, ctx);
     }
-    assocConstraints.addAll(buildAssocConstraints(assoc, ctx));
   }
 
   @Override
@@ -82,8 +87,8 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
                   ctx,
                   Set.of(new ImmutablePair<>(left, leftExpr1)),
                   ctx.mkEq(rightExpr, assocFunc.apply(leftExpr1)),
-                  classData),
-              classData);
+                  inheritanceData),
+              inheritanceData);
 
       BoolExpr injective =
           mkForAll(
@@ -92,15 +97,26 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
               ctx.mkImplies(
                   ctx.mkEq(assocFunc.apply(leftExpr1), assocFunc.apply(leftExpr2)),
                   ctx.mkEq(leftExpr2, leftExpr1)),
-              classData);
+              inheritanceData);
+
+      // result must have the correct type
+      BoolExpr resultType =
+          mkForAll(
+              ctx,
+              Set.of(new ImmutablePair<>(left, leftExpr1)),
+              inheritanceData.filterObject(assocFunc.apply(leftExpr1), right),
+              inheritanceData);
 
       SourcePosition srcPos = assoc.get_SourcePositionStart();
       assert srcPos.getFileName().isPresent();
       IdentifiableBoolExpr constraint =
           IdentifiableBoolExpr.buildIdentifiable(
-              ctx.mkAnd(injective, surjectiv), srcPos, Optional.of("cardinality-constraint"));
+              ctx.mkAnd(injective, surjectiv, resultType),
+              srcPos,
+              Optional.of("cardinality-constraint"));
 
       constraints.add(constraint);
+
     } else {
       constraints.addAll(super.buildAssocConstraints(assoc, ctx));
     }

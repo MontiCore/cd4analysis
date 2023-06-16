@@ -5,7 +5,7 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -36,19 +36,15 @@ public class SMTHelper {
     return SMTHelper.fCharToLowerCase(astcdType.getName()) + "_get_subclass";
   }
 
-  public static String printSMTCDTypeName(ASTCDType myClass) {
-    return myClass.getName() + "_obj";
-  }
-
   public static BoolExpr mkForAll(
       Context ctx,
       Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,
       BoolExpr body,
-      ClassData classData) {
+      InheritanceData inheritanceData) {
     Expr[] res = vars.stream().map(Pair::getRight).toArray(Expr[]::new);
     return ctx.mkForall(
         res,
-        ctx.mkImplies(buildTypeConstraint(vars, ctx, classData), body),
+        ctx.mkImplies(buildTypeConstraint(vars, ctx, inheritanceData), body),
         0,
         null,
         null,
@@ -60,10 +56,10 @@ public class SMTHelper {
       Context ctx,
       Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,
       BoolExpr body,
-      ClassData classData) {
+      InheritanceData inheritanceData) {
     return ctx.mkExists(
         vars.stream().map(Pair::getRight).toArray(Expr[]::new),
-        ctx.mkAnd(buildTypeConstraint(vars, ctx, classData), body),
+        ctx.mkAnd(buildTypeConstraint(vars, ctx, inheritanceData), body),
         0,
         null,
         null,
@@ -72,10 +68,13 @@ public class SMTHelper {
   }
 
   public static BoolExpr buildTypeConstraint(
-      Set<Pair<ASTCDType, Expr<? extends Sort>>> vars, Context ctx, ClassData classData) {
+      Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,
+      Context ctx,
+      InheritanceData inheritanceData) {
     BoolExpr constraint = ctx.mkTrue();
     for (Map.Entry<ASTCDType, Expr<? extends Sort>> entry : vars) {
-      constraint = ctx.mkAnd(constraint, classData.hasType(entry.getValue(), entry.getKey()));
+      constraint =
+          ctx.mkAnd(constraint, inheritanceData.filterObject(entry.getValue(), entry.getKey()));
     }
     return constraint;
   }

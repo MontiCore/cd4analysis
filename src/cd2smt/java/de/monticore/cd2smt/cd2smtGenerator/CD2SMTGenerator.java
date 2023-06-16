@@ -12,16 +12,20 @@ import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy.
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one.One2OneAssocStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DistinctSort;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort.SingleSort;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DSClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort.SSClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy.DefaultInhrStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.SExpression.SEInheritanceStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.multExpression.MEInheritanceStrategy;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -34,12 +38,53 @@ import java.util.Set;
  */
 public class CD2SMTGenerator implements ClassData, AssociationsData, InheritanceData {
 
-  private ClassStrategy classStrategy = new DistinctSort();
-  private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy();
-  private AssociationStrategy associationStrategy = new DefaultAssocStrategy();
+  private ClassStrategy classStrategy;
+  private InheritanceStrategy inheritanceStrategy;
+  private AssociationStrategy associationStrategy;
   private DataWrapper dataWrapper;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
+
+  public CD2SMTGenerator(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as) {
+    if (is == InheritanceData.Strategy.SE && cs != ClassStrategy.Strategy.SSCOMB) {
+
+      Log.error(
+          "The Class Strategy Single Sort Combined (SSCOMB) can only be combine with The inheritance Strategy"
+              + " Single Sort Composed (SECOMB) ");
+    }
+
+    // set classtrategy
+    switch (cs) {
+      case DS:
+        this.classStrategy = new DSClassStrategy();
+        break;
+      case SS:
+        this.classStrategy = new SSClassStrategy();
+        break;
+      case SSCOMB:
+        this.classStrategy = new SEInheritanceStrategy();
+    }
+
+    // set association Strategy
+    switch (as) {
+      case ONE2ONE:
+        this.associationStrategy = new One2OneAssocStrategy();
+        break;
+      case DEFAULT:
+        this.associationStrategy = new DefaultAssocStrategy();
+        break;
+    }
+
+    // set Inheritance Strategy
+    switch (is) {
+      case ME:
+        this.inheritanceStrategy = new MEInheritanceStrategy();
+        break;
+      case SE:
+        this.inheritanceStrategy = (SEInheritanceStrategy) (this.classStrategy);
+    }
+  }
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
     Solver solver = ctx.mkSolver();
@@ -77,29 +122,7 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
 
     inheritanceStrategy.cd2smt(astCd, ctx, classStrategy);
 
-    associationStrategy.cd2smt(astCd, ctx, classStrategy);
-  }
-
-  public void setClassStrategy(ClassStrategy.Strategy strategy) {
-    switch (strategy) {
-      case DS:
-        this.classStrategy = new DistinctSort();
-        break;
-      case SS:
-        this.classStrategy = new SingleSort();
-        break;
-    }
-  }
-
-  public void setAssociationStrategy(AssociationStrategy.Strategy strategy) {
-    switch (strategy) {
-      case ONE2ONE:
-        this.associationStrategy = new One2OneAssocStrategy();
-        break;
-      case DEFAULT:
-        this.associationStrategy = new DefaultAssocStrategy();
-        break;
-    }
+    associationStrategy.cd2smt(astCd, ctx, classStrategy, inheritanceStrategy);
   }
 
   @Override
@@ -108,8 +131,8 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
-    return dataWrapper.hasType(expr, astCdType);
+  public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType) {
+    return dataWrapper.hasType(expr, astcdType);
   }
 
   @Override
@@ -121,6 +144,12 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   @Override
   public Set<IdentifiableBoolExpr> getClassConstraints() {
     return dataWrapper.getClassConstraints();
+  }
+
+  @Override
+  public Expr<? extends Sort> getEnumConstant(
+      ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
+    return dataWrapper.getEnumConstant(enumeration, enumConstant);
   }
 
   @Override
@@ -145,8 +174,13 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType, ASTCDType subType) {
-    return dataWrapper.instanceOf(obj, objType, subType);
+  public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType) {
+    return dataWrapper.instanceOf(obj, objType);
+  }
+
+  @Override
+  public BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type) {
+    return dataWrapper.filterObject(obj, type);
   }
 
   @Override
