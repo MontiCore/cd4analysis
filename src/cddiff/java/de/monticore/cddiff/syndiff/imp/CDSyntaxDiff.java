@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff.imp;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
@@ -20,9 +21,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isNewSuper;
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 public class CDSyntaxDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
@@ -40,6 +40,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
   private List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs;
   private List<DiffTypes> baseDiff;
+
+  private ArrayListMultimap<ASTCDClass, ASTCDAssociation> srcMap = ArrayListMultimap.create();
+  private ArrayListMultimap<ASTCDClass, ASTCDAssociation> trgMap = ArrayListMultimap.create();
 
   @Override
   public ASTCDCompilationUnit getSrcCD() {
@@ -260,7 +263,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   @Override
   public List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass){
     return null;
-    //implemented
+    //implemented - not needed, it is part of other functions inCDDiffUtil
   }
 
   /**
@@ -281,7 +284,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
     if (astcdAssociation.getLeft().isPresentCDCardinality()){
       Optional<ASTNatLiteral> literal = Optional.ofNullable(astcdAssociation.getRight().getCDCardinality().toCardinality().getLowerBoundLit());
-      if (literal.isPresent() || astcdAssociation.getRight().getCDCardinality().toCardinality().getLowerBound() == 0){
+      if (!literal.isPresent() || astcdAssociation.getRight().getCDCardinality().toCardinality().getLowerBound() == 0){
         //add to Diff List
         ASTCDClass astcdClass = getConnectedClasses(astcdAssociation).b;
       }
@@ -292,13 +295,61 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   /**
    *
-   * Similar case - the association @param astcdAssociation is needed in cd1, but not in cd2.
+   * Check if an added association brings a semantic difference.
    *
-   * @return true if a class instantiate another one by @param association.
+   * @return true if a class can now have a new relation to another.
    */
   @Override
   public boolean isAlwaysNeededAssoc(ASTCDAssociation astcdAssociation) {
-    return false;
+    Map<ASTCDClass, Boolean> map = new HashMap<>();
+    if (astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft()){
+      ASTCDClass classToCheck = getConnectedClasses(astcdAssociation).b;
+      for (ASTCDClass astcdClass : getSpannedInheritance(classToCheck)){
+        map.put(astcdClass, false);
+        ASTCDClass matchedClass = findMatchedClass(astcdClass);
+        if (matchedClass != null){
+          List<ASTCDAssociation> associationList = getTrgMap().get(matchedClass);
+          for (ASTCDAssociation association : associationList){
+            if(sameAssociation(association, astcdAssociation) || sameAssociationInReverse(association, astcdAssociation)){
+              map.remove(astcdClass);
+              map.put(astcdClass, true);
+            }
+          }
+        }
+      }
+    }
+
+    Map<ASTCDClass, Boolean> map2 = new HashMap<>();
+    if (astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight()){
+      ASTCDClass classToCheck = getConnectedClasses(astcdAssociation).a;
+      for (ASTCDClass astcdClass : getSpannedInheritance(classToCheck)){
+        map2.put(astcdClass, false);
+        ASTCDClass matchedClass = findMatchedClass(astcdClass);
+        if (matchedClass != null){
+          List<ASTCDAssociation> associationList = getTrgMap().get(matchedClass);
+          for (ASTCDAssociation association : associationList){
+            if(sameAssociation(association, astcdAssociation) || sameAssociationInReverse(association, astcdAssociation)){
+              map2.remove(astcdClass);
+              map2.put(astcdClass, true);
+            }
+          }
+        }
+      }
+    }
+    for (ASTCDClass astcdClass : map.keySet()){
+      if (!map.get(astcdClass)){
+        //add to diff list
+        return false;
+      }
+    }
+
+    for (ASTCDClass astcdClass : map2.keySet()){
+      if (!map2.get(astcdClass)){
+        //add to diff list
+        return false;
+      }
+    }
+    return true;
     //not needed - isNotNeededAssoc does the same
   }
 
@@ -318,7 +369,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         }
       }
     }
-    return null;
+    return classesWithEnum;
   }
 
   /**
@@ -329,8 +380,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    */
   @Override
   public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass){
-    return null;
-    //was impelemented in deleted commits
+    List<ASTCDClass> subclasses = new ArrayList<>();
+    for (ASTCDClass childClass : getSrcCD().getCDDefinition().getCDClassesList()) {
+      if ((getAllSuper(childClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(getSrcCD()))).contains(astcdClass)) {
+        subclasses.add(childClass);
+      }
+    }
+    return subclasses;
   }
 
   @Override
@@ -503,6 +559,53 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
     return foundConflicts;
+  }
+
+  public void setMaps(){
+    for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
+      for (ASTCDAssociation astcdAssociation : getSrcCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
+        srcMap.put(astcdClass, astcdAssociation);
+      }
+    }
+
+    for (ASTCDClass astcdClass : getTrgCD().getCDDefinition().getCDClassesList()){
+      for (ASTCDAssociation astcdAssociation : getTrgCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
+        trgMap.put(astcdClass, astcdAssociation);
+      }
+    }
+    Set<ASTCDAssociation> srcAssocs = collectSuperAssociations(getSrcCD(), getSrcCD());
+    if (srcAssocs != null){
+      for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
+        for (ASTCDAssociation astcdAssociation : srcAssocs){
+          Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
+          if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())
+          || (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())){
+            srcMap.put(astcdClass, astcdAssociation);
+          }
+        }
+      }
+    }
+
+    Set<ASTCDAssociation> trgAssocs = collectSuperAssociations(getSrcCD(), getSrcCD());
+    if (trgAssocs != null){
+      for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
+        for (ASTCDAssociation astcdAssociation : trgAssocs){
+          Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
+          if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())
+            || (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())){
+            trgMap.put(astcdClass, astcdAssociation);
+          }
+        }
+      }
+    }
+  }
+
+  public ArrayListMultimap<ASTCDClass, ASTCDAssociation> getSrcMap() {
+    return srcMap;
+  }
+
+  public ArrayListMultimap<ASTCDClass, ASTCDAssociation> getTrgMap() {
+    return trgMap;
   }
 
   @Override
