@@ -1,15 +1,14 @@
 package de.monticore.cddiff.syndiff.imp;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
@@ -41,8 +40,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   private List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs;
   private List<DiffTypes> baseDiff;
 
-  private ArrayListMultimap<ASTCDClass, ASTCDAssociation> srcMap = ArrayListMultimap.create();
-  private ArrayListMultimap<ASTCDClass, ASTCDAssociation> trgMap = ArrayListMultimap.create();
+  private ArrayListMultimap<ASTCDClass, Pair<String, Pair<String, ASTCDAssociation>>> srcMap = ArrayListMultimap.create();
+  private ArrayListMultimap<ASTCDClass, Pair<String, Pair<String, ASTCDAssociation>>> trgMap = ArrayListMultimap.create();
 
   @Override
   public ASTCDCompilationUnit getSrcCD() {
@@ -308,9 +307,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         map.put(astcdClass, false);
         ASTCDClass matchedClass = findMatchedClass(astcdClass);
         if (matchedClass != null){
-          List<ASTCDAssociation> associationList = getTrgMap().get(matchedClass);
-          for (ASTCDAssociation association : associationList){
-            if(sameAssociation(association, astcdAssociation) || sameAssociationInReverse(association, astcdAssociation)){
+          List<Pair<String, Pair<String, ASTCDAssociation>>> pairList = getTrgMap().get(matchedClass);
+          for (Pair<String, Pair<String, ASTCDAssociation>> pair : pairList){
+            if(sameAssociation(pair.b.b, astcdAssociation) || sameAssociationInReverse(pair.b.b, astcdAssociation)){
               map.remove(astcdClass);
               map.put(astcdClass, true);
             }
@@ -326,9 +325,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         map2.put(astcdClass, false);
         ASTCDClass matchedClass = findMatchedClass(astcdClass);
         if (matchedClass != null){
-          List<ASTCDAssociation> associationList = getTrgMap().get(matchedClass);
-          for (ASTCDAssociation association : associationList){
-            if(sameAssociation(association, astcdAssociation) || sameAssociationInReverse(association, astcdAssociation)){
+          List<Pair<String, Pair<String, ASTCDAssociation>>> pairList = getTrgMap().get(matchedClass);
+          for (Pair<String, Pair<String, ASTCDAssociation>> pair : pairList){
+            if(sameAssociation(pair.b.b, astcdAssociation) || sameAssociationInReverse(pair.b.b, astcdAssociation)){
               map2.remove(astcdClass);
               map2.put(astcdClass, true);
             }
@@ -390,8 +389,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   @Override
-  public void isClassNeeded() {
+  public boolean isClassNeeded(CDTypeDiff pair) {
+    ASTCDClass srcCLass = (ASTCDClass) pair.getElem1();
+    if (!srcCLass.getModifier().isAbstract()){
+      //add to Diff List - class can be instantiated
+    }
+    else{
+      //do we check if assocs make sense - assoc to abstract class
+    }
     //not implemented
+    return false;
   }
 
   @Override
@@ -564,47 +571,140 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   public void setMaps(){
     for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
       for (ASTCDAssociation astcdAssociation : getSrcCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
-        srcMap.put(astcdClass, astcdAssociation);
+        Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
+        if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
+          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+            srcMap.put(astcdClass, new Pair<>("<->", new Pair<>("left", astcdAssociation)));
+          }
+          else {
+            srcMap.put(astcdClass, new Pair<>("->", new Pair<>("left", astcdAssociation)));
+          }
+        } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
+          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+            srcMap.put(astcdClass, new Pair<>("<->", new Pair<>("right", astcdAssociation)));
+          }
+          else {
+            srcMap.put(astcdClass, new Pair<>("<-", new Pair<>("right", astcdAssociation)));
+          }
+        }
       }
     }
 
     for (ASTCDClass astcdClass : getTrgCD().getCDDefinition().getCDClassesList()){
       for (ASTCDAssociation astcdAssociation : getTrgCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
-        trgMap.put(astcdClass, astcdAssociation);
-      }
-    }
-    Set<ASTCDAssociation> srcAssocs = collectSuperAssociations(getSrcCD(), getSrcCD());
-    if (srcAssocs != null){
-      for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
-        for (ASTCDAssociation astcdAssociation : srcAssocs){
-          Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
-          if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())
-          || (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())){
-            srcMap.put(astcdClass, astcdAssociation);
+        Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
+        if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
+          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+            trgMap.put(astcdClass, new Pair<>("<->", new Pair<>("left", astcdAssociation)));
+          }
+          else {
+            trgMap.put(astcdClass, new Pair<>("->", new Pair<>("left", astcdAssociation)));
+          }
+        } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
+          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+            trgMap.put(astcdClass, new Pair<>("<->", new Pair<>("right", astcdAssociation)));
+          }
+          else {
+            trgMap.put(astcdClass, new Pair<>("<-", new Pair<>("right", astcdAssociation)));
           }
         }
       }
     }
 
-    Set<ASTCDAssociation> trgAssocs = collectSuperAssociations(getSrcCD(), getSrcCD());
-    if (trgAssocs != null){
-      for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
-        for (ASTCDAssociation astcdAssociation : trgAssocs){
-          Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
-          if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())
-            || (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())){
-            trgMap.put(astcdClass, astcdAssociation);
+    for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
+      Set<ASTCDType> superClasses = getAllSuper(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(getSrcCD()));
+      for (ASTCDType superClass : superClasses){
+        if (superClass instanceof ASTCDClass){
+          for (ASTCDAssociation association : getSrcCD().getCDDefinition().getCDAssociationsListForType(superClass)){
+            Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association);
+            if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
+//              ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
+//              ASTCDAssocLeftSideBuilder leftSideBuilder = CD4CodeMill.cDAssocLeftSideBuilder().setMCQualifiedType(association.getLeft().getMCQualifiedType())
+//                .setModifier(association.getLeft().getModifier())
+//                .setCDCardinality(association.getLeft().getCDCardinality())
+//                .setCDRole(association.getLeft().getCDRole());
+//              //subClass must be set on the left side - how
+//              ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
+//                .setCDAssocType(association.getCDAssocType())
+//                .setModifier(association.getModifier()).setName(association.getName()).setLeft(leftSideBuilder.build()).build();
+
+              if (association.getCDAssocDir().isBidirectional()) {
+                trgMap.put(astcdClass, new Pair<>("<->", new Pair<>("left", association)));
+              }
+              else {
+                trgMap.put(astcdClass, new Pair<>("->", new Pair<>("left", association)));
+              }
+            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+              if (association.getCDAssocDir().isBidirectional()) {
+                srcMap.put(astcdClass, new Pair<>("<->", new Pair<>("right", association)));
+              }
+              else {
+                srcMap.put(astcdClass, new Pair<>("<-", new Pair<>("right", association)));
+              }
+            }
           }
         }
       }
     }
+
+    for (ASTCDClass astcdClass : getTrgCD().getCDDefinition().getCDClassesList()){
+      Set<ASTCDType> superClasses = getAllSuper(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(getTrgCD()));
+      for (ASTCDType superClass : superClasses){
+        if (superClass instanceof ASTCDClass){
+          for (ASTCDAssociation association : getTrgCD().getCDDefinition().getCDAssociationsListForType(superClass)){
+            Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association);
+            if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
+              if (association.getCDAssocDir().isBidirectional()) {
+                trgMap.put(astcdClass, new Pair<>("<->", new Pair<>("left", association)));
+              }
+              else {
+                trgMap.put(astcdClass, new Pair<>("->", new Pair<>("left", association)));
+              }
+            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+              if (association.getCDAssocDir().isBidirectional()) {
+                trgMap.put(astcdClass, new Pair<>("<->", new Pair<>("right", association)));
+              }
+              else {
+                trgMap.put(astcdClass, new Pair<>("<-", new Pair<>("right", association)));
+              }
+            }
+          }
+        }
+      }
+    }
+
+//    Set<ASTCDAssociation> srcAssocs = collectSuperAssociations(getSrcCD(), getSrcCD());
+//    if (srcAssocs != null){
+//      for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
+//        for (ASTCDAssociation astcdAssociation : srcAssocs){
+//          Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
+//          if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())
+//          || (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())){
+//            srcMap.put(astcdClass, astcdAssociation);
+//          }
+//        }
+//      }
+//    }
+//
+//    Set<ASTCDAssociation> trgAssocs = collectSuperAssociations(getSrcCD(), getSrcCD());
+//    if (trgAssocs != null){
+//      for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
+//        for (ASTCDAssociation astcdAssociation : trgAssocs){
+//          Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
+//          if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())
+//            || (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())){
+//            trgMap.put(astcdClass, astcdAssociation);
+//          }
+//        }
+//      }
+//    }
   }
 
-  public ArrayListMultimap<ASTCDClass, ASTCDAssociation> getSrcMap() {
+  public ArrayListMultimap<ASTCDClass, Pair<String, Pair<String, ASTCDAssociation>>> getSrcMap() {
     return srcMap;
   }
 
-  public ArrayListMultimap<ASTCDClass, ASTCDAssociation> getTrgMap() {
+  public ArrayListMultimap<ASTCDClass, Pair<String, Pair<String, ASTCDAssociation>>> getTrgMap() {
     return trgMap;
   }
 
@@ -636,5 +736,42 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
     return null;
+  }
+
+  public Set<Object> createObjectsForOD(ASTCDClass astcdClass, ASTCDAssociation astcdAssociation){
+    Set<Object> set = new HashSet<>();
+    return (createChains(astcdClass, astcdAssociation, set));
+  }
+
+  public Set<Object> createChains(ASTCDClass astcdClass, ASTCDAssociation astcdAssociation, Set<Object> objectSet){
+    if (astcdClass != null) {
+      if (!objectSet.contains(astcdClass)) {
+        objectSet.add(astcdClass);
+        List<Pair<String, Pair<String, ASTCDAssociation>>> list = getSrcMap().get(astcdClass);
+        for (Pair<String, Pair<String, ASTCDAssociation>> pair : list) {
+          if (!objectSet.contains(pair.b.b)) {
+            switch (pair.b.a) {
+              case "left":
+                if (pair.b.b.getRight().getCDCardinality().isAtLeastOne()) {
+                  objectSet.add(pair.b.b);
+                  objectSet.addAll(createChains(getConnectedClasses(pair.b.b).b, null, objectSet));
+                }
+              case "right":
+                if (pair.b.b.getLeft().getCDCardinality().isAtLeastOne()) {
+                  objectSet.add(pair.b.b);
+                  objectSet.addAll(createChains(getConnectedClasses(pair.b.b).a, null, objectSet));
+                }
+            }
+          }
+        }
+      }
+    }
+    else {
+      if (!objectSet.contains(astcdAssociation)) {
+        objectSet.addAll(createChains(getConnectedClasses(astcdAssociation).a, null, objectSet));
+        objectSet.addAll(createChains(getConnectedClasses(astcdAssociation).b, null, objectSet));
+      }
+    }
+    return objectSet;
   }
 }

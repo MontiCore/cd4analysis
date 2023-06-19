@@ -133,7 +133,7 @@ public interface ICDSyntaxDiff {
    * @return true if we have a semantic difference. This function kind of uses multiple others:
    *     inheritance hierarchy, comparison of associations.
    */
-  void isClassNeeded();
+  boolean isClassNeeded(CDTypeDiff pair);
 
   /**
    * Merge all duplicated associations that have the same role names @param duplicatedAssociations

@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -7,14 +9,21 @@ import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
+
+import java.util.ArrayList;
 import java.util.List;
+import de.monticore.cddiff.*;
+import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
+
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
 
 public class CDTypeDiff implements ICDTypeDiff {
   private final ASTCDType elem1;
   private final ASTCDType elem2;
   private List<CDMemberDiff> changedMembers;
   private List<ASTCDAttribute> addedAttributes;
-  private List<ASTCDAttribute> deletedAttribute;
+  private List<ASTCDAttribute> deletedAttributes;
   private List<ASTCDEnumConstant> addedConstants;
   private List<ASTCDEnumConstant> deletedConstants;
   private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes;
@@ -58,12 +67,12 @@ public class CDTypeDiff implements ICDTypeDiff {
 
   @Override
   public List<ASTCDAttribute> getDeletedAttribute() {
-    return deletedAttribute;
+    return deletedAttributes;
   }
 
   @Override
   public void setDeletedAttribute(List<ASTCDAttribute> deletedAttribute) {
-    this.deletedAttribute = deletedAttribute;
+    this.deletedAttributes = deletedAttribute;
   }
 
   @Override
@@ -134,4 +143,29 @@ public class CDTypeDiff implements ICDTypeDiff {
     }
     return null;
   }
+
+  /**
+   * Check if an attribute is really deleted.
+   * @param attribute from list deletedAttributes
+   * @return true if not found in inheritance hierarchy
+   */
+  public boolean isDeleted(ASTCDAttribute attribute, ICD4CodeArtifactScope artifactScope){
+    return isAttributInSuper(attribute, getElem1(), artifactScope);
+  }
+
+//  public boolean isAdded(ASTCDAttribute attribute){
+//    List<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getElem2());
+//
+//    return false;
+//  }
+//
+//  public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass){
+//    List<ASTCDClass> subclasses = new ArrayList<>();
+//    for (ASTCDClass childClass : getSrcCD().getCDDefinition().getCDClassesList()) {
+//      if ((getAllSuper(childClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(getSrcCD()))).contains(astcdClass)) {
+//        subclasses.add(childClass);
+//      }
+//    }
+//    return subclasses;
+//  }
 }
