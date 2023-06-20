@@ -143,7 +143,9 @@ configurations {
 }
 
 dependencies {
-  grammar("$var_path:monticore-grammar:$mc_version") {
+  testImplementation project(path: ':')
+    testImplementation project(path: ':')
+    grammar("$var_path:monticore-grammar:$mc_version") {
     capabilities {
       requireCapability("$var_path:monticore-grammar-grammars")
     }
