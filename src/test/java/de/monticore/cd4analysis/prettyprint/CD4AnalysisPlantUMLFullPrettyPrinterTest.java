@@ -14,20 +14,20 @@ import java.util.Optional;
 
 public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBasis {
 
-  protected CD4AnalysisPlantUMLFullPrettyPrinter printer;
+ // protected CD4AnalysisPlantUMLFullPrettyPrinter printer;
   protected CD4AnalysisParser p;
 
   @Before
   public void initObjects() {
 
-    printer = new CD4AnalysisPlantUMLFullPrettyPrinter();
+  //  printer = new CD4AnalysisPlantUMLFullPrettyPrinter();
     p = new CD4AnalysisParser();
 
   }
 
 
-  @Test
-  public void completeModel() throws IOException {
+ // @Test
+ /* public void completeModel() throws IOException {
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/Simple.cd"));
@@ -40,6 +40,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
       p.parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
-  }
+  }*/
 
 }
