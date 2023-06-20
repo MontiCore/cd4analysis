@@ -1,0 +1,31 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+		}
+	}
+</style>
+hide circle
+
+class Customer {
+	name
+	address
+	birthday
+	changeAdr(Address adr)
+	setAge(Age a)
+}
+
+class Account {
+	number
+	balance
+	interestRate
+}
+
+class Person
+
+Customer "1" -right- "*" Account: ownerOff
+Customer -up-|> Person
+
+@enduml
