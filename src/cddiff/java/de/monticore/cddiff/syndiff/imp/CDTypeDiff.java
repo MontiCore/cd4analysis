@@ -4,6 +4,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
@@ -12,11 +13,12 @@ import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 import de.monticore.cddiff.*;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 public class CDTypeDiff implements ICDTypeDiff {
   private final ASTCDType elem1;
@@ -147,25 +149,81 @@ public class CDTypeDiff implements ICDTypeDiff {
   /**
    * Check if an attribute is really deleted.
    * @param attribute from list deletedAttributes
-   * @return true if not found in inheritance hierarchy
+   * @return false if not found in inheritance hierarchy
    */
   public boolean isDeleted(ASTCDAttribute attribute, ICD4CodeArtifactScope artifactScope){
     return isAttributInSuper(attribute, getElem1(), artifactScope);
   }
 
-//  public boolean isAdded(ASTCDAttribute attribute){
-//    List<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getElem2());
-//
-//    return false;
-//  }
-//
-//  public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass){
-//    List<ASTCDClass> subclasses = new ArrayList<>();
-//    for (ASTCDClass childClass : getSrcCD().getCDDefinition().getCDClassesList()) {
-//      if ((getAllSuper(childClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(getSrcCD()))).contains(astcdClass)) {
-//        subclasses.add(childClass);
-//      }
-//    }
-//    return subclasses;
-//  }
+  /**
+   * Check if an attribute is really added.
+   * @param attribute from addedList
+   * @param compilationUnit for diagram (trg)
+   * @return false if not found in all subclasses
+   */
+  public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
+    List<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getElem2(), compilationUnit);
+    boolean conditionSatisfied = false; // Track if the condition is satisfied
+    for (ASTCDClass astcdClass : classList) {
+      if (!astcdClass.getCDAttributeList().contains(attribute)) {
+        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit));
+        astcdClassList.remove(getElem2());
+        for (ASTCDType type : astcdClassList) {
+          if (type instanceof ASTCDClass && type.getCDAttributeList().contains(attribute)) {
+            conditionSatisfied = true; // Set the flag to true if the condition holds
+            break;
+          }
+        }
+      }
+      if (conditionSatisfied) {
+        break; // Break out of the first loop if the condition is satisfied
+      }
+    }
+    return conditionSatisfied;
+  }
+
+  public List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass, ASTCDCompilationUnit compilationUnit){
+    List<ASTCDClass> subclasses = new ArrayList<>();
+    for (ASTCDClass childClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      if ((getAllSuper(childClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit))).contains(astcdClass)) {
+        subclasses.add(childClass);
+      }
+    }
+    return subclasses;
+  }
+
+  public List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants(){
+    List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();
+    if (!getAddedConstants().isEmpty()){
+      for (ASTCDEnumConstant constant : getAddedConstants()){
+        pairList.add(new Pair<>((ASTCDClass) getElem1(), constant));
+      }
+    }
+    return pairList;
+  }
+
+  public void findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit){
+    if (!getElem1().getModifier().isAbstract()) {
+      for (DiffTypes type : memberDiff.getBaseDiff()) {
+        switch (type) {
+          case CHANGED_ATTRIBUTE: //add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+          case CHANGED_VISIBILITY: //give as output to user - no semDiff
+            //other cases
+        }
+      }
+    }
+    else { //class is abstract and can't be instantiated - get a subclass
+      for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()){
+        if (getDirectSuperClasses(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit)).contains(getElem1())){// can be made to contains ONLY - extends as in java or C++?
+          for (DiffTypes type : memberDiff.getBaseDiff()) {
+            switch (type) {
+              case CHANGED_ATTRIBUTE: //add to Diff List new Pair(astcdClass, memberDiff.getElem1())
+              case CHANGED_VISIBILITY: //give as output to user - no semDiff
+                //other cases?
+            }
+          }
+        }
+      }
+    }
+  }
 }

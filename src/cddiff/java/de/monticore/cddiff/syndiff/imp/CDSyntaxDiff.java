@@ -396,6 +396,23 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
     else{
       //do we check if assocs make sense - assoc to abstract class
+      Set<ASTCDClass> map = getSrcMap().keySet();
+      map.remove((ASTCDClass) pair.getElem1());
+      for (ASTCDClass astcdClass : map){
+        for (Pair<String, Pair<String, ASTCDAssociation>> mapPair : getSrcMap().get(astcdClass)){
+          if (Objects.equals(mapPair.a, "->") && getConnectedClasses(mapPair.b.b).b.equals(pair.getElem1()) && mapPair.b.b.getRight().getCDCardinality().isAtLeastOne()){
+             //add to Diff List - class can be instantiated without the abstract class
+          } else if (Objects.equals(mapPair.a, "<-") && getConnectedClasses(mapPair.b.b).a.equals(pair.getElem1()) && mapPair.b.b.getLeft().getCDCardinality().isAtLeastOne()) {
+            //add to Diff List - class can be instantiated without the abstract class
+          } else if (Objects.equals(mapPair.a, "<->")) {
+            if (Objects.equals(mapPair.b.a, "left") && mapPair.b.b.getRight().getCDCardinality().isAtLeastOne()){
+              //add to Diff List - class can be instantiated without the abstract class
+            } else if (mapPair.b.b.getLeft().getCDCardinality().isAtLeastOne()) {
+              //add to Diff List - class can be instantiated without the abstract class
+            }
+          }
+        }
+      }
     }
     //not implemented
     return false;
@@ -736,6 +753,15 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
     return null;
+  }
+
+  public void findTypeDiff(CDTypeDiff typeDiff){
+    for (DiffTypes types : typeDiff.getBaseDiffs()){
+      switch (types){
+        case CHANGED_ATTRIBUTE:
+        case STEREOTYPE_DIFFERENCE:
+      }
+    }
   }
 
   public Set<Object> createObjectsForOD(ASTCDClass astcdClass, ASTCDAssociation astcdAssociation){
