@@ -6,7 +6,6 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
-import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -41,7 +40,7 @@ public class AssociationsMatcher {
   public boolean checkAssociations(
       ASTODArtifact od, ASTCDCompilationUnit cd, CDSemantics semantics) {
 
-    this.scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    this.scope = (ICD4CodeArtifactScope) cd.getEnclosingScope();
 
     this.semantics = semantics;
 
@@ -145,9 +144,6 @@ public class AssociationsMatcher {
    */
   private boolean checkTargetTypeAndCardinality(ASTODNamedObject object, ASTCDAssociation assoc) {
 
-    CDAssociationFullPrettyPrinter pp = new CDAssociationFullPrettyPrinter();
-    assoc.accept(pp.getTraverser());
-
     Set<ASTODLink> outgoingLinks =
         links.stream()
             .filter(link -> link.getLeftReferenceNames().contains(object.getName()))
@@ -193,7 +189,7 @@ public class AssociationsMatcher {
                 + " of "
                 + outgoingLinks.size()
                 + " violates "
-                + pp.prettyprint(targetSide));
+                + CD4CodeMill.prettyPrint(targetSide,false));
         return false;
       }
     }
@@ -202,9 +198,6 @@ public class AssociationsMatcher {
 
   private boolean checkBidirLoop(
       ASTODNamedObject object, ASTCDAssociation assoc, Collection<ASTODLink> outgoingLinks) {
-
-    CDAssociationFullPrettyPrinter pp = new CDAssociationFullPrettyPrinter();
-    assoc.accept(pp.getTraverser());
 
     if (object.getODAttributeList().stream()
         .anyMatch(
@@ -260,7 +253,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
-        Log.println("[RIGHT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getRight()));
+        Log.println("[RIGHT] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(assoc.getRight(),false));
         return false;
       }
     }
@@ -272,7 +265,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getLeft().getCDCardinality(), numberOfTargets)) {
-        Log.println("[LEFT] " + numberOfTargets + " violates " + pp.prettyprint(assoc.getLeft()));
+        Log.println("[LEFT] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(assoc.getLeft(),false));
         return false;
       }
     }
@@ -284,8 +277,6 @@ public class AssociationsMatcher {
    * constraints.
    */
   private boolean checkSourceCardinality(ASTODNamedObject object, ASTCDAssociation assoc) {
-    CDAssociationFullPrettyPrinter pp = new CDAssociationFullPrettyPrinter();
-    assoc.accept(pp.getTraverser());
 
     Set<ASTODLink> incomingLinks =
         links.stream()
@@ -311,7 +302,7 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(srcSide.getCDCardinality(), numberOfTargets)) {
-        Log.println("[SRC] " + numberOfTargets + " violates " + pp.prettyprint(srcSide));
+        Log.println("[SRC] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(srcSide,false));
         return false;
       }
     }

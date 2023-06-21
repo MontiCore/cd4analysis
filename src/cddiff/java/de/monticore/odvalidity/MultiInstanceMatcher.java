@@ -40,8 +40,8 @@ public class MultiInstanceMatcher {
     List<ASTODObject> objectList = ODHelper.getAllObjects(od);
 
     // generate scopes
-    ICD4CodeArtifactScope baseScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(baseCD);
-    ICD4CodeArtifactScope compScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(compCD);
+    ICD4CodeArtifactScope baseScope = (ICD4CodeArtifactScope) baseCD.getEnclosingScope();
+    ICD4CodeArtifactScope compScope = (ICD4CodeArtifactScope) compCD.getEnclosingScope();
 
     Log.print(
         System.lineSeparator()

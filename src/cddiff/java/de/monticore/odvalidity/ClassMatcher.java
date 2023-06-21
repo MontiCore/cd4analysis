@@ -46,7 +46,7 @@ public class ClassMatcher {
 
     this.od = od;
     this.cd = cd;
-    this.scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    this.scope = (ICD4CodeArtifactScope) cd.getEnclosingScope();
     this.semantics = semantics;
 
     // Set all parameters
