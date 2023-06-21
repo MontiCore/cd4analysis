@@ -189,7 +189,7 @@ public class AssociationsMatcher {
                 + " of "
                 + outgoingLinks.size()
                 + " violates "
-                + CD4CodeMill.prettyPrint(targetSide,false));
+                + CD4CodeMill.prettyPrint(targetSide, false));
         return false;
       }
     }
@@ -253,7 +253,11 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getRight().getCDCardinality(), numberOfTargets)) {
-        Log.println("[RIGHT] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(assoc.getRight(),false));
+        Log.println(
+            "[RIGHT] "
+                + numberOfTargets
+                + " violates "
+                + CD4CodeMill.prettyPrint(assoc.getRight(), false));
         return false;
       }
     }
@@ -265,7 +269,11 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(assoc.getLeft().getCDCardinality(), numberOfTargets)) {
-        Log.println("[LEFT] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(assoc.getLeft(),false));
+        Log.println(
+            "[LEFT] "
+                + numberOfTargets
+                + " violates "
+                + CD4CodeMill.prettyPrint(assoc.getLeft(), false));
         return false;
       }
     }
@@ -302,7 +310,8 @@ public class AssociationsMatcher {
         }
       }
       if (!checkIfObjectNumberIsValid(srcSide.getCDCardinality(), numberOfTargets)) {
-        Log.println("[SRC] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(srcSide,false));
+        Log.println(
+            "[SRC] " + numberOfTargets + " violates " + CD4CodeMill.prettyPrint(srcSide, false));
         return false;
       }
     }

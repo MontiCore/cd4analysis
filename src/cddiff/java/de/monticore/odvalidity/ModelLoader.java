@@ -29,8 +29,9 @@ public class ModelLoader {
         e.printStackTrace();
       }
 
-      cdAST.ifPresent(astcdCompilationUnit -> CD4CodeMill.scopesGenitorDelegator()
-          .createFromAST(astcdCompilationUnit));
+      cdAST.ifPresent(
+          astcdCompilationUnit ->
+              CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit));
       return cdAST;
 
     } else {
