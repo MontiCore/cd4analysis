@@ -1,8 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -47,7 +45,7 @@ public interface ICDTypeDiff {
    * @return true if attribute can't be instantiated. This function is similar to the one for added
    *     classes.
    */
-  void changedAttribute();
+  List<Pair<ASTCDClass, ASTCDMember>> changedAttribute(ASTCDCompilationUnit compilationUnit);
 
   /**
    * Get all classes that use the ASTCDEnum as an attribute. We use this function when the typeDiff

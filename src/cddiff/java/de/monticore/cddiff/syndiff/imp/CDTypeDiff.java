@@ -1,11 +1,7 @@
 package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -14,9 +10,6 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import de.monticore.cddiff.*;
-import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
@@ -103,9 +96,6 @@ public class CDTypeDiff implements ICDTypeDiff {
   }
 
   @Override
-  public void changedAttribute() {}
-
-  @Override
   public List<ASTCDClass> getClassesForEnum() {
     return null;
   }
@@ -146,15 +136,34 @@ public class CDTypeDiff implements ICDTypeDiff {
     return null;
   }
 
+  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit){
+    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
+    for (ASTCDAttribute attribute : getDeletedAttribute()){
+      if (!isDeleted(attribute, compilationUnit)){
+        pairList.add(new Pair<>((ASTCDClass) getElem1(), attribute));
+      }
+    }
+    return pairList;
+  }
+
   /**
    * Check if an attribute is really deleted.
    * @param attribute from list deletedAttributes
    * @return false if not found in inheritance hierarchy
    */
-  public boolean isDeleted(ASTCDAttribute attribute, ICD4CodeArtifactScope artifactScope){
-    return isAttributInSuper(attribute, getElem1(), artifactScope);
+  public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
+    return isAttributInSuper(attribute, getElem1(), CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit));
   }
 
+  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(ASTCDCompilationUnit compilationUnit){
+    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
+    for (ASTCDAttribute attribute : getAddedAttributes()){
+      if (!isAdded(attribute, compilationUnit)){
+        pairList.add(new Pair<>((ASTCDClass) getElem1(), attribute));
+      }
+    }
+    return pairList;
+  }
   /**
    * Check if an attribute is really added.
    * @param attribute from addedList
@@ -202,28 +211,43 @@ public class CDTypeDiff implements ICDTypeDiff {
     return pairList;
   }
 
-  public void findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit){
+  @Override
+  public List<Pair<ASTCDClass, ASTCDMember>> changedAttribute(ASTCDCompilationUnit compilationUnit){
+    List<Pair<ASTCDClass, ASTCDMember>> pairList = new ArrayList<>();
+    for (CDMemberDiff memberDiff : getChangedMembers()){
+      if (findMemberDiff(memberDiff, compilationUnit) != null){
+        pairList.addAll(findMemberDiff(memberDiff, compilationUnit));
+      }
+    }
+    return pairList;
+  }
+  public List<Pair<ASTCDClass, ASTCDMember>> findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit){
     if (!getElem1().getModifier().isAbstract()) {
+      List<Pair<ASTCDClass, ASTCDMember>> list = new ArrayList<>();
       for (DiffTypes type : memberDiff.getBaseDiff()) {
         switch (type) {
-          case CHANGED_ATTRIBUTE: //add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+          case CHANGED_ATTRIBUTE: list.add(new Pair<>((ASTCDClass)getElem1(), (ASTCDAttribute) memberDiff.getElem1()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
           case CHANGED_VISIBILITY: //give as output to user - no semDiff
             //other cases
         }
       }
+      return list;
     }
     else { //class is abstract and can't be instantiated - get a subclass
       for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()){
         if (getDirectSuperClasses(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit)).contains(getElem1())){// can be made to contains ONLY - extends as in java or C++?
+          List<Pair<ASTCDClass, ASTCDMember>> list = new ArrayList<>();
           for (DiffTypes type : memberDiff.getBaseDiff()) {
             switch (type) {
-              case CHANGED_ATTRIBUTE: //add to Diff List new Pair(astcdClass, memberDiff.getElem1())
+              case CHANGED_ATTRIBUTE: list.add(new Pair<>(astcdClass, (ASTCDAttribute) memberDiff.getElem1()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
               case CHANGED_VISIBILITY: //give as output to user - no semDiff
                 //other cases?
             }
           }
+          return list;
         }
       }
     }
+    return null;
   }
 }

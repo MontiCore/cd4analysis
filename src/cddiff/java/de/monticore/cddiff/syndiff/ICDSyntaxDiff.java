@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -131,9 +132,9 @@ public interface ICDSyntaxDiff {
    * semantic difference - another class uses this abstract class.
    *
    * @return true if we have a semantic difference. This function kind of uses multiple others:
-   *     inheritance hierarchy, comparison of associations.
+   * inheritance hierarchy, comparison of associations.
    */
-  boolean isClassNeeded(CDTypeDiff pair);
+  ASTCDType isClassNeeded(CDTypeDiff pair);
 
   /**
    * Merge all duplicated associations that have the same role names @param duplicatedAssociations

@@ -389,10 +389,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   @Override
-  public boolean isClassNeeded(CDTypeDiff pair) {
+  public ASTCDType isClassNeeded(CDTypeDiff pair) {
     ASTCDClass srcCLass = (ASTCDClass) pair.getElem1();
     if (!srcCLass.getModifier().isAbstract()){
-      //add to Diff List - class can be instantiated
+      return pair.getElem1();
     }
     else{
       //do we check if assocs make sense - assoc to abstract class
@@ -402,20 +402,24 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         for (Pair<String, Pair<String, ASTCDAssociation>> mapPair : getSrcMap().get(astcdClass)){
           if (Objects.equals(mapPair.a, "->") && getConnectedClasses(mapPair.b.b).b.equals(pair.getElem1()) && mapPair.b.b.getRight().getCDCardinality().isAtLeastOne()){
              //add to Diff List - class can be instantiated without the abstract class
+            return astcdClass;
           } else if (Objects.equals(mapPair.a, "<-") && getConnectedClasses(mapPair.b.b).a.equals(pair.getElem1()) && mapPair.b.b.getLeft().getCDCardinality().isAtLeastOne()) {
             //add to Diff List - class can be instantiated without the abstract class
+            return astcdClass;
           } else if (Objects.equals(mapPair.a, "<->")) {
             if (Objects.equals(mapPair.b.a, "left") && mapPair.b.b.getRight().getCDCardinality().isAtLeastOne()){
               //add to Diff List - class can be instantiated without the abstract class
+              return astcdClass;
             } else if (mapPair.b.b.getLeft().getCDCardinality().isAtLeastOne()) {
               //add to Diff List - class can be instantiated without the abstract class
+              return astcdClass;
             }
           }
         }
       }
     }
     //not implemented
-    return false;
+    return null;
   }
 
   @Override
@@ -450,6 +454,117 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
     return map;
+  }
+
+//  public ArrayListMultimap<ASTCDAssociation, List<ASTCDAssociation>> findDuplicatedAssocs(){
+//    ArrayListMultimap<ASTCDClass, Pair<String, Pair<String, ASTCDAssociation>>> map = getSrcMap();
+//    ArrayListMultimap<ASTCDAssociation, List<ASTCDAssociation>> dupAssocMap = ArrayListMultimap.create();
+//    for (ASTCDClass astcdClass : map.keySet()) {
+//      for (Pair<String, Pair<String, ASTCDAssociation>> association1 : map.get(astcdClass)) {
+//        for (Pair<String, Pair<String, ASTCDAssociation>> association2 : map.get(astcdClass)) {
+//          if (association1 != association2) {
+//            if (getConnectedClasses(association1.b.b).b.equals(getConnectedClasses(association2.b.b).b)
+//              && matchRoleNames(association1.b.b.getLeft(), association2.b.b.getLeft())
+//              && matchRoleNames(association1.b.b.getRight(), association2.b.b.getRight())) {
+//              //add to Diff List - class can be instantiated without the abstract class
+//            } else if (getConnectedClasses(association1.b.b).a.equals(getConnectedClasses(association2.b.b).a)
+//              && matchRoleNames(association1.b.b.getLeft(), association2.b.b.getLeft())
+//              && matchRoleNames(association1.b.b.getRight(), association2.b.b.getRight())) {
+//              //add to Diff List - class can be instantiated without the abstract class
+//            } else if (Objects.equals(mapPair.a, "<->")) {
+//              if (Objects.equals(mapPair.b.a, "left") && mapPair.b.b.getRight().getCDCardinality().isAtLeastOne()) {
+//                //add to Diff List - class can be instantiated without the abstract class
+//                return astcdClass;
+//              } else if (mapPair.b.b.getLeft().getCDCardinality().isAtLeastOne()) {
+//                //add to Diff List - class can be instantiated without the abstract class
+//                return astcdClass;
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
+//  }
+
+  public ArrayListMultimap<ASTCDAssociation, Pair<Boolean, ASTCDAssociation>> findDuplicatedAssocs() {
+    ArrayListMultimap<ASTCDAssociation, Pair<Boolean, ASTCDAssociation>> dupAssocList = ArrayListMultimap.create();
+    for (ASTCDAssociation association1 : getSrcCD().getCDDefinition().getCDAssociationsList()) {
+      for (ASTCDAssociation association2 : getSrcCD().getCDDefinition().getCDAssociationsList()) {
+        if (association1 != association2) {
+          if (sameAssociation(association1, association2)
+            && !dupAssocList.get(association2).contains(new Pair<>(true, association1))) {
+            dupAssocList.put(association1, new Pair<>(true, association2));
+          } else if (sameAssociationInReverse(association1, association2)
+            && !dupAssocList.get(association2).contains(new Pair<>(false, association1))) {
+            dupAssocList.put(association1, new Pair<>(false, association1));
+          }
+        }
+      }
+    }
+    List<Pair<ASTCDAssociation, Pair<String, String>>> result = new ArrayList<>();
+    for (ASTCDAssociation association : dupAssocList.keys()){
+      String intersectionLeft = null;
+      String intersectionRight = null;
+      for (Pair<Boolean, ASTCDAssociation> pair : dupAssocList.get(association)){
+        if (pair.a) {
+          intersectionLeft = intersectCardinalities(intersectionLeft, cardToSting(pair.b.getLeft().getCDCardinality()));
+          intersectionRight = intersectCardinalities(intersectionRight, cardToSting(pair.b.getRight().getCDCardinality()));
+        }
+        else {
+          intersectionLeft = intersectCardinalities(intersectionLeft, cardToSting(pair.b.getRight().getCDCardinality()));
+          intersectionRight = intersectCardinalities(intersectionRight, cardToSting(pair.b.getLeft().getCDCardinality()));
+        }
+      }
+      result.add(new Pair<>(association, new Pair<>(intersectionLeft, intersectionRight)));
+    }
+    return dupAssocList;
+  }
+
+  private static String cardToSting(ASTCDCardinality cardinality){
+    if (cardinality.isOne()) {
+      return "one";
+    } else if (cardinality.isOpt()) {
+      return "optional";
+    } else if (cardinality.isAtLeastOne()) {
+      return "atleastone";
+    } else {
+      return "multiple";
+    }
+  }
+  private static String intersectCardinalities(String cardinalityA, String cardinalityB) {
+    if (cardinalityA == null){
+      return cardinalityB;
+    }
+    if (cardinalityA.equals("one")) {
+      if (cardinalityB.equals("one") || cardinalityB.equals("optional") || cardinalityB.equals("multiple") || cardinalityB.equals("atleastone")) {
+        return "one";
+      }
+    } else if (cardinalityA.equals("optional")) {
+      if (cardinalityB.equals("one")) {
+        return "one";
+      } else if (cardinalityB.equals("multiple") || cardinalityB.equals("optional")) {
+        return "optional";
+      } else if (cardinalityB.equals("atleastone")) {
+        return "one";
+      }
+    } else if (cardinalityA.equals("multiple")) {
+      if (cardinalityB.equals("one")) {
+        return "one";
+      } else if (cardinalityB.equals("optional")) {
+        return "optional";
+      } else if (cardinalityB.equals("multiple")) {
+        return "multiple";
+      } else if (cardinalityB.equals("atleastone")) {
+        return "atleastone";
+      }
+    } else if (cardinalityA.equals("atleastone")) {
+      if (cardinalityB.equals("one") || cardinalityB.equals("optional")) {
+        return "atleastone";
+      } else if (cardinalityB.equals("multiple") || cardinalityB.equals("atleastone")) {
+        return "atleastone";
+      }
+    }
+    return "";
   }
 
   @Override
@@ -756,10 +871,15 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   public void findTypeDiff(CDTypeDiff typeDiff){
+    List<Object> list = new ArrayList<>();
     for (DiffTypes types : typeDiff.getBaseDiffs()){
       switch (types){
-        case CHANGED_ATTRIBUTE:
-        case STEREOTYPE_DIFFERENCE:
+        case CHANGED_ATTRIBUTE: if (typeDiff.changedAttribute(getSrcCD()) != null){ list.addAll(typeDiff.changedAttribute(getSrcCD())); }
+        case STEREOTYPE_DIFFERENCE: if (isClassNeeded(typeDiff) != null){ list.add(isClassNeeded(typeDiff)); }
+        case REMOVED_ATTRIBUTE: list.addAll(typeDiff.deletedAttributes(getSrcCD()));
+        case ADDED_ATTRIBUTE: list.addAll(typeDiff.addedAttributes(getSrcCD()));
+        case ADDED_CONSTANTS: list.add(typeDiff.newConstants());
+        //other cases?
       }
     }
   }
