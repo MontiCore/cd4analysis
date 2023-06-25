@@ -295,6 +295,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       List<ASTCDClass> superClassesLeft = getSuperClasses(pair.a);
       List<ASTCDClass> superClassesRight = getSuperClasses(pair.b);
       //leftSide
+      int i = 0;
       for (Pair<String, Pair<String, ASTCDAssociation>> association : getSrcMap().get(pair.a)){
         if (association.a == "<->"
           && association.b.a == "left"
@@ -304,7 +305,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
           && astcdAssociation.getRight().getCDRole().equals(association.b.b.getRight().getCDRole())
           && superClassesRight.contains(getConnectedClasses(astcdAssociation).b)
           ){
-          return true;
+          i++;
+        }
+        if (i == 0){
+          return false;
         }
         if (association.a == "<->"
           && association.b.a == "right"
@@ -313,6 +317,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
           && astcdAssociation.getLeft().getCDRole().equals(association.b.b.getRight().getCDRole())
           && astcdAssociation.getRight().getCDRole().equals(association.b.b.getLeft().getCDRole())
           && superClassesRight.contains(getConnectedClasses(astcdAssociation).a)){
+          i++;
+        }
+        if (i == 2){
           return true;
         }
       }
@@ -1100,9 +1107,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     List<Object> list = new ArrayList<>();
     for (DiffTypes types : assocDiff.getBaseDiff()){
       switch (types){
-        case CHANGED_ASSOCIATION_MULTIPLICITY:
-        case CHANGED_ASSOCIATION_DIRECTION:
-        case CHANGED_ASSOCIATION_ROLE:
+        case CHANGED_ASSOCIATION_MULTIPLICITY: list.addAll(assocDiff.getCardDiff());
+        case CHANGED_ASSOCIATION_DIRECTION: list.add(new Pair<>(assocDiff.getElem1(), assocDiff.getDirection(assocDiff.getElem1())));
+        case CHANGED_ASSOCIATION_ROLE: list.addAll(assocDiff.getRoleDiff());
           //other cases?
       }
     }
