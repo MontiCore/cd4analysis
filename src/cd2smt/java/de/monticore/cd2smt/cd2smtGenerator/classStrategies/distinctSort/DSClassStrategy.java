@@ -14,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
+import java.util.function.Function;
 
 /***
  * This class creates transform classes and interfaces of a class diagram in SMT.
@@ -75,6 +76,17 @@ public class DSClassStrategy implements ClassStrategy {
   }
 
   @Override
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+
+    return ctx.mkForall(new Expr[] {var}, body.apply(var), 0, null, null, null, null);
+  }
+
+  @Override
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    return ctx.mkExists(new Expr[] {var}, body.apply(var), 0, null, null, null, null);
+  }
+
+  @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     this.ast = ast;
     ctx = context;
@@ -120,8 +132,7 @@ public class DSClassStrategy implements ClassStrategy {
   private void declareCDType(ASTCDType astcdType) {
 
     // declare the sort for the type
-    UninterpretedSort typeSort =
-        ctx.mkUninterpretedSort(ctx.mkSymbol(printSMTCDTypeName(astcdType)));
+    Sort typeSort = declareSort(astcdType);
     typeMap.put(astcdType, typeSort);
 
     // declare a function for each attribute
@@ -156,6 +167,9 @@ public class DSClassStrategy implements ClassStrategy {
     typeMap.put(astcdType, typeSort);
   }
 
+  protected Sort declareSort(ASTCDType astcdType) {
+    return ctx.mkUninterpretedSort(ctx.mkSymbol(printSMTCDTypeName(astcdType)));
+  }
   /**
    * evaluate the model produce by the SMT-Solver to get the attribute values of Objects. if partial
    * = true, on ly the attribute with non-trivial value will appear on the Object-diagram.
@@ -166,25 +180,26 @@ public class DSClassStrategy implements ClassStrategy {
 
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
-
-        ASTCDType astcdType =
-            CDHelper.getASTCDType(getType(mySort.getName()), ast.getCDDefinition());
-        assert astcdType != null;
-        MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
-
-        // evaluate each attribute
-        for (ASTCDAttribute attribute : astcdType.getCDAttributeList()) {
-          FuncDecl<? extends Sort> attrFunc = attributeMap.get(attribute);
-          Expr<? extends Sort> attrExpr = model.eval(attrFunc.apply(smtExpr), !partial);
-          if (attrExpr.getNumArgs() == 0) {
-            obj.addAttribute(attribute, attrExpr);
-          }
-        }
-
-        objectSet.add(obj);
+        objectSet.add(buildObject(mySort, smtExpr, model, partial));
       }
     }
     return objectSet;
+  }
+
+  protected MinObject buildObject(Sort mySort, Expr<?> smtExpr, Model model, boolean partial) {
+    ASTCDType astcdType = CDHelper.getASTCDType(getType(mySort.getName()), ast.getCDDefinition());
+    assert astcdType != null;
+    MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
+
+    // evaluate each attribute
+    for (ASTCDAttribute attribute : astcdType.getCDAttributeList()) {
+      FuncDecl<? extends Sort> attrFunc = attributeMap.get(attribute);
+      Expr<? extends Sort> attrExpr = model.eval(attrFunc.apply(smtExpr), !partial);
+      if (attrExpr.getNumArgs() == 0) {
+        obj.addAttribute(attribute, attrExpr);
+      }
+    }
+    return obj;
   }
 
   private String getType(Symbol symbol) {
@@ -194,7 +209,7 @@ public class DSClassStrategy implements ClassStrategy {
     return stringBuilder.toString();
   }
 
-  private String printSMTCDTypeName(ASTCDType myClass) {
+  protected String printSMTCDTypeName(ASTCDType myClass) {
     return myClass.getName() + "_obj";
   }
 }

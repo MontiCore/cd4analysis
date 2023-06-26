@@ -1,10 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator;
 
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Expr;
-import com.microsoft.z3.Sort;
+import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationsData;
@@ -17,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
+import java.util.function.Function;
 
 public class DataWrapper implements ClassData, AssociationsData, InheritanceData {
   protected final ASTCDCompilationUnit ast;
@@ -140,6 +138,16 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   public Expr<? extends Sort> getEnumConstant(
       ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
     return classData.getEnumConstant(enumeration, enumConstant);
+  }
+
+  @Override
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    return inheritanceData.mkForall(type, var, body);
+  }
+
+  @Override
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    return inheritanceData.mkExists(type, var, body);
   }
 
   protected Optional<Expr<? extends Sort>> getAttributeHelper(

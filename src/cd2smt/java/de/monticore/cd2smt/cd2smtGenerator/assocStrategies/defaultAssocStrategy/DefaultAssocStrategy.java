@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy;
 
-import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
-import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
-
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
@@ -164,18 +161,17 @@ public class DefaultAssocStrategy implements AssociationStrategy {
       boolean isLeft,
       Context ctx) {
 
-    Pair<ASTCDType, Expr<? extends Sort>> left = !isLeft ? obj : otherObj;
-    Pair<ASTCDType, Expr<? extends Sort>> right = isLeft ? obj : otherObj;
-
-    return mkForAll(
-        ctx,
-        Set.of(obj),
-        mkExists(
-            ctx,
-            Set.of(otherObj),
-            (BoolExpr) ctx.mkApp(assocFunc, left.getRight(), right.getRight()),
-            inheritanceData),
-        inheritanceData);
+    return inheritanceData.mkForall(
+        obj.getLeft(),
+        obj.getRight(),
+        expr ->
+            inheritanceData.mkExists(
+                otherObj.getLeft(),
+                otherObj.getRight(),
+                (otherExpr ->
+                    (!isLeft
+                        ? (BoolExpr) ctx.mkApp(assocFunc, expr, otherExpr)
+                        : (BoolExpr) ctx.mkApp(assocFunc, otherExpr, expr)))));
   }
 
   protected BoolExpr buildOptionalConstraint(
@@ -186,29 +182,30 @@ public class DefaultAssocStrategy implements AssociationStrategy {
       boolean isLeft,
       Context ctx) {
     BoolExpr res;
-    if (isLeft) {
-      res =
-          mkForAll(
-              ctx,
-              Set.of(obj1, otherObj1, otherObj2),
-              ctx.mkImplies(
-                  ctx.mkAnd(
-                      (BoolExpr) ctx.mkApp(assocFunc, otherObj1.getRight(), obj1.getRight()),
-                      (BoolExpr) ctx.mkApp(assocFunc, otherObj2.getRight(), obj1.getRight())),
-                  ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
-              inheritanceData);
-    } else {
-      res =
-          mkForAll(
-              ctx,
-              Set.of(obj1, otherObj1, otherObj2),
-              ctx.mkImplies(
-                  ctx.mkAnd(
-                      (BoolExpr) ctx.mkApp(assocFunc, obj1.getRight(), otherObj1.getRight()),
-                      (BoolExpr) ctx.mkApp(assocFunc, obj1.getRight(), otherObj2.getRight())),
-                  ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
-              inheritanceData);
-    }
+
+    res =
+        inheritanceData.mkForall(
+            obj1.getLeft(),
+            obj1.getRight(),
+            expr1 ->
+                inheritanceData.mkForall(
+                    otherObj1.getLeft(),
+                    otherObj1.getRight(),
+                    otherExpr1 ->
+                        inheritanceData.mkForall(
+                            otherObj2.getLeft(),
+                            otherObj2.getRight(),
+                            otherExpr2 ->
+                                ctx.mkImplies(
+                                    ctx.mkAnd(
+                                        (isLeft
+                                            ? (BoolExpr) ctx.mkApp(assocFunc, otherExpr1, expr1)
+                                            : (BoolExpr) ctx.mkApp(assocFunc, expr1, otherExpr1)),
+                                        (isLeft
+                                            ? (BoolExpr) ctx.mkApp(assocFunc, otherExpr2, expr1)
+                                            : (BoolExpr) ctx.mkApp(assocFunc, expr1, otherExpr2))),
+                                    ctx.mkEq(otherExpr1, otherExpr2)))));
+
     return res;
   }
   /***evaluate association function to get links between objects*/

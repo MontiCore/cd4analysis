@@ -30,6 +30,8 @@ public interface ClassStrategy extends ClassData {
   enum Strategy {
     SS,
     DS,
-    SSCOMB
+    SSCOMB,
+    FINITEDS,
+    FINITESS
   }
 }
