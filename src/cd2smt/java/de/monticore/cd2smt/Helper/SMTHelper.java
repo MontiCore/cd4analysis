@@ -1,17 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper;
 
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Expr;
-import com.microsoft.z3.Sort;
-import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
+import com.microsoft.z3.*;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang3.tuple.Pair;
+import de.se_rwth.commons.logging.Log;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SMTHelper {
   public static String fCharToLowerCase(String str) {
@@ -36,50 +32,15 @@ public class SMTHelper {
     return SMTHelper.fCharToLowerCase(astcdType.getName()) + "_get_subclass";
   }
 
-  public static BoolExpr mkForAll(
-      Context ctx,
-      Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,
-      BoolExpr body,
-      InheritanceData inheritanceData) {
-    Expr[] res = vars.stream().map(Pair::getRight).toArray(Expr[]::new);
-    return ctx.mkForall(
-        res,
-        ctx.mkImplies(buildTypeConstraint(vars, ctx, inheritanceData), body),
-        0,
-        null,
-        null,
-        null,
-        null);
-  }
-
-  public static BoolExpr mkExists(
-      Context ctx,
-      Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,
-      BoolExpr body,
-      InheritanceData inheritanceData) {
-    return ctx.mkExists(
-        vars.stream().map(Pair::getRight).toArray(Expr[]::new),
-        ctx.mkAnd(buildTypeConstraint(vars, ctx, inheritanceData), body),
-        0,
-        null,
-        null,
-        null,
-        null);
-  }
-
-  public static BoolExpr buildTypeConstraint(
-      Set<Pair<ASTCDType, Expr<? extends Sort>>> vars,
-      Context ctx,
-      InheritanceData inheritanceData) {
-    BoolExpr constraint = ctx.mkTrue();
-    for (Map.Entry<ASTCDType, Expr<? extends Sort>> entry : vars) {
-      constraint =
-          ctx.mkAnd(constraint, inheritanceData.filterObject(entry.getValue(), entry.getKey()));
+  public static String buildObjectName(Expr<? extends Sort> expr, ASTCDType astcdType) {
+    Matcher matcher = Pattern.compile("\\d+$").matcher(expr.toString());
+    String digits;
+    if (matcher.find()) {
+      digits = matcher.group();
+    } else {
+      digits = "";
+      Log.error("Error by building  object names. no digit at the end of the expression name");
     }
-    return constraint;
-  }
-
-  public static String buildObjectName(Expr<? extends Sort> expr) {
-    return expr.toString().replace("!val!", "");
+    return SMTHelper.fCharToLowerCase(astcdType.getName()) + "_" + digits;
   }
 }

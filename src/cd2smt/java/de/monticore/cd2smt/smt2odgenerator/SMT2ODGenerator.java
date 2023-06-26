@@ -44,7 +44,9 @@ public class SMT2ODGenerator {
     attributeList = getAllSuperInstanceAttribute(obj, attributeList);
 
     return ODHelper.buildObject(
-        SMTHelper.buildObjectName(obj.getSmtExpr()), obj.getASTCDType().getName(), attributeList);
+        SMTHelper.buildObjectName(obj.getSmtExpr(), obj.getASTCDType()),
+        obj.getASTCDType().getName(),
+        attributeList);
   }
 
   protected List<ASTODAttribute> getAllSuperInstanceAttribute(

@@ -1,8 +1,5 @@
 package de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one;
 
-import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
-import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -13,7 +10,6 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.SourcePosition;
 import java.util.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 /***
  * extend the DefaultAssocStrategy by handling One2One ([1]A--B[1]) cardinality constraints differently.
@@ -80,32 +76,28 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
 
       FuncDecl<? extends Sort> assocFunc = assocFuncMap.get(assoc);
       BoolExpr surjectiv =
-          mkForAll(
-              ctx,
-              Set.of(new ImmutablePair<>(right, rightExpr)),
-              mkExists(
-                  ctx,
-                  Set.of(new ImmutablePair<>(left, leftExpr1)),
-                  ctx.mkEq(rightExpr, assocFunc.apply(leftExpr1)),
-                  inheritanceData),
-              inheritanceData);
+          inheritanceData.mkForall(
+              right,
+              rightExpr,
+              r -> inheritanceData.mkExists(left, leftExpr1, l -> ctx.mkEq(r, assocFunc.apply(l))));
 
       BoolExpr injective =
-          mkForAll(
-              ctx,
-              Set.of(new ImmutablePair<>(left, leftExpr1), new ImmutablePair<>(left, leftExpr2)),
-              ctx.mkImplies(
-                  ctx.mkEq(assocFunc.apply(leftExpr1), assocFunc.apply(leftExpr2)),
-                  ctx.mkEq(leftExpr2, leftExpr1)),
-              inheritanceData);
+          inheritanceData.mkForall(
+              left,
+              leftExpr1,
+              l1 ->
+                  inheritanceData.mkForall(
+                      left,
+                      leftExpr2,
+                      l2 ->
+                          ctx.mkImplies(
+                              ctx.mkEq(assocFunc.apply(l1), assocFunc.apply(l2)),
+                              ctx.mkEq(l2, l1))));
 
       // result must have the correct type
       BoolExpr resultType =
-          mkForAll(
-              ctx,
-              Set.of(new ImmutablePair<>(left, leftExpr1)),
-              inheritanceData.filterObject(assocFunc.apply(leftExpr1), right),
-              inheritanceData);
+          inheritanceData.mkForall(
+              left, leftExpr1, l -> inheritanceData.filterObject(assocFunc.apply(l), right));
 
       SourcePosition srcPos = assoc.get_SourcePositionStart();
       assert srcPos.getFileName().isPresent();

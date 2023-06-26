@@ -1,10 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies;
 
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Expr;
-import com.microsoft.z3.Sort;
+import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -12,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import java.util.Set;
+import java.util.function.Function;
 
 public interface ClassData {
   /**
@@ -65,4 +63,23 @@ public interface ClassData {
    * get an enm Constant form the class declaration as SMTExpression
    */
   Expr<? extends Sort> getEnumConstant(ASTCDEnum enumeration, ASTCDEnumConstant enumConstant);
+
+  /***
+   * assert that the constraint "body" must hold for all elements with the type "type".
+   * @param type the type.
+   * @param var  one Variable of this type.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
+
+  /***
+   * assert that the constraint "body" must hold for at least one element with the type "type".
+   * @param type the type.
+   * @param var  one Variable of this type.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+
+  BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
 }
