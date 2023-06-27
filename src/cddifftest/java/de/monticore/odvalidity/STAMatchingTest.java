@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MultiInstanceTest {
+public class STAMatchingTest {
   String[] validBaseCDModelsOpenWorld = {
     "MultiBaseNoOpenDiff.cd", "MultiBaseOpenSubsetDiff.cd", "MultiBaseOpenCycleDiff.cd"
   };
@@ -52,9 +52,9 @@ public class MultiInstanceTest {
   @Test
   public void testMultiInstanceClosedWorldNoStereotype() throws FileNotFoundException {
 
-    MultiInstanceMatcher matcher = new MultiInstanceMatcher(new OD2CDMatcher());
+    STAObjectMatcher matcher = new STAObjectMatcher(new OD2CDMatcher());
 
-    String resources = "src/cddifftest/resources/de/monticore/odvalidity/MultiInstanceMatcher/";
+    String resources = "src/cddifftest/resources/de/monticore/odvalidity/STAObjectMatcher/";
     odModel = new File(resources + validODModel);
     ASTODArtifact od = loader.loadODModel(odModel).get();
 
@@ -65,11 +65,9 @@ public class MultiInstanceTest {
       ASTCDCompilationUnit compCD = loader.loadCDModel(cdCompareModel).get();
 
       if (closedDiff[i]) {
-        Assert.assertTrue(
-            matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, baseCD, compCD, od));
+        Assert.assertTrue(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
       } else {
-        Assert.assertFalse(
-            matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, baseCD, compCD, od));
+        Assert.assertFalse(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
       }
     }
   }
@@ -77,9 +75,9 @@ public class MultiInstanceTest {
   @Test
   public void testMultiInstanceOpenWorldNoStereotype() throws FileNotFoundException {
 
-    MultiInstanceMatcher matcher = new MultiInstanceMatcher(new OD2CDMatcher());
+    STAObjectMatcher matcher = new STAObjectMatcher(new OD2CDMatcher());
 
-    String resources = "src/cddifftest/resources/de/monticore/odvalidity/MultiInstanceMatcher/";
+    String resources = "src/cddifftest/resources/de/monticore/odvalidity/STAObjectMatcher/";
     odModel = new File(resources + validODModel);
     ASTODArtifact od = loader.loadODModel(odModel).get();
 
@@ -90,11 +88,9 @@ public class MultiInstanceTest {
       ASTCDCompilationUnit compCD = loader.loadCDModel(cdCompareModel).get();
 
       if (openDiff[i]) {
-        Assert.assertTrue(
-            matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, baseCD, compCD, od));
+        Assert.assertTrue(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
       } else {
-        Assert.assertFalse(
-            matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, baseCD, compCD, od));
+        Assert.assertFalse(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
       }
     }
   }

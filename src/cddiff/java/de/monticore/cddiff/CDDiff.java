@@ -22,9 +22,8 @@ public class CDDiff {
 
   /**
    * Computes the semantic difference between ast1 and ast2 by applying Syntax2SemDiff and prints
-   * the resulting diff-witness(es) to stdout or the specified directory. Applies open-to-closed
-   * world reduction to enable open-world diff. todo: open-world diff does not work because
-   * Syntax2SemDiff is currently incompatible
+   * the resulting diff-witness(es) to stdout or the specified directory. todo: fix handling of
+   * overlapping associations to enable open-world diff
    */
   public static void computeRuleBasedSemDiff(
       ASTCDCompilationUnit ast1,
@@ -43,7 +42,7 @@ public class CDDiff {
       if (toDir) {
         CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
       }
-      semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+      semantics = CDSemantics.STA_CLOSED_WORLD;
     }
 
     if (toDir) {
@@ -86,10 +85,10 @@ public class CDDiff {
         if (toDir) {
           CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
         }
-        semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+        semantics = CDSemantics.STA_CLOSED_WORLD;
       } else {
 
-        semantics = CDSemantics.MULTI_INSTANCE_OPEN_WORLD;
+        semantics = CDSemantics.STA_OPEN_WORLD;
 
         // handle unspecified association directions for open-world
         ReductionTrafo.handleAssocDirections(ast1, ast2);
@@ -118,6 +117,10 @@ public class CDDiff {
     }
   }
 
+  /**
+   * Computes the default diff-size (i.e. maximum number of objects and types) based on the number
+   * of classes and interfaces in the input CDs.
+   */
   public static int getDefaultDiffsize(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2) {
     int diffsize;
     int cd1size =

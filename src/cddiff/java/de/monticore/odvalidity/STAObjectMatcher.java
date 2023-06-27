@@ -15,13 +15,13 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
-public class MultiInstanceMatcher {
+public class STAObjectMatcher {
 
   private final OD2CDMatcher matcher;
 
   private static final String INSTANCE_OF_STEREOTYPE = "instanceof";
 
-  public MultiInstanceMatcher(OD2CDMatcher matcher) {
+  public STAObjectMatcher(OD2CDMatcher matcher) {
     this.matcher = matcher;
   }
 

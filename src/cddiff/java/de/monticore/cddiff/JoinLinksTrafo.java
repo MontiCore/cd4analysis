@@ -18,6 +18,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Transformation that combines two corresponding unidirectional links of a bidirectional
+ * association into one bidirectional link. Needed to process output of Alloy-CDDiff
+ */
 public class JoinLinksTrafo {
 
   protected ASTCDCompilationUnit cd;

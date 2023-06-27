@@ -25,11 +25,11 @@ public class DiffModuleGenerator {
     String alloyModule;
     // Generate general module
     switch (semantics) {
-      case MULTI_INSTANCE_CLOSED_WORLD:
+      case STA_CLOSED_WORLD:
         // code block
         alloyModule = CD2AlloyGenerator.getInstance().generateModule(cds, true);
         break;
-      case MULTI_INSTANCE_OPEN_WORLD:
+      case STA_OPEN_WORLD:
         // code block
         alloyModule = OpenWorldGenerator.getInstance().generateModule(cds, true);
         break;

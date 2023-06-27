@@ -9,8 +9,8 @@ import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.odvalidity.MultiInstanceMatcher;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.monticore.odvalidity.STAObjectMatcher;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -49,7 +49,7 @@ public class ValidationAndPerformanceTest {
 
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
-      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
 
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
@@ -58,7 +58,7 @@ public class ValidationAndPerformanceTest {
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
@@ -80,7 +80,7 @@ public class ValidationAndPerformanceTest {
 
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
-      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
 
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
@@ -89,7 +89,7 @@ public class ValidationAndPerformanceTest {
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
@@ -111,7 +111,7 @@ public class ValidationAndPerformanceTest {
 
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
-      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
 
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
@@ -120,7 +120,7 @@ public class ValidationAndPerformanceTest {
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
@@ -144,8 +144,7 @@ public class ValidationAndPerformanceTest {
 
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
-      witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+      witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
 
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
@@ -155,9 +154,7 @@ public class ValidationAndPerformanceTest {
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      witnesses =
-          CDDiff.computeAlloySemDiff(
-              cd1, cd2, diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
@@ -181,8 +178,7 @@ public class ValidationAndPerformanceTest {
 
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
-      witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd1, diffsize, 1, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+      witnesses = CDDiff.computeAlloySemDiff(cd1, cd1, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
 
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
@@ -193,7 +189,7 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo trafo = new ReductionTrafo();
       ASTCDCompilationUnit cd2 = cd1.deepClone();
       trafo.transform(cd1, cd2);
-      CDDiff.computeAlloySemDiff(cd1, cd1, diffsize, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      CDDiff.computeAlloySemDiff(cd1, cd1, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
@@ -224,12 +220,12 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
 
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_OPEN_WORLD);
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -258,20 +254,18 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(
-              cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_CLOSED_WORLD);
       Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1, cd2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
       }
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -305,14 +299,14 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
 
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_OPEN_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -341,15 +335,13 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(
-              cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_CLOSED_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
 
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1, cd2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -357,7 +349,7 @@ public class ValidationAndPerformanceTest {
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -391,14 +383,14 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
 
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_OPEN_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -427,15 +419,13 @@ public class ValidationAndPerformanceTest {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(
-              cd1, cd2, diffsize, 5, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_CLOSED_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
 
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, cd1, cd2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -443,7 +433,7 @@ public class ValidationAndPerformanceTest {
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, original1, original2, od)) {
+            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -489,7 +479,7 @@ public class ValidationAndPerformanceTest {
               .map(e -> (ASTODObject) e)
               .collect(Collectors.toSet());
       for (ASTODObject object : objects) {
-        j += MultiInstanceMatcher.getSuperSetFromStereotype(object).get().size();
+        j += STAObjectMatcher.getSuperSetFromStereotype(object).get().size();
       }
       i += j / objects.size();
     }

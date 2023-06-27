@@ -123,7 +123,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
 
     // Call generator
     DiffModuleGenerator.generateDiffPredicateToFile(
-        astV1, astV2, 20, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputDirectory.toFile());
+        astV1, astV2, 20, CDSemantics.STA_CLOSED_WORLD, outputDirectory.toFile());
   }
 
   @Test
@@ -145,12 +145,12 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
 
     // Call generator
     DiffModuleGenerator.generateDiffPredicateToFile(
-        astV1, astV2, 7, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputDirectory.toFile());
+        astV1, astV2, 7, CDSemantics.STA_CLOSED_WORLD, outputDirectory.toFile());
 
     outputDirectory = Paths.get("target/generated/cddiff-example/open_world");
 
     // Call generator
     DiffModuleGenerator.generateDiffPredicateToFile(
-        astV1, astV2, 7, CDSemantics.MULTI_INSTANCE_OPEN_WORLD, outputDirectory.toFile());
+        astV1, astV2, 7, CDSemantics.STA_OPEN_WORLD, outputDirectory.toFile());
   }
 }

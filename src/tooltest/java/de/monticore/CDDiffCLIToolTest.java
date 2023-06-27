@@ -498,7 +498,7 @@ public class CDDiffCLIToolTest {
             Assert.assertTrue(
                 new OD2CDMatcher()
                     .checkIfDiffWitness(
-                        CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
+                        CDSemantics.STA_CLOSED_WORLD,
                         Paths.get(output + "/Employees7.cd").toFile(),
                         Paths.get(output + "/Employees8.cd").toFile(),
                         odFile));
@@ -549,14 +549,14 @@ public class CDDiffCLIToolTest {
           Assert.assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
-                      CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
+                      CDSemantics.STA_OPEN_WORLD,
                       ast1,
                       ast2,
                       CDDiffUtil.loadODModel(odFile.getPath())));
           Assert.assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
-                      CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
+                      CDSemantics.STA_CLOSED_WORLD,
                       Paths.get(output + "/DigitalTwin3.cd").toFile(),
                       Paths.get(output + "/DigitalTwin2.cd").toFile(),
                       odFile));

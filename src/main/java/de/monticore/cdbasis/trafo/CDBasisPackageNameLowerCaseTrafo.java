@@ -13,10 +13,11 @@ public class CDBasisPackageNameLowerCaseTrafo implements CDBasisVisitor2 {
   @Override
   public void visit(ASTCDPackage node) {
     ASTMCQualifiedName qName = node.getMCQualifiedName();
-    for (int i=0; i<qName.sizeParts(); i++) {
+    for (int i = 0; i < qName.sizeParts(); i++) {
       qName.setParts(i, qName.getParts(i).toLowerCase());
     }
   }
+
   public void transform(ASTCDCompilationUnit ast) {
     CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(this);

@@ -86,7 +86,7 @@ public class CDWrapperSyntaxDiffGenerator {
         compareCDTypeWrapper =
             compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().get(baseCDTypeWrapper.getName());
       }
-    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
+    } else if (cdSemantics == CDSemantics.STA_CLOSED_WORLD) {
       if (compareCDW
           .getCDTypeWrapperGroupOnlyWithStatusOPEN()
           .containsKey(baseCDTypeWrapper.getName())) {
@@ -298,7 +298,7 @@ public class CDWrapperSyntaxDiffGenerator {
 
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       isInCompareSG = true;
-    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
+    } else if (cdSemantics == CDSemantics.STA_CLOSED_WORLD) {
       if (!isAssocNameExchanged) {
         if (checkClassSet4MultiInstance(
                 intersectedBaseCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses(),
@@ -330,7 +330,7 @@ public class CDWrapperSyntaxDiffGenerator {
           Optional.of(intersectedCompareCDAssociationWrapper),
           isInCompareSG,
           isAssocNameExchanged);
-    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
+    } else if (cdSemantics == CDSemantics.STA_CLOSED_WORLD) {
       if (intersectedBaseCDAssociationWrapper.getCDWrapperLeftClass().getSubclasses().size() == 1
           && intersectedBaseCDAssociationWrapper.getCDWrapperRightClass().getSubclasses().size()
               == 1) {

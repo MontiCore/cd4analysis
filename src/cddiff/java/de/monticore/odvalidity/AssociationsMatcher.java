@@ -402,9 +402,9 @@ public class AssociationsMatcher {
   /** Check if object is instance of type. */
   private boolean isInstanceOf(ASTODNamedObject object, String type) {
 
-    // check the intanceof-stereotype iff semantics is multi-instance open-world
-    if (semantics.equals(CDSemantics.MULTI_INSTANCE_OPEN_WORLD)) {
-      Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(object);
+    // check the intanceof-stereotype iff semantics is STA open-world
+    if (semantics.equals(CDSemantics.STA_OPEN_WORLD)) {
+      Optional<Set<String>> optSuper = STAObjectMatcher.getSuperSetFromStereotype(object);
       if (optSuper.isPresent()) {
         return optSuper.get().contains(type);
       }

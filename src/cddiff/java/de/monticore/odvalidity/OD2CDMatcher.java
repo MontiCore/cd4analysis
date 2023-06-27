@@ -45,8 +45,8 @@ public class OD2CDMatcher {
       ASTCDCompilationUnit baseCD,
       ASTCDCompilationUnit compareCD,
       ASTODArtifact od) {
-    if (Semantic.isMultiInstance(semantics)) {
-      return new MultiInstanceMatcher(this).isDiffWitness(semantics, baseCD, compareCD, od);
+    if (Semantic.isSuperTypeAware(semantics)) {
+      return new STAObjectMatcher(this).isDiffWitness(semantics, baseCD, compareCD, od);
     } else {
       return checkODValidity(semantics, od, baseCD) && !checkODValidity(semantics, od, compareCD);
     }
