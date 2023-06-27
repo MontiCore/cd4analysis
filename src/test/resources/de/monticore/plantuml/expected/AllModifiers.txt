@@ -1,0 +1,29 @@
+@startuml
+  skinparam classAttributeIconSize 0
+  skinparam legend {
+    BorderColor black
+    BackGroundColor white
+  }
+  legend top right
+    .AllModifiers CD
+  end legend
+  class A {
+    {field} private int a
+  }
+
+  class B {
+    {field} protected int b
+  }
+
+  class C {
+    {field} public int c
+  }
+
+  class D {
+    {field} private int a
+    {field} protected int b
+    {field} public int c
+  }
+
+  center footer generated with MontiCore using PlantUML
+@enduml

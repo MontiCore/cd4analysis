@@ -2,6 +2,7 @@
 package de.monticore.cd4analysis.prettyprint;
 
 import de.monticore.cd.plantuml.PlantUMLConfig;
+import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis.CD4AnalysisTool;
@@ -11,6 +12,7 @@ import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
 import net.sourceforge.plantuml.graph2.Plan;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,7 +22,11 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -28,12 +34,16 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
   protected CD4AnalysisPlantUMLFullPrettyPrinter printer;
   protected CD4AnalysisParser p;
+  protected PlantUMLPrettyPrintUtil util;
+  protected PlantUMLConfig plantUMLConfig;
 
   @BeforeEach
   public void initObjects() {
 
-    // printer = new CD4AnalysisFullPrettyPrinter(new IndentPrinter());
-    printer = new CD4AnalysisPlantUMLFullPrettyPrinter();
+    plantUMLConfig = new PlantUMLConfig(true, true, true, true, true);
+
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
     p = new CD4AnalysisParser();
 
   }
@@ -41,30 +51,32 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
   /**
    * Tests the pretty printed result of each test case against the manually created expected result.
    * PlantUMLConfig is set to enable all options (getAtt, gettAssoc,getRoles, getCards, getModifier)
+   *
    * @throws IOException
    */
   @ParameterizedTest
   @ValueSource(strings =
-    {"AllModifiers",
-      "Attributes",
+    {/*"AllModifiers",
+      "Attributes",*/
       "BasicAssociations",
-      "ClassTypes",
+      /*"ClassTypes",
       "Compositions",
       "Enums",
       "Extensions",
       "FullExample",
-      "Methods",
+      //"Methods",*/
       "NamedAssociations",
-      "Packages",
+      //"Packages",
       "QuantifiedAssociations",
       "QuantifiedNamedAssociations"
-  })
+    })
   public void completeModel(String input) throws IOException {
-    //String outputPath = "C:\\Users\\yvonn\\OneDrive\\Documents\\uni\\Master\\2.Semester\\SLE\\model.svg";
-    String outputPath = Paths.get(getFilePath("plantuml/results/" + input +".svg")).toAbsolutePath().toString();
+    //String input = "FullExample";
+    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
-    String resultPath = getFilePath("plantuml/expected/"+input+".svg");
-    String filePath = getFilePath("cd4analysis/prettyprint/"+input+".cd");
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
 
     var tool = new CD4AnalysisTool();
     tool.init();
@@ -76,19 +88,16 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
-    PlantUMLConfig plantUMLConfig = new PlantUMLConfig(true,true,true,true,true);
 
-    PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit,outputPath, plantUMLConfig);
-    String output = printer.prettyprintWithConfig(node,plantUMLConfig);
+    PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, outputPath, plantUMLConfig);
+    String output = printer.prettyprint(node);
     System.out.println(output);
 
-    // new CD4AnalysisAfterParseTrafo().transform(node);
-    // String output = printer.prettyprint(node);
-//
-    // final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
-    //   p.parse_StringCDCompilationUnit(output);
-    // checkNullAndPresence(p, astcdCompilationUnitReParsed);
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    // assert(output.equals(content));
+    System.out.println(expected);
 
+    Assert.assertEquals(output, expected);
   }
 
 

@@ -1,0 +1,22 @@
+@startuml
+  skinparam classAttributeIconSize 0
+  skinparam legend {
+    BorderColor black
+    BackGroundColor white
+  }
+  legend top right
+    .Packages CD
+  end legend
+  namespace someOtherPackage {
+    class A {
+      {field} int a
+    }
+    class B
+  }
+
+  class C {
+    {field} public someOtherPackage.A c
+  }
+
+  center footer generated with MontiCore using PlantUML
+@enduml

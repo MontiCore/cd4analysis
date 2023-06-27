@@ -3,9 +3,9 @@
 classdiagram Methods {
 
   class A {
-    public A();
-    void doStuff();
-    void doStuffwithArguments(int a, int b);
-    int returnStuff();
+
+    public void doStuff(String name);
+    public float doStuffwithArguments(int a, int b);
+    public int returnStuff();
   }
 }

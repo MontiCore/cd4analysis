@@ -1,0 +1,37 @@
+@startuml
+  skinparam classAttributeIconSize 0
+  skinparam legend {
+    BorderColor black
+    BackGroundColor white
+  }
+  legend top right
+    .NamedAssociations CD
+  end legend
+  class One {
+    {field} String name
+    {field} int number
+    {field} boolean exists
+  }
+
+  class Two {
+    {field} String name
+  }
+
+  class Three {
+    {field} String name
+  }
+
+  class Four {
+    {field} String name
+  }
+
+
+
+
+
+
+  Two "d" *--* "e" Three
+  Two "i" --* "j" One
+  Four "g" --* "h" One : c
+  center footer generated with MontiCore using PlantUML
+@enduml

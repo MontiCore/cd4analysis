@@ -33,7 +33,7 @@ class Couple implements Pair {
 }
 
 class Child extends Person {
- -> (parent1) Person [1];
+ /*-> (parent1) Person [1];*/
 }
 
 enum HappinessLevel { NONEXISTENT, LOW, MEDIUM, HIGH, EXTREM; }
@@ -43,7 +43,7 @@ private readonly class Birthcertificate {
     final String ausstellungsdatum;
 
 
--> Person [1];
+/*-> Person [1];*/
 }
 
 

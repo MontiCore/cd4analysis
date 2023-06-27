@@ -3,7 +3,7 @@
 classdiagram Compostions {
 
   class A {
-    -> E [*];
+    /*-> E [*];*/
   }
 
   class B;

@@ -1,0 +1,28 @@
+@startuml
+  skinparam classAttributeIconSize 0
+  skinparam legend {
+    BorderColor black
+    BackGroundColor white
+  }
+  legend top right
+    .Enums CD
+  end legend
+  enum State {
+    DEAD
+    ALIVE
+    UNDEAD
+  }
+
+  enum Color {
+    RED
+    BLUE
+    YELLOW
+  }
+
+  class Person {
+    {field} State state
+    {field} Color color
+  }
+
+  center footer generated with MontiCore using PlantUML
+@enduml

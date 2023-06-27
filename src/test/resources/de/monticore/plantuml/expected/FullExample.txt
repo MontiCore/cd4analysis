@@ -1,0 +1,64 @@
+@startuml
+  skinparam classAttributeIconSize 0
+  skinparam legend {
+    BorderColor black
+    BackGroundColor white
+  }
+  legend top right
+    .FullExample CD
+  end legend
+  class Person {
+    {field} public String name
+    {field} protected int age
+    {field} final long id
+    {field} readonly String birthplace
+    {field} protected derived boolean married
+    {field} List<Person> children
+    {field} derived Person parent1
+    {field} derived Person parent2
+    {field} java.util.Date birthday
+    {field} HappinessLevel happy
+    {field} private double bankBalance
+  }
+
+  class Address {
+    {field} String streetname
+    {field} int streetnumber
+    {field} int postalcode
+    {field} String country
+  }
+
+  interface Pair {
+    {field} Person person1
+    {field} Person person2
+  }
+
+  class Couple implements  {
+    {field} boolean married
+  }
+
+  class Child extends Person
+
+  enum HappinessLevel {
+    NONEXISTENT
+    LOW
+    MEDIUM
+    HIGH
+    EXTREM
+  }
+
+  class Birthcertificate {
+    {field} java.util.Date birthday
+    {field} final String ausstellungsdatum
+  }
+
+  class Hospital {
+    {field} String name
+  }
+
+
+
+
+
+  center footer generated with MontiCore using PlantUML
+@enduml

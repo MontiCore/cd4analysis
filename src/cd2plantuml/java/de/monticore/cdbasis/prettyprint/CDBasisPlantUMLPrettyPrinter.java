@@ -142,20 +142,12 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     print("class " + node.getName());
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");
-      /*print(
-          node.getSymbol().getSuperClassesOnly().stream()
-              .map(s -> s.getTypeInfo().getFullName())
-              .collect(Collectors.joining(", ")));*/
       print(node.getSuperclassList().stream()
         .map(s -> s.printType())
         .collect(Collectors.joining(", ")));
     }
     if (node.isPresentCDInterfaceUsage()) {
       print(" implements ");
-      /*print(
-          node.getSymbol().getInterfaceList().stream()
-              .map(s -> s.getTypeInfo().getFullName())
-              .collect(Collectors.joining(", ")));*/
       print(node.getSuperclassList().stream()
         .map(s -> s.printType())
         .collect(Collectors.joining(", ")));
