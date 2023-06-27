@@ -115,4 +115,13 @@ public class CD4AnalysisPlantUMLFullPrettyPrinter {
     node.accept(getTraverser());
     return getPrinter().getContent();
   }
+
+  public String prettyprintWithConfig(
+      ASTCDCompilationUnit node,
+      PlantUMLConfig plantUMLConfig) {
+    setPlantUMLConfig(plantUMLConfig);
+    getPrinter().clearBuffer();
+    node.accept(getTraverser());
+    return getPrinter().getContent();
+  }
 }

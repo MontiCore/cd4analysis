@@ -6,6 +6,9 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
@@ -139,17 +142,24 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     print("class " + node.getName());
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");
-      print(
+      /*print(
           node.getSymbol().getSuperClassesOnly().stream()
               .map(s -> s.getTypeInfo().getFullName())
-              .collect(Collectors.joining(", ")));
+              .collect(Collectors.joining(", ")));*/
+      print(node.getSuperclassList().stream()
+        .map(s -> s.printType())
+        .collect(Collectors.joining(", ")));
     }
     if (node.isPresentCDInterfaceUsage()) {
       print(" implements ");
-      print(
+      /*print(
           node.getSymbol().getInterfaceList().stream()
               .map(s -> s.getTypeInfo().getFullName())
-              .collect(Collectors.joining(", ")));
+              .collect(Collectors.joining(", ")));*/
+      print(node.getSuperclassList().stream()
+        .map(s -> s.printType())
+        .collect(Collectors.joining(", ")));
+
     }
 
     if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {

@@ -2,7 +2,7 @@
 /* Yvonne Heimowski */
 import java.lang.String;
 
-classdiagram NamedAssociations {
+classdiagram QuantifiedNamedAssociations {
 
   class One {
       String name;
