@@ -3,6 +3,7 @@ package de.monticore.cd4analysis.prettyprint;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis.CD4AnalysisTool;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
@@ -32,6 +33,9 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
   @Test
   public void completeModel() throws IOException {
 
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
     String filePath = getFilePath("cd4analysis/parser/Simple.cd");
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
@@ -39,6 +43,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
 
     //String outputPath = PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, "./", new PlantUMLConfig());
     String output = printer.prettyprint(node);

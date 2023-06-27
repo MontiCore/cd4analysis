@@ -1,0 +1,14 @@
+## Meeting Protocol for 2023-06-14
+
+* CD4A Test cases in bestehende Testklasse einbetten
+* Gleiche test cases für PlantUMLUtil
+* Bestehenden JSON PrettyPrinter für PlantUML wiederverwenden
+&rarr; Evtl bestehende test cases wiederverwenden und erweitern
+* Visualization: Bestehende SVG anschauen und "reverse-engineeren"
+
+## Meeting Protocol for 2023-06-21
+
+* `PlantUMLUtil.java`: make methods returning `String`s `deprecated` and create equivalent methods returning `Path`s
+* PlantUML CD style: borders black and hide methods/variables if empty
+* PlantUML JSON style: style like your IDE of choice
+* Build in styles, e.g., in `PlantUMLConfig.java` and `CD4AnalysisPlantUMLFullPrettyPrinter.java`
