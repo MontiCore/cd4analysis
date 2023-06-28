@@ -12,3 +12,11 @@
 * PlantUML CD style: borders black and hide methods/variables if empty
 * PlantUML JSON style: style like your IDE of choice
 * Build in styles, e.g., in `PlantUMLConfig.java` and `CD4AnalysisPlantUMLFullPrettyPrinter.java`
+
+## Meeting Protocol for 2023-06-28
+
+* Colors to `PlantUMLConfig.java` and remove unused
+* `JSONTool.java` for JSON like in CD4Analysis
+* Repair associaton prints in CD4Analysis project + test cases
+* Add class diagram model tag to PlantUML diagrams
+* Test/run util methods
