@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.refactoring.rename.tf;
-transformation RenameClassInType {
-  classdiagram $_ {
-    class $_{
-      [[ $oldType :- $newType ]] $_ ;
-    }
-  }
-}

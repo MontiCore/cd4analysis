@@ -4,7 +4,7 @@ package de.monticore.cdlib.evaluationTests;
 import static org.junit.Assert.*;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdlib.refactoring.delete.tf.DeleteAttribute;
+import de.monticore.cdlib.Refactoring.*;
 import de.monticore.cdlib.refactorings.ExtractSuperClass;
 import de.monticore.cdlib.refactorings.Move;
 import de.monticore.cdlib.refactorings.PullUp;

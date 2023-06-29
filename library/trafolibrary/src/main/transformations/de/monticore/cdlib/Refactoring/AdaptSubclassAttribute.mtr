@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation AdaptSubclassAttribute {
+  classdiagram $_{
+    $Sub [[	class $subclass [[ :- extends $newParent ]] {
+      [[ CDAttribute $A  :- ]]
+    } ]]
+  }
+
+  where{
+    ($Sub.getSuperclassList().isEmpty())&&
+    (!$subclass.equals($newParent))
+  }
+}

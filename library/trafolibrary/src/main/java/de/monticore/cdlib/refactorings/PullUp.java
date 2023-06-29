@@ -2,14 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.pullup.association.tf.PullUpAssociation2ClassesBi;
-import de.monticore.cdlib.refactoring.pullup.association.tf.PullUpAssociation2ClassesLeftToRight;
-import de.monticore.cdlib.refactoring.pullup.association.tf.PullUpAssociation2ClassesRightToLeft;
-import de.monticore.cdlib.refactoring.pullup.association.tf.PullUpAssociation2ClassesUni;
-import de.monticore.cdlib.refactoring.pullup.attribute.tf.PullUpAttributes;
-import de.monticore.cdlib.refactoring.pullup.attribute.tf.TurnPrivateAttributeToProtected;
-import de.monticore.cdlib.refactoring.pullup.method.tf.PullUpMethods;
-import de.monticore.cdlib.refactoring.pullup.method.tf.TurnPrivateMethodToProtected;
+import de.monticore.cdlib.Refactoring.*;
 
 /**
  * Pull up: Pull up methods and/or attributes from subclasses to a common superclass

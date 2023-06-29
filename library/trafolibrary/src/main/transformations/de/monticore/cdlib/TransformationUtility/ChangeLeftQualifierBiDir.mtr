@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.TransformationUtility;
+transformation ChangeLeftQualifierBiDir {
+  classdiagram $_ {
+    CDAssociation $C [[ association [[ $oldName :- $leftNew ]] <-> $_ ; ]]
+  }
+}

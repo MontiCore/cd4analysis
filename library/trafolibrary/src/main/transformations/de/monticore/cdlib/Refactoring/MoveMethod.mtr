@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation MoveMethod {
+  classdiagram $_ {
+    class $startClassName {
+      [[ CDMethod $M1 :- ]]
+    }
+
+    class $destinationClassName{
+      [[ :- CDMethod $M1 ]]
+    }
+  }
+}

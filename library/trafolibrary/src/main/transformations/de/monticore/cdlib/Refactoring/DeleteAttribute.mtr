@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation DeleteAttribute {
+  classdiagram $_ {
+    class $className{
+      [[ CDAttribute $Attribute [[ Modifier $mod MCType $type $name;]] :- ]]
+    }
+  }
+}

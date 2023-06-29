@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.TransformationUtility;
+transformation AddAttribute {
+  CDAttribute $Attribute
+
+  class $className{
+    [[ :- CDAttribute $Attribute ]]
+  }
+}

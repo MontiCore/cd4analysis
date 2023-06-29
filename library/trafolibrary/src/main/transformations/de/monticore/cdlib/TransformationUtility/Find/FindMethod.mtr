@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.transformationutility.find.tf;
-transformation FindMethod {
-  classdiagram $_ {
-    class $className{
-        CDMethod $Method [[ Modifier $mod MCReturnType $type $name (); ]]
-    }
-  }
-}

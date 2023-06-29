@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cdlib.refactoring.delete.tf.DeleteAttribute;
+import de.monticore.cdlib.Refactoring.*;
 import de.monticore.cdlib.refactorings.ExtractIntermediateClass;
 import de.monticore.cdlib.refactorings.ExtractSuperClass;
 import de.monticore.cdlib.refactorings.Move;

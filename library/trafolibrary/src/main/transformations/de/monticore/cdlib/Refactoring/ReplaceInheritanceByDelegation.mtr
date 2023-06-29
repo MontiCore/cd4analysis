@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation ReplaceInheritanceByDelegation {
+  classdiagram $_{
+    class $subclassName extends [[ $superclass :- ]] ;
+
+    [[ :- association $subclassName -> $superclass; ]]
+  }
+}

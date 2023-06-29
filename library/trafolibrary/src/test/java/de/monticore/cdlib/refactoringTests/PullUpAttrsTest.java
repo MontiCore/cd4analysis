@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.pullup.attribute.tf.PullUpAttributes;
+import de.monticore.cdlib.Refactoring.*;
 import de.monticore.generating.templateengine.reporting.Reporting;
 import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
 import de.monticore.generating.templateengine.reporting.commons.ReportManager;
