@@ -1,0 +1,4 @@
+package de.monticore.cddiff.syndiff.imp;
+
+public class CDHelper {
+}

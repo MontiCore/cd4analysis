@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
@@ -158,7 +159,7 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @return false if not found in inheritance hierarchy.
    */
   public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
-    return isAttributInSuper(attribute, getElem1(), CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit));
+    return isAttributInSuper(attribute, getElem1(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
   }
 
   /**
@@ -188,7 +189,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
       if (!astcdClass.getCDAttributeList().contains(attribute)) {
-        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit));
+        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
         astcdClassList.remove(getElem2());
         for (ASTCDType type : astcdClassList) {
           if (type instanceof ASTCDClass && type.getCDAttributeList().contains(attribute)) {
