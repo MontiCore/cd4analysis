@@ -1,18 +1,19 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDMemberDiff;
 import java.util.List;
 
 public class CDMemberDiff implements ICDMemberDiff {
-  private final ASTCDMember elem1;
-  private final ASTCDMember elem2;
+  private final ASTCDMember srcElem;
+  private final ASTCDMember tgtElem;
   private List<DiffTypes> baseDiff;
 
-  public CDMemberDiff(ASTCDMember elem1, ASTCDMember elem2) {
-    this.elem1 = elem1;
-    this.elem2 = elem2;
+  public CDMemberDiff(ASTCDMember srcElem, ASTCDMember tgtElem) {
+    this.srcElem = srcElem;
+    this.tgtElem = tgtElem;
   }
 
   @Override
@@ -26,12 +27,26 @@ public class CDMemberDiff implements ICDMemberDiff {
   }
 
   @Override
-  public ASTCDMember getElem1() {
-    return elem1;
+  public ASTCDMember getSrcElem() {
+    return srcElem;
   }
 
   @Override
-  public ASTCDMember getElem2() {
-    return elem2;
+  public ASTCDMember getTgtElem() {
+    return tgtElem;
+  }
+
+  public ASTCDMember compareMember(ASTCDMember srcElem, ASTCDMember tgtElem) {
+    if (srcElem instanceof ASTCDAttribute || tgtElem instanceof ASTCDAttribute) {
+      ASTCDAttribute srcAttr = (ASTCDAttribute) srcElem;
+      ASTCDAttribute tgtAttr = (ASTCDAttribute) tgtElem;
+
+      if (srcAttr.getName().equals(tgtAttr.getName())
+          && !srcAttr.getMCType().equals(tgtAttr.getMCType())) {
+        baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE);
+        return srcElem;
+      }
+    }
+    return null;
   }
 }

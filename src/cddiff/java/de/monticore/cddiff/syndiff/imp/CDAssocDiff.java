@@ -3,16 +3,12 @@ package de.monticore.cddiff.syndiff.imp;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperCardinality;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation elem1;
@@ -50,35 +46,37 @@ public class CDAssocDiff implements ICDAssocDiff {
     ASTCDAssociation oldAssoc = getElem2();
     StringBuilder diff = new StringBuilder(new String());
     if (!newAssoc
-      .getLeftQualifiedName()
-      .getQName()
-      .equals(oldAssoc.getLeftQualifiedName().getQName())) {
+        .getLeftQualifiedName()
+        .getQName()
+        .equals(oldAssoc.getLeftQualifiedName().getQName())) {
       diff.append(
-        "\nLeft role changed from "
-          + oldAssoc.getLeftQualifiedName().getQName()
-          + " to "
-          + newAssoc.getLeftQualifiedName().getQName());
+          "\nLeft role changed from "
+              + oldAssoc.getLeftQualifiedName().getQName()
+              + " to "
+              + newAssoc.getLeftQualifiedName().getQName());
     }
     if (!newAssoc
-      .getRightQualifiedName()
-      .getQName()
-      .equals(oldAssoc.getRightQualifiedName().getQName())) {
+        .getRightQualifiedName()
+        .getQName()
+        .equals(oldAssoc.getRightQualifiedName().getQName())) {
       diff.append(
-        "\nLeft role changed from "
-          + oldAssoc.getLeftQualifiedName().getQName()
-          + " to "
-          + newAssoc.getLeftQualifiedName().getQName());
+          "\nLeft role changed from "
+              + oldAssoc.getLeftQualifiedName().getQName()
+              + " to "
+              + newAssoc.getLeftQualifiedName().getQName());
     }
     return diff.toString();
   }
 
   @Override
   public String dirDiff() {
-    return "Direction changed from " + getDirection(getElem2()).toString() + " to " + getDirection(getElem1());
-
+    return "Direction changed from "
+        + getDirection(getElem2()).toString()
+        + " to "
+        + getDirection(getElem1());
   }
 
-  public AssocDirection getDirection(ASTCDAssociation association){
+  public AssocDirection getDirection(ASTCDAssociation association) {
     if (association.getCDAssocDir() == null) {
       return AssocDirection.Unspecified;
     }
@@ -101,55 +99,55 @@ public class CDAssocDiff implements ICDAssocDiff {
     StringBuilder cardinalityChanges = new StringBuilder();
 
     if (oldAssoc.getLeft().isPresentCDCardinality()
-      && newAssoc.getLeft().isPresentCDCardinality()) {
+        && newAssoc.getLeft().isPresentCDCardinality()) {
       ASTCDCardinality card0 = oldAssoc.getLeft().getCDCardinality(); // old
       ASTCDCardinality card1 = newAssoc.getLeft().getCDCardinality(); // new
 
       if (!card0.equals(card1)) {
         cardinalityChanges
-          .append("Source cardinality changed from ")
-          .append(getTypeOfCard(oldAssoc.getLeft().getCDCardinality()))
-          .append(" to ")
-          .append(getTypeOfCard(newAssoc.getLeft().getCDCardinality()))
-          .append(" ");
+            .append("Source cardinality changed from ")
+            .append(getTypeOfCard(oldAssoc.getLeft().getCDCardinality()))
+            .append(" to ")
+            .append(getTypeOfCard(newAssoc.getLeft().getCDCardinality()))
+            .append(" ");
       }
     } else if (oldAssoc.getLeft().isPresentCDCardinality()
-      && !newAssoc.getLeft().isPresentCDCardinality()) {
+        && !newAssoc.getLeft().isPresentCDCardinality()) {
       cardinalityChanges
-        .append("Source cardinality changed from ")
-        .append(getTypeOfCard(oldAssoc.getLeft().getCDCardinality()))
-        .append(" to 1 ");
+          .append("Source cardinality changed from ")
+          .append(getTypeOfCard(oldAssoc.getLeft().getCDCardinality()))
+          .append(" to 1 ");
     } else if (!oldAssoc.getLeft().isPresentCDCardinality()
-      && newAssoc.getLeft().isPresentCDCardinality()) {
+        && newAssoc.getLeft().isPresentCDCardinality()) {
       cardinalityChanges
-        .append("Source cardinality changed from 1 to ")
-        .append(getTypeOfCard(newAssoc.getLeft().getCDCardinality()))
-        .append(" ");
+          .append("Source cardinality changed from 1 to ")
+          .append(getTypeOfCard(newAssoc.getLeft().getCDCardinality()))
+          .append(" ");
     }
 
     if (oldAssoc.getRight().isPresentCDCardinality()
-      && newAssoc.getRight().isPresentCDCardinality()) {
+        && newAssoc.getRight().isPresentCDCardinality()) {
 
       if (!oldAssoc.getRight().getCDCardinality().equals(newAssoc.getRight().getCDCardinality())) {
         cardinalityChanges
-          .append("Target cardinality changed from ")
-          .append(getTypeOfCard(oldAssoc.getRight().getCDCardinality()))
-          .append(" to ")
-          .append(getTypeOfCard(newAssoc.getRight().getCDCardinality()))
-          .append(" ");
+            .append("Target cardinality changed from ")
+            .append(getTypeOfCard(oldAssoc.getRight().getCDCardinality()))
+            .append(" to ")
+            .append(getTypeOfCard(newAssoc.getRight().getCDCardinality()))
+            .append(" ");
       }
     } else if (oldAssoc.getRight().isPresentCDCardinality()
-      && !newAssoc.getRight().isPresentCDCardinality()) {
+        && !newAssoc.getRight().isPresentCDCardinality()) {
       cardinalityChanges
-        .append("Target cardinality changed from ")
-        .append(getTypeOfCard(oldAssoc.getRight().getCDCardinality()))
-        .append(" to 1 ");
+          .append("Target cardinality changed from ")
+          .append(getTypeOfCard(oldAssoc.getRight().getCDCardinality()))
+          .append(" to 1 ");
     } else if (!oldAssoc.getRight().isPresentCDCardinality()
-      && newAssoc.getRight().isPresentCDCardinality()) {
+        && newAssoc.getRight().isPresentCDCardinality()) {
       cardinalityChanges
-        .append("Target cardinality changed from 1 to ")
-        .append(getTypeOfCard(newAssoc.getRight().getCDCardinality()))
-        .append(" ");
+          .append("Target cardinality changed from 1 to ")
+          .append(getTypeOfCard(newAssoc.getRight().getCDCardinality()))
+          .append(" ");
     }
 
     if (cardinalityChanges.length() == 0) {
@@ -172,50 +170,106 @@ public class CDAssocDiff implements ICDAssocDiff {
   }
 
   /**
-   * Find the difference in the cardinalities of an association.
-   * Each pair has the association side with the lowest number that is in the
-   * new cardinality but not in the old one.
+   * Find the difference in the cardinalities of an association. Each pair has the association side
+   * with the lowest number that is in the new cardinality but not in the old one.
+   *
    * @return list with one or two pairs.
    */
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> getCardDiff(){
+  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> getCardDiff() {
     List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
-    if (getElem1().getLeftQualifiedName().getQName().equals(getElem1().getLeftQualifiedName().getQName())
-      && getElem1().getRightQualifiedName().getQName().equals(getElem2().getRightQualifiedName().getQName())){
-      //assoc not reversed
-      if (!getElem1().getLeft().getCDCardinality().equals(getElem2().getLeft().getCDCardinality())){
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getElem1().getLeft().getCDCardinality()), getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
+    if (getElem1()
+            .getLeftQualifiedName()
+            .getQName()
+            .equals(getElem1().getLeftQualifiedName().getQName())
+        && getElem1()
+            .getRightQualifiedName()
+            .getQName()
+            .equals(getElem2().getRightQualifiedName().getQName())) {
+      // assoc not reversed
+      if (!getElem1()
+          .getLeft()
+          .getCDCardinality()
+          .equals(getElem2().getLeft().getCDCardinality())) {
+        list.add(
+            new Pair<>(
+                getElem1(),
+                new Pair<>(
+                    ClassSide.Left,
+                    findUniqueNumber(
+                        getTypeOfCard(getElem1().getLeft().getCDCardinality()),
+                        getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
       }
-      if (!getElem1().getRight().getCDCardinality().equals(getElem2().getRight().getCDCardinality())){
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getElem1().getRight().getCDCardinality()), getTypeOfCard(getElem2().getRight().getCDCardinality())))));
+      if (!getElem1()
+          .getRight()
+          .getCDCardinality()
+          .equals(getElem2().getRight().getCDCardinality())) {
+        list.add(
+            new Pair<>(
+                getElem1(),
+                new Pair<>(
+                    ClassSide.Right,
+                    findUniqueNumber(
+                        getTypeOfCard(getElem1().getRight().getCDCardinality()),
+                        getTypeOfCard(getElem2().getRight().getCDCardinality())))));
       }
     } else {
-      if (!getElem1().getLeft().getCDCardinality().equals(getElem2().getRight().getCDCardinality())){
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getElem1().getLeft().getCDCardinality()), getTypeOfCard(getElem2().getRight().getCDCardinality())))));
+      if (!getElem1()
+          .getLeft()
+          .getCDCardinality()
+          .equals(getElem2().getRight().getCDCardinality())) {
+        list.add(
+            new Pair<>(
+                getElem1(),
+                new Pair<>(
+                    ClassSide.Left,
+                    findUniqueNumber(
+                        getTypeOfCard(getElem1().getLeft().getCDCardinality()),
+                        getTypeOfCard(getElem2().getRight().getCDCardinality())))));
       }
-      if (!getElem1().getRight().getCDCardinality().equals(getElem2().getLeft().getCDCardinality())){
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getElem1().getRight().getCDCardinality()), getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
+      if (!getElem1()
+          .getRight()
+          .getCDCardinality()
+          .equals(getElem2().getLeft().getCDCardinality())) {
+        list.add(
+            new Pair<>(
+                getElem1(),
+                new Pair<>(
+                    ClassSide.Right,
+                    findUniqueNumber(
+                        getTypeOfCard(getElem1().getRight().getCDCardinality()),
+                        getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
       }
     }
     return list;
   }
 
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
+  public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff() {
     List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
-    if (getElem1().getLeftQualifiedName().getQName().equals(getElem1().getLeftQualifiedName().getQName())
-      && getElem1().getRightQualifiedName().getQName().equals(getElem2().getRightQualifiedName().getQName())){
-      //assoc not reversed
+    if (getElem1()
+            .getLeftQualifiedName()
+            .getQName()
+            .equals(getElem1().getLeftQualifiedName().getQName())
+        && getElem1()
+            .getRightQualifiedName()
+            .getQName()
+            .equals(getElem2().getRightQualifiedName().getQName())) {
+      // assoc not reversed
       if (!Objects.equals(getElem1().getLeft().getCDRole(), getElem2().getLeft().getCDRole())) {
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));
+        list.add(
+            new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));
       }
       if (!Objects.equals(getElem1().getRight().getCDRole(), getElem2().getRight().getCDRole())) {
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Right, getElem1().getRight().getCDRole())));
+        list.add(
+            new Pair<>(getElem1(), new Pair<>(ClassSide.Right, getElem1().getRight().getCDRole())));
       }
     } else {
       if (!Objects.equals(getElem1().getLeft().getCDRole(), getElem2().getRight().getCDRole())) {
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));
+        list.add(
+            new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));
       }
       if (!Objects.equals(getElem1().getRight().getCDRole(), getElem2().getLeft().getCDRole())) {
-        list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Right, getElem1().getRight().getCDRole())));
+        list.add(
+            new Pair<>(getElem1(), new Pair<>(ClassSide.Right, getElem1().getRight().getCDRole())));
       }
     }
     return list;
@@ -223,6 +277,7 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   /**
    * Find the lowest integer that is the first interval but not in the second.
+   *
    * @param interval1 new cardinality
    * @param interval2 old cardinality
    * @return integer representing the difference.
@@ -238,15 +293,15 @@ public class CDAssocDiff implements ICDAssocDiff {
         return null;
       }
     } else if (interval1.equals(AssocCardinality.AtLeastOne)) {
-      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.Optional)){
+      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.Optional)) {
         return 2;
       } else {
         return null;
       }
     } else if (interval1.equals(AssocCardinality.Multiple)) {
-      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.AtLeastOne)){
+      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.AtLeastOne)) {
         return 0;
-      } else if (interval2.equals(AssocCardinality.Optional)){
+      } else if (interval2.equals(AssocCardinality.Optional)) {
         return 2;
       } else {
         return null;

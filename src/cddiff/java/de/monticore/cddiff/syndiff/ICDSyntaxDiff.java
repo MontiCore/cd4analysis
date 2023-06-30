@@ -132,7 +132,7 @@ public interface ICDSyntaxDiff {
    * semantic difference - another class uses this abstract class.
    *
    * @return true if we have a semantic difference. This function kind of uses multiple others:
-   * inheritance hierarchy, comparison of associations.
+   *     inheritance hierarchy, comparison of associations.
    */
   ASTCDType isClassNeeded(CDTypeDiff pair);
 

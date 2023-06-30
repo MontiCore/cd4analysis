@@ -1,4 +1,3 @@
 package de.monticore.cddiff.syndiff.imp;
 
-public class CDHelper {
-}
+public class CDHelper {}
