@@ -8,6 +8,7 @@ public class AssocStruct {
   ASTCDAssociation association;
   AssocDirection direction;
   ClassSide side;
+  boolean isSuperAssoc = false;
 
   public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side) {
     this.association = association;
@@ -37,5 +38,13 @@ public class AssocStruct {
 
   public void setSide(ClassSide side) {
     this.side = side;
+  }
+
+  public boolean isSuperAssoc() {
+    return isSuperAssoc;
+  }
+
+  public void setSuperAssoc(boolean superAssoc) {
+    isSuperAssoc = superAssoc;
   }
 }

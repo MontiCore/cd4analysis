@@ -124,9 +124,9 @@ public class CDTypeDiff implements ICDTypeDiff {
   public String attDiff() {
     StringBuilder stringBuilder = new StringBuilder();
     for (CDMemberDiff member : getChangedMembers()) {
-      if (member.getElem1() instanceof ASTCDAttribute) {
-        ASTCDAttribute attribute1 = (ASTCDAttribute) member.getElem1();
-        ASTCDAttribute attribute2 = (ASTCDAttribute) member.getElem2();
+      if (member.getSrcElem() instanceof ASTCDAttribute) {
+        ASTCDAttribute attribute1 = (ASTCDAttribute) member.getSrcElem();
+        ASTCDAttribute attribute2 = (ASTCDAttribute) member.getTgtElem();
         stringBuilder.append("Attribute type changed from ")
           .append(attribute2.getMCType().printType())
           .append(" to ")
@@ -269,7 +269,7 @@ public class CDTypeDiff implements ICDTypeDiff {
       List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
       for (DiffTypes type : memberDiff.getBaseDiff()) {
         switch (type) {
-          case CHANGED_ATTRIBUTE: list.add(new Pair<>((ASTCDClass)getElem1(),(ASTCDAttribute) memberDiff.getElem1()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+          case CHANGED_ATTRIBUTE: list.add(new Pair<>((ASTCDClass)getElem1(),(ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
           case CHANGED_VISIBILITY: //give as output to user - no semDiff
             //other cases
         }
@@ -282,7 +282,7 @@ public class CDTypeDiff implements ICDTypeDiff {
           List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
           for (DiffTypes type : memberDiff.getBaseDiff()) {
             switch (type) {
-              case CHANGED_ATTRIBUTE: list.add(new Pair<>(astcdClass, (ASTCDAttribute) memberDiff.getElem1()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
+              case CHANGED_ATTRIBUTE: list.add(new Pair<>(astcdClass, (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
               case CHANGED_VISIBILITY: //give as output to user - no semDiff
                 //other cases?
             }

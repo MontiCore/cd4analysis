@@ -4,9 +4,9 @@ import de.monticore.cdbasis._ast.ASTCDMember;
 import java.util.List;
 
 public interface ICDMemberDiff {
-  ASTCDMember getElem1();
+  ASTCDMember getSrcElem();
 
-  ASTCDMember getElem2();
+  ASTCDMember getTgtElem();
 
   List<DiffTypes> getBaseDiff();
 

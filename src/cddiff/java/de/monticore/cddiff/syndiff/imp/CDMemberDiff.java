@@ -6,13 +6,13 @@ import de.monticore.cddiff.syndiff.ICDMemberDiff;
 import java.util.List;
 
 public class CDMemberDiff implements ICDMemberDiff {
-  private final ASTCDMember elem1;
-  private final ASTCDMember elem2;
+  private final ASTCDMember srcElem;
+  private final ASTCDMember tgtElem;
   private List<DiffTypes> baseDiff;
 
-  public CDMemberDiff(ASTCDMember elem1, ASTCDMember elem2) {
-    this.elem1 = elem1;
-    this.elem2 = elem2;
+  public CDMemberDiff(ASTCDMember srcElem, ASTCDMember elem2) {
+    this.srcElem = srcElem;
+    this.tgtElem = elem2;
   }
 
   @Override
@@ -26,12 +26,12 @@ public class CDMemberDiff implements ICDMemberDiff {
   }
 
   @Override
-  public ASTCDMember getElem1() {
-    return elem1;
+  public ASTCDMember getSrcElem() {
+    return srcElem;
   }
 
   @Override
-  public ASTCDMember getElem2() {
-    return elem2;
+  public ASTCDMember getTgtElem() {
+    return tgtElem;
   }
 }

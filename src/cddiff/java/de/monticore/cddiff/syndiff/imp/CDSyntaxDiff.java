@@ -5,10 +5,7 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdassociation._ast.ASTCDAssocLeftSideBuilder;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDAssociationBuilder;
-import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,6 +13,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.AssocStruct;
+import de.monticore.cddiff.syndiff.CardinalityStruc;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -1126,5 +1124,168 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     //
     //We also need to compare between direct associations
     //If we have two direct associations with the same role name in srcDirection, but the classes aren't in an inheritance hierarchy
+    for (ASTCDClass astcdClass : getSrcMap().keySet()) {
+      for (AssocStruct association : getSrcMap().get(astcdClass)) {
+        if (!association.isSuperAssoc()) {
+          for (AssocStruct superAssoc : getSrcMap().get(astcdClass)) {
+            if (superAssoc.isSuperAssoc()) {
+              if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
+                //same target role names and target classes are in inheritance relation
+                //associations need to be merged
+                ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
+                CardinalityStruc cardinalities = getCardinalities(association, superAssoc);
+                AssocCardinality cardinalityLeft = intersectCardinalities(cardToEnum(cardinalities.getLeftCardinalities().a), cardToEnum(cardinalities.getLeftCardinalities().b));
+                AssocCardinality cardinalityRight = intersectCardinalities(cardToEnum(cardinalities.getRightCardinalities().a), cardToEnum(cardinalities.getRightCardinalities().b));
+                association.getAssociation().setCDAssocDir(direction);
+                association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityLeft)));
+                association.getAssociation().getRight().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityRight)));
+              } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
+                //two associations with same target role names, but target classes are not in inheritance relation
+                //if trg cardinality on one of them is 0..1 or 0..* then such association can't exist
+                //if trg cardinality on one of them is 1 or 1..* then such association can't exist and also no objects of this type can exist
+                if (areZeroAssocs(association, superAssoc)){
+                  //such association can't exist
+                  //delete
+                } else {
+                  //such class can't exist
+                  //delete
+                }
+              }
+            }
+          }
+        } else {
+          //comparison between direct associations
+        }
+      }
+    }
+  }
+
+  /**
+   * Modified version of the function inConflict in CDAssociationHelper.
+   * In the map, all association that can be created from a class
+   * are saved in the values for this class (key).
+   * Because of that we don't need to check if the source classes of both
+   * associations are in an inheritance relation.
+   * @param association association from the class
+   * @param superAssociation superAssociation for that class
+   * @return true, if the role names in target direction are the same
+   */
+  public boolean isInConflict(AssocStruct association, AssocStruct superAssociation){
+    ASTCDAssociation srcAssoc = association.getAssociation();
+    ASTCDAssociation targetAssoc = superAssociation.getAssociation();
+    ICD4CodeArtifactScope scope = (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope();
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
+    }
+
+    return false;
+  }
+
+  public boolean inInheritanceRelation(AssocStruct association, AssocStruct superAssociation){
+    if (association.getSide().equals(ClassSide.Left)
+      && superAssociation.getSide().equals(ClassSide.Left)){
+      return isSuperOf(association.getAssociation().getRightQualifiedName().getQName(),
+        superAssociation.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition());
+    } else if (association.getSide().equals(ClassSide.Left)
+      && superAssociation.getSide().equals(ClassSide.Right)) {
+      return isSuperOf(association.getAssociation().getRightQualifiedName().getQName(),
+        superAssociation.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition());
+    } else if (association.getSide().equals(ClassSide.Right)
+      && superAssociation.getSide().equals(ClassSide.Left)){
+      return isSuperOf(association.getAssociation().getLeftQualifiedName().getQName(),
+        superAssociation.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition());
+    } else {
+      return isSuperOf(association.getAssociation().getLeftQualifiedName().getQName(),
+        superAssociation.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition());
+    }
+  }
+
+  /**
+   * Merge the directions of two associations
+   * @param association association from the class
+   * @param superAssociation association from the class or superAssociation
+   * @return merged direction in ASTCDAssocDir
+   */
+  public ASTCDAssocDir mergeAssocDir(AssocStruct association, AssocStruct superAssociation){
+    if (association.getDirection().equals(AssocDirection.BiDirectional) || superAssociation.getDirection().equals(AssocDirection.BiDirectional)){
+      return new ASTCDBiDir();
+    } else if (association.getDirection().equals(AssocDirection.LeftToRight)) {
+      if (superAssociation.getDirection().equals(AssocDirection.LeftToRight)){
+        return new ASTCDLeftToRightDir();
+
+      }
+      if (superAssociation.getDirection().equals(AssocDirection.RightToLeft)){
+        return new ASTCDBiDir();
+      }
+    } else if (association.getDirection().equals(AssocDirection.RightToLeft)){
+      if (superAssociation.getDirection().equals(AssocDirection.RightToLeft)){
+        return new ASTCDRightToLeftDir();
+      }
+      if (superAssociation.getDirection().equals(AssocDirection.LeftToRight)){
+        return new ASTCDBiDir();
+      }
+    }
+    return null;
+  }
+
+  public CardinalityStruc getCardinalities(AssocStruct association, AssocStruct superAssociation){
+    if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()),
+        new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()));
+    } else if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Right)){
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()),
+        new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()));
+    } else if (association.getSide().equals(ClassSide.Right) && superAssociation.getSide().equals(ClassSide.Left)){
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()),
+        new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()));
+    } else {
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()),
+        new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()));
+    }
+  }
+
+  public ASTCDCardinality createCardinality(AssocCardinality assocCardinality){
+    if (assocCardinality.equals(AssocCardinality.One)){
+      return new ASTCDCardOne();
+    } else if (assocCardinality.equals(AssocCardinality.Optional)) {
+      return new ASTCDCardOpt();
+    } else if (assocCardinality.equals(AssocCardinality.AtLeastOne)) {
+      return new ASTCDCardAtLeastOne();
+    } else {
+      return new ASTCDCardMult();
+    }
+  }
+
+  public boolean areZeroAssocs(AssocStruct association, AssocStruct superAssociation){
+    if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
+      return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getRight().getCDCardinality().isMult() || superAssociation.getAssociation().getRight().getCDCardinality().isOpt());
+    } else if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Right)){
+      return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getLeft().getCDCardinality().isMult() || superAssociation.getAssociation().getLeft().getCDCardinality().isOpt());
+    } else if (association.getSide().equals(ClassSide.Right) && superAssociation.getSide().equals(ClassSide.Left)){
+      return (association.getAssociation().getLeft().getCDCardinality().isMult() || association.getAssociation().getLeft().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getRight().getCDCardinality().isMult() || superAssociation.getAssociation().getRight().getCDCardinality().isOpt());
+    } else {
+      return (association.getAssociation().getLeft().getCDCardinality().isMult() || association.getAssociation().getLeft().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getLeft().getCDCardinality().isMult() || superAssociation.getAssociation().getLeft().getCDCardinality().isOpt());
+    }
   }
 }
