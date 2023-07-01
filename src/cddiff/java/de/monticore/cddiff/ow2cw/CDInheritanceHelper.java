@@ -3,42 +3,16 @@ package de.monticore.cddiff.ow2cw;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
 public class CDInheritanceHelper {
-
-  /** check if newSuper is not already a superclass/interface of targetNode */
-  public static boolean isNewSuper(
-      ASTMCObjectType newSuper, ASTCDType targetNode, ICD4CodeArtifactScope artifactScope) {
-    for (ASTCDType oldSuper : getAllSuper(targetNode, artifactScope)) {
-      if (oldSuper.getSymbol().getInternalQualifiedName().contains(newSuper.printType())) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /** check if newSuper does not cause cyclical inheritance */
-  public static boolean inducesNoInheritanceCycle(
-      ASTMCObjectType newSuper, ASTCDType targetNode, ICD4CodeArtifactScope artifactScope) {
-
-    for (ASTCDType superSuper :
-        getAllSuper(
-            resolveClosestType(targetNode, newSuper.printType(), artifactScope), artifactScope)) {
-      if (superSuper
-          .getSymbol()
-          .getInternalQualifiedName()
-          .equals(targetNode.getSymbol().getInternalQualifiedName())) {
-        return false;
-      }
-    }
-    return true;
-  }
 
   /** check if attribute is already in superclass/interface */
   public static boolean isAttributInSuper(
@@ -156,6 +130,17 @@ public class CDInheritanceHelper {
     Optional<CDTypeSymbol> optTarget = scope.resolveCDTypeDown(targetName);
     if (optSrc.isPresent() && optTarget.isPresent()) {
       return CDInheritanceHelper.getAllSuper(optTarget.get().getAstNode(), scope)
+          .contains(optSrc.get().getAstNode());
+    }
+    return false;
+  }
+
+  public static boolean isSuperOf(String srcName, String targetName, ASTCDCompilationUnit cd) {
+
+    Optional<CDTypeSymbol> optSrc = cd.getEnclosingScope().resolveCDTypeDown(srcName);
+    Optional<CDTypeSymbol> optTarget = cd.getEnclosingScope().resolveCDTypeDown(targetName);
+    if (optSrc.isPresent() && optTarget.isPresent()) {
+      return CDDiffUtil.getAllSuperTypes(optTarget.get().getAstNode(), cd.getCDDefinition())
           .contains(optSrc.get().getAstNode());
     }
     return false;
