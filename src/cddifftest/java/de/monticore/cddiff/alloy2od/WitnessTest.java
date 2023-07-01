@@ -60,11 +60,7 @@ public class WitnessTest extends CDDiffTestBasis {
 
     Optional<AlloyDiffSolution> optS =
         AlloyCDDiff.getAlloyDiffSolution(
-            astV1,
-            astV2,
-            7,
-            CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
-            "target/generated/cddiff-test/");
+            astV1, astV2, 7, CDSemantics.STA_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful
     assertTrue(optS.isPresent());
@@ -93,11 +89,7 @@ public class WitnessTest extends CDDiffTestBasis {
 
     Optional<AlloyDiffSolution> optS =
         AlloyCDDiff.getAlloyDiffSolution(
-            astV1,
-            astV2,
-            7,
-            CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
-            "target/generated/cddiff-test/");
+            astV1, astV2, 7, CDSemantics.STA_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful
     assertTrue(optS.isPresent());
@@ -126,11 +118,7 @@ public class WitnessTest extends CDDiffTestBasis {
 
     Optional<AlloyDiffSolution> optS =
         AlloyCDDiff.getAlloyDiffSolution(
-            astV1,
-            astV2,
-            20,
-            CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
-            "target/generated/cddiff-test/");
+            astV1, astV2, 20, CDSemantics.STA_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful
     assertTrue(optS.isPresent());
@@ -159,11 +147,7 @@ public class WitnessTest extends CDDiffTestBasis {
 
     Optional<AlloyDiffSolution> optS =
         AlloyCDDiff.getAlloyDiffSolution(
-            astV1,
-            astV2,
-            20,
-            CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
-            "target/generated/cddiff-test/");
+            astV1, astV2, 20, CDSemantics.STA_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful
     assertTrue(optS.isPresent());

@@ -13,6 +13,8 @@ import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one.One2OneAssocS
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DSClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.finiteDs.FiniteDSClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.finiteSs.FiniteSSClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort.SSClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
@@ -30,6 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * this class Convert a class diagram into SMT using three different Strategies a class-strategy to
@@ -64,6 +67,12 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
         break;
       case SSCOMB:
         this.classStrategy = new SEInheritanceStrategy();
+        break;
+      case FINITEDS:
+        this.classStrategy = new FiniteDSClassStrategy();
+        break;
+      case FINITESS:
+        this.classStrategy = new FiniteSSClassStrategy();
     }
 
     // set association Strategy
@@ -150,6 +159,16 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   public Expr<? extends Sort> getEnumConstant(
       ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
     return dataWrapper.getEnumConstant(enumeration, enumConstant);
+  }
+
+  @Override
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    return dataWrapper.mkForall(type, var, body);
+  }
+
+  @Override
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    return dataWrapper.mkExists(type, var, body);
   }
 
   @Override

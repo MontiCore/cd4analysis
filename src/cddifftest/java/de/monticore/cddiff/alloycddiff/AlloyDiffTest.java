@@ -319,11 +319,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     // Run alloy
     Optional<AlloyDiffSolution> optS1 =
         AlloyCDDiff.getAlloyDiffSolution(
-            astV1,
-            astV2,
-            1,
-            CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
-            "target" + "/generated/cddiff-test");
+            astV1, astV2, 1, CDSemantics.STA_CLOSED_WORLD, "target" + "/generated/cddiff-test");
     // Test first solution
     testSolution(optS1, 2);
     // Write solution to location
@@ -341,11 +337,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     // Generate second solution
     Optional<AlloyDiffSolution> optS2 =
         AlloyCDDiff.getAlloyDiffSolution(
-            astV2,
-            astV1,
-            1,
-            CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
-            "target" + "/generated/cddiff-test");
+            astV2, astV1, 1, CDSemantics.STA_CLOSED_WORLD, "target" + "/generated/cddiff-test");
     // Test second solution
     testSolution(optS2, 2);
     // Write solution to location

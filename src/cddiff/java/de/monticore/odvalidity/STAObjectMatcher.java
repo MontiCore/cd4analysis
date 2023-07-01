@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,13 +15,13 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
-public class MultiInstanceMatcher {
+public class STAObjectMatcher {
 
   private final OD2CDMatcher matcher;
 
   private static final String INSTANCE_OF_STEREOTYPE = "instanceof";
 
-  public MultiInstanceMatcher(OD2CDMatcher matcher) {
+  public STAObjectMatcher(OD2CDMatcher matcher) {
     this.matcher = matcher;
   }
 
@@ -40,8 +39,8 @@ public class MultiInstanceMatcher {
     List<ASTODObject> objectList = ODHelper.getAllObjects(od);
 
     // generate scopes
-    ICD4CodeArtifactScope baseScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(baseCD);
-    ICD4CodeArtifactScope compScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(compCD);
+    ICD4CodeArtifactScope baseScope = (ICD4CodeArtifactScope) baseCD.getEnclosingScope();
+    ICD4CodeArtifactScope compScope = (ICD4CodeArtifactScope) compCD.getEnclosingScope();
 
     Log.print(
         System.lineSeparator()

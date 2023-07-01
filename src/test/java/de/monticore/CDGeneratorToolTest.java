@@ -164,7 +164,8 @@ public class CDGeneratorToolTest {
           "-o",
           "target/generated/example/imports",
           "-c2mc",
-          "target/generated/example/imports/model/Example.cdsym"
+          "-s",
+          "target/generated/example/imports/"
         });
 
     CDGeneratorTool.main(
@@ -175,7 +176,7 @@ public class CDGeneratorToolTest {
           "target/generated/example/imports",
           "-c2mc",
           "-path",
-          "target/generated/example/model"
+          "target/generated/example/imports/"
         });
 
     assertTrue(true);

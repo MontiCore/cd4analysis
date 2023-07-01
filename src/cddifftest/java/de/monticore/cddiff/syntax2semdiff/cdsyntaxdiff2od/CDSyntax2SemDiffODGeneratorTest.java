@@ -341,7 +341,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODBySubclassDiff2() {
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     generateCDSyntaxDiffTemp("Association", "SubclassDiff1A.cd", "SubclassDiff1B.cd", cdSemantics);
     CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
     List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
@@ -357,7 +357,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByCombination3() {
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     generateCDSyntaxDiffTemp("Combination", "Employees1A.cd", "Employees1B.cd", cdSemantics);
     CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
     List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
@@ -371,7 +371,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByCombinationAbstractInterface() {
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     generateCDSyntaxDiffTemp("Combination", "Employees1A.cd", "Employees1C.cd", cdSemantics);
     CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
     List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
@@ -387,7 +387,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     String filePath2 =
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
             + "/Combination/NotMatchedAssocInCompareCDW1B.cd";
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
     List<ASTODArtifact> ods = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
@@ -414,7 +414,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   public void testOpenWorldDiff() {
     String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees0.cd";
     String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
     List<ASTODArtifact> ods = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
@@ -436,7 +436,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     String filePath2 =
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
             + "Combination/Employees_object2B.cd";
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
     List<ASTODArtifact> ods = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
@@ -453,7 +453,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     String filePath2 =
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
             + "Combination/Employees_object1B.cd";
-    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    CDSemantics cdSemantics = CDSemantics.STA_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
     List<ASTODArtifact> ods = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
@@ -599,7 +599,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
             "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
                 + "/Employees1B.cd");
 
-    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.STA_CLOSED_WORLD);
     System.out.println(res);
   }
 
@@ -629,7 +629,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
         parseModel(
             "src/cddifftest/resources/de/monticore/cddiff/FullNameEmployees/FNEmployees2.cd");
 
-    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.STA_CLOSED_WORLD);
     System.out.println(res);
   }
 
@@ -645,7 +645,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
             "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
                 + "/Vehicle2B.cd");
 
-    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.STA_CLOSED_WORLD);
     System.out.println(res);
   }
 

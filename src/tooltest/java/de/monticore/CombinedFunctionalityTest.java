@@ -67,6 +67,6 @@ public class CombinedFunctionalityTest {
 
     assertEquals(
         new ArrayList<>(),
-        CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD));
+        CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.STA_CLOSED_WORLD));
   }
 }

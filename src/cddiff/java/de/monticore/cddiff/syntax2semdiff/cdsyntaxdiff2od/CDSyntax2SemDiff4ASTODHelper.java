@@ -236,7 +236,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
                       .build())
               .setODAttributesList(astODAttributeList)
               .build();
-    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
+    } else if (cdSemantics == CDSemantics.STA_CLOSED_WORLD) {
       List<String> classList = new ArrayList<>();
       newCDTypeWrapper.getSuperclasses().forEach(e -> classList.add(e.split("_")[1]));
       String multiLabel = "instanceof";
