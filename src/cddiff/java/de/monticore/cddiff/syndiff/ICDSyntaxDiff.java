@@ -150,7 +150,7 @@ public interface ICDSyntaxDiff {
    * This function must be used before handling associations difference - possible inconsistent
    * output.
    */
-  ArrayListMultimap<ASTCDClass, Pair<ASTCDAssociation, ASTCDAssociation>> findOverlappingAssocs();
+//  ArrayListMultimap<ASTCDClass, Pair<ASTCDAssociation, ASTCDAssociation>> findOverlappingAssocs();
 
   //  /**
   //   *
@@ -171,10 +171,10 @@ public interface ICDSyntaxDiff {
    */
   String findDiff(Object diff);
 
-  /**
-   * Get the two classes that are connected via the associations.
-   *
-   * @return pair of two classes.
-   */
-  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association);
+//  /**
+//   * Get the two classes that are connected via the associations.
+//   *
+//   * @return pair of two classes.
+//   */
+////  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association);
 }

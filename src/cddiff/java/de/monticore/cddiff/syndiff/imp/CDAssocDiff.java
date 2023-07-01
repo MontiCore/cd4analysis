@@ -1,18 +1,25 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperCardinality;
 import edu.mit.csail.sdg.alloy4.Pair;
+import de.monticore.cddiff.syndiff.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
+import static de.monticore.cddiff.syndiff.imp.CDHelper.getConnectedClasses;
 
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation elem1;
@@ -254,5 +261,50 @@ public class CDAssocDiff implements ICDAssocDiff {
     } else {
       return null;
     }
+  }
+
+  public Pair<ASTCDAssociation, ASTCDClass> getChangedTgtClass(ASTCDCompilationUnit compilationUnit){
+    if (changedTgtClass(compilationUnit)){
+      Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(getElem1(), compilationUnit);
+      if (getElem1().getCDAssocDir().isBidirectional()){
+        Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getElem2(), compilationUnit);
+        if (pair.a.getName().equals(pairOld.a.getName())
+          && !pair.b.getName().equals(pairOld.b.getName())){
+          return new Pair<>(getElem1(), pair.b);
+        } else if (pair.a.getName().equals(pairOld.b.getName())
+          && !pair.b.getName().equals(pairOld.a.getName())) {
+          return new Pair<>(getElem1(), pair.b);
+        } else if (pair.b.getName().equals(pairOld.b.getName())
+          && !pair.a.getName().equals(pairOld.a.getName())) {
+          return new Pair<>(getElem1(), pair.a);
+        } else if (pair.b.getName().equals(pairOld.a.getName())
+          && !pair.a.getName().equals(pairOld.b.getName())) {
+          return new Pair<>(getElem1(), pair.a);
+        }
+      } else if (getElem1().getCDAssocDir().isDefinitiveNavigableRight()){
+        return new Pair<>(getElem1(), pair.b);
+      } else if (getElem1().getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return new Pair<>(getElem1(), pair.a);
+      }
+    }
+    return null;
+  }
+  public boolean changedTgtClass(ASTCDCompilationUnit compilationUnit){
+    Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getElem1(), compilationUnit);
+    Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getElem2(), compilationUnit);
+    if (pairNew.a.getName().equals(pairOld.a.getName())
+      && !pairNew.b.getName().equals(pairOld.b.getName())){
+      return isSuperOf(pairNew.b.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.a.getName().equals(pairOld.b.getName())
+      && !pairNew.b.getName().equals(pairOld.a.getName())) {
+      return isSuperOf(pairNew.b.getName(), pairOld.a.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.b.getName().equals(pairOld.b.getName())
+      && !pairNew.a.getName().equals(pairOld.a.getName())) {
+      return isSuperOf(pairNew.a.getName(), pairOld.a.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.b.getName().equals(pairOld.a.getName())
+      && !pairNew.a.getName().equals(pairOld.b.getName())) {
+      return isSuperOf(pairNew.a.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    }
+    return false;
   }
 }
