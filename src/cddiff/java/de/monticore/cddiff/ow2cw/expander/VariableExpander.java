@@ -105,7 +105,7 @@ public class VariableExpander extends BasicExpander {
     }
 
     ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+        (ICD4CodeArtifactScope) getCD().getEnclosingScope();
 
     if (assoc.getCDAssocDir().isDefinitiveNavigableRight()) {
       Optional<CDTypeSymbol> symbol =

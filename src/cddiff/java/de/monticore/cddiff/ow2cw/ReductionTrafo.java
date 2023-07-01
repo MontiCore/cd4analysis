@@ -62,6 +62,7 @@ public class ReductionTrafo {
         new HashSet<>(expander1.getDummies4Diff(typeList, COMMON_INTERFACE));
 
     // Add missing Enums and new EnumConstant if Enum is <<complete>> in second.
+    CDDiffUtil.refreshSymbolTable(first);
     expander1.addNewEnumConstants(second.getCDDefinition().getCDEnumsList());
 
     // create common interface for all classes in first
@@ -72,12 +73,14 @@ public class ReductionTrafo {
     addSubClasses4Diff(first);
 
     // add new associations for classes that are only <<complete>> in second
+    CDDiffUtil.refreshSymbolTable(first);
     expander1.addAssociationsWithoutConflicts(newAssocs);
 
     // add a unidirectional super-association in first for each association in second
     Set<ASTCDAssociation> superSet =
         expander1.buildSuperAssociations(
             second.getCDDefinition().getCDAssociationsList(), COMMON_INTERFACE);
+    CDDiffUtil.refreshSymbolTable(first);
     expander1.addAssociationsWithoutConflicts(superSet);
 
     /*
@@ -92,13 +95,16 @@ public class ReductionTrafo {
     createCommonInterface(second, COMMON_INTERFACE);
 
     // add classes, interfaces and attributes exclusive to first
+    CDDiffUtil.refreshSymbolTable(second);
     expander2.addMissingTypesAndAttributes(first.getCDDefinition().getCDClassesList());
+    CDDiffUtil.refreshSymbolTable(second);
     expander2.addMissingTypesAndAttributes(first.getCDDefinition().getCDInterfacesList());
 
     // add enums and enum constants exclusive to first
+    CDDiffUtil.refreshSymbolTable(second);
     expander2.addMissingEnumsAndConstants(first.getCDDefinition().getCDEnumsList());
 
-    // add inheritance relation to first, unless it causes cyclical inheritance
+    // add inheritance relation to second from first, unless it causes cyclical inheritance
     copyInheritance(first, second);
 
     // add a unidirectional super-association in second for each association in first
