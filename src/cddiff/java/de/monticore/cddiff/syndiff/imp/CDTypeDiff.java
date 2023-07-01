@@ -7,6 +7,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.matcher.MatchingStrategy;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -297,9 +298,8 @@ public class CDTypeDiff implements ICDTypeDiff {
                 new Pair<>(
                     (ASTCDClass) getSrcType(),
                     (ASTCDAttribute)
-                        memberDiff
-                            .getSrcElem())); // add to Diff List new Pair(getElem1(),
-                                             // memberDiff.getElem1()
+                        memberDiff.getSrcElem())); // add to Diff List new Pair(getElem1(),
+            // memberDiff.getElem1()
           case CHANGED_VISIBILITY: // give as output to user - no semDiff
             // other cases
         }
@@ -318,9 +318,8 @@ public class CDTypeDiff implements ICDTypeDiff {
                     new Pair<>(
                         astcdClass,
                         (ASTCDAttribute)
-                            memberDiff
-                                .getSrcElem())); // add to Diff List new Pair(astcdClass,
-                                                 // memberDiff.getElem1())
+                            memberDiff.getSrcElem())); // add to Diff List new Pair(astcdClass,
+                // memberDiff.getElem1())
               case CHANGED_VISIBILITY: // give as output to user - no semDiff
                 // other cases?
             }
@@ -345,6 +344,12 @@ public class CDTypeDiff implements ICDTypeDiff {
     return classList;
   }
 
+  /**
+   * Add all attributes to the list changedMembers which have been changed.
+   *
+   * @param srcType a type in the new CD
+   * @param tgtType a type in the old CD
+   */
   // Function for adding to the list changedMembers all attributes
   // which have been changed in the source class diagram
   public void addAllChangedMembers(ASTCDType srcType, ASTCDType tgtType) {
@@ -361,6 +366,13 @@ public class CDTypeDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Add all attributes to the list addedAttributes which have not been in the tgtType, but are in
+   * the srcType
+   *
+   * @param srcType a type in the new CD
+   * @param tgtType a type in the old CD
+   */
   public void addAllAddedAttributes(ASTCDType srcType, ASTCDType tgtType) {
     if (typeMatcher.isMatched(srcType, tgtType)) {
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
@@ -379,6 +391,13 @@ public class CDTypeDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Add all attributes to the list deletedAttributes which have been in the tgtType, but aren't
+   * anymore in the srcType
+   *
+   * @param srcType a type in the new CD
+   * @param tgtType a type in the old CD
+   */
   public void addAllDeletedAttributes(ASTCDType srcType, ASTCDType tgtType) {
     if (typeMatcher.isMatched(srcType, tgtType)) {
       for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
@@ -392,6 +411,86 @@ public class CDTypeDiff implements ICDTypeDiff {
         if (notFound) {
           deletedAttributes.add(tgtAttr);
           baseDiffs.add(DiffTypes.REMOVED_ATTRIBUTE);
+        }
+      }
+    }
+  }
+
+  /**
+   * Add all enum constants to the list addedConstants which are in the srcType, but haven't been in
+   * the tgtType
+   *
+   * @param srcEnum an enum in the new CD
+   * @param tgtEnum an enum in the old CD
+   */
+  public void addAllAddedConstants(ASTCDEnum srcEnum, ASTCDEnum tgtEnum) {
+    for (ASTCDEnumConstant firstConstant : srcEnum.getCDEnumConstantList()) {
+      boolean notFound = true;
+      for (ASTCDEnumConstant secondConstant : tgtEnum.getCDEnumConstantList()) {
+        if (firstConstant.getName().equals(secondConstant.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        addedConstants.add(firstConstant);
+        baseDiffs.add(DiffTypes.ADDED_CONSTANTS);
+      }
+    }
+  }
+
+  /**
+   * Add all enum constants to the list deletedConstants which have been in the tgtType, but aren'T
+   * in the srcType
+   *
+   * @param srcEnum an enum constant in the new CD
+   * @param tgtEnum an enum constant in the old CD
+   */
+  public void addAllDeletedConstants(ASTCDEnum srcEnum, ASTCDEnum tgtEnum) {
+    for (ASTCDEnumConstant firstConstant : tgtEnum.getCDEnumConstantList()) {
+      boolean notFound = true;
+      for (ASTCDEnumConstant secondConstant : srcEnum.getCDEnumConstantList()) {
+        if (firstConstant.getName().equals(secondConstant.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        addedConstants.add(firstConstant);
+        baseDiffs.add(DiffTypes.REMOVED_CONSTANTS);
+      }
+    }
+  }
+
+  /**
+   * Add all matched attributes to the list matchedAttributes
+   *
+   * @param srcType a type in the new CD
+   * @param tgtType a type in the old CD
+   */
+  public void addAllMatchedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+    if (typeMatcher.isMatched(srcType, tgtType)) {
+      for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
+        for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
+          if (srcAttr.getName().equals(tgtAttr.getName())) {
+            matchedAttributes.add(new Pair(srcAttr, tgtAttr));
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Add all matched enum constants to the list matchedConstants
+   *
+   * @param srcEnum an enum in the new CD
+   * @param tgtEnum an enum in the old CD
+   */
+  public void addAllMatchedConstants(ASTCDEnum srcEnum, ASTCDEnum tgtEnum) {
+    for (ASTCDEnumConstant srcEnumConstant : srcEnum.getCDEnumConstantList()) {
+      for (ASTCDEnumConstant tgtEnumConstant : tgtEnum.getCDEnumConstantList()) {
+        if (srcEnumConstant.getName().equals(tgtEnumConstant.getName())) {
+          matchedConstants.add(new Pair(srcEnumConstant, tgtEnumConstant));
         }
       }
     }
