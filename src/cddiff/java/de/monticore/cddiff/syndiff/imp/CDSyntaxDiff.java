@@ -1298,7 +1298,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         case CHANGED_ASSOCIATION_MULTIPLICITY:
           list.addAll(assocDiff.getCardDiff());
         case CHANGED_ASSOCIATION_DIRECTION:
-          list.add(new Pair<>(assocDiff.getElem1(), assocDiff.getDirection(assocDiff.getElem1())));
+          list.add(
+              new Pair<>(assocDiff.getSrcAssoc(), assocDiff.getDirection(assocDiff.getSrcAssoc())));
         case CHANGED_ASSOCIATION_ROLE:
           list.addAll(assocDiff.getRoleDiff());
           // other cases?

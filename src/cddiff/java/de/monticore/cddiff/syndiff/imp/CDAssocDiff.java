@@ -5,24 +5,26 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
+import de.monticore.matcher.MatchingStrategy;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class CDAssocDiff implements ICDAssocDiff {
-  private final ASTCDAssociation elem1;
-  private final ASTCDAssociation elem2;
+  private final ASTCDAssociation srcAssoc;
+  private final ASTCDAssociation tgtAssoc;
   private List<DiffTypes> baseDiff;
+  protected MatchingStrategy<ASTCDAssociation> assocMatcher;
 
   @Override
-  public ASTCDAssociation getElem1() {
-    return elem1;
+  public ASTCDAssociation getSrcAssoc() {
+    return srcAssoc;
   }
 
   @Override
-  public ASTCDAssociation getElem2() {
-    return elem2;
+  public ASTCDAssociation getTgtAssoc() {
+    return tgtAssoc;
   }
 
   @Override
@@ -35,15 +37,15 @@ public class CDAssocDiff implements ICDAssocDiff {
     this.baseDiff = baseDiff;
   }
 
-  protected CDAssocDiff(ASTCDAssociation elem1, ASTCDAssociation elem2) {
-    this.elem1 = elem1;
-    this.elem2 = elem2;
+  protected CDAssocDiff(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
+    this.srcAssoc = srcAssoc;
+    this.tgtAssoc = tgtAssoc;
   }
 
   @Override
   public String roleDiff() {
-    ASTCDAssociation newAssoc = getElem1();
-    ASTCDAssociation oldAssoc = getElem2();
+    ASTCDAssociation newAssoc = getSrcAssoc();
+    ASTCDAssociation oldAssoc = getTgtAssoc();
     StringBuilder diff = new StringBuilder(new String());
     if (!newAssoc
         .getLeftQualifiedName()
@@ -71,9 +73,9 @@ public class CDAssocDiff implements ICDAssocDiff {
   @Override
   public String dirDiff() {
     return "Direction changed from "
-        + getDirection(getElem2()).toString()
+        + getDirection(getTgtAssoc()).toString()
         + " to "
-        + getDirection(getElem1());
+        + getDirection(getSrcAssoc());
   }
 
   public AssocDirection getDirection(ASTCDAssociation association) {
@@ -94,8 +96,8 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   @Override
   public String cardDiff() {
-    ASTCDAssociation newAssoc = getElem1();
-    ASTCDAssociation oldAssoc = getElem2();
+    ASTCDAssociation newAssoc = getSrcAssoc();
+    ASTCDAssociation oldAssoc = getTgtAssoc();
     StringBuilder cardinalityChanges = new StringBuilder();
 
     if (oldAssoc.getLeft().isPresentCDCardinality()
@@ -177,67 +179,67 @@ public class CDAssocDiff implements ICDAssocDiff {
    */
   public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> getCardDiff() {
     List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
-    if (getElem1()
+    if (getSrcAssoc()
             .getLeftQualifiedName()
             .getQName()
-            .equals(getElem1().getLeftQualifiedName().getQName())
-        && getElem1()
+            .equals(getSrcAssoc().getLeftQualifiedName().getQName())
+        && getSrcAssoc()
             .getRightQualifiedName()
             .getQName()
-            .equals(getElem2().getRightQualifiedName().getQName())) {
+            .equals(getTgtAssoc().getRightQualifiedName().getQName())) {
       // assoc not reversed
-      if (!getElem1()
+      if (!getSrcAssoc()
           .getLeft()
           .getCDCardinality()
-          .equals(getElem2().getLeft().getCDCardinality())) {
+          .equals(getTgtAssoc().getLeft().getCDCardinality())) {
         list.add(
             new Pair<>(
-                getElem1(),
+                getSrcAssoc(),
                 new Pair<>(
                     ClassSide.Left,
                     findUniqueNumber(
-                        getTypeOfCard(getElem1().getLeft().getCDCardinality()),
-                        getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
+                        getTypeOfCard(getSrcAssoc().getLeft().getCDCardinality()),
+                        getTypeOfCard(getTgtAssoc().getLeft().getCDCardinality())))));
       }
-      if (!getElem1()
+      if (!getSrcAssoc()
           .getRight()
           .getCDCardinality()
-          .equals(getElem2().getRight().getCDCardinality())) {
+          .equals(getTgtAssoc().getRight().getCDCardinality())) {
         list.add(
             new Pair<>(
-                getElem1(),
+                getSrcAssoc(),
                 new Pair<>(
                     ClassSide.Right,
                     findUniqueNumber(
-                        getTypeOfCard(getElem1().getRight().getCDCardinality()),
-                        getTypeOfCard(getElem2().getRight().getCDCardinality())))));
+                        getTypeOfCard(getSrcAssoc().getRight().getCDCardinality()),
+                        getTypeOfCard(getTgtAssoc().getRight().getCDCardinality())))));
       }
     } else {
-      if (!getElem1()
+      if (!getSrcAssoc()
           .getLeft()
           .getCDCardinality()
-          .equals(getElem2().getRight().getCDCardinality())) {
+          .equals(getTgtAssoc().getRight().getCDCardinality())) {
         list.add(
             new Pair<>(
-                getElem1(),
+                getSrcAssoc(),
                 new Pair<>(
                     ClassSide.Left,
                     findUniqueNumber(
-                        getTypeOfCard(getElem1().getLeft().getCDCardinality()),
-                        getTypeOfCard(getElem2().getRight().getCDCardinality())))));
+                        getTypeOfCard(getSrcAssoc().getLeft().getCDCardinality()),
+                        getTypeOfCard(getTgtAssoc().getRight().getCDCardinality())))));
       }
-      if (!getElem1()
+      if (!getSrcAssoc()
           .getRight()
           .getCDCardinality()
-          .equals(getElem2().getLeft().getCDCardinality())) {
+          .equals(getTgtAssoc().getLeft().getCDCardinality())) {
         list.add(
             new Pair<>(
-                getElem1(),
+                getSrcAssoc(),
                 new Pair<>(
                     ClassSide.Right,
                     findUniqueNumber(
-                        getTypeOfCard(getElem1().getRight().getCDCardinality()),
-                        getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
+                        getTypeOfCard(getSrcAssoc().getRight().getCDCardinality()),
+                        getTypeOfCard(getTgtAssoc().getLeft().getCDCardinality())))));
       }
     }
     return list;
@@ -245,31 +247,39 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff() {
     List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
-    if (getElem1()
+    if (getSrcAssoc()
             .getLeftQualifiedName()
             .getQName()
-            .equals(getElem1().getLeftQualifiedName().getQName())
-        && getElem1()
+            .equals(getSrcAssoc().getLeftQualifiedName().getQName())
+        && getSrcAssoc()
             .getRightQualifiedName()
             .getQName()
-            .equals(getElem2().getRightQualifiedName().getQName())) {
+            .equals(getTgtAssoc().getRightQualifiedName().getQName())) {
       // assoc not reversed
-      if (!Objects.equals(getElem1().getLeft().getCDRole(), getElem2().getLeft().getCDRole())) {
+      if (!Objects.equals(
+          getSrcAssoc().getLeft().getCDRole(), getTgtAssoc().getLeft().getCDRole())) {
         list.add(
-            new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));
+            new Pair<>(
+                getSrcAssoc(), new Pair<>(ClassSide.Left, getSrcAssoc().getLeft().getCDRole())));
       }
-      if (!Objects.equals(getElem1().getRight().getCDRole(), getElem2().getRight().getCDRole())) {
+      if (!Objects.equals(
+          getSrcAssoc().getRight().getCDRole(), getTgtAssoc().getRight().getCDRole())) {
         list.add(
-            new Pair<>(getElem1(), new Pair<>(ClassSide.Right, getElem1().getRight().getCDRole())));
+            new Pair<>(
+                getSrcAssoc(), new Pair<>(ClassSide.Right, getSrcAssoc().getRight().getCDRole())));
       }
     } else {
-      if (!Objects.equals(getElem1().getLeft().getCDRole(), getElem2().getRight().getCDRole())) {
+      if (!Objects.equals(
+          getSrcAssoc().getLeft().getCDRole(), getTgtAssoc().getRight().getCDRole())) {
         list.add(
-            new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));
+            new Pair<>(
+                getSrcAssoc(), new Pair<>(ClassSide.Left, getSrcAssoc().getLeft().getCDRole())));
       }
-      if (!Objects.equals(getElem1().getRight().getCDRole(), getElem2().getLeft().getCDRole())) {
+      if (!Objects.equals(
+          getSrcAssoc().getRight().getCDRole(), getTgtAssoc().getLeft().getCDRole())) {
         list.add(
-            new Pair<>(getElem1(), new Pair<>(ClassSide.Right, getElem1().getRight().getCDRole())));
+            new Pair<>(
+                getSrcAssoc(), new Pair<>(ClassSide.Right, getSrcAssoc().getRight().getCDRole())));
       }
     }
     return list;
@@ -309,5 +319,111 @@ public class CDAssocDiff implements ICDAssocDiff {
     } else {
       return null;
     }
+  }
+
+  public ASTCDAssociation findChangedAssocs(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
+    boolean changedRoleName = false;
+    boolean changedDirection = false;
+    boolean changedMultiplicity = false;
+    if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+      if (srcAssoc
+              .getLeftQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getLeftQualifiedName().getQName())
+          || srcAssoc
+              .getRightQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getRightQualifiedName().getQName())) {
+        if (!srcAssoc
+                .getLeft()
+                .getCDRole()
+                .getName()
+                .equals(tgtAssoc.getLeft().getCDRole().getName())
+            || !srcAssoc
+                .getRight()
+                .getCDRole()
+                .getName()
+                .equals(tgtAssoc.getRight().getCDRole().getName())) {
+          changedRoleName = true;
+        }
+      }
+
+      if (srcAssoc
+              .getLeftQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getRightQualifiedName().getQName())
+          || srcAssoc
+              .getRightQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getLeftQualifiedName().getQName())) {
+        if (!srcAssoc
+                .getLeft()
+                .getCDRole()
+                .getName()
+                .equals(tgtAssoc.getRight().getCDRole().getName())
+            || !srcAssoc
+                .getRight()
+                .getCDRole()
+                .getName()
+                .equals(tgtAssoc.getLeft().getCDRole().getName())) {
+          changedRoleName = true;
+        }
+      }
+
+      if (changedRoleName) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_ROLE);
+      }
+
+      if (!srcAssoc.getCDAssocDir().equals(tgtAssoc.getCDAssocDir())) {
+        changedDirection = true;
+      }
+
+      if (changedDirection) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_DIRECTION);
+      }
+
+      if (srcAssoc
+              .getLeftQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getLeftQualifiedName().getQName())
+          || srcAssoc
+              .getRightQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getRightQualifiedName().getQName())) {
+        if (!srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getLeft().getCDCardinality())
+            || !srcAssoc
+                .getRight()
+                .getCDCardinality()
+                .equals(tgtAssoc.getRight().getCDCardinality())) {
+          changedMultiplicity = true;
+        }
+      }
+
+      if (srcAssoc
+              .getLeftQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getRightQualifiedName().getQName())
+          || srcAssoc
+              .getRightQualifiedName()
+              .getQName()
+              .equals(tgtAssoc.getLeftQualifiedName().getQName())) {
+        if (!srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getRight().getCDCardinality())
+            || !srcAssoc
+                .getRight()
+                .getCDCardinality()
+                .equals(tgtAssoc.getLeft().getCDCardinality())) {
+          changedMultiplicity = true;
+        }
+      }
+
+      if (changedMultiplicity) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY);
+      }
+    }
+
+    if (changedRoleName || changedDirection || changedMultiplicity) {
+      return srcAssoc;
+    }
+    return null;
   }
 }
