@@ -118,13 +118,7 @@ public interface ICDSyntaxDiff {
    */
   List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum);
 
-  /**
-   * Compute the classes that extend a given class.
-   *
-   * @param astcdClass
-   * @return list of extending classes. This function is similar to getClassHierarchy().
-   */
-  List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass);
+
 
   /**
    * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:

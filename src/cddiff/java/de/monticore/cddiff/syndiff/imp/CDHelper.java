@@ -1,12 +1,18 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import edu.mit.csail.sdg.alloy4.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 
 public class CDHelper {
   public static Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association, ASTCDCompilationUnit compilationUnit) {
@@ -20,5 +26,32 @@ public class CDHelper {
             .resolveCDTypeDown(association.getRightQualifiedName().getQName());
     return new Pair<ASTCDClass, ASTCDClass>(
         (ASTCDClass) astcdClass.get().getAstNode(), (ASTCDClass) astcdClass1.get().getAstNode());
+  }
+
+  /**
+   * Compute the classes that extend a given class.
+   *
+   * @param cdSyntaxDiff
+   * @param astcdClass
+   * @return list of extending classes. This function is similar to getClassHierarchy().
+   */
+  public static List<ASTCDClass> getSpannedInheritance(CDSyntaxDiff cdSyntaxDiff, ASTCDClass astcdClass){
+    List<ASTCDClass> subclasses = new ArrayList<>();
+    for (ASTCDClass childClass : cdSyntaxDiff.getSrcCD().getCDDefinition().getCDClassesList()) {
+      if ((getAllSuper(childClass, (ICD4CodeArtifactScope) cdSyntaxDiff.getSrcCD().getEnclosingScope())).contains(astcdClass)) {
+        subclasses.add(childClass);
+      }
+    }
+    return subclasses;
+  }
+
+  public static List<ASTCDClass> getSuperClasses(CDSyntaxDiff cdSyntaxDiff, ASTCDClass astcdClass){
+    List<ASTCDClass> superClasses = new ArrayList<>();
+    for (ASTCDType type : getAllSuper(astcdClass, (ICD4CodeArtifactScope) cdSyntaxDiff.getSrcCD().getEnclosingScope())){
+      if (type instanceof ASTCDClass){
+        superClasses.add((ASTCDClass) type);
+      }
+    }
+    return superClasses;
   }
 }
