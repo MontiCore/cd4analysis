@@ -23,13 +23,14 @@ import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.matcher.MatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
 public class CDSyntaxDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
-  private ASTCDCompilationUnit trgCD;
+  private ASTCDCompilationUnit tgtCD;
   private List<CDTypeDiff> changedClasses;
   private List<CDAssocDiff> changedAssocs;
   private List<ASTCDClass> addedClasses;
@@ -42,7 +43,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   private List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums;
   private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
   private List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs;
+  // needed baseDiff?????
   private List<DiffTypes> baseDiff;
+  protected MatchingStrategy<ASTCDType> typeMatcher;
+  protected MatchingStrategy<ASTCDAssociation> assocMatcher;
 
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
@@ -58,13 +62,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   @Override
-  public ASTCDCompilationUnit getTrgCD() {
-    return trgCD;
+  public ASTCDCompilationUnit getTgtCD() {
+    return tgtCD;
   }
 
   @Override
-  public void setTrgCD(ASTCDCompilationUnit trgCD) {
-    this.trgCD = trgCD;
+  public void setTgtCD(ASTCDCompilationUnit tgtCD) {
+    this.tgtCD = tgtCD;
   }
 
   @Override
@@ -251,7 +255,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 || !isAttributInSuper(
                     attribute,
                     matchedClass,
-                    (ICD4CodeArtifactScope) getTrgCD().getEnclosingScope())) {
+                    (ICD4CodeArtifactScope) getTgtCD().getEnclosingScope())) {
               return false;
             }
           }
@@ -1037,9 +1041,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
 
-    for (ASTCDClass astcdClass : getTrgCD().getCDDefinition().getCDClassesList()) {
+    for (ASTCDClass astcdClass : getTgtCD().getCDDefinition().getCDClassesList()) {
       for (ASTCDAssociation astcdAssociation :
-          getTrgCD().getCDDefinition().getCDAssociationsListForType(astcdClass)) {
+          getTgtCD().getCDDefinition().getCDAssociationsListForType(astcdClass)) {
         Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation);
         if ((pair.a
                 .getSymbol()
@@ -1171,13 +1175,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
 
-    for (ASTCDClass astcdClass : getTrgCD().getCDDefinition().getCDClassesList()) {
+    for (ASTCDClass astcdClass : getTgtCD().getCDDefinition().getCDClassesList()) {
       Set<ASTCDType> superClasses =
-          getAllSuper(astcdClass, (ICD4CodeArtifactScope) getTrgCD().getEnclosingScope());
+          getAllSuper(astcdClass, (ICD4CodeArtifactScope) getTgtCD().getEnclosingScope());
       for (ASTCDType superClass : superClasses) {
         if (superClass instanceof ASTCDClass) {
           for (ASTCDAssociation association :
-              getTrgCD().getCDDefinition().getCDAssociationsListForType(superClass)) {
+              getTgtCD().getCDDefinition().getCDAssociationsListForType(superClass)) {
             Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association);
             if ((pair.a
                     .getSymbol()
@@ -1370,5 +1374,158 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     // We also need to compare between direct associations
     // If we have two direct associations with the same role name in srcDirection, but the classes
     // aren't in an inheritance hierarchy
+  }
+
+  public void addAllChangedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDType srcClass : srcCD.getCDDefinition().getCDClassesList()) {
+      for (ASTCDType tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
+        CDTypeDiff diffClass = new CDTypeDiff(srcClass, tgtClass);
+        // TODO the list is always empty!!!! Call functions!!!!!
+        if (!diffClass.getBaseDiffs().isEmpty()) {
+          changedClasses.add(diffClass);
+        }
+      }
+    }
+  }
+
+  public void addAllChangedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
+      for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
+        CDAssocDiff diffAssoc = new CDAssocDiff(srcAssoc, tgtAssoc);
+        if (!diffAssoc.getBaseDiff().isEmpty()) {
+          changedAssocs.add(diffAssoc);
+        }
+      }
+    }
+  }
+
+  public void addAllAddedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
+      boolean notFound = true;
+      for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
+        if (srcClass.getName().equals(tgtClass.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        addedClasses.add(srcClass);
+      }
+    }
+  }
+
+  public void addAllDeletedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
+      boolean notFound = true;
+      for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
+        if (srcClass.getName().equals(tgtClass.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        deletedClasses.add(tgtClass);
+      }
+    }
+  }
+
+  public void addAllAddedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
+      boolean notFound = true;
+      for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
+        if (srcEnum.getName().equals(tgtEnum.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        addedEnums.add(srcEnum);
+      }
+    }
+  }
+
+  public void addAllDeletedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
+      boolean notFound = true;
+      for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
+        if (srcEnum.getName().equals(tgtEnum.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        deletedEnums.add(tgtEnum);
+      }
+    }
+  }
+
+  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
+      boolean notFound = true;
+      for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
+        if (srcAssoc.getName().equals(tgtAssoc.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        addedAssocs.add(srcAssoc);
+      }
+    }
+  }
+
+  public void addAllDeletedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
+      boolean notFound = true;
+      for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
+        if (srcAssoc.getName().equals(tgtAssoc.getName())) {
+          notFound = false;
+          break;
+        }
+      }
+      if (notFound) {
+        deletedAssocs.add(tgtAssoc);
+      }
+    }
+  }
+
+  public void addAllMatchedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
+      for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
+        if (typeMatcher.isMatched(srcClass, tgtClass)) {
+          matchedClasses.add(new Pair(srcClass, tgtClass));
+        }
+      }
+    }
+  }
+
+  public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
+      for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
+        if (typeMatcher.isMatched(srcInterface, tgtInterface)) {
+          matchedInterfaces.add(new Pair(srcInterface, tgtInterface));
+        }
+      }
+    }
+  }
+
+  public void addAllMatchedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
+      for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
+        if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+          matchedAssocs.add(new Pair(srcAssoc, tgtAssoc));
+        }
+      }
+    }
+  }
+
+  public void addAllMatchedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
+      for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
+        if (srcEnum.deepEquals(tgtEnum)) {
+          matchedEnums.add(new Pair(srcEnum, tgtEnum));
+        }
+      }
+    }
   }
 }

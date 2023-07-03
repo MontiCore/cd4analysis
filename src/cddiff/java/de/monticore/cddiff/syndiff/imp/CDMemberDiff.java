@@ -41,10 +41,15 @@ public class CDMemberDiff implements ICDMemberDiff {
       ASTCDAttribute srcAttr = (ASTCDAttribute) srcElem;
       ASTCDAttribute tgtAttr = (ASTCDAttribute) tgtElem;
 
-      if (srcAttr.getName().equals(tgtAttr.getName())
-          && !srcAttr.getMCType().equals(tgtAttr.getMCType())) {
-        baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE);
-        return srcElem;
+      if (srcAttr.getName().equals(tgtAttr.getName())) {
+        if (!srcAttr.getMCType().equals(tgtAttr.getMCType())) {
+          baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE);
+          return srcElem;
+        }
+        if (!srcAttr.getModifier().equals(tgtAttr.getModifier())) {
+          baseDiff.add(DiffTypes.CHANGED_VISIBILITY);
+          return srcElem;
+        }
       }
     }
     return null;

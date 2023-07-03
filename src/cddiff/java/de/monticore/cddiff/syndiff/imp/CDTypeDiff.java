@@ -350,19 +350,21 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param srcType a type in the new CD
    * @param tgtType a type in the old CD
    */
-  // Function for adding to the list changedMembers all attributes
-  // which have been changed in the source class diagram
   public void addAllChangedMembers(ASTCDType srcType, ASTCDType tgtType) {
+    boolean changedMember = false;
     if (typeMatcher.isMatched(srcType, tgtType)) {
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
         for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
           CDMemberDiff diffMember = new CDMemberDiff(srcAttr, tgtAttr);
           if (diffMember.compareMember(srcAttr, tgtAttr) != null) {
             changedMembers.add(diffMember);
-            baseDiffs.add(DiffTypes.CHANGED_ATTRIBUTE);
+            changedMember = true;
           }
         }
       }
+    }
+    if (changedMember) {
+      baseDiffs.add(DiffTypes.CHANGED_ATTRIBUTE);
     }
   }
 
@@ -374,20 +376,24 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param tgtType a type in the old CD
    */
   public void addAllAddedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+    boolean addedAttribute = false;
     if (typeMatcher.isMatched(srcType, tgtType)) {
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
         boolean notFound = true;
         for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
           if (srcAttr.getName().equals(tgtAttr.getName())) {
             notFound = false;
+            addedAttribute = true;
             break;
           }
         }
         if (notFound) {
           addedAttributes.add(srcAttr);
-          baseDiffs.add(DiffTypes.ADDED_ATTRIBUTE);
         }
       }
+    }
+    if (addedAttribute) {
+      baseDiffs.add(DiffTypes.ADDED_ATTRIBUTE);
     }
   }
 
@@ -399,20 +405,24 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param tgtType a type in the old CD
    */
   public void addAllDeletedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+    boolean removedAttribute = false;
     if (typeMatcher.isMatched(srcType, tgtType)) {
       for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
         boolean notFound = true;
         for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
           if (srcAttr.getName().equals(tgtAttr.getName())) {
             notFound = false;
+            removedAttribute = true;
             break;
           }
         }
         if (notFound) {
           deletedAttributes.add(tgtAttr);
-          baseDiffs.add(DiffTypes.REMOVED_ATTRIBUTE);
         }
       }
+    }
+    if (removedAttribute) {
+      baseDiffs.add(DiffTypes.REMOVED_ATTRIBUTE);
     }
   }
 
@@ -424,18 +434,22 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param tgtEnum an enum in the old CD
    */
   public void addAllAddedConstants(ASTCDEnum srcEnum, ASTCDEnum tgtEnum) {
+    boolean addedConstant = false;
     for (ASTCDEnumConstant firstConstant : srcEnum.getCDEnumConstantList()) {
       boolean notFound = true;
       for (ASTCDEnumConstant secondConstant : tgtEnum.getCDEnumConstantList()) {
         if (firstConstant.getName().equals(secondConstant.getName())) {
           notFound = false;
+          addedConstant = true;
           break;
         }
       }
       if (notFound) {
         addedConstants.add(firstConstant);
-        baseDiffs.add(DiffTypes.ADDED_CONSTANTS);
       }
+    }
+    if (addedConstant) {
+      baseDiffs.add(DiffTypes.ADDED_CONSTANTS);
     }
   }
 
@@ -447,18 +461,22 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param tgtEnum an enum constant in the old CD
    */
   public void addAllDeletedConstants(ASTCDEnum srcEnum, ASTCDEnum tgtEnum) {
+    boolean deletedConstant = false;
     for (ASTCDEnumConstant firstConstant : tgtEnum.getCDEnumConstantList()) {
       boolean notFound = true;
       for (ASTCDEnumConstant secondConstant : srcEnum.getCDEnumConstantList()) {
         if (firstConstant.getName().equals(secondConstant.getName())) {
           notFound = false;
+          deletedConstant = true;
           break;
         }
       }
       if (notFound) {
         addedConstants.add(firstConstant);
-        baseDiffs.add(DiffTypes.REMOVED_CONSTANTS);
       }
+    }
+    if (deletedConstant) {
+      baseDiffs.add(DiffTypes.REMOVED_CONSTANTS);
     }
   }
 

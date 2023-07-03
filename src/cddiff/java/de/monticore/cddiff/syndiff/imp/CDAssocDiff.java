@@ -374,6 +374,7 @@ public class CDAssocDiff implements ICDAssocDiff {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_ROLE);
       }
 
+      // TODO
       if (!srcAssoc.getCDAssocDir().equals(tgtAssoc.getCDAssocDir())) {
         changedDirection = true;
       }

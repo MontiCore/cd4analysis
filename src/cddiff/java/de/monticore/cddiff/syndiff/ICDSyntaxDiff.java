@@ -46,9 +46,9 @@ public interface ICDSyntaxDiff {
 
   void setSrcCD(ASTCDCompilationUnit srcCD);
 
-  ASTCDCompilationUnit getTrgCD();
+  ASTCDCompilationUnit getTgtCD();
 
-  void setTrgCD(ASTCDCompilationUnit trgCD);
+  void setTgtCD(ASTCDCompilationUnit tgtCD);
 
   void setChangedClasses(List<CDTypeDiff> changedCLasses);
 
