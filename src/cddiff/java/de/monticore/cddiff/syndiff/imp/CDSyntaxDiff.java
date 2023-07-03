@@ -15,6 +15,7 @@ import de.monticore.cddiff.syndiff.CardinalityStruc;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -344,19 +345,22 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
         && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
         return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
-          && assoc1.getRight().getCDCardinality().equals(assoc2.getLeft().getCDCardinality());
+          //&& assoc1.getRight().getCDCardinality().equals(assoc2.getLeft().getCDCardinality())
+          && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getRight().getCDCardinality()), CDHelper.cardToEnum(assoc2.getLeft().getCDCardinality()));
       }
 
       if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight()
         && !assoc2.getCDAssocDir().isDefinitiveNavigableLeft()) {
         return matchRoleNames(assoc1.getLeft(), assoc2.getRight())
-          && assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality());
+          //&& assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality())
+          && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getLeft().getCDCardinality()), CDHelper.cardToEnum(assoc2.getRight().getCDCardinality()));
       }
 
       return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
         && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
         && assoc1.getRight().getCDCardinality().equals(assoc2.getLeft().getCDCardinality())
-        && assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality());
+        && assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality())
+        && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getLeft().getCDCardinality()), CDHelper.cardToEnum(assoc2.getRight().getCDCardinality()));
   }
 
   /**
@@ -427,112 +431,59 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return true;
   }
 
-  /**
-   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without
-   * attribute. Similar case for added ones.
-   *
-   * @param astcdEnum
-   *///not needed - if a class can't be inst with an enum, then the asstribute has been deleted
-  //we will get this info from CDTypeDiff with isDeleted
-  @Override
-  public List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum){
-    List<ASTCDClass> classesWithEnum = new ArrayList<>();
-    for (ASTCDClass classToCheck : getSrcCD().getCDDefinition().getCDClassesList()){
-      for (ASTCDAttribute attribute : classToCheck.getCDAttributeList()){
-        if (attribute.getMCType().printType().equals(astcdEnum.getName())){
-          classesWithEnum.add(classToCheck);
-        }
-      }
-    }
-    return classesWithEnum;
-  }
+//  /**
+//   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without
+//   * attribute. Similar case for added ones.
+//   *
+//   * @param astcdEnum
+//   *///not needed - if a class can't be inst with an enum, then the asstribute has been deleted
+//  //we will get this info from CDTypeDiff with isDeleted
+//  @Override
+//  public List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum){
+//    List<ASTCDClass> classesWithEnum = new ArrayList<>();
+//    for (ASTCDClass classToCheck : getSrcCD().getCDDefinition().getCDClassesList()){
+//      for (ASTCDAttribute attribute : classToCheck.getCDAttributeList()){
+//        if (attribute.getMCType().printType().equals(astcdEnum.getName())){
+//          classesWithEnum.add(classToCheck);
+//        }
+//      }
+//    }
+//    return classesWithEnum;
+//  }
 
-  //to be moved in CDTypeDiff with cd Parameter
-  @Override
-  public ASTCDType isClassNeeded(CDTypeDiff pair) {
-    //TODO: check
-    ASTCDClass srcCLass = (ASTCDClass) pair.getElem1();
-    if (!srcCLass.getModifier().isAbstract()){
-      return pair.getElem1();
-    }
-    else{
-      //do we check if assocs make sense - assoc to abstract class
-      Set<ASTCDClass> map = getSrcMap().keySet();
-      map.remove((ASTCDClass) pair.getElem1());
-      for (ASTCDClass astcdClass : map){
-        for (AssocStruct mapPair : getSrcMap().get(astcdClass)){//Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>>
-          if (Objects.equals(mapPair.getDirection(), AssocDirection.LeftToRight)
-            && CDHelper.getConnectedClasses(mapPair.getAssociation(), getSrcCD()).b.equals(pair.getElem1())
-            && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()){
-             //add to Diff List - class can be instantiated without the abstract class
-            return astcdClass;
-          } else if (Objects.equals(mapPair.getDirection(), AssocDirection.RightToLeft)
-            && CDHelper.getConnectedClasses(mapPair.getAssociation(), getSrcCD()).a.equals(pair.getElem1())
-            && mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
-            //add to Diff List - class can be instantiated without the abstract class
-            return astcdClass;
-          } else if (Objects.equals(mapPair.getDirection(), AssocDirection.BiDirectional)) {
-            if (Objects.equals(mapPair.getSide(), ClassSide.Left)
-              && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()){
-              //add to Diff List - class can be instantiated without the abstract class
-              return astcdClass;
-            } else if (mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
-              //add to Diff List - class can be instantiated without the abstract class
-              return astcdClass;
-            }
-          }
-        }
-      }
-    }
-    //not implemented
-    return null;
-  }
-
-  @Override
-  public ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations() {
-    // need to add all superAssocs(CDAssocHelper?)
-    ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> map = ArrayListMultimap.create();
-    for (ASTCDAssociation astcdAssociation : getSrcCD().getCDDefinition().getCDAssociationsList()) {
-      map.put(astcdAssociation, null);
-      for (ASTCDAssociation astcdAssociation1 :
-          getSrcCD().getCDDefinition().getCDAssociationsList()) {
-        if (!astcdAssociation.equals(astcdAssociation1)
-            && matchRoleNames(astcdAssociation.getLeft(), astcdAssociation1.getLeft())
-            && matchRoleNames(astcdAssociation.getRight(), astcdAssociation1.getRight())
-            && getSrcCD()
-                .getEnclosingScope()
-                .resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName())
-                .equals(
-                    getSrcCD()
-                        .getEnclosingScope()
-                        .resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))
-            && getSrcCD()
-                .getEnclosingScope()
-                .resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName())
-                .equals(
-                    getSrcCD()
-                        .getEnclosingScope()
-                        .resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))) {
-          map.put(astcdAssociation, astcdAssociation1);
-          // assocs1 needs to be deleted if not from superclass
-          // Can I change the ASTCdCompilationUnit?
-        }
-      }
-    }
-    return map;
-  }
-
-  private static AssocCardinality cardToEnum(ASTCDCardinality cardinality){
-    if (cardinality.isOne()) {
-      return AssocCardinality.One;
-    } else if (cardinality.isOpt()) {
-      return AssocCardinality.Optional;
-    } else if (cardinality.isAtLeastOne()) {
-      return AssocCardinality.AtLeastOne;
-    } else {
-      return AssocCardinality.Multiple;
-    }
-  }
+//  @Override
+//  public ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations() {
+//    // need to add all superAssocs(CDAssocHelper?)
+//    ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> map = ArrayListMultimap.create();
+//    for (ASTCDAssociation astcdAssociation : getSrcCD().getCDDefinition().getCDAssociationsList()) {
+//      map.put(astcdAssociation, null);
+//      for (ASTCDAssociation astcdAssociation1 :
+//          getSrcCD().getCDDefinition().getCDAssociationsList()) {
+//        if (!astcdAssociation.equals(astcdAssociation1)
+//            && matchRoleNames(astcdAssociation.getLeft(), astcdAssociation1.getLeft())
+//            && matchRoleNames(astcdAssociation.getRight(), astcdAssociation1.getRight())
+//            && getSrcCD()
+//                .getEnclosingScope()
+//                .resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName())
+//                .equals(
+//                    getSrcCD()
+//                        .getEnclosingScope()
+//                        .resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))
+//            && getSrcCD()
+//                .getEnclosingScope()
+//                .resolveDiagramDown(astcdAssociation.getLeftQualifiedName().getQName())
+//                .equals(
+//                    getSrcCD()
+//                        .getEnclosingScope()
+//                        .resolveDiagramDown(astcdAssociation1.getLeftQualifiedName().getQName()))) {
+//          map.put(astcdAssociation, astcdAssociation1);
+//          // assocs1 needs to be deleted if not from superclass
+//          // Can I change the ASTCdCompilationUnit?
+//        }
+//      }
+//    }
+//    return map;
+//  }
 
   /**
    * Given the following two cardinalities, find their intersection
@@ -765,16 +716,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @param typeDiff pair of new and old type
    * @return list of changes with information about it
    */
-  public List<Object> findTypeDiff(CDTypeDiff typeDiff){
+  public List<Pair<ASTCDClass, Object>> findTypeDiff(CDTypeDiff typeDiff){
     //TODO: find a better return type
-    List<Object> list = new ArrayList<>();
+    List<Pair<ASTCDClass, Object>> list = new ArrayList<>();
     for (DiffTypes types : typeDiff.getBaseDiffs()){
       switch (types){
-        case CHANGED_ATTRIBUTE: if (typeDiff.changedAttribute(getSrcCD()) != null){ list.addAll(typeDiff.changedAttribute(getSrcCD())); }
-        case STEREOTYPE_DIFFERENCE: if (isClassNeeded(typeDiff) != null){ list.add(isClassNeeded(typeDiff)); }
-        case REMOVED_ATTRIBUTE: list.addAll(typeDiff.deletedAttributes(getSrcCD()));
-        case ADDED_ATTRIBUTE: list.addAll(typeDiff.addedAttributes(getSrcCD()));
-        case ADDED_CONSTANTS: list.add(typeDiff.newConstants());
+        case CHANGED_ATTRIBUTE: if (typeDiff.changedAttribute(getSrcCD()) != null){ for (Pair<ASTCDClass, ASTCDAttribute> pair : typeDiff.changedAttribute(getSrcCD())){list.add(new Pair<>(pair.a, pair.b));} }
+        case STEREOTYPE_DIFFERENCE: if (typeDiff.isClassNeeded(this) != null){ list.add(new Pair<>((ASTCDClass) typeDiff.isClassNeeded(this), null)); }
+        case REMOVED_ATTRIBUTE: for (Pair<ASTCDClass, ASTCDAttribute> pair : typeDiff.deletedAttributes(getSrcCD())){list.add(new Pair<>(pair.a, pair.b));}
+        case ADDED_ATTRIBUTE: for (Pair<ASTCDClass, ASTCDAttribute> pair : typeDiff.addedAttributes(getSrcCD())){list.add(new Pair<>(pair.a, pair.b));}
+        case ADDED_CONSTANTS: for (Pair<ASTCDClass, ASTCDEnumConstant> pair : typeDiff.newConstants()){list.add(new Pair<>(pair.a, pair.b));}
         //other cases?
       }
     }
@@ -787,15 +738,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @param assocDiff pair od new and old association
    * @return list of changes with information about it
    */
-  public List<Object> findAssocDiff(CDAssocDiff assocDiff){
+  public List<Pair<ASTCDAssociation, Object>> findAssocDiff(CDAssocDiff assocDiff){
     //TODO: find a better return type
-    List<Object> list = new ArrayList<>();
+    //with this I can use instanceOf when creating the info for the ODs
+    List<Pair<ASTCDAssociation, Object>> list = new ArrayList<>();
     for (DiffTypes types : assocDiff.getBaseDiff()){
       switch (types){
-        case CHANGED_ASSOCIATION_MULTIPLICITY: list.addAll(assocDiff.getCardDiff());
+        case CHANGED_ASSOCIATION_MULTIPLICITY: for (Pair<ASTCDAssociation, Pair<ClassSide, Integer>> pair : assocDiff.getCardDiff()){list.add(new Pair<>(pair.a, pair.b));}
         case CHANGED_ASSOCIATION_DIRECTION: list.add(new Pair<>(assocDiff.getElem1(), assocDiff.getDirection(assocDiff.getElem1())));
-        case CHANGED_ASSOCIATION_ROLE: list.addAll(assocDiff.getRoleDiff());
-        case CHANGED_TARGET: list.add(assocDiff.getChangedTgtClass(getSrcCD()));
+        case CHANGED_ASSOCIATION_ROLE: for (Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>> pair : assocDiff.getRoleDiff()){list.add(new Pair<>(pair.a, pair.b));}
+        case CHANGED_TARGET: list.add(new Pair<>(assocDiff.getElem1(), assocDiff.getChangedTgtClass(getSrcCD())));
           //other cases?
       }
     }
@@ -848,7 +800,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return objectSet;
   }
 
-  public void overlappingAssocs(){
+  @Override
+  public void findOverlappingAssocs(){
     //In each map we have for each class all associations that need to be considered (not only direct)
     //Each direct association we can compare to each superAssociation - I can add an attribute isSuperAssoc in AssocStruct so that it can be more efficient
     //We determine the case
@@ -868,8 +821,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 //associations need to be merged
                 ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
                 CardinalityStruc cardinalities = getCardinalities(association, superAssoc);
-                AssocCardinality cardinalityLeft = intersectCardinalities(cardToEnum(cardinalities.getLeftCardinalities().a), cardToEnum(cardinalities.getLeftCardinalities().b));
-                AssocCardinality cardinalityRight = intersectCardinalities(cardToEnum(cardinalities.getRightCardinalities().a), cardToEnum(cardinalities.getRightCardinalities().b));
+                AssocCardinality cardinalityLeft = intersectCardinalities(CDHelper.cardToEnum(cardinalities.getLeftCardinalities().a), CDHelper.cardToEnum(cardinalities.getLeftCardinalities().b));
+                AssocCardinality cardinalityRight = intersectCardinalities(CDHelper.cardToEnum(cardinalities.getRightCardinalities().a), CDHelper.cardToEnum(cardinalities.getRightCardinalities().b));
                 association.getAssociation().setCDAssocDir(direction);
                 association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityLeft)));
                 association.getAssociation().getRight().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityRight)));
@@ -895,8 +848,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 || sameAssociationInReverse(association.getAssociation(), superAssoc.getAssociation())){
                 ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
                 CardinalityStruc cardinalities = getCardinalities(association, superAssoc);
-                AssocCardinality cardinalityLeft = intersectCardinalities(cardToEnum(cardinalities.getLeftCardinalities().a), cardToEnum(cardinalities.getLeftCardinalities().b));
-                AssocCardinality cardinalityRight = intersectCardinalities(cardToEnum(cardinalities.getRightCardinalities().a), cardToEnum(cardinalities.getRightCardinalities().b));
+                AssocCardinality cardinalityLeft = intersectCardinalities(CDHelper.cardToEnum(cardinalities.getLeftCardinalities().a), CDHelper.cardToEnum(cardinalities.getLeftCardinalities().b));
+                AssocCardinality cardinalityRight = intersectCardinalities(CDHelper.cardToEnum(cardinalities.getRightCardinalities().a), CDHelper.cardToEnum(cardinalities.getRightCardinalities().b));
                 association.getAssociation().setCDAssocDir(direction);
                 association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityLeft)));
                 association.getAssociation().getRight().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityRight)));
@@ -981,27 +934,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
 
     return null;
-  }
-
-  /**
-   * Check if the first cardinality is contained in the second cardinality
-   * @param cardinality1 first cardinality
-   * @param cardinality2 second cardinality
-   * @return true if first cardinality is contained in the second one
-   */
-  //TODO: replace in all statements, where cardinalities are compared
-  public boolean isContainedIn(AssocCardinality cardinality1, AssocCardinality cardinality2){
-    if (cardinality1.equals(AssocCardinality.One)
-      || cardinality2.equals(AssocCardinality.Multiple)){
-      return true;
-    } else if (cardinality1.equals(AssocCardinality.Optional)){
-      return !cardinality2.equals(AssocCardinality.One)
-        && !cardinality2.equals(AssocCardinality.AtLeastOne);
-    } else if (cardinality1.equals(AssocCardinality.AtLeastOne)){
-      return cardinality2.equals(AssocCardinality.AtLeastOne);
-    } else{
-      return false;
-    }
   }
 
   public boolean inInheritanceRelation(AssocStruct association, AssocStruct superAssociation){

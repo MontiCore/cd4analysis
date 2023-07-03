@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
-import static de.monticore.cddiff.syndiff.imp.CDHelper.getConnectedClasses;
+import static de.monticore.cddiff.syndiff.imp.CDHelper.*;
 
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation elem1;
@@ -189,17 +189,17 @@ public class CDAssocDiff implements ICDAssocDiff {
     if (getElem1().getLeftQualifiedName().getQName().equals(getElem1().getLeftQualifiedName().getQName())
       && getElem1().getRightQualifiedName().getQName().equals(getElem2().getRightQualifiedName().getQName())){
       //assoc not reversed
-      if (!getElem1().getLeft().getCDCardinality().equals(getElem2().getLeft().getCDCardinality())){
+      if (!isContainedIn(cardToEnum(getElem1().getLeft().getCDCardinality()), cardToEnum(getElem2().getLeft().getCDCardinality()))){
         list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getElem1().getLeft().getCDCardinality()), getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
       }
-      if (!getElem1().getRight().getCDCardinality().equals(getElem2().getRight().getCDCardinality())){
+      if (!isContainedIn(cardToEnum(getElem1().getRight().getCDCardinality()), cardToEnum(getElem2().getRight().getCDCardinality()))){
         list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getElem1().getRight().getCDCardinality()), getTypeOfCard(getElem2().getRight().getCDCardinality())))));
       }
     } else {
-      if (!getElem1().getLeft().getCDCardinality().equals(getElem2().getRight().getCDCardinality())){
+      if (!isContainedIn(cardToEnum(getElem1().getLeft().getCDCardinality()), cardToEnum(getElem2().getRight().getCDCardinality()))){
         list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getElem1().getLeft().getCDCardinality()), getTypeOfCard(getElem2().getRight().getCDCardinality())))));
       }
-      if (!getElem1().getRight().getCDCardinality().equals(getElem2().getLeft().getCDCardinality())){
+      if (!isContainedIn(cardToEnum(getElem1().getRight().getCDCardinality()), cardToEnum(getElem2().getLeft().getCDCardinality()))){
         list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getElem1().getRight().getCDCardinality()), getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
       }
     }

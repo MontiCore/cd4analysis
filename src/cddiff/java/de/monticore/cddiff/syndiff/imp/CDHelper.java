@@ -2,6 +2,7 @@ package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -53,5 +54,38 @@ public class CDHelper {
       }
     }
     return superClasses;
+  }
+
+    /**
+     * Check if the first cardinality is contained in the second cardinality
+     * @param cardinality1 first cardinality
+     * @param cardinality2 second cardinality
+     * @return true if first cardinality is contained in the second one
+     */
+    //TODO: replace in all statements, where cardinalities are compared
+    public static boolean isContainedIn(AssocCardinality cardinality1, AssocCardinality cardinality2){
+      if (cardinality1.equals(AssocCardinality.One)
+        || cardinality2.equals(AssocCardinality.Multiple)){
+        return true;
+      } else if (cardinality1.equals(AssocCardinality.Optional)){
+        return !cardinality2.equals(AssocCardinality.One)
+          && !cardinality2.equals(AssocCardinality.AtLeastOne);
+      } else if (cardinality1.equals(AssocCardinality.AtLeastOne)){
+        return cardinality2.equals(AssocCardinality.AtLeastOne);
+      } else{
+        return false;
+      }
+    }
+
+  static AssocCardinality cardToEnum(ASTCDCardinality cardinality){
+    if (cardinality.isOne()) {
+      return AssocCardinality.One;
+    } else if (cardinality.isOpt()) {
+      return AssocCardinality.Optional;
+    } else if (cardinality.isAtLeastOne()) {
+      return AssocCardinality.AtLeastOne;
+    } else {
+      return AssocCardinality.Multiple;
+    }
   }
 }

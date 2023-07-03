@@ -3,15 +3,13 @@ package de.monticore.cddiff.syndiff.imp;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
@@ -27,7 +25,7 @@ public class CDTypeDiff implements ICDTypeDiff {
   private List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> matchedConstants;
   private List<DiffTypes> baseDiffs;
 
-  protected CDTypeDiff(ASTCDType elem1, ASTCDType elem2) {
+  public CDTypeDiff(ASTCDType elem1, ASTCDType elem2) {
     this.elem1 = elem1;
     this.elem2 = elem2;
   }
@@ -230,6 +228,7 @@ public class CDTypeDiff implements ICDTypeDiff {
    * Get all added constants to an enum
    * @return list of added constants
    */
+  //TODO: get the attribute that uses this Enum
   @Override
   public List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants(){
     List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();
@@ -305,5 +304,45 @@ public class CDTypeDiff implements ICDTypeDiff {
       }
     }
     return classList;
+  }
+
+  @Override
+  public ASTCDType isClassNeeded(CDSyntaxDiff cdSyntaxDiff) {
+    //TODO: check
+    ASTCDClass srcCLass = (ASTCDClass) getElem1();
+    if (!srcCLass.getModifier().isAbstract()){
+      return getElem1();
+    }
+    else{
+      //do we check if assocs make sense - assoc to abstract class
+      Set<ASTCDClass> map = cdSyntaxDiff.getSrcMap().keySet();
+      map.remove((ASTCDClass) getElem1());
+      for (ASTCDClass astcdClass : map){
+        for (AssocStruct mapPair : cdSyntaxDiff.getSrcMap().get(astcdClass)){//Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>>
+          if (Objects.equals(mapPair.getDirection(), AssocDirection.LeftToRight)
+            && CDHelper.getConnectedClasses(mapPair.getAssociation(), cdSyntaxDiff.getSrcCD()).b.equals(getElem1())
+            && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()){
+            //add to Diff List - class can be instantiated without the abstract class
+            return astcdClass;
+          } else if (Objects.equals(mapPair.getDirection(), AssocDirection.RightToLeft)
+            && CDHelper.getConnectedClasses(mapPair.getAssociation(), cdSyntaxDiff.getSrcCD()).a.equals(getElem1())
+            && mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
+            //add to Diff List - class can be instantiated without the abstract class
+            return astcdClass;
+          } else if (Objects.equals(mapPair.getDirection(), AssocDirection.BiDirectional)) {
+            if (Objects.equals(mapPair.getSide(), ClassSide.Left)
+              && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()){
+              //add to Diff List - class can be instantiated without the abstract class
+              return astcdClass;
+            } else if (mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
+              //add to Diff List - class can be instantiated without the abstract class
+              return astcdClass;
+            }
+          }
+        }
+      }
+    }
+    //not implemented
+    return null;
   }
 }

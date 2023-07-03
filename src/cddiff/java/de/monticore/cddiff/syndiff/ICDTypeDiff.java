@@ -110,4 +110,14 @@ public interface ICDTypeDiff {
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
   List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit);
+
+  /**
+   * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:
+   * semantic difference - class can be instantiated. From non-abstract to abstract: possible
+   * semantic difference - another class uses this abstract class.
+   *
+   * @return true if we have a semantic difference. This function kind of uses multiple others:
+   * inheritance hierarchy, comparison of associations.
+   */
+  ASTCDType isClassNeeded(CDSyntaxDiff cdSyntaxDiff);
 }
