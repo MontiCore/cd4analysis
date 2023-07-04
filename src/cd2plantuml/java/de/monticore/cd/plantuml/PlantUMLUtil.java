@@ -78,7 +78,7 @@ public class PlantUMLUtil {
 
     final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
 
-    final String plantUMLString = printCD2PlantUML(cdString, plantUMLConfig);
+    final String plantUMLString = toPlantUmlModelString(cdString, plantUMLConfig);
     final SourceStringReader reader = new SourceStringReader(plantUMLString);
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
     // Write the first image to "os"
@@ -97,7 +97,7 @@ public class PlantUMLUtil {
     Path outputPath,
     PlantUMLConfig plantUMLConfig)
     throws IOException {
-    final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
+    final String plantUMLString = toPlantUmlModelString(astCD, plantUMLConfig);
 
     try (PrintWriter out = new PrintWriter(outputPath.toString())) {
       out.println(plantUMLString);
@@ -110,7 +110,7 @@ public class PlantUMLUtil {
     String pathCD, Path outputPath, PlantUMLConfig plantUMLConfig) throws IOException {
     final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
 
-    final String plantUMLString = printCD2PlantUML(cdString, plantUMLConfig);
+    final String plantUMLString = toPlantUmlModelString(cdString, plantUMLConfig);
 
     try (PrintWriter out = new PrintWriter(outputPath.toString())) {
       out.println(plantUMLString);
@@ -135,7 +135,7 @@ public class PlantUMLUtil {
 
     try {
       Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
-      return printCD2PlantUML(astCD, config);
+      return toPlantUmlModelString(astCD, config);
     } catch (IOException e) {
       Log.error("Cannot display CD since it contains errors!");
     }
