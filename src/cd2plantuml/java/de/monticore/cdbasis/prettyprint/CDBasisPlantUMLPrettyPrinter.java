@@ -12,9 +12,10 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-    implements CDBasisVisitor2, CDBasisHandler {
+  implements CDBasisVisitor2, CDBasisHandler {
 
   protected CDBasisTraverser traverser;
+  private String visualization;
 
   public CDBasisPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -22,6 +23,19 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   public CDBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
+    visualization = "<style>\n" +
+      "\tclassDiagram {\n" +
+      "\t\tclass {\n" +
+      "\t\t\tBackgroundColor White\n" +
+      "\t\t\tRoundCorner 0\n" +
+      "\t  }\n" +
+      "\t  legend {\n" +
+      "      BackgroundColor White\n" +
+      "      RoundCorner 0\n" +
+      "    }\n" +
+      "</style>\n" +
+      "hide circle\n" +
+      "hide empty members\n";
   }
 
   @Override
@@ -46,6 +60,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void visit(ASTCDDefinition node) {
     printComment(node, node.getName());
     println("@startuml");
+    println(visualization);
     indent();
     if (getPlantUMLConfig().getOrtho()) {
       println("skinparam linetype ortho");
@@ -58,13 +73,8 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     }
 
     println("skinparam classAttributeIconSize 0");
-
-    println("skinparam legend {");
-    indent();
-    println("BorderColor black");
-    println("BackGroundColor white");
     unindent();
-    println("}");
+
   }
 
   @Override
@@ -139,6 +149,9 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     printComment(node);
 
+    /*if (node.getModifier().isStatic() || node.getModifier().isAbstract()) {
+      node.getModifier().accept(getTraverser());
+    }*/
     print("class " + node.getName());
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");
@@ -148,7 +161,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     }
     if (node.isPresentCDInterfaceUsage()) {
       print(" implements ");
-      print(node.getSuperclassList().stream()
+      print(node.getInterfaceList().stream()
         .map(s -> s.printType())
         .collect(Collectors.joining(", ")));
 

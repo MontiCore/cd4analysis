@@ -18,9 +18,7 @@ classdiagram ClassTypes {
 
   }
 
-  private class Privat {
 
-  }
 
   public class Public {
 

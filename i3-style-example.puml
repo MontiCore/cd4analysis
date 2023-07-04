@@ -4,10 +4,15 @@
 		class {
 			BackgroundColor White
 			RoundCorner 0
-		}
-	}
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
 </style>
 hide circle
+hide empty members
+
 
 class Customer {
 	name

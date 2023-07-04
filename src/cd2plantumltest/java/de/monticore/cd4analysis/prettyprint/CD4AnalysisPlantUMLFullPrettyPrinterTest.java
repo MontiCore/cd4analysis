@@ -33,6 +33,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     plantUMLConfig = new PlantUMLConfig(true, true, true, true, true);
 
+
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
     p = new CD4AnalysisParser();
@@ -47,25 +48,26 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
    */
   @ParameterizedTest
   @ValueSource(strings =
-    {/*"AllModifiers",
-      "Attributes",*/
+    {"AllModifiers",
+      "Attributes",
       "BasicAssociations",
-      /*"ClassTypes",
+      "ClassTypes",
       "Compositions",
       "Enums",
       "Extensions",
       "FullExample",
-      //"Methods",*/
+      //"Methods",
       "NamedAssociations",
-      //"Packages",
+      "Packages",
       "QuantifiedAssociations",
       "QuantifiedNamedAssociations"
     })
   public void completeModel(String input) throws IOException {
     //String input = "FullExample";
+
     String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
 
@@ -82,30 +84,67 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, outputPath, plantUMLConfig);
     String output = printer.prettyprint(node);
-    System.out.println(output);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    //String output = Files.readString(Paths.get(outputPath));
+    //output = output.substring(output.indexOf('\n')+1).split("\r?\nPlantUML version")[0].replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n"+output);
 
     String expected = Files.readString(expectedPath, Charset.defaultCharset());
-    // assert(output.equals(content));
-    System.out.println(expected);
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected:\n"+expected);
 
     Assert.assertEquals(output, expected);
   }
 
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      //"Methods",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void ModelWithOptionsFalse(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(false, false, false, false, false);
 
-  // @Test
- /* public void completeModel() throws IOException {
+    //String input = "FullExample";
+    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-      p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/Simple.cd"));
+      p.parseCDCompilationUnit(filePath);
 
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    new CD4AnalysisAfterParseTrafo().transform(node);
-    String output = printer.prettyprint(node);
 
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
-      p.parse_StringCDCompilationUnit(output);
-    checkNullAndPresence(p, astcdCompilationUnitReParsed);
-  }*/
+    tool.createSymbolTable(node);
+
+    PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, outputPath, plantUMLConfig);
+   // String output = printer.prettyprint(node);
+    String output = Files.readString(Paths.get(outputPath));
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(output, expected);
+  }
+
 
 }
