@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
   protected PlantUMLConfig plantUMLConfig;
   protected Stack<String> nameStack;
-  protected AtomicBoolean immediatelyPrintAssociations = new AtomicBoolean(false);
+  protected AtomicBoolean immediatelyPrintAssociations = new AtomicBoolean(true);
   protected final Set<ASTCDAssociation> associations;
 
   public PlantUMLPrettyPrintUtil() {

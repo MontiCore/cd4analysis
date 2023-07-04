@@ -1,67 +1,81 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="749px" preserveAspectRatio="none" style="width:330px;height:749px;background:#000000;" version="1.1" viewBox="0 0 330 749" width="330px" zoomAndPan="magnify"><defs/><g><rect fill="#0B0C16" height="1" style="stroke: #0B0C16; stroke-width: 1.0;" width="1" x="0" y="0"/><text fill="#33FF02" font-family="sans-serif" font-size="12" font-style="italic" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="114" x="5" y="17">PlantUML 1.2020.15</text><text fill="#33FF02" font-family="sans-serif" font-size="12" font-style="italic" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="323" x="5" y="32.0938">This version of PlantUML is 1094 days old, so you should</text><text fill="#33FF02" font-family="sans-serif" font-size="12" font-style="italic" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="317" x="11" y="47.1875">consider upgrading from https://plantuml.com/download</text><rect fill="#33FF02" height="22.6094" style="stroke: #33FF02; stroke-width: 1.0;" width="308" x="5" y="58.2813"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="155" x="6" y="73.2813">[From string (line 36) ]</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="94.8906"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="71" x="5" y="112.5">@startuml</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="244" x="13" y="130.1094">skinparam classAttributeIconSize 0</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="134" x="13" y="147.7188">skinparam legend {</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="128" x="21" y="165.3281">BorderColor black</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="167" x="21" y="182.9375">BackGroundColor white</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="5" x="13" y="200.5469">}</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="113" x="13" y="218.1563">legend top right</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="113" x="21" y="235.7656">.FullExample CD</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="80" x="13" y="253.375">end legend</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="99" x="13" y="270.9844">class Person {</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="176" x="21" y="288.5938">{field} public String name</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="166" x="21" y="306.2031">{field} protected int age</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="127" x="21" y="323.8125">{field} final long id</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="227" x="21" y="341.4219">{field} readonly String birthplace</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="292" x="21" y="359.0313">{field} protected derived boolean married</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="198" x="21" y="376.6406">{field} List&lt;Person&gt; children</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="212" x="21" y="394.25">{field} derived Person parent1</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="212" x="21" y="411.8594">{field} derived Person parent2</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="197" x="21" y="429.4688">{field} java.util.Date birthday</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="204" x="21" y="447.0781">{field} HappinessLevel happy</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="242" x="21" y="464.6875">{field} private double bankBalance</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="5" x="13" y="482.2969">}</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="499.9063"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="107" x="13" y="517.5156">class Address {</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="171" x="21" y="535.125">{field} String streetname</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="163" x="21" y="552.7344">{field} int streetnumber</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="145" x="21" y="570.3438">{field} int postalcode</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="144" x="21" y="587.9531">{field} String country</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="5" x="13" y="605.5625">}</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="623.1719"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="103" x="13" y="640.7813">interface Pair {</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="157" x="21" y="658.3906">{field} Person person1</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="157" x="21" y="676">{field} Person person2</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="5" x="13" y="693.6094">}</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="711.2188"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="188" x="13" y="728.8281">class Couple implements  {</text><text fill="#FF0000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="95" x="9" y="746.4375">Syntax Error?</text><!--MD5=[09c017aa852ced06c4d7ec043e4335c0]
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="279px" preserveAspectRatio="none" style="width:265px;height:279px;background:#000000;" version="1.1" viewBox="0 0 265 279" width="265px" zoomAndPan="magnify"><defs/><g><rect fill="#DDDDDD" height="27.6094" rx="5" ry="5" style="stroke: #000000; stroke-width: 1.0;" width="116" x="143" y="8"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="104" x="149" y="27.5332">.FullExample CD</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="140" x="5" y="63.6094">Dot Executable: null</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="173" x="5" y="81.2188">No dot executable found</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="258" x="5" y="98.8281">Cannot find Graphviz. You should try</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="116.4375"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="71" x="5" y="134.0469">@startuml</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="50" x="5" y="151.6563">testdot</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="66" x="5" y="169.2656">@enduml</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="186.875"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="15" x="9" y="204.4844">or</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="222.0938"/><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="201" x="5" y="239.7031">java -jar plantuml.jar -testdot</text><text fill="#33FF02" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="9" y="257.3125"/><text fill="#888888" font-family="sans-serif" font-size="10" lengthAdjust="spacingAndGlyphs" textLength="200" x="34" y="276.3027">generated with MontiCore using PlantUML</text><!--MD5=[02883929d372589401c6d2f4f2919f51]
 @startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+
   skinparam classAttributeIconSize 0
-  skinparam legend {
-    BorderColor black
-    BackGroundColor white
-  }
-  legend top right
-    .FullExample CD
-  end legend
-  class Person {
-    {field} public String name
-    {field} protected int age
-    {field} final long id
-    {field} readonly String birthplace
-    {field} protected derived boolean married
-    {field} List<Person> children
-    {field} derived Person parent1
-    {field} derived Person parent2
-    {field} java.util.Date birthday
-    {field} HappinessLevel happy
-    {field} private double bankBalance
-  }
+legend top right
+  .FullExample CD
+end legend
+class Person {
+  {field} public String name
+  {field} protected int age
+  {field} final long id
+  {field} readonly String birthplace
+  {field} protected derived boolean married
+  {field} List<Person> children
+  {field} derived Person parent1
+  {field} derived Person parent2
+  {field} java.util.Date birthday
+  {field} HappinessLevel happy
+  {field} private double bankBalance
+}
 
-  class Address {
-    {field} String streetname
-    {field} int streetnumber
-    {field} int postalcode
-    {field} String country
-  }
+class Address {
+  {field} String streetname
+  {field} int streetnumber
+  {field} int postalcode
+  {field} String country
+}
 
-  interface Pair {
-    {field} Person person1
-    {field} Person person2
-  }
+interface Pair {
+  {field} Person person1
+  {field} Person person2
+}
 
-  class Couple implements  {
-    {field} boolean married
-  }
+class Couple implements Pair {
+  {field} boolean married
+}
 
-  class Child extends Person
+class Child extends Person
 
-  enum HappinessLevel {
-    NONEXISTENT
-    LOW
-    MEDIUM
-    HIGH
-    EXTREM
-  }
+enum HappinessLevel {
+  NONEXISTENT
+  LOW
+  MEDIUM
+  HIGH
+  EXTREM
+}
 
-  class Birthcertificate {
-    {field} java.util.Date birthday
-    {field} final String ausstellungsdatum
-  }
+class Birthcertificate {
+  {field} java.util.Date birthday
+  {field} final String ausstellungsdatum
+}
 
-  class Hospital {
-    {field} String name
-  }
+class Hospital {
+  {field} String name
+}
 
+Person "*" *- -* "1" Address : address
 
+Hospital - -* "1..*" Person : hires
 
+Person - -* "1" Hospital : worksAt
 
+Hospital - -* "1" Address
 
-  center footer generated with MontiCore using PlantUML
+center footer generated with MontiCore using PlantUML
 @enduml
 
 PlantUML version 1.2020.15(Sun Jun 28 13:39:45 CEST 2020)

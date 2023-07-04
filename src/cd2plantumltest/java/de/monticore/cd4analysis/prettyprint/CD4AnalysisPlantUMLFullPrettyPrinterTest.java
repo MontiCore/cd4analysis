@@ -56,17 +56,17 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
    */
   @ParameterizedTest
   @ValueSource(strings =
-    {/*"AllModifiers",
-      "Attributes",*/
+    {"AllModifiers",
+      "Attributes",
       "BasicAssociations",
-      /*"ClassTypes",
+      "ClassTypes",
       "Compositions",
       "Enums",
       "Extensions",
       "FullExample",
-      //"Methods",*/
+      //"Methods",
       "NamedAssociations",
-      //"Packages",
+      "Packages",
       "QuantifiedAssociations",
       "QuantifiedNamedAssociations"
     })
@@ -91,11 +91,12 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, outputPath, plantUMLConfig);
     String output = printer.prettyprint(node);
-    System.out.println(output);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
 
     String expected = Files.readString(expectedPath, Charset.defaultCharset());
-    // assert(output.equals(content));
-    System.out.println(expected);
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
 
     Assert.assertEquals(output, expected);
   }
