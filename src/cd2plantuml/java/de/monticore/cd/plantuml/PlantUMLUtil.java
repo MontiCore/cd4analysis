@@ -120,13 +120,11 @@ public class PlantUMLUtil {
   protected static String toPlantUmlModelString(
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
     PlantUMLConfig config) {
-    final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil =
-      new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
-    CD4CodePlantUMLFullPrettyPrinter cdVisitor =
-      new CD4CodePlantUMLFullPrettyPrinter(plantUMLPrettyPrintUtil);
+    final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
+    CD4CodePlantUMLFullPrettyPrinter prettyPrinter = new CD4CodePlantUMLFullPrettyPrinter(plantUMLPrettyPrintUtil);
     if (astCD.isPresent()) {
-      plantUMLPrettyPrintUtil.getPrinter().print(cdVisitor.prettyprint(astCD.get()));
-      return plantUMLPrettyPrintUtil.getPrinter().getContent();
+      prettyPrinter.prettyprint(astCD.get());
+      return prettyPrinter.getPrinter().getContent();
     }
 
     return PLANTUML_EMPTY;
