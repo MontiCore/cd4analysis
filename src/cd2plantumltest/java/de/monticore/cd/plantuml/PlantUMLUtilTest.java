@@ -49,4 +49,32 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
       fail(ex.getMessage());
     }
   }
+
+  @Test
+  public void testWriteCdToPlantUmlSvg() {
+    String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
+    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath().toString(), "FullExample.svg");
+    PlantUMLConfig config = new PlantUMLConfig();
+
+    try {
+      PlantUMLUtil.writeCdToPlantUmlSvg(pathCD, outputPath, config);
+    } catch (IOException ex) {
+      fail(ex.getMessage());
+    }
+
+    assertTrue(outputPath.toFile().exists());
+
+    try {
+      File file = new File(outputPath.toUri());
+      // Read and strip empty lines
+      String puml = FileUtils.readFileToString(file, "UTF-8").replaceAll("(?m)^[ \t]*\r?\n", "");
+      assertNotNull(puml);
+      assertNotEquals("", puml);
+      assertEquals(0, StringUtils.countMatches(puml, "Syntax Error"));
+      assertEquals(0, StringUtils.countMatches(puml, "Cannot find Graphviz"));
+    } catch (IOException ex) {
+      fail(ex.getMessage());
+    }
+
+  }
 }
