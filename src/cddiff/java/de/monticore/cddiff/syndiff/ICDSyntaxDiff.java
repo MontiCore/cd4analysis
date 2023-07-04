@@ -89,14 +89,6 @@ public interface ICDSyntaxDiff {
   boolean isSuperclass(ASTCDClass astcdClass);
 
   /**
-   * Get the whole inheritance hierarchy that @param astcdClass. is part of - all direct and
-   * indirect superclasses.
-   *
-   * @return a list of the superclasses.
-   */
-  List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass);
-
-  /**
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
    *
    * @return true if we have a case where we can instantiate a class without instantiating another.
@@ -108,7 +100,7 @@ public interface ICDSyntaxDiff {
    *
    * @return true if a class instantiate another one by @param association.
    */
-  boolean isAlwaysNeededAssoc(ASTCDAssociation astcdAssociation);
+  boolean isAddedAssoc(ASTCDAssociation astcdAssociation);
 
 //  /**
 //   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without

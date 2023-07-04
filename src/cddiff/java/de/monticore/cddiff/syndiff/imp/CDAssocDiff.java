@@ -24,6 +24,7 @@ import static de.monticore.cddiff.syndiff.imp.CDHelper.*;
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation elem1;
   private final ASTCDAssociation elem2;
+  private boolean isReversed;
   private List<DiffTypes> baseDiff;
 
   @Override
@@ -46,16 +47,25 @@ public class CDAssocDiff implements ICDAssocDiff {
     this.baseDiff = baseDiff;
   }
 
-  protected CDAssocDiff(ASTCDAssociation elem1, ASTCDAssociation elem2) {
+  protected CDAssocDiff(ASTCDAssociation elem1, ASTCDAssociation elem2, boolean isReversed) {
     this.elem1 = elem1;
     this.elem2 = elem2;
+    this.isReversed = isReversed;
+  }
+
+  public boolean isReversed() {
+    return isReversed;
+  }
+
+  public void setReversed(boolean reversed) {
+    isReversed = reversed;
   }
 
   @Override
   public String roleDiff() {
     ASTCDAssociation newAssoc = getElem1();
     ASTCDAssociation oldAssoc = getElem2();
-    StringBuilder diff = new StringBuilder(new String());
+    StringBuilder diff = new StringBuilder("");
     if (!newAssoc
       .getLeftQualifiedName()
       .getQName()

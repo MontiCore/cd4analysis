@@ -265,18 +265,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   /**
    *
-   * Get the whole inheritance hierarchy that @param astcdClass.
-   * is part of - all direct and indirect superclasses.
-   * @return a list of the superclasses.
-   */
-  @Override
-  public List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass){
-    return null;
-    //implemented - not needed, it is part of other functions inCDDiffUtil
-  }
-
-  /**
-   *
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
@@ -289,12 +277,12 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       for (AssocStruct association : getSrcMap().get(pair.a)){
         if (association.getDirection() == AssocDirection.BiDirectional
           && association.getSide() == ClassSide.Left
-          && sameRoleNames(astcdAssociation, association.getAssociation())
+          && sameAssociationType(astcdAssociation, association.getAssociation())
           && superClassesRight.contains(CDHelper.getConnectedClasses(association.getAssociation(), getSrcCD()).b)){
           return false;
         } else if (association.getDirection() == AssocDirection.BiDirectional
           && association.getSide() == ClassSide.Right
-          && sameRoleNames(astcdAssociation, association.getAssociation())
+          && sameAssociationType(astcdAssociation, association.getAssociation())
           && superClassesRight.contains(CDHelper.getConnectedClasses(association.getAssociation(), getSrcCD()).a)){
           return false;
         }
@@ -308,13 +296,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       for (AssocStruct association : getSrcMap().get(pair.a)){
         if (association.getSide() == ClassSide.Left
           && association.getAssociation().getCDAssocDir().isDefinitiveNavigableRight()
-          && sameRoleNames(astcdAssociation, association.getAssociation())
+          && sameAssociationType(astcdAssociation, association.getAssociation())
           && superClassesRight.contains(CDHelper.getConnectedClasses(astcdAssociation, getSrcCD()).b)){
           return true;
         }
         if (association.getSide() == ClassSide.Right //reversed assoc
           && association.getAssociation().getCDAssocDir().isDefinitiveNavigableLeft()
-          && sameRoleNames(astcdAssociation, association.getAssociation())
+          && sameAssociationType(astcdAssociation, association.getAssociation())
           && superClassesRight.contains(CDHelper.getConnectedClasses(astcdAssociation, getSrcCD()).a)){
           return true;
         }
@@ -326,13 +314,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       for (AssocStruct association : getSrcMap().get(pair.b)){
         if (association.getDirection() == AssocDirection.LeftToRight
           && association.getSide() == ClassSide.Left
-          && sameRoleNames(astcdAssociation, association.getAssociation())
+          && sameAssociationType(astcdAssociation, association.getAssociation())
           && superClassesLeft.contains(CDHelper.getConnectedClasses(astcdAssociation, getSrcCD()).b)){
           return true;
         }
         if (association.getDirection() == AssocDirection.RightToLeft
           && association.getSide() == ClassSide.Right
-          && sameRoleNames(association.getAssociation(), astcdAssociation)
+          && sameAssociationType(association.getAssociation(), astcdAssociation)
           && superClassesLeft.contains(CDHelper.getConnectedClasses(astcdAssociation, getSrcCD()).a)){
           return true;
         }
@@ -341,7 +329,17 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return false;
   }
 
-  public static boolean sameRoleNames(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+  /**
+   * This function is a less restrictive version of sameAssociation in CDAssociationHelper.
+   * We check if the first association has the same navigation and role names.
+   * The cardinalities of the the first do not need to be same, but they have to be
+   * 'contained' in the cardinalities of the second association
+   * @param assoc1 first association
+   * @param assoc2 second association
+   * @return true, if all conditions are fulfilled
+   */
+  //TODO: same function for the reversed case
+  public static boolean sameAssociationType(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
       if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
         && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
         return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
@@ -358,8 +356,34 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
       return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
         && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
-        && assoc1.getRight().getCDCardinality().equals(assoc2.getLeft().getCDCardinality())
-        && assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality())
+        && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getLeft().getCDCardinality()), CDHelper.cardToEnum(assoc2.getRight().getCDCardinality()))
+        && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getRight().getCDCardinality()), CDHelper.cardToEnum(assoc2.getLeft().getCDCardinality()));
+  }
+
+  /**
+   * 'sameAssociationType' for reversed directions
+   * @param assoc1 first association
+   * @param assoc2 second association
+   * @return true, if all conditions are fulfilled
+   */
+  //TODO: add this to all places where sameAssociationType is used
+  public static boolean sameAssociationTypeInReverse(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
+        return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+          && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getRight().getCDCardinality()), CDHelper.cardToEnum(assoc2.getLeft().getCDCardinality()));
+      }
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+          && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getLeft().getCDCardinality()), CDHelper.cardToEnum(assoc2.getRight().getCDCardinality()));
+      }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+        && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+        && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getRight().getCDCardinality()), CDHelper.cardToEnum(assoc2.getLeft().getCDCardinality()))
         && CDHelper.isContainedIn(CDHelper.cardToEnum(assoc1.getLeft().getCDCardinality()), CDHelper.cardToEnum(assoc2.getRight().getCDCardinality()));
   }
 
@@ -370,7 +394,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @return true if a class can now have a new relation to another.
    */
   @Override
-  public boolean isAlwaysNeededAssoc(ASTCDAssociation astcdAssociation) {
+  public boolean isAddedAssoc(ASTCDAssociation astcdAssociation) {
     //TODO: check again
     if (astcdAssociation.getCDAssocDir().isBidirectional()){
       Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(astcdAssociation, getSrcCD());
@@ -381,13 +405,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         for (AssocStruct assocStruct : getTrgMap().get(matchedRight)){
           if (assocStruct.getSide().equals(ClassSide.Left)
             && assocStruct.getAssociation().getCDAssocDir().isBidirectional()
-            && sameRoleNames(astcdAssociation, assocStruct.getAssociation())
+            && sameAssociationType(astcdAssociation, assocStruct.getAssociation())
             && superClasses.contains(CDHelper.getConnectedClasses(assocStruct.getAssociation(), getTrgCD()).b)){
             return false;
           }
           if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStruct.getAssociation().getCDAssocDir().isBidirectional()
-            && sameRoleNames(astcdAssociation, assocStruct.getAssociation())
+            && sameAssociationType(astcdAssociation, assocStruct.getAssociation())
             && superClasses.contains(CDHelper.getConnectedClasses(assocStruct.getAssociation(), getTrgCD()).a)){
             return false;
           }
@@ -404,7 +428,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         for (AssocStruct assocStruct : getTrgMap().get(matchedRight)){
           if (assocStruct.getSide().equals(ClassSide.Left)
             && assocStruct.getAssociation().getCDAssocDir().isBidirectional()
-            && sameRoleNames(astcdAssociation, assocStruct.getAssociation())
+            && sameAssociationType(astcdAssociation, assocStruct.getAssociation())
             && superClasses.contains(CDHelper.getConnectedClasses(assocStruct.getAssociation(), getTrgCD()).b)){
             return false;
           }
@@ -420,7 +444,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         List<ASTCDClass> superClasses = CDHelper.getSuperClasses(this, matchedLeft);
         for (AssocStruct assocStruct : getTrgMap().get(matchedLeft)){
           if (assocStruct.getAssociation().getCDAssocDir().isDefinitiveNavigableLeft()
-            && sameRoleNames(astcdAssociation, assocStruct.getAssociation())
+            && sameAssociationType(astcdAssociation, assocStruct.getAssociation())
             && superClasses.contains(CDHelper.getConnectedClasses(assocStruct.getAssociation(), getTrgCD()).a)){
             return false;
           }
@@ -534,6 +558,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   public void setMaps(){
     //TODO: check if class position is right
     //Seems right
+    //TODO: add the new association to the map
     for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
       for (ASTCDAssociation astcdAssociation : getSrcCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
         Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(astcdAssociation, getSrcCD());
@@ -800,6 +825,29 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return objectSet;
   }
 
+  //TODO: implement function that gets all attributes from superclasses for creating ODs
+
+  /**
+   * Get all attributes that need to be added from inheritance structure to an object of a given type
+   * @param astcdClass class
+   * @return Pair of the class and a list of attributes
+   */
+  public Pair<ASTCDClass, List<ASTCDAttribute>> getAllAttr(ASTCDClass astcdClass){
+    List<ASTCDAttribute> attributes = new ArrayList<>();
+    Set<ASTCDType> classes = getAllSuper(astcdClass, (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope());
+    for (ASTCDType classToCheck : classes){
+      if (classToCheck instanceof ASTCDClass) {
+        attributes.addAll(classToCheck.getCDAttributeList());
+      }
+    }
+    return new Pair<>(astcdClass, attributes);
+  }
+
+  /**
+   * Find all overlapping and all duplicated associations.
+   *
+   */
+  //TODO: check cases and write a good description of the idea
   @Override
   public void findOverlappingAssocs(){
     //In each map we have for each class all associations that need to be considered (not only direct)
@@ -817,6 +865,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
           for (AssocStruct superAssoc : getSrcMap().get(astcdClass)) {
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
               if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
+                //TODO: this case needs to be modified - when there are role names on the source sides, but they are different
+                //TODO: ask Max
                 //same target role names and target classes are in inheritance relation
                 //associations need to be merged
                 ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
@@ -845,7 +895,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
             } else if (!association.equals(superAssoc)){
               //comparison between direct associations
               if (sameAssociation(association.getAssociation(), superAssoc.getAssociation())
-                || sameAssociationInReverse(association.getAssociation(), superAssoc.getAssociation())){
+                || sameAssociationTypeInReverse(association.getAssociation(), superAssoc.getAssociation())){
                 ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
                 CardinalityStruc cardinalities = getCardinalities(association, superAssoc);
                 AssocCardinality cardinalityLeft = intersectCardinalities(CDHelper.cardToEnum(cardinalities.getLeftCardinalities().a), CDHelper.cardToEnum(cardinalities.getLeftCardinalities().b));
@@ -905,6 +955,12 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return false;
   }
 
+  /**
+   * Given the two associations, get the role name that causes the conflict
+   * @param association base association
+   * @param superAssociation association from superclass
+   * @return role name
+   */
   public ASTCDRole getConflict(AssocStruct association, AssocStruct superAssociation){
     ASTCDAssociation srcAssoc = association.getAssociation();
     ASTCDAssociation targetAssoc = superAssociation.getAssociation();
@@ -936,6 +992,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return null;
   }
 
+  /**
+   * Check if the target classes of the two associations are in an inheritance relation
+   * @param association base association
+   * @param superAssociation association from superclass
+   * @return true, if they filfill the condition
+   */
+  //TODO: check inheritance in the other way
   public boolean inInheritanceRelation(AssocStruct association, AssocStruct superAssociation){
     if (association.getSide().equals(ClassSide.Left)
       && superAssociation.getSide().equals(ClassSide.Left)){
@@ -983,6 +1046,12 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return null;
   }
 
+  /**
+   *
+   * @param association
+   * @param superAssociation
+   * @return
+   */
   public CardinalityStruc getCardinalities(AssocStruct association, AssocStruct superAssociation){
     //I think that all cardinalities should be the other way around
     //Changed
@@ -1001,6 +1070,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
+  /**
+   * Transform the internal cardinality to orginal
+   * @param assocCardinality cardinality to transform
+   * @return cardinality with type ASTCDCardinality
+   */
   public ASTCDCardinality createCardinality(AssocCardinality assocCardinality){
     if (assocCardinality.equals(AssocCardinality.One)){
       return new ASTCDCardOne();
@@ -1013,6 +1087,12 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
+  /**
+   *
+   * @param association
+   * @param superAssociation
+   * @return
+   */
   public boolean areZeroAssocs(AssocStruct association, AssocStruct superAssociation){
     if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
       return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt())
@@ -1029,6 +1109,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
+  /**
+   *
+   * @param astcdClass
+   * @param role
+   */
   public void deleteAssocs(ASTCDClass astcdClass, ASTCDRole role){
     for (AssocStruct assocStruct : getSrcMap().get(astcdClass)){
       if (assocStruct.getSide().equals(ClassSide.Left)
