@@ -332,7 +332,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   /**
    * This function is a less restrictive version of sameAssociation in CDAssociationHelper.
    * We check if the first association has the same navigation and role names.
-   * The cardinalities of the the first do not need to be same, but they have to be
+   * The cardinalities of the first do not need to be same, but they have to be
    * 'contained' in the cardinalities of the second association
    * @param assoc1 first association
    * @param assoc2 second association
@@ -564,20 +564,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(astcdAssociation, getSrcCD());
         if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
           if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            //srcMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Left, astcdAssociation)));
             srcMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
-            //srcMap.put(astcdClass, new Pair<>(AssocDirection.LeftToRight, new Pair<>(ClassSide.Left, astcdAssociation)));
             srcMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.LeftToRight, ClassSide.Left));
           }
         } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            //srcMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Right, astcdAssociation)));
             srcMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.BiDirectional, ClassSide.Right));
           }
           else {
-            //srcMap.put(astcdClass, new Pair<>(AssocDirection.RightToLeft, new Pair<>(ClassSide.Right, astcdAssociation)));
             srcMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.RightToLeft, ClassSide.Right));
           }
         }
@@ -589,20 +585,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(astcdAssociation, getSrcCD());
         if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
           if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            //trgMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Left, astcdAssociation)));
             trgMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
-            //trgMap.put(astcdClass, new Pair<>(AssocDirection.LeftToRight, new Pair<>(ClassSide.Left, astcdAssociation)));
             trgMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.LeftToRight, ClassSide.Left));
           }
         } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            //trgMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Right, astcdAssociation)));
             trgMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.BiDirectional, ClassSide.Right));
           }
           else {
-            //trgMap.put(astcdClass, new Pair<>(AssocDirection.RightToLeft, new Pair<>(ClassSide.Right, astcdAssociation)));
             trgMap.put(astcdClass, new AssocStruct(astcdAssociation, AssocDirection.RightToLeft, ClassSide.Right));
           }
         }
@@ -613,53 +605,52 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       Set<ASTCDType> superClasses = getAllSuper(astcdClass, (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope());//falsch
       for (ASTCDType superClass : superClasses){//getAllSuperTypes CDDffUtils
         if (superClass instanceof ASTCDClass){
+          ASTCDClass superC = (ASTCDClass) superClass;
           for (ASTCDAssociation association : getSrcCD().getCDDefinition().getCDAssociationsListForType(superClass)){
             Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(association, getSrcCD());
-            if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName())
+            if ((pair.a.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName())
               && association.getCDAssocDir().isDefinitiveNavigableRight())){
               ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
+              //change left side from superClass to subClass
               ASTCDAssocLeftSideBuilder leftSideBuilder = CD4CodeMill.cDAssocLeftSideBuilder()
                 .setModifier(association.getLeft().getModifier())
                 .setCDCardinality(association.getLeft().getCDCardinality())
                 .setCDRole(association.getLeft().getCDRole())
                 .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-//              //subClass must be set on the left side - how
+
               ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
                 .setCDAssocType(association.getCDAssocType())
                 .setModifier(association.getModifier())
                 .setName(association.getName())
                 .setLeft(leftSideBuilder.build())
-                //.setRight()
+                .setRight(association.getRight())
                 .build();
               if (association.getCDAssocDir().isBidirectional()) {
-                //trgMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Left, assocForSubClass)));
                 srcMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Left));
               }
               else {
-                //trgMap.put(astcdClass, new Pair<>(AssocDirection.LeftToRight, new Pair<>(ClassSide.Left, association)));
                 srcMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.LeftToRight, ClassSide.Left));
               }
-            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
-              ASTCDAssocLeftSideBuilder leftSideBuilder = CD4CodeMill.cDAssocLeftSideBuilder();
-//                .setModifier(association.getLeft().getModifier())
-//                .setCDCardinality(association.getLeft().getCDCardinality())
-//                .setCDRole(association.getLeft().getCDRole())
-//                .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-//              //subClass must be set on the left side - how
+              //change right side from superClass to subclass
+              ASTCDAssocRightSideBuilder rightSideBuilder = CD4CodeMill.cDAssocRightSideBuilder()
+                .setModifier(association.getRight().getModifier())
+                .setCDCardinality(association.getRight().getCDCardinality())
+                .setCDRole(association.getRight().getCDRole())
+                .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+
               ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
                 .setCDAssocType(association.getCDAssocType())
                 .setModifier(association.getModifier())
                 .setName(association.getName())
-                .setLeft(leftSideBuilder.build())
-                //.setRight()
+                .setLeft(association.getLeft())
+                .setRight(rightSideBuilder.build())
                 .build();
               if (association.getCDAssocDir().isBidirectional()) {
-                //srcMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Right, association)));
                 srcMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Right));
               }
               else {
-                //srcMap.put(astcdClass, new Pair<>(AssocDirection.RightToLeft, new Pair<>(ClassSide.Right, association)));
                 srcMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.RightToLeft, ClassSide.Right));
               }
             }
@@ -672,25 +663,52 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       Set<ASTCDType> superClasses = getAllSuper(astcdClass, (ICD4CodeArtifactScope) getTrgCD().getEnclosingScope());
       for (ASTCDType superClass : superClasses){
         if (superClass instanceof ASTCDClass){
+          ASTCDClass superC = (ASTCDClass) superClass;
           for (ASTCDAssociation association : getTrgCD().getCDDefinition().getCDAssociationsListForType(superClass)){
             Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(association, getSrcCD());
-            if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
+            if ((pair.a.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
+              ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
+              //change left side from superClass to subClass
+              ASTCDAssocLeftSideBuilder leftSideBuilder = CD4CodeMill.cDAssocLeftSideBuilder()
+                .setModifier(association.getLeft().getModifier())
+                .setCDCardinality(association.getLeft().getCDCardinality())
+                .setCDRole(association.getLeft().getCDRole())
+                .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+
+              ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
+                .setCDAssocType(association.getCDAssocType())
+                .setModifier(association.getModifier())
+                .setName(association.getName())
+                .setLeft(leftSideBuilder.build())
+                .setRight(association.getRight())
+                .build();
               if (association.getCDAssocDir().isBidirectional()) {
-                //trgMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Left, association)));
-                trgMap.put(astcdClass, new AssocStruct(association, AssocDirection.BiDirectional, ClassSide.Left));
+                trgMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Left));
               }
               else {
-                //trgMap.put(astcdClass, new Pair<>(AssocDirection.LeftToRight, new Pair<>(ClassSide.Left, association)));
-                trgMap.put(astcdClass, new AssocStruct(association, AssocDirection.LeftToRight, ClassSide.Left));
+                trgMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.LeftToRight, ClassSide.Left));
               }
-            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+              ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
+              //change right side from superClass to subclass
+              ASTCDAssocRightSideBuilder rightSideBuilder = CD4CodeMill.cDAssocRightSideBuilder()
+                .setModifier(association.getRight().getModifier())
+                .setCDCardinality(association.getRight().getCDCardinality())
+                .setCDRole(association.getRight().getCDRole())
+                .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+
+              ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
+                .setCDAssocType(association.getCDAssocType())
+                .setModifier(association.getModifier())
+                .setName(association.getName())
+                .setLeft(association.getLeft())
+                .setRight(rightSideBuilder.build())
+                .build();
               if (association.getCDAssocDir().isBidirectional()) {
-                //trgMap.put(astcdClass, new Pair<>(AssocDirection.BiDirectional, new Pair<>(ClassSide.Right, association)));
-                trgMap.put(astcdClass, new AssocStruct(association, AssocDirection.BiDirectional, ClassSide.Right));
+                trgMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Right));
               }
               else {
-                //trgMap.put(astcdClass, new Pair<>(AssocDirection.RightToLeft, new Pair<>(ClassSide.Right, association)));
-                trgMap.put(astcdClass, new AssocStruct(association, AssocDirection.RightToLeft, ClassSide.Right));
+                trgMap.put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.RightToLeft, ClassSide.Right));
               }
             }
           }
