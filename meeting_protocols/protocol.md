@@ -20,3 +20,12 @@
 * Repair associaton prints in CD4Analysis project + test cases
 * Add class diagram model tag to PlantUML diagrams
 * Test/run util methods
+
+## Meeting Protocol for 2023-07-05
+
+* Remove whitespace from "\*- -\*"-associations
+* Label class modifiers with <<*modifier*>> & class name below
+* JSON: Test various styles. Is the output valid PlantUML?
+* CLI
+* Document code w/ Javadoc (use tags)
+* Write "tutorial" in Markdown
