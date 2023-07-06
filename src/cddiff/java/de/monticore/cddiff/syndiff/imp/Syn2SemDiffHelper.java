@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 
-public class CDHelper {
+public class Syn2SemDiffHelper {
   public static Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association, ASTCDCompilationUnit compilationUnit) {
     Optional<CDTypeSymbol> astcdClass =
         compilationUnit
@@ -32,23 +32,23 @@ public class CDHelper {
   /**
    * Compute the classes that extend a given class.
    *
-   * @param cdSyntaxDiff
+   * @param compilationUnit
    * @param astcdClass
    * @return list of extending classes. This function is similar to getClassHierarchy().
    */
-  public static List<ASTCDClass> getSpannedInheritance(CDSyntaxDiff cdSyntaxDiff, ASTCDClass astcdClass){
+  public static List<ASTCDClass> getSpannedInheritance(ASTCDCompilationUnit compilationUnit, ASTCDClass astcdClass){
     List<ASTCDClass> subclasses = new ArrayList<>();
-    for (ASTCDClass childClass : cdSyntaxDiff.getSrcCD().getCDDefinition().getCDClassesList()) {
-      if ((getAllSuper(childClass, (ICD4CodeArtifactScope) cdSyntaxDiff.getSrcCD().getEnclosingScope())).contains(astcdClass)) {
+    for (ASTCDClass childClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      if ((getAllSuper(childClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())).contains(astcdClass)) {
         subclasses.add(childClass);
       }
     }
     return subclasses;
   }
 
-  public static List<ASTCDClass> getSuperClasses(CDSyntaxDiff cdSyntaxDiff, ASTCDClass astcdClass){
+  public static List<ASTCDClass> getSuperClasses(ASTCDCompilationUnit compilationUnit, ASTCDClass astcdClass){
     List<ASTCDClass> superClasses = new ArrayList<>();
-    for (ASTCDType type : getAllSuper(astcdClass, (ICD4CodeArtifactScope) cdSyntaxDiff.getSrcCD().getEnclosingScope())){
+    for (ASTCDType type : getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
       if (type instanceof ASTCDClass){
         superClasses.add((ASTCDClass) type);
       }

@@ -1,0 +1,15 @@
+import java.lang.*;
+classdiagram CD51{
+
+  class A{}
+
+  class B extends A{
+    int age;
+  }
+
+  class C extends B{}
+
+  class D{}
+
+  association [1] D -> C [1];
+}

@@ -6,20 +6,16 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperCardinality;
 import edu.mit.csail.sdg.alloy4.Pair;
-import de.monticore.cddiff.syndiff.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
-import static de.monticore.cddiff.syndiff.imp.CDHelper.*;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation elem1;
@@ -275,7 +271,7 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   public Pair<ASTCDAssociation, ASTCDClass> getChangedTgtClass(ASTCDCompilationUnit compilationUnit){
     if (changedTgtClass(compilationUnit)){
-      Pair<ASTCDClass, ASTCDClass> pair = CDHelper.getConnectedClasses(getElem1(), compilationUnit);
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(getElem1(), compilationUnit);
       if (getElem1().getCDAssocDir().isBidirectional()){
         Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getElem2(), compilationUnit);
         if (pair.a.getName().equals(pairOld.a.getName())
