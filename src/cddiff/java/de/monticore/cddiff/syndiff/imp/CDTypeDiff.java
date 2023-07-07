@@ -26,6 +26,8 @@ public class CDTypeDiff implements ICDTypeDiff {
   private List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> matchedConstants;
   private List<DiffTypes> baseDiffs;
 
+  private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
   public CDTypeDiff(ASTCDType elem1, ASTCDType elem2) {
     this.elem1 = elem1;
     this.elem2 = elem2;
@@ -355,12 +357,13 @@ public class CDTypeDiff implements ICDTypeDiff {
     else{
       //do we check if assocs make sense - assoc to abstract class
       //TODO: ask Max if this case is allowed
+      //it is needed
       //TODO:
       if (Syn2SemDiffHelper.getSpannedInheritance(cdSyntaxDiff.getSrcCD(), (ASTCDClass) getElem1()).isEmpty()) {
-        Set<ASTCDClass> map = cdSyntaxDiff.getSrcMap().keySet();
+        Set<ASTCDClass> map = helper.getSrcMap().keySet();
         map.remove((ASTCDClass) getElem1());
         for (ASTCDClass astcdClass : map) {
-          for (AssocStruct mapPair : cdSyntaxDiff.getSrcMap().get(astcdClass)) {//Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>>
+          for (AssocStruct mapPair : helper.getSrcMap().get(astcdClass)) {//Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>>
             if (Objects.equals(mapPair.getDirection(), AssocDirection.LeftToRight)
               && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), cdSyntaxDiff.getSrcCD()).b.equals(getElem1())
               && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()) {

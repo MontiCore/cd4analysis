@@ -23,6 +23,8 @@ public class CDAssocDiff implements ICDAssocDiff {
   private boolean isReversed;
   private List<DiffTypes> baseDiff;
 
+  private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
   @Override
   public ASTCDAssociation getElem1() {
     return elem1;
@@ -192,8 +194,7 @@ public class CDAssocDiff implements ICDAssocDiff {
    */
   public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> getCardDiff(){
     List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
-    if (getElem1().getLeftQualifiedName().getQName().equals(getElem1().getLeftQualifiedName().getQName())
-      && getElem1().getRightQualifiedName().getQName().equals(getElem2().getRightQualifiedName().getQName())){
+    if (!isReversed){
       //assoc not reversed
       if (!isContainedIn(cardToEnum(getElem1().getLeft().getCDCardinality()), cardToEnum(getElem2().getLeft().getCDCardinality()))){
         list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getElem1().getLeft().getCDCardinality()), getTypeOfCard(getElem2().getLeft().getCDCardinality())))));
@@ -214,8 +215,7 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
     List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
-    if (getElem1().getLeftQualifiedName().getQName().equals(getElem1().getLeftQualifiedName().getQName())
-      && getElem1().getRightQualifiedName().getQName().equals(getElem2().getRightQualifiedName().getQName())){
+    if (!isReversed){
       //assoc not reversed
       if (!Objects.equals(getElem1().getLeft().getCDRole(), getElem2().getLeft().getCDRole())) {
         list.add(new Pair<>(getElem1(), new Pair<>(ClassSide.Left, getElem1().getLeft().getCDRole())));

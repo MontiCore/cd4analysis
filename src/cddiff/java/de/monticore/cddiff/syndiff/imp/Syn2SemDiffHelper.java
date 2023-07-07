@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
@@ -7,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cddiff.syndiff.AssocStruct;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.ArrayList;
@@ -16,6 +18,28 @@ import java.util.Optional;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 
 public class Syn2SemDiffHelper {
+
+  private static Syn2SemDiffHelper instance;
+
+  public static Syn2SemDiffHelper getInstance() {
+    if (instance == null) {
+      instance = new Syn2SemDiffHelper();
+    }
+    return instance;
+  }
+  public Syn2SemDiffHelper() {
+  }
+  private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
+  private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
+
+  public ArrayListMultimap<ASTCDClass, AssocStruct> getSrcMap() {
+    return srcMap;
+  }
+
+  public ArrayListMultimap<ASTCDClass, AssocStruct> getTrgMap() {
+    return trgMap;
+  }
+
   public static Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association, ASTCDCompilationUnit compilationUnit) {
     Optional<CDTypeSymbol> astcdClass =
         compilationUnit
