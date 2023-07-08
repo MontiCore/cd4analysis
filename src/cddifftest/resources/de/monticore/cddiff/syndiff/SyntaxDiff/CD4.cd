@@ -1,0 +1,12 @@
+import java.lang.*;
+classdiagram CD4{
+
+  class A{}
+
+  class B{}
+
+  class C extends B{}
+
+  association A -> (r) B [*];
+  association A <-> (r) C [0..1];
+}

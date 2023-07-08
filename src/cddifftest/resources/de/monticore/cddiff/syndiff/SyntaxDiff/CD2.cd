@@ -1,0 +1,14 @@
+import java.lang.*;
+classdiagram CD2{
+
+  class A{}
+
+  class B{}
+
+  class C extends A{}
+
+  class D extends B{}
+
+  association A -> (r) B [*];
+  association C (q) <-> (r) D [0..1];
+}
