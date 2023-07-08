@@ -3,10 +3,10 @@ package de.monticore.cddiff.ow2cw;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import java.util.HashSet;
 import org.junit.Assert;
@@ -17,8 +17,6 @@ public class VariableDiffTest extends CDDiffTestBasis {
   @Test
   public void testVariableEmployees() {
 
-    CD4CodeMill.globalScope().clear();
-
     ASTCDCompilationUnit cd1 =
         parseModel(
             "src/cddifftest/resources/de/monticore/cddiff/variablediff/VariableEmployees1.cd");
@@ -28,12 +26,12 @@ public class VariableDiffTest extends CDDiffTestBasis {
 
     new ReductionTrafo().transform(cd2, cd1);
 
-    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2);
+    CDDiffUtil.refreshSymbolTable(cd1);
+    CDDiffUtil.refreshSymbolTable(cd2);
 
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-    cd1.accept(pp.getTraverser());
-    System.out.println(pp.prettyprint(cd1));
+    ICD4CodeArtifactScope scope1 = (ICD4CodeArtifactScope) cd1.getEnclosingScope();
+
+    System.out.println(CD4CodeMill.prettyPrint(cd1, true));
 
     Assert.assertTrue(
         cd2.getCDDefinition().getModifier().isPresentStereotype()

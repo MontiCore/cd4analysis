@@ -28,7 +28,6 @@ public class CDDiffCLIToolTest {
   @Before
   public void init() {
     Log.init();
-    Log.enableFailQuick(false);
   }
 
   @Test
