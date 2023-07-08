@@ -45,7 +45,7 @@ public class CDAssocDiff implements ICDAssocDiff {
     this.baseDiff = baseDiff;
   }
 
-  protected CDAssocDiff(ASTCDAssociation elem1, ASTCDAssociation elem2, boolean isReversed) {
+  public CDAssocDiff(ASTCDAssociation elem1, ASTCDAssociation elem2, boolean isReversed) {
     this.elem1 = elem1;
     this.elem2 = elem2;
     this.isReversed = isReversed;
@@ -211,6 +211,10 @@ public class CDAssocDiff implements ICDAssocDiff {
       }
     }
     return list;
+  }
+
+  public boolean isDirectionChanged(){
+    return getDirection(getElem1()).equals(getDirection(getElem2()));
   }
 
   public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
