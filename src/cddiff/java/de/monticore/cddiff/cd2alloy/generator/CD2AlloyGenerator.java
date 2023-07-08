@@ -1,16 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.generator;
 
-import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -1535,14 +1530,8 @@ public class CD2AlloyGenerator {
     for (ASTCDCompilationUnit ast : asts) {
       // build symbol table
       // CD4CodeMill.globalScope().clear();
-      BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
       new CD4CodeDirectCompositionTrafo().transform(ast);
-      CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
-      CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(ast);
-      ast.accept(c.getTraverser());
-      cocos.checkAll(ast);
+      CDDiffUtil.refreshSymbolTable(ast);
     }
 
     // Check if two CDs have the same name and rename them, if this is the case

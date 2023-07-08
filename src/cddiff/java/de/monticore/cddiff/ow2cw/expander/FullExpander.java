@@ -94,6 +94,7 @@ public class FullExpander implements CDExpander {
   public void addAssociationClones(Collection<ASTCDAssociation> originals) {
     for (ASTCDAssociation srcAssoc : originals) {
       ASTCDAssociation newAssoc = srcAssoc.deepClone();
+      newAssoc.setNameAbsent();
       newAssoc.getRight().setCDCardinalityAbsent();
       newAssoc.getLeft().setCDCardinalityAbsent();
       addAssociation(newAssoc);

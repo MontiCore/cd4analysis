@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.CDDiffUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +21,8 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
   public void testFindInSuper() {
     ASTCDCompilationUnit cd1 =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
-    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
+    CDDiffUtil.refreshSymbolTable(cd1);
+    ICD4CodeArtifactScope scope1 = (ICD4CodeArtifactScope) cd1.getEnclosingScope();
 
     Optional<CDTypeSymbol> opt = scope1.resolveCDType("Truck");
 
@@ -40,7 +42,8 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
     ASTCDCompilationUnit lecture1 =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
-    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture1);
+    CDDiffUtil.refreshSymbolTable(lecture1);
+    ICD4CodeArtifactScope scope1 = (ICD4CodeArtifactScope) lecture1.getEnclosingScope();
 
     List<String> superList = new ArrayList<>();
     superList.add("Being");
@@ -63,14 +66,16 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
     ASTCDCompilationUnit employees8 =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
 
-    ICD4CodeArtifactScope scope8 = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
-    scope8
+    CDDiffUtil.refreshSymbolTable(employees8);
+    employees8
+        .getEnclosingScope()
         .resolveCDType("Manager")
         .ifPresent(
             src ->
                 Assert.assertEquals(
                     "ins.Employee",
-                    CDInheritanceHelper.resolveClosestType(src.getAstNode(), "Employee", scope8)
+                    CDInheritanceHelper.resolveClosestType(
+                            src.getAstNode(), "Employee", employees8.getEnclosingScope())
                         .getSymbol()
                         .getFullName()));
   }

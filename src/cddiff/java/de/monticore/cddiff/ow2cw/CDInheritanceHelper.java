@@ -76,12 +76,12 @@ public class CDInheritanceHelper {
 
   /** helper-method to resolve extended/implemented class/interface */
   public static ASTCDType resolveClosestType(
-      ASTCDType srcNode, String targetName, ICD4CodeArtifactScope artifactScope) {
+      ASTCDType srcNode, String targetName, ICDBasisScope scope) {
 
     ICDBasisScope currentScope = srcNode.getEnclosingScope();
     List<CDTypeSymbol> symbolList;
 
-    while (currentScope != artifactScope) {
+    while (currentScope != scope) {
       symbolList = currentScope.resolveCDTypeDownMany(targetName);
       if (!symbolList.isEmpty()) {
         break;

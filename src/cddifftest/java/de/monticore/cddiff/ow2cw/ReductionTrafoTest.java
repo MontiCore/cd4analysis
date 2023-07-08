@@ -4,7 +4,6 @@ package de.monticore.cddiff.ow2cw;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -23,8 +22,6 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
   @Test
   public void testTrafo() {
 
-    CD4CodeMill.globalScope().clear();
-
     ASTCDCompilationUnit m1Ast =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees5.cd");
     ASTCDCompilationUnit m2Ast =
@@ -33,13 +30,8 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(m1Ast, m2Ast);
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    m1Ast.accept(pprinter.getTraverser());
-    String cd1 = pprinter.getPrinter().getContent();
-
-    pprinter = new CD4CodeFullPrettyPrinter();
-    m2Ast.accept(pprinter.getTraverser());
-    String cd2 = pprinter.getPrinter().getContent();
+    String cd1 = CD4CodeMill.prettyPrint(m1Ast, false);
+    String cd2 = CD4CodeMill.prettyPrint(m2Ast, false);
 
     // Set Output Path
     String outputPath = "target/generated/cddiff-test/trafo/";
@@ -57,7 +49,6 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
 
   @Test
   public void testTrafoWithPackages() {
-    CD4CodeMill.globalScope().clear();
 
     String outputPath = "target/generated/cddiff-test/trafo-with-packages/";
 
@@ -69,13 +60,8 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(m1Ast, m2Ast);
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    m1Ast.accept(pprinter.getTraverser());
-    String cd1 = pprinter.getPrinter().getContent();
-
-    pprinter = new CD4CodeFullPrettyPrinter();
-    m2Ast.accept(pprinter.getTraverser());
-    String cd2 = pprinter.getPrinter().getContent();
+    String cd1 = CD4CodeMill.prettyPrint(m1Ast, false);
+    String cd2 = CD4CodeMill.prettyPrint(m2Ast, false);
 
     Path outputFile1 = Paths.get(outputPath, m1Ast.getCDDefinition().getName() + ".cd");
     Path outputFile2 = Paths.get(outputPath, m2Ast.getCDDefinition().getName() + ".cd");
@@ -106,19 +92,12 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
 
     lecture2.getCDDefinition().setName(lecture1.getCDDefinition().getName());
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture1);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture2);
-
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.copyInheritance(lecture1, lecture2);
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    lecture1.accept(pprinter.getTraverser());
-    String cd1 = pprinter.getPrinter().getContent();
+    String cd1 = CD4CodeMill.prettyPrint(lecture1, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
-    lecture2.accept(pprinter.getTraverser());
-    String cd2 = pprinter.getPrinter().getContent();
+    String cd2 = CD4CodeMill.prettyPrint(lecture2, false);
 
     Assert.assertEquals(cd1, cd2);
   }

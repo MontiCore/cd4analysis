@@ -124,7 +124,12 @@ public class ReductionTrafo {
 
   private void copyImportStatements(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
     Set<ASTMCImportStatement> imports = new HashSet<>(first.getMCImportStatementList());
-    imports.addAll(second.getMCImportStatementList());
+    imports.addAll(
+        second.getMCImportStatementList().stream()
+            .filter(
+                newImport ->
+                    imports.stream().noneMatch(i -> i.getQName().equals(newImport.getQName())))
+            .collect(Collectors.toSet()));
     first.setMCImportStatementList(new ArrayList<>(imports));
     second.setMCImportStatementList(new ArrayList<>(imports));
   }
