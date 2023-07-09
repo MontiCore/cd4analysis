@@ -1,6 +1,5 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
@@ -18,7 +17,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.matcher.MatchingStrategy;
-import de.monticore.matcher.SuperTypeMatcher;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -267,6 +265,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
+  //TODO: replace the boolean with the class
   @Override
   public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation){
     if (astcdAssociation.getCDAssocDir().isBidirectional()){
@@ -612,6 +611,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
     for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
       Set<ASTCDType> superClasses = getAllSuper(astcdClass, (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope());//falsch
+      //Set<ASTCDType> superClasses = CDDiffUtil.getAllSuperTypes(astcdClass, getSrcCD().getCDDefinition());
       for (ASTCDType superClass : superClasses){//getAllSuperTypes CDDffUtils
         if (superClass instanceof ASTCDClass){
           ASTCDClass superC = (ASTCDClass) superClass;
@@ -810,52 +810,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
     return list;
-  }
-
-  /**
-   * Create a minimal set of associations and classes that are needed for deriving
-   * an object diagram for a given class or association
-   * @param astcdClass optional
-   * @param astcdAssociation optional
-   * @return minimal set of objects
-   */
-  public Set<Object> createObjectsForOD(ASTCDClass astcdClass, ASTCDAssociation astcdAssociation){
-    Set<Object> set = new HashSet<>();
-    return (createChains(astcdClass, astcdAssociation, set));
-  }
-
-  public Set<Object> createChains(ASTCDClass astcdClass, ASTCDAssociation astcdAssociation, Set<Object> objectSet){
-    if (astcdClass != null) {
-      if (!objectSet.contains(astcdClass)) {
-        objectSet.add(astcdClass);
-        List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
-        for (AssocStruct pair : list) { //Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>> pair
-          if (!objectSet.contains(pair.getAssociation())) {
-            switch (pair.getSide()) {
-              case Left:
-                if (pair.getAssociation().getRight().getCDCardinality().isAtLeastOne()
-                  || pair.getAssociation().getRight().getCDCardinality().isOne()) {
-                  objectSet.add(pair.getAssociation());
-                  objectSet.addAll(createChains(Syn2SemDiffHelper.getConnectedClasses(pair.getAssociation(), getSrcCD()).b, null, objectSet));
-                }
-              case Right:
-                if (pair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()
-                  || pair.getAssociation().getLeft().getCDCardinality().isOne()) {
-                  objectSet.add(pair.getAssociation());
-                  objectSet.addAll(createChains(Syn2SemDiffHelper.getConnectedClasses(pair.getAssociation(), getSrcCD()).a, null, objectSet));
-                }
-            }
-          }
-        }
-      }
-    }
-    else {
-      if (!objectSet.contains(astcdAssociation)) {
-        objectSet.addAll(createChains(Syn2SemDiffHelper.getConnectedClasses(astcdAssociation, getSrcCD()).a, null, objectSet));
-        objectSet.addAll(createChains(Syn2SemDiffHelper.getConnectedClasses(astcdAssociation, getSrcCD()).b, null, objectSet));
-      }
-    }
-    return objectSet;
   }
 
   //TODO: implement function that gets all attributes from superclasses for creating ODs
@@ -1192,10 +1146,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   /**
-   *
-   * @param association
-   * @param superAssociation
-   * @return
+   * Group corresponding cardinalities
+   * @param association association
+   * @param superAssociation association
+   * @return structure with two pairs of corresponding cardinalities
    */
   public CardinalityStruc getCardinalities(AssocStruct association, AssocStruct superAssociation){
     //I think that all cardinalities should be the other way around
@@ -1233,10 +1187,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   /**
-   *
-   * @param association
-   * @param superAssociation
-   * @return
+   * Check if the associations allow 0 objects from target class
+   * @param association association
+   * @param superAssociation association
+   * @return true if the condition is fulfilled
    */
   public boolean areZeroAssocs(AssocStruct association, AssocStruct superAssociation){
     if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
@@ -1255,9 +1209,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   /**
-   *
-   * @param astcdClass
-   * @param role
+   * Delete associations from map with a specific role name
+   * @param astcdClass source class
+   * @param role role name
    */
   public void deleteAssocs(ASTCDClass astcdClass, ASTCDRole role){
     for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)){
@@ -1270,4 +1224,43 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
   }
+
+  public List<ASTCDAssociation> addedAssocList(){
+    List<ASTCDAssociation> associationList = new ArrayList<>();
+    for (ASTCDAssociation association : addedAssocs){
+      if (isAddedAssoc(association)){
+        associationList.add(association);
+      }
+    }
+    return associationList;
+  }
+
+  public List<ASTCDClass> addedClassList(){
+    List<ASTCDClass> classList = new ArrayList<>();
+    for (ASTCDClass astcdClass : addedClasses){
+      if (isSuperclass(astcdClass)){
+        classList.add(astcdClass);
+      }
+    }
+    return classList;
+  }
+
+  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAssocList(){
+    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
+    return pairList;
+  }
+
+  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributeList(){
+    return null;
+  }
+
+  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributeList(){
+    return null;
+  }
+
+  public List<Pair<ASTCDAttribute, ASTCDEnumConstant>> addedConstantsList(){
+    return null;
+  }
+
+  //TODO: to for all diffs
 }

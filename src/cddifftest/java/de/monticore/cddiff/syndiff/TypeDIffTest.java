@@ -17,11 +17,11 @@ import java.util.List;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
- // @Test
+  //@Test
   public void testCD2() {
 
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD11.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD12.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
 
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
@@ -35,23 +35,23 @@ public class TypeDIffTest extends CDDiffTestBasis {
     assert aOld != null;
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    syntaxDiff.setMaps();
+    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    //syntaxDiff.setMaps();
 
     // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitNew);
-    ASTCDType result2 = typeDiff.isClassNeeded(syntaxDiff);
+    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
+    //ASTCDType result2 = typeDiff.isClassNeeded(syntaxDiff);
 
     // Assert the result
     Assert.assertFalse(result);
-    Assert.assertNull(result2);
+    //Assert.assertNull(result2);
   }
 
   //@Test
   public void testCD1() {
 
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD11.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD12.cd");
 
     ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
@@ -66,15 +66,15 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
     // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitNew);
-    boolean result2 = typeDiff.isDeleted(attributeOld, compilationUnitOld);
+    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
+    boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
 
     // Assert the result
     Assert.assertFalse(result);
-    Assert.assertFalse(result2);
+    Assert.assertTrue(result2);
   }
 
- // @Test
+  //@Test
   public void testCD3(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
@@ -88,6 +88,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     // Prepare test data
     assert bNew != null;
     ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
+    assert aOld != null;
+    ASTCDAttribute astcdAttribute = CDTestHelper.getAttribute(aOld, "age");
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.setMaps();
 
@@ -95,11 +97,13 @@ public class TypeDIffTest extends CDDiffTestBasis {
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     ASTCDType result2 = typeDiff1.isClassNeeded(syntaxDiff);
+    boolean result3 = typeDiff1.isDeleted(astcdAttribute, compilationUnitNew);
 
 
     // Assert the result
     Assert.assertTrue(result);
     Assert.assertNotNull(result2);
+    Assert.assertTrue(result3);
   }
 
   //@Test

@@ -215,6 +215,7 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @return false if found in all 'old' subclasses or in some 'old' superClass
    */
   public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
+    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit);
     if (CDInheritanceHelper.isAttributInSuper(attribute, getElem2(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
       return false;
     }
@@ -309,8 +310,6 @@ public class CDTypeDiff implements ICDTypeDiff {
       for (DiffTypes type : memberDiff.getBaseDiff()) {
         switch (type) {
           case CHANGED_ATTRIBUTE: list.add(new Pair<>((ASTCDClass)getElem1(),(ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
-          case CHANGED_VISIBILITY: //give as output to user - no semDiff
-            //other cases
         }
       }
       return list;
@@ -323,8 +322,6 @@ public class CDTypeDiff implements ICDTypeDiff {
           for (DiffTypes type : memberDiff.getBaseDiff()) {
             switch (type) {
               case CHANGED_ATTRIBUTE: list.add(new Pair<>(astcdClass, (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
-              case CHANGED_VISIBILITY: //give as output to user - no semDiff
-                //other cases?
             }
           }
           return list;

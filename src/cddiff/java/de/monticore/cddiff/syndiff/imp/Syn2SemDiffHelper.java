@@ -32,12 +32,31 @@ public class Syn2SemDiffHelper {
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
+  private ASTCDCompilationUnit srcCD;
+
+  private ASTCDCompilationUnit tgtCD;
   public ArrayListMultimap<ASTCDClass, AssocStruct> getSrcMap() {
     return srcMap;
   }
 
   public ArrayListMultimap<ASTCDClass, AssocStruct> getTrgMap() {
     return trgMap;
+  }
+
+  public ASTCDCompilationUnit getSrcCD() {
+    return srcCD;
+  }
+
+  public void setSrcCD(ASTCDCompilationUnit srcCD) {
+    this.srcCD = srcCD;
+  }
+
+  public ASTCDCompilationUnit getTgtCD() {
+    return tgtCD;
+  }
+
+  public void setTgtCD(ASTCDCompilationUnit tgtCD) {
+    this.tgtCD = tgtCD;
   }
 
   public static Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association, ASTCDCompilationUnit compilationUnit) {
