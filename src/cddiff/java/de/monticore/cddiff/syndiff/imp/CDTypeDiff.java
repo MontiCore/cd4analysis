@@ -303,6 +303,7 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param compilationUnit class diagram
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
+  //TODO: redo this part
   @Override
   public List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit){
     if (!getElem1().getModifier().isAbstract()) {
@@ -331,6 +332,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     return null;
   }
 
+  //this doesn't belong here
   @Override
   public List<ASTCDClass> getClassesForEnum(ASTCDCompilationUnit compilationUnit) {
     List<ASTCDClass> classList = new ArrayList<>();
@@ -344,6 +346,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     return classList;
   }
 
+  //TODO: replace CDSyntaxDiff with CDs from Helper
   @Override
   public ASTCDType isClassNeeded(CDSyntaxDiff cdSyntaxDiff) {
     //TODO: check

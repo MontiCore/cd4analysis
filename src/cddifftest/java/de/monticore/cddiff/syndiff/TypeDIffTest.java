@@ -35,16 +35,14 @@ public class TypeDIffTest extends CDDiffTestBasis {
     assert aOld != null;
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
-    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    //syntaxDiff.setMaps();
-
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
+    boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
     //ASTCDType result2 = typeDiff.isClassNeeded(syntaxDiff);
 
     // Assert the result
     Assert.assertFalse(result);
-    //Assert.assertNull(result2);
+    Assert.assertFalse(result2);
   }
 
   //@Test
@@ -92,6 +90,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute astcdAttribute = CDTestHelper.getAttribute(aOld, "age");
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.setMaps();
+    //Error in getAllSuper(only in setMaps()) from CDDiffUtil - Nullpointer
 
 
     // Invoke the method
@@ -135,6 +134,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
   //@Test
   public void testCD5(){
+
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
 
@@ -153,10 +153,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff2.isDeleted(attributeOld, compilationUnitOld);
-
+    ASTCDClass result3 = (ASTCDClass) typeDiff2.isClassNeeded(null);
 
     // Assert the result
     Assert.assertFalse(result);
     Assert.assertFalse(result2);
+    Assert.assertNotNull(result3);
   }
 }
