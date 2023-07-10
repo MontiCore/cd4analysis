@@ -25,10 +25,10 @@ public class Matcher {
   }
 
   public static boolean matchingStructureTypeStrategy(
-    ASTCDType srcElem,
-    ASTCDType tgtElem,
-    ASTCDCompilationUnit srcCD,
-    ASTCDCompilationUnit tgtCD) {
+      ASTCDType srcElem,
+      ASTCDType tgtElem,
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD) {
     StructureTypeMatcher structureTypeMatcher = new StructureTypeMatcher(srcCD, tgtCD);
     return structureTypeMatcher.isMatched(srcElem, tgtElem);
   }

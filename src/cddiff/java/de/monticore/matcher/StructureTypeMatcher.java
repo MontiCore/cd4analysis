@@ -5,7 +5,6 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,26 +34,26 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     List<ASTCDAttribute> matchedAttributes = new ArrayList<>();
-      if(srcElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(srcCD)) &&
-      tgtElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(tgtCD))) {
-        for(ASTCDAttribute srcAttr : srcElem.getCDAttributeList()){
-          for(ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()){
-            if(srcAttr.getName().equals(tgtAttr.getName())){
-              matchedAttributes.add(srcAttr);
-            }
+    if (srcElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(srcCD))
+        && tgtElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(tgtCD))) {
+      for (ASTCDAttribute srcAttr : srcElem.getCDAttributeList()) {
+        for (ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()) {
+          if (srcAttr.getName().equals(tgtAttr.getName())) {
+            matchedAttributes.add(srcAttr);
           }
         }
-        if (matchedAttributes.size() >= (0.2 * srcElem.getCDAttributeList().size())){
-          return true;
-        }
       }
-      return false;
+      if (matchedAttributes.size() >= (0.2 * srcElem.getCDAttributeList().size())) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  public double getAverageForCD(ASTCDCompilationUnit cd){
+  public double getAverageForCD(ASTCDCompilationUnit cd) {
     List<ASTCDAttribute> attributes = new ArrayList<>();
-    for (ASTCDClass tgtType : tgtCD.getCDDefinition().getCDClassesList()){
-      for(ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()){
+    for (ASTCDClass tgtType : tgtCD.getCDDefinition().getCDClassesList()) {
+      for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
         attributes.add(tgtAttr);
       }
     }

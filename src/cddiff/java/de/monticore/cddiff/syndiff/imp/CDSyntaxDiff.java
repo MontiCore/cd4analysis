@@ -1381,11 +1381,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       for (ASTCDType tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
         CDTypeDiff diffClass = new CDTypeDiff(srcClass, tgtClass);
         // TODO Easier way to call all the functions from the class to fill the list baseDiff!!!!!
-        diffClass.addAllChangedMembers(srcClass,tgtClass);
-        diffClass.addAllAddedAttributes(srcClass,tgtClass);
-        diffClass.addAllDeletedAttributes(srcClass,tgtClass);
-        //diffClass.addAllAddedConstants(srcClass,tgtClass);
-        //diffClass.addAllDeletedConstants(srcClass,tgtClass);
+        diffClass.addAllChangedMembers(srcClass, tgtClass);
+        diffClass.addAllAddedAttributes(srcClass, tgtClass);
+        diffClass.addAllDeletedAttributes(srcClass, tgtClass);
+        // diffClass.addAllAddedConstants(srcClass,tgtClass);
+        // diffClass.addAllDeletedConstants(srcClass,tgtClass);
         // TODO the list is always empty!!!!! Call functions!!!!!
         if (!diffClass.getBaseDiffs().isEmpty()) {
           changedClasses.add(diffClass);
