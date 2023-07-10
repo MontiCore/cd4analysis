@@ -2,10 +2,10 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.extractintermediateclass.autoname.attribute.tf.ExtractIntermediateClassAttribute;
-import de.monticore.cdlib.refactoring.extractintermediateclass.autoname.method.tf.ExtractIntermediateClassMethod;
-import de.monticore.cdlib.refactoring.extractintermediateclass.manualname.attribute.tf.ExtractIntermediateClassManualNameAttribute;
-import de.monticore.cdlib.refactoring.extractintermediateclass.manualname.method.tf.ExtractIntermediateClassManualNameMethod;
+import de.monticore.cdlib.Refactoring.ClassAttribute;
+import de.monticore.cdlib.Refactoring.ClassManualNameAttribute;
+import de.monticore.cdlib.Refactoring.ClassManualNameMethod;
+import de.monticore.cdlib.Refactoring.ClassMethod;
 
 /**
  * Extract superclass: Extracts additional superclass for classes with same superclass and same
@@ -108,7 +108,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    * @return <code>true</code> if the transformation was successful
    */
   private boolean extractIntermediateClassAttribute(ASTCDCompilationUnit ast) {
-    ExtractIntermediateClassAttribute extract = new ExtractIntermediateClassAttribute(ast);
+    ClassAttribute extract = new ClassAttribute(ast);
     if (extract.doPatternMatching()) {
       extract.doReplacement();
       return true;
@@ -124,7 +124,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    * @return <code>true</code> if the transformation was successful
    */
   private boolean extractIntermediateClassMethod(ASTCDCompilationUnit ast) {
-    ExtractIntermediateClassMethod extract = new ExtractIntermediateClassMethod(ast);
+    ClassMethod extract = new ClassMethod(ast);
     if (extract.doPatternMatching()) {
       extract.doReplacement();
       return true;
@@ -142,8 +142,8 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    */
   private boolean extractIntermediateClassManualNameAttribute(
       ASTCDCompilationUnit ast, String name) {
-    ExtractIntermediateClassManualNameAttribute extract =
-        new ExtractIntermediateClassManualNameAttribute(ast);
+    ClassManualNameAttribute extract =
+        new ClassManualNameAttribute(ast);
     extract.set_$newParent(name);
     if (extract.doPatternMatching()) {
       extract.doReplacement();
@@ -161,8 +161,8 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    * @return <code>true</code> if the transformation was successful
    */
   private boolean extractIntermediateClassManualNameMethod(ASTCDCompilationUnit ast, String name) {
-    ExtractIntermediateClassManualNameMethod extract =
-        new ExtractIntermediateClassManualNameMethod(ast);
+    ClassManualNameMethod extract =
+        new ClassManualNameMethod(ast);
     extract.set_$newParent(name);
     if (extract.doPatternMatching()) {
       extract.doReplacement();

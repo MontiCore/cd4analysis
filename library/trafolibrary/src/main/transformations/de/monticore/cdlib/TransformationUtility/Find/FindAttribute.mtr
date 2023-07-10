@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.transformationutility.find.tf;
-transformation FindAttribute {
-  classdiagram $_ {
-    class $className{
-        CDAttribute $Attribute [[ MCType $type $name; ]]
-    }
-  }
-}

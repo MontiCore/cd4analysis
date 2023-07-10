@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation PushDownMethod2 {
+  classdiagram $_ {
+    class $superclass {
+      [[ CDMethod $M1 :- ]]
+    }
+
+    class $subclass1 extends $superclass{
+      [[ :- CDMethod $M1 ]]
+    }
+
+    class $subclass2 extends $superclass {
+      [[ :- CDMethod $M2 ]]
+    }
+  }
+}

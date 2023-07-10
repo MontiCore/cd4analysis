@@ -2,7 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.delete.tf.Delete1to1Association;
+import de.monticore.cdlib.Refactoring.Delete1to1Association;
 import de.se_rwth.commons.logging.Log;
 
 /**

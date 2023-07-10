@@ -2,10 +2,10 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.collapsehierarchy.attribute.tf.CollapseHierarchyAttribute;
-import de.monticore.cdlib.refactoring.collapsehierarchy.method.tf.CollapseHierarchyMethod;
-import de.monticore.cdlib.refactoring.collapsehierarchy.tf.DeleteInheritance;
-import de.monticore.cdlib.refactoring.collapsehierarchy.tf.DeleteSuperclass;
+import de.monticore.cdlib.Refactoring.CollapseHierarchyAttribute;
+import de.monticore.cdlib.Refactoring.CollapseHierarchyMethod;
+import de.monticore.cdlib.Refactoring.DeleteInheritance;
+import de.monticore.cdlib.Refactoring.DeleteSuperclass;
 
 /**
  * Collapse Hierarchy: Move all methods and attributes from a superclass to subclasses

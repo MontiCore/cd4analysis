@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.TransformationUtility;
+transformation FindAttribute {
+  classdiagram $_ {
+    class $className{
+        CDAttribute $Attribute [[ MCType $type $name; ]]
+    }
+  }
+}

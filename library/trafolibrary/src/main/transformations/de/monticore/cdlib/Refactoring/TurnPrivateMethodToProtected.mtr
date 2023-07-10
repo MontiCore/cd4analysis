@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation TurnPrivateMethodToProtected {
+  classdiagram $_ {
+    class $_ {
+      CDMethod $M1 [[ [[ private :- protected ]] MCReturnType $_ $_ ();]]
+    }
+  }
+}

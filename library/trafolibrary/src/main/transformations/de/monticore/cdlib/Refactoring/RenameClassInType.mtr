@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation RenameClassInType {
+  classdiagram $_ {
+    class $_{
+      [[ $oldType :- $newType ]] $_ ;
+    }
+  }
+}

@@ -2,10 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.pushdown.attribute.tf.CopyAttributeToSubclass;
-import de.monticore.cdlib.refactoring.pushdown.attribute.tf.DeleteAttributeInSuperclass;
-import de.monticore.cdlib.refactoring.pushdown.method.tf.CopyMethodToSubclass;
-import de.monticore.cdlib.refactoring.pushdown.method.tf.DeleteMethodInSuperclass;
+import de.monticore.cdlib.Refactoring.*;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 

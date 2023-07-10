@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation DeleteAttributeInSuperclass {
+  classdiagram $_ {
+    class $superclass{
+      [[  $A1 [[ MCType $_ $name; ]] :- ]]
+    }
+  }
+}

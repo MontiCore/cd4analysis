@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation DeleteClassChangeInheritance {
+  classdiagram $_ {
+    class $classToDelete;
+
+    class $subclass extends [[ $classToDelete :- ]] ;
+  }
+}

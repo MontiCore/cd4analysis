@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation DeleteMethodInSuperclass {
+  classdiagram $_ {
+    class $superclass{
+      [[ CDMethod $A1 [[ MCReturnType $_ $name (); ]] :- ]]
+    }
+  }
+}

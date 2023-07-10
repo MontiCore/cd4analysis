@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation CollapseHierarchyAttribute {
+  classdiagram $_{
+
+
+    class $superclass1{
+       [[CDAttribute $A1 :-]]
+    }
+
+    list $test [[class $_ extends $superclass1{
+      [[ :- CDAttribute $A1]]
+      not [[ CDAttribute $A2 ]]
+    } ]]
+  }
+
+  where {$A2.deepEquals($A1)}
+}

@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation RenameAttribute {
+  classdiagram $_ {
+    class $_{
+      not [[ MCType $_ $newName; ]]
+
+        CDAttribute $C [[
+          MCType $type [[ $oldName :- $newName ]] ;
+        ]]
+      }
+  }
+}

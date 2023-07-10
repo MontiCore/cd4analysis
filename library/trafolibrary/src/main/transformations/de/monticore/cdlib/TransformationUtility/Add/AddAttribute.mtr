@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.transformationutility.add.tf;
-transformation AddAttribute {
-  CDAttribute $Attribute
-
-  class $className{
-    [[ :- CDAttribute $Attribute ]]
-  }
-}

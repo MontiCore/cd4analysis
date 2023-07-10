@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.TransformationUtility;
+transformation CreateRightDirAssociation {
+  classdiagram $_ {
+
+    [[ :- association $LeftReferenceList -> $RightReferenceList ; ]]
+
+  }
+}
