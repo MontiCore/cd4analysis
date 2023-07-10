@@ -1,0 +1,44 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+
+transformation Class6ClassesManualNameMethod {
+  classdiagram $_{
+    class $parent;
+
+    class $subclass1 extends [[ $parent :- $newParent ]] {
+      [[ CDMethod $A1  :- ]]
+    }
+
+    class $subclass2 extends [[ $parent :- $newParent ]] {
+       [[ CDMethod $A2 :- ]]
+    }
+
+    class $subclass3 extends [[ $parent :- $newParent ]] {
+       [[ CDMethod $A3 :- ]]
+    }
+
+    class $subclass4 extends [[ $parent :- $newParent ]] {
+       [[ CDMethod $A4 :- ]]
+    }
+
+    class $subclass5 extends [[ $parent :- $newParent ]] {
+       [[ CDMethod $A5 :- ]]
+    }
+
+    class $subclass6 extends [[ $parent :- $newParent ]] {
+       [[ CDMethod $A6 :- ]]
+    }
+
+    [[ :- class $newParent extends $parent{
+       CDMethod $A1
+    } ]]
+  }
+
+  where{
+    $A2.deepEquals($A1)&&
+    $A3.deepEquals($A1)&&
+    $A4.deepEquals($A1)&&
+    $A5.deepEquals($A1)&&
+    $A6.deepEquals($A1)
+  }
+}

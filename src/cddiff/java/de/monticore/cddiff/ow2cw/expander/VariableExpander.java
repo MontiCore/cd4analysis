@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw.expander;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -104,8 +103,7 @@ public class VariableExpander extends BasicExpander {
       return;
     }
 
-    ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    ICD4CodeArtifactScope artifactScope = (ICD4CodeArtifactScope) getCD().getEnclosingScope();
 
     if (assoc.getCDAssocDir().isDefinitiveNavigableRight()) {
       Optional<CDTypeSymbol> symbol =

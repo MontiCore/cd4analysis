@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.refactoring.collapsehierarchy.tf;
-transformation DeleteSuperclass {
-  classdiagram $_ {
-
-    [[ class $superclass; :- ]]
-
-  }
-}

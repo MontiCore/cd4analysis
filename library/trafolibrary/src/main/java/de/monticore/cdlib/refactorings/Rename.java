@@ -2,9 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.rename.tf.RenameAttribute;
-import de.monticore.cdlib.refactoring.rename.tf.RenameClass;
-import de.monticore.cdlib.refactoring.rename.tf.RenameGetterAndSetter;
+import de.monticore.cdlib.Refactoring.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 

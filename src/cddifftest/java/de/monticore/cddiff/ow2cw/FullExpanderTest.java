@@ -5,12 +5,11 @@ import de.monticore.cd.facade.CDExtendUsageFacade;
 import de.monticore.cd.facade.CDInterfaceUsageFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.expander.BasicExpander;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -25,7 +24,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
   public void testAddNewSubClass() {
     ASTCDCompilationUnit machines =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Machines/Machines2.cd");
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
+    CDDiffUtil.refreshSymbolTable(machines);
 
     FullExpander fullExpander = new FullExpander(new BasicExpander(machines));
 
@@ -40,24 +39,19 @@ public class FullExpanderTest extends CDDiffTestBasis {
       }
     }
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    machines.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(machines, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     machines = parseModel("src/cddifftest/resources/de/monticore/cddiff/Machines/Machines3.cd");
     machines.getCDDefinition().setName("Machines2");
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
-    machines.accept(pprinter.getTraverser());
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines, false));
   }
 
   @Test
   public void testAddClass2Package() {
     ASTCDCompilationUnit machines =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Machines/Machines1.cd");
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
+    CDDiffUtil.refreshSymbolTable(machines);
 
     FullExpander fullExpander = new FullExpander(new BasicExpander(machines));
 
@@ -82,17 +76,13 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     fullExpander.addType2Package(car.deepClone(), "future");
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    machines.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(machines, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     machines = parseModel("src/cddifftest/resources/de/monticore/cddiff/Machines/Machines2.cd");
     machines.getCDDefinition().setName("Machines1");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
-    machines.accept(pprinter.getTraverser());
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines, false));
   }
 
   @Test
@@ -103,8 +93,9 @@ public class FullExpanderTest extends CDDiffTestBasis {
     ASTCDCompilationUnit machines5 =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Machines/Machines5.cd");
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(machines4);
-    ICD4CodeArtifactScope scope5 = CD4CodeMill.scopesGenitorDelegator().createFromAST(machines5);
+    CDDiffUtil.refreshSymbolTable(machines4);
+    CDDiffUtil.refreshSymbolTable(machines5);
+    ICD4CodeArtifactScope scope5 = (ICD4CodeArtifactScope) machines5.getEnclosingScope();
 
     FullExpander fullExpander = new FullExpander(new BasicExpander(machines4));
 
@@ -115,15 +106,11 @@ public class FullExpanderTest extends CDDiffTestBasis {
         .resolveCDTypeDown("ancient.Wheel")
         .ifPresent(type -> fullExpander.addClone(type.getAstNode()));
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    machines4.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(machines4, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     machines5.getCDDefinition().setName("Machines4");
-    machines5.accept(pprinter.getTraverser());
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines5, false));
   }
 
   @Test
@@ -134,8 +121,8 @@ public class FullExpanderTest extends CDDiffTestBasis {
     ASTCDCompilationUnit machines4 =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Machines/Machines4.cd");
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(machines3);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(machines4);
+    CDDiffUtil.refreshSymbolTable(machines3);
+    CDDiffUtil.refreshSymbolTable(machines4);
 
     FullExpander fullExpander = new FullExpander(new BasicExpander(machines3));
 
@@ -145,15 +132,11 @@ public class FullExpanderTest extends CDDiffTestBasis {
       }
     }
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    machines3.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(machines3, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     machines4.getCDDefinition().setName("Machines3");
-    machines4.accept(pprinter.getTraverser());
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines4, false));
   }
 
   @Test
@@ -163,8 +146,8 @@ public class FullExpanderTest extends CDDiffTestBasis {
     ASTCDCompilationUnit lecture5 =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture5.cd");
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture4);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture5);
+    CDDiffUtil.refreshSymbolTable(lecture4);
+    CDDiffUtil.refreshSymbolTable(lecture5);
 
     FullExpander fullExpander = new FullExpander(new BasicExpander(lecture5));
 
@@ -173,16 +156,12 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture5);
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    lecture5.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(lecture5, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     lecture4.getCDDefinition().setName("Lecture5");
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture4);
-    lecture4.accept(pprinter.getTraverser());
+    CDDiffUtil.refreshSymbolTable(lecture4);
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(lecture4, false));
   }
 
   @Test
@@ -201,16 +180,11 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp1);
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    enumComp1.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(enumComp1, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     enumComp2.getCDDefinition().setName("enumCompV1");
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp2);
-    enumComp2.accept(pprinter.getTraverser());
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(enumComp2, false));
   }
 
   @Test
@@ -233,17 +207,12 @@ public class FullExpanderTest extends CDDiffTestBasis {
     fullExpander.addAssociationClones(copies);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
 
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    lecture.accept(pprinter.getTraverser());
-    String result = pprinter.getPrinter().getContent();
+    String result = CD4CodeMill.prettyPrint(lecture, false);
 
-    pprinter = new CD4CodeFullPrettyPrinter();
     lecture = parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture3.cd");
     lecture.getCDDefinition().setName("Lecture2");
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
-    lecture.accept(pprinter.getTraverser());
 
-    Assert.assertEquals(result, pprinter.getPrinter().getContent());
+    Assert.assertEquals(result, CD4CodeMill.prettyPrint(lecture, false));
   }
 
   @Test
@@ -338,12 +307,10 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     Assert.assertEquals(left2right + right2left, assocList.size());
 
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
     for (ASTCDAssociation assoc : assocList) {
-      assoc.accept(pp.getTraverser());
-      String node = pp.prettyprint((ASTCDAssociationNode) assoc);
+      String node = CD4CodeMill.prettyPrint(assoc, false);
       Assert.assertTrue(node.contains("->"));
-      Assert.assertTrue(node.contains("Object ;"));
+      Assert.assertTrue(node.contains("Object;"));
     }
   }
 
@@ -351,7 +318,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
   public void testInConflict() {
     final ASTCDCompilationUnit conflictCD =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/Conflict/ConflictEmployees.cd");
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(conflictCD);
+    CDDiffUtil.refreshSymbolTable(conflictCD);
 
     List<ASTCDAssociation> assocList =
         new ArrayList<>(conflictCD.getCDDefinition().getCDAssociationsList());

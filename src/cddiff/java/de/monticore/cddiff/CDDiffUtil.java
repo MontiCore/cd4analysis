@@ -2,6 +2,9 @@
 package de.monticore.cddiff;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -311,5 +314,14 @@ public class CDDiffUtil {
     }
     result.remove(type);
     return result;
+  }
+
+  public static void refreshSymbolTable(ASTCDCompilationUnit cd) {
+    if (cd.getEnclosingScope() != null) {
+      CD4CodeMill.globalScope().removeSubScope(cd.getEnclosingScope());
+    }
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
+    cd.accept(completer);
   }
 }

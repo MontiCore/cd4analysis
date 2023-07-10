@@ -2,8 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.switchinheritancedelegation.tf.ReplaceDelegationByInheritance;
-import de.monticore.cdlib.refactoring.switchinheritancedelegation.tf.ReplaceInheritanceByDelegation;
+import de.monticore.cdlib.Refactoring.*;
 
 /**
  * Replace an association by an inheritance between the classes and the other way around

@@ -30,6 +30,8 @@ public abstract class CDDiffTestBasis {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
 
   /**

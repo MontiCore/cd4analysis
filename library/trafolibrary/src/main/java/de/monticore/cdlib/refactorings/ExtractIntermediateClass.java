@@ -2,12 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.extractintermediateclass.additionalclasses.tf.ExtractIntermediateClassAdaptSubclassAttribute;
-import de.monticore.cdlib.refactoring.extractintermediateclass.additionalclasses.tf.ExtractIntermediateClassAdaptSubclassMethod;
-import de.monticore.cdlib.refactoring.extractintermediateclass.autoname.attribute.tf.*;
-import de.monticore.cdlib.refactoring.extractintermediateclass.autoname.method.tf.*;
-import de.monticore.cdlib.refactoring.extractintermediateclass.manualname.attribute.tf.*;
-import de.monticore.cdlib.refactoring.extractintermediateclass.manualname.method.tf.*;
+import de.monticore.cdlib.Refactoring.*;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
@@ -50,19 +45,19 @@ public class ExtractIntermediateClass implements Refactoring {
 
     /* Extract Superclass from six classes (or more) */
     // for attributes
-    ExtractIntermediateClass6ClassesAttribute extract6Superclasses =
-        new ExtractIntermediateClass6ClassesAttribute(ast);
+    Class6ClassesAttribute extract6Superclasses =
+        new Class6ClassesAttribute(ast);
     if (extract6Superclasses.doPatternMatching()) {
       extract6Superclasses.doReplacement();
 
       // Adapt all additional Classes with this attribute
-      ExtractIntermediateClassAdaptSubclassAttribute additionalSubclass =
-          new ExtractIntermediateClassAdaptSubclassAttribute(ast);
+      ClassAdaptSubclassAttribute additionalSubclass =
+          new ClassAdaptSubclassAttribute(ast);
       additionalSubclass.set_$A(extract6Superclasses.get_$A1());
       additionalSubclass.set_$parent(extract6Superclasses.get_$parent());
       additionalSubclass.set_$newParent(extract6Superclasses.get_$newParent());
       while (additionalSubclass.doPatternMatching()) {
-        additionalSubclass = new ExtractIntermediateClassAdaptSubclassAttribute(ast);
+        additionalSubclass = new ClassAdaptSubclassAttribute(ast);
         additionalSubclass.set_$A(extract6Superclasses.get_$A1());
         additionalSubclass.set_$parent(extract6Superclasses.get_$parent());
         additionalSubclass.set_$newParent(extract6Superclasses.get_$newParent());
@@ -72,19 +67,19 @@ public class ExtractIntermediateClass implements Refactoring {
     }
 
     // for methods
-    ExtractIntermediateClass6ClassesMethod extract6SuperclassesMethod =
-        new ExtractIntermediateClass6ClassesMethod(ast);
+    Class6ClassesMethod extract6SuperclassesMethod =
+        new Class6ClassesMethod(ast);
     if (extract6SuperclassesMethod.doPatternMatching()) {
       extract6SuperclassesMethod.doReplacement();
 
       // Adapt all additional classes with this method
-      ExtractIntermediateClassAdaptSubclassMethod additionalSubclassMethod =
-          new ExtractIntermediateClassAdaptSubclassMethod(ast);
+      ClassAdaptSubclassMethod additionalSubclassMethod =
+          new ClassAdaptSubclassMethod(ast);
       additionalSubclassMethod.set_$A(extract6SuperclassesMethod.get_$A1());
       additionalSubclassMethod.set_$parent(extract6SuperclassesMethod.get_$parent());
       additionalSubclassMethod.set_$newParent(extract6SuperclassesMethod.get_$newParent());
       while (additionalSubclassMethod.doPatternMatching()) {
-        additionalSubclassMethod = new ExtractIntermediateClassAdaptSubclassMethod(ast);
+        additionalSubclassMethod = new ClassAdaptSubclassMethod(ast);
         additionalSubclassMethod.set_$A(extract6SuperclassesMethod.get_$A1());
         additionalSubclassMethod.set_$parent(extract6SuperclassesMethod.get_$parent());
         additionalSubclassMethod.set_$newParent(extract6SuperclassesMethod.get_$newParent());
@@ -94,16 +89,16 @@ public class ExtractIntermediateClass implements Refactoring {
 
     /* Extract Superclass from five classes */
     // for attributes
-    ExtractIntermediateClass5ClassesAttribute extract5Superclasses =
-        new ExtractIntermediateClass5ClassesAttribute(ast);
+    Class5ClassesAttribute extract5Superclasses =
+        new Class5ClassesAttribute(ast);
     if (extract5Superclasses.doPatternMatching()) {
       extract5Superclasses.doReplacement();
       return true;
     }
 
     // for methods
-    ExtractIntermediateClass5ClassesMethod extract5SuperclassesMethods =
-        new ExtractIntermediateClass5ClassesMethod(ast);
+    Class5ClassesMethod extract5SuperclassesMethods =
+        new Class5ClassesMethod(ast);
     if (extract5SuperclassesMethods.doPatternMatching()) {
       extract5SuperclassesMethods.doReplacement();
       return true;
@@ -111,16 +106,16 @@ public class ExtractIntermediateClass implements Refactoring {
 
     /* Extract Superclass from four classes */
     // for attributes
-    ExtractIntermediateClass4ClassesAttribute extract4Superclasses =
-        new ExtractIntermediateClass4ClassesAttribute(ast);
+    Class4ClassesAttribute extract4Superclasses =
+        new Class4ClassesAttribute(ast);
     if (extract4Superclasses.doPatternMatching()) {
       extract4Superclasses.doReplacement();
       return true;
     }
 
     // for methods
-    ExtractIntermediateClass4ClassesMethod extract4SuperclassesMethod =
-        new ExtractIntermediateClass4ClassesMethod(ast);
+    Class4ClassesMethod extract4SuperclassesMethod =
+        new Class4ClassesMethod(ast);
     if (extract4SuperclassesMethod.doPatternMatching()) {
       extract4SuperclassesMethod.doReplacement();
       return true;
@@ -128,15 +123,15 @@ public class ExtractIntermediateClass implements Refactoring {
 
     /* Extract Superclass from three classes */
     // for attributes
-    ExtractIntermediateClass3ClassesAttribute extract3Superclasses =
-        new ExtractIntermediateClass3ClassesAttribute(ast);
+    Class3ClassesAttribute extract3Superclasses =
+        new Class3ClassesAttribute(ast);
     if (extract3Superclasses.doPatternMatching()) {
       extract3Superclasses.doReplacement();
       return true;
     }
     // for methods
-    ExtractIntermediateClass3ClassesMethod extract3SuperclassesMethod =
-        new ExtractIntermediateClass3ClassesMethod(ast);
+    Class3ClassesMethod extract3SuperclassesMethod =
+        new Class3ClassesMethod(ast);
     if (extract3SuperclassesMethod.doPatternMatching()) {
       extract3SuperclassesMethod.doReplacement();
       return true;
@@ -144,16 +139,16 @@ public class ExtractIntermediateClass implements Refactoring {
 
     /* Extract Superclass from two classes */
     // for attributes
-    ExtractIntermediateClass2ClassesAttribute extract2Superclasses =
-        new ExtractIntermediateClass2ClassesAttribute(ast);
+    Class2ClassesAttribute extract2Superclasses =
+        new Class2ClassesAttribute(ast);
     if (extract2Superclasses.doPatternMatching()) {
       extract2Superclasses.doReplacement();
       return true;
     }
 
     // for methods
-    ExtractIntermediateClass2ClassesMethod extract2SuperclassesMethod =
-        new ExtractIntermediateClass2ClassesMethod(ast);
+    Class2ClassesMethod extract2SuperclassesMethod =
+        new Class2ClassesMethod(ast);
     if (extract2SuperclassesMethod.doPatternMatching()) {
       extract2SuperclassesMethod.doReplacement();
       return true;
@@ -177,24 +172,24 @@ public class ExtractIntermediateClass implements Refactoring {
 
     switch (subclasses.size()) {
       case 2:
-        success = extractIntermediateClasses(newSuperclassName, subclasses, ast);
+        success = Classes(newSuperclassName, subclasses, ast);
         break;
       case 3:
-        success = extractIntermediateClass3(newSuperclassName, subclasses, ast);
+        success = Class3(newSuperclassName, subclasses, ast);
         break;
       case 4:
-        success = extractIntermediateClass4(newSuperclassName, subclasses, ast);
+        success = Class4(newSuperclassName, subclasses, ast);
         break;
       case 5:
-        success = extractIntermediateClass5(newSuperclassName, subclasses, ast);
+        success = Class5(newSuperclassName, subclasses, ast);
         break;
       case 6:
-        success = extractIntermediateClass6(newSuperclassName, subclasses, ast);
+        success = Class6(newSuperclassName, subclasses, ast);
         break;
       default:
         Log.info(
             "0xF4091: ExtractSuperclass is only applicable for up to six subclasses",
-            ExtractIntermediateClass.class.getName());
+            Class.class.getName());
         return false;
     }
 
@@ -202,11 +197,11 @@ public class ExtractIntermediateClass implements Refactoring {
   }
 
   // Create new Superclass for six subclasses with same attribute or method
-  private boolean extractIntermediateClass6(
+  private boolean Class6(
       String newSuperclassName, List<String> subclasses, ASTCDCompilationUnit ast) {
     /* Pull Up attributes from six classes */
-    ExtractIntermediateClass6ClassesManualNameAttribute extractSuperclass =
-        new ExtractIntermediateClass6ClassesManualNameAttribute(ast);
+    Class6ClassesManualNameAttribute extractSuperclass =
+        new Class6ClassesManualNameAttribute(ast);
     extractSuperclass.set_$newParent(newSuperclassName);
     extractSuperclass.set_$subclass1(subclasses.get(0));
     extractSuperclass.set_$subclass2(subclasses.get(1));
@@ -221,8 +216,8 @@ public class ExtractIntermediateClass implements Refactoring {
     } else {
 
       /* Pull Up methods from six classes */
-      ExtractIntermediateClass6ClassesManualNameMethod extractSuperclassMethod =
-          new ExtractIntermediateClass6ClassesManualNameMethod(ast);
+      Class6ClassesManualNameMethod extractSuperclassMethod =
+          new Class6ClassesManualNameMethod(ast);
       extractSuperclassMethod.set_$newParent(newSuperclassName);
       extractSuperclassMethod.set_$subclass1(subclasses.get(0));
       extractSuperclassMethod.set_$subclass2(subclasses.get(1));
@@ -240,11 +235,11 @@ public class ExtractIntermediateClass implements Refactoring {
   }
 
   // Create new Superclass for five subclasses with same attribute or method
-  private boolean extractIntermediateClass5(
+  private boolean Class5(
       String newSuperclassName, List<String> subclasses, ASTCDCompilationUnit ast) {
     /* Pull Up attributes from five classes */
-    ExtractIntermediateClass5ClassesManualNameAttribute extractSuperclass =
-        new ExtractIntermediateClass5ClassesManualNameAttribute(ast);
+    Class5ClassesManualNameAttribute extractSuperclass =
+        new Class5ClassesManualNameAttribute(ast);
     extractSuperclass.set_$newParent(newSuperclassName);
     extractSuperclass.set_$subclass1(subclasses.get(0));
     extractSuperclass.set_$subclass2(subclasses.get(1));
@@ -257,8 +252,8 @@ public class ExtractIntermediateClass implements Refactoring {
       return true;
     } else {
       /* Pull Up methods from five classes */
-      ExtractIntermediateClass5ClassesManualNameMethod extractSuperclassMethod =
-          new ExtractIntermediateClass5ClassesManualNameMethod(ast);
+      Class5ClassesManualNameMethod extractSuperclassMethod =
+          new Class5ClassesManualNameMethod(ast);
       extractSuperclassMethod.set_$newParent(newSuperclassName);
       extractSuperclassMethod.set_$subclass1(subclasses.get(0));
       extractSuperclassMethod.set_$subclass2(subclasses.get(1));
@@ -275,11 +270,11 @@ public class ExtractIntermediateClass implements Refactoring {
   }
 
   // Create new superclass for four subclasses with same attributes or methods
-  private boolean extractIntermediateClass4(
+  private boolean Class4(
       String newSuperclassName, List<String> subclasses, ASTCDCompilationUnit ast) {
     /* Pull Up attributes from four classes */
-    ExtractIntermediateClass4ClassesManualNameAttribute extractSuperclass =
-        new ExtractIntermediateClass4ClassesManualNameAttribute(ast);
+    Class4ClassesManualNameAttribute extractSuperclass =
+        new Class4ClassesManualNameAttribute(ast);
     extractSuperclass.set_$newParent(newSuperclassName);
     extractSuperclass.set_$subclass1(subclasses.get(0));
     extractSuperclass.set_$subclass2(subclasses.get(1));
@@ -290,8 +285,8 @@ public class ExtractIntermediateClass implements Refactoring {
       return true;
     } else {
       /* Pull Up methods from four classes */
-      ExtractIntermediateClass4ClassesManualNameMethod extractSuperclassMethod =
-          new ExtractIntermediateClass4ClassesManualNameMethod(ast);
+      Class4ClassesManualNameMethod extractSuperclassMethod =
+          new Class4ClassesManualNameMethod(ast);
       extractSuperclassMethod.set_$newParent(newSuperclassName);
       extractSuperclassMethod.set_$subclass1(subclasses.get(0));
       extractSuperclassMethod.set_$subclass2(subclasses.get(1));
@@ -307,11 +302,11 @@ public class ExtractIntermediateClass implements Refactoring {
 
   // Create new superclass for three subclasses with same attributes or
   // methods
-  private boolean extractIntermediateClass3(
+  private boolean Class3(
       String newSuperclassName, List<String> subclasses, ASTCDCompilationUnit ast) {
     /* Pull Up attributes from three classes */
-    ExtractIntermediateClass3ClassesManualNameAttribute extract3Superclasses =
-        new ExtractIntermediateClass3ClassesManualNameAttribute(ast);
+    Class3ClassesManualNameAttribute extract3Superclasses =
+        new Class3ClassesManualNameAttribute(ast);
     extract3Superclasses.set_$newParent(newSuperclassName);
     extract3Superclasses.set_$subclass1(subclasses.get(0));
     extract3Superclasses.set_$subclass2(subclasses.get(1));
@@ -322,8 +317,8 @@ public class ExtractIntermediateClass implements Refactoring {
       return true;
     } else {
       /* Pull Up methods from three classes */
-      ExtractIntermediateClass3ClassesManualNameMethod extract3SuperclassesMethod =
-          new ExtractIntermediateClass3ClassesManualNameMethod(ast);
+      Class3ClassesManualNameMethod extract3SuperclassesMethod =
+          new Class3ClassesManualNameMethod(ast);
       extract3SuperclassesMethod.set_$newParent(newSuperclassName);
       extract3SuperclassesMethod.set_$subclass1(subclasses.get(0));
       extract3SuperclassesMethod.set_$subclass2(subclasses.get(1));
@@ -338,11 +333,11 @@ public class ExtractIntermediateClass implements Refactoring {
   }
 
   // Create new superclass for two subclasses with same attributes or methods
-  private boolean extractIntermediateClasses(
+  private boolean Classes(
       String newSuperclassName, List<String> subclasses, ASTCDCompilationUnit ast) {
     /* Pull Up attribtues from two classes */
-    ExtractIntermediateClass2ClassesManualNameAttribute extract2Superclasses =
-        new ExtractIntermediateClass2ClassesManualNameAttribute(ast);
+    Class2ClassesManualNameAttribute extract2Superclasses =
+        new Class2ClassesManualNameAttribute(ast);
     extract2Superclasses.set_$newParent(newSuperclassName);
     extract2Superclasses.set_$subclass1(subclasses.get(0));
     extract2Superclasses.set_$subclass2(subclasses.get(1));
@@ -352,8 +347,8 @@ public class ExtractIntermediateClass implements Refactoring {
       return true;
     } else {
       /* Pull Up methods from two classes */
-      ExtractIntermediateClass2ClassesManualNameMethod extract2SuperclassesMethod =
-          new ExtractIntermediateClass2ClassesManualNameMethod(ast);
+      Class2ClassesManualNameMethod extract2SuperclassesMethod =
+          new Class2ClassesManualNameMethod(ast);
       extract2SuperclassesMethod.set_$newParent(newSuperclassName);
       extract2SuperclassesMethod.set_$subclass1(subclasses.get(0));
       extract2SuperclassesMethod.set_$subclass2(subclasses.get(1));
@@ -366,10 +361,10 @@ public class ExtractIntermediateClass implements Refactoring {
     return false;
   }
 
-  private boolean extractIntermediateClasses(String newSuperclassName, ASTCDCompilationUnit ast) {
+  private boolean Classes(String newSuperclassName, ASTCDCompilationUnit ast) {
     /* Pull Up attribtues from two classes */
-    ExtractIntermediateClass2ClassesManualNameAttribute extract2Superclasses =
-        new ExtractIntermediateClass2ClassesManualNameAttribute(ast);
+    Class2ClassesManualNameAttribute extract2Superclasses =
+        new Class2ClassesManualNameAttribute(ast);
     extract2Superclasses.set_$newParent(newSuperclassName);
 
     if (extract2Superclasses.doPatternMatching()) {
@@ -377,8 +372,8 @@ public class ExtractIntermediateClass implements Refactoring {
       return true;
     } else {
       /* Pull Up methods from two classes */
-      ExtractIntermediateClass2ClassesManualNameMethod extract2SuperclassesMethod =
-          new ExtractIntermediateClass2ClassesManualNameMethod(ast);
+      Class2ClassesManualNameMethod extract2SuperclassesMethod =
+          new Class2ClassesManualNameMethod(ast);
       extract2SuperclassesMethod.set_$newParent(newSuperclassName);
 
       if (extract2SuperclassesMethod.doPatternMatching()) {
