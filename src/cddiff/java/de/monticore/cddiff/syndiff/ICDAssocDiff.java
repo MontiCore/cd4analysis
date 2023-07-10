@@ -4,9 +4,9 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import java.util.List;
 
 public interface ICDAssocDiff {
-  ASTCDAssociation getElem1();
+  ASTCDAssociation getSrcElem();
 
-  ASTCDAssociation getElem2();
+  ASTCDAssociation getTgtElem();
 
   List<DiffTypes> getBaseDiff();
 

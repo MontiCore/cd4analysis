@@ -1,0 +1,13 @@
+import java.lang.*;
+classdiagram CD31{
+
+  class A{
+    int age;
+  }
+
+  class B extends A{
+    double age;
+  }
+
+  class C extends B{}
+}

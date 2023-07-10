@@ -22,9 +22,9 @@ public interface ICDTypeDiff {
 
   List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
 
-  ASTCDType getElem1();
+  ASTCDType getSrcElem();
 
-  ASTCDType getElem2();
+  ASTCDType getTgtElem();
 
   void setChangedMembers(List<CDMemberDiff> changedMembers);
 
@@ -119,5 +119,5 @@ public interface ICDTypeDiff {
    * @return true if we have a semantic difference. This function kind of uses multiple others:
    * inheritance hierarchy, comparison of associations.
    */
-  ASTCDType isClassNeeded(CDSyntaxDiff cdSyntaxDiff);
+  ASTCDType isClassNeeded();
 }

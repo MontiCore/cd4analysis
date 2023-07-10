@@ -5,15 +5,12 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
-import org.checkerframework.checker.units.qual.A;
+import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import org.junit.Assert;
 import org.junit.Test;
-import de.monticore.cddiff.syndiff.*;
-import de.monticore.cddiff.syndiff.*;
-
-import java.util.List;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
@@ -35,12 +32,14 @@ public class TypeDIffTest extends CDDiffTestBasis {
     assert aOld != null;
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
     //ASTCDType result2 = typeDiff.isClassNeeded(syntaxDiff);
 
     // Assert the result
+    System.out.print(Syn2SemDiffHelper.getSpannedInheritance(compilationUnitNew, aNew));
     Assert.assertFalse(result);
     Assert.assertFalse(result2);
   }
@@ -95,7 +94,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
-    ASTCDType result2 = typeDiff1.isClassNeeded(syntaxDiff);
+    ASTCDType result2 = typeDiff1.isClassNeeded();
     boolean result3 = typeDiff1.isDeleted(astcdAttribute, compilationUnitNew);
 
 
@@ -153,7 +152,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff2.isDeleted(attributeOld, compilationUnitOld);
-    ASTCDClass result3 = (ASTCDClass) typeDiff2.isClassNeeded(null);
+    ASTCDClass result3 = (ASTCDClass) typeDiff2.isClassNeeded();
 
     // Assert the result
     Assert.assertFalse(result);

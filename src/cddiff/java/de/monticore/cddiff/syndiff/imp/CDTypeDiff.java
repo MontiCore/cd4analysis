@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff.imp;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.DiffTypes;
@@ -15,8 +16,8 @@ import java.util.*;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 public class CDTypeDiff implements ICDTypeDiff {
-  private final ASTCDType elem1;
-  private final ASTCDType elem2;
+  private final ASTCDType srcElem;
+  private final ASTCDType tgtElem;
   private List<CDMemberDiff> changedMembers;
   private List<ASTCDAttribute> addedAttributes;
   private List<ASTCDAttribute> deletedAttributes;
@@ -28,19 +29,19 @@ public class CDTypeDiff implements ICDTypeDiff {
 
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
 
-  public CDTypeDiff(ASTCDType elem1, ASTCDType elem2) {
-    this.elem1 = elem1;
-    this.elem2 = elem2;
+  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem) {
+    this.srcElem = srcElem;
+    this.tgtElem = tgtElem;
   }
 
   @Override
-  public ASTCDType getElem1() {
-    return elem1;
+  public ASTCDType getSrcElem() {
+    return srcElem;
   }
 
   @Override
-  public ASTCDType getElem2() {
-    return elem2;
+  public ASTCDType getTgtElem() {
+    return tgtElem;
   }
 
   @Override
@@ -115,7 +116,7 @@ public class CDTypeDiff implements ICDTypeDiff {
 
   @Override
   public String sterDiff() {
-    return "Modifier changed from " + getElem2().getModifier() + " to " + getElem1().getModifier();
+    return "Modifier changed from " + getTgtElem().getModifier() + " to " + getSrcElem().getModifier();
   }
 
   /**
@@ -148,7 +149,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttribute()){
       if (isDeleted(attribute, compilationUnit)){
-        pairList.add(new Pair<>((ASTCDClass) getElem1(), attribute));
+        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
       }
     }
     return pairList;
@@ -160,23 +161,27 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @param compilationUnit srcCD
    * @return false if found in inheritance hierarchy or the class is now abstract and the structure is refactored
    */
-  public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
-    if (isAttributInSuper(attribute, getElem1(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
+  public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit) {
+    if (isAttributInSuper(attribute, getSrcElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())) {
       return false;
     } else {
-      if (!getElem1().getModifier().isAbstract()){
+      if (!getSrcElem().getModifier().isAbstract()) {
         return true;
       }
-      Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getElem1(), compilationUnit);
+      Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getSrcElem(), compilationUnit);
+      classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
-        if (!astcdClass.getCDAttributeList().contains(attribute)) {
+        System.out.println(astcdClass.getName());
+        if (!isAttContainedInClass(attribute, astcdClass)) {
           Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-          astcdClassList.remove(getElem1());
+          astcdClassList.remove(getSrcElem());
           for (ASTCDType type : astcdClassList) {
-            if (type instanceof ASTCDClass && type.getCDAttributeList().contains(attribute)) {
-              conditionSatisfied = true; // Set the flag to true if the condition holds
-              break;
+            if (type instanceof ASTCDClass) {
+              if (isAttContainedInClass(attribute, (ASTCDClass) type)) {
+                conditionSatisfied = true; // Set the flag to true if the condition holds
+                break;
+              }
             }
           }
         } else {
@@ -192,6 +197,16 @@ public class CDTypeDiff implements ICDTypeDiff {
     }
   }
 
+  public boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDClass astcdClass){
+    for (ASTCDAttribute att : astcdClass.getCDAttributeList()){
+      if ((att.getName().equals(attribute.getName())
+        && att.printType().equals(attribute.printType()))){
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Check for each attribute in the list addedAttributes if it
    * has been really added and add it to a list.
@@ -203,7 +218,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getAddedAttributes()){
       if (isAdded(attribute, compilationUnit)){
-        pairList.add(new Pair<>((ASTCDClass) getElem1(), attribute));
+        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
       }
     }
     return pairList;
@@ -216,18 +231,18 @@ public class CDTypeDiff implements ICDTypeDiff {
    */
   public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit);
-    if (CDInheritanceHelper.isAttributInSuper(attribute, getElem2(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
+    if (CDInheritanceHelper.isAttributInSuper(attribute, getTgtElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
       return false;
     }
-    if (!getElem1().getModifier().isAbstract()){
+    if (!getSrcElem().getModifier().isAbstract()){
       return true;
     }
-    Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getElem2(), compilationUnit);
+    Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getTgtElem(), compilationUnit);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
       if (!astcdClass.getCDAttributeList().contains(attribute)) {
         Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-        astcdClassList.remove(getElem2());
+        astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
           if (type instanceof ASTCDClass && type.getCDAttributeList().contains(attribute)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
@@ -275,7 +290,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();
     if (!getAddedConstants().isEmpty()){
       for (ASTCDEnumConstant constant : getAddedConstants()){
-        pairList.add(new Pair<>((ASTCDClass) getElem1(), constant));
+        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), constant));
       }
     }
     return pairList;
@@ -305,31 +320,75 @@ public class CDTypeDiff implements ICDTypeDiff {
    */
   //TODO: redo this part
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit){
-    if (!getElem1().getModifier().isAbstract()) {
+  public List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit) {
+    if (!getSrcElem().getModifier().isAbstract()) {
       List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
       for (DiffTypes type : memberDiff.getBaseDiff()) {
-        switch (type) {
-          case CHANGED_ATTRIBUTE: list.add(new Pair<>((ASTCDClass)getElem1(),(ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+        if (Objects.requireNonNull(type) == DiffTypes.CHANGED_ATTRIBUTE) {
+          list.add(new Pair<>((ASTCDClass) getSrcElem(), (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+        }
+      }
+      return list;
+    } else { //class is abstract and can't be instantiated - get a subclass
+      //TODO: direct sublclasses might also be abstract
+      List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+      for (DiffTypes type : memberDiff.getBaseDiff()) {
+        if (Objects.requireNonNull(type) == DiffTypes.CHANGED_ATTRIBUTE) {
+          list.add(new Pair<>(minDiffWitness((ASTCDClass) getSrcElem()), (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
         }
       }
       return list;
     }
-    else { //class is abstract and can't be instantiated - get a subclass
-      //TODO: direct sublclasses might also be abstract
-      for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()){
-        if (getDirectSuperClasses(astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit)).contains(getElem1())){// can be made to contain ONLY - extends as in java or C++?
-          List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
-          for (DiffTypes type : memberDiff.getBaseDiff()) {
-            switch (type) {
-              case CHANGED_ATTRIBUTE: list.add(new Pair<>(astcdClass, (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
-            }
-          }
-          return list;
+  }
+
+  private ASTCDClass minDiffWitness(ASTCDClass astcdClass){
+    Set<ASTCDClass> set = getSpannedInheritance(astcdClass, helper.getSrcCD());
+
+    ASTCDClass closestClass = null;
+    int closestDepth = Integer.MAX_VALUE;
+
+    for (ASTCDClass cdClass : set) {
+      if (!cdClass.getModifier().isAbstract()) {
+        int depth = calculateClassDepth(cdClass, astcdClass);
+        if (depth < closestDepth) {
+          closestClass = cdClass;
+          closestDepth = depth;
         }
       }
     }
-    return null;
+
+    return closestClass;
+  }
+
+  public int calculateClassDepth(ASTCDClass rootClass, ASTCDClass targetClass) {
+    // Check if the target class is the root class
+    if (rootClass.getName().equals(targetClass.getName())) {
+      return 0;
+    }
+
+    // Get the direct superclasses of the target class
+    Set<ASTCDClass> superClasses = CDDiffUtil.getAllSuperclasses(targetClass, helper.getSrcCD().getCDDefinition().getCDClassesList());
+
+    // If the target class has no superclasses, it is not in the hierarchy
+    if (superClasses.isEmpty()) {
+      return -1;
+    }
+
+    // Recursively calculate the depth for each direct superclass
+    List<Integer> depths = new ArrayList<>();
+    for (ASTCDClass superClass : superClasses) {
+      int depth = calculateClassDepth(rootClass, superClass);
+      if (depth >= 0) {
+        depths.add(depth + 1);
+      }
+    }
+
+    // Return the maximum depth from the direct superclasses
+    if (depths.isEmpty()) {
+      return -1;
+    } else {
+      return depths.stream().max(Integer::compare).get();
+    }
   }
 
   //this doesn't belong here
@@ -338,7 +397,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     List<ASTCDClass> classList = new ArrayList<>();
     for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()){
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
-        if (attribute.getMCType().printType().equals(getElem1().toString())){
+        if (attribute.getMCType().printType().equals(getSrcElem().toString())){
           classList.add(astcdClass);
         }
       }
@@ -346,31 +405,27 @@ public class CDTypeDiff implements ICDTypeDiff {
     return classList;
   }
 
-  //TODO: replace CDSyntaxDiff with CDs from Helper
   @Override
-  public ASTCDType isClassNeeded(CDSyntaxDiff cdSyntaxDiff) {
-    //TODO: check
-    ASTCDClass srcCLass = (ASTCDClass) getElem1();
+  public ASTCDType isClassNeeded() {
+    ASTCDClass srcCLass = (ASTCDClass) getSrcElem();
     if (!srcCLass.getModifier().isAbstract()){
-      return getElem1();
+      return getSrcElem();
     }
     else{
       //do we check if assocs make sense - assoc to abstract class
-      //TODO: ask Max if this case is allowed
-      //it is needed
       //TODO:
-      if (Syn2SemDiffHelper.getSpannedInheritance(cdSyntaxDiff.getSrcCD(), (ASTCDClass) getElem1()).isEmpty()) {
+      if (Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), (ASTCDClass) getSrcElem()).isEmpty()) {
         Set<ASTCDClass> map = helper.getSrcMap().keySet();
-        map.remove((ASTCDClass) getElem1());
+        map.remove((ASTCDClass) getSrcElem());
         for (ASTCDClass astcdClass : map) {
           for (AssocStruct mapPair : helper.getSrcMap().get(astcdClass)) {//Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>>
             if (Objects.equals(mapPair.getDirection(), AssocDirection.LeftToRight)
-              && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), cdSyntaxDiff.getSrcCD()).b.equals(getElem1())
+              && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), helper.getSrcCD()).b.equals(getSrcElem())
               && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()) {
               //add to Diff List - class can be instantiated without the abstract class
               return astcdClass;
             } else if (Objects.equals(mapPair.getDirection(), AssocDirection.RightToLeft)
-              && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), cdSyntaxDiff.getSrcCD()).a.equals(getElem1())
+              && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), helper.getSrcCD()).a.equals(getSrcElem())
               && mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
               //add to Diff List - class can be instantiated without the abstract class
               return astcdClass;

@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.AssocStruct;
 import edu.mit.csail.sdg.alloy4.Pair;
 
@@ -82,7 +83,8 @@ public class Syn2SemDiffHelper {
   public static List<ASTCDClass> getSpannedInheritance(ASTCDCompilationUnit compilationUnit, ASTCDClass astcdClass){
     List<ASTCDClass> subclasses = new ArrayList<>();
     for (ASTCDClass childClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-      if ((getAllSuper(childClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())).contains(astcdClass)) {
+      if (childClass != astcdClass && (CDDiffUtil.getAllSuperTypes(childClass, compilationUnit.getCDDefinition())).contains(astcdClass)) {
+        System.out.print(childClass.getName());
         subclasses.add(childClass);
       }
     }
