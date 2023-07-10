@@ -14,6 +14,7 @@ import java.util.Objects;
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation srcAssoc;
   private final ASTCDAssociation tgtAssoc;
+  boolean isReversed;
   private List<DiffTypes> baseDiff;
   protected MatchingStrategy<ASTCDAssociation> assocMatcher;
 
@@ -323,9 +324,21 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   public ASTCDAssociation findChangedAssocs(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
     boolean changedRoleName = false;
-    boolean changedDirection = false;
-    boolean changedMultiplicity = false;
+    boolean changedLeftMultiplicity = false;
+    boolean changedRightMultiplicity = false;
     if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+
+      if(srcAssoc
+        .getLeftQualifiedName()
+        .getQName()
+        .equals(tgtAssoc.getRightQualifiedName().getQName())
+        || srcAssoc
+        .getRightQualifiedName()
+        .getQName()
+        .equals(tgtAssoc.getLeftQualifiedName().getQName())){
+        isReversed = true;
+      }
+
       if (srcAssoc
               .getLeftQualifiedName()
               .getQName()
@@ -333,7 +346,7 @@ public class CDAssocDiff implements ICDAssocDiff {
           || srcAssoc
               .getRightQualifiedName()
               .getQName()
-              .equals(tgtAssoc.getRightQualifiedName().getQName())) {
+              .equals(tgtAssoc.getRightQualifiedName().getQName()) ) {
         if (!srcAssoc
                 .getLeft()
                 .getCDRole()
@@ -348,14 +361,8 @@ public class CDAssocDiff implements ICDAssocDiff {
         }
       }
 
-      if (srcAssoc
-              .getLeftQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getRightQualifiedName().getQName())
-          || srcAssoc
-              .getRightQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getLeftQualifiedName().getQName())) {
+      if (isReversed) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_DIRECTION);
         if (!srcAssoc
                 .getLeft()
                 .getCDRole()
@@ -374,55 +381,46 @@ public class CDAssocDiff implements ICDAssocDiff {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_ROLE);
       }
 
-      // TODO
-      if (!srcAssoc.getCDAssocDir().equals(tgtAssoc.getCDAssocDir())) {
-        changedDirection = true;
-      }
-
-      if (changedDirection) {
-        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_DIRECTION);
-      }
-
-      if (srcAssoc
+      if ((srcAssoc
               .getLeftQualifiedName()
               .getQName()
-              .equals(tgtAssoc.getLeftQualifiedName().getQName())
-          || srcAssoc
-              .getRightQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getRightQualifiedName().getQName())) {
-        if (!srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getLeft().getCDCardinality())
-            || !srcAssoc
-                .getRight()
-                .getCDCardinality()
-                .equals(tgtAssoc.getRight().getCDCardinality())) {
-          changedMultiplicity = true;
-        }
+              .equals(tgtAssoc.getLeftQualifiedName().getQName()) &&
+        !srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getLeft().getCDCardinality())) ||
+        (srcAssoc
+          .getLeftQualifiedName()
+          .getQName()
+          .equals(tgtAssoc.getRightQualifiedName().getQName()) &&
+          !srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getRight().getCDCardinality()))) {
+          changedLeftMultiplicity = true;
       }
 
-      if (srcAssoc
-              .getLeftQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getRightQualifiedName().getQName())
-          || srcAssoc
-              .getRightQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getLeftQualifiedName().getQName())) {
-        if (!srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getRight().getCDCardinality())
-            || !srcAssoc
-                .getRight()
-                .getCDCardinality()
-                .equals(tgtAssoc.getLeft().getCDCardinality())) {
-          changedMultiplicity = true;
-        }
+      if (changedLeftMultiplicity) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_LEFT_MULTIPLICITY);
       }
 
-      if (changedMultiplicity) {
-        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY);
+      if((srcAssoc
+        .getRightQualifiedName()
+        .getQName()
+        .equals(tgtAssoc.getRightQualifiedName().getQName()) && !srcAssoc
+        .getRight()
+        .getCDCardinality()
+        .equals(tgtAssoc.getRight().getCDCardinality()) || (srcAssoc
+        .getRightQualifiedName()
+        .getQName()
+        .equals(tgtAssoc.getLeftQualifiedName().getQName()) && !srcAssoc
+        .getRight()
+        .getCDCardinality()
+        .equals(tgtAssoc.getLeft().getCDCardinality())))){
+        changedRightMultiplicity = true;
       }
+
+      if (changedRightMultiplicity) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_RIGHT_MULTIPLICITY);
+      }
+
     }
 
-    if (changedRoleName || changedDirection || changedMultiplicity) {
+    if (changedRoleName || changedLeftMultiplicity || changedRightMultiplicity) {
       return srcAssoc;
     }
     return null;

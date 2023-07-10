@@ -237,10 +237,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
             MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
                 .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName()))
                 .build();
-        if (isNewSuper(
-            newSuper, classesToCheck, (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope())) {
-          subclassesToCheck.add(classesToCheck);
-        }
       }
     } else {
       return false;
@@ -1516,10 +1512,29 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   public void addAllMatchedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    // 1. Phase - für SemDiff
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
         if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
           matchedAssocs.add(new Pair(srcAssoc, tgtAssoc));
+        }
+      }
+    }
+
+    // 2. Phase - added/deleted Assocs matching über Typen
+    for(ASTCDAssociation assoc1 : addedAssocs){
+      for(ASTCDAssociation assoc2 : deletedAssocs){
+        Optional<CDTypeSymbol> typeSymbol1L = srcCD.getEnclosingScope().resolveCDTypeDown(assoc1.getLeftQualifiedName().getQName());
+        Optional<CDTypeSymbol> typeSymbol1R = srcCD.getEnclosingScope().resolveCDTypeDown(assoc1.getRightQualifiedName().getQName());
+        Optional<CDTypeSymbol> typeSymbol2L = srcCD.getEnclosingScope().resolveCDTypeDown(assoc2.getLeftQualifiedName().getQName());
+        Optional<CDTypeSymbol> typeSymbol2R = tgtCD.getEnclosingScope().resolveCDTypeDown(assoc1.getRightQualifiedName().getQName());
+        ASTCDType srcTypeL = typeSymbol1L.get().getAstNode();
+        ASTCDType srcTypeR = typeSymbol1R.get().getAstNode();
+        ASTCDType tgtTypeL = typeSymbol2L.get().getAstNode();
+        ASTCDType tgtTypeR = typeSymbol2R.get().getAstNode();
+        if((typeMatcher.isMatched(srcTypeL,tgtTypeL) && typeMatcher.isMatched(srcTypeR,tgtTypeR))
+        || (typeMatcher.isMatched(srcTypeL,tgtTypeR) && typeMatcher.isMatched(srcTypeR,tgtTypeL))) {
+          matchedAssocs.add(new Pair(assoc1, assoc2));
         }
       }
     }
