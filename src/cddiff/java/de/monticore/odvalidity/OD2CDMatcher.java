@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
@@ -45,8 +45,8 @@ public class OD2CDMatcher {
       ASTCDCompilationUnit baseCD,
       ASTCDCompilationUnit compareCD,
       ASTODArtifact od) {
-    if (Semantic.isMultiInstance(semantics)) {
-      return new MultiInstanceMatcher(this).isDiffWitness(semantics, baseCD, compareCD, od);
+    if (Semantic.isSuperTypeAware(semantics)) {
+      return new STAObjectMatcher(this).isDiffWitness(semantics, baseCD, compareCD, od);
     } else {
       return checkODValidity(semantics, od, baseCD) && !checkODValidity(semantics, od, compareCD);
     }
@@ -72,7 +72,9 @@ public class OD2CDMatcher {
             "[CHECK] Check if %s permits %s.",
             cd.getCDDefinition().getName(), od.getObjectDiagram().getName()));
 
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    if (cd.getEnclosingScope() == null) {
+      CDDiffUtil.refreshSymbolTable(cd);
+    }
 
     // Check all objects from OD if they can exist in the CD
     if (classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic)

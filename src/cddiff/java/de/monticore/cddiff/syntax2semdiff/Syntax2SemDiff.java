@@ -56,7 +56,7 @@ public class Syntax2SemDiff {
           result.append(
               "\t *********************  in Simple-Closed-World  ********************* \n");
           break;
-        case MULTI_INSTANCE_CLOSED_WORLD:
+        case STA_CLOSED_WORLD:
           result.append(
               "\t *****************  in Multi-Instance-Closed-World  ***************** \n");
           break;
@@ -74,7 +74,7 @@ public class Syntax2SemDiff {
           result.append(
               "\t *********************  in Simple-Closed-World  ********************* \n");
           break;
-        case MULTI_INSTANCE_CLOSED_WORLD:
+        case STA_CLOSED_WORLD:
           result.append(
               "\t *****************  in Multi-Instance-Closed-World  ***************** \n");
           break;

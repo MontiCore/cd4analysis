@@ -597,8 +597,7 @@ public class CDWrapperSyntaxDiffGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testClass4InheritInMultiInstance() {
     CDWrapperSyntaxDiff cg =
-        generateCDSyntaxDiffTemp(
-            "Class", "Class1D.cd", "Class1G.cd", CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+        generateCDSyntaxDiffTemp("Class", "Class1D.cd", "Class1G.cd", CDSemantics.STA_CLOSED_WORLD);
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 2);
     Assert.assertTrue(
         cg.getCDTypeDiffResultQueueWithDiff().stream()
@@ -629,10 +628,7 @@ public class CDWrapperSyntaxDiffGeneratorTest extends CDDiffTestBasis {
   public void testAssociation4InheritInMultiInstance() {
     CDWrapperSyntaxDiff cg =
         generateCDSyntaxDiffTemp(
-            "Association",
-            "Association1A.cd",
-            "Association1B.cd",
-            CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+            "Association", "Association1A.cd", "Association1B.cd", CDSemantics.STA_CLOSED_WORLD);
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(
         cg.getCDAssociationDiffResultQueueWithDiff().stream()

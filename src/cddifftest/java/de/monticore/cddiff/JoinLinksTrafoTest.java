@@ -2,8 +2,8 @@
 package de.monticore.cddiff;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -30,7 +30,7 @@ public class JoinLinksTrafoTest extends CDDiffTestBasis {
               .filter(element -> element instanceof ASTODLink)
               .collect(Collectors.toSet())
               .size());
-      Log.print(System.lineSeparator() + new OD4ReportFullPrettyPrinter().prettyprint(od));
+      Log.print(System.lineSeparator() + OD4ReportMill.prettyPrint(od, true));
     } catch (Exception e) {
       e.printStackTrace();
       Assert.fail();

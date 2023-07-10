@@ -3,6 +3,7 @@ package de.monticore.odvalidity;
 
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
@@ -28,6 +29,7 @@ public class ModelLoader {
         e.printStackTrace();
       }
 
+      cdAST.ifPresent(CDDiffUtil::refreshSymbolTable);
       return cdAST;
 
     } else {

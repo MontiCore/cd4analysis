@@ -7,6 +7,7 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.Set;
+import java.util.function.Function;
 
 public interface InheritanceData {
   /**
@@ -38,6 +39,25 @@ public interface InheritanceData {
 
   /** @return the inheritances' constraint as set identifiable Bool-expressions */
   Set<IdentifiableBoolExpr> getInheritanceConstraints();
+
+  /***
+   * assert that the constraint "body" must hold for all elements with the type "type".
+   *
+   * @param type the type.
+   * @param var  one Variable of this type.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
+
+  /***
+   * assert that the constraint "body" must hold for at least one element with the type "type".
+   * @param type the type.
+   * @param var  one Variable of this type.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
 
   enum Strategy {
     ME,

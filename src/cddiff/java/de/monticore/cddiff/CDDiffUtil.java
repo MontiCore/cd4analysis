@@ -2,7 +2,9 @@
 package de.monticore.cddiff;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -24,6 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 
+/** Collection of helper-methods for CDDiff. */
 public class CDDiffUtil {
 
   public static String escape2Alloy(String type) {
@@ -62,6 +65,10 @@ public class CDDiffUtil {
     return new String(roleName);
   }
 
+  /**
+   * The default role-name for a referenced type is the (simple) type-name with the first letter in
+   * lower case.
+   */
   public static String inferRole(ASTCDAssocSide assocSide) {
     if (assocSide.isPresentCDRole()) {
       return assocSide.getCDRole().getName();
@@ -74,13 +81,8 @@ public class CDDiffUtil {
 
   protected static void saveDiffCDs2File(
       ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, String outputPath) throws IOException {
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    ast1.accept(pprinter.getTraverser());
-    String cd1 = pprinter.getPrinter().getContent();
-
-    pprinter = new CD4CodeFullPrettyPrinter();
-    ast2.accept(pprinter.getTraverser());
-    String cd2 = pprinter.getPrinter().getContent();
+    String cd1 = CD4CodeMill.prettyPrint(ast1, true);
+    String cd2 = CD4CodeMill.prettyPrint(ast2, true);
 
     String suffix1 = "";
     String suffix2 = "";
@@ -97,6 +99,10 @@ public class CDDiffUtil {
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
+  /**
+   * Parse the model, add default role-names and replace all qualified names with (internal) full
+   * names.
+   */
   public static ASTCDCompilationUnit loadCD(String modelPath) throws IOException {
     Optional<ASTCDCompilationUnit> cd = CD4CodeMill.parser().parse(modelPath);
     if (cd.isPresent()) {
@@ -118,16 +124,14 @@ public class CDDiffUtil {
         return optOD.get();
       }
     } catch (IOException e) {
-      Log.error("Could not parse CD model.");
+      Log.error("Could not parse OD model.");
       e.printStackTrace();
     }
     return null;
   }
 
   public static ASTCDCompilationUnit reparseCD(ASTCDCompilationUnit cd) {
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-    cd.accept(pp.getTraverser());
-    String content = pp.prettyprint(cd);
+    String content = CD4CodeMill.prettyPrint(cd, true);
     try {
       Optional<ASTCDCompilationUnit> opt = CD4CodeMill.parser().parse_String(content);
       if (opt.isPresent()) {
@@ -229,6 +233,10 @@ public class CDDiffUtil {
     return interfaces;
   }
 
+  /**
+   * A helper function to compute the reflexive transitive hull of all super-interfaces of an
+   * interface in allowedInterfaces.
+   */
   public static Set<ASTCDInterface> getAllInterfaces(
       ASTCDInterface astcdInterface, Collection<ASTCDInterface> allowedInterfaces) {
     Set<ASTCDInterface> interfaces = new HashSet<>();
@@ -252,6 +260,9 @@ public class CDDiffUtil {
     return interfaces;
   }
 
+  /**
+   * A helper function to compute the reflexive transitive hull of all super-types of type in cd.
+   */
   public static Set<ASTCDType> getAllSuperTypes(ASTCDClass type, ASTCDDefinition cd) {
     Set<ASTCDType> superTypes = new HashSet<>();
     superTypes.addAll(getAllSuperclasses(type, cd.getCDClassesList()));
@@ -259,6 +270,9 @@ public class CDDiffUtil {
     return superTypes;
   }
 
+  /**
+   * A helper function to compute the reflexive transitive hull of all super-types of type in cd.
+   */
   public static Set<ASTCDType> getAllSuperTypes(ASTCDType type, ASTCDDefinition cd) {
     if (type instanceof ASTCDClass) {
       return getAllSuperTypes((ASTCDClass) type, cd);
@@ -269,6 +283,7 @@ public class CDDiffUtil {
     return new HashSet<>();
   }
 
+  /** A helper function to compute all associations in cd that reference astcdType. */
   public static Set<ASTCDAssociation> getReferencingAssociations(
       ASTCDType astcdType, ASTCDCompilationUnit cd) {
     return cd.getCDDefinition().getCDAssociationsList().stream()
@@ -285,6 +300,7 @@ public class CDDiffUtil {
         .collect(Collectors.toSet());
   }
 
+  /** A helper function that collect all strict sub-types of type in cd. */
   public static Set<ASTCDType> getAllStrictSubTypes(ASTCDType type, ASTCDDefinition cd) {
     Set<ASTCDType> result = new HashSet<>();
     Set<ASTCDType> allTypes = new HashSet<>();
@@ -298,5 +314,14 @@ public class CDDiffUtil {
     }
     result.remove(type);
     return result;
+  }
+
+  public static void refreshSymbolTable(ASTCDCompilationUnit cd) {
+    if (cd.getEnclosingScope() != null) {
+      CD4CodeMill.globalScope().removeSubScope(cd.getEnclosingScope());
+    }
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
+    cd.accept(completer);
   }
 }

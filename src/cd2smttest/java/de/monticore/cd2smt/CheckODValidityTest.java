@@ -19,6 +19,7 @@ import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -103,6 +104,59 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         ClassStrategy.Strategy.SSCOMB,
         AssociationStrategy.Strategy.ONE2ONE,
         SE);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void checkODValidityTestFiniteDS_O2O(String CDFileName) {
+    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
+    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
+
+    checkODValidity(
+        CDFileName,
+        "ds/one2one/",
+        ClassStrategy.Strategy.FINITEDS,
+        AssociationStrategy.Strategy.ONE2ONE,
+        InheritanceData.Strategy.ME);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void checkODValidityTestFiniteDS_DEFAULT(String CDFileName) {
+    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
+    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
+    checkODValidity(
+        CDFileName,
+        "ds/default/",
+        ClassStrategy.Strategy.FINITEDS,
+        AssociationStrategy.Strategy.DEFAULT,
+        InheritanceData.Strategy.ME);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void checkODValidityTestFiniteSS_O2O(String CDFileName) {
+    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
+    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
+    checkODValidity(
+        CDFileName,
+        "ds/one2one/",
+        ClassStrategy.Strategy.FINITESS,
+        AssociationStrategy.Strategy.ONE2ONE,
+        InheritanceData.Strategy.ME);
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void checkODValidityTestFiniteSS_DEFAULT(String CDFileName) {
+    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
+    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
+    checkODValidity(
+        CDFileName,
+        "ds/default/",
+        ClassStrategy.Strategy.FINITESS,
+        AssociationStrategy.Strategy.DEFAULT,
+        InheritanceData.Strategy.ME);
   }
 
   public void checkODValidity(

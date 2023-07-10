@@ -27,7 +27,9 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Set;
 
-// todo: needs to be fixed
+/**
+ * Tool for automatic conformance checking of concrete CDs to reference CDs given a set of mappings.
+ */
 public class ConformanceChecker {
   protected Set<ConfParameter> params;
   protected MatchingStrategy<ASTCDType> typeInc;

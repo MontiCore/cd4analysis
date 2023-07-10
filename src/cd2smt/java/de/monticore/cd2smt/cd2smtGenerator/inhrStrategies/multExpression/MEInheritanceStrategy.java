@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.multExpression;
 
-import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
-import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -20,8 +17,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.function.Function;
 
 /***
  * This Strategy converts inheritance-relations in SMT in a multi-instance-way, object and
@@ -83,6 +79,18 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
   @Override
   public Set<IdentifiableBoolExpr> getInheritanceConstraints() {
     return inheritanceConstraints;
+  }
+
+  @Override
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    Function<Expr<?>, BoolExpr> filter = obj -> classData.hasType(obj, type);
+    return classData.mkForall(type, var, obj -> ctx.mkImplies(filter.apply(obj), body.apply(obj)));
+  }
+
+  @Override
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    Function<Expr<?>, BoolExpr> filter = obj -> classData.hasType(obj, type);
+    return classData.mkExists(type, var, obj -> ctx.mkAnd(filter.apply(obj), body.apply(obj)));
   }
 
   @Override
@@ -210,32 +218,34 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
 
     List<ASTCDType> subTypeList = CDHelper.getSubTypeList(cd, astcdType);
 
-    BoolExpr helpConstr = ctx.mkFalse();
+    Set<Function<Expr<?>, BoolExpr>> constrSet = new HashSet<>(Set.of(obj -> ctx.mkFalse()));
     for (ASTCDType subType : subTypeList) {
 
       InheritanceFeatures subSMTInstance = inheritanceFeaturesMap.get(subType);
       Expr<Sort> subInstanceObj = ctx.mkConst(subType.getName(), classData.getSort(subType));
       FuncDecl<Sort> convert2Sub = subSMTInstance.getConvert2SuperTypeFuncMap().get(astcdType);
-      Set<Pair<ASTCDType, Expr<? extends Sort>>> quanParams =
-          Set.of(new ImmutablePair<>(subType, subInstanceObj));
-      helpConstr =
-          ctx.mkOr(
-              helpConstr,
-              mkExists(
-                  ctx,
-                  quanParams,
-                  ctx.mkEq(ctx.mkApp(convert2Sub, subInstanceObj), abstrObj),
-                  this));
-    }
-    Set<Pair<ASTCDType, Expr<? extends Sort>>> quanParams =
-        Set.of(new ImmutablePair<>(astcdType, abstrObj));
 
-    BoolExpr superInstanceConstraint = mkForAll(ctx, quanParams, helpConstr, this);
+      constrSet.add(
+          obj2 ->
+              mkExists(
+                  subType, subInstanceObj, obj -> ctx.mkEq(ctx.mkApp(convert2Sub, obj), abstrObj)));
+    }
+
+    BoolExpr superInstanceConstraint =
+        mkForall(
+            astcdType,
+            abstrObj,
+            obj ->
+                ctx.mkImplies(classData.hasType(abstrObj, astcdType), mkOr(constrSet).apply(obj)));
 
     return IdentifiableBoolExpr.buildIdentifiable(
         superInstanceConstraint,
         astcdType.get_SourcePositionStart(),
         Optional.of(astcdType.getName() + "Exist_sub"));
+  }
+
+  Function<Expr<?>, BoolExpr> mkOr(Set<Function<Expr<?>, BoolExpr>> constr) {
+    return obj -> ctx.mkOr(constr.stream().map(func -> func.apply(obj)).toArray(BoolExpr[]::new));
   }
 
   List<IdentifiableBoolExpr> buildCDTypeInheritanceConstraint(
@@ -262,15 +272,14 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
         ctx.mkConst(superType.getName() + "supertype", classData.getSort(superType));
 
     BoolExpr constrConvert =
-        mkForAll(
-            ctx,
-            Set.of(new ImmutablePair<>(subType, subclassObj)),
-            mkExists(
-                ctx,
-                Set.of(new ImmutablePair<>(superType, superClassObj)),
-                ctx.mkEq(ctx.mkApp(convert2Super, subclassObj), superClassObj),
-                this),
-            this);
+        mkForall(
+            subType,
+            subclassObj,
+            subObj ->
+                mkExists(
+                    superType,
+                    superClassObj,
+                    superObj -> ctx.mkEq(ctx.mkApp(convert2Super, subObj), superObj)));
 
     constraints.add(
         IdentifiableBoolExpr.buildIdentifiable(
@@ -280,13 +289,18 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
     Expr<Sort> b1 = ctx.mkConst("b1", classData.getSort(subType));
     Expr<Sort> b2 = ctx.mkConst("b2", classData.getSort(subType));
     BoolExpr bijection =
-        mkForAll(
-            ctx,
-            Set.of(new ImmutablePair<>(subType, b1), new ImmutablePair<>(subType, b2)),
-            ctx.mkEq(
-                ctx.mkEq(ctx.mkApp(convert2Super, b1), ctx.mkApp(convert2Super, b2)),
-                ctx.mkEq(b1, b2)),
-            this);
+        mkForall(
+            subType,
+            b1,
+            b1Obj ->
+                mkForall(
+                    subType,
+                    b2,
+                    b2Obj ->
+                        ctx.mkEq(
+                            ctx.mkEq(
+                                ctx.mkApp(convert2Super, b1Obj), ctx.mkApp(convert2Super, b2Obj)),
+                            ctx.mkEq(b1Obj, b2Obj))));
     constraints.add(
         IdentifiableBoolExpr.buildIdentifiable(
             bijection, srcPos, Optional.of(subType.getName() + "_inheritance_bijection")));
@@ -297,11 +311,13 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
       Expr<? extends Sort> sort =
           ctx.mkConst(smtSuperType.getSubClassConstructorList().get(subType).ConstructorDecl());
       BoolExpr typeConstr =
-          mkForAll(
-              ctx,
-              Set.of(new ImmutablePair<>(subType, b3)),
-              ctx.mkEq(ctx.mkApp(smtSuperType.getSubClass(), ctx.mkApp(convert2Super, b1)), sort),
-              this);
+          mkForall(
+              subType,
+              b3,
+              b3Obj ->
+                  ctx.mkEq(
+                      ctx.mkApp(smtSuperType.getSubClass(), ctx.mkApp(convert2Super, b3Obj)),
+                      sort));
 
       // add the constraints to the list
       constraints.add(

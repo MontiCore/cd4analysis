@@ -87,11 +87,11 @@ public class CDGeneratorTool extends CD4CodeTool {
 
       Log.init();
       CD4CodeMill.init();
+
       if (cmd.hasOption("c2mc")) {
         initializeClass2MC();
-      } else {
-        BasicSymbolsMill.initializePrimitives();
       }
+      BasicSymbolsMill.initializePrimitives();
 
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts =
@@ -172,8 +172,10 @@ public class CDGeneratorTool extends CD4CodeTool {
       }
 
     } catch (ParseException e) {
+      CD4CodeMill.globalScope().clear();
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
+    CD4CodeMill.globalScope().clear();
   }
 
   public void addDefaultImports(ICD4CodeArtifactScope scope, boolean java) {

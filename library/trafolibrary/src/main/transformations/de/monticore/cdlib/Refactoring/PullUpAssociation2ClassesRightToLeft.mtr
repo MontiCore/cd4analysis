@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation PullUpAssociation2ClassesRightToLeft {
+  classdiagram $_ {
+    class $subClass1Name extends $superclassName;
+
+    class $subClass2Name extends $superclassName;
+
+    not [[ class $_ extends $superclassName; ]]
+
+    class $referenceName;
+
+    association [[$subClass1Name:-$superclassName]] <- $referenceName;
+
+    [[ association $subClass2Name <- $referenceName; :- ]]
+  }
+}

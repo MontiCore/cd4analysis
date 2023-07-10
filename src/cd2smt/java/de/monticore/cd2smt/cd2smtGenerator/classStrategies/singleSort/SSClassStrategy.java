@@ -14,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
+import java.util.function.Function;
 
 /***
  * This class converts the classes and the interfaces of a class diagram in SMT.
@@ -91,6 +92,17 @@ public class SSClassStrategy implements ClassStrategy {
   }
 
   @Override
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+
+    return ctx.mkForall(new Expr[] {var}, body.apply(var), 0, null, null, null, null);
+  }
+
+  @Override
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+    return ctx.mkExists(new Expr[] {var}, body.apply(var), 0, null, null, null, null);
+  }
+
+  @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     this.ast = ast;
     this.ctx = context;
@@ -113,7 +125,7 @@ public class SSClassStrategy implements ClassStrategy {
   /***
    * declare a boolean constraint which ensures that each Object has a unique Type. (6)
    */
-  private IdentifiableBoolExpr buildTypeUniquenessConstraint() {
+  protected IdentifiableBoolExpr buildTypeUniquenessConstraint() {
     Expr<? extends Sort> obj = ctx.mkConst("obj", sort);
 
     Expr<? extends Sort> type1 = ctx.mkConst("type1", types);
@@ -173,7 +185,7 @@ public class SSClassStrategy implements ClassStrategy {
    * CD:  enum Color {RED, YELLOW, GREEN}
    * SMT: (declare-datatype ((RED) (YELLOW) (GREEN))
    */
-  private void declareEnum(ASTCDEnum astcdEnum) {
+  protected void declareEnum(ASTCDEnum astcdEnum) {
     SMTEnum smtEnum = new SMTEnum();
     List<Constructor<Sort>> constructorList = new ArrayList<>();
 
@@ -209,17 +221,7 @@ public class SSClassStrategy implements ClassStrategy {
         for (ASTCDType astcdType : CDHelper.getASTCDTypes(ast.getCDDefinition())) {
 
           if (hasType(smtExpr, astcdType, model)) {
-
-            MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
-
-            for (ASTCDAttribute attr : astcdType.getCDAttributeList()) {
-              Expr<? extends Sort> attrExpr =
-                  model.eval(attributeMap.get(attr).apply(smtExpr), !partial);
-              if (attrExpr.getNumArgs() == 0) {
-                obj.addAttribute(attr, attrExpr);
-              }
-            }
-            objectSet.add(obj);
+            objectSet.add(buildObject(astcdType, smtExpr, model, partial));
           }
         }
       }
@@ -227,8 +229,21 @@ public class SSClassStrategy implements ClassStrategy {
     return objectSet;
   }
 
+  protected MinObject buildObject(
+      ASTCDType astcdType, Expr<?> smtExpr, Model model, boolean partial) {
+    MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
+
+    for (ASTCDAttribute attr : astcdType.getCDAttributeList()) {
+      Expr<? extends Sort> attrExpr = model.eval(attributeMap.get(attr).apply(smtExpr), !partial);
+      if (attrExpr.getNumArgs() == 0) {
+        obj.addAttribute(attr, attrExpr);
+      }
+    }
+    return obj;
+  }
+
   /** collect the CDType constructor of each class and interface. */
-  private Constructor<Sort>[] collectTypeConstructors() {
+  protected Constructor<Sort>[] collectTypeConstructors() {
     Set<Constructor<? extends Sort>> constructors = new HashSet<>(typeMap.values());
 
     // constructors.add(ctx.mkConstructor("SS_NO_TYPE", "SS_IS_" + "NO_TYPE", null, null, null));

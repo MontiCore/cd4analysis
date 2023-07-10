@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -47,7 +46,7 @@ public class ClassMatcher {
 
     this.od = od;
     this.cd = cd;
-    this.scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    this.scope = (ICD4CodeArtifactScope) cd.getEnclosingScope();
     this.semantics = semantics;
 
     // Set all parameters
@@ -88,11 +87,11 @@ public class ClassMatcher {
         return false;
       }
 
-      if (semantics.equals(CDSemantics.MULTI_INSTANCE_OPEN_WORLD)) {
-        Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(obj);
+      if (semantics.equals(CDSemantics.STA_OPEN_WORLD)) {
+        Optional<Set<String>> optSuper = STAObjectMatcher.getSuperSetFromStereotype(obj);
         if (optSuper.isPresent()) {
           for (String type : optSuper.get()) {
-            if (!optSuper.get().containsAll(MultiInstanceMatcher.getSuperSet(type, scope))) {
+            if (!optSuper.get().containsAll(STAObjectMatcher.getSuperSet(type, scope))) {
               return false;
             }
             Optional<ASTCDClass> optType = getCDClassOfType(type);
@@ -117,9 +116,9 @@ public class ClassMatcher {
   /** Check if object is instance of type. */
   private boolean isInstanceOf(ASTODObject object, ASTCDType type) {
 
-    // check the intanceof-stereotype iff semantics is multi-instance open-world
-    if (Semantic.isMultiInstance(semantics)) {
-      Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(object);
+    // check the intanceof-stereotype iff semantics is STA open-world
+    if (Semantic.isSuperTypeAware(semantics)) {
+      Optional<Set<String>> optSuper = STAObjectMatcher.getSuperSetFromStereotype(object);
       if (optSuper.isPresent()) {
         return optSuper.get().contains(type.getSymbol().getInternalQualifiedName());
       }

@@ -27,7 +27,7 @@ public class FullExpander implements CDExpander {
   }
 
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    ICD4CodeArtifactScope scope = (ICD4CodeArtifactScope) getCD().getEnclosingScope();
     for (ASTCDType type : typeList) {
       Optional<CDTypeSymbol> opt =
           scope.resolveCDTypeDown(type.getSymbol().getInternalQualifiedName());
@@ -47,7 +47,7 @@ public class FullExpander implements CDExpander {
   }
 
   public void addMissingEnumsAndConstants(Collection<ASTCDEnum> enumCol) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    ICD4CodeArtifactScope scope = (ICD4CodeArtifactScope) getCD().getEnclosingScope();
     // add enums and enum constants exclusive to first
     for (ASTCDEnum astcdEnum : enumCol) {
       Optional<CDTypeSymbol> opt =
@@ -94,6 +94,7 @@ public class FullExpander implements CDExpander {
   public void addAssociationClones(Collection<ASTCDAssociation> originals) {
     for (ASTCDAssociation srcAssoc : originals) {
       ASTCDAssociation newAssoc = srcAssoc.deepClone();
+      newAssoc.setNameAbsent();
       newAssoc.getRight().setCDCardinalityAbsent();
       newAssoc.getLeft().setCDCardinalityAbsent();
       addAssociation(newAssoc);
@@ -168,7 +169,7 @@ public class FullExpander implements CDExpander {
   }
 
   public void addAssociationsWithoutConflicts(Collection<ASTCDAssociation> dummySet) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    ICD4CodeArtifactScope scope = (ICD4CodeArtifactScope) getCD().getEnclosingScope();
     for (ASTCDAssociation dummy : dummySet) {
       if (getCD().getCDDefinition().getCDAssociationsList().stream()
           .noneMatch(assoc -> CDAssociationHelper.inConflict(dummy, assoc, scope))) {
@@ -179,7 +180,7 @@ public class FullExpander implements CDExpander {
 
   public Set<ASTCDAssociation> getDummies4Diff(
       Collection<ASTCDType> typeCol, String assocTargetName) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    ICD4CodeArtifactScope scope = (ICD4CodeArtifactScope) getCD().getEnclosingScope();
     Set<ASTCDAssociation> newAssocs = new HashSet<>();
     for (ASTCDType srcType : typeCol) {
       Optional<CDTypeSymbol> opt =

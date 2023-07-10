@@ -24,6 +24,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Transformation that adds default role-names to associations and fully qualifies all qualified
+ * names in a CD to allow better resolving.
+ */
 public class CDFullNameTrafo {
 
   public void transform(ASTCDCompilationUnit cd) {

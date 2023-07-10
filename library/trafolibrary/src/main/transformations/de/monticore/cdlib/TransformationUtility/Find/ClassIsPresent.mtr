@@ -1,7 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.transformationutility.find.tf;
-transformation ClassIsPresent {
-  classdiagram $_ {
-    class $className;
-  }
-}

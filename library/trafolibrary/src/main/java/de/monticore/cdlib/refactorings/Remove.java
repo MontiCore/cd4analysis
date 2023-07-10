@@ -2,9 +2,7 @@
 package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdlib.refactoring.delete.tf.DeleteAttribute;
-import de.monticore.cdlib.refactoring.delete.tf.DeleteClass;
-import de.monticore.cdlib.refactoring.delete.tf.DeleteMethod;
+import de.monticore.cdlib.Refactoring.*;
 import de.se_rwth.commons.logging.Log;
 
 /**

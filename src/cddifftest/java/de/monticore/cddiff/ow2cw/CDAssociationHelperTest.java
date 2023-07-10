@@ -1,23 +1,30 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.CDDiffUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CDAssociationHelperTest extends CDDiffTestBasis {
   protected final ASTCDCompilationUnit conflictCD =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Conflict/ConflictEmployees.cd");
+  protected ICD4CodeArtifactScope scope;
+
+  @Before
+  public void buildSymbolTable() {
+    CDDiffUtil.refreshSymbolTable(conflictCD);
+    scope = (ICD4CodeArtifactScope) conflictCD.getEnclosingScope();
+  }
 
   @Test
   public void testInConflict() {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(conflictCD);
     List<ASTCDAssociation> assocList =
         new ArrayList<>(conflictCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
@@ -46,7 +53,6 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
 
   @Test
   public void testSuperAssociation() {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(conflictCD);
     List<ASTCDAssociation> assocList =
         new ArrayList<>(conflictCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
