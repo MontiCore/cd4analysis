@@ -8,7 +8,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import java.util.*;
-import java.util.function.Function;
 
 public class FiniteDSClassStrategy extends DSClassStrategy {
   protected final int MAX = 5; // FIXME: 13.06.2023 delete
@@ -39,16 +38,25 @@ public class FiniteDSClassStrategy extends DSClassStrategy {
     return ctx.mkConstructor(name, name, null, null, null);
   }
 
-  protected Expr<?> mkConst(int index, ASTCDType astcdType) {
-    return ctx.mkConst(((DatatypeSort<?>) getSort(astcdType)).getConstructors()[index]);
+  protected Expr<?> mkConst(int index, ASTCDType type) {
+    return ctx.mkConst(((DatatypeSort<?>) getSort(type)).getConstructors()[index]);
+  }
+
+  protected List<Expr<?>> generateTypeUniverse(ASTCDType type) {
+    List<Expr<?>> universe = new ArrayList<>();
+    for (int i = 0; i < cardMap.get(type); i++) {
+      universe.add(mkConst(i, type));
+    }
+    return universe;
   }
 
   @Override
-  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
+    List<Expr<?>> typeUniverses = generateTypeUniverse(type);
     BoolExpr res = ctx.mkTrue();
-    for (int i = 0; i < cardMap.get(type); i++) {
-      Expr<?> var2 = mkConst(i, type);
-      res = ctx.mkAnd(res, body.apply(var2));
+
+    for (Expr<?> param : typeUniverses) {
+      res = ctx.mkAnd(res, body.substitute(var, param));
     }
 
     return res;

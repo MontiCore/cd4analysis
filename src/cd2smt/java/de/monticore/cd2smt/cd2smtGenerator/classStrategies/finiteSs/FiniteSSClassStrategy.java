@@ -7,22 +7,24 @@ import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort.SSClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import java.util.function.Function;
 
 public class FiniteSSClassStrategy extends SSClassStrategy {
 
   protected FuncDecl<Sort> getType;
-  Map<ASTCDType, Set<Constructor<Sort>>> constants = new HashMap<>();
+  Map<ASTCDType, List<Constructor<Sort>>> constants = new HashMap<>();
   protected static int counter = 0;
 
   @Override
-  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+  public BoolExpr mkForall(ASTCDType types, Expr<?> vars, BoolExpr body) {
     BoolExpr res = ctx.mkTrue();
-    for (Constructor<Sort> contr : constants.get(type)) {
+    Log.error("Forall not yet implemented for finite ss class strategy");
+    assert false;
+    /* for (Constructor<Sort> contr : constants.get(type)) {
       Expr<?> var2 = ctx.mkConst(contr.ConstructorDecl());
       res = ctx.mkAnd(res, body.apply(var2));
-    }
+    }*/
 
     return res;
   }
@@ -71,7 +73,7 @@ public class FiniteSSClassStrategy extends SSClassStrategy {
 
   protected Constructor<Sort>[] collectObjectsConstructors() {
     for (ASTCDType astcdType : CDHelper.getASTCDTypes(ast.getCDDefinition())) {
-      Set<Constructor<Sort>> universe = new HashSet<>();
+      List<Constructor<Sort>> universe = new ArrayList<>();
       for (int i = 0; i < 6; i++) { // TODO: 19.06.2023  fixme
         // create constant
         Constructor<Sort> constant =
@@ -84,7 +86,7 @@ public class FiniteSSClassStrategy extends SSClassStrategy {
       constants.put(astcdType, universe);
     }
     return (Constructor<Sort>[])
-        constants.values().stream().flatMap(Set::stream).distinct().toArray(Constructor[]::new);
+        constants.values().stream().flatMap(List::stream).distinct().toArray(Constructor[]::new);
   }
 
   protected Constructor<Sort> mkconstructor(String name) {
@@ -95,7 +97,7 @@ public class FiniteSSClassStrategy extends SSClassStrategy {
   public Set<MinObject> smt2od(Model model, Boolean partial) {
     Set<MinObject> objectSet = new HashSet<>();
 
-    for (Map.Entry<ASTCDType, Set<Constructor<Sort>>> entry : constants.entrySet()) {
+    for (Map.Entry<ASTCDType, List<Constructor<Sort>>> entry : constants.entrySet()) {
       for (Constructor<Sort> constructor : entry.getValue()) {
         Expr<?> smtExpr = ctx.mkConst(constructor.ConstructorDecl());
         if (hasType(smtExpr, entry.getKey(), model)) {

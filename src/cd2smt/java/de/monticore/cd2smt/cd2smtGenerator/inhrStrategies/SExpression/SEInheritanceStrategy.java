@@ -12,7 +12,6 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.*;
-import java.util.function.Function;
 
 /***
  * this class  convert inheritance relations in a Single expression way.
@@ -60,15 +59,33 @@ public class SEInheritanceStrategy extends SSClassStrategy implements Inheritanc
   }
 
   @Override
-  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
-    Function<Expr<?>, BoolExpr> filter = obj -> instanceOf(obj, type);
-    return super.mkForall(type, var, obj -> ctx.mkImplies(filter.apply(obj), body.apply(obj)));
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
+    BoolExpr filter = instanceOf(var, type);
+    return super.mkForall(type, var, ctx.mkImplies(filter, body));
   }
 
   @Override
-  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
-    Function<Expr<?>, BoolExpr> filter = obj -> instanceOf(obj, type);
-    return super.mkExists(type, var, obj -> ctx.mkAnd(filter.apply(obj), body.apply(obj)));
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
+    BoolExpr filter = instanceOf(var, type);
+    return super.mkExists(type, var, ctx.mkAnd(filter, body));
+  }
+
+  @Override
+  public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr filter = instanceOf(vars.get(0), types.get(0));
+    for (int i = 1; i < types.size(); i++) {
+      filter = ctx.mkAnd(filter, instanceOf(vars.get(i), types.get(i)));
+    }
+    return super.mkForall(types, vars, ctx.mkImplies(filter, body));
+  }
+
+  @Override
+  public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr filter = instanceOf(vars.get(0), types.get(0));
+    for (int i = 1; i < types.size(); i++) {
+      filter = ctx.mkAnd(filter, instanceOf(vars.get(i), types.get(i)));
+    }
+    return super.mkExists(types, vars, ctx.mkAnd(filter, body));
   }
 
   @Override
