@@ -7,10 +7,8 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationsData;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy.DefaultAssocStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one.One2OneAssocStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DSClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.finiteDs.FiniteDSClassStrategy;
@@ -133,53 +131,43 @@ public class CD2SMTGenerator {
     associationStrategy.cd2smt(astCd, ctx, classStrategy, inheritanceStrategy);
   }
 
-
   public Sort getSort(ASTCDType astcdType) {
     return dataWrapper.getSort(astcdType);
   }
 
-
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType) {
     return dataWrapper.hasType(expr, astcdType);
   }
-
 
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     return dataWrapper.getAttribute(astCdType, attributeName, cDTypeExpr);
   }
 
-
   public Set<IdentifiableBoolExpr> getClassConstraints() {
     return dataWrapper.getClassConstraints();
   }
-
 
   public Expr<? extends Sort> getEnumConstant(
       ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
     return dataWrapper.getEnumConstant(enumeration, enumConstant);
   }
 
-
   public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
     return dataWrapper.mkForall(type, var, body);
   }
-
 
   public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
     return dataWrapper.mkExists(type, var, body);
   }
 
-
   public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
     return dataWrapper.mkForall(types, vars, body);
   }
 
-
   public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
     return dataWrapper.mkExists(types, vars, body);
   }
-
 
   public BoolExpr evaluateLink(
       ASTCDAssociation association,
@@ -190,27 +178,22 @@ public class CD2SMTGenerator {
     return dataWrapper.evaluateLink(association, type1, type2, expr1, expr2);
   }
 
-
   public Set<IdentifiableBoolExpr> getAssociationsConstraints() {
     return dataWrapper.getAssociationsConstraints();
   }
-
 
   public Expr<? extends Sort> getSuperInstance(
       ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
     return dataWrapper.getSuperInstance(objType, superType, objExpr);
   }
 
-
   public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType) {
     return dataWrapper.instanceOf(obj, objType);
   }
 
-
   public BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type) {
     return dataWrapper.filterObject(obj, type);
   }
-
 
   public Set<IdentifiableBoolExpr> getInheritanceConstraints() {
     return dataWrapper.getInheritanceConstraints();

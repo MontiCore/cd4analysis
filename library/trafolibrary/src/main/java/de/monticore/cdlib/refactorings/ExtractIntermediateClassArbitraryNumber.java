@@ -142,8 +142,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    */
   private boolean extractIntermediateClassManualNameAttribute(
       ASTCDCompilationUnit ast, String name) {
-    ClassManualNameAttribute extract =
-        new ClassManualNameAttribute(ast);
+    ClassManualNameAttribute extract = new ClassManualNameAttribute(ast);
     extract.set_$newParent(name);
     if (extract.doPatternMatching()) {
       extract.doReplacement();
@@ -161,8 +160,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    * @return <code>true</code> if the transformation was successful
    */
   private boolean extractIntermediateClassManualNameMethod(ASTCDCompilationUnit ast, String name) {
-    ClassManualNameMethod extract =
-        new ClassManualNameMethod(ast);
+    ClassManualNameMethod extract = new ClassManualNameMethod(ast);
     extract.set_$newParent(name);
     if (extract.doPatternMatching()) {
       extract.doReplacement();

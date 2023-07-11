@@ -65,13 +65,13 @@ public interface InheritanceData {
    * @param body the body.
    * @return the assertion as boolExpr.
    */
-default   BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body){
-  BoolExpr res = body;
-  for (int i = 0; i < vars.size(); i++) {
-    res = mkForall(types.get(i), vars.get(i), res);
+  default BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr res = body;
+    for (int i = 0; i < vars.size(); i++) {
+      res = mkForall(types.get(i), vars.get(i), res);
+    }
+    return res;
   }
-  return res;
-}
 
   /***
    * assert that the constraint "body" must hold for at least one element with the type "type".
@@ -80,13 +80,13 @@ default   BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr 
    * @param body the body.
    * @return the assertion as boolExpr.
    */
-default BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body){
-  BoolExpr res = body;
-  for (int i = 0; i < vars.size(); i++) {
-    res = mkExists(types.get(i), vars.get(i), res);
+  default BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr res = body;
+    for (int i = 0; i < vars.size(); i++) {
+      res = mkExists(types.get(i), vars.get(i), res);
+    }
+    return res;
   }
-  return res;
-}
 
   enum Strategy {
     ME,
