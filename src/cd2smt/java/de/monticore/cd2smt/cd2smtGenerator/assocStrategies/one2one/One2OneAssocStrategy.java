@@ -79,25 +79,21 @@ public class One2OneAssocStrategy extends DefaultAssocStrategy {
           inheritanceData.mkForall(
               right,
               rightExpr,
-              r -> inheritanceData.mkExists(left, leftExpr1, l -> ctx.mkEq(r, assocFunc.apply(l))));
+              inheritanceData.mkExists(
+                  left, leftExpr1, ctx.mkEq(rightExpr, assocFunc.apply(leftExpr1))));
 
       BoolExpr injective =
           inheritanceData.mkForall(
-              left,
-              leftExpr1,
-              l1 ->
-                  inheritanceData.mkForall(
-                      left,
-                      leftExpr2,
-                      l2 ->
-                          ctx.mkImplies(
-                              ctx.mkEq(assocFunc.apply(l1), assocFunc.apply(l2)),
-                              ctx.mkEq(l2, l1))));
+              List.of(left, left),
+              List.of(leftExpr1, leftExpr2),
+              ctx.mkImplies(
+                  ctx.mkEq(assocFunc.apply(leftExpr1), assocFunc.apply(leftExpr2)),
+                  ctx.mkEq(leftExpr1, leftExpr2)));
 
       // result must have the correct type
       BoolExpr resultType =
           inheritanceData.mkForall(
-              left, leftExpr1, l -> inheritanceData.filterObject(assocFunc.apply(l), right));
+              left, leftExpr1, inheritanceData.filterObject(assocFunc.apply(leftExpr1), right));
 
       SourcePosition srcPos = assoc.get_SourcePositionStart();
       assert srcPos.getFileName().isPresent();

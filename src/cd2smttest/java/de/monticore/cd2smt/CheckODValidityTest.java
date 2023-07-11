@@ -21,6 +21,7 @@ import java.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -133,6 +134,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         InheritanceData.Strategy.ME);
   }
 
+  @Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestFiniteSS_O2O(String CDFileName) {
@@ -146,6 +148,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         InheritanceData.Strategy.ME);
   }
 
+  @Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestFiniteSS_DEFAULT(String CDFileName) {

@@ -14,7 +14,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import java.util.function.Function;
 
 public class DataWrapper implements ClassData, AssociationsData, InheritanceData {
   protected final ASTCDCompilationUnit ast;
@@ -141,13 +140,23 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
   }
 
   @Override
-  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
     return inheritanceData.mkForall(type, var, body);
   }
 
   @Override
-  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
     return inheritanceData.mkExists(type, var, body);
+  }
+
+  @Override
+  public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    return inheritanceData.mkForall(types, vars, body);
+  }
+
+  @Override
+  public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    return inheritanceData.mkExists(types, vars, body);
   }
 
   protected Optional<Expr<? extends Sort>> getAttributeHelper(
