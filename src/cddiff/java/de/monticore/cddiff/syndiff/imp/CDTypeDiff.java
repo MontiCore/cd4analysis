@@ -173,12 +173,12 @@ public class CDTypeDiff implements ICDTypeDiff {
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
         System.out.println(astcdClass.getName());
-        if (!isAttContainedInClass(attribute, astcdClass)) {
+        if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
           Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
           astcdClassList.remove(getSrcElem());
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass) {
-              if (isAttContainedInClass(attribute, (ASTCDClass) type)) {
+              if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;
               }
@@ -195,16 +195,6 @@ public class CDTypeDiff implements ICDTypeDiff {
       }
       return false;
     }
-  }
-
-  public boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDClass astcdClass){
-    for (ASTCDAttribute att : astcdClass.getCDAttributeList()){
-      if ((att.getName().equals(attribute.getName())
-        && att.printType().equals(attribute.printType()))){
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

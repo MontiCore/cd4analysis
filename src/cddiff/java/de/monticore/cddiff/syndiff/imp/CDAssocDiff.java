@@ -1,11 +1,13 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import com.google.common.collect.Multimap;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -21,6 +23,10 @@ public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation srcElem;
   private final ASTCDAssociation tgtElem;
   private boolean isReversed;
+  //use them to check if a search has been made
+  private AssocStruct srcStruc;
+  private AssocStruct tgtStruc;
+  private boolean mustBeCompared;
   private List<DiffTypes> baseDiff;
 
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
@@ -185,6 +191,38 @@ public class CDAssocDiff implements ICDAssocDiff {
       return AssocCardinality.Multiple;
     }
   }
+
+  //TODO: check if somewhere the comparisson should be with unmatchedAssoc
+  //TODO: if no match is found for src, we don't look anymore at this
+  //if no match in tgt is found, we just add this assoc to diff
+  public AssocStruct findMatchingAssocStructSrc(
+    ASTCDAssociation association, ASTCDClass associatedClass) {
+    Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getSrcCD());
+    for (AssocStruct assocStruct : helper.getSrcMap().get(associatedClass)) {
+      Pair<ASTCDClass, ASTCDClass> structAssociatedClasses = getConnectedClasses(assocStruct.getUnmodifiedAssoc(), helper.getSrcCD());
+      if (associatedClasses.a.equals(structAssociatedClasses.a)
+        && associatedClasses.b.equals(structAssociatedClasses.b)) {
+        return assocStruct;
+      }
+    }
+    mustBeCompared = false;
+    return null;
+  }
+
+  public AssocStruct findMatchingAssocStructTgt(
+    ASTCDAssociation association, ASTCDClass associatedClass) {
+    Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getTgtCD());
+    for (AssocStruct assocStruct : helper.getTrgMap().get(associatedClass)) {
+      Pair<ASTCDClass, ASTCDClass> structAssociatedClasses = getConnectedClasses(assocStruct.getUnmodifiedAssoc(), helper.getTgtCD());
+      if (associatedClasses.a.equals(structAssociatedClasses.a)
+        && associatedClasses.b.equals(structAssociatedClasses.b)) {
+        return assocStruct;
+      }
+    }
+
+    return null;
+  }
+  //Update get..Diff with matched strucs
 
   /**
    * Find the difference in the cardinalities of an association.

@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.CardinalityStruc;
 import de.monticore.cddiff.syndiff.DiffTypes;
@@ -215,37 +216,67 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Checks if each of the added classes refactors the old structure. The class must be abstarct,
    * its subclasses in the old CD need to have all of its attributes and it can't have new ones.
    */
-  @Override
-  public boolean isSuperclass(ASTCDClass astcdClass){
-    List<ASTCDClass> subclassesToCheck = new ArrayList<>();
-    if (!astcdClass.getModifier().isAbstract()){
-      for (ASTCDClass classesToCheck : getSrcCD().getCDDefinition().getCDClassesList()){
-        ASTMCObjectType newSuper =
-          MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
-            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName()))
-            .build();
-//        if (isNewSuper(newSuper, classesToCheck,
-//          (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope())){
-//          subclassesToCheck.add(classesToCheck);
+//  @Override
+//  public boolean isSuperclass(ASTCDClass astcdClass){
+//    List<ASTCDClass> subclassesToCheck = new ArrayList<>();
+//    if (!astcdClass.getModifier().isAbstract()){
+//      for (ASTCDClass classesToCheck : getSrcCD().getCDDefinition().getCDClassesList()){
+//        ASTMCObjectType newSuper =
+//          MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+//            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName()))
+//            .build();
+////        if (isNewSuper(newSuper, classesToCheck,
+////          (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope())){
+////          subclassesToCheck.add(classesToCheck);
+////        }
+//      }
+//    }
+//    else {
+//      return false;
+//    }
+//
+//    if (!astcdClass.getCDAttributeList().isEmpty()){
+//      for (ASTCDClass classToCheck : subclassesToCheck){
+//        ASTCDClass matchedClass = findMatchedClass(classToCheck);
+//        if (matchedClass != null){
+//          for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
+//            if (!matchedClass.getCDAttributeList().contains(attribute) || !isAttributInSuper(attribute, matchedClass,
+//              (ICD4CodeArtifactScope) getTgtCD().getEnclosingScope())){
+//              return false;
+//            }
+//          }
 //        }
-      }
-    }
-    else {
-      return false;
-    }
+//      }
+//    }
+//    return true;
+//  }
 
-    if (!astcdClass.getCDAttributeList().isEmpty()){
-      for (ASTCDClass classToCheck : subclassesToCheck){
-        ASTCDClass matchedClass = findMatchedClass(classToCheck);
-        if (matchedClass != null){
-          for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
-            if (!matchedClass.getCDAttributeList().contains(attribute) || !isAttributInSuper(attribute, matchedClass,
-              (ICD4CodeArtifactScope) getTgtCD().getEnclosingScope())){
+  public boolean isSupClass(ASTCDClass astcdClass){
+    if (astcdClass.getModifier().isAbstract()){
+      List<ASTCDClass> classesToCheck = Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), astcdClass);
+      List<ASTCDAttribute> attributes = astcdClass.getCDAttributeList();
+      for (ASTCDClass classToCheck : classesToCheck){
+        for (ASTCDAttribute attribute : attributes){
+          if (Syn2SemDiffHelper.isAttContainedInClass(attribute, classToCheck)){
+
+          } else {
+            Set<ASTCDClass> classes = CDDiffUtil.getAllSuperclasses(classToCheck, helper.getSrcCD().getCDDefinition().getCDClassesList());
+            classes.remove(astcdClass);
+            boolean isContained = false;
+            for (ASTCDClass superOfSub : classes){
+              if (Syn2SemDiffHelper.isAttContainedInClass(attribute, superOfSub)){
+                isContained = true;
+                break;
+              }
+            }
+            if (!isContained){
               return false;
             }
           }
         }
       }
+    } else {
+      return false;
     }
     return true;
   }
@@ -266,6 +297,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
   //TODO: replace the boolean with the class
+  //TODO: check if exists after overlapping Assocs
+  //TODO: also for classes - maybe do this when creating the list with changes as if(){...}
   @Override
   public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation){
     if (astcdAssociation.getCDAssocDir().isBidirectional()){
@@ -334,7 +367,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * @param assoc2 second association
    * @return true, if all conditions are fulfilled
    */
-  //TODO: same function for the reversed case
   public static boolean sameAssociationType(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
       if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
         && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
@@ -1241,7 +1273,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   public List<ASTCDClass> addedClassList(){
     List<ASTCDClass> classList = new ArrayList<>();
     for (ASTCDClass astcdClass : addedClasses){
-      if (isSuperclass(astcdClass)){
+      if (isSupClass(astcdClass)){
         classList.add(astcdClass);
       }
     }
@@ -1281,4 +1313,5 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   public List overlappingAssocList() { return null; }
   //TODO: to for all diffs
+  //TODO: after overlappingAssocs there might be associations to classes that cannot be instantiated - function
 }

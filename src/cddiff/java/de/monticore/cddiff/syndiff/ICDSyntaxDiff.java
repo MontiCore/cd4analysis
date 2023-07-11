@@ -86,7 +86,7 @@ public interface ICDSyntaxDiff {
    *
    * @return true if the class fulfills those requirements.
    */
-  boolean isSuperclass(ASTCDClass astcdClass);
+  boolean isSupClass(ASTCDClass astcdClass);
 
   /**
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.

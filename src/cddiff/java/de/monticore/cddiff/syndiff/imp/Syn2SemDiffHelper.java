@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -36,6 +37,17 @@ public class Syn2SemDiffHelper {
   private ASTCDCompilationUnit srcCD;
 
   private ASTCDCompilationUnit tgtCD;
+
+  public static boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDClass astcdClass){
+    for (ASTCDAttribute att : astcdClass.getCDAttributeList()){
+      if ((att.getName().equals(attribute.getName())
+        && att.printType().equals(attribute.printType()))){
+        return true;
+      }
+    }
+    return false;
+  }
+
   public ArrayListMultimap<ASTCDClass, AssocStruct> getSrcMap() {
     return srcMap;
   }
