@@ -1,5 +1,5 @@
 import java.lang.*;
-classdiagram CD12{
+classdiagram CD32{
 
   abstract class A{
     int age;

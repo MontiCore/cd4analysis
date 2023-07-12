@@ -1,7 +1,7 @@
 import java.lang.*;
-classdiagram CD21{
+classdiagram CD71{
 
-  class A{
+  abstract class A{
     double age;
   }
 

@@ -106,10 +106,9 @@ public interface ICDTypeDiff {
   /**
    * Get all attributes with changed types.
    * @param memberDiff
-   * @param compilationUnit
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
-  List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit);
+  List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff);
 
   /**
    * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:

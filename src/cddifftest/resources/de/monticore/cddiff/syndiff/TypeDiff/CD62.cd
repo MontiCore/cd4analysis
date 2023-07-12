@@ -1,5 +1,5 @@
 import java.lang.*;
-classdiagram CD42{
+classdiagram CD62{
 
   abstract class A{}
 
