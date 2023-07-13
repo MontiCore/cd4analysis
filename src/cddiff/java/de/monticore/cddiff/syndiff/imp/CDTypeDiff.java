@@ -11,10 +11,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.matcher.MatchingStrategy;
 import edu.mit.csail.sdg.alloy4.Pair;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CDTypeDiff implements ICDTypeDiff {
   private final ASTCDType srcType;

@@ -162,6 +162,14 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
+        if (cmd.hasOption("syndiff")) {
+          if (useBuiltInTypes) {
+            BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+          }
+          computeNewSyntaxDiff();
+          CD4CodeMill.globalScope().clear();
+        }
+
         new CD4CodeAfterParseTrafo().transform(ast);
         modelName = ast.getCDDefinition().getName();
 
@@ -712,6 +720,61 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     new CDFullNameTrafo().transform(ast1);
     new CDFullNameTrafo().transform(ast2);
 
+    ast1 = ast1.deepClone();
+    ast2 = ast2.deepClone();
+
+    new CD4CodeDirectCompositionTrafo().transform(ast1);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
+
+    String printOption = cmd.getOptionValue("show", "diff");
+    if (printOption.equals("diff")) {
+      syntaxDiff.print();
+    }
+    if (printOption.equals("cd1")) {
+      syntaxDiff.printCD1();
+    }
+    if (printOption.equals("cd2")) {
+      syntaxDiff.printCD2();
+    }
+    if (printOption.equals("both")) {
+      syntaxDiff.printCD1();
+      syntaxDiff.printCD2();
+    }
+    if (printOption.equals("all")) {
+      syntaxDiff.print();
+      syntaxDiff.printCD1();
+      System.out.println(System.lineSeparator());
+      syntaxDiff.printCD2();
+    }
+    if (printOption.equals("nocolor")) {
+      syntaxDiff.printNoColour();
+    }
+  }
+
+  /** All Print Options for NEW Syntax Diff **/
+  protected void computeNewSyntaxDiff() {
+
+    /** Clone the current (new) CD **/
+    ASTCDCompilationUnit ast1 = ast.deepClone();
+
+    /** Parse the second (old) CD **/
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
+
+    /** Check if the parse option has been successful **/
+    if (ast2 == null) {
+      Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
+      return;
+    }
+
+    /** Check with Trafo if fully qualified names are used **/
+    new CDFullNameTrafo().transform(ast1);
+    new CDFullNameTrafo().transform(ast2);
+
+    /** Use deep cloning of the CDs **/
     ast1 = ast1.deepClone();
     ast2 = ast2.deepClone();
 

@@ -410,6 +410,25 @@ public class CDToolOptions {
             .build());
   }
 
+  /** Options for NEW SyntaxDiff */
+  public void initNewSyntaxDiff() {
+
+    options.addOption(
+      Option.builder()
+        .longOpt("syndiff")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .numberOfArgs(1)
+        .desc(
+          "Shows the syntactical differences between the current (new) CD and "
+            + "the second (old) CD and prints the result. The default option is to output the "
+            + "the colored diffs in the CDs - green for added elements, red for deleted elements, "
+            + "yellow for changed elements.")
+        .build());
+
+  }
+
   /** adds options for CDMerge */
   public void initMergeOptions() {
     options.addOption(
