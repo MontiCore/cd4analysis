@@ -14,5 +14,5 @@ classdiagram CD101{
 
   class S extends Q{}
 
-  association [1] Q -> (r) B [1];
+  association new [1] Q -> (r) A [1];
 }

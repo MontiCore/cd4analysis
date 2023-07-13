@@ -252,7 +252,18 @@ public class CDAssocDiff implements ICDAssocDiff {
   }
 
   public boolean isDirectionChanged(){
-    return getDirection(getSrcElem()).equals(getDirection(getTgtElem()));
+    //TODO: check if a class now can be instatiated without anothe one
+    if (isReversed){
+      if ((getDirection(getSrcElem()).equals(AssocDirection.LeftToRight) && getDirection(getTgtElem()).equals(AssocDirection.RightToLeft))
+        || (getDirection(getSrcElem()).equals(AssocDirection.RightToLeft) && getDirection(getTgtElem()).equals(AssocDirection.LeftToRight)
+        || (getDirection(getSrcElem()).equals(AssocDirection.BiDirectional)) && getDirection(getTgtElem()).equals(AssocDirection.BiDirectional))){
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return !getDirection(getSrcElem()).equals(getDirection(getTgtElem()));
+    }
   }
 
   public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff(){

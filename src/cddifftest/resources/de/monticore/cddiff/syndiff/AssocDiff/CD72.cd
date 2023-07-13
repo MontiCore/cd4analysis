@@ -14,5 +14,5 @@ classdiagram CD72{
 
   class S extends Q{}
 
-  association [*] Q (q) <-> A (r) [1];
+  association old [*] Q (q) <-> (r) A [1];
 }

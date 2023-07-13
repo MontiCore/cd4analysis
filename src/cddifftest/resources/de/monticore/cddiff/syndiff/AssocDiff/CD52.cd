@@ -14,5 +14,5 @@ classdiagram CD52{
 
   class S extends Q{}
 
-  association [1] S (q) <-> (r) A [1];
+  association old [1] S (q) <-> (r) A [1];
 }
