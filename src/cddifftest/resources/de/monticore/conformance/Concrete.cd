@@ -2,17 +2,23 @@ import java.lang.String;
 
 classdiagram Concrete {
   <<ref="Account">> class BankAccount {
-    <<ref = "username">> String username;
+    <<ref = "username">> String name;
     <<ref = "password">> String password;
   }
 
+   class Account {
+      String username;
+      String password;
+    }
+
   <<ref="Item">> abstract class Item {
-    <<ref="id">>String id;
+    <<ref="id">>String itemId;
   }
 
   class Transaction extends Item;
 
   class Deposit extends Item;
 
-  <<ref="hasItems">> association [1..*] BankAccount <-> Item [1..*];
+   association hasItems [1..*] BankAccount <-> Item [1..*];
+  <<ref="hasItems">>  association  [1..*] Account <-> Item [1..*];
 }

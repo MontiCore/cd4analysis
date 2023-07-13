@@ -24,6 +24,7 @@ import de.monticore.conformance.inc.type.EqTypeIncStrategy;
 import de.monticore.conformance.inc.type.STTypeIncStrategy;
 import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -107,8 +108,16 @@ public class ConformanceChecker {
     return assocInc.getMatchedElements(con);
   }
 
-  public List<ASTCDAttribute> getRefElements(ASTCDAttribute type) {
-    return attrInc.getMatchedElements(type);
+  public List<ASTCDAttribute> getRefElements(ASTCDType conType, ASTCDAttribute con) {
+    List<ASTCDAttribute> refElements = new ArrayList<>();
+    getRefElements(conType)
+        .forEach(
+            refType -> {
+              attrInc.setConcreteType(conType);
+              attrInc.setReferenceType(refType);
+              refElements.addAll(attrInc.getMatchedElements(con));
+            });
+    return refElements;
   }
 
   public static boolean checkStrictDeepComposedConformance(
