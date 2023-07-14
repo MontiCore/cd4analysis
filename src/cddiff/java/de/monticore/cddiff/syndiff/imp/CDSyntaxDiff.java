@@ -640,6 +640,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 } else {
                   //such class can't exist
                   //delete
+                  helper.updateSrc(astcdClass);
                   helper.getSrcMap().removeAll(astcdClass);
                 }
               }
@@ -659,6 +660,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)){
                   deleteAssocsFromSrc(astcdClass, getConflict(association, superAssoc));
                 } else {
+                  helper.updateSrc(astcdClass);
                   helper.getSrcMap().removeAll(astcdClass);
                 }
               }
@@ -711,6 +713,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 } else {
                   //such class can't exist
                   //delete
+                  helper.updateTgt(astcdClass);
                   helper.getTrgMap().removeAll(astcdClass);
                 }
               }
@@ -730,6 +733,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)){
                   deleteAssocsFromTgt(astcdClass, getConflict(association, superAssoc));
                 } else {
+                  helper.updateTgt(astcdClass);
                   helper.getTrgMap().removeAll(astcdClass);
                 }
               }
@@ -1004,7 +1008,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   public List<ASTCDClass> addedClassList(){
     List<ASTCDClass> classList = new ArrayList<>();
     for (ASTCDClass astcdClass : addedClasses){
-      if (helper.getSrcMap().containsKey(astcdClass)
+      if (!helper.getNotInstanClassesSrc().contains(astcdClass)
         && isSupClass(astcdClass)){
         classList.add(astcdClass);
       }
@@ -1017,34 +1021,142 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return pairList;
   }
 
-
-
-  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributeList(){
-    return null;
+  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributeList() {
+    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+    for (CDTypeDiff typeDiff : changedClasses) {
+      if (typeDiff.getSrcElem() instanceof ASTCDClass
+        && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
+        && typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)) {
+        list.addAll(typeDiff.addedAttributes(tgtCD));
+      }
+    }
+    return list;
   }
 
   public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributeList(){
-    return null;
+    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+    for (CDTypeDiff typeDiff : changedClasses) {
+      if (typeDiff.getSrcElem() instanceof ASTCDClass
+        && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
+        && typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
+        list.addAll(typeDiff.deletedAttributes(srcCD));
+      }
+    }
+    return list;
   }
 
-  public List<Pair<ASTCDAttribute, ASTCDEnumConstant>> addedConstantsList(){
-    return null;
+  public List<EnumStruc> addedConstantsList(){
+    List<EnumStruc> list = new ArrayList<>();
+    for (CDTypeDiff typeDiff : changedClasses){
+      if (typeDiff.getSrcElem() instanceof ASTCDEnum){
+        ASTCDClass astcdClass = null;
+        ASTCDAttribute attribute = null;
+        for (ASTCDEnumConstant enumConstant : typeDiff.getAddedConstants()){
+          list.add(new EnumStruc(astcdClass, attribute, enumConstant));
+        }
+      }
+    }
+    return list;
   }
 
-  public List changedAttributeList() { return null; }
+  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttributeList() {
+    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+    for (CDTypeDiff typeDiff : changedClasses) {
+      if (typeDiff.getSrcElem() instanceof ASTCDClass
+        && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
+        && typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
+        list.addAll(typeDiff.deletedAttributes(srcCD));
+      }
+    }
+    return list;
+  }
 
-  public List changedRoleNameList() { return null; }
+  //TODO: check if somewhere the comparisson should be with unmatchedAssoc
+  //TODO: if no match is found for src, we don't look anymore at this
+  //if no match in tgt is found, we just add this assoc to diff
+  public boolean srcAndTgtExist(CDAssocDiff assocDiff){
+    Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
+    if (assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.a) != null
+      || assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.b) != null){
+      Pair<ASTCDClass, ASTCDClass> pair2 = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getTgtElem(), tgtCD);
+      if ((assocDiff.findMatchingAssocStructTgt(assocDiff.getTgtElem(), pair2.a) != null
+        || assocDiff.findMatchingAssocStructTgt(assocDiff.getTgtElem(), pair2.b) != null)){
+        return true;
+      }
+    }
+    return false;
+  }
 
-  public List changedCardinalityList() { return null; }
+  public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> changedRoleNameList() {
+    List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
+    for (CDAssocDiff assocDiff : changedAssocs){
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
+        if (srcAndTgtExist(assocDiff)) {
+          list.addAll(assocDiff.getRoleDiff());
+        }
+      }
+    }
+    return list;
+  }
 
-  public List changedTargetList() { return null;}
+  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> changedCardinalityList() {
+    List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
+    for (CDAssocDiff assocDiff : changedAssocs){
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY)) {
+        if (srcAndTgtExist(assocDiff)) {
+          list.addAll(assocDiff.getCardDiff());
+        }
+      }
+    }
+    return list;
+  }
 
-  public List changedDirectionList() { return null; }
+  public List<Pair<ASTCDAssociation, ASTCDClass>> changedTargetList() {
+    List<Pair<ASTCDAssociation, ASTCDClass>> list = new ArrayList<>();
+    for (CDAssocDiff assocDiff : changedAssocs){
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_TARGET)) {
+        if (srcAndTgtExist(assocDiff)) {
+          list.add(assocDiff.getChangedTgtClass());
+        }
+      }
+    }
+    return list;
+  }
 
-  public List changedVisibilityList() { return null; }
+  public List changedDirectionList() {
+    List<ASTCDAssociation> list = new ArrayList<>();
+    for (CDAssocDiff assocDiff : changedAssocs){
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)) {
+        if (srcAndTgtExist(assocDiff)
+          && assocDiff.isDirectionChanged()) {
+          Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
+          AssocStruct association = assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.a);
+          AssocStruct assocStruct = assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.b);
+          if (association != null){
+            list.add(association.getAssociation());
+          } else if (assocStruct != null){
+            list.add(assocStruct.getAssociation());
+          }
+        }
+      }
+    }
+    return list;
+  }
 
-  public List overlappingAssocList() { return null; }
-  //TODO: after overlappingAssocs there might be associations to classes that cannot be instantiated - function
-  //TODO: check if exists after overlapping Assocs
+  public List<ASTCDClass> srcExistsTgtNot(){
+    List<ASTCDClass> list = new ArrayList<>();
+    for (ASTCDClass astcdClass : helper.getNotInstanClassesTgt()){
+      if (!helper.getNotInstanClassesSrc().contains(astcdClass)){
+        list.add(astcdClass);
+      }
+    }
+    return list;
+  }
+
+//  public List changedVisibilityList() { return null; }
+
+//  public List overlappingAssocList() { return null; }
+  //after overlappingAssocs there might be associations to classes that cannot be instantiated - function
+  //check if exists after overlapping Assocs
   //TODO: also for classes - maybe do this when creating the list with changes as if(){...}
 }

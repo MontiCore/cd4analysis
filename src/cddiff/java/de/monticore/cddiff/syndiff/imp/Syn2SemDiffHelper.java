@@ -37,6 +37,10 @@ public class Syn2SemDiffHelper {
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
+  private List<ASTCDClass> notInstanClassesSrc = new ArrayList<>();
+
+  private List<ASTCDClass> notInstanClassesTgt = new ArrayList<>();
+
   private ASTCDCompilationUnit srcCD;
 
   private ASTCDCompilationUnit tgtCD;
@@ -63,6 +67,30 @@ public class Syn2SemDiffHelper {
 
   public void setTgtCD(ASTCDCompilationUnit tgtCD) {
     this.tgtCD = tgtCD;
+  }
+
+  public List<ASTCDClass> getNotInstanClassesSrc() {
+    return notInstanClassesSrc;
+  }
+
+  public void setNotInstanClassesSrc(List<ASTCDClass> notInstanClassesSrc) {
+    this.notInstanClassesSrc = notInstanClassesSrc;
+  }
+
+  public List<ASTCDClass> getNotInstanClassesTgt() {
+    return notInstanClassesTgt;
+  }
+
+  public void setNotInstanClassesTgt(List<ASTCDClass> notInstanClassesTgt) {
+    this.notInstanClassesTgt = notInstanClassesTgt;
+  }
+
+  public void updateSrc(ASTCDClass astcdClass){
+    notInstanClassesSrc.add(astcdClass);
+  }
+
+  public void updateTgt(ASTCDClass astcdClass){
+    notInstanClassesTgt.add(astcdClass);
   }
 
   public static boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDClass astcdClass){

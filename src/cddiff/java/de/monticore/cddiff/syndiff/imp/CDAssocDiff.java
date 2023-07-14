@@ -266,6 +266,19 @@ public class CDAssocDiff implements ICDAssocDiff {
     }
   }
 
+  /**
+   * CHeck if the old association allowed 0 objects
+   * @param association association
+   * @return true if condition is fulfilled
+   */
+  public boolean allowsZeroObjects(AssocStruct association){
+    if (association.getSide().equals(ClassSide.Left)) {
+      return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt());
+    } else {
+      return (association.getAssociation().getLeft().getCDCardinality().isMult() || association.getAssociation().getLeft().getCDCardinality().isOpt());
+    }
+  }
+
   public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
     List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
     if (!isReversed){
