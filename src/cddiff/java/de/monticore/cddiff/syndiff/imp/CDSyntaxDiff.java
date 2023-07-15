@@ -1123,7 +1123,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  public List changedDirectionList() {
+  public List<ASTCDAssociation> changedDirectionList() {
     List<ASTCDAssociation> list = new ArrayList<>();
     for (CDAssocDiff assocDiff : changedAssocs){
       if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)) {
