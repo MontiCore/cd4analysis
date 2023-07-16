@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -34,6 +36,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   private List<ASTCDEnum> deletedEnums;
   private List<ASTCDAssociation> addedAssocs;
   private List<ASTCDAssociation> deletedAssocs;
+  private List<InheritanceDiff> addedInheritance;
+  private List<InheritanceDiff> deletedInheritance;
   private List<Pair<ASTCDClass, ASTCDClass>> matchedClasses;
   private List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums;
   private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
@@ -187,6 +191,18 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   @Override
   public void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs) {
     this.matchedAssocs = matchedAssocs;
+  }
+  public List<InheritanceDiff> getAddedInheritance() {
+    return addedInheritance;
+  }
+  public void setAddedInheritance(List<InheritanceDiff> addedInheritance) {
+    this.addedInheritance = addedInheritance;
+  }
+  public List<InheritanceDiff> getDeletedInheritance() {
+    return deletedInheritance;
+  }
+  public void setDeletedInheritance(List<InheritanceDiff> deletedInheritance) {
+    this.deletedInheritance = deletedInheritance;
   }
 
   @Override
@@ -992,6 +1008,153 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
+  public List<Pair<ASTCDClass, Set<ASTCDAttribute>>> allNewAttributes(){
+    List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list = new ArrayList<>();
+    for (InheritanceDiff inheritanceDiff : addedInheritance){
+      Pair<ASTCDClass, Set<ASTCDAttribute>> pair = newAttributes(inheritanceDiff);
+      if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)
+        && !pair.b.isEmpty()){
+        list.add(pair);
+      }
+    }
+    return mergeSets(list);
+  }
+
+  public static List<Pair<ASTCDClass, Set<ASTCDAttribute>>> mergeSets(List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list) {
+    Map<ASTCDClass, Set<ASTCDAttribute>> classMap = new HashMap<>();
+
+    for (Pair<ASTCDClass, Set<ASTCDAttribute>> pair : list) {
+      ASTCDClass cdClass = pair.a;
+      Set<ASTCDAttribute> attributeSet = pair.b;
+
+      // Check if the class already exists in the map
+      if (classMap.containsKey(cdClass)) {
+        Set<ASTCDAttribute> mergedSet = classMap.get(cdClass);
+        mergedSet.addAll(attributeSet);
+      } else {
+        // Add the class and its attribute set to the map
+        classMap.put(cdClass, new HashSet<>(attributeSet));
+      }
+    }
+
+    List<Pair<ASTCDClass, Set<ASTCDAttribute>>> mergedList = new ArrayList<>();
+    for (Map.Entry<ASTCDClass, Set<ASTCDAttribute>> entry : classMap.entrySet()) {
+      ASTCDClass cdClass = entry.getKey();
+      Set<ASTCDAttribute> attributeSet = entry.getValue();
+      mergedList.add(new Pair<>(cdClass, attributeSet));
+    }
+
+    return mergedList;
+  }
+  public Pair<ASTCDClass, Set<ASTCDAttribute>> newAttributes(InheritanceDiff inheritanceDiff) {
+    Set<ASTCDClass> classes = new HashSet<>();
+    for (ASTCDClass astcdClass : inheritanceDiff.getNewDirectSuper()){
+      boolean isContained = false;
+      for (ASTCDClass astcdClass1 : inheritanceDiff.getOldDirectSuper()){
+        if (astcdClass.getName().equals(astcdClass1.getName())) {
+          isContained = true;
+          break;
+        }
+      }
+      if (!isContained){
+        classes.add(astcdClass);
+      }
+    }
+    Set<ASTCDAttribute> attributes = new HashSet<>();
+    for (ASTCDClass astcdClass : classes) {
+      for (ASTCDAttribute attribute : getAllAttr(astcdClass).b) {
+        boolean isContained = false;
+        for (ASTCDAttribute attribute1 : getAllAttr(inheritanceDiff.getAstcdClasses().b).b) {
+          if (attribute.getName().equals(attribute1.getName())
+            && attribute.printType().equals(attribute1.printType())) {
+            isContained = true;
+            break;
+          }
+        }
+        if (!isContained) {
+          attributes.add(attribute);
+        }
+      }
+    }
+    return new Pair<>(inheritanceDiff.getAstcdClasses().a, attributes);
+  }
+
+  public Pair<ASTCDClass, Set<ASTCDAttribute>> deletedAttributes(InheritanceDiff inheritanceDiff){
+    Set<ASTCDClass> classes = new HashSet<>();
+    for (ASTCDClass astcdClass : inheritanceDiff.getOldDirectSuper()){
+      boolean isContained = false;
+      for (ASTCDClass astcdClass1 : inheritanceDiff.getNewDirectSuper()){
+        if (astcdClass.getName().equals(astcdClass1.getName())) {
+          isContained = true;
+          break;
+        }
+      }
+      if (!isContained){
+        classes.add(astcdClass);
+      }
+    }
+    Set<ASTCDAttribute> attributes = new HashSet<>();
+    for (ASTCDClass astcdClass : classes) {
+      for (ASTCDAttribute attribute : getAllAttr(astcdClass).b) {
+        boolean isContained = false;
+        for (ASTCDAttribute attribute1 : getAllAttr(inheritanceDiff.getAstcdClasses().a).b) {
+          if (attribute.getName().equals(attribute1.getName())
+            && attribute.printType().equals(attribute1.printType())) {
+            isContained = true;
+          }
+        }
+        if (!isContained) {
+          attributes.add(attribute);
+        }
+      }
+    }
+    return new Pair<>(inheritanceDiff.getAstcdClasses().a, attributes);
+  }
+
+  public Pair<ASTCDClass, Set<ASTCDAssociation>> newAssocs(InheritanceDiff inheritanceDiff){
+    Set<ASTCDAssociation> associations = new HashSet<>();
+    for (ASTCDClass astcdClass : inheritanceDiff.getNewDirectSuper()){
+      for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)){
+        boolean isContained = false;
+        for (AssocStruct assocStruct1 : helper.getTrgMap().get(inheritanceDiff.getAstcdClasses().a)){
+          Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD);
+          Pair<ASTCDClass, ASTCDClass> pair1 = Syn2SemDiffHelper.getConnectedClasses(assocStruct1.getAssociation(), tgtCD);
+          if (sameTgt(assocStruct, assocStruct1)
+            && (sameAssociation(assocStruct.getAssociation(), assocStruct1.getAssociation())
+            || sameAssociation(assocStruct.getAssociation(), assocStruct1.getAssociation()))){
+            isContained = true;
+          }
+        }
+        if (!isContained){
+          associations.add(assocStruct.getAssociation());
+        }
+      }
+    }
+    return new Pair<>(inheritanceDiff.getAstcdClasses().a, associations);
+  }
+
+  //TODO: composition - association.getCDType.isComposition()
+
+  public boolean sameTgt(AssocStruct assocStruct, AssocStruct assocStruct2){
+    if (assocStruct.getSide().equals(ClassSide.Left)){
+      if (assocStruct2.getSide().equals(ClassSide.Left)){
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName()
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).b.getName());
+      } else {
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName()
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).a.getName());
+      }
+    }
+    else {
+      if (assocStruct2.getSide().equals(ClassSide.Left)){
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getName()
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).b.getName());
+      } else {
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getName()
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).a.getName());
+      }
+    }
+  }
   public List<ASTCDAssociation> addedAssocList(){
     List<ASTCDAssociation> associationList = new ArrayList<>();
     for (ASTCDAssociation association : addedAssocs){

@@ -134,8 +134,14 @@ public class ODHelper {
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, astcdClass), null);
       artifactList.add(astodArtifact);
     }
+
+    for (Pair<ASTCDClass, Set<ASTCDAttribute>> pair : syntaxDiff.allNewAttributes()){
+      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, pair.a), null);
+      artifactList.add(astodArtifact);
+    }
     return artifactList;
   }
+  //TODO: add stereotype and comments - here and in ODBuilder
   public List<ASTODElement> generateElements(ASTCDAssociation association, ASTCDClass astcdClass){
     Set<ASTCDElement> elements;
     if (association != null){
