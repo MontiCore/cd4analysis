@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
 import java.util.Date;
-import java.util.String;
+import java.lang.String;
 
 classdiagram Employees8 {
   enum PositionKind{fullTime, partTime, external;}
