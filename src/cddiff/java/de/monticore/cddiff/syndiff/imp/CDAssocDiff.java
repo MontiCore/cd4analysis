@@ -99,7 +99,7 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   }
 
-  public AssocDirection getDirection(ASTCDAssociation association){
+  public static AssocDirection getDirection(ASTCDAssociation association){
     if (association.getCDAssocDir() == null) {
       return AssocDirection.Unspecified;
     }
@@ -230,25 +230,25 @@ public class CDAssocDiff implements ICDAssocDiff {
    * new cardinality but not in the old one.
    * @return list with one or two pairs.
    */
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> getCardDiff(){
-    List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
+  public Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> getCardDiff(){
+    List<Pair<ClassSide, Integer>> list = new ArrayList<>();
     if (!isReversed){
       //assoc not reversed
       if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality())))));
+        list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
       }
       if (!isContainedIn(cardToEnum(getSrcElem().getRight().getCDCardinality()), cardToEnum(getTgtElem().getRight().getCDCardinality()))){
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality())))));
+        list.add(new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality()))));
       }
     } else {
       if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getRight().getCDCardinality()))){
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality())))));
+        list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality()))));
       }
       if (!isContainedIn(cardToEnum(getSrcElem().getRight().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality())))));
+        list.add(new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
       }
     }
-    return list;
+    return new Pair<>(srcElem, list);
   }
 
   public boolean isDirectionChanged(){
@@ -279,25 +279,25 @@ public class CDAssocDiff implements ICDAssocDiff {
     }
   }
 
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
-    List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
+  public Pair<ASTCDAssociation, List<Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
+    List<Pair<ClassSide, ASTCDRole>> list = new ArrayList<>();
     if (!isReversed){
       //assoc not reversed
       if (!Objects.equals(getSrcElem().getLeft().getCDRole(), getTgtElem().getLeft().getCDRole())) {
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole())));
+        list.add(new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole()));
       }
       if (!Objects.equals(getSrcElem().getRight().getCDRole(), getTgtElem().getRight().getCDRole())) {
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole())));
+        list.add(new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole()));
       }
     } else {
       if (!Objects.equals(getSrcElem().getLeft().getCDRole(), getTgtElem().getRight().getCDRole())) {
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole())));
+        list.add(new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole()));
       }
       if (!Objects.equals(getSrcElem().getRight().getCDRole(), getTgtElem().getLeft().getCDRole())) {
-        list.add(new Pair<>(getSrcElem(), new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole())));
+        list.add(new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole()));
       }
     }
-    return list;
+    return new Pair<>(srcElem, list);
   }
 
   /**

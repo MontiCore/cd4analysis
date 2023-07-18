@@ -274,7 +274,6 @@ public class CDTypeDiff implements ICDTypeDiff {
    * Get all added constants to an enum
    * @return list of added constants
    */
-  //TODO: get the attribute that uses this Enum
   @Override
   public List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants(){
     List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();

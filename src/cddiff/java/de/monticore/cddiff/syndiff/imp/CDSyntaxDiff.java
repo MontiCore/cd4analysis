@@ -1,7 +1,5 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -22,8 +20,10 @@ import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociation;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 
 public class CDSyntaxDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
@@ -385,7 +385,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    */
   @Override
   public boolean isAddedAssoc(ASTCDAssociation astcdAssociation) {
-    //TODO: check again
+    //TODO: ask Tsveti
     //List<ASTCDAssociation> list = typeMatcher.getMatchedElements(astcdAssociation);
     //this must replace first if()
     //so just check if the list isn't empty?
@@ -536,48 +536,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
       return difference.toString();
     }
-  }
-
-  /**
-   * Find all differences (with additional information) in a pair of changed types
-   *
-   * @param typeDiff pair of new and old type
-   * @return list of changes with information about it
-   */
-  public List<Pair<ASTCDClass, Object>> findTypeDiff(CDTypeDiff typeDiff){
-    List<Pair<ASTCDClass, Object>> list = new ArrayList<>();
-    for (DiffTypes types : typeDiff.getBaseDiffs()){
-      switch (types){
-        case CHANGED_ATTRIBUTE: if (typeDiff.changedAttribute(getSrcCD()) != null){ for (Pair<ASTCDClass, ASTCDAttribute> pair : typeDiff.changedAttribute(getSrcCD())){list.add(new Pair<>(pair.a, pair.b));} }
-        case STEREOTYPE_DIFFERENCE: if (typeDiff.isClassNeeded() != null){ list.add(new Pair<>((ASTCDClass) typeDiff.isClassNeeded(), null)); }
-        case REMOVED_ATTRIBUTE: for (Pair<ASTCDClass, ASTCDAttribute> pair : typeDiff.deletedAttributes(getSrcCD())){list.add(new Pair<>(pair.a, pair.b));}
-        case ADDED_ATTRIBUTE: for (Pair<ASTCDClass, ASTCDAttribute> pair : typeDiff.addedAttributes(getSrcCD())){list.add(new Pair<>(pair.a, pair.b));}
-        case ADDED_CONSTANTS: for (Pair<ASTCDClass, ASTCDEnumConstant> pair : typeDiff.newConstants()){list.add(new Pair<>(pair.a, pair.b));}
-        //other cases?
-      }
-    }
-    return list;
-  }
-
-  /**
-   * Find all differences (with additional information) in a pair of changed associations
-   *
-   * @param assocDiff pair od new and old association
-   * @return list of changes with information about it
-   */
-  public List<Pair<ASTCDAssociation, Object>> findAssocDiff(CDAssocDiff assocDiff){
-    //with this I can use instanceOf when creating the info for the ODs
-    List<Pair<ASTCDAssociation, Object>> list = new ArrayList<>();
-    for (DiffTypes types : assocDiff.getBaseDiff()){
-      switch (types){
-        case CHANGED_ASSOCIATION_MULTIPLICITY: for (Pair<ASTCDAssociation, Pair<ClassSide, Integer>> pair : assocDiff.getCardDiff()){list.add(new Pair<>(pair.a, pair.b));}
-        case CHANGED_ASSOCIATION_DIRECTION: list.add(new Pair<>(assocDiff.getSrcElem(), assocDiff.getDirection(assocDiff.getSrcElem())));
-        case CHANGED_ASSOCIATION_ROLE: for (Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>> pair : assocDiff.getRoleDiff()){list.add(new Pair<>(pair.a, pair.b));}
-        case CHANGED_TARGET: list.add(new Pair<>(assocDiff.getSrcElem(), assocDiff.getChangedTgtClass(getSrcCD())));
-          //other cases?
-      }
-    }
-    return list;
   }
 
   /**
@@ -1133,7 +1091,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return new Pair<>(inheritanceDiff.getAstcdClasses().a, associations);
   }
 
-  //TODO: composition - association.getCDType.isComposition()
+  //composition - association.getCDType.isComposition()
 
   public boolean sameTgt(AssocStruct assocStruct, AssocStruct assocStruct2){
     if (assocStruct.getSide().equals(ClassSide.Left)){
@@ -1234,9 +1192,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  //TODO: check if somewhere the comparisson should be with unmatchedAssoc
-  //TODO: if no match is found for src, we don't look anymore at this
+  // check if somewhere the comparisson should be with unmatchedAssoc
+  //if no match is found for src, we don't look anymore at this
   //if no match in tgt is found, we just add this assoc to diff
+  //TODO: add check if the classes can be instantiated to added/deleted attributes, also for super?
   public boolean srcAndTgtExist(CDAssocDiff assocDiff){
     Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
     if (assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.a) != null
@@ -1255,24 +1214,24 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (CDAssocDiff assocDiff : changedAssocs){
       if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
         if (srcAndTgtExist(assocDiff)) {
-          list.addAll(assocDiff.getRoleDiff());
+          //list.addAll(assocDiff.getRoleDiff());
         }
       }
     }
     return list;
   }
 
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> changedCardinalityList() {
-    List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
-    for (CDAssocDiff assocDiff : changedAssocs){
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY)) {
-        if (srcAndTgtExist(assocDiff)) {
-          list.addAll(assocDiff.getCardDiff());
-        }
-      }
-    }
-    return list;
-  }
+//  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> changedCardinalityList() {
+//    List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
+//    for (CDAssocDiff assocDiff : changedAssocs){
+//      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY)) {
+//        if (srcAndTgtExist(assocDiff)) {
+//          list.addAll(assocDiff.getCardDiff());
+//        }
+//      }
+//    }
+//    return list;
+//  }
 
   public List<Pair<ASTCDAssociation, ASTCDClass>> changedTargetList() {
     List<Pair<ASTCDAssociation, ASTCDClass>> list = new ArrayList<>();
@@ -1306,6 +1265,36 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
+  public List<AssocDiffStruc> changedAssoc(){
+    List<AssocDiffStruc> list = new ArrayList<>();
+    for (CDAssocDiff assocDiff : changedAssocs) {
+      AssocDiffStruc diff = new AssocDiffStruc();
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
+        if (srcAndTgtExist(assocDiff)) {
+          diff.setChangedRoleNames(assocDiff.getRoleDiff().b);
+        }
+      }
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)) {
+        if (srcAndTgtExist(assocDiff)
+          && assocDiff.isDirectionChanged()) {
+          diff.setChangedDir(true);
+        }
+      }
+
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_TARGET)) {
+        if (srcAndTgtExist(assocDiff)) {
+          diff.setChangedTgt(assocDiff.getChangedTgtClass().b);
+        }
+      }
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY)) {
+        if (srcAndTgtExist(assocDiff)) {
+          diff.setChangedCard(assocDiff.getCardDiff().b);
+        }
+      }
+    }
+    return list;
+  }
+
   public List<ASTCDClass> srcExistsTgtNot(){
     List<ASTCDClass> list = new ArrayList<>();
     for (ASTCDClass astcdClass : helper.getNotInstanClassesTgt()){
@@ -1322,4 +1311,5 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   //after overlappingAssocs there might be associations to classes that cannot be instantiated - function
   //check if exists after overlapping Assocs
   //TODO: also for classes - maybe do this when creating the list with changes as if(){...}
+  //TODO: CDSyntax2SemDiff4ASTODHelper
 }

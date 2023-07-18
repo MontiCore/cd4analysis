@@ -17,6 +17,7 @@ import java.util.List;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
+  //TODO: add test for added/deleted inheritance
   @Test
   public void testCD2() {
 
