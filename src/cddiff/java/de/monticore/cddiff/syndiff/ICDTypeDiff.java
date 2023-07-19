@@ -22,9 +22,9 @@ public interface ICDTypeDiff {
 
   List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
 
-  ASTCDType getSrcType();
+  ASTCDType getSrcElem();
 
-  ASTCDType getTgtType();
+  ASTCDType getTgtElem();
 
   void setChangedMembers(List<CDMemberDiff> changedMembers);
 
@@ -41,20 +41,17 @@ public interface ICDTypeDiff {
   public void setBaseDiffs(List<DiffTypes> baseDiffs);
 
   /**
-   * Compute the spanned inheritance of a given class. That is we get all classes that are extending
-   * (not only direct) a class
-   *
+   * Compute the spanned inheritance of a given class.
+   * That is we get all classes that are extending (not only direct) a class
    * @param astcdClass
    * @param compilationUnit
-   * @return set of extending classes. The implementation is not efficient (no way to go from
-   *     subclasses to superclasses).
+   * @return set of extending classes.
+   * The implementation is not efficient (no way to go from subclasses to superclasses).
    */
-  abstract Set<ASTCDClass> getSpannedInheritance(
-      ASTCDClass astcdClass, ASTCDCompilationUnit compilationUnit);
+  abstract Set<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass, ASTCDCompilationUnit compilationUnit);
 
   /**
    * Compute all changed attributes in all classes.
-   *
    * @param compilationUnit
    * @return list of pairs of classes and changed attributes.
    */
@@ -85,18 +82,16 @@ public interface ICDTypeDiff {
   String attDiff();
 
   /**
-   * Check for each attribute in the list deletedAttribute if it has been really deleted and add it
-   * to a list.
-   *
+   * Check for each attribute in the list deletedAttribute if it
+   * has been really deleted and add it to a list.
    * @param compilationUnit
    * @return list of pairs of the class with a deleted attribute.
    */
   List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit);
 
   /**
-   * Check for each attribute in the list addedAttributes if it has been really added and add it to
-   * a list.
-   *
+   * Check for each attribute in the list addedAttributes if it
+   * has been really added and add it to a list.
    * @param compilationUnit
    * @return list of pairs of the class with an added (new) attribute.
    */
@@ -104,18 +99,24 @@ public interface ICDTypeDiff {
 
   /**
    * Get all added constants to an enum
-   *
    * @return list of added constants
    */
   List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants();
 
   /**
    * Get all attributes with changed types.
-   *
    * @param memberDiff
-   * @param compilationUnit
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
-  List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(
-      CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit);
+  List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff);
+
+  /**
+   * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:
+   * semantic difference - class can be instantiated. From non-abstract to abstract: possible
+   * semantic difference - another class uses this abstract class.
+   *
+   * @return true if we have a semantic difference. This function kind of uses multiple others:
+   * inheritance hierarchy, comparison of associations.
+   */
+  ASTCDType isClassNeeded();
 }

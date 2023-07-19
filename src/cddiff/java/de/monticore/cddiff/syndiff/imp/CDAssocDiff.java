@@ -1,26 +1,35 @@
 package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
 import de.monticore.matcher.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
-import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
+
+
 public class CDAssocDiff implements ICDAssocDiff {
-  private final ASTCDAssociation srcAssoc;
-  private final ASTCDAssociation tgtAssoc;
-  boolean isReversed;
+  private final ASTCDAssociation srcElem;
+  private final ASTCDAssociation tgtElem;
+  private boolean isReversed;
 
   private ASTCDCompilationUnit srcCD;
   private ASTCDCompilationUnit tgtCD;
@@ -54,20 +63,21 @@ public class CDAssocDiff implements ICDAssocDiff {
   String tgtCardinalityLeft;
   String tgtCardinalityRight;
 
-  protected CDAssocDiff(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
-    this.srcAssoc = srcAssoc;
-    this.tgtAssoc = tgtAssoc;
+  protected CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, boolean isReversed) {
+    this.srcElem = srcElem;
+    this.tgtElem = tgtElem;
+    this.isReversed = isReversed;
     buildingInterpretation();
   }
 
   @Override
-  public ASTCDAssociation getSrcAssoc() {
-    return srcAssoc;
+  public ASTCDAssociation getSrcElem() {
+    return srcElem;
   }
 
   @Override
-  public ASTCDAssociation getTgtAssoc() {
-    return tgtAssoc;
+  public ASTCDAssociation getTgtElem() {
+    return tgtElem;
   }
 
   @Override
@@ -82,9 +92,9 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   @Override
   public String roleDiff() {
-    ASTCDAssociation newAssoc = getSrcAssoc();
-    ASTCDAssociation oldAssoc = getTgtAssoc();
-    StringBuilder diff = new StringBuilder(new String());
+    ASTCDAssociation newAssoc = getSrcElem();
+    ASTCDAssociation oldAssoc = getTgtElem();
+    StringBuilder diff = new StringBuilder("");
     if (!newAssoc
         .getLeftQualifiedName()
         .getQName()
@@ -111,9 +121,9 @@ public class CDAssocDiff implements ICDAssocDiff {
   @Override
   public String dirDiff() {
     return "Direction changed from "
-        + getDirection(getTgtAssoc()).toString()
+        + getDirection(getTgtElem()).toString()
         + " to "
-        + getDirection(getSrcAssoc());
+        + getDirection(getSrcElem());
   }
 
   public AssocDirection getDirection(ASTCDAssociation association) {
@@ -134,8 +144,8 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   @Override
   public String cardDiff() {
-    ASTCDAssociation newAssoc = getSrcAssoc();
-    ASTCDAssociation oldAssoc = getTgtAssoc();
+    ASTCDAssociation newAssoc = getSrcElem();
+    ASTCDAssociation oldAssoc = getTgtElem();
     StringBuilder cardinalityChanges = new StringBuilder();
 
     if (oldAssoc.getLeft().isPresentCDCardinality()
@@ -209,123 +219,116 @@ public class CDAssocDiff implements ICDAssocDiff {
     }
   }
 
-  /**
-   * Find the difference in the cardinalities of an association. Each pair has the association side
-   * with the lowest number that is in the new cardinality but not in the old one.
-   *
-   * @return list with one or two pairs.
-   */
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> getCardDiff() {
-    List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
-    if (getSrcAssoc()
-            .getLeftQualifiedName()
-            .getQName()
-            .equals(getSrcAssoc().getLeftQualifiedName().getQName())
-        && getSrcAssoc()
-            .getRightQualifiedName()
-            .getQName()
-            .equals(getTgtAssoc().getRightQualifiedName().getQName())) {
-      // assoc not reversed
-      if (!getSrcAssoc()
-          .getLeft()
-          .getCDCardinality()
-          .equals(getTgtAssoc().getLeft().getCDCardinality())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(),
-                new Pair<>(
-                    ClassSide.Left,
-                    findUniqueNumber(
-                        getTypeOfCard(getSrcAssoc().getLeft().getCDCardinality()),
-                        getTypeOfCard(getTgtAssoc().getLeft().getCDCardinality())))));
-      }
-      if (!getSrcAssoc()
-          .getRight()
-          .getCDCardinality()
-          .equals(getTgtAssoc().getRight().getCDCardinality())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(),
-                new Pair<>(
-                    ClassSide.Right,
-                    findUniqueNumber(
-                        getTypeOfCard(getSrcAssoc().getRight().getCDCardinality()),
-                        getTypeOfCard(getTgtAssoc().getRight().getCDCardinality())))));
-      }
-    } else {
-      if (!getSrcAssoc()
-          .getLeft()
-          .getCDCardinality()
-          .equals(getTgtAssoc().getRight().getCDCardinality())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(),
-                new Pair<>(
-                    ClassSide.Left,
-                    findUniqueNumber(
-                        getTypeOfCard(getSrcAssoc().getLeft().getCDCardinality()),
-                        getTypeOfCard(getTgtAssoc().getRight().getCDCardinality())))));
-      }
-      if (!getSrcAssoc()
-          .getRight()
-          .getCDCardinality()
-          .equals(getTgtAssoc().getLeft().getCDCardinality())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(),
-                new Pair<>(
-                    ClassSide.Right,
-                    findUniqueNumber(
-                        getTypeOfCard(getSrcAssoc().getRight().getCDCardinality()),
-                        getTypeOfCard(getTgtAssoc().getLeft().getCDCardinality())))));
+  //TODO: check if somewhere the comparisson should be with unmatchedAssoc
+  //TODO: if no match is found for src, we don't look anymore at this
+  //if no match in tgt is found, we just add this assoc to diff
+  public AssocStruct findMatchingAssocStructSrc(
+    ASTCDAssociation association, ASTCDClass associatedClass) {
+    Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getSrcCD());
+    for (AssocStruct assocStruct : helper.getSrcMap().get(associatedClass)) {
+      Pair<ASTCDClass, ASTCDClass> structAssociatedClasses = getConnectedClasses(assocStruct.getUnmodifiedAssoc(), helper.getSrcCD());
+      if (associatedClasses.a.equals(structAssociatedClasses.a)
+        && associatedClasses.b.equals(structAssociatedClasses.b)) {
+        return assocStruct;
       }
     }
-    return list;
+    mustBeCompared = false;
+    return null;
   }
 
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> getRoleDiff() {
-    List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
-    if (getSrcAssoc()
-            .getLeftQualifiedName()
-            .getQName()
-            .equals(getSrcAssoc().getLeftQualifiedName().getQName())
-        && getSrcAssoc()
-            .getRightQualifiedName()
-            .getQName()
-            .equals(getTgtAssoc().getRightQualifiedName().getQName())) {
-      // assoc not reversed
-      if (!Objects.equals(
-          getSrcAssoc().getLeft().getCDRole(), getTgtAssoc().getLeft().getCDRole())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(), new Pair<>(ClassSide.Left, getSrcAssoc().getLeft().getCDRole())));
-      }
-      if (!Objects.equals(
-          getSrcAssoc().getRight().getCDRole(), getTgtAssoc().getRight().getCDRole())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(), new Pair<>(ClassSide.Right, getSrcAssoc().getRight().getCDRole())));
-      }
-    } else {
-      if (!Objects.equals(
-          getSrcAssoc().getLeft().getCDRole(), getTgtAssoc().getRight().getCDRole())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(), new Pair<>(ClassSide.Left, getSrcAssoc().getLeft().getCDRole())));
-      }
-      if (!Objects.equals(
-          getSrcAssoc().getRight().getCDRole(), getTgtAssoc().getLeft().getCDRole())) {
-        list.add(
-            new Pair<>(
-                getSrcAssoc(), new Pair<>(ClassSide.Right, getSrcAssoc().getRight().getCDRole())));
+  public AssocStruct findMatchingAssocStructTgt(
+    ASTCDAssociation association, ASTCDClass associatedClass) {
+    Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getTgtCD());
+    for (AssocStruct assocStruct : helper.getTrgMap().get(associatedClass)) {
+      Pair<ASTCDClass, ASTCDClass> structAssociatedClasses = getConnectedClasses(assocStruct.getUnmodifiedAssoc(), helper.getTgtCD());
+      if (associatedClasses.a.equals(structAssociatedClasses.a)
+        && associatedClasses.b.equals(structAssociatedClasses.b)) {
+        return assocStruct;
       }
     }
-    return list;
+
+    return null;
+  }
+  //Update get..Diff with matched strucs
+
+  /**
+   * Find the difference in the cardinalities of an association.
+   * Each pair has the association side with the lowest number that is in the
+   * new cardinality but not in the old one.
+   * @return list with one or two pairs.
+   */
+  public Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> getCardDiff(){
+    List<Pair<ClassSide, Integer>> list = new ArrayList<>();
+    if (!isReversed){
+      //assoc not reversed
+      if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
+        list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
+      }
+      if (!isContainedIn(cardToEnum(getSrcElem().getRight().getCDCardinality()), cardToEnum(getTgtElem().getRight().getCDCardinality()))){
+        list.add(new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality()))));
+      }
+    } else {
+      if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getRight().getCDCardinality()))){
+        list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality()))));
+      }
+      if (!isContainedIn(cardToEnum(getSrcElem().getRight().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
+        list.add(new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
+      }
+    }
+    return new Pair<>(srcElem, list);
+  }
+
+  public boolean isDirectionChanged(){
+    //TODO: check if a class now can be instatiated without anothe one
+    if (isReversed){
+      if ((getDirection(getSrcElem()).equals(AssocDirection.LeftToRight) && getDirection(getTgtElem()).equals(AssocDirection.RightToLeft))
+        || (getDirection(getSrcElem()).equals(AssocDirection.RightToLeft) && getDirection(getTgtElem()).equals(AssocDirection.LeftToRight)
+        || (getDirection(getSrcElem()).equals(AssocDirection.BiDirectional)) && getDirection(getTgtElem()).equals(AssocDirection.BiDirectional))){
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return !getDirection(getSrcElem()).equals(getDirection(getTgtElem()));
+    }
+  }
+
+  /**
+   * CHeck if the old association allowed 0 objects
+   * @param association association
+   * @return true if condition is fulfilled
+   */
+  public boolean allowsZeroObjects(AssocStruct association){
+    if (association.getSide().equals(ClassSide.Left)) {
+      return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt());
+    } else {
+      return (association.getAssociation().getLeft().getCDCardinality().isMult() || association.getAssociation().getLeft().getCDCardinality().isOpt());
+    }
+  }
+
+  public Pair<ASTCDAssociation, List<Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
+    List<Pair<ClassSide, ASTCDRole>> list = new ArrayList<>();
+    if (!isReversed){
+      //assoc not reversed
+      if (!Objects.equals(getSrcElem().getLeft().getCDRole(), getTgtElem().getLeft().getCDRole())) {
+        list.add(new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole()));
+      }
+      if (!Objects.equals(getSrcElem().getRight().getCDRole(), getTgtElem().getRight().getCDRole())) {
+        list.add(new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole()));
+      }
+    } else {
+      if (!Objects.equals(getSrcElem().getLeft().getCDRole(), getTgtElem().getRight().getCDRole())) {
+        list.add(new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole()));
+      }
+      if (!Objects.equals(getSrcElem().getRight().getCDRole(), getTgtElem().getLeft().getCDRole())) {
+        list.add(new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole()));
+      }
+    }
+    return new Pair<>(srcElem, list);
   }
 
   /**
    * Find the lowest integer that is the first interval but not in the second.
-   *
    * @param interval1 new cardinality
    * @param interval2 old cardinality
    * @return integer representing the difference.
@@ -341,15 +344,15 @@ public class CDAssocDiff implements ICDAssocDiff {
         return null;
       }
     } else if (interval1.equals(AssocCardinality.AtLeastOne)) {
-      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.Optional)) {
+      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.Optional)){
         return 2;
       } else {
         return null;
       }
     } else if (interval1.equals(AssocCardinality.Multiple)) {
-      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.AtLeastOne)) {
+      if (interval2.equals(AssocCardinality.One) || interval2.equals(AssocCardinality.AtLeastOne)){
         return 0;
-      } else if (interval2.equals(AssocCardinality.Optional)) {
+      } else if (interval2.equals(AssocCardinality.Optional)){
         return 2;
       } else {
         return null;
@@ -357,6 +360,105 @@ public class CDAssocDiff implements ICDAssocDiff {
     } else {
       return null;
     }
+  }
+
+  public Pair<ASTCDAssociation, ASTCDClass> getChangedTgtClass(ASTCDCompilationUnit compilationUnit){
+    if (changedTgtClass(compilationUnit)){
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(getSrcElem(), compilationUnit);
+      if (getSrcElem().getCDAssocDir().isBidirectional()){
+        Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), compilationUnit);
+        if (pair.a.getName().equals(pairOld.a.getName())
+          && !pair.b.getName().equals(pairOld.b.getName())){
+          return new Pair<>(getSrcElem(), pair.b);
+        } else if (pair.a.getName().equals(pairOld.b.getName())
+          && !pair.b.getName().equals(pairOld.a.getName())) {
+          return new Pair<>(getSrcElem(), pair.b);
+        } else if (pair.b.getName().equals(pairOld.b.getName())
+          && !pair.a.getName().equals(pairOld.a.getName())) {
+          return new Pair<>(getSrcElem(), pair.a);
+        } else if (pair.b.getName().equals(pairOld.a.getName())
+          && !pair.a.getName().equals(pairOld.b.getName())) {
+          return new Pair<>(getSrcElem(), pair.a);
+        }
+      } else if (getSrcElem().getCDAssocDir().isDefinitiveNavigableRight()){
+        return new Pair<>(getSrcElem(), pair.b);
+      } else if (getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return new Pair<>(getSrcElem(), pair.a);
+      }
+    }
+    return null;
+  }
+
+  public Pair<ASTCDAssociation, ASTCDClass> getChangedTgtClass(){
+    //wrong idea
+    //check if the new class is abstract
+    //if it is, check if there is a class of the super, that doesn't have the old one as super
+    ASTCDClass superClass = getChangedTgtClass(helper.getSrcCD()).b;
+    if (superClass.getModifier().isAbstract()){
+      Pair<Boolean, ASTCDClass> subClass = hasOtherSubclasses(superClass, null);
+      if (subClass.a){
+        return new Pair<>(getSrcElem(), subClass.b);// diff might not be minimal!!!
+      }
+    } else {
+      return new Pair<>(getSrcElem(), superClass);
+    }
+    return null;
+  }
+
+  public Pair<Boolean, ASTCDClass> hasOtherSubclasses(ASTCDClass superClass, ASTCDClass subClass) {
+    List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), superClass);
+
+    for (ASTCDClass subclass : subclassesA) {
+      if (subclass != subClass && !isSuperOf(subClass.getName(), subclass.getName(), helper.getSrcCD())) {
+        return new Pair<>(true, subclass);
+      }
+    }
+
+    return null;
+  }
+
+  public boolean isOldSuperOfNew(){
+    return false;
+  }
+
+  public Pair<Boolean, ASTCDClass> isCardZero(){
+    if (!isReversed){
+      if (getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a.getSymbol().getInternalQualifiedName()
+        .equals(getConnectedClasses(getTgtElem(), Syn2SemDiffHelper.getInstance().getTgtCD()).a.getSymbol().getInternalQualifiedName())){
+        return new Pair<>((getTgtElem().getLeft().getCDCardinality().isOpt()
+          || getTgtElem().getLeft().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).b);
+      } else {
+        return new Pair<>((getTgtElem().getRight().getCDCardinality().isOpt()
+          || getTgtElem().getRight().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a);
+      }
+    } else {
+      if (getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a.getSymbol().getInternalQualifiedName()
+        .equals(getConnectedClasses(getTgtElem(), Syn2SemDiffHelper.getInstance().getTgtCD()).b.getSymbol().getInternalQualifiedName())){
+        return new Pair<>((getTgtElem().getRight().getCDCardinality().isOpt()
+          || getTgtElem().getRight().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a);
+      } else {
+        return new Pair<>((getTgtElem().getLeft().getCDCardinality().isOpt()
+          || getTgtElem().getLeft().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).b);
+      }
+    }
+  }
+  public boolean changedTgtClass(ASTCDCompilationUnit compilationUnit){
+    Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), compilationUnit);
+    Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), compilationUnit);
+    if (pairNew.a.getName().equals(pairOld.a.getName())
+      && !pairNew.b.getName().equals(pairOld.b.getName())){
+      return isSuperOf(pairNew.b.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.a.getName().equals(pairOld.b.getName())
+      && !pairNew.b.getName().equals(pairOld.a.getName())) {
+      return isSuperOf(pairNew.b.getName(), pairOld.a.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.b.getName().equals(pairOld.b.getName())
+      && !pairNew.a.getName().equals(pairOld.a.getName())) {
+      return isSuperOf(pairNew.a.getName(), pairOld.a.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.b.getName().equals(pairOld.a.getName())
+      && !pairNew.a.getName().equals(pairOld.b.getName())) {
+      return isSuperOf(pairNew.a.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    }
+    return false;
   }
 
   public ASTCDAssociation findChangedAssocs(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {

@@ -8,11 +8,14 @@ public class AssocStruct {
   ASTCDAssociation association;
   AssocDirection direction;
   ClassSide side;
+  boolean isSuperAssoc = false;
+  ASTCDAssociation unmodifiedAssoc;
 
   public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side) {
     this.association = association;
     this.direction = direction;
     this.side = side;
+    this.unmodifiedAssoc = association;
   }
 
   public ASTCDAssociation getAssociation() {
@@ -37,5 +40,21 @@ public class AssocStruct {
 
   public void setSide(ClassSide side) {
     this.side = side;
+  }
+
+  public boolean isSuperAssoc() {
+    return isSuperAssoc;
+  }
+
+  public void setSuperAssoc(boolean superAssoc) {
+    isSuperAssoc = superAssoc;
+  }
+
+  public ASTCDAssociation getUnmodifiedAssoc() {
+    return unmodifiedAssoc;
+  }
+
+  public void setUnmodifiedAssoc(ASTCDAssociation unmodifiedAssoc) {
+    this.unmodifiedAssoc = unmodifiedAssoc;
   }
 }

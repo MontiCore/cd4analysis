@@ -1,14 +1,14 @@
 package de.monticore.cddiff.syndiff;
 
-import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syndiff.imp.*;
+import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
+import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import edu.mit.csail.sdg.alloy4.Pair;
+
 import java.util.List;
 
 public interface ICDSyntaxDiff {
@@ -86,15 +86,7 @@ public interface ICDSyntaxDiff {
    *
    * @return true if the class fulfills those requirements.
    */
-  boolean isSuperclass(ASTCDClass astcdClass);
-
-  /**
-   * Get the whole inheritance hierarchy that @param astcdClass. is part of - all direct and
-   * indirect superclasses.
-   *
-   * @return a list of the superclasses.
-   */
-  List<ASTCDClass> getClassHierarchy(ASTCDClass astcdClass);
+  boolean isSupClass(ASTCDClass astcdClass);
 
   /**
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
@@ -108,33 +100,15 @@ public interface ICDSyntaxDiff {
    *
    * @return true if a class instantiate another one by @param association.
    */
-  boolean isAlwaysNeededAssoc(ASTCDAssociation astcdAssociation);
+  boolean isAddedAssoc(ASTCDAssociation astcdAssociation);
 
-  /**
-   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without
-   * attribute. Similar case for added ones.
-   *
-   * @param astcdEnum
-   */
-  List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum);
-
-  /**
-   * Compute the classes that extend a given class.
-   *
-   * @param astcdClass
-   * @return list of extending classes. This function is similar to getClassHierarchy().
-   */
-  List<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass);
-
-  /**
-   * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:
-   * semantic difference - class can be instantiated. From non-abstract to abstract: possible
-   * semantic difference - another class uses this abstract class.
-   *
-   * @return true if we have a semantic difference. This function kind of uses multiple others:
-   *     inheritance hierarchy, comparison of associations.
-   */
-  ASTCDType isClassNeeded(CDTypeDiff pair);
+//  /**
+//   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without
+//   * attribute. Similar case for added ones.
+//   *
+//   * @param astcdEnum
+//   */
+//  List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum);
 
   /**
    * Merge all duplicated associations that have the same role names @param duplicatedAssociations
@@ -143,14 +117,14 @@ public interface ICDSyntaxDiff {
    *
    * @return
    */
-  ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations();
+  //ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations();
 
   /**
    * Find all overlapping associations (same role name in target dir) and put them in a multymap.
    * This function must be used before handling associations difference - possible inconsistent
    * output.
    */
-  ArrayListMultimap<ASTCDClass, Pair<ASTCDAssociation, ASTCDAssociation>> findOverlappingAssocs();
+  void findOverlappingAssocs();
 
   //  /**
   //   *
@@ -171,10 +145,10 @@ public interface ICDSyntaxDiff {
    */
   String findDiff(Object diff);
 
-  /**
-   * Get the two classes that are connected via the associations.
-   *
-   * @return pair of two classes.
-   */
-  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association);
+//  /**
+//   * Get the two classes that are connected via the associations.
+//   *
+//   * @return pair of two classes.
+//   */
+////  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association);
 }
