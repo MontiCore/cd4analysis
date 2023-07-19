@@ -5,7 +5,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdlib.Refactoring.EncapsulateAttribute;
 import de.monticore.cdlib.Refactoring.EncapsulateAttributeBoolean;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 
 /**

@@ -3,7 +3,6 @@ package de.monticore.cdlib.refactorings;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdlib.Refactoring.*;
-
 import java.util.List;
 
 /**

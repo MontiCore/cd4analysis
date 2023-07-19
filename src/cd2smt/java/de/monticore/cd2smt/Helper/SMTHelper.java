@@ -32,7 +32,7 @@ public class SMTHelper {
     return SMTHelper.fCharToLowerCase(astcdType.getName()) + "_get_subclass";
   }
 
-  public static String buildObjectName(Expr<? extends Sort> expr, ASTCDType astcdType) {
+  public static String buildObjectName(Expr<? extends Sort> expr, String typeName) {
     Matcher matcher = Pattern.compile("\\d+$").matcher(expr.toString());
     String digits;
     if (matcher.find()) {
@@ -41,6 +41,6 @@ public class SMTHelper {
       digits = "";
       Log.error("Error by building  object names. no digit at the end of the expression name");
     }
-    return SMTHelper.fCharToLowerCase(astcdType.getName()) + "_" + digits;
+    return SMTHelper.fCharToLowerCase(typeName) + "_" + digits;
   }
 }

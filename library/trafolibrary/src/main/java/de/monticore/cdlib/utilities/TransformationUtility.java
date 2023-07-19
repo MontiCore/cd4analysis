@@ -30,7 +30,6 @@ import de.monticore.cdlib.TransformationUtility.GetAttribute;
 import de.monticore.cdlib.TransformationUtility.GetMethod;
 import de.monticore.cdlib.designpatterns.facade.tf.CreateBiDirAssociation;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.IOException;
 import java.util.List;
 

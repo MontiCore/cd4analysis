@@ -14,7 +14,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import java.util.function.Function;
 
 /***
  * This class creates transform classes and interfaces of a class diagram in SMT.
@@ -76,14 +75,23 @@ public class DSClassStrategy implements ClassStrategy {
   }
 
   @Override
-  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
-
-    return ctx.mkForall(new Expr[] {var}, body.apply(var), 0, null, null, null, null);
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
+    return ctx.mkForall(new Expr[] {var}, body, 0, null, null, null, null);
   }
 
   @Override
-  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
-    return ctx.mkExists(new Expr[] {var}, body.apply(var), 0, null, null, null, null);
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
+    return ctx.mkExists(new Expr[] {var}, body, 0, null, null, null, null);
+  }
+
+  @Override
+  public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    return ctx.mkForall(vars.toArray(new Expr[0]), body, 0, null, null, null, null);
+  }
+
+  @Override
+  public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    return ctx.mkExists(vars.toArray(new Expr[0]), body, 0, null, null, null, null);
   }
 
   @Override

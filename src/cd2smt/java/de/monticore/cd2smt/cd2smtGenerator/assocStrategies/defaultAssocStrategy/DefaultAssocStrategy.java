@@ -164,14 +164,12 @@ public class DefaultAssocStrategy implements AssociationStrategy {
     return inheritanceData.mkForall(
         obj.getLeft(),
         obj.getRight(),
-        expr ->
-            inheritanceData.mkExists(
-                otherObj.getLeft(),
-                otherObj.getRight(),
-                (otherExpr ->
-                    (!isLeft
-                        ? (BoolExpr) ctx.mkApp(assocFunc, expr, otherExpr)
-                        : (BoolExpr) ctx.mkApp(assocFunc, otherExpr, expr)))));
+        inheritanceData.mkExists(
+            otherObj.getLeft(),
+            otherObj.getRight(),
+            (!isLeft
+                ? (BoolExpr) ctx.mkApp(assocFunc, obj.getRight(), otherObj.getRight())
+                : (BoolExpr) ctx.mkApp(assocFunc, otherObj.getRight(), obj.getRight()))));
   }
 
   protected BoolExpr buildOptionalConstraint(
@@ -185,26 +183,17 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
     res =
         inheritanceData.mkForall(
-            obj1.getLeft(),
-            obj1.getRight(),
-            expr1 ->
-                inheritanceData.mkForall(
-                    otherObj1.getLeft(),
-                    otherObj1.getRight(),
-                    otherExpr1 ->
-                        inheritanceData.mkForall(
-                            otherObj2.getLeft(),
-                            otherObj2.getRight(),
-                            otherExpr2 ->
-                                ctx.mkImplies(
-                                    ctx.mkAnd(
-                                        (isLeft
-                                            ? (BoolExpr) ctx.mkApp(assocFunc, otherExpr1, expr1)
-                                            : (BoolExpr) ctx.mkApp(assocFunc, expr1, otherExpr1)),
-                                        (isLeft
-                                            ? (BoolExpr) ctx.mkApp(assocFunc, otherExpr2, expr1)
-                                            : (BoolExpr) ctx.mkApp(assocFunc, expr1, otherExpr2))),
-                                    ctx.mkEq(otherExpr1, otherExpr2)))));
+            List.of(obj1.getLeft(), otherObj1.getLeft(), otherObj2.getLeft()),
+            List.of(obj1.getRight(), otherObj1.getRight(), otherObj2.getRight()),
+            ctx.mkImplies(
+                ctx.mkAnd(
+                    (isLeft
+                        ? (BoolExpr) ctx.mkApp(assocFunc, otherObj1.getRight(), obj1.getRight())
+                        : (BoolExpr) ctx.mkApp(assocFunc, obj1.getRight(), otherObj1.getRight())),
+                    (isLeft
+                        ? (BoolExpr) ctx.mkApp(assocFunc, otherObj2.getRight(), obj1.getRight())
+                        : (BoolExpr) ctx.mkApp(assocFunc, obj1.getRight(), otherObj2.getRight()))),
+                ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())));
 
     return res;
   }

@@ -7,10 +7,8 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationsData;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy.DefaultAssocStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.one2one.One2OneAssocStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DSClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.finiteDs.FiniteDSClassStrategy;
@@ -32,14 +30,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 /**
  * this class Convert a class diagram into SMT using three different Strategies a class-strategy to
  * convert classes and interface an association-strategy to Convert Association an
  * inheritance-strategy to convert inheritance
  */
-public class CD2SMTGenerator implements ClassData, AssociationsData, InheritanceData {
+public class CD2SMTGenerator {
 
   private ClassStrategy classStrategy;
   private InheritanceStrategy inheritanceStrategy;
@@ -134,44 +131,44 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
     associationStrategy.cd2smt(astCd, ctx, classStrategy, inheritanceStrategy);
   }
 
-  @Override
   public Sort getSort(ASTCDType astcdType) {
     return dataWrapper.getSort(astcdType);
   }
 
-  @Override
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType) {
     return dataWrapper.hasType(expr, astcdType);
   }
 
-  @Override
   public Expr<? extends Sort> getAttribute(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     return dataWrapper.getAttribute(astCdType, attributeName, cDTypeExpr);
   }
 
-  @Override
   public Set<IdentifiableBoolExpr> getClassConstraints() {
     return dataWrapper.getClassConstraints();
   }
 
-  @Override
   public Expr<? extends Sort> getEnumConstant(
       ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
     return dataWrapper.getEnumConstant(enumeration, enumConstant);
   }
 
-  @Override
-  public BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+  public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
     return dataWrapper.mkForall(type, var, body);
   }
 
-  @Override
-  public BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body) {
+  public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
     return dataWrapper.mkExists(type, var, body);
   }
 
-  @Override
+  public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    return dataWrapper.mkForall(types, vars, body);
+  }
+
+  public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    return dataWrapper.mkExists(types, vars, body);
+  }
+
   public BoolExpr evaluateLink(
       ASTCDAssociation association,
       ASTCDType type1,
@@ -181,28 +178,23 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
     return dataWrapper.evaluateLink(association, type1, type2, expr1, expr2);
   }
 
-  @Override
   public Set<IdentifiableBoolExpr> getAssociationsConstraints() {
     return dataWrapper.getAssociationsConstraints();
   }
 
-  @Override
   public Expr<? extends Sort> getSuperInstance(
       ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
     return dataWrapper.getSuperInstance(objType, superType, objExpr);
   }
 
-  @Override
   public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType) {
     return dataWrapper.instanceOf(obj, objType);
   }
 
-  @Override
   public BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type) {
     return dataWrapper.filterObject(obj, type);
   }
 
-  @Override
   public Set<IdentifiableBoolExpr> getInheritanceConstraints() {
     return dataWrapper.getInheritanceConstraints();
   }

@@ -6,8 +6,8 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDType;
+import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 public interface InheritanceData {
   /**
@@ -39,25 +39,54 @@ public interface InheritanceData {
 
   /** @return the inheritances' constraint as set identifiable Bool-expressions */
   Set<IdentifiableBoolExpr> getInheritanceConstraints();
-
   /***
    * assert that the constraint "body" must hold for all elements with the type "type".
    *
-   * @param type the type.
-   * @param var  one Variable of this type.
+   * @param type the types of bounded variables.
+   * @param var  bounded Variables.
    * @param body the body.
    * @return the assertion as boolExpr.
    */
-  BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
+  BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body);
 
   /***
    * assert that the constraint "body" must hold for at least one element with the type "type".
-   * @param type the type.
-   * @param var  one Variable of this type.
+   * @param type of bounded variables.
+   * @param var bounded variables.
    * @param body the body.
    * @return the assertion as boolExpr.
    */
-  BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
+  BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body);
+  /***
+   * assert that the constraint "body" must hold for all elements with the type "type".
+   *
+   * @param types the types of bounded variables.
+   * @param vars  bounded Variables.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  default BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr res = body;
+    for (int i = 0; i < vars.size(); i++) {
+      res = mkForall(types.get(i), vars.get(i), res);
+    }
+    return res;
+  }
+
+  /***
+   * assert that the constraint "body" must hold for at least one element with the type "type".
+   * @param types of bounded variables.
+   * @param vars bounded variables.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  default BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr res = body;
+    for (int i = 0; i < vars.size(); i++) {
+      res = mkExists(types.get(i), vars.get(i), res);
+    }
+    return res;
+  }
 
   enum Strategy {
     ME,

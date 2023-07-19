@@ -8,8 +8,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 
 public interface ClassData {
   /**
@@ -23,7 +23,7 @@ public interface ClassData {
    *
    * @param expr the object
    * @param astcdType  the type
-   * @return a Boolexpr
+   * @return a BoolExpr
    */
   BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType);
 
@@ -63,23 +63,53 @@ public interface ClassData {
    * get an enm Constant form the class declaration as SMTExpression
    */
   Expr<? extends Sort> getEnumConstant(ASTCDEnum enumeration, ASTCDEnumConstant enumConstant);
+  /***
+   * assert that the constraint "body" must hold for all elements with the type "type".
+   * @param type the type of the bounded variable.
+   * @param var  the bounded variable.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body);
 
   /***
    * assert that the constraint "body" must hold for all elements with the type "type".
-   * @param type the type.
-   * @param var  one Variable of this type.
+   * @param type the type of the bounded variable.
+   * @param var  the bounded variable.
    * @param body the body.
    * @return the assertion as boolExpr.
    */
-  BoolExpr mkForall(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
+
+  BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body);
 
   /***
-   * assert that the constraint "body" must hold for at least one element with the type "type".
-   * @param type the type.
-   * @param var  one Variable of this type.
+   * assert that the constraint "body" must hold for all elements with the type "type".
+   * @param types the types of the bounded variables.
+   * @param vars  the bounded variables.
+   * @param body the body.
+   * @return the assertion as boolExpr.
+   */
+  default BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr res = body;
+    for (int i = 0; i < vars.size(); i++) {
+      res = mkForall(types.get(i), vars.get(i), res);
+    }
+    return res;
+  }
+
+  /***
+   * assert that the constraint "body" must hold for all elements with the type "type".
+   * @param types the types of the bounded variables.
+   * @param vars  the bounded variables.
    * @param body the body.
    * @return the assertion as boolExpr.
    */
 
-  BoolExpr mkExists(ASTCDType type, Expr<?> var, Function<Expr<?>, BoolExpr> body);
+  default BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
+    BoolExpr res = body;
+    for (int i = 0; i < vars.size(); i++) {
+      res = mkExists(types.get(i), vars.get(i), res);
+    }
+    return res;
+  }
 }
