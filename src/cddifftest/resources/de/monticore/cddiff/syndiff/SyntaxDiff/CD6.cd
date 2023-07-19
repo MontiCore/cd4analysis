@@ -1,0 +1,12 @@
+import java.lang.*;
+classdiagram CD6{
+
+  class A{}
+
+  class B{}
+
+  class C extends B{}
+
+  association A -> (r) B [*];
+  association [0..1] C (r) <- A;
+}

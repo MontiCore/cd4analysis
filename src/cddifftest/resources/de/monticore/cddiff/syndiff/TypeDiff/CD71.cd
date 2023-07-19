@@ -1,0 +1,12 @@
+import java.lang.*;
+classdiagram CD71{
+
+  abstract class A{
+    double age;
+  }
+
+  abstract class B extends A{}
+
+  class C extends B{
+  }
+}

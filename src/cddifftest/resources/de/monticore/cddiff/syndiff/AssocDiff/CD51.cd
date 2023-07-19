@@ -1,0 +1,18 @@
+import java.lang.*;
+classdiagram CD51{
+
+  class A{}
+
+  class B extends A{}
+
+  class C extends B{}
+
+
+  class P{}
+
+  class Q extends P{}
+
+  class S extends Q{}
+
+  association new [1] S -> (r) A [1];
+}

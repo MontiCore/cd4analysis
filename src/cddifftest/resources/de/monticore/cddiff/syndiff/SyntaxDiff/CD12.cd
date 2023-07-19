@@ -1,0 +1,17 @@
+import java.lang.*;
+classdiagram CD11{
+
+  class A{
+    int age;
+  }
+
+  class B{
+    int age;
+    String name;
+   }
+
+  class C{
+    int age;
+    String name;
+  }
+}

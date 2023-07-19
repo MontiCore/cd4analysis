@@ -1,0 +1,18 @@
+import java.lang.*;
+classdiagram CD82{
+
+  class A{}
+
+  class B extends A{}
+
+  class C extends B{}
+
+
+  class P{}
+
+  class Q extends P{}
+
+  class S extends Q{}
+
+  association old [0..1] Q <-> (r) A [1];
+}

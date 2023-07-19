@@ -1,0 +1,14 @@
+import java.lang.*;
+classdiagram CD41{
+
+  abstract class A{
+    String name;
+  }
+
+  abstract class B{
+    int age;
+  }
+
+  class C extends A, B{
+  }
+}
