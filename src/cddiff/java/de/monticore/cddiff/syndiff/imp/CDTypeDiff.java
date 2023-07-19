@@ -37,7 +37,7 @@ public class CDTypeDiff implements ICDTypeDiff {
   CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
 
-  protected CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem) {
+  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
   }
