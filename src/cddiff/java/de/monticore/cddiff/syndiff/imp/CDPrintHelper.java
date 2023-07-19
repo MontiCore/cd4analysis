@@ -1,18 +1,9 @@
-package de.monticore.cddiff.syndiff;
+package de.monticore.cddiff.syndiff.imp;
 
-import de.monticore.cdbasis._ast.ASTCDMember;
 import java.util.List;
 
-public interface ICDMemberDiff {
-  ASTCDMember getSrcElem();
-
-  ASTCDMember getTgtElem();
-
-  List<DiffTypes> getBaseDiff();
-
-  void setBaseDiff(List<DiffTypes> baseDiff);
-
-  public default String buildStrings(List<String> stringList) {
+public class CDPrintHelper {
+  public String buildStrings(List<String> stringList) {
     StringBuilder output = new StringBuilder();
 
     for (String field : stringList) {

@@ -7,23 +7,22 @@ import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdassociation._ast.ASTCDAssocLeftSideBuilder;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDAssociationBuilder;
-import de.monticore.cdassociation._ast.ASTCDCardinality;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
+import de.monticore.cdassociation._ast.*;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
+import de.monticore.cddiff.syntaxdiff.CDAssociationDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
 import de.monticore.matcher.MatchingStrategy;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
@@ -50,6 +49,46 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
+
+ public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    this.srcCD = srcCD;
+    this.tgtCD = tgtCD;
+
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+
+    String hello = "Hello";
+    System.out.println(hello);
+
+    /** Trafo to make in-class declarations of compositions appear in the association list **/
+    new CD4CodeDirectCompositionTrafo().transform(srcCD);
+    new CD4CodeDirectCompositionTrafo().transform(tgtCD);
+
+    /** Defining the colors for the console output **/
+    final String GREEN = "\u001B[32m";
+    final String RED = "\u001B[31m";
+    final String YELLOW = "\u001B[33m";
+    final String RESET = "\u001B[0m";
+
+
+    StringBuilder initial = new StringBuilder();
+
+    initial
+      .append(System.lineSeparator())
+      .append("Printing the differences between the (new) CD")
+      .append(srcCD.getCDDefinition().getName())
+      .append(" and the (old) CD ")
+      .append(tgtCD.getCDDefinition().getName())
+      .append(" is created")
+      .append(System.lineSeparator())
+      .append(System.lineSeparator());
+
+    for (CDTypeDiff x : changedClasses) {
+      System.out.println(x);
+    }
+
+    StringBuilder outPutAll = new StringBuilder();
+    outPutAll.append(initial);
+  }
 
   @Override
   public ASTCDCompilationUnit getSrcCD() {
@@ -1250,8 +1289,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
             difference.append(obj.roleDiff());
           case CHANGED_ASSOCIATION_DIRECTION:
             difference.append(obj.dirDiff());
-          case CHANGED_ASSOCIATION_MULTIPLICITY:
-            difference.append(obj.cardDiff());
         }
       }
     }
@@ -1295,8 +1332,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     List<Object> list = new ArrayList<>();
     for (DiffTypes types : assocDiff.getBaseDiff()) {
       switch (types) {
-        case CHANGED_ASSOCIATION_MULTIPLICITY:
-          list.addAll(assocDiff.getCardDiff());
         case CHANGED_ASSOCIATION_DIRECTION:
           list.add(
               new Pair<>(assocDiff.getSrcAssoc(), assocDiff.getDirection(assocDiff.getSrcAssoc())));
@@ -1382,7 +1417,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         diffClass.addAllDeletedAttributes(srcClass, tgtClass);
         // diffClass.addAllAddedConstants(srcClass,tgtClass);
         // diffClass.addAllDeletedConstants(srcClass,tgtClass);
-        // TODO the list is always empty!!!!! Call functions!!!!!
         if (!diffClass.getBaseDiffs().isEmpty()) {
           changedClasses.add(diffClass);
         }

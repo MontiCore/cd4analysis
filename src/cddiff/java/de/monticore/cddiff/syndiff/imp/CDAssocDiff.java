@@ -1,22 +1,64 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDAssocDiff;
 import de.monticore.matcher.MatchingStrategy;
+import de.monticore.prettyprint.IndentPrinter;
+import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import java.util.*;
 
 public class CDAssocDiff implements ICDAssocDiff {
   private final ASTCDAssociation srcAssoc;
   private final ASTCDAssociation tgtAssoc;
   boolean isReversed;
+
+  private ASTCDCompilationUnit srcCD;
+  private ASTCDCompilationUnit tgtCD;
+
   private List<DiffTypes> baseDiff;
   protected MatchingStrategy<ASTCDAssociation> assocMatcher;
+  protected MatchingStrategy<ASTCDType> typeMatcher;
+
+  //Printer help functions and strings
+  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+  protected static final String CHANGED_ASSOCIATION = "\u001B[33m";
+  final String RESET = "\u001B[0m";
+  String stringSrcAssoc;
+  String stringTgtAssoc;
+  //What if both sides are changed
+  String srcAssocName;
+  String tgtAssocName;
+  String srcTypeLeft;
+  String srcTypeRight;
+  String tgtTypeLeft;
+  String tgtTypeRight;
+  String srcRoleNameLeft;
+  String srcRoleNameRight;
+  String tgtRoleNameLeft;
+  String tgtRoleNameRight;
+  String differenceInWords;
+  String srcDirection;
+  String tgtDirection;
+  String srcCardinalityLeft;
+  String srcCardinalityRight;
+  String tgtCardinalityLeft;
+  String tgtCardinalityRight;
+
+  protected CDAssocDiff(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
+    this.srcAssoc = srcAssoc;
+    this.tgtAssoc = tgtAssoc;
+    buildingInterpretation();
+  }
 
   @Override
   public ASTCDAssociation getSrcAssoc() {
@@ -36,11 +78,6 @@ public class CDAssocDiff implements ICDAssocDiff {
   @Override
   public void setBaseDiff(List<DiffTypes> baseDiff) {
     this.baseDiff = baseDiff;
-  }
-
-  protected CDAssocDiff(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
-    this.srcAssoc = srcAssoc;
-    this.tgtAssoc = tgtAssoc;
   }
 
   @Override
@@ -326,54 +363,75 @@ public class CDAssocDiff implements ICDAssocDiff {
     boolean changedRoleName = false;
     boolean changedLeftMultiplicity = false;
     boolean changedRightMultiplicity = false;
+    this.stringSrcAssoc = printer.prettyprint(srcAssoc);
+    this.stringTgtAssoc = printer.prettyprint(tgtAssoc);
+    srcAssocName = srcAssoc.getName();
+    tgtAssocName = tgtAssoc.getName();
+    srcTypeLeft = srcAssoc.getLeftQualifiedName().getQName();
+    srcTypeRight = srcAssoc.getRightQualifiedName().getQName();
+    tgtTypeLeft = tgtAssoc.getLeftQualifiedName().getQName();
+    tgtTypeRight = tgtAssoc.getRightQualifiedName().getQName();
+    srcDirection = srcAssoc.getCDAssocDir().toString();
+    tgtDirection = tgtAssoc.getCDAssocDir().toString();
+
     if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
 
-      if(srcAssoc
-        .getLeftQualifiedName()
-        .getQName()
-        .equals(tgtAssoc.getRightQualifiedName().getQName())
-        || srcAssoc
-        .getRightQualifiedName()
-        .getQName()
-        .equals(tgtAssoc.getLeftQualifiedName().getQName())){
+      if(getTypes(srcAssoc.getLeftQualifiedName().getQName(),tgtAssoc.getRightQualifiedName().getQName())
+      || getTypes(srcAssoc.getRightQualifiedName().getQName(), tgtAssoc.getLeftQualifiedName().getQName())){
         isReversed = true;
       }
 
-      if (srcAssoc
-              .getLeftQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getLeftQualifiedName().getQName())
-          || srcAssoc
-              .getRightQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getRightQualifiedName().getQName()) ) {
-        if (!srcAssoc
-                .getLeft()
-                .getCDRole()
-                .getName()
-                .equals(tgtAssoc.getLeft().getCDRole().getName())
-            || !srcAssoc
-                .getRight()
-                .getCDRole()
-                .getName()
-                .equals(tgtAssoc.getRight().getCDRole().getName())) {
+      if(getTypes(srcAssoc.getLeftQualifiedName().getQName(),tgtAssoc.getLeftQualifiedName().getQName())
+      || getTypes(srcAssoc.getRightQualifiedName().getQName(),tgtAssoc.getRightQualifiedName().getQName())){
+        if(!srcAssoc.getLeft().getCDRole().getName().equals(tgtAssoc.getLeft().getCDRole().getName())){
           changedRoleName = true;
+          srcRoleNameLeft = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getLeft().getCDRole()) + RESET;
+          tgtRoleNameLeft = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getLeft().getCDRole()) + RESET;
+        }
+
+        if(!srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getLeft().getCDCardinality())){
+          changedLeftMultiplicity = true;
+          srcCardinalityLeft = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getLeft().getCDCardinality()) + RESET;
+          tgtCardinalityLeft = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getLeft().getCDCardinality()) + RESET;
+        }
+
+        if(!srcAssoc.getRight().getCDRole().getName().equals(tgtAssoc.getRight().getCDRole().getName())){
+          changedRoleName = true;
+          srcRoleNameRight = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getRight().getCDRole()) + RESET;
+          tgtRoleNameRight = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getRight().getCDRole()) + RESET;
+        }
+
+        if(!srcAssoc.getRight().getCDCardinality().equals(tgtAssoc.getRight().getCDCardinality())){
+          changedRightMultiplicity = true;
+          srcCardinalityRight = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getRight().getCDCardinality()) + RESET;
+          tgtCardinalityRight = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getRight().getCDCardinality()) + RESET;
         }
       }
 
       if (isReversed) {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_DIRECTION);
-        if (!srcAssoc
-                .getLeft()
-                .getCDRole()
-                .getName()
-                .equals(tgtAssoc.getRight().getCDRole().getName())
-            || !srcAssoc
-                .getRight()
-                .getCDRole()
-                .getName()
-                .equals(tgtAssoc.getLeft().getCDRole().getName())) {
+        if (!srcAssoc.getLeft().getCDRole().getName().equals(tgtAssoc.getRight().getCDRole().getName())){
           changedRoleName = true;
+          srcRoleNameLeft = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getLeft().getCDRole()) + RESET;
+          tgtRoleNameLeft = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getRight().getCDRole()) + RESET;
+        }
+
+        if(!srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getRight().getCDCardinality())){
+          changedLeftMultiplicity = true;
+          srcCardinalityLeft = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getLeft().getCDCardinality()) + RESET;
+          tgtCardinalityRight = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getRight().getCDCardinality()) + RESET;
+        }
+
+        if(!srcAssoc.getRight().getCDRole().getName().equals(tgtAssoc.getLeft().getCDRole().getName())) {
+          changedRoleName = true;
+          srcRoleNameRight = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getRight().getCDRole()) + RESET;
+          tgtRoleNameRight = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getLeft().getCDRole()) + RESET;
+        }
+
+        if(!srcAssoc.getRight().getCDCardinality().equals(tgtAssoc.getLeft().getCDCardinality())){
+          changedRightMultiplicity = true;
+          srcCardinalityRight = CHANGED_ASSOCIATION + printer.prettyprint(srcAssoc.getRight().getCDCardinality()) + RESET;
+          tgtCardinalityLeft = CHANGED_ASSOCIATION + printer.prettyprint(tgtAssoc.getLeft().getCDCardinality()) + RESET;
         }
       }
 
@@ -381,37 +439,8 @@ public class CDAssocDiff implements ICDAssocDiff {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_ROLE);
       }
 
-      if ((srcAssoc
-              .getLeftQualifiedName()
-              .getQName()
-              .equals(tgtAssoc.getLeftQualifiedName().getQName()) &&
-        !srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getLeft().getCDCardinality())) ||
-        (srcAssoc
-          .getLeftQualifiedName()
-          .getQName()
-          .equals(tgtAssoc.getRightQualifiedName().getQName()) &&
-          !srcAssoc.getLeft().getCDCardinality().equals(tgtAssoc.getRight().getCDCardinality()))) {
-          changedLeftMultiplicity = true;
-      }
-
       if (changedLeftMultiplicity) {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_LEFT_MULTIPLICITY);
-      }
-
-      if((srcAssoc
-        .getRightQualifiedName()
-        .getQName()
-        .equals(tgtAssoc.getRightQualifiedName().getQName()) && !srcAssoc
-        .getRight()
-        .getCDCardinality()
-        .equals(tgtAssoc.getRight().getCDCardinality()) || (srcAssoc
-        .getRightQualifiedName()
-        .getQName()
-        .equals(tgtAssoc.getLeftQualifiedName().getQName()) && !srcAssoc
-        .getRight()
-        .getCDCardinality()
-        .equals(tgtAssoc.getLeft().getCDCardinality())))){
-        changedRightMultiplicity = true;
       }
 
       if (changedRightMultiplicity) {
@@ -423,6 +452,42 @@ public class CDAssocDiff implements ICDAssocDiff {
     if (changedRoleName || changedLeftMultiplicity || changedRightMultiplicity) {
       return srcAssoc;
     }
+
     return null;
+  }
+
+  //TODO CompilationUnit??
+  protected boolean getTypes(String srcElem, String tgt) {
+    Optional<CDTypeSymbol> srcTypeSymbol = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem);
+    Optional<CDTypeSymbol> tgtTypeSymbol = tgtCD.getEnclosingScope().resolveCDTypeDown(tgt);
+
+    if (srcTypeSymbol.isPresent() && tgtTypeSymbol.isPresent()) {
+      ASTCDType srcType = srcTypeSymbol.get().getAstNode();
+      ASTCDType tgtType = tgtTypeSymbol.get().getAstNode();
+      return typeMatcher.isMatched(tgtType, srcType);
+    }
+    return false;
+  }
+
+  private void buildingInterpretation() {
+
+    this.stringSrcAssoc = buildStrings(Arrays.asList(srcAssocName, srcCardinalityLeft, srcTypeLeft, srcRoleNameLeft, srcDirection, srcRoleNameRight, srcTypeRight, srcCardinalityRight));
+
+    this.stringTgtAssoc = buildStrings(Arrays.asList(tgtAssocName, tgtCardinalityLeft, tgtTypeLeft, tgtRoleNameLeft, tgtDirection, tgtRoleNameRight, tgtTypeRight, tgtCardinalityRight));
+
+    this.differenceInWords = "Difference in words: ";
+  }
+
+  @Override
+  public String buildStrings(List<String> stringList) {
+    return buildStrings(stringList) + ";";
+  }
+
+  public String printHelperSrcCD() {
+    return stringSrcAssoc;
+  }
+
+  public String printHelperTgtCD() {
+    return stringTgtAssoc;
   }
 }

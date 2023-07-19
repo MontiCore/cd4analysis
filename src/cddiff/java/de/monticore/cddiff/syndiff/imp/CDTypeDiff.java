@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff.imp;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.DiffTypes;
@@ -10,6 +11,7 @@ import de.monticore.cddiff.syndiff.ICDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.matcher.MatchingStrategy;
+import de.monticore.prettyprint.IndentPrinter;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
@@ -25,6 +27,10 @@ public class CDTypeDiff implements ICDTypeDiff {
   private List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> matchedConstants;
   private List<DiffTypes> baseDiffs;
   protected MatchingStrategy<ASTCDType> typeMatcher;
+
+  //Print help functions and strings
+  CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+
 
   protected CDTypeDiff(ASTCDType srcType, ASTCDType tgtType) {
     this.srcType = srcType;
