@@ -38,7 +38,11 @@ public class CDAssocDiff implements ICDAssocDiff {
   protected MatchingStrategy<ASTCDAssociation> assocMatcher;
   protected MatchingStrategy<ASTCDType> typeMatcher;
 
+  //use them to check if a search has been made
+  private AssocStruct srcStruc;
+  private AssocStruct tgtStruc;
   private boolean mustBeCompared;
+
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
 
   //Printer help functions and strings
@@ -66,11 +70,19 @@ public class CDAssocDiff implements ICDAssocDiff {
   String tgtCardinalityLeft;
   String tgtCardinalityRight;
 
-  protected CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, boolean isReversed) {
+  public CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, boolean isReversed) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
     this.isReversed = isReversed;
     buildingInterpretation();
+  }
+
+  public boolean isReversed() {
+    return isReversed;
+  }
+
+  public void setReversed(boolean reversed) {
+    isReversed = reversed;
   }
 
   @Override
@@ -129,7 +141,7 @@ public class CDAssocDiff implements ICDAssocDiff {
         + getDirection(getSrcElem());
   }
 
-  public AssocDirection getDirection(ASTCDAssociation association) {
+  public static AssocDirection getDirection(ASTCDAssociation association) {
     if (association.getCDAssocDir() == null) {
       return AssocDirection.Unspecified;
     }

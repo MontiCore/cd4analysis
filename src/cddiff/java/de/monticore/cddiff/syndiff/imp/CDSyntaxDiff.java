@@ -273,14 +273,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     this.baseDiff = baseDiff;
   }
 
-  public ArrayListMultimap<ASTCDClass, AssocStruct> getSrcMap() {
-    return srcMap;
-  }
-
-  public ArrayListMultimap<ASTCDClass, AssocStruct> getTrgMap() {
-    return trgMap;
-  }
-
   /**
    * Checks if each of the added classes refactors the old structure. The class must be abstract,
    * its subclasses in the old CD need to have all of its attributes and it can't have new ones.
