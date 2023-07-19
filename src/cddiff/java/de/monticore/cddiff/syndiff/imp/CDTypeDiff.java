@@ -7,6 +7,8 @@ import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
+import de.monticore.cddiff.syndiff.AssocStruct;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -17,8 +19,8 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
 public class CDTypeDiff implements ICDTypeDiff {
-  private final ASTCDType srcType;
-  private final ASTCDType tgtType;
+  private final ASTCDType srcElem;
+  private final ASTCDType tgtElem;
   private List<CDMemberDiff> changedMembers;
   private List<ASTCDAttribute> addedAttributes;
   private List<ASTCDAttribute> deletedAttributes;
@@ -35,19 +37,19 @@ public class CDTypeDiff implements ICDTypeDiff {
   CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
 
-  protected CDTypeDiff(ASTCDType srcType, ASTCDType tgtType) {
-    this.srcType = srcType;
-    this.tgtType = tgtType;
+  protected CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem) {
+    this.srcElem = srcElem;
+    this.tgtElem = tgtElem;
   }
 
   @Override
-  public ASTCDType getSrcType() {
-    return srcType;
+  public ASTCDType getSrcElem() {
+    return srcElem;
   }
 
   @Override
-  public ASTCDType getTgtType() {
-    return tgtType;
+  public ASTCDType getTgtElem() {
+    return tgtElem;
   }
 
   @Override
@@ -123,9 +125,9 @@ public class CDTypeDiff implements ICDTypeDiff {
   @Override
   public String sterDiff() {
     return "Modifier changed from "
-        + getTgtType().getModifier()
+        + getTgtElem().getModifier()
         + " to "
-        + getSrcType().getModifier();
+        + getSrcElem().getModifier();
   }
 
   /**
@@ -205,111 +207,6 @@ public class CDTypeDiff implements ICDTypeDiff {
       }
       return false;
     }
-  }
-
-  /**
-   * Check for each attribute in the list addedAttributes if it
-   * has been really added and add it to a list.
-   * @param compilationUnit trgCD
-   * @return list of pairs of the class with an added (new) attribute.
-   */
-  @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(ASTCDCompilationUnit compilationUnit){
-    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
-    for (ASTCDAttribute attribute : getAddedAttributes()){
-      if (isAdded(attribute, compilationUnit)){
-        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
-      }
-    }
-    return pairList;
-  }
-  /**
-   * Check if an attribute is really added.
-   * @param attribute from addedList
-   * @param compilationUnit for diagram (trg)
-   * @return false if found in all 'old' subclasses or in some 'old' superClass
-   */
-  public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
-    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit);
-    if (CDInheritanceHelper.isAttributInSuper(attribute, getTgtElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
-      return false;
-    }
-    if (!getSrcElem().getModifier().isAbstract()){
-      return true;
-    }
-    Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getTgtElem(), compilationUnit);
-    classList.remove(tgtElem);
-    boolean conditionSatisfied = false; // Track if the condition is satisfied
-    for (ASTCDClass astcdClass : classList) {
-      if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
-        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-        astcdClassList.remove(getTgtElem());
-        for (ASTCDType type : astcdClassList) {
-          if (type instanceof ASTCDClass && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
-            conditionSatisfied = true; // Set the flag to true if the condition holds
-            break;
-          }
-        }
-      } else {
-        conditionSatisfied = true;
-      }
-      if (!conditionSatisfied) {//found a subclass that doesn't have this attribute
-        return true;// Break out of the first loop if the condition is satisfied
-      } else {
-        conditionSatisfied = false;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Compute the spanned inheritance of a given class.
-   * That is we get all classes that are extending (not only direct) a class
-   * @param astcdClass compute subclasses of this class
-   * @param compilationUnit class diagram
-   * @return set of extending classes.
-   * The implementation is not efficient (no way to go from subclasses to superclasses).
-   */
-  @Override
-  public Set<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass, ASTCDCompilationUnit compilationUnit){
-    Set<ASTCDClass> subclasses = new HashSet<>();
-    for (ASTCDClass childClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-      if ((CDDiffUtil.getAllSuperclasses(childClass, compilationUnit.getCDDefinition().getCDClassesList())).contains(astcdClass)) {
-        subclasses.add(childClass);
-      }
-    }
-    return subclasses;
-  }
-
-  /**
-   * Get all added constants to an enum
-   * @return list of added constants
-   */
-  @Override
-  public List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants(){
-    List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();
-    if (!getAddedConstants().isEmpty()){
-      for (ASTCDEnumConstant constant : getAddedConstants()){
-        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), constant));
-      }
-    }
-    return pairList;
-  }
-
-  /**
-   * Compute all changed attributes in all classes.
-   * @param compilationUnit class diagram
-   * @return list of pairs of classes and changed attributes.
-   */
-  @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute(ASTCDCompilationUnit compilationUnit){
-    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
-    for (CDMemberDiff memberDiff : getChangedMembers()){
-      if (findMemberDiff(memberDiff) != null){
-        pairList.addAll(findMemberDiff(memberDiff));
-      }
-    }
-    return pairList;
   }
 
   /**
@@ -458,83 +355,61 @@ public class CDTypeDiff implements ICDTypeDiff {
   }
 
   /**
-   * Check for each attribute in the list deletedAttribute if it has been really deleted and add it
-   * to a list.
-   *
-   * @param compilationUnit class diagram
-   * @return list of pairs of the class with a deleted attribute.
-   */
-  @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes(
-      ASTCDCompilationUnit compilationUnit) {
-    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
-    for (ASTCDAttribute attribute : getDeletedAttribute()) {
-      if (!isDeleted(attribute, compilationUnit)) {
-        pairList.add(new Pair<>((ASTCDClass) getSrcType(), attribute));
-      }
-    }
-    return pairList;
-  }
-
-  /**
-   * Check if an attribute is really deleted.
-   *
-   * @param attribute from list deletedAttributes.
-   * @return false if not found in inheritance hierarchy.
-   */
-  public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit) {
-    return isAttributInSuper(
-        attribute, getSrcType(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-  }
-
-  /**
-   * Check for each attribute in the list addedAttributes if it has been really added and add it to
-   * a list.
-   *
-   * @param compilationUnit class diagram
+   * Check for each attribute in the list addedAttributes if it
+   * has been really added and add it to a list.
+   * @param compilationUnit trgCD
    * @return list of pairs of the class with an added (new) attribute.
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(
-      ASTCDCompilationUnit compilationUnit) {
+  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(ASTCDCompilationUnit compilationUnit){
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
-    for (ASTCDAttribute attribute : getAddedAttributes()) {
-      if (!isAdded(attribute, compilationUnit)) {
-        pairList.add(new Pair<>((ASTCDClass) getSrcType(), attribute));
+    for (ASTCDAttribute attribute : getAddedAttributes()){
+      if (isAdded(attribute, compilationUnit)){
+        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
       }
     }
     return pairList;
   }
+
   /**
    * Check if an attribute is really added.
-   *
    * @param attribute from addedList
    * @param compilationUnit for diagram (trg)
-   * @return false if not found in all subclasses
+   * @return false if found in all 'old' subclasses or in some 'old' superClass
    */
-  public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit) {
-    Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getTgtType(), compilationUnit);
+  public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
+    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit);
+    if (CDInheritanceHelper.isAttributInSuper(attribute, getTgtElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
+      return false;
+    }
+    if (!getSrcElem().getModifier().isAbstract()){
+      return true;
+    }
+    Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getTgtElem(), compilationUnit);
+    classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
-      if (!astcdClass.getCDAttributeList().contains(attribute)) {
-        Set<ASTCDType> astcdClassList =
-            getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-        astcdClassList.remove(getTgtType());
+      if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
+        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+        astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
-          if (type instanceof ASTCDClass && type.getCDAttributeList().contains(attribute)) {
+          if (type instanceof ASTCDClass && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
             break;
           }
         }
+      } else {
+        conditionSatisfied = true;
       }
-      if (!conditionSatisfied) { // found a subclass that doesn't have this attribute
-        return false; // Break out of the first loop if the condition is satisfied
+      if (!conditionSatisfied) {//found a subclass that doesn't have this attribute
+        return true;// Break out of the first loop if the condition is satisfied
       } else {
         conditionSatisfied = false;
       }
     }
-    return true;
+    return false;
   }
+
 
   /**
    * Compute the spanned inheritance of a given class. That is we get all classes that are extending
@@ -569,7 +444,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();
     if (!getAddedConstants().isEmpty()) {
       for (ASTCDEnumConstant constant : getAddedConstants()) {
-        pairList.add(new Pair<>((ASTCDClass) getSrcType(), constant));
+        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), constant));
       }
     }
     return pairList;
@@ -577,85 +452,18 @@ public class CDTypeDiff implements ICDTypeDiff {
 
   /**
    * Compute all changed attributes in all classes.
-   *
    * @param compilationUnit class diagram
    * @return list of pairs of classes and changed attributes.
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute(
-      ASTCDCompilationUnit compilationUnit) {
+  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute(ASTCDCompilationUnit compilationUnit){
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
-    for (CDMemberDiff memberDiff : getChangedMembers()) {
-      if (findMemberDiff(memberDiff, compilationUnit) != null) {
-        pairList.addAll(findMemberDiff(memberDiff, compilationUnit));
+    for (CDMemberDiff memberDiff : getChangedMembers()){
+      if (findMemberDiff(memberDiff) != null){
+        pairList.addAll(findMemberDiff(memberDiff));
       }
     }
     return pairList;
-  }
-
-  /**
-   * Get all attributes with changed types.
-   *
-   * @param memberDiff pair of attributes
-   * @param compilationUnit class diagram
-   * @return list of pairs of the class (or subclass) and changed attribute.
-   */
-  @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(
-      CDMemberDiff memberDiff, ASTCDCompilationUnit compilationUnit) {
-    if (!getSrcType().getModifier().isAbstract()) {
-      List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
-      for (DiffTypes type : memberDiff.getBaseDiff()) {
-        switch (type) {
-          case CHANGED_ATTRIBUTE:
-            list.add(
-                new Pair<>(
-                    (ASTCDClass) getSrcType(),
-                    (ASTCDAttribute)
-                        memberDiff.getSrcElem())); // add to Diff List new Pair(getElem1(),
-            // memberDiff.getElem1()
-          case CHANGED_VISIBILITY: // give as output to user - no semDiff
-            // other cases
-        }
-      }
-      return list;
-    } else { // class is abstract and can't be instantiated - get a subclass
-      for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-        if (getDirectSuperClasses(
-                astcdClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit))
-            .contains(getSrcType())) { // can be made to contain ONLY - extends as in java or C++?
-          List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
-          for (DiffTypes type : memberDiff.getBaseDiff()) {
-            switch (type) {
-              case CHANGED_ATTRIBUTE:
-                list.add(
-                    new Pair<>(
-                        astcdClass,
-                        (ASTCDAttribute)
-                            memberDiff.getSrcElem())); // add to Diff List new Pair(astcdClass,
-                // memberDiff.getElem1())
-              case CHANGED_VISIBILITY: // give as output to user - no semDiff
-                // other cases?
-            }
-          }
-          return list;
-        }
-      }
-    }
-    return null;
-  }
-
-  @Override
-  public List<ASTCDClass> getClassesForEnum(ASTCDCompilationUnit compilationUnit) {
-    List<ASTCDClass> classList = new ArrayList<>();
-    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-      for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()) {
-        if (attribute.getMCType().printType().equals(getSrcType().toString())) {
-          classList.add(astcdClass);
-        }
-      }
-    }
-    return classList;
   }
 
   /**

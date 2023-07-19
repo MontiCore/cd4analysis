@@ -4,9 +4,6 @@ import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 import com.google.common.collect.ArrayListMultimap;
-import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
@@ -15,13 +12,15 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.AssocStruct;
+import de.monticore.cddiff.syndiff.CardinalityStruc;
 import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cddiff.syndiff.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.matcher.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
@@ -67,11 +66,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     String hello = "Hello";
     System.out.println(hello);
 
-    /** Trafo to make in-class declarations of compositions appear in the association list **/
     new CD4CodeDirectCompositionTrafo().transform(srcCD);
     new CD4CodeDirectCompositionTrafo().transform(tgtCD);
 
-    /** Defining the colors for the console output **/
     final String GREEN = "\u001B[32m";
     final String RED = "\u001B[31m";
     final String YELLOW = "\u001B[33m";
@@ -285,7 +282,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   /**
-   * Checks if each of the added classes refactors the old structure. The class must be abstarct,
+   * Checks if each of the added classes refactors the old structure. The class must be abstract,
    * its subclasses in the old CD need to have all of its attributes and it can't have new ones.
    */
 //  @Override
@@ -312,7 +309,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 //        ASTCDClass matchedClass = findMatchedClass(classToCheck);
 //        if (matchedClass != null){
 //          for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
-//            if (!matchedClass.getCDAttributeList().contains(attribute) || !isAttributInSuper(attribute, matchedClass,
+//            if (!matchedClass.getCDAttributeList().contains(attribute) || !isAttributeInSuper(attribute, matchedClass,
 //              (ICD4CodeArtifactScope) getTgtCD().getEnclosingScope())){
 //              return false;
 //            }
@@ -501,11 +498,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
 //  /**
-//   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without
+//   * Deleted Enum-classes always bring a semantic difference - a class can be instantiated without
 //   * attribute. Similar case for added ones.
 //   *
 //   * @param astcdEnum
-//   *///not needed - if a class can't be inst with an enum, then the asstribute has been deleted
+//   *///not needed - if a class can't be inst with an enum, then the attribute has been deleted
 //  //we will get this info from CDTypeDiff with isDeleted
 //  @Override
 //  public List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum){
@@ -557,7 +554,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   /**
    * Get the differences in a matched pair as a String
    * @param diff object of type CDAssocDiff or CDTypeDIff
-   * @return differeces as a String
+   * @return differences as a String
    */
   @Override
   public String findDiff(Object diff) {
@@ -582,7 +579,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
             difference.append(obj.roleDiff());
           case CHANGED_ASSOCIATION_DIRECTION:
             difference.append(obj.dirDiff());
-          case CHANGED_ASSOCIATION_MULTIPLICITY:
+            //TODO: ADD RIGHT MULTIPLICITY
+          case CHANGED_ASSOCIATION_LEFT_MULTIPLICITY:
             difference.append(obj.cardDiff());
         }
       }
@@ -868,7 +866,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Check if the target classes of the two associations are in an inheritance relation
    * @param association base association
    * @param superAssociation association from superclass
-   * @return true, if they filfill the condition
+   * @return true, if they fulfill the condition
    */
   public boolean inInheritanceRelation(AssocStruct association, AssocStruct superAssociation){
     if (association.getSide().equals(ClassSide.Left)
@@ -946,7 +944,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   /**
-   * Transform the internal cardinality to orginal
+   * Transform the internal cardinality to original
    * @param assocCardinality cardinality to transform
    * @return cardinality with type ASTCDCardinality
    */
@@ -1244,7 +1242,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  // check if somewhere the comparisson should be with unmatchedAssoc
+  // check if somewhere the comparison should be with unmatchedAssoc
   //if no match is found for src, we don't look anymore at this
   //if no match in tgt is found, we just add this assoc to diff
   //TODO: add check if the classes can be instantiated to added/deleted attributes, also for super?
@@ -1338,7 +1336,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
           diff.setChangedTgt(assocDiff.getChangedTgtClass().b);
         }
       }
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY)) {
+      // TODO: NOT LEFT MULTIPLICITY, DO ALSO FOR RIGHT MULTIPLICITY
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_LEFT_MULTIPLICITY)) {
         if (srcAndTgtExist(assocDiff)) {
           diff.setChangedCard(assocDiff.getCardDiff().b);
         }
@@ -1373,8 +1372,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         diffClass.addAllChangedMembers(srcClass, tgtClass);
         diffClass.addAllAddedAttributes(srcClass, tgtClass);
         diffClass.addAllDeletedAttributes(srcClass, tgtClass);
-        // diffClass.addAllAddedConstants(srcClass,tgtClass);
-        // diffClass.addAllDeletedConstants(srcClass,tgtClass);
+        // for (ASTCDEnum srcEnum : srcClass.getCDDefinition().getCDEnumsList()) {
+        //  for (ASTCDEnum tgtEnum : tgtClass.getCDDefinition().getCDEnumsList()) {
+        //    diffClass.addAllAddedConstants(srcClass, tgtClass);
+        //  }
+        // }
+        // for (ASTCDEnum srcEnum : srcClass.getCDDefinition().getCDEnumsList()) {
+        //  for (ASTCDEnum tgtEnum : tgtClass.getCDDefinition().getCDEnumsList()) {
+        //    diffClass.addAllDeletedConstants(srcClass,tgtClass);
+        //  }
+        // }
         if (!diffClass.getBaseDiffs().isEmpty()) {
           changedClasses.add(diffClass);
         }
@@ -1514,7 +1521,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
 
-    // 2. Phase - added/deleted Assocs matching über Typen
+    // 2. Phase - added/deleted Assocs matching of Types
     for(ASTCDAssociation assoc1 : addedAssocs){
       for(ASTCDAssociation assoc2 : deletedAssocs){
         Optional<CDTypeSymbol> typeSymbol1L = srcCD.getEnclosingScope().resolveCDTypeDown(assoc1.getLeftQualifiedName().getQName());

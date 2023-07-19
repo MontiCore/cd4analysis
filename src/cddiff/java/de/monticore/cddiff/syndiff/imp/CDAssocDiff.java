@@ -38,6 +38,9 @@ public class CDAssocDiff implements ICDAssocDiff {
   protected MatchingStrategy<ASTCDAssociation> assocMatcher;
   protected MatchingStrategy<ASTCDType> typeMatcher;
 
+  private boolean mustBeCompared;
+  private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
   //Printer help functions and strings
   private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   protected static final String CHANGED_ASSOCIATION = "\u001B[33m";
