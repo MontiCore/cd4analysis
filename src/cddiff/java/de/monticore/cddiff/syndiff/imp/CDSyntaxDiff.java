@@ -360,13 +360,54 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return matchedClass;
   }
 
+  public Pair<ASTCDAssociation, List<ASTCDClass>> deletedAssoc(ASTCDAssociation astcdAssociation){
+    List<ASTCDClass> classes = new ArrayList<>();
+    if (astcdAssociation.getLeft().isPresentCDCardinality()){
+      if (!(astcdAssociation.getLeft().getCDCardinality().isOpt()
+        || astcdAssociation.getLeft().getCDCardinality().isMult())){
+        ASTCDClass astcdClass = Syn2SemDiffHelper.getConnectedClasses(astcdAssociation, tgtCD).a;
+        ASTCDClass matched = isSecondElementInPair(astcdClass);
+        if (matched != null){
+          classes.add(matched);
+        }
+      }
+    }
+    if (astcdAssociation.getRight().isPresentCDCardinality()){
+      if (!(astcdAssociation.getRight().getCDCardinality().isMult()
+        || astcdAssociation.getRight().getCDCardinality().isOpt())){
+        ASTCDClass astcdClass = Syn2SemDiffHelper.getConnectedClasses(astcdAssociation, tgtCD).b;
+        ASTCDClass matched = isSecondElementInPair(astcdClass);
+        if (matched != null){
+          classes.add(matched);
+        }
+      }
+    }
+    if (!classes.isEmpty()){
+      return new Pair<>(astcdAssociation, classes);
+    }
+    return null;
+  }
+
+  public ASTCDClass isSecondElementInPair(ASTCDClass astClass) {
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
+      if (pair.b.equals(astClass)) {
+        return pair.a;
+      }
+    }
+    return null;
+  }
+
+
   /**
    *
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
   //TODO: replace the boolean with the class
-
+  //false idea
+  //if old was bidirectional, check if both sides allowed 0. If this is the case - we have no semDiff
+  //if this isn't the case, we have a semDiff for the side(s) that doesn't allow 0
+  //TODO: ask Tsveti if the cardinalities are indepdent of the direction
   @Override
   public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation){
     if (astcdAssociation.getCDAssocDir().isBidirectional()){
