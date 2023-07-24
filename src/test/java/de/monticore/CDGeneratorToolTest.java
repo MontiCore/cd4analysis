@@ -133,10 +133,10 @@ public class CDGeneratorToolTest {
         });
     File symtab =
         new File(
-            "target/generated/example/examplewithpkg/veryUniquePkGNameZBSJKEBV/ExampleWithPkg.cdsym");
+            "target/generated/example/examplewithpkg/pkg/ExampleWithPkg.cdsym");
     assertTrue(symtab.isFile());
     String contents = Files.readString(Path.of(symtab.toURI()));
-    assertTrue(contents.contains("veryUniquePkGNameZBSJKEBV"));
+    assertTrue(contents.contains("pkg"));
   }
 
   @Test

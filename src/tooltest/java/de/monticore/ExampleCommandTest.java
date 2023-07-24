@@ -93,11 +93,11 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testPrettyPrintingExample2() {
     String fileName = "doc/MyExample.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "-pp", outputPath + "PPExample.cd"});
-    assertTrue(Files.exists(Paths.get(outputPath + "PPExample.cd")));
+    CD4CodeTool.main(new String[] {"-i", fileName, "-pp", outputPath + "MyExample.cd"});
+    assertTrue(Files.exists(Paths.get(outputPath + "MyExample.cd")));
     assertTrue(
         loadAndCheckCD("doc/MyExample.cd")
-            .deepEquals(loadAndCheckCD(outputPath + "PPExample.cd"), false));
+            .deepEquals(loadAndCheckCD(outputPath + "MyExample.cd"), false));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
