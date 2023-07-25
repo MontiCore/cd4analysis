@@ -13,14 +13,14 @@ public class TestCD4AnalysisParserTest extends CD4AnalysisTestBasis {
   @Test
   public void parseCompleteModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/Simple.cd"));
+        p.parse(getFilePath("cd4analysis/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 
   @Test
   public void testLanguageTeaser() throws RecognitionException, IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/MyLife.cd"));
+        p.parse(getFilePath("cd4analysis/parser/MyLife.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 }

@@ -104,7 +104,7 @@ public class CDDiffUtil {
    * names.
    */
   public static ASTCDCompilationUnit loadCD(String modelPath) throws IOException {
-    Optional<ASTCDCompilationUnit> cd = CD4CodeMill.parser().parse(modelPath);
+    Optional<ASTCDCompilationUnit> cd = CD4CodeMill.parser().parseCDCompilationUnit(modelPath);
     if (cd.isPresent()) {
       new CDFullNameTrafo().transform(cd.get());
       return cd.get();

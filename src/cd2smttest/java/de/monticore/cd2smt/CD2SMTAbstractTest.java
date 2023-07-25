@@ -41,7 +41,7 @@ public class CD2SMTAbstractTest {
     CD4AnalysisParser parser = CD4AnalysisMill.parser();
     Optional<ASTCDCompilationUnit> optAutomaton;
     try {
-      optAutomaton = parser.parse(model.toString());
+      optAutomaton = parser.parseCDCompilationUnit(model.toString());
       assertTrue(optAutomaton.isPresent());
       (new CD4AnalysisAfterParseTrafo()).transform(optAutomaton.get());
       return optAutomaton.get();
