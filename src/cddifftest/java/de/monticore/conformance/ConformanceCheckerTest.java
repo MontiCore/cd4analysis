@@ -18,6 +18,13 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 
+  @Test
+  public void testConformanceCheckInvalid() {
+    parseModels("Concrete.cd", "Reference.cd");
+    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING, NO_MULTI_INC));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"EqName.cd", "STName.cd", "composed.cd"})
   public void testAttributeConformanceValid(String concrete) {

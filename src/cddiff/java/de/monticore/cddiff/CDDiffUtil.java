@@ -300,7 +300,15 @@ public class CDDiffUtil {
         .collect(Collectors.toSet());
   }
 
-  /** A helper function that collect all strict sub-types of type in cd. */
+  public static List<ASTCDType> getAllCDTypes(ASTCDCompilationUnit cd) {
+    List<ASTCDType> types = new ArrayList<>();
+    types.addAll(cd.getCDDefinition().getCDClassesList());
+    types.addAll(cd.getCDDefinition().getCDInterfacesList());
+    types.addAll(cd.getCDDefinition().getCDEnumsList());
+    return types;
+  }
+
+  /** A helper function that collects all strict subtypes of a type in cd. */
   public static Set<ASTCDType> getAllStrictSubTypes(ASTCDType type, ASTCDDefinition cd) {
     Set<ASTCDType> result = new HashSet<>();
     Set<ASTCDType> allTypes = new HashSet<>();

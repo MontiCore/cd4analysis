@@ -131,8 +131,8 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
     if (ref.isPresentCDCardinality() != concrete.isPresentCDCardinality()) {
       return false;
     }
-    return !ref.isPresentCDCardinality() || concrete.getCDCardinality().deepEquals(ref.getCDCardinality());
-
+    return !ref.isPresentCDCardinality()
+        || concrete.getCDCardinality().deepEquals(ref.getCDCardinality());
   }
 
   protected boolean checkReference(String concrete, String ref) {

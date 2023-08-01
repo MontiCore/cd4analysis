@@ -131,9 +131,7 @@ public class CDGeneratorToolTest {
           "-s",
           "target/generated/example/examplewithpkg"
         });
-    File symtab =
-        new File(
-            "target/generated/example/examplewithpkg/pkg/ExampleWithPkg.cdsym");
+    File symtab = new File("target/generated/example/examplewithpkg/pkg/ExampleWithPkg.cdsym");
     assertTrue(symtab.isFile());
     String contents = Files.readString(Path.of(symtab.toURI()));
     assertTrue(contents.contains("pkg"));

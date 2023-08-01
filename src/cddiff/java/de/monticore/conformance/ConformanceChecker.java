@@ -2,10 +2,10 @@ package de.monticore.conformance;
 
 import static de.monticore.conformance.ConfParameter.*;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.conformance.conf.AttributeChecker;
 import de.monticore.conformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.conformance.conf.association.DeepAssocConfStrategy;
@@ -24,9 +24,7 @@ import de.monticore.conformance.inc.type.EqTypeIncStrategy;
 import de.monticore.conformance.inc.type.STTypeIncStrategy;
 import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Tool for automatic conformance checking of concrete CDs to reference CDs given a set of mappings.
@@ -36,6 +34,11 @@ public class ConformanceChecker {
   protected MatchingStrategy<ASTCDType> typeInc;
   protected MatchingStrategy<ASTCDAssociation> assocInc;
   protected AttributeChecker attrInc;
+
+  protected Map<ASTCDType, List<ASTCDType>> typeMap = new HashMap<>();
+  protected Map<ASTCDAttribute, List<ASTCDAttribute>> attributeMap = new HashMap<>();
+
+  protected Map<ASTCDAssociation, List<ASTCDAssociation>> assocMap = new HashMap<>();
 
   public ConformanceChecker(Set<ConfParameter> params) {
     this.params = params;
@@ -104,7 +107,84 @@ public class ConformanceChecker {
         new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
 
     // check conformance
-    return cdChecker.checkConformance(concreteCD);
+    boolean muliInc = !params.contains(NO_MULTI_INC);
+    return cdChecker.checkConformance(concreteCD)
+        && checkIncarnationMap(referenceCD, concreteCD, muliInc);
+  }
+
+  private boolean checkIncarnationMap(
+      ASTCDCompilationUnit refCD, ASTCDCompilationUnit conCD, boolean multiInc) {
+    boolean typeMapping =
+        CDDiffUtil.getAllCDTypes(refCD).stream()
+            .allMatch(ref -> checkTypeMapping(ref, conCD, multiInc));
+    boolean assocMapping =
+        refCD.getCDDefinition().getCDAssociationsList().stream()
+            .allMatch(ref -> checkAssocMapping(ref, conCD, multiInc));
+
+    return typeMapping && assocMapping;
+  }
+
+  private boolean checkAttributeMapping(ASTCDType refType, boolean multiInc) {
+
+    for (ASTCDAttribute refAttribute : refType.getCDAttributeList()) {
+      List<ASTCDAttribute> conAttributes = new ArrayList<>();
+      for (ASTCDType conType : getConElements(refType)) {
+        for (ASTCDAttribute conAttr : conType.getCDAttributeList()) {
+          if (getRefElements(conType, conAttr).contains(refAttribute)) {
+            conAttributes.add(conAttr);
+          }
+        }
+      }
+      if (conAttributes.size() > 1 && !multiInc) {
+        Log.info(
+            "Type " + refAttribute.getName() + " has multiple incarnations ",
+            this.getClass().getName());
+        return false;
+      }
+
+      attributeMap.put(refAttribute, conAttributes);
+    }
+
+    return true;
+  }
+
+  protected boolean checkTypeMapping(ASTCDType ref, ASTCDCompilationUnit conCD, boolean multiInc) {
+
+    List<ASTCDType> concretes = new ArrayList<>();
+    for (ASTCDType con : CDDiffUtil.getAllCDTypes(conCD)) {
+      if (getRefElements(con).contains(ref)) {
+        concretes.add(con);
+      }
+    }
+
+    if (concretes.size() > 1 && !multiInc) {
+      Log.info("Type " + ref.getName() + " has multiple incarnations ", this.getClass().getName());
+      return false;
+    }
+
+    typeMap.put(ref, concretes);
+    return checkAttributeMapping(ref, multiInc);
+  }
+
+  protected boolean checkAssocMapping(
+      ASTCDAssociation ref, ASTCDCompilationUnit conCD, boolean multiInc) {
+
+    List<ASTCDAssociation> concretes = new ArrayList<>();
+    for (ASTCDAssociation con : conCD.getCDDefinition().getCDAssociationsList()) {
+      if (getRefElements(con).contains(ref)) {
+        concretes.add(con);
+      }
+    }
+
+    if (concretes.size() > 1 && !multiInc) {
+      Log.info(
+          "Assoc " + CD4CodeMill.prettyPrint(ref, false) + " has multiple incarnations ",
+          this.getClass().getName());
+      return false;
+    }
+
+    assocMap.put(ref, concretes);
+    return true;
   }
 
   public List<ASTCDType> getRefElements(ASTCDType con) {
@@ -125,5 +205,17 @@ public class ConformanceChecker {
               refElements.addAll(attrInc.getMatchedElements(con));
             });
     return refElements;
+  }
+
+  public List<ASTCDType> getConElements(ASTCDType con) {
+    return typeMap.containsKey(con) ? typeMap.get(con) : new ArrayList<>();
+  }
+
+  public List<ASTCDAssociation> getConElements(ASTCDAssociation con) {
+    return assocMap.containsKey(con) ? assocMap.get(con) : new ArrayList<>();
+  }
+
+  public List<ASTCDAttribute> getConElements(ASTCDAttribute con) {
+    return attributeMap.containsKey(con) ? attributeMap.get(con) : new ArrayList<>();
   }
 }
