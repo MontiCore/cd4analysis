@@ -76,7 +76,8 @@ public class MatcherTest {
 
   public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> src =
+          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (src.isPresent() && tgt.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());

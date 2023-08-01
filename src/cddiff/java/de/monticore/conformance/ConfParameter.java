@@ -9,7 +9,9 @@ public enum ConfParameter {
   STRICT_INHERITANCE("Enable Strict Inheritance for associations"),
 
   ALLOW_CARD_RESTRICTION(
-      "when added,the cardinality of a concrete association can refine the card  of a reference association ");
+      "when added,the cardinality of a concrete association can refine the card  of a reference association "),
+
+  NO_MULTI_INC("when added a type, assoc or attribute can have many incarnations");
 
   private final String description;
 
