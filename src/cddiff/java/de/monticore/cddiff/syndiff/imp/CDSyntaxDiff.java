@@ -87,9 +87,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       .append(System.lineSeparator())
       .append(System.lineSeparator());
 
-    for (CDTypeDiff x : changedClasses) {
-      System.out.println(x);
-    }
+//    for (CDTypeDiff x : changedClasses) {
+//      System.out.println(x);
+//    }
 
     StringBuilder outPutAll = new StringBuilder();
     outPutAll.append(initial);
@@ -395,11 +395,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
    * @return true if we have a case where we can instantiate a class without instantiating another.
    */
-  //TODO: replace the boolean with the class
   //false idea
   //if old was bidirectional, check if both sides allowed 0. If this is the case - we have no semDiff
   //if this isn't the case, we have a semDiff for the side(s) that doesn't allow 0
-  //TODO: ask Tsveti if the cardinalities are indepdent of the direction
   @Override
   public boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation){
     if (astcdAssociation.getCDAssocDir().isBidirectional()){
@@ -654,9 +652,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     //We also need to compare between direct associations
     //If we have two direct associations with the same role name in srcDirection, but the classes aren't in an inheritance hierarchy
     for (ASTCDClass astcdClass : helper.getSrcMap().keySet()) {
-      for (AssocStruct association : helper.getSrcMap().get(astcdClass)) {
+      Iterator<AssocStruct> iterator = helper.getSrcMap().get(astcdClass).iterator();
+      while (iterator.hasNext()) {
+        AssocStruct association = iterator.next();
         if (!association.isSuperAssoc()) {
-          for (AssocStruct superAssoc : helper.getSrcMap().get(astcdClass)) {
+          Iterator<AssocStruct> superAssocIterator = helper.getSrcMap().get(astcdClass).iterator();
+          while (superAssocIterator.hasNext()) {
+            AssocStruct superAssoc = superAssocIterator.next();
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
               if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
                 if (!sameRoleNames(association, superAssoc)){
@@ -692,13 +694,17 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)){
                   //such association can't exist
                   //delete
-                  deleteAssocsFromSrc(astcdClass, getConflict(association, superAssoc));
+                  //save a list with assocs to delete
+                  //deleteAssocsFromSrc(astcdClass, getConflict(association, superAssoc));
+                  iterator.remove();
                   //Do I need to give some output about the class
                 } else {
                   //such class can't exist
                   //delete
                   helper.updateSrc(astcdClass);
-                  helper.getSrcMap().removeAll(astcdClass);
+                  iterator.remove();
+                  //save a list with classes to delete
+                  //helper.getSrcMap().removeAll(astcdClass);
                 }
               }
             } else if (!association.equals(superAssoc)){
@@ -716,9 +722,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
               } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
                 if (areZeroAssocs(association, superAssoc)){
                   deleteAssocsFromSrc(astcdClass, getConflict(association, superAssoc));
+                  iterator.remove();
+                  superAssocIterator.remove();
                 } else {
                   helper.updateSrc(astcdClass);
-                  helper.getSrcMap().removeAll(astcdClass);
+                  iterator.remove();
+                  superAssocIterator.remove();
+                  //helper.getSrcMap().removeAll(astcdClass);
                 }
               }
             }
@@ -728,9 +738,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
 
     for (ASTCDClass astcdClass : helper.getTrgMap().keySet()) {
-      for (AssocStruct association : helper.getTrgMap().get(astcdClass)) {
+      Iterator<AssocStruct> iterator = helper.getSrcMap().get(astcdClass).iterator();
+      while (iterator.hasNext()) {
+        AssocStruct association = iterator.next();
         if (!association.isSuperAssoc()) {
-          for (AssocStruct superAssoc : helper.getTrgMap().get(astcdClass)) {
+          Iterator<AssocStruct> superAssocIterator = helper.getSrcMap().get(astcdClass).iterator();
+          while (superAssocIterator.hasNext()) {
+            AssocStruct superAssoc = superAssocIterator.next();
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
               if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
                 if (!sameRoleNames(association, superAssoc)){
@@ -765,13 +779,17 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)){
                   //such association can't exist
                   //delete
-                  deleteAssocsFromTgt(astcdClass, getConflict(association, superAssoc));
+                  //deleteAssocsFromTgt(astcdClass, getConflict(association, superAssoc));
+                  iterator.remove();
+                  superAssocIterator.remove();
                   //Do I need to give some output about the class
                 } else {
                   //such class can't exist
                   //delete
                   helper.updateTgt(astcdClass);
-                  helper.getTrgMap().removeAll(astcdClass);
+                  iterator.remove();
+                  superAssocIterator.remove();
+                  //helper.getTrgMap().removeAll(astcdClass);
                 }
               }
             } else if (!association.equals(superAssoc)){
@@ -788,10 +806,14 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
                 helper.getTrgMap().remove(astcdClass, superAssoc);
               } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
                 if (areZeroAssocs(association, superAssoc)){
-                  deleteAssocsFromTgt(astcdClass, getConflict(association, superAssoc));
+                  //deleteAssocsFromTgt(astcdClass, getConflict(association, superAssoc));
+                  iterator.remove();
+                  superAssocIterator.remove();
                 } else {
                   helper.updateTgt(astcdClass);
-                  helper.getTrgMap().removeAll(astcdClass);
+                  iterator.remove();
+                  superAssocIterator.remove();
+                 // helper.getTrgMap().removeAll(astcdClass);
                 }
               }
             }
@@ -916,12 +938,12 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     } else if (association.getSide().equals(ClassSide.Right)
       && superAssociation.getSide().equals(ClassSide.Left)){
       return isSuperOf(association.getAssociation().getLeftQualifiedName().getQName(),
-        superAssociation.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition())
-        || isSuperOf(superAssociation.getAssociation().getRightQualifiedName().getQName(), association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition());
+        superAssociation.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope())
+        || isSuperOf(superAssociation.getAssociation().getRightQualifiedName().getQName(), association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope());
     } else {
       return isSuperOf(association.getAssociation().getLeftQualifiedName().getQName(),
-        superAssociation.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition())
-        || isSuperOf(superAssociation.getAssociation().getLeftQualifiedName().getQName(), association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getCDDefinition());
+        superAssociation.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope())
+        || isSuperOf(superAssociation.getAssociation().getLeftQualifiedName().getQName(), association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope());
     }
   }
 

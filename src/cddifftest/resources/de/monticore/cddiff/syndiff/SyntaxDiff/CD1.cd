@@ -9,6 +9,6 @@ classdiagram CD1{
 
   class D extends B{}
 
-  association A -> (r) B [*];
-  association C <-> (r) D [0..1];
+  association up [1] A -> (r) B [*];
+  association down [1] C <-> (r) D [0..1];
 }

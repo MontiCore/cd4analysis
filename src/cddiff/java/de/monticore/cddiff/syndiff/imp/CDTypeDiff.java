@@ -161,7 +161,8 @@ public class CDTypeDiff implements ICDTypeDiff {
   public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit){
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttribute()){
-      if (isDeleted(attribute, compilationUnit)){
+      if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
+        && isDeleted(attribute, compilationUnit)){
         pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
       }
     }
@@ -185,11 +186,13 @@ public class CDTypeDiff implements ICDTypeDiff {
       classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
-        if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
+        if (!helper.getNotInstanClassesSrc().contains(astcdClass)
+          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
           Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
           astcdClassList.remove(getSrcElem());
           for (ASTCDType type : astcdClassList) {
-            if (type instanceof ASTCDClass) {
+            if (type instanceof ASTCDClass
+              && !helper.getNotInstanClassesSrc().contains((ASTCDClass) type)) {
               if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;
@@ -235,7 +238,8 @@ public class CDTypeDiff implements ICDTypeDiff {
     int closestDepth = Integer.MAX_VALUE;
 
     for (ASTCDClass cdClass : set) {
-      if (!cdClass.getModifier().isAbstract()) {
+      if (!cdClass.getModifier().isAbstract()
+        && !helper.getNotInstanClassesSrc().contains(astcdClass)) {
         int depth = getDepthOfClass(cdClass, astcdClass);
         if (depth < closestDepth) {
           closestClass = cdClass;
@@ -364,7 +368,8 @@ public class CDTypeDiff implements ICDTypeDiff {
   public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(ASTCDCompilationUnit compilationUnit){
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getAddedAttributes()){
-      if (isAdded(attribute, compilationUnit)){
+      if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
+        &&isAdded(attribute, compilationUnit)){
         pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
       }
     }
@@ -378,7 +383,6 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @return false if found in all 'old' subclasses or in some 'old' superClass
    */
   public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
-    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit);
     if (CDInheritanceHelper.isAttributInSuper(attribute, getTgtElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
       return false;
     }
@@ -389,11 +393,14 @@ public class CDTypeDiff implements ICDTypeDiff {
     classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
-      if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
+      if (!helper.getNotInstanClassesTgt().contains(astcdClass)
+        &&!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
         Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
         astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
-          if (type instanceof ASTCDClass && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
+          if (type instanceof ASTCDClass
+            && helper.getNotInstanClassesSrc().contains((ASTCDClass) type)
+            && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
             break;
           }
