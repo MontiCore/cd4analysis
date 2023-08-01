@@ -79,17 +79,24 @@ public class ConformanceChecker {
     // init conformance Checker
     BasicTypeConfStrategy typeChecker;
     BasicAssocConfStrategy assocChecker;
+    boolean assocCardRefinement = params.contains(ALLOW_CARD_RESTRICTION);
     if (!params.contains(INHERITANCE) && !params.contains(STRICT_INHERITANCE)) {
 
       typeChecker = new BasicTypeConfStrategy(referenceCD, concreteCD, attrInc, typeInc, assocInc);
-      assocChecker = new BasicAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
 
+      assocChecker =
+          new BasicAssocConfStrategy(
+              referenceCD, concreteCD, typeInc, assocInc, assocCardRefinement);
     } else {
       typeChecker = new DeepTypeConfStrategy(referenceCD, concreteCD, attrInc, typeInc, assocInc);
       if (params.contains(STRICT_INHERITANCE)) {
-        assocChecker = new StrictDeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+        assocChecker =
+            new StrictDeepAssocConfStrategy(
+                referenceCD, concreteCD, typeInc, assocInc, assocCardRefinement);
       } else {
-        assocChecker = new DeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
+        assocChecker =
+            new DeepAssocConfStrategy(
+                referenceCD, concreteCD, typeInc, assocInc, assocCardRefinement);
       }
     }
 
@@ -118,25 +125,5 @@ public class ConformanceChecker {
               refElements.addAll(attrInc.getMatchedElements(con));
             });
     return refElements;
-  }
-
-  public static boolean checkStrictDeepComposedConformance(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
-
-    // create Incarnation Strategies
-    CompTypeIncStrategy typeInc = new CompTypeIncStrategy(referenceCD, mapping);
-    CompAssocIncStrategy assocInc = new CompAssocIncStrategy(referenceCD, mapping);
-    CompAttributeChecker attrChecker = new CompAttributeChecker(mapping);
-
-    // create Conformance Strategies
-    DeepTypeConfStrategy typeChecker =
-        new DeepTypeConfStrategy(referenceCD, concreteCD, attrChecker, typeInc, assocInc);
-    BasicAssocConfStrategy assocChecker =
-        new StrictDeepAssocConfStrategy(referenceCD, concreteCD, typeInc, assocInc);
-    BasicCDConfStrategy cdChecker =
-        new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
-
-    // check conformance
-    return cdChecker.checkConformance(concreteCD);
   }
 }
