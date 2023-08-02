@@ -87,6 +87,10 @@ public class CDGeneratorTool extends CD4CodeTool {
         return;
       }
 
+      if (cmd.hasOption("v")) {
+        printVersion();
+      }
+
       Log.init();
       CD4CodeMill.init();
 
@@ -108,26 +112,15 @@ public class CDGeneratorTool extends CD4CodeTool {
       }
 
       Collection<ICD4CodeArtifactScope> scopes =
-          asts.stream()
-              .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
-              .collect(Collectors.toList());
+        asts.stream()
+          .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
+          .collect(Collectors.toList());
       asts.forEach(this::completeSymbolTable);
-
-      if (cmd.hasOption("v")) {
-        printVersion();
-      }
 
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         asts.forEach(this::runCoCos);
         Log.enableFailQuick(true);
-      }
-
-      if (cmd.hasOption("s")) {
-        for (ICD4CodeArtifactScope scope : scopes) {
-
-          this.storeSymTab(scope, cmd.getOptionValue("s"));
-        }
       }
 
       String fieldFromRole = cmd.hasOption("fieldfromrole") ? cmd.getOptionValue("fieldfromrole") : "navigable";
@@ -154,6 +147,12 @@ public class CDGeneratorTool extends CD4CodeTool {
         case "none":
         default:
           Log.error(String.format("0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.", fieldFromRole));
+      }
+
+      if (cmd.hasOption("s")) {
+        for (ICD4CodeArtifactScope scope : scopes) {
+          this.storeSymTab(scope, cmd.getOptionValue("s"));
+        }
       }
 
       if (cmd.hasOption("o")) {

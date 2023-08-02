@@ -13,7 +13,7 @@ classdiagram Example {
     boolean foo(int i);
   }
 
-  association A <-> B;
+  association [1] A -> B [*];
 
   interface C;
 
