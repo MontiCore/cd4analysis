@@ -153,7 +153,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         }
         case "none":
         default:
-          // do nothing
+          Log.error(String.format("0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.", fieldFromRole));
       }
 
       if (cmd.hasOption("o")) {
