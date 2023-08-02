@@ -5,9 +5,32 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import org.junit.Test;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
+
+  //@Test
+  public void ini(){
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
+
+    ASTCDClass classC = CDTestHelper.getClass("D", compilationUnitNew.getCDDefinition());
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    syntaxDiff.getHelper().doSmt(classC);
+    //syntaxDiff.doSmt(classC);
+    System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
+    System.out.println("------------");
+    for (AssocStruct astcdClass : syntaxDiff.getHelper().getSrcMap().get(classC)){
+      System.out.print(Syn2SemDiffHelper.getConnectedClasses(astcdClass.getUnmodifiedAssoc(), compilationUnitNew).a.getName() + "" + Syn2SemDiffHelper.getConnectedClasses(astcdClass.getUnmodifiedAssoc(), compilationUnitNew).b.getName());
+    }
+    //System.out.println(syntaxDiff.getHelper().getNotInstanClassesSrc());
+    System.out.println("------------");
+    System.out.println(syntaxDiff.getHelper().getNotInstanClassesTgt());
+  }
 
   //@Test
   public void testCD1(){
@@ -23,7 +46,10 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
     System.out.println("------------");
-    System.out.println(syntaxDiff.getHelper().getNotInstanClassesSrc());
+    for (ASTCDClass astcdClass : syntaxDiff.getHelper().getNotInstanClassesSrc()){
+      System.out.print(astcdClass.getName());
+    }
+    //System.out.println(syntaxDiff.getHelper().getNotInstanClassesSrc());
     System.out.println("------------");
     System.out.println(syntaxDiff.getHelper().getNotInstanClassesTgt());
   }
