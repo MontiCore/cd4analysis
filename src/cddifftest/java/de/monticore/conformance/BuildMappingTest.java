@@ -21,7 +21,12 @@ public class BuildMappingTest extends ConfAbstractTest {
   public void init() {
     parseModels("Concrete.cd", "Reference.cd");
     checker =
-        new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING, ALLOW_CARD_RESTRICTION));
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                ALLOW_CARD_RESTRICTION,
+                SRC_TARGET_ASSOC_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 
