@@ -10,5 +10,5 @@ classdiagram Reference {
     String id;
   }
 
-  association  Account -> (items)Item;
+  association hasItems Account -> (items)Item;
 }
