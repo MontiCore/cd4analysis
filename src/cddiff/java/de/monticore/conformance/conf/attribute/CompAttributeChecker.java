@@ -8,23 +8,31 @@ import java.util.List;
 
 public class CompAttributeChecker implements AttributeChecker {
   protected String mapping;
+  protected ASTCDType conType;
 
-  protected EqNameAttributeChecker eqNameAttrChecker;
-  protected STNamedAttributeChecker stNameAttrChecker;
+  protected ASTCDType refType;
+
+  List<AttributeChecker> attributeCheckers = new ArrayList<>();
 
   public CompAttributeChecker(String mapping) {
-    eqNameAttrChecker = new EqNameAttributeChecker(mapping);
-    stNameAttrChecker = new STNamedAttributeChecker(mapping);
     this.mapping = mapping;
+  }
+
+  public void addIncStrategy(AttributeChecker checker) {
+    attributeCheckers.add(checker);
   }
 
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
-    List<ASTCDAttribute> refElements =
-        new ArrayList<>(stNameAttrChecker.getMatchedElements(concrete));
-    if (refElements.isEmpty()) {
-      refElements.addAll(eqNameAttrChecker.getMatchedElements(concrete));
+    List<ASTCDAttribute> refElements = new ArrayList<>();
+
+    for (AttributeChecker checker : attributeCheckers) {
+      refElements.addAll(checker.getMatchedElements(concrete));
+      if (!refElements.isEmpty()) {
+        return refElements;
+      }
     }
+
     return refElements;
   }
 
@@ -35,23 +43,23 @@ public class CompAttributeChecker implements AttributeChecker {
 
   @Override
   public ASTCDType getReferenceType() {
-    return eqNameAttrChecker.getReferenceType();
+    return refType;
   }
 
   @Override
   public void setReferenceType(ASTCDType refType) {
-    eqNameAttrChecker.setReferenceType(refType);
-    stNameAttrChecker.setReferenceType(refType);
+    this.refType = refType;
+    attributeCheckers.forEach(checker -> checker.setReferenceType(refType));
   }
 
   @Override
   public ASTCDType getConcreteType() {
-    return eqNameAttrChecker.getConcreteType();
+    return conType;
   }
 
   @Override
   public void setConcreteType(ASTCDType conType) {
-    eqNameAttrChecker.setConcreteType(conType);
-    stNameAttrChecker.setConcreteType(conType);
+    this.conType = conType;
+    attributeCheckers.forEach(checker -> checker.setConcreteType(conType));
   }
 }

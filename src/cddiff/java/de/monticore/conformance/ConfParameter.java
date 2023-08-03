@@ -2,6 +2,9 @@ package de.monticore.conformance;
 
 public enum ConfParameter {
   STEREOTYPE_MAPPING("Enable mapping with stereotypes"),
+  SRC_TARGET_ASSOC_MAPPING(
+      "when enable a concrete association implicitly incarnate a reference association when the reference and the roles"
+          + "match according to the direction"),
   NAME_MAPPING(
       "Enable mapping with names, element of the concrete and the reference model with the same name will be map together without explicit mapping "),
   INHERITANCE(

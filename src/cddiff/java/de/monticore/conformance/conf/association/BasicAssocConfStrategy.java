@@ -20,8 +20,8 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
   protected boolean allowCardRestriction;
 
   public BasicAssocConfStrategy(
-      ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      ASTCDCompilationUnit refCD,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc,
       boolean allowCardRestriction) {
