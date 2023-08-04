@@ -179,7 +179,7 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
     if (srcTypeSymbol.isPresent() && tgtTypeSymbol.isPresent()) {
       ASTCDType srcType = srcTypeSymbol.get().getAstNode();
       ASTCDType tgtType = tgtTypeSymbol.get().getAstNode();
-      return typeMatcher.isMatched(tgtType, srcType);
+      return typeMatcher.isMatched(srcType, tgtType);
     }
     Log.error("Could not resolve match source classes!");
     return false;

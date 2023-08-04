@@ -13,12 +13,12 @@ import java.util.Set;
 public class StrictDeepAssocConfStrategy extends BasicAssocConfStrategy {
 
   public StrictDeepAssocConfStrategy(
-      ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      ASTCDCompilationUnit refCD,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc,
       boolean allowCardRefinement) {
-    super(refCD, conCD, typeInc, assocInc, allowCardRefinement);
+    super(conCD, refCD, typeInc, assocInc, allowCardRefinement);
   }
 
   @Override

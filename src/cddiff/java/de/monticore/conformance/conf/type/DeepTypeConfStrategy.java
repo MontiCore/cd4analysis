@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
   public DeepTypeConfStrategy(
-      ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      ASTCDCompilationUnit refCD,
       AttributeChecker attributeChecker,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc) {
-    super(refCD, conCD, attributeChecker, typeInc, assocInc);
+    super(conCD, refCD, attributeChecker, typeInc, assocInc);
   }
 
   @Override
