@@ -9,6 +9,6 @@ classdiagram CD3{
 
   class D{}
 
-  association A -> (r) B [*];
-  association C <-> (r) D [0..1];
+  association up A -> (r) B [*];
+  association down C <-> (r) D [0..1];
 }

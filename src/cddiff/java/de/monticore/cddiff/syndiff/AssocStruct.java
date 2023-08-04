@@ -18,6 +18,14 @@ public class AssocStruct {
     this.unmodifiedAssoc = association;
   }
 
+  public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side, boolean isSuperAssoc) {
+    this.association = association;
+    this.direction = direction;
+    this.side = side;
+    this.unmodifiedAssoc = association;
+    this.isSuperAssoc = isSuperAssoc;
+  }
+
   public ASTCDAssociation getAssociation() {
     return association;
   }

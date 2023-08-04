@@ -278,6 +278,11 @@ public class Syn2SemDiffHelper {
               && association.getCDAssocDir().isDefinitiveNavigableRight())){
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+              if (copyAssoc.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
+                char firstChar = astcdClass.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
+              }
               copyAssoc.setName("");
               if (!copyAssoc.getLeft().isPresentCDCardinality()){
                 copyAssoc.getLeft().setCDCardinality(new ASTCDCardMult());
@@ -301,14 +306,19 @@ public class Syn2SemDiffHelper {
 //                .setRight(association.getRight())
 //                .build();
               if (association.getCDAssocDir().isBidirectional()) {
-                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
+                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left, true));
               }
               else {
-                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left));
+                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left, true));
               }
             } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+              if (copyAssoc.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
+                char firstChar = astcdClass.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
+              }
               copyAssoc.setName("");
               if (!copyAssoc.getLeft().isPresentCDCardinality()){
                 copyAssoc.getLeft().setCDCardinality(new ASTCDCardMult());
@@ -332,10 +342,10 @@ public class Syn2SemDiffHelper {
 //                .setRight(rightSideBuilder.build())
 //                .build();
               if (association.getCDAssocDir().isBidirectional()) {
-                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right));
+                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right, true));
               }
               else {
-                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.RightToLeft, ClassSide.Right));
+                getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.RightToLeft, ClassSide.Right, true));
               }
             }
           }
@@ -354,19 +364,12 @@ public class Syn2SemDiffHelper {
             if ((pair.a.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
               ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
               //change left side from superClass to subClass
-              ASTCDAssocLeftSideBuilder leftSideBuilder = CD4CodeMill.cDAssocLeftSideBuilder()
-                .setModifier(association.getLeft().getModifier())
-                .setCDCardinality(association.getLeft().getCDCardinality())
-                .setCDRole(association.getLeft().getCDRole())
-                .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-
-              ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
-                .setCDAssocType(association.getCDAssocType())
-                .setModifier(association.getModifier())
-                .setName(association.getName())
-                .setLeft(leftSideBuilder.build())
-                .setRight(association.getRight())
-                .build();
+              ASTCDAssociation assocForSubClass = association.deepClone();
+              if (assocForSubClass.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
+                char firstChar = astcdClass.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                assocForSubClass.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
+              }
               assocForSubClass.setName("");
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
                 assocForSubClass.getLeft().setCDCardinality(new ASTCDCardMult());
@@ -375,27 +378,21 @@ public class Syn2SemDiffHelper {
                 association.getRight().setCDCardinality(new ASTCDCardMult());
               }
               if (association.getCDAssocDir().isBidirectional()) {
-                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Left));
+                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Left, true));
               }
               else {
-                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.LeftToRight, ClassSide.Left));
+                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.LeftToRight, ClassSide.Left, true));
               }
             } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
               //change right side from superClass to subclass
-              ASTCDAssocRightSideBuilder rightSideBuilder = CD4CodeMill.cDAssocRightSideBuilder()
-                .setModifier(association.getRight().getModifier())
-                .setCDCardinality(association.getRight().getCDCardinality())
-                .setCDRole(association.getRight().getCDRole())
-                .setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-
-              ASTCDAssociation assocForSubClass = builder.setCDAssocDir(association.getCDAssocDir())
-                .setCDAssocType(association.getCDAssocType())
-                .setModifier(association.getModifier())
-                .setName(association.getName())
-                .setLeft(association.getLeft())
-                .setRight(rightSideBuilder.build())
-                .build();
+              ASTCDAssociation assocForSubClass = association.deepClone();
+              if (assocForSubClass.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
+                char firstChar = astcdClass.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                assocForSubClass.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
+              }
+              assocForSubClass.setName("");
               //TODO: problem if I use the same datastructure for composition
               //maybe add !...isComposition()
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
@@ -405,10 +402,10 @@ public class Syn2SemDiffHelper {
                 association.getRight().setCDCardinality(new ASTCDCardMult());
               }
               if (association.getCDAssocDir().isBidirectional()) {
-                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Right));
+                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Right, true));
               }
               else {
-                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.RightToLeft, ClassSide.Right));
+                getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.RightToLeft, ClassSide.Right, true));
               }
             }
           }
