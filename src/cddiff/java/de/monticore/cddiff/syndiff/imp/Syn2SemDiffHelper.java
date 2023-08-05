@@ -14,10 +14,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.AssocStruct;
 import edu.mit.csail.sdg.alloy4.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
@@ -37,9 +34,9 @@ public class Syn2SemDiffHelper {
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
-  private List<ASTCDClass> notInstanClassesSrc = new ArrayList<>();
+  private Set<ASTCDClass> notInstanClassesSrc = new HashSet<>();
 
-  private List<ASTCDClass> notInstanClassesTgt = new ArrayList<>();
+  private Set<ASTCDClass> notInstanClassesTgt = new HashSet<>();
 
   private ASTCDCompilationUnit srcCD;
 
@@ -69,19 +66,19 @@ public class Syn2SemDiffHelper {
     this.tgtCD = tgtCD;
   }
 
-  public List<ASTCDClass> getNotInstanClassesSrc() {
+  public Set<ASTCDClass> getNotInstanClassesSrc() {
     return notInstanClassesSrc;
   }
 
-  public void setNotInstanClassesSrc(List<ASTCDClass> notInstanClassesSrc) {
+  public void setNotInstanClassesSrc(Set<ASTCDClass> notInstanClassesSrc) {
     this.notInstanClassesSrc = notInstanClassesSrc;
   }
 
-  public List<ASTCDClass> getNotInstanClassesTgt() {
+  public Set<ASTCDClass> getNotInstanClassesTgt() {
     return notInstanClassesTgt;
   }
 
-  public void setNotInstanClassesTgt(List<ASTCDClass> notInstanClassesTgt) {
+  public void setNotInstanClassesTgt(Set<ASTCDClass> notInstanClassesTgt) {
     this.notInstanClassesTgt = notInstanClassesTgt;
   }
 

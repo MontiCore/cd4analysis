@@ -352,20 +352,23 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return matchedClass;
   }
 
-  public Set<Pair<ASTCDClass, ASTCDClass>> deletedClasses(){
-    Set<Pair<ASTCDClass, ASTCDClass>> diff = new HashSet<>();
+  public Set<Pair<ASTCDClass, Set<ASTCDClass>>> deletedClasses(){
+    Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
     for (InheritanceDiff struc : deletedInheritance){
       List<ASTCDClass> subclasses = struc.getOldDirectSuper();
+      Set<ASTCDClass> currentDiff = new HashSet<>();
       for (ASTCDClass subClass : subclasses){
         if (isClassDeleted(struc.getAstcdClasses().a, subClass)){
-          diff.add(new Pair<>(struc.getAstcdClasses().a, subClass));
+          currentDiff.add(subClass);
         }
+      }
+      if (!currentDiff.isEmpty()){
+        diff.add(new Pair<>(struc.getAstcdClasses().a, currentDiff));
       }
     }
     return diff;
   }
 
-  //TODO
   public boolean isClassDeleted(ASTCDClass astcdClass, ASTCDClass subClass){
     //check if a deleted class brings a semantic difference
     //check if all subclasses have the attributes from this class from tgt tgtCD
@@ -420,6 +423,30 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
     return null;
+  }
+
+  public Set<Pair<ASTCDClass, Set<ASTCDClass>>> addedInheritance(){
+    Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
+    for (InheritanceDiff struc : addedInheritance){
+      List<ASTCDClass> subclasses = struc.getNewDirectSuper();
+      Set<ASTCDClass> currentDiff = new HashSet<>();
+      for (ASTCDClass subClass : subclasses){
+        if (isInheritanceAdded(struc.getAstcdClasses().a, subClass)){
+          currentDiff.add(subClass);
+        }
+      }
+      if (!currentDiff.isEmpty()){
+        diff.add(new Pair<>(struc.getAstcdClasses().a, currentDiff));
+      }
+    }
+    return diff;
+  }
+
+  private boolean isInheritanceAdded(ASTCDClass astcdClass, ASTCDClass subClass){
+    //reversed case
+    //check if new attributes existed in the given subclass - use function from CDTypeDiff
+    //check if the associations also existed(are subtypes of the associations) in the tgtMap - same subfunction from isClassDeleted
+    return false;
   }
 
   public Pair<ASTCDAssociation, List<ASTCDClass>> deletedAssoc(ASTCDAssociation astcdAssociation){
@@ -904,13 +931,12 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
     for (ASTCDClass astcdClass : srcToDelete){
       helper.getSrcMap().removeAll(astcdClass);
+      for (ASTCDClass subClass : Syn2SemDiffHelper.getSpannedInheritance(srcCD, astcdClass)){
+        helper.getSrcMap().removeAll(subClass);
+      }
     }
     for (Pair<ASTCDClass, ASTCDRole> pair : srcAssocsToDelete){
       deleteAssocsFromSrc(pair.a, pair.b);
-    }
-    for (Pair<AssocStruct, AssocStruct> pair : srcAssocsToMerge){
-      setBiDirRoleName(pair.a, pair.b);
-      mergeAssocs(pair.a, pair.b);
     }
     for (DeleteStruc pair : srcAssocsToMergeWithDelete){
       setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
@@ -919,16 +945,14 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (DeleteStruc pair : srcAssocsToMergeWithDelete){
       helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
     }
-
     for (ASTCDClass astcdClass : srcToDelete){
       helper.getTrgMap().removeAll(astcdClass);
+      for (ASTCDClass subClass : Syn2SemDiffHelper.getSpannedInheritance(tgtCD, astcdClass)){
+        helper.getTrgMap().removeAll(subClass);
+      }
     }
     for (Pair<ASTCDClass, ASTCDRole> pair : tgtAssocsToDelete){
       deleteAssocsFromTgt(pair.a, pair.b);
-    }
-    for (Pair<AssocStruct, AssocStruct> pair : tgtAssocsToMerge){
-      setBiDirRoleName(pair.a, pair.b);
-      mergeAssocs(pair.a, pair.b);
     }
     for (DeleteStruc pair : tgtAssocsToMergeWithDelete){
       setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
