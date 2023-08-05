@@ -352,37 +352,61 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return matchedClass;
   }
 
+  public Set<Pair<ASTCDClass, ASTCDClass>> deletedClasses(){
+    Set<Pair<ASTCDClass, ASTCDClass>> diff = new HashSet<>();
+    for (InheritanceDiff struc : deletedInheritance){
+      List<ASTCDClass> subclasses = struc.getOldDirectSuper();
+      for (ASTCDClass subClass : subclasses){
+        if (isClassDeleted(struc.getAstcdClasses().a, subClass)){
+          diff.add(new Pair<>(struc.getAstcdClasses().a, subClass));
+        }
+      }
+    }
+    return diff;
+  }
+
   //TODO
-  public boolean isClassDeleted(ASTCDClass astcdClass){
+  public boolean isClassDeleted(ASTCDClass astcdClass, ASTCDClass subClass){
     //check if a deleted class brings a semantic difference
     //check if all subclasses have the attributes from this class from tgt tgtCD
     //check if there were outgoing(or bidirectional) associations that weren't zero assocs and check if all subclasses have them
     Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getAllAttr(astcdClass);
-    List<ASTCDClass> subclasses = Syn2SemDiffHelper.getSpannedInheritance(tgtCD, astcdClass);
-    for (ASTCDClass classToCheck : subclasses) {
-      ASTCDClass matchedClass = findMatchingClassSrc(classToCheck);
-      if (matchedClass != null) {
-        for (ASTCDAttribute attribute : allAtts.b) {
-          boolean conditionSatisfied = false; // Track if the condition is satisfied
-          if (!helper.getNotInstanClassesSrc().contains(matchedClass)
-            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, matchedClass)) {
-            Set<ASTCDType> astcdClassList = getAllSuper(matchedClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
-            for (ASTCDType type : astcdClassList) {
-              if (type instanceof ASTCDClass
-                && !helper.getNotInstanClassesSrc().contains((ASTCDClass) type)) {
-                if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
-                  conditionSatisfied = true; // Set the flag to true if the condition holds
-                  break;
-                }
+    ASTCDClass matchedClass = findMatchingClassSrc(subClass);
+    if (matchedClass != null) {
+      for (ASTCDAttribute attribute : allAtts.b) {
+        boolean conditionSatisfied = false; // Track if the condition is satisfied
+        if (!helper.getNotInstanClassesSrc().contains(matchedClass)
+          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, matchedClass)) {
+          Set<ASTCDType> astcdClassList = getAllSuper(matchedClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+          for (ASTCDType type : astcdClassList) {
+            if (type instanceof ASTCDClass
+              && !helper.getNotInstanClassesSrc().contains((ASTCDClass) type)) {
+              if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
+                conditionSatisfied = true; // Set the flag to true if the condition holds
+                break;
               }
             }
-          } else {
-            conditionSatisfied = true;
           }
-          if (!conditionSatisfied) {//found a subclass that doesn't have this attribute
-            return true;// Break out of the first loop if the condition is satisfied
-          }
+        } else {
+          conditionSatisfied = true;
         }
+        if (!conditionSatisfied) {//found a subclass that doesn't have this attribute
+          return true;// Break out of the first loop if the condition is satisfied
+        }
+      }
+    }
+    boolean isContained = false;
+    for (AssocStruct assocStruct : getHelper().getSrcMap().get(astcdClass)){
+      for (AssocStruct baseAssoc : getHelper().getSrcMap().get(subClass)){
+        if (Syn2SemDiffHelper.sameAssociationType(baseAssoc.getAssociation(), assocStruct.getAssociation())
+          || Syn2SemDiffHelper.sameAssociationTypeInReverse(baseAssoc.getAssociation(), assocStruct.getAssociation())){
+          isContained = true;
+        }
+      }
+      if (!isContained){
+        return true;
+      } else {
+        isContained = false;
       }
     }
     //check if there were outgoing(or bidirectional) associations that weren't zero assocs and check if all subclasses have them
