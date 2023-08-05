@@ -14,7 +14,7 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .NamedAssociations CD
+  CD
 end legend
 class One
 class Two

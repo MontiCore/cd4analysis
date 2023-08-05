@@ -14,11 +14,16 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .QuantifiedNamedAssociations CD
+  CD
 end legend
 class One
 class Two
 class Three
 class Four
+One --* Two : a
+Two *--* Three : c
+Three *-- Four : f
+Four --* One
+Two --* One : l
 center footer generated with MontiCore using PlantUML
 @enduml

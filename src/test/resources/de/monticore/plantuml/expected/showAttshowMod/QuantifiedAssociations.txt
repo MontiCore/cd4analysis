@@ -16,10 +16,19 @@ hide empty members
 legend top right
   CD
 end legend
-class A << abstract >>
-class B extends A
-class C extends A
-class D extends B
-class E extends B
+class One {
+  {field} String name
+  {field} int number
+  {field} boolean exists
+}
+class Two {
+  {field} String name
+}
+class Three {
+  {field} String name
+}
+class Four {
+  {field} String name
+}
 center footer generated with MontiCore using PlantUML
 @enduml

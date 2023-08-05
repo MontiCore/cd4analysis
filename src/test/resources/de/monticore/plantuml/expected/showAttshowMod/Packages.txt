@@ -16,10 +16,14 @@ hide empty members
 legend top right
   CD
 end legend
-class A << abstract >>
-class B extends A
-class C extends A
-class D extends B
-class E extends B
+namespace someOtherPackage {
+  class A {
+    {field} int a
+  }
+  class B
+}
+class C {
+  {field} public someOtherPackage.A c
+}
 center footer generated with MontiCore using PlantUML
 @enduml

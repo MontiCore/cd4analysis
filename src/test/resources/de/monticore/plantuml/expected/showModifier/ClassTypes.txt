@@ -14,19 +14,18 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .ClassTypes CD
+  CD
 end legend
-class Abstrakt
-class Finale
-class Statische
-class Lokal
+class Abstrakt << abstract >>
+class Finale << final >>
+class Statische << static >>
+class Lokal << local >>
 class Public
-class Protected
-class PAF
-class RO
-class Derived
-class PDR
+class Protected << protected >>
+class PAF << private final abstract >>
+class RO << readonly >>
+class Derived << derived >>
+class PDR << public derived readonly >>
 interface Interface
 center footer generated with MontiCore using PlantUML
 @enduml
-

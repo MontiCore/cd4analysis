@@ -16,10 +16,19 @@ hide empty members
 legend top right
   CD
 end legend
-class A << abstract >>
-class B extends A
-class C extends A
-class D extends B
-class E extends B
+class A {
+  {field} private int a
+}
+class B {
+  {field} protected int b
+}
+class C {
+  {field} public int c
+}
+class D {
+  {field} private int a
+  {field} protected int b
+  {field} public int c
+}
 center footer generated with MontiCore using PlantUML
 @enduml

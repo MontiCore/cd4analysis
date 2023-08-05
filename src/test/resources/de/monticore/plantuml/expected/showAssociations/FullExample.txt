@@ -14,7 +14,7 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .FullExample CD
+  CD
 end legend
 class Person
 class Address
@@ -30,5 +30,9 @@ enum HappinessLevel {
 }
 class BirthCertificate
 class Hospital
+Person *--* Address : address
+Hospital --* Person : hires
+Person --* Hospital : worksAt
+Hospital --* Address
 center footer generated with MontiCore using PlantUML
 @enduml

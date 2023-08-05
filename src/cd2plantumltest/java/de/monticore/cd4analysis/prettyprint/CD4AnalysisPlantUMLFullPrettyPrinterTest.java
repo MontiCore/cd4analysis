@@ -215,6 +215,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     })
   public void modelWithOnlyShowAssociations(String input) throws IOException {
     plantUMLConfig = new PlantUMLConfig(false, true, false, false, false);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
     String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
@@ -267,6 +269,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     })
   public void modelWithOnlyShowRoles(String input) throws IOException {
     plantUMLConfig = new PlantUMLConfig(false, false, true, false, false);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/showRoles/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
@@ -317,6 +321,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     })
   public void modelWithOnlyShowCardinalities(String input) throws IOException {
     plantUMLConfig = new PlantUMLConfig(false, false, false, true, false);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/showCardinalities/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
@@ -366,11 +372,67 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
       "QuantifiedNamedAssociations"
     })
   public void modelWithOnlyShowModifier(String input) throws IOException {
-    plantUMLConfig = new PlantUMLConfig(true, false, false, false, true);
+    plantUMLConfig = new PlantUMLConfig(false, false, false, false, true);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
     String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/showModifier/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parseCDCompilationUnit(filePath);
+
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
+
+    String output = printer.prettyprint(node);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(expected,output);
+  }
+
+  /**
+   * Test to check if CD4A models are printed correctly when using a PlantUmlConfig
+   * where showModifier and showAtt are set to true but showAssoc, showRoles and showCard
+   * are set to false
+   * @param input name of the CD4A model that is tested in a run
+   * @throws IOException
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void modelWithShowAttShowModifier(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(true, false, false, false, true);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
+
+    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttshowMod/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();

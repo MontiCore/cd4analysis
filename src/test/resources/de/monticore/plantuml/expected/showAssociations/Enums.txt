@@ -14,7 +14,7 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .Enums CD
+  CD
 end legend
 enum State {
   DEAD

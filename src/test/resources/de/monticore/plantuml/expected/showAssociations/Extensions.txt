@@ -14,7 +14,7 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .Extensions CD
+  CD
 end legend
 class A
 class B extends A

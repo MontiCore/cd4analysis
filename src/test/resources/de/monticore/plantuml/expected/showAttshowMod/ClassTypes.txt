@@ -16,17 +16,22 @@ hide empty members
 legend top right
   CD
 end legend
-class Abstrakt
-class Finale
-class Statische
-class Lokal
+class Abstrakt << abstract >> {
+  {field} boolean abstrakt
+}
+class Finale << final >> {
+  {field} String ohoho
+}
+class Statische << static >> {
+  {field} int spannung
+}
+class Lokal << local >>
 class Public
-class Protected
-class PAF
-class RO
-class Derived
-class PDR
+class Protected << protected >>
+class PAF << private final abstract >>
+class RO << readonly >>
+class Derived << derived >>
+class PDR << public derived readonly >>
 interface Interface
 center footer generated with MontiCore using PlantUML
 @enduml
-
