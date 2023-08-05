@@ -38,7 +38,7 @@ class Child extends Person {
 
 enum HappinessLevel { NONEXISTENT, LOW, MEDIUM, HIGH, EXTREM; }
 
-private readonly class Birthcertificate {
+private readonly class BirthCertificate {
     java.util.Date birthday;
     final String ausstellungsdatum;
 

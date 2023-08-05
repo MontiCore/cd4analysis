@@ -12,7 +12,6 @@
 </style>
 hide circle
 hide empty members
-
   skinparam classAttributeIconSize 0
 legend top right
   .AllModifiers CD

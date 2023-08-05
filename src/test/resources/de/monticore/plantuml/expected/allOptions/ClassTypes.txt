@@ -14,7 +14,7 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .ClassTypes CD
+  CD
 end legend
 class Abstrakt {
   {field} boolean abstrakt
@@ -31,7 +31,8 @@ class Protected
 class PAF
 class RO
 class Derived
-class PDR
+class
 interface Interface
 center footer generated with MontiCore using PlantUML
 @enduml
+

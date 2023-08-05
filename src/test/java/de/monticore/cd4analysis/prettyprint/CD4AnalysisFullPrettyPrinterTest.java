@@ -36,8 +36,6 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
 
   @Test
   public void completeModelWithSymboltable() throws IOException {
-
-
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parse(getFilePath("cd4analysis/parser/MyLife.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
@@ -49,7 +47,6 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
     new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos().checkAll(node);
-
   }
 
 }

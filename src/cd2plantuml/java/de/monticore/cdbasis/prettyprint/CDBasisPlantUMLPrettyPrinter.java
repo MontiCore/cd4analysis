@@ -81,7 +81,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void traverse(ASTCDDefinition node) {
     println("legend top right");
     indent();
-    println(node.getDefaultPackageName() + "." + node.getName() + " CD");
+    println("CD");
     unindent();
     println("end legend");
 
@@ -146,13 +146,16 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void visit(ASTCDClass node) {
     nameStack.push(node.getName());
-
     printComment(node);
 
-    /*if (node.getModifier().isStatic() || node.getModifier().isAbstract()) {
-      node.getModifier().accept(getTraverser());
-    }*/
     print("class " + node.getName());
+
+    if(plantUMLConfig.getShowModifier() && hasModifier(node.getModifier())){
+      print(" << ");
+      node.getModifier().accept(getTraverser());
+      print(">>");
+    }
+
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");
       print(node.getSuperclassList().stream()

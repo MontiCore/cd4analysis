@@ -14,7 +14,7 @@ hide circle
 hide empty members
   skinparam classAttributeIconSize 0
 legend top right
-  .FullExample CD
+  CD
 end legend
 class Person {
   {field} public String name
@@ -50,7 +50,7 @@ enum HappinessLevel {
   HIGH
   EXTREM
 }
-class Birthcertificate {
+class BirthCertificate << private readonly >> {
   {field} java.util.Date birthday
   {field} final String ausstellungsdatum
 }

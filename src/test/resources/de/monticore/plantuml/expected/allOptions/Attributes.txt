@@ -12,10 +12,9 @@
 </style>
 hide circle
 hide empty members
-
   skinparam classAttributeIconSize 0
 legend top right
-  .Attributes CD
+  CD
 end legend
 class Person {
   {field} public String name

@@ -32,8 +32,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
   public void initObjects() {
 
     plantUMLConfig = new PlantUMLConfig(true, true, true, true, true);
-
-
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
     p = new CD4AnalysisParser();
@@ -41,9 +39,10 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
   }
 
   /**
-   * Tests the pretty printed result of each test case against the manually created expected result.
-   * PlantUMLConfig is set to enable all options (getAtt, gettAssoc,getRoles, getCards, getModifier)
+   * Test to check the pretty printed result of each tested CD4A model against the manually created expected PlantUML result.
+   * PlantUMLConfig is set to enable all options (getAtt, getAssoc, getRoles, getCards, getModifier)
    *
+   * @param input name of the model tested in a run
    * @throws IOException
    */
   @ParameterizedTest
@@ -56,17 +55,12 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
       "Enums",
       "Extensions",
       "FullExample",
-      //"Methods",
       "NamedAssociations",
       "Packages",
       "QuantifiedAssociations",
       "QuantifiedNamedAssociations"
     })
   public void completeModel(String input) throws IOException {
-    //String input = "FullExample";
-
-    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
-
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
@@ -82,20 +76,24 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     tool.createSymbolTable(node);
 
-    PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, outputPath, plantUMLConfig);
     String output = printer.prettyprint(node);
     output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
-    //String output = Files.readString(Paths.get(outputPath));
-    //output = output.substring(output.indexOf('\n')+1).split("\r?\nPlantUML version")[0].replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Output:\n"+output);
 
     String expected = Files.readString(expectedPath, Charset.defaultCharset());
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected:\n"+expected);
 
-    Assert.assertEquals(output, expected);
+    Assert.assertEquals(expected, output);
   }
 
+  /**
+   * Tests the pretty printed result of each tested CD4A model against the manually created expected PlantUML result.
+   * PlantUMLConfig is set to disable all options (getAtt, getAssoc, getRoles, getCards, getModifier)
+   *
+   * @param input name of the CD4A model that is tested in a run
+   * @throws IOException
+   */
   @ParameterizedTest
   @ValueSource(strings =
     {"AllModifiers",
@@ -106,21 +104,18 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
       "Enums",
       "Extensions",
       "FullExample",
-      //"Methods",
       "NamedAssociations",
       "Packages",
       "QuantifiedAssociations",
       "QuantifiedNamedAssociations"
     })
-  public void ModelWithOptionsFalse(String input) throws IOException {
+  public void modelWithOptionsFalse(String input) throws IOException {
     plantUMLConfig = new PlantUMLConfig(false, false, false, false, false);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    //String input = "FullExample";
-    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
-
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/noOptions/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
-
 
     var tool = new CD4AnalysisTool();
     tool.init();
@@ -133,9 +128,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     tool.createSymbolTable(node);
 
-    PlantUMLUtil.printCD2PlantUMLLocally(astcdCompilationUnit, outputPath, plantUMLConfig);
-   // String output = printer.prettyprint(node);
-    String output = Files.readString(Paths.get(outputPath));
+    String output = printer.prettyprint(node);
     output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Output:\n "+output);
 
@@ -143,7 +136,263 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(output, expected);
+    Assert.assertEquals(expected, output);
+  }
+
+  /**
+   * Test to check if CD4A models are pretty printed correctly in PlantUML when using a PlantUmlConfig
+   * where showAtt is set to true but showModifier, showAssoc, showRoles and showCard
+   * are set to false
+   * @param input name of the CD4A model that is tested in a run
+   * @throws IOException
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void modelWithOnlyShowAtt(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(true, false, false, false, false);
+    util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
+    printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttributes/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parseCDCompilationUnit(filePath);
+
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
+
+    String output = printer.prettyprint(node);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(expected,output);
+  }
+
+  /**
+   * Test to check if CD4A models are pretty printed correctly in PlantUML when using a PlantUmlConfig
+   * where showAssoc is set to true but showAtt, showModifier, showRoles and showCard
+   * are set to false
+   * @param input name of the CD4A model that is tested in a run
+   * @throws IOException
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void modelWithOnlyShowAssociations(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(false, true, false, false, false);
+
+    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAssociations/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parseCDCompilationUnit(filePath);
+
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
+
+    String output = printer.prettyprint(node);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(expected,output);
+  }
+
+  /**
+   * Test to check if CD4A models are printed correctly when using a PlantUmlConfig
+   * where showRoles is set to true but showAtt, showAssoc, showModifier and showCard
+   * are set to false
+   * @param input name of the model that is tested in a run
+   * @throws IOException
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void modelWithOnlyShowRoles(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(false, false, true, false, false);
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showRoles/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parseCDCompilationUnit(filePath);
+
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
+
+    String output = printer.prettyprint(node);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(expected, output);
+  }
+
+  /**
+   * Test to check if CD4A models are printed correctly when using a PlantUmlConfig
+   * where showCard is set to true but showAtt, showAssoc, showRoles and showModifier
+   * are set to false
+   * @param input name of the CD4A model that is tested in a run
+   * @throws IOException
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void modelWithOnlyShowCardinalities(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(false, false, false, true, false);
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showCardinalities/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parseCDCompilationUnit(filePath);
+
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
+
+    String output = printer.prettyprint(node);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(expected,output);
+  }
+
+  /**
+   * Test to check if CD4A models are printed correctly when using a PlantUmlConfig
+   * where showModifier is set to true but showAtt, showAssoc, showRoles and showCard
+   * are set to false
+   * @param input name of the CD4A model that is tested in a run
+   * @throws IOException
+   */
+  @ParameterizedTest
+  @ValueSource(strings =
+    {"AllModifiers",
+      "Attributes",
+      "BasicAssociations",
+      "ClassTypes",
+      "Compositions",
+      "Enums",
+      "Extensions",
+      "FullExample",
+      "NamedAssociations",
+      "Packages",
+      "QuantifiedAssociations",
+      "QuantifiedNamedAssociations"
+    })
+  public void modelWithOnlyShowModifier(String input) throws IOException {
+    plantUMLConfig = new PlantUMLConfig(true, false, false, false, true);
+
+    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
+
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showModifier/" + input + ".txt"));
+    String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
+
+    var tool = new CD4AnalysisTool();
+    tool.init();
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parseCDCompilationUnit(filePath);
+
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    tool.createSymbolTable(node);
+
+    String output = printer.prettyprint(node);
+    output = output.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Output:\n "+output);
+
+    String expected = Files.readString(expectedPath, Charset.defaultCharset());
+    expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
+    System.out.println("Expected: \n " +expected);
+
+    Assert.assertEquals(expected,output);
   }
 
 
