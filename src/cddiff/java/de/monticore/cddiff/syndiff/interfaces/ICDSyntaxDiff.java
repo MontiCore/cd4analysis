@@ -1,8 +1,9 @@
-package de.monticore.cddiff.syndiff;
+package de.monticore.cddiff.syndiff.interfaces;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.syndiff.imp.DiffTypes;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -75,10 +76,6 @@ public interface ICDSyntaxDiff {
   void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums);
 
   void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces);
-
-  List<DiffTypes> getBaseDiff();
-
-  void setBaseDiff(List<DiffTypes> baseDiff);
 
   /**
    * Checks if an added @param astcdClass refactors the old structure. The class must be abstarct,

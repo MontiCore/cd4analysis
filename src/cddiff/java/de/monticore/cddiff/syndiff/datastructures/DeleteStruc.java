@@ -1,7 +1,6 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cddiff.syndiff.AssocStruct;
 
 public class DeleteStruc {
   private AssocStruct association;

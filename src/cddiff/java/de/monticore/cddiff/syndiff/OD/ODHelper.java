@@ -1,15 +1,15 @@
 package de.monticore.cddiff.syndiff.OD;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
-import de.monticore.cddiff.syndiff.AssocStruct;
-import de.monticore.cddiff.syndiff.DiffTypes;
+import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
+import de.monticore.cddiff.syndiff.imp.DiffTypes;
+import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruc;
+import de.monticore.cddiff.syndiff.datastructures.EnumStruc;
 import de.monticore.cddiff.syndiff.imp.*;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.literals.mccommonliterals._ast.ASTStringLiteralBuilder;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.*;

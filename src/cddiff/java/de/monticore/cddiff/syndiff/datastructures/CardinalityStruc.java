@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff;
+package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import edu.mit.csail.sdg.alloy4.Pair;

@@ -3,8 +3,7 @@ package de.monticore.cddiff.syndiff.imp;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDMember;
-import de.monticore.cddiff.syndiff.DiffTypes;
-import de.monticore.cddiff.syndiff.ICDMemberDiff;
+import de.monticore.cddiff.syndiff.interfaces.ICDMemberDiff;
 import de.monticore.prettyprint.IndentPrinter;
 
 import java.util.Arrays;

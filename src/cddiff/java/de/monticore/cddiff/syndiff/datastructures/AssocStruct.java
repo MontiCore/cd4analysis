@@ -1,8 +1,8 @@
-package de.monticore.cddiff.syndiff;
+package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cddiff.syndiff.imp.AssocDirection;
-import de.monticore.cddiff.syndiff.imp.ClassSide;
+import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
+import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 
 public class AssocStruct {
   ASTCDAssociation association;
