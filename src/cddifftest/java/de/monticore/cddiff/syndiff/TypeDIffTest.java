@@ -13,8 +13,6 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
-
 public class TypeDIffTest extends CDDiffTestBasis {
 
   //TODO: add test for added/deleted inheritance
@@ -201,7 +199,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     // Invoke the method
     System.out.println(typeDiff.minDiffWitness(aNew).getName());
-    List<Pair<ASTCDClass, ASTCDAttribute>> result = typeDiff.findMemberDiff(memberDiff);
+    Pair<ASTCDClass, ASTCDAttribute> result = typeDiff.findMemberDiff(memberDiff);
 
     // Assert the result
     System.out.println(result);

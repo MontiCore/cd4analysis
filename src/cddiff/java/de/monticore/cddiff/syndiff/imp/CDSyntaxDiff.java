@@ -35,8 +35,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   private List<ASTCDEnum> deletedEnums;
   private List<ASTCDAssociation> addedAssocs;
   private List<ASTCDAssociation> deletedAssocs;
-  private List<InheritanceDiff> addedInheritance;
-  private List<InheritanceDiff> deletedInheritance;
+  private List<Pair<ASTCDClass, List<ASTCDClass>>> addedInheritance;
+  private List<Pair<ASTCDClass, List<ASTCDClass>>> deletedInheritance;
   private List<Pair<ASTCDClass, ASTCDClass>> matchedClasses;
   private List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums;
   private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
@@ -205,16 +205,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     this.deletedAssocs = deletedAssocs;
   }
 
-  public List<InheritanceDiff> getAddedInheritance() {
+  public List<Pair<ASTCDClass, List<ASTCDClass>>> getAddedInheritance() {
     return addedInheritance;
   }
-  public void setAddedInheritance(List<InheritanceDiff> addedInheritance) {
+  public void setAddedInheritance(List<Pair<ASTCDClass, List<ASTCDClass>>> addedInheritance) {
     this.addedInheritance = addedInheritance;
   }
-  public List<InheritanceDiff> getDeletedInheritance() {
+  public List<Pair<ASTCDClass, List<ASTCDClass>>> getDeletedInheritance() {
     return deletedInheritance;
   }
-  public void setDeletedInheritance(List<InheritanceDiff> deletedInheritance) {
+  public void setDeletedInheritance(List<Pair<ASTCDClass, List<ASTCDClass>>> deletedInheritance) {
     this.deletedInheritance = deletedInheritance;
   }
 
@@ -304,16 +304,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   public Set<Pair<ASTCDClass, Set<ASTCDClass>>> deletedClasses(){
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
-    for (InheritanceDiff struc : deletedInheritance){
-      List<ASTCDClass> superClasses = struc.getOldDirectSuper();
+    for (Pair<ASTCDClass, List<ASTCDClass>> struc : deletedInheritance){
+      List<ASTCDClass> superClasses = struc.b;
       Set<ASTCDClass> currentDiff = new HashSet<>();
       for (ASTCDClass superClass : superClasses){
-        if (isClassDeleted(struc.getAstcdClasses().a, struc.getAstcdClasses().a)){
+        if (isClassDeleted(struc.a, struc.a)){
           currentDiff.add(superClass);
         }
       }
       if (!currentDiff.isEmpty()){
-        diff.add(new Pair<>(struc.getAstcdClasses().a, currentDiff));
+        diff.add(new Pair<>(struc.a, currentDiff));
       }
     }
     return diff;
@@ -369,22 +369,22 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
 
   public Set<Pair<ASTCDClass, Set<ASTCDClass>>> addedInheritance(){
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
-    for (InheritanceDiff struc : addedInheritance){
-      List<ASTCDClass> subclasses = struc.getNewDirectSuper();
+    for (Pair<ASTCDClass, List<ASTCDClass>> struc : addedInheritance){
+      List<ASTCDClass> subclasses = struc.b;
       Set<ASTCDClass> currentDiff = new HashSet<>();
       for (ASTCDClass subClass : subclasses){
-        if (isInheritanceAdded(struc.getAstcdClasses().a, subClass)){
+        if (isInheritanceAdded(struc.a, subClass)){
           currentDiff.add(subClass);
         }
       }
       if (!currentDiff.isEmpty()){
-        diff.add(new Pair<>(struc.getAstcdClasses().a, currentDiff));
+        diff.add(new Pair<>(struc.a, currentDiff));
       }
     }
     return diff;
   }
 
-  private boolean isInheritanceAdded(ASTCDClass astcdClass, ASTCDClass subClass) {
+  public boolean isInheritanceAdded(ASTCDClass astcdClass, ASTCDClass subClass) {
     //reversed case
     //check if new attributes existed in the given subclass - use function from CDTypeDiff
     //check if the associations also existed(are subtypes of the associations) in the tgtMap - same subfunction from isClassDeleted
@@ -433,6 +433,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return false;
   }
 
+  //TODO: look again at added/deleted assocs for missing cases
   public Pair<ASTCDAssociation, List<ASTCDClass>> deletedAssoc(ASTCDAssociation astcdAssociation){
     List<ASTCDClass> classes = new ArrayList<>();
     if (astcdAssociation.getLeft().isPresentCDCardinality()){
@@ -1092,17 +1093,17 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
-  public List<Pair<ASTCDClass, Set<ASTCDAttribute>>> allNewAttributes(){
-    List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list = new ArrayList<>();
-    for (InheritanceDiff inheritanceDiff : addedInheritance){
-      Pair<ASTCDClass, Set<ASTCDAttribute>> pair = newAttributes(inheritanceDiff);
-      if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)
-        && !pair.b.isEmpty()){
-        list.add(pair);
-      }
-    }
-    return mergeSets(list);
-  }
+//  public List<Pair<ASTCDClass, Set<ASTCDAttribute>>> allNewAttributes(){
+//    List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list = new ArrayList<>();
+//    for (Pair<ASTCDClass, List<ASTCDClass>> inheritanceDiff : addedInheritance){
+//      Pair<ASTCDClass, Set<ASTCDAttribute>> pair = newAttributes(inheritanceDiff);
+//      if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.a)
+//        && !pair.b.isEmpty()){
+//        list.add(pair);
+//      }
+//    }
+//    return mergeSets(list);
+//  }
 
   public static List<Pair<ASTCDClass, Set<ASTCDAttribute>>> mergeSets(List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list) {
     Map<ASTCDClass, Set<ASTCDAttribute>> classMap = new HashMap<>();
@@ -1280,13 +1281,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributeList(){
-    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> deletedAttributeList(){
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses) {
       if (typeDiff.getSrcElem() instanceof ASTCDClass
         && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
         && typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
-        list.addAll(typeDiff.deletedAttributes(srcCD));
+        list.add(typeDiff.deletedAttributes(srcCD));
       }
     }
     return list;
@@ -1306,13 +1307,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttributeList() {
-    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> changedAttributeList() {
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses) {
       if (typeDiff.getSrcElem() instanceof ASTCDClass
         && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
         && typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
-        list.addAll(typeDiff.deletedAttributes(srcCD));
+        list.add(typeDiff.deletedAttributes(srcCD));
       }
     }
     return list;
@@ -1391,6 +1392,27 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
+  public List<TypeDiffStruc> changedTypes(){
+    List<TypeDiffStruc> list = new ArrayList<>();
+    for (CDTypeDiff typeDiff : changedClasses){
+      TypeDiffStruc diff = new TypeDiffStruc();
+      if (typeDiff.getSrcElem() instanceof ASTCDEnum){
+        diff.setAddedConstants(typeDiff.newConstants());
+      } else {
+        if (typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)){
+
+        }
+        if (typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)){
+
+        }
+        if (typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)){
+
+        }
+      }
+    }
+    return list;
+  }
+
   public List<AssocDiffStruc> changedAssoc(){
     List<AssocDiffStruc> list = new ArrayList<>();
     for (CDAssocDiff assocDiff : changedAssocs) {
@@ -1414,6 +1436,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
       // TODO: NOT LEFT MULTIPLICITY, DO ALSO FOR RIGHT MULTIPLICITY
       if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_LEFT_MULTIPLICITY)) {
+        if (srcAndTgtExist(assocDiff)) {
+          diff.setChangedCard(assocDiff.getCardDiff().b);
+        }
+      }
+      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_RIGHT_MULTIPLICITY)) {
         if (srcAndTgtExist(assocDiff)) {
           diff.setChangedCard(assocDiff.getCardDiff().b);
         }

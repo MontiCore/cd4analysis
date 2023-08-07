@@ -98,59 +98,60 @@ public class ODHelper {
     syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     List<ASTODArtifact> artifactList = new ArrayList<>();
     //TODO: when there are multiple changes to a class, they must be shown together!!!
-    for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
-      String comment = "A new associations has been added to the diagram."
-        + "\nThis association allows a new relation between the classes" + pair.a.getName() + "and" + pair.b.getName() + "and their subclasses";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_ASSOCIATION), generateElements(association, null, "", "", "added association", comment), null);
-      artifactList.add(astodArtifact);
-    }
+//    for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
+//      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
+//      String comment = "A new associations has been added to the diagram."
+//        + "\nThis association allows a new relation between the classes" + pair.a.getName() + "and" + pair.b.getName() + "and their subclasses";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_ASSOCIATION), generateElements(association, null, "", "", "added association", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
+//
+//    for (ASTCDClass astcdClass : syntaxDiff.addedClassList()){
+//      String comment = "A new class has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.ADDED_CLASS), generateElements(null, astcdClass, "", "", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
+//
+//    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.addedAttributeList()){
+//      String comment = "A new attribute" + pair.b.getName() + " has been added to the class" + pair.a.getName() + "."
+//        + "\nThis attribute couldn't be found in any of the old superclasses or in all of the old subclasses";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_ATTRIBUTE), generateElements(null, pair.a, "", "", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
+//
+//    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.deletedAttributeList()){
+//      String comment = "The old attribute " + pair.b.getName() + " has been removed from the class" + pair.a.getName() + "."
+//        + "\nThis attribute couldn't be found in any of the new superclasses or in all of the new subclasses";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.REMOVED_ATTRIBUTE), generateElements(null, pair.a, "", "", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
+//
+//    for (EnumStruc enumStruc : syntaxDiff.addedConstantsList()){
+//      String comment = "In the Enum " + enumStruc.getAttribute().printType() + " the constant " + enumStruc.getEnumConstant().toString() + " has been added."
+//        + "\nNow we can create an object for example of type " + enumStruc.getAstcdClass().getName() + " where the attribute has the constant";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_CONSTANTS), generateElements(null, enumStruc.getAstcdClass(), "", "", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
+//
+//    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.changedAttributeList()){
+//      String comment = "The type of the attribute" + pair.b.getName() + " in the class" + pair.a.getName() + " has been changed to " + pair.b.printType() + ".";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.CHANGED_ATTRIBUTE), generateElements(null, pair.a, "", "as", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
+//
+//    for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
+//      String comment = "In tgtCD the class" + astcdClass.getName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, astcdClass, "", "", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
 
-    for (ASTCDClass astcdClass : syntaxDiff.addedClassList()){
-      String comment = "A new class has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.ADDED_CLASS), generateElements(null, astcdClass, "", "", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
+//    for (Pair<ASTCDClass, Set<ASTCDAttribute>> pair : syntaxDiff.allNewAttributes()){
+//      String comment = "In srcCD the class" + pair.a + " is a now a new subclass of at least one other and because of that it has the following new attributes: "
+//        +"\n" + pair.b.toString();
+//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, pair.a, "", "", "", comment), null);
+//      artifactList.add(astodArtifact);
+//    }
 
-    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.addedAttributeList()){
-      String comment = "A new attribute" + pair.b.getName() + " has been added to the class" + pair.a.getName() + "."
-        + "\nThis attribute couldn't be found in any of the old superclasses or in all of the old subclasses";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_ATTRIBUTE), generateElements(null, pair.a, "", "", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.deletedAttributeList()){
-      String comment = "The old attribute " + pair.b.getName() + " has been removed from the class" + pair.a.getName() + "."
-        + "\nThis attribute couldn't be found in any of the new superclasses or in all of the new subclasses";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.REMOVED_ATTRIBUTE), generateElements(null, pair.a, "", "", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (EnumStruc enumStruc : syntaxDiff.addedConstantsList()){
-      String comment = "In the Enum " + enumStruc.getAttribute().printType() + " the constant " + enumStruc.getEnumConstant().toString() + " has been added."
-        + "\nNow we can create an object for example of type " + enumStruc.getAstcdClass().getName() + " where the attribute has the constant";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_CONSTANTS), generateElements(null, enumStruc.getAstcdClass(), "", "", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.changedAttributeList()){
-      String comment = "The type of the attribute" + pair.b.getName() + " in the class" + pair.a.getName() + " has been changed to " + pair.b.printType() + ".";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.CHANGED_ATTRIBUTE), generateElements(null, pair.a, "", "as", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
-      String comment = "In tgtCD the class" + astcdClass.getName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, astcdClass, "", "", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (Pair<ASTCDClass, Set<ASTCDAttribute>> pair : syntaxDiff.allNewAttributes()){
-      String comment = "In srcCD the class" + pair.a + " is a now a new subclass of at least one other and because of that it has the following new attributes: "
-        +"\n" + pair.b.toString();
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, pair.a, "", "", "", comment), null);
-      artifactList.add(astodArtifact);
-    }
 
     for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
       String comment = "In the association the following is changed: ";

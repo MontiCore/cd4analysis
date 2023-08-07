@@ -85,10 +85,11 @@ public interface ICDTypeDiff {
   /**
    * Check for each attribute in the list deletedAttribute if it
    * has been really deleted and add it to a list.
+   *
    * @param compilationUnit
    * @return list of pairs of the class with a deleted attribute.
    */
-  List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit);
+  Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit);
 
   /**
    * Check for each attribute in the list addedAttributes if it
@@ -106,10 +107,11 @@ public interface ICDTypeDiff {
 
   /**
    * Get all attributes with changed types.
+   *
    * @param memberDiff
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
-  List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff);
+  Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff);
 
   /**
    * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:

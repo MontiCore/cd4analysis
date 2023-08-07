@@ -155,19 +155,20 @@ public class CDTypeDiff implements ICDTypeDiff {
   /**
    * Check for each attribute in the list deletedAttribute if it
    * has been really deleted and add it to a list.
+   *
    * @param compilationUnit class diagram
    * @return list of pairs of the class with a deleted attribute.
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit){
-    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
+  public Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit){
+    List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttribute()){
       if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
         && isDeleted(attribute, compilationUnit)){
-        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
+        pairList.add(attribute);
       }
     }
-    return pairList;
+    return new Pair<>( (ASTCDClass) getSrcElem(), pairList);
   }
 
   /**
@@ -215,19 +216,16 @@ public class CDTypeDiff implements ICDTypeDiff {
 
   /**
    * Get all attributes with changed types.
+   *
    * @param memberDiff pair of attributes
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> findMemberDiff(CDMemberDiff memberDiff) {
+  public Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff) {
     if (!getSrcElem().getModifier().isAbstract()) {
-      List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
-      list.add(new Pair<>((ASTCDClass) getSrcElem(), (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
-      return list;
+      return new Pair<>((ASTCDClass) getSrcElem(), (ASTCDAttribute) memberDiff.getSrcElem());//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
     } else { //class is abstract and can't be instantiated - get a subclass
-      List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
-      list.add(new Pair<>(minDiffWitness((ASTCDClass) getSrcElem()), (ASTCDAttribute) memberDiff.getSrcElem()));//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
-      return list;
+      return new Pair<>(minDiffWitness((ASTCDClass) getSrcElem()), (ASTCDAttribute) memberDiff.getSrcElem());//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
     }
   }
 
@@ -468,7 +466,7 @@ public class CDTypeDiff implements ICDTypeDiff {
     List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (CDMemberDiff memberDiff : getChangedMembers()){
       if (findMemberDiff(memberDiff) != null){
-        pairList.addAll(findMemberDiff(memberDiff));
+        pairList.add(findMemberDiff(memberDiff));
       }
     }
     return pairList;
