@@ -5,7 +5,6 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
@@ -14,7 +13,6 @@ import de.monticore.cdmerge.log.MCLoggerWrapper;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
 import de.monticore.cdmerge.util.CDUtils;
-import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -83,9 +81,7 @@ public class BaseTest {
   }
 
   protected String prettyPrint(ASTCDCompilationUnit cd) {
-    IndentPrinter i = new IndentPrinter();
-    CD4CodeFullPrettyPrinter prettyprinter = new CD4CodeFullPrettyPrinter(i);
-    return prettyprinter.prettyprint(cd);
+    return CD4CodeMill.prettyPrint(cd,true);
   }
 
   protected void processResult(MergeStepResult result) {

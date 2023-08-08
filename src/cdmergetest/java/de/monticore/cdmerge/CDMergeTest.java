@@ -3,10 +3,9 @@ package de.monticore.cdmerge;
 
 import static org.junit.Assert.fail;
 
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.MergeParameter;
-import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,10 +28,8 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new HashSet<>());
 
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
     Assert.assertNotNull(mergedCD);
-    mergedCD.accept(pp.getTraverser());
-    System.out.println(pp.prettyprint(mergedCD));
+    System.out.println(CD4CodeMill.prettyPrint(mergedCD,true));
   }
 
   @Test
@@ -53,9 +50,7 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
 
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
     Assert.assertNotNull(mergedCD);
-    mergedCD.accept(pp.getTraverser());
-    Log.println(pp.prettyprint(mergedCD));
+    System.out.println(CD4CodeMill.prettyPrint(mergedCD,true));
   }
 }
