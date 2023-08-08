@@ -7,6 +7,8 @@ import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd.codegen.methods.MethodDecorator;
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTool;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
@@ -85,6 +87,10 @@ public class CDGeneratorTool extends CD4CodeTool {
         return;
       }
 
+      if (cmd.hasOption("v")) {
+        printVersion();
+      }
+
       Log.init();
       CD4CodeMill.init();
 
@@ -106,14 +112,10 @@ public class CDGeneratorTool extends CD4CodeTool {
       }
 
       Collection<ICD4CodeArtifactScope> scopes =
-          asts.stream()
-              .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
-              .collect(Collectors.toList());
+        asts.stream()
+          .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
+          .collect(Collectors.toList());
       asts.forEach(this::completeSymbolTable);
-
-      if (cmd.hasOption("v")) {
-        printVersion();
-      }
 
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
@@ -121,9 +123,34 @@ public class CDGeneratorTool extends CD4CodeTool {
         Log.enableFailQuick(true);
       }
 
+      String fieldFromRole = cmd.hasOption("fieldfromrole") ? cmd.getOptionValue("fieldfromrole") : "navigable";
+      switch (fieldFromRole) {
+        case "all": { // add FieldSymbols for all the CDRoleSymbols
+          final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
+            new CDAssociationCreateFieldsFromAllRoles();
+          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+          asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
+          break;
+        }
+        case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
+          final CDAssociationCreateFieldsFromNavigableRoles
+            cdAssociationCreateFieldsFromNavigableRoles =
+            new CDAssociationCreateFieldsFromNavigableRoles();
+          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+          asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
+          break;
+        }
+        case "none":
+        default:
+          Log.error(String.format("0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.", fieldFromRole));
+      }
+
       if (cmd.hasOption("s")) {
         for (ICD4CodeArtifactScope scope : scopes) {
-
           this.storeSymTab(scope, cmd.getOptionValue("s"));
         }
       }
@@ -232,6 +259,12 @@ public class CDGeneratorTool extends CD4CodeTool {
             .longOpt("class2mc")
             .desc("Enables to resolve java classes in the model path")
             .build());
+
+    options.addOption(
+      Option.builder("fieldfromrole")
+        .desc("Configures if explicit field symbols should be added for associations")
+        .hasArg()
+        .build());
 
     return options;
   }

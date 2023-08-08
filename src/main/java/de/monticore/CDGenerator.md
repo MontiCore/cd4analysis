@@ -12,17 +12,18 @@ models including:
 
 The possible options are:
 
-| Option                     | Explanation                                                                                              |
-|----------------------------|----------------------------------------------------------------------------------------------------------|
-| `-h` `--help`              | Prints out all possible Options as well as short explanations                                            |
-| `-i` `--input`             | Inputs the location of a classdiagram-file to be parsed, and checked                                     |
-| `-c2mc` `--class2mc`       | Enables to resolve java classes used in the class diagram in the model diagram                           |
-| `-path`                    | Sets the path of for loading additionally stored symbols                                                 |
-| `-c` `--checkcocos`        | Checks all CD4C-CoCos on the current classdiagram-model                                                  |
-| `-o` `--output`            | Sets the path for all output files                                                                       |
-| `-s` `--symboltable`       | Sets the additional path and file for a serialized version of the symbol-table                           |
-| `-tp` `--template`         | Sets the path of additional templates that can be used in the generation process                         |
-| `-hwc` `--handwrittencode` | Sets the path for additional handwritten code to be integrated in the generation process                 |
-|                            | (see explanation for details)                                                                            |
-| `-ct` `--configtemplate`   | Sets a template for generator configurations to replace the default template                   |
-| `-v` `--version`           | Prints out the current version of the tool to the console                                                |
+| Option                     | Explanation                                                                                                                               |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `-h` `--help`              | Prints out all possible Options as well as short explanations                                                                             |
+| `-i` `--input`             | Inputs the location of a classdiagram-file to be parsed, and checked                                                                      |
+| `-c2mc` `--class2mc`       | Enables to resolve java classes used in the class diagram in the model diagram                                                            |
+| `-path`                    | Sets the path of for loading additionally stored symbols                                                                                  |
+| `-c` `--checkcocos`        | Checks all CD4C-CoCos on the current classdiagram-model                                                                                   |
+| `-o` `--output`            | Sets the path for all output files                                                                                                        |
+| `-s` `--symboltable`       | Sets the additional path and file for a serialized version of the symbol-table                                                            |
+| `-tp` `--template`         | Sets the path of additional templates that can be used in the generation process                                                          |
+| `-hwc` `--handwrittencode` | Sets the path for additional handwritten code to be integrated in the generation process                                                  |
+|                            | (see explanation for details)                                                                                                             |
+| `-ct` `--configtemplate`   | Sets a template for generator configurations to replace the default template                                                              |
+| `-v` `--version`           | Prints out the current version of the tool to the console                                                                                 |
+| `--fieldfromrole`           |Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modeling, `all` adds always on both classes, `navigable` adds only if the association is navigable.|                                                                                                                                        |
