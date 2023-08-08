@@ -17,6 +17,8 @@ import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraver
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {
@@ -27,6 +29,8 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
   public void initObjects() {
     TestCDInterfaceAndEnumMill.reset();
     TestCDInterfaceAndEnumMill.init();
+    Log.enableFailQuick(false);
+
     p = TestCDInterfaceAndEnumMill.parser();
 
     final ICDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill.globalScope();
