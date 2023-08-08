@@ -6,6 +6,7 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd.codegen.methods.MethodDecorator;
+import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -33,6 +34,7 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -381,6 +383,12 @@ public class CDGeneratorTool extends CD4CodeTool {
   public void mapCD4CImports(ASTCDCompilationUnit ast) {
     CD4C cd4c = CD4C.getInstance();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
+
+    imports.add(MCBasicTypesMill.mCImportStatementBuilder()
+      .setMCQualifiedName(
+        MCQualifiedNameFacade.createQualifiedName("de.se_rwth.commons.logging.Log"))
+      .build());
+
     for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTMCImportStatement i : imports) {
         String qName = i.getQName();
