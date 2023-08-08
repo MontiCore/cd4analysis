@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd4codebasis.symboltable;
+
+classdiagram DefaultConstructor {
+
+  class A{}
+
+  class B {
+    int foo;
+    B(int bar);
+  }
+
+}

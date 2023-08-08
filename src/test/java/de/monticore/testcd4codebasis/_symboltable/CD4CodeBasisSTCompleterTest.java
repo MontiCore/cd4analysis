@@ -4,7 +4,13 @@ package de.monticore.testcd4codebasis._symboltable;
 import static org.junit.Assert.*;
 
 import com.google.common.collect.LinkedListMultimap;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
+import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
+import de.monticore.cd4codebasis._symboltable.ICD4CodeBasisScope;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -17,10 +23,12 @@ import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisTraverser;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.junit.Test;
 
 public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
@@ -93,7 +101,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
     TestCD4CodeBasisSymbolTableCompleter cd4codeBasisCompleter =
-        new TestCD4CodeBasisSymbolTableCompleter(imports, packageDecl);
+      new TestCD4CodeBasisSymbolTableCompleter(imports, packageDecl);
 
     ast.accept(cd4codeBasisCompleter.getTraverser());
 
@@ -117,11 +125,39 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
     t.add4CDBasis(cdBasisCompleter);
     t.add4OOSymbols(cdBasisCompleter);
     t.add4CD4CodeBasis(cd4codeCompleter);
+    t.add4CDBasis(cd4codeCompleter);
 
     ast.accept(t);
 
     assertEquals(4, Log.getErrorCount());
     Log.clearFindings();
+  }
+
+  @Test
+  public void createDefaultConstructorTest() {
+    ASTCDCompilationUnit ast = loadModel(SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/DefaultConstructor.cd");
+    createSymbolTableFromAST(ast);
+
+    assertTrue(ast.getCDDefinition().getCDClassesList().get(0).getCDConstructorList().isEmpty());
+    assertEquals(1, ast.getCDDefinition().getCDClassesList().get(1).getCDConstructorList().size());
+    List<CDMethodSignatureSymbol> constructor = ((ICD4CodeBasisScope) ast.getCDDefinition().getCDClassesList().get(1).getSpannedScope())
+      .getCDMethodSignatureSymbols().get("B");
+
+    CD4CodeBasisSymbolTableCompleter completer = new CD4CodeBasisSymbolTableCompleter();
+    CD4CodeBasisTraverser traverser = CD4CodeBasisMill.traverser();
+    traverser.add4CD4CodeBasis(completer);
+    traverser.add4CDBasis(completer);
+    ast.accept(traverser);
+
+    assertTrue(ast.getCDDefinition().getCDClassesList().get(0).getCDConstructorList().isEmpty());
+    assertEquals(1, ((ICD4CodeBasisScope)ast.getCDDefinition()
+      .getCDClassesList().get(0).getSpannedScope()).getCDMethodSignatureSymbols().size());
+    assertTrue(((ICD4CodeBasisScope)ast.getCDDefinition()
+      .getCDClassesList().get(0).getSpannedScope()).getCDMethodSignatureSymbols().get("A").get(0).isIsConstructor());
+
+    assertEquals(1, ast.getCDDefinition().getCDClassesList().get(1).getCDConstructorList().size());
+    assertEquals(constructor, ((ICD4CodeBasisScope) ast.getCDDefinition().getCDClassesList().get(1).getSpannedScope())
+      .getCDMethodSignatureSymbols().get("B"));
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {
@@ -136,7 +172,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
 
   private ITestCD4CodeBasisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
     ITestCD4CodeBasisArtifactScope as =
-        TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
+      TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
     return as;
   }
 }
