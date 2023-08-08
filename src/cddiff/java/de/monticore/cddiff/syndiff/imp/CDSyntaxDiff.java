@@ -323,7 +323,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     //check if a deleted class brings a semantic difference
     //check if all subclasses have the attributes from this class from tgt tgtCD
     //check if there were outgoing(or bidirectional) associations that weren't zero assocs and check if all subclasses have them
-    Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getAllAttr(astcdClass);
+    Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr( astcdClass);
     if (subClass != null) {
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
@@ -388,7 +388,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     //reversed case
     //check if new attributes existed in the given subclass - use function from CDTypeDiff
     //check if the associations also existed(are subtypes of the associations) in the tgtMap - same subfunction from isClassDeleted
-    Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getAllAttr(astcdClass);
+    Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
     if (subClass != null) {
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
@@ -645,22 +645,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
       return difference.toString();
     }
-  }
-
-  /**
-   * Get all attributes that need to be added from inheritance structure to an object of a given type
-   * @param astcdClass class
-   * @return Pair of the class and a list of attributes
-   */
-  public Pair<ASTCDClass, List<ASTCDAttribute>> getAllAttr(ASTCDClass astcdClass){
-    List<ASTCDAttribute> attributes = new ArrayList<>();
-    Set<ASTCDType> classes = getAllSuper(astcdClass, (ICD4CodeArtifactScope) getSrcCD().getEnclosingScope());
-    for (ASTCDType classToCheck : classes){
-      if (classToCheck instanceof ASTCDClass) {
-        attributes.addAll(classToCheck.getCDAttributeList());
-      }
-    }
-    return new Pair<>(astcdClass, attributes);
   }
 
   /**
@@ -1147,9 +1131,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
     Set<ASTCDAttribute> attributes = new HashSet<>();
     for (ASTCDClass astcdClass : classes) {
-      for (ASTCDAttribute attribute : getAllAttr(astcdClass).b) {
+      for (ASTCDAttribute attribute : getHelper().getAllAttr(astcdClass).b) {
         boolean isContained = false;
-        for (ASTCDAttribute attribute1 : getAllAttr(inheritanceDiff.getAstcdClasses().b).b) {
+        for (ASTCDAttribute attribute1 : getHelper().getAllAttr(inheritanceDiff.getAstcdClasses().b).b) {
           if (attribute.getName().equals(attribute1.getName())
             && attribute.printType().equals(attribute1.printType())) {
             isContained = true;
@@ -1180,9 +1164,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
     Set<ASTCDAttribute> attributes = new HashSet<>();
     for (ASTCDClass astcdClass : classes) {
-      for (ASTCDAttribute attribute : getAllAttr(astcdClass).b) {
+      for (ASTCDAttribute attribute : getHelper().getAllAttr(astcdClass).b) {
         boolean isContained = false;
-        for (ASTCDAttribute attribute1 : getAllAttr(inheritanceDiff.getAstcdClasses().a).b) {
+        for (ASTCDAttribute attribute1 : getHelper().getAllAttr(inheritanceDiff.getAstcdClasses().a).b) {
           if (attribute.getName().equals(attribute1.getName())
             && attribute.printType().equals(attribute1.printType())) {
             isContained = true;
@@ -1269,13 +1253,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return pairList;
   }
 
-  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributeList() {
-    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
+  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> addedAttributeList() {
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses) {
       if (typeDiff.getSrcElem() instanceof ASTCDClass
         && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
         && typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)) {
-        list.addAll(typeDiff.addedAttributes(tgtCD));
+        list.add(typeDiff.addedAttributes());
       }
     }
     return list;
@@ -1287,7 +1271,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       if (typeDiff.getSrcElem() instanceof ASTCDClass
         && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
         && typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
-        list.add(typeDiff.deletedAttributes(srcCD));
+        list.add(typeDiff.deletedAttributes());
       }
     }
     return list;
@@ -1313,7 +1297,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       if (typeDiff.getSrcElem() instanceof ASTCDClass
         && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
         && typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
-        list.add(typeDiff.deletedAttributes(srcCD));
+        list.add(typeDiff.deletedAttributes( ));
       }
     }
     return list;
@@ -1396,17 +1380,26 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     List<TypeDiffStruc> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses){
       TypeDiffStruc diff = new TypeDiffStruc();
+      diff.setBaseDiff(typeDiff.getBaseDiffs());
       if (typeDiff.getSrcElem() instanceof ASTCDEnum){
         diff.setAddedConstants(typeDiff.newConstants());
       } else {
         if (typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)){
-
+          diff.setMemberDiff(typeDiff.changedAttribute());
+          List<Pair<ASTCDAttribute, ASTCDAttribute>> pairs = new ArrayList<>();
+          for (ASTCDAttribute attribute : typeDiff.changedAttribute().b){
+            pairs.add(new Pair<>(attribute, typeDiff.getOldAttribute(attribute)));
+          }
+          diff.setMatchedAttributes(pairs);
         }
         if (typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)){
-
+          diff.setAddedAttributes(typeDiff.addedAttributes());
         }
         if (typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)){
-
+          diff.setDeletedAttributes(typeDiff.deletedAttributes());
+        }
+        if (typeDiff.getBaseDiffs().contains(DiffTypes.STEREOTYPE_DIFFERENCE)){
+          diff.setChangedStereotype(typeDiff.isClassNeeded());
         }
       }
     }

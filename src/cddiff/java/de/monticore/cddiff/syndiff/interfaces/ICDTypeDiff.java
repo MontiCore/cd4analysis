@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff.interfaces;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.imp.DiffTypes;
 import de.monticore.cddiff.syndiff.imp.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
@@ -53,10 +54,9 @@ public interface ICDTypeDiff {
 
   /**
    * Compute all changed attributes in all classes.
-   * @param compilationUnit
    * @return list of pairs of classes and changed attributes.
    */
-  List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute(ASTCDCompilationUnit compilationUnit);
+  Pair<ASTCDClass, List<ASTCDAttribute>> changedAttribute();
 
   /**
    * Get all classes that use the ASTCDEnum as an attribute. We use this function when the typeDiff
@@ -86,24 +86,22 @@ public interface ICDTypeDiff {
    * Check for each attribute in the list deletedAttribute if it
    * has been really deleted and add it to a list.
    *
-   * @param compilationUnit
    * @return list of pairs of the class with a deleted attribute.
    */
-  Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit);
+  Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes();
 
   /**
    * Check for each attribute in the list addedAttributes if it
    * has been really added and add it to a list.
-   * @param compilationUnit
    * @return list of pairs of the class with an added (new) attribute.
    */
-  List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(ASTCDCompilationUnit compilationUnit);
+  Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes();
 
   /**
    * Get all added constants to an enum
    * @return list of added constants
    */
-  List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants();
+  Pair<ASTCDEnum, List<ASTCDEnumConstant>> newConstants();
 
   /**
    * Get all attributes with changed types.

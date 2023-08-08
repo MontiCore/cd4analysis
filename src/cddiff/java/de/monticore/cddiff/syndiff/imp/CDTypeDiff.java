@@ -152,19 +152,27 @@ public class CDTypeDiff implements ICDTypeDiff {
     return stringBuilder.toString();
   }
 
+  public ASTCDAttribute getOldAttribute(ASTCDAttribute attribute){
+    for (Pair<ASTCDAttribute, ASTCDAttribute> pair : matchedAttributes){
+      if (attribute.equals(pair.a)){
+        return pair.b;
+      }
+    }
+    return null;
+  }
+
   /**
    * Check for each attribute in the list deletedAttribute if it
    * has been really deleted and add it to a list.
    *
-   * @param compilationUnit class diagram
    * @return list of pairs of the class with a deleted attribute.
    */
   @Override
-  public Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(ASTCDCompilationUnit compilationUnit){
+  public Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(){
     List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttribute()){
       if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
-        && isDeleted(attribute, compilationUnit)){
+        && isDeleted(attribute, helper.getSrcCD())){
         pairList.add(attribute);
       }
     }
@@ -360,19 +368,18 @@ public class CDTypeDiff implements ICDTypeDiff {
   /**
    * Check for each attribute in the list addedAttributes if it
    * has been really added and add it to a list.
-   * @param compilationUnit trgCD
    * @return list of pairs of the class with an added (new) attribute.
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes(ASTCDCompilationUnit compilationUnit){
-    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
+  public Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes(){
+    List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getAddedAttributes()){
       if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
-        &&isAdded(attribute, compilationUnit)){
-        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), attribute));
+        &&isAdded(attribute, helper.getTgtCD())){
+        pairList.add(attribute);
       }
     }
-    return pairList;
+    return new Pair<>( (ASTCDClass) getSrcElem(), pairList);
   }
 
   /**
@@ -446,30 +453,27 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @return list of added constants
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDEnumConstant>> newConstants() {
-    List<Pair<ASTCDClass, ASTCDEnumConstant>> pairList = new ArrayList<>();
+  public Pair<ASTCDEnum, List<ASTCDEnumConstant>> newConstants() {
+    List<ASTCDEnumConstant> pairList = new ArrayList<>();
     if (!getAddedConstants().isEmpty()) {
-      for (ASTCDEnumConstant constant : getAddedConstants()) {
-        pairList.add(new Pair<>((ASTCDClass) getSrcElem(), constant));
-      }
+      pairList.addAll(getAddedConstants());
     }
-    return pairList;
+    return new Pair<>((ASTCDEnum) getSrcElem(), pairList);
   }
 
   /**
    * Compute all changed attributes in all classes.
-   * @param compilationUnit class diagram
    * @return list of pairs of classes and changed attributes.
    */
   @Override
-  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute(ASTCDCompilationUnit compilationUnit){
-    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
+  public Pair<ASTCDClass, List<ASTCDAttribute>> changedAttribute(){
+    List<ASTCDAttribute> pairList = new ArrayList<>();
     for (CDMemberDiff memberDiff : getChangedMembers()){
       if (findMemberDiff(memberDiff) != null){
-        pairList.add(findMemberDiff(memberDiff));
+        pairList.add(findMemberDiff(memberDiff).b);
       }
     }
-    return pairList;
+    return new Pair<>((ASTCDClass) getSrcElem(), pairList);
   }
 
   /**

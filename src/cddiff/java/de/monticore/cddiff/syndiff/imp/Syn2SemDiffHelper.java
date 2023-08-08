@@ -11,6 +11,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.datastructures.AssocCardinality;
 import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
@@ -44,6 +45,22 @@ public class Syn2SemDiffHelper {
   private ASTCDCompilationUnit srcCD;
 
   private ASTCDCompilationUnit tgtCD;
+
+  /**
+   * Get all attributes that need to be added from inheritance structure to an object of a given type
+   * @param astcdClass class
+   * @return Pair of the class and a list of attributes
+   */
+  public Pair<ASTCDClass, List<ASTCDAttribute>> getAllAttr(ASTCDClass astcdClass){
+    List<ASTCDAttribute> attributes = new ArrayList<>();
+    Set<ASTCDType> classes = getAllSuper(astcdClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+    for (ASTCDType classToCheck : classes){
+      if (classToCheck instanceof ASTCDClass) {
+        attributes.addAll(classToCheck.getCDAttributeList());
+      }
+    }
+    return new Pair<>(astcdClass, attributes);
+  }
 
   public ArrayListMultimap<ASTCDClass, AssocStruct> getSrcMap() {
     return srcMap;
@@ -483,4 +500,77 @@ public class Syn2SemDiffHelper {
     }
     return null;
   }
+
+  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
+    assert srcCD != null;
+    List<ASTCDClass> set = getSpannedInheritance(srcCD, astcdClass);
+
+    ASTCDClass closestClass = null;
+    int closestDepth = Integer.MAX_VALUE;
+
+    for (ASTCDClass cdClass : set) {
+      if (!cdClass.getModifier().isAbstract()
+        && notInstanClassesSrc.contains(astcdClass)) {
+        int depth = getDepthOfClass(cdClass, astcdClass);
+        if (depth < closestDepth) {
+          closestClass = cdClass;
+          closestDepth = depth;
+        }
+      }
+    }
+
+    return closestClass;
+  }
+
+  public int getDepthOfClass(ASTCDClass classNode, ASTCDClass rootClass) {
+    if (classNode == null || rootClass == null) {
+      return -1; // or any other suitable value to indicate an invalid depth
+    }
+
+    if (classNode == rootClass) {
+      return 0; // base case: classNode is the root class
+    }
+
+    int maxDepth = -1;
+    for (ASTCDType directSuperClass : CDInheritanceHelper.getDirectSuperClasses(classNode, (ICD4CodeArtifactScope) srcCD.getEnclosingScope())) {
+      if (directSuperClass instanceof ASTCDClass) {
+        int depth = getDepthOfClass((ASTCDClass) directSuperClass, rootClass);
+        if (depth >= 0 && depth > maxDepth) {
+          maxDepth = depth;
+        }
+      }
+    }
+
+    return maxDepth >= 0 ? maxDepth + 1 : -1; // add 1 to the maximum depth found
+  }
+//  public int calculateClassDepth(ASTCDClass rootClass, ASTCDClass targetClass) {
+//    // Check if the target class is the root class
+//    if (rootClass.getName().equals(targetClass.getName())) {
+//      return 0;
+//    }
+//
+//    // Get the direct superclasses of the target class
+//    Set<ASTCDClass> superClasses = CDDiffUtil.getAllSuperclasses(targetClass, helper.getSrcCD().getCDDefinition().getCDClassesList());
+//
+//    // If the target class has no superclasses, it is not in the hierarchy
+//    if (superClasses.isEmpty()) {
+//      return -1;
+//    }
+//
+//    // Recursively calculate the depth for each direct superclass
+//    List<Integer> depths = new ArrayList<>();
+//    for (ASTCDClass superClass : superClasses) {
+//      int depth = calculateClassDepth(rootClass, superClass);
+//      if (depth >= 0) {
+//        depths.add(depth + 1);
+//      }
+//    }
+//
+//    // Return the maximum depth from the direct superclasses
+//    if (depths.isEmpty()) {
+//      return -1;
+//    } else {
+//      return depths.stream().max(Integer::compare).get();
+//    }
+//  }
 }
