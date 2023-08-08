@@ -162,7 +162,7 @@ public class CDUtils {
   }
 
   public static String getName(ASTMCObjectType referencedType) {
-    return CD4CodeMill.prettyPrint(referencedType,false);
+    return CD4CodeMill.prettyPrint(referencedType, false);
   }
 
   public static String getName(ASTNode astCDNode) {
@@ -226,35 +226,35 @@ public class CDUtils {
     if (type == null) {
       return "";
     }
-    return CD4CodeMill.prettyPrint(type,false);
+    return CD4CodeMill.prettyPrint(type, false);
   }
 
   /** Used for log outputs */
   public static String prettyPrint(ASTCD4CodeNode node) {
-    return CD4CodeMill.prettyPrint(node,true);
+    return CD4CodeMill.prettyPrint(node, true);
   }
 
   public static String prettyPrint(ASTCDBasisNode node) {
-    return CD4CodeMill.prettyPrint(node,true);
+    return CD4CodeMill.prettyPrint(node, true);
   }
 
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTMCBasicTypesNode node) {
-    return CD4CodeMill.prettyPrint(node,false);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTCD4CodeNode node) {
 
-    return CD4CodeMill.prettyPrint(node,false);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   public static String prettyPrintInline(ASTCDAssociationNode node) {
-    return CD4CodeMill.prettyPrint(node,false);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   public static String prettyPrintInline(ASTCDBasisNode node) {
-    return CD4CodeMill.prettyPrint(node,false);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   public static String prettyPrintInline(ASTNode node) {

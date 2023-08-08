@@ -31,8 +31,8 @@ public class ASTCDElementCollectorTest extends BaseTest {
 
     // The Element collector does not change the result
 
-    String oldCD = CD4CodeMill.prettyPrint(cd,false);
+    String oldCD = CD4CodeMill.prettyPrint(cd, false);
     testant.collect(cd);
-    assertEquals(oldCD, CD4CodeMill.prettyPrint(cd,false));
+    assertEquals(oldCD, CD4CodeMill.prettyPrint(cd, false));
   }
 }

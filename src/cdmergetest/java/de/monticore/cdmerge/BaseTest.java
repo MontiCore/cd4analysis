@@ -81,7 +81,7 @@ public class BaseTest {
   }
 
   protected String prettyPrint(ASTCDCompilationUnit cd) {
-    return CD4CodeMill.prettyPrint(cd,true);
+    return CD4CodeMill.prettyPrint(cd, true);
   }
 
   protected void processResult(MergeStepResult result) {

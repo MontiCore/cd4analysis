@@ -29,7 +29,7 @@ public class CDMergeTest extends BaseTest {
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new HashSet<>());
 
     Assert.assertNotNull(mergedCD);
-    System.out.println(CD4CodeMill.prettyPrint(mergedCD,true));
+    System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
 
   @Test
@@ -51,6 +51,6 @@ public class CDMergeTest extends BaseTest {
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
 
     Assert.assertNotNull(mergedCD);
-    System.out.println(CD4CodeMill.prettyPrint(mergedCD,true));
+    System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
 }
