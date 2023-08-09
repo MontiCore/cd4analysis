@@ -5,11 +5,9 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.*;
@@ -39,19 +37,6 @@ import org.apache.commons.io.FileUtils;
  * etc.
  */
 public class CDUtils {
-
-  private static final CD4CodeFullPrettyPrinter commentsEnabledPrettyPrinter;
-
-  private static final CD4CodeFullPrettyPrinter inlinePrettyPrinter;
-
-  private static CD4CodeParser parser;
-
-  static {
-    commentsEnabledPrettyPrinter = new CD4CodeFullPrettyPrinter();
-    commentsEnabledPrettyPrinter.setPrintComments(true);
-    StringBuilder sb = new StringBuilder();
-    inlinePrettyPrinter = new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-  }
 
   /** Returns the common Attributes from two classes (Names checked only) */
   public static List<ASTCDAttribute> commonAttributeNames(ASTCDClass class1, ASTCDClass class2) {
@@ -152,7 +137,7 @@ public class CDUtils {
       return "";
     }
     StringJoiner sj = new StringJoiner(".");
-    parts.forEach(s -> sj.add(s));
+    parts.forEach(sj::add);
     return sj.toString();
   }
 
@@ -173,12 +158,8 @@ public class CDUtils {
     return Optional.empty();
   }
 
-  public static String getName(ASTMCObjectType referernceType) {
-    StringBuilder sb = new StringBuilder();
-    CD4CodeFullPrettyPrinter prettyPrinter =
-        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    referernceType.accept(prettyPrinter.getTraverser());
-    return prettyPrinter.getPrinter().getContent();
+  public static String getName(ASTMCObjectType referencedType) {
+    return CD4CodeMill.prettyPrint(referencedType, false);
   }
 
   public static String getName(ASTNode astCDNode) {
@@ -242,44 +223,35 @@ public class CDUtils {
     if (type == null) {
       return "";
     }
-    StringBuilder sb = new StringBuilder();
-    CD4CodeFullPrettyPrinter prettyPrinter =
-        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    type.accept(prettyPrinter.getTraverser());
-    return prettyPrinter.getPrinter().getContent();
+    return CD4CodeMill.prettyPrint(type, false);
   }
 
   /** Used for log outputs */
   public static String prettyPrint(ASTCD4CodeNode node) {
-    return commentsEnabledPrettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, true);
   }
 
   public static String prettyPrint(ASTCDBasisNode node) {
-    return commentsEnabledPrettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, true);
   }
 
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTMCBasicTypesNode node) {
-    inlinePrettyPrinter.getPrinter().clearBuffer();
-    node.accept(inlinePrettyPrinter.getTraverser());
-    return inlinePrettyPrinter.getPrinter().getContent();
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTCD4CodeNode node) {
 
-    return inlinePrettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   public static String prettyPrintInline(ASTCDAssociationNode node) {
-    return inlinePrettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   public static String prettyPrintInline(ASTCDBasisNode node) {
-    StringBuilder sb = new StringBuilder();
-    CD4CodeFullPrettyPrinter prettyPrinter =
-        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    return prettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, false);
   }
 
   public static String prettyPrintInline(ASTNode node) {
@@ -290,7 +262,7 @@ public class CDUtils {
       return prettyPrintInline((ASTCDAssociationNode) node);
     }
     if (node instanceof ASTCDInterfaceAndEnumNode) {
-      return prettyPrintInline((ASTCDInterfaceAndEnumNode) node);
+      return prettyPrintInline(node);
     }
     if (node instanceof ASTCD4CodeNode) {
       return prettyPrintInline((ASTCD4CodeNode) node);
@@ -357,13 +329,6 @@ public class CDUtils {
     }
   }
 
-  private static CD4CodeParser getParser() {
-    if (parser == null) {
-      parser = CD4CodeMill.parser();
-    }
-    return parser;
-  }
-
   /**
    * Parses a CD4Code model from file, without performing any CoCo checks.
    *
@@ -415,7 +380,7 @@ public class CDUtils {
 
     Optional<ASTCDCompilationUnit> ast = Optional.empty();
     try {
-      ast = getParser().parse_StringCDCompilationUnit(model);
+      ast = CD4CodeMill.parser().parse_StringCDCompilationUnit(model);
     } catch (IOException e) {
       // Should never happen
       Log.error("Unable to parse input model due to IO Exception!");
@@ -436,7 +401,7 @@ public class CDUtils {
       }
 
     } else {
-      if (parser.hasErrors()) {
+      if (CD4CodeMill.parser().hasErrors()) {
         Log.error("Unable to parse input model due to parsing Errors!");
       } else {
         Log.error("Unable to parse input model  !");
@@ -470,8 +435,7 @@ public class CDUtils {
   public static List<ASTCDAttribute> retainUniqueAttributesFromClass1(
       ASTCDClass class1, ASTCDClass class2) {
     List<ASTCDAttribute> common = commonAttributeNames(class1, class2);
-    List<ASTCDAttribute> diff = new ArrayList<>();
-    diff.addAll(class1.getCDAttributeList());
+    List<ASTCDAttribute> diff = new ArrayList<>(class1.getCDAttributeList());
     diff.removeIf(attr -> common.stream().anyMatch(a -> a.getName().equals(attr.getName())));
     return diff;
   }

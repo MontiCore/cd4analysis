@@ -74,9 +74,8 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MergeDriveAndEmployment", params);
 
-
     Assert.assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
-    Assert.assertTrue(mergedCD.deepEquals(expected,false));
+    Assert.assertTrue(mergedCD.deepEquals(expected, false));
   }
 }

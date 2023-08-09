@@ -3,8 +3,8 @@ package de.monticore.cdmerge;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.config.CDMergeConfig;
@@ -303,9 +303,8 @@ public class MergeTool {
     for (int j = 0; j < results.size() - 1; j++) {
 
       try {
-        CD4CodeParser parser = new CD4CodeParser();
-        cd1Opt = parser.parse_String(CDUtils.prettyPrint(results.get(j)));
-        cd2Opt = parser.parse_String(CDUtils.prettyPrint(results.get(j + 1)));
+        cd1Opt = CD4CodeMill.parser().parse_String(CDUtils.prettyPrint(results.get(j)));
+        cd2Opt = CD4CodeMill.parser().parse_String(CDUtils.prettyPrint(results.get(j + 1)));
         if (cd1Opt.isPresent() && cd2Opt.isPresent()) {
           if (!cd1Opt.get().deepEquals(cd2Opt.get(), false)) {
             // Different Result for different order
