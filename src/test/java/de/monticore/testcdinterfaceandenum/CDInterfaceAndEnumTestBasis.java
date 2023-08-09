@@ -14,10 +14,11 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import de.monticore.testcdinterfaceandenum._symboltable.ITestCDInterfaceAndEnumArtifactScope;
 import de.monticore.testcdinterfaceandenum._visitor.TestCDInterfaceAndEnumTraverser;
-import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {

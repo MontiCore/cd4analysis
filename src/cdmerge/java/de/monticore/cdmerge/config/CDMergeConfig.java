@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
@@ -36,6 +37,8 @@ public class CDMergeConfig {
   private final PrecedenceConfig precedences;
 
   private final boolean CLI_MODE;
+
+  private CD4CodeParser parser;
 
   private List<ModelValidatorBuilder> modelValidators;
 

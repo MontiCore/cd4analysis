@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4codebasis._symboltable;
 
+import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
@@ -20,6 +21,8 @@ import de.monticore.types.check.TypeCheckResult;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.stream.Collectors;
+
+import static de.monticore.cd.facade.CDModifier.PUBLIC;
 
 public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, CDBasisVisitor2 {
   protected ISynthesize typeSynthesizer;
@@ -59,20 +62,17 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
   @Override
   public void visit(ASTCDClass node) {
     if (node.getCDConstructorList().isEmpty()) {
-      CDMethodSignatureSymbol constructor =
-          CD4CodeBasisMill.cDMethodSignatureSymbolBuilder()
-              .setIsPublic(true)
-              .setIsStatic(true)
-              .setIsConstructor(true)
-              .setName(node.getName())
-              .setType(SymTypeExpressionFactory.createTypeExpression(node.getSymbol()))
-              .build();
+      CDMethodSignatureSymbol constructor = CD4CodeBasisMill.cDMethodSignatureSymbolBuilder()
+        .setIsPublic(true)
+        .setIsStatic(true)
+        .setIsConstructor(true)
+        .setName(node.getName())
+        .setType(SymTypeExpressionFactory.createTypeExpression(node.getSymbol()))
+        .build();
       ICD4CodeBasisScope scope = CD4CodeBasisMill.scope();
       scope.setName(node.getName());
       constructor.setSpannedScope(scope);
-      ((ICD4CodeBasisScope) node.getSpannedScope())
-          .getCDMethodSignatureSymbols()
-          .put(constructor.getName(), constructor);
+      ((ICD4CodeBasisScope)node.getSpannedScope()).getCDMethodSignatureSymbols().put(constructor.getName(), constructor);
     }
   }
 

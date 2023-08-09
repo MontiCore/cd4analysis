@@ -23,4 +23,5 @@ public class CDAttributeInInterfaceNotPublic implements CDInterfaceAndEnumASTCDI
       }
     }
   }
+
 }
