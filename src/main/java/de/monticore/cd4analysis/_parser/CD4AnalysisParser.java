@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class CD4AnalysisParser extends CD4AnalysisParserTOP {
-  boolean _checkFileAndPackageName = false;
+  boolean _checkFileAndPackageName = true;
 
   public CD4AnalysisParser() {}
 

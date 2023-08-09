@@ -23,8 +23,8 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected MatchingStrategy<ASTCDAssociation> assocInc;
 
   public BasicTypeConfStrategy(
-      ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      ASTCDCompilationUnit refCD,
       AttributeChecker attributeChecker,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc) {

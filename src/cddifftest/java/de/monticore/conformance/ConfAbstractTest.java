@@ -31,8 +31,9 @@ public abstract class ConfAbstractTest {
 
   public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parse(dir + concrete);
-      Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parse(dir + ref);
+      Optional<ASTCDCompilationUnit> conCD =
+          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (conCD.isPresent() && refCD.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
         CD4CodeMill.scopesGenitorDelegator().createFromAST(refCD.get());

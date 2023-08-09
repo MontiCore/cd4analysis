@@ -25,6 +25,7 @@ public class CDInterfaceAndEnumCoCos extends CoCoParent<CDInterfaceAndEnumCoCoCh
     // CDInterface
     checker.addCoCo(new CDInterfaceExtendsNotCyclic());
     checker.addCoCo(new CDInterfaceExtendsOnlyInterfaces());
+    checker.addCoCo(new CDAttributeInInterfaceNotPublic());
 
     // CDEnumConstant
     checker.addCoCo(new CDEnumConstantUnique());

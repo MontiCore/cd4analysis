@@ -10,22 +10,28 @@ public class CompTypeIncStrategy implements MatchingStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
 
-  protected EqTypeIncStrategy eqTypeIncStrategy;
-  protected STTypeIncStrategy stTypeIncStrategy;
+  List<MatchingStrategy<ASTCDType>> incStrategies = new ArrayList<>();
 
   public CompTypeIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
-    this.eqTypeIncStrategy = new EqTypeIncStrategy(refCD, mapping);
-    this.stTypeIncStrategy = new STTypeIncStrategy(refCD, mapping);
     this.refCD = refCD;
     this.mapping = mapping;
   }
 
+  public void addIncStrategy(MatchingStrategy<ASTCDType> strategy) {
+    incStrategies.add(strategy);
+  }
+
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType concrete) {
-    List<ASTCDType> refElements = new ArrayList<>(stTypeIncStrategy.getMatchedElements(concrete));
-    if (refElements.isEmpty()) {
-      refElements.addAll(eqTypeIncStrategy.getMatchedElements(concrete));
+    List<ASTCDType> refElements = new ArrayList<>();
+
+    for (MatchingStrategy<ASTCDType> strategy : incStrategies) {
+      refElements.addAll(strategy.getMatchedElements(concrete));
+      if (!refElements.isEmpty()) {
+        return refElements;
+      }
     }
+
     return refElements;
   }
 

@@ -10,12 +10,14 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
 public class DeepAssocConfStrategy extends BasicAssocConfStrategy {
+
   public DeepAssocConfStrategy(
-      ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      ASTCDCompilationUnit refCD,
       MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc) {
-    super(refCD, conCD, typeInc, assocInc);
+      MatchingStrategy<ASTCDAssociation> assocInc,
+      boolean allowCardRefinement) {
+    super(conCD, refCD, typeInc, assocInc, allowCardRefinement);
   }
 
   @Override

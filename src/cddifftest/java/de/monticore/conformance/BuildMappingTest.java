@@ -1,7 +1,6 @@
 package de.monticore.conformance;
 
-import static de.monticore.conformance.ConfParameter.NAME_MAPPING;
-import static de.monticore.conformance.ConfParameter.STEREOTYPE_MAPPING;
+import static de.monticore.conformance.ConfParameter.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -21,7 +20,13 @@ public class BuildMappingTest extends ConfAbstractTest {
   @BeforeEach
   public void init() {
     parseModels("Concrete.cd", "Reference.cd");
-    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    checker =
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                ALLOW_CARD_RESTRICTION,
+                SRC_TARGET_ASSOC_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 

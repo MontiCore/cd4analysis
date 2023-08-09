@@ -20,5 +20,5 @@ classdiagram Concrete {
   class Deposit extends Item;
 
    association hasItems [1..*] BankAccount <-> Item [1..*];
-  <<ref="hasItems">>  association  [1..*] Account <-> Item [1..*];
+   association  [1..*] Account -> (items)Item [1..*];
 }

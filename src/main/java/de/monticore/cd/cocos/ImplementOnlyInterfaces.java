@@ -35,7 +35,7 @@ public abstract class ImplementOnlyInterfaces {
             e ->
                 Log.error(
                     String.format(
-                        "0xCDCF4: Class %s cannot extend %s %s. A class may only extend classes.",
+                        "0xCDCF4: Class %s cannot implement %s %s. A class may only implement interfaces.",
                         node.getName(), CDMill.cDTypeKindPrinter().print(e), e.getName()),
                     node.get_SourcePositionStart()));
   }
