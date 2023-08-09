@@ -53,4 +53,30 @@ public class CDMergeTest extends BaseTest {
     Assert.assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
+
+  @Test
+  public void testUMLPExample() {
+    final String srcDir = "src/cdmergetest/resources/class_diagrams/umlp/";
+    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    ASTCDCompilationUnit expected = null;
+    try {
+      expected = loadModel(srcDir + "MergeDriveAndEmployment.umlp");
+      inputSet.add(loadModel(srcDir + "Driver.umlp"));
+      inputSet.add(loadModel(srcDir + "Employment.umlp"));
+    } catch (IOException e) {
+      fail("IO exception while accessing input models: " + e.getMessage());
+    }
+
+    HashSet<MergeParameter> params = new HashSet<>();
+
+    params.add(MergeParameter.LOG_VERBOSE);
+    params.add(MergeParameter.LOG_TO_CONSOLE);
+
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MergeDriveAndEmployment", params);
+
+
+    Assert.assertNotNull(mergedCD);
+    System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
+    Assert.assertTrue(mergedCD.deepEquals(expected,false));
+  }
 }
