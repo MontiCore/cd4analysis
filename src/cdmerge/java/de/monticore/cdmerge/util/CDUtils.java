@@ -9,6 +9,7 @@ import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.*;
@@ -39,7 +40,18 @@ import org.apache.commons.io.FileUtils;
  */
 public class CDUtils {
 
+  private static final CD4CodeFullPrettyPrinter commentsEnabledPrettyPrinter;
+
+  private static final CD4CodeFullPrettyPrinter inlinePrettyPrinter;
+
   private static CD4CodeParser parser;
+
+  static {
+    commentsEnabledPrettyPrinter = new CD4CodeFullPrettyPrinter();
+    commentsEnabledPrettyPrinter.setPrintComments(true);
+    StringBuilder sb = new StringBuilder();
+    inlinePrettyPrinter = new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
+  }
 
   /** Returns the common Attributes from two classes (Names checked only) */
   public static List<ASTCDAttribute> commonAttributeNames(ASTCDClass class1, ASTCDClass class2) {
@@ -140,7 +152,7 @@ public class CDUtils {
       return "";
     }
     StringJoiner sj = new StringJoiner(".");
-    parts.forEach(sj::add);
+    parts.forEach(s -> sj.add(s));
     return sj.toString();
   }
 
@@ -161,8 +173,12 @@ public class CDUtils {
     return Optional.empty();
   }
 
-  public static String getName(ASTMCObjectType referencedType) {
-    return CD4CodeMill.prettyPrint(referencedType, false);
+  public static String getName(ASTMCObjectType referernceType) {
+    StringBuilder sb = new StringBuilder();
+    CD4CodeFullPrettyPrinter prettyPrinter =
+        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
+    referernceType.accept(prettyPrinter.getTraverser());
+    return prettyPrinter.getPrinter().getContent();
   }
 
   public static String getName(ASTNode astCDNode) {
@@ -226,35 +242,44 @@ public class CDUtils {
     if (type == null) {
       return "";
     }
-    return CD4CodeMill.prettyPrint(type, false);
+    StringBuilder sb = new StringBuilder();
+    CD4CodeFullPrettyPrinter prettyPrinter =
+        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
+    type.accept(prettyPrinter.getTraverser());
+    return prettyPrinter.getPrinter().getContent();
   }
 
   /** Used for log outputs */
   public static String prettyPrint(ASTCD4CodeNode node) {
-    return CD4CodeMill.prettyPrint(node, true);
+    return commentsEnabledPrettyPrinter.prettyprint(node);
   }
 
   public static String prettyPrint(ASTCDBasisNode node) {
-    return CD4CodeMill.prettyPrint(node, true);
+    return commentsEnabledPrettyPrinter.prettyprint(node);
   }
 
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTMCBasicTypesNode node) {
-    return CD4CodeMill.prettyPrint(node, false);
+    inlinePrettyPrinter.getPrinter().clearBuffer();
+    node.accept(inlinePrettyPrinter.getTraverser());
+    return inlinePrettyPrinter.getPrinter().getContent();
   }
 
   /** Used for log outputs, produces inline model code */
   public static String prettyPrintInline(ASTCD4CodeNode node) {
 
-    return CD4CodeMill.prettyPrint(node, false);
+    return inlinePrettyPrinter.prettyprint(node);
   }
 
   public static String prettyPrintInline(ASTCDAssociationNode node) {
-    return CD4CodeMill.prettyPrint(node, false);
+    return inlinePrettyPrinter.prettyprint(node);
   }
 
   public static String prettyPrintInline(ASTCDBasisNode node) {
-    return CD4CodeMill.prettyPrint(node, false);
+    StringBuilder sb = new StringBuilder();
+    CD4CodeFullPrettyPrinter prettyPrinter =
+        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
+    return prettyPrinter.prettyprint(node);
   }
 
   public static String prettyPrintInline(ASTNode node) {
@@ -265,7 +290,7 @@ public class CDUtils {
       return prettyPrintInline((ASTCDAssociationNode) node);
     }
     if (node instanceof ASTCDInterfaceAndEnumNode) {
-      return prettyPrintInline(node);
+      return prettyPrintInline((ASTCDInterfaceAndEnumNode) node);
     }
     if (node instanceof ASTCD4CodeNode) {
       return prettyPrintInline((ASTCD4CodeNode) node);
@@ -445,7 +470,8 @@ public class CDUtils {
   public static List<ASTCDAttribute> retainUniqueAttributesFromClass1(
       ASTCDClass class1, ASTCDClass class2) {
     List<ASTCDAttribute> common = commonAttributeNames(class1, class2);
-    List<ASTCDAttribute> diff = new ArrayList<>(class1.getCDAttributeList());
+    List<ASTCDAttribute> diff = new ArrayList<>();
+    diff.addAll(class1.getCDAttributeList());
     diff.removeIf(attr -> common.stream().anyMatch(a -> a.getName().equals(attr.getName())));
     return diff;
   }
