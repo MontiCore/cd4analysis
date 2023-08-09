@@ -10,23 +10,28 @@ public class CompAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> 
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
 
-  protected EqNameAssocIncStrategy eqNameAssocIncStrategy;
-  protected STNamedAssocIncStrategy stNamedAssocIncStrategy;
+  List<MatchingStrategy<ASTCDAssociation>> incStrategies = new ArrayList<>();
 
   public CompAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
-    this.eqNameAssocIncStrategy = new EqNameAssocIncStrategy(refCD, mapping);
-    this.stNamedAssocIncStrategy = new STNamedAssocIncStrategy(refCD, mapping);
     this.refCD = refCD;
     this.mapping = mapping;
   }
 
+  public void addIncStrategy(MatchingStrategy<ASTCDAssociation> strategy) {
+    incStrategies.add(strategy);
+  }
+
   @Override
   public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
-    List<ASTCDAssociation> refElements =
-        new ArrayList<>(stNamedAssocIncStrategy.getMatchedElements(concrete));
-    if (refElements.isEmpty()) {
-      refElements.addAll(eqNameAssocIncStrategy.getMatchedElements(concrete));
+    List<ASTCDAssociation> refElements = new ArrayList<>();
+
+    for (MatchingStrategy<ASTCDAssociation> strategy : incStrategies) {
+      refElements.addAll(strategy.getMatchedElements(concrete));
+      if (!refElements.isEmpty()) {
+        return refElements;
+      }
     }
+
     return refElements;
   }
 

@@ -1,0 +1,31 @@
+classdiagram MergeDriveAndEmployment {
+    enum ContractKind {
+      fullTime,
+      partTime,
+      external;
+    }
+    class Company extends Entity;
+    class Task {
+      java.util.Date deadline;
+    }
+    class Employee extends Person {
+      int salary;
+      ContractKind contract;
+    }
+    class Manager extends Employee;
+    abstract class Entity;
+    class Car {
+      String licensePlate;
+    }
+    class Person extends Entity {
+      java.util.Date birthday;
+      String address;
+    }
+    association  [*] Employee  (staff) <-> (worksFor) Company [1..*];
+    association  [*] Employee  (manages) <-> (managedBy) Manager [0..1] ;
+    association  [1] Employee  -> (todo) Task [1..*] ;
+    association  [1] Entity  (owner) <-> (owns) Car [*] ;
+    association  [*] Person  (driver) -> (drives) Car [*] ;
+
+}
+

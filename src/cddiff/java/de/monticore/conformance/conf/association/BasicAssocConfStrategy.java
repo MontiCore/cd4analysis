@@ -17,16 +17,19 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
   protected ASTCDCompilationUnit conCD;
   protected MatchingStrategy<ASTCDType> typeInc;
   protected MatchingStrategy<ASTCDAssociation> assocInc;
+  protected boolean allowCardRestriction;
 
   public BasicAssocConfStrategy(
-      ASTCDCompilationUnit refCD,
       ASTCDCompilationUnit conCD,
+      ASTCDCompilationUnit refCD,
       MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc) {
+      MatchingStrategy<ASTCDAssociation> assocInc,
+      boolean allowCardRestriction) {
     this.refCD = refCD;
     this.conCD = conCD;
     this.typeInc = typeInc;
     this.assocInc = assocInc;
+    this.allowCardRestriction = allowCardRestriction;
   }
 
   @Override
@@ -52,12 +55,26 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
             || concrete.getCDAssocDir().isDefinitiveNavigableRight())
         && (!ref.getCDAssocDir().isDefinitiveNavigableLeft()
             || concrete.getCDAssocDir().isDefinitiveNavigableLeft())) {
-      return checkReference(
-              concrete.getLeftQualifiedName().getQName(), ref.getLeftQualifiedName().getQName())
-          && checkCardinality(concrete.getLeft(), ref.getLeft())
-          && checkReference(
-              concrete.getRightQualifiedName().getQName(), ref.getRightQualifiedName().getQName())
-          && checkCardinality(concrete.getRight(), ref.getRight());
+
+      boolean leftRefs =
+          checkReference(
+              concrete.getLeftQualifiedName().getQName(), ref.getLeftQualifiedName().getQName());
+
+      boolean leftCards =
+          allowCardRestriction
+              ? checkCardinality(concrete.getLeft(), ref.getLeft())
+              : checkCardinalityStrict(concrete.getLeft(), ref.getLeft());
+
+      boolean rightRefs =
+          checkReference(
+              concrete.getRightQualifiedName().getQName(), ref.getRightQualifiedName().getQName());
+
+      boolean rightCards =
+          allowCardRestriction
+              ? checkCardinality(concrete.getRight(), ref.getRight())
+              : checkCardinalityStrict(concrete.getRight(), ref.getRight());
+
+      return leftCards && leftRefs && rightCards && rightRefs;
     }
     return false;
   }
@@ -67,12 +84,24 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
             || concrete.getCDAssocDir().isDefinitiveNavigableLeft())
         && (!ref.getCDAssocDir().isDefinitiveNavigableLeft()
             || concrete.getCDAssocDir().isDefinitiveNavigableRight())) {
-      return checkReference(
-              concrete.getLeftQualifiedName().getQName(), ref.getRightQualifiedName().getQName())
-          && checkCardinality(concrete.getLeft(), ref.getRight())
-          && checkReference(
-              concrete.getRightQualifiedName().getQName(), ref.getLeftQualifiedName().getQName())
-          && checkCardinality(concrete.getRight(), ref.getLeft());
+
+      boolean leftReverseRef =
+          checkReference(
+              concrete.getLeftQualifiedName().getQName(), ref.getRightQualifiedName().getQName());
+      boolean leftReverseCard =
+          allowCardRestriction
+              ? checkCardinality(concrete.getLeft(), ref.getRight())
+              : checkCardinalityStrict(concrete.getLeft(), ref.getRight());
+      boolean rightReverseRef =
+          checkReference(
+              concrete.getRightQualifiedName().getQName(), ref.getLeftQualifiedName().getQName());
+
+      boolean refReverseCard =
+          allowCardRestriction
+              ? checkCardinality(concrete.getRight(), ref.getLeft())
+              : checkCardinalityStrict(concrete.getRight(), ref.getLeft());
+
+      return leftReverseRef && leftReverseCard && rightReverseRef && refReverseCard;
     }
 
     return false;
@@ -96,6 +125,14 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
             <= concrete.getCDCardinality().getLowerBound())
         && (ref.getCDCardinality().toCardinality().getUpperBound()
             >= concrete.getCDCardinality().toCardinality().getUpperBound());
+  }
+
+  protected boolean checkCardinalityStrict(ASTCDAssocSide concrete, ASTCDAssocSide ref) {
+    if (ref.isPresentCDCardinality() != concrete.isPresentCDCardinality()) {
+      return false;
+    }
+    return !ref.isPresentCDCardinality()
+        || concrete.getCDCardinality().deepEquals(ref.getCDCardinality());
   }
 
   protected boolean checkReference(String concrete, String ref) {

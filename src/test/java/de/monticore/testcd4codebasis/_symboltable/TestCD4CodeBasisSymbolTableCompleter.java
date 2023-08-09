@@ -36,6 +36,7 @@ public class TestCD4CodeBasisSymbolTableCompleter {
     final CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor =
         new CD4CodeBasisSymbolTableCompleter();
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
+    traverser.add4CDBasis(cd4CodeBasisVisitor);
   }
 
   public TestCD4CodeBasisTraverser getTraverser() {

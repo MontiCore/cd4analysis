@@ -116,9 +116,9 @@ public class CDDiffCLIToolTest {
   public void testNoSemDiff() {
     // given 2 CDs that are semantically equivalent
     final String cd1 =
-        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1" + ".cd";
+        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/CDSimilarManagerv1" + ".cd";
     final String cd2 =
-        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2" + ".cd";
+        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/CDSimilarManagerv2" + ".cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
     for (String cwDiffOption : cwDiffOptions) {

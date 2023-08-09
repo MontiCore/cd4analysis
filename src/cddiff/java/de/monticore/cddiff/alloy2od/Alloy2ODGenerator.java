@@ -493,8 +493,6 @@ public class Alloy2ODGenerator {
     od.append(type);
     od.append(" ");
     od.append(name);
-    od.append(" = some_");
-    od.append(value);
 
     // Remove all "_" and return
     return od.toString();

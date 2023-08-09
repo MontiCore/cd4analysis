@@ -43,6 +43,7 @@ public class CD4CodeSymbolTableCompleter {
     final CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor =
         new CD4CodeBasisSymbolTableCompleter(new FullSynthesizeFromCD4Code());
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
+    traverser.add4CDBasis(cd4CodeBasisVisitor);
   }
 
   public CD4CodeTraverser getTraverser() {

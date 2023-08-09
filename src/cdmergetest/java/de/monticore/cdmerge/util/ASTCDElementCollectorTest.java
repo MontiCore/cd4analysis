@@ -1,13 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
-import de.monticore.cdmerge.exceptions.MergingException;
-import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.nio.file.Paths;
 import org.junit.Test;
@@ -22,7 +20,7 @@ public class ASTCDElementCollectorTest extends BaseTest {
 
   public final ASTCDHelper helper;
 
-  public ASTCDElementCollectorTest() throws IOException, MergingException {
+  public ASTCDElementCollectorTest() throws IOException {
     this.cd = loadModel(Paths.get(MODEL_PATH, INPUT_MODEL_FILE).toString());
     this.helper = new ASTCDHelper(this.cd);
     this.testant = new ASTCDElementCollector(helper);
@@ -33,14 +31,8 @@ public class ASTCDElementCollectorTest extends BaseTest {
 
     // The Element collector does not change the result
 
-    // Get PrettyPrinter
-    IndentPrinter printer = new IndentPrinter();
-    CD4CodeFullPrettyPrinter visitor = new CD4CodeFullPrettyPrinter(printer);
-
-    String oldCD = visitor.prettyprint(cd);
-
+    String oldCD = CD4CodeMill.prettyPrint(cd, false);
     testant.collect(cd);
-
-    assertTrue(oldCD.equals(visitor.prettyprint(cd)));
+    assertEquals(oldCD, CD4CodeMill.prettyPrint(cd, false));
   }
 }

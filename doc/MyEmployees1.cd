@@ -1,6 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package work;
 import java.util.Date;
 classdiagram MyEmployees1 {
   enum PositionKind{FULL_TIME, PART_TIME;}

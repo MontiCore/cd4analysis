@@ -2,7 +2,7 @@
 
 import java.util.Date;
 
-classdiagram Employees1 {
+classdiagram Employees0 {
   enum PositionKind{fullTime, partTime;}
 
   class Employee {

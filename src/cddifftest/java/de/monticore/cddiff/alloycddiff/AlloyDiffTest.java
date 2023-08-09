@@ -235,11 +235,11 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1.cd");
+            "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/CDSimilarManagerv1.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2.cd");
+            "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/CDSimilarManagerv2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts

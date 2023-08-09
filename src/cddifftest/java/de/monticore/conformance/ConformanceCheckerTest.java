@@ -13,8 +13,21 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
   @Test
   public void testConformanceCheck() {
     parseModels("Concrete.cd", "Reference.cd");
-    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    checker =
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                ALLOW_CARD_RESTRICTION));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
+  public void testConformanceCheckInvalid() {
+    parseModels("Concrete.cd", "Reference.cd");
+    checker = new ConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING, NO_MULTI_INC));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   @ParameterizedTest
@@ -37,7 +50,7 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
   @ValueSource(strings = {"AttrInSuperClasses.cd"})
   public void testDeepAttributeConformanceValid(String concrete) {
     parseModels("attributes/valid/" + concrete, "attributes/Reference.cd");
-    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    checker = new ConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
@@ -53,15 +66,15 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
   @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
   public void testDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
-    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    checker = new ConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"FalseDirection.cd"})
+  @ValueSource(strings = {"FalseDirection.cd", "FalseCard.cd"})
   public void testDeepAssocConformanceInvalid(String concrete) {
     parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
-    checker = new ConformanceChecker(Set.of(INHERITANCE));
+    checker = new ConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
 
@@ -69,29 +82,15 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
   @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
   public void testStrictDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
-    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE));
+    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd"})
+  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd", "FalseCard.cd"})
   public void testStrictDeepAssocConformanceInvalid(String concrete) {
     parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
-    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE));
+    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
-  public void testStrengthDeepAssocConformanceValid(String concrete) {
-    parseModels("associations/valid/" + concrete, "associations/Reference.cd");
-    assertTrue(ConformanceChecker.checkStrictDeepComposedConformance(conCD, refCD, "ref"));
-  }
-
-  @ParameterizedTest
-  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd"})
-  public void testStrengthDeepAssocConformanceInvalid(String concrete) {
-    parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
-    assertFalse(ConformanceChecker.checkStrictDeepComposedConformance(conCD, refCD, "ref"));
   }
 }

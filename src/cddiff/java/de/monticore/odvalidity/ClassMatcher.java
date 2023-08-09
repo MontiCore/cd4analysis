@@ -242,36 +242,38 @@ public class ClassMatcher {
     String cdAttrType = cdAttr.getMCType().printType();
     String odAttrType = getObjectAttributeType(odAttr);
 
-    // Handle enums and another objects
-    if (isNameEnumInCD(cdAttrType) || isNameClassInCD(cdAttrType)) {
-      return validateNameExpression(odAttr.getODValue(), cdAttrType);
-    }
-
-    // Handle lists
-    if ((odAttr.getODValue() instanceof ASTODList) && cdAttr.getMCType() instanceof ASTMCListType) {
-      // Handle special case that list has no elements
-      var elementList = ((ASTODList) odAttr.getODValue()).getODValueList();
-      if (elementList.size() == 0 && cdAttr.getMCType() instanceof ASTMCListType) {
-        // When the list attribute of the object has no elements then we have no chance to
-        // determine the list element type
-        // Just say it is valid because we can not contradict it
-        return true;
+    if (odAttr.isPresentODValue()) {
+      // Handle enums and another objects
+      if (isNameEnumInCD(cdAttrType) || isNameClassInCD(cdAttrType)) {
+        return validateNameExpression(odAttr.getODValue(), cdAttrType);
       }
 
-      // Check if types are correct
-      if (!cdAttrType.equals(odAttrType)) {
-        return false;
-      }
-      // Check if all list elements have the same type
-      String listElementType = ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType();
-      for (var element : ((ASTODList) odAttr.getODValue()).getODValueList()) {
-        // Compare list element type to with type of all elements in object list attribute
-        if (!listElementType.equals(getObjectAttributeTypeByAST(element))) {
+      // Handle lists
+      if ((odAttr.getODValue() instanceof ASTODList) && (cdAttr.getMCType() instanceof ASTMCListType)) {
+        // Handle special case that list has no elements
+        var elementList = ((ASTODList) odAttr.getODValue()).getODValueList();
+        if (elementList.size() == 0 && cdAttr.getMCType() instanceof ASTMCListType) {
+          // When the list attribute of the object has no elements then we have no chance to
+          // determine the list element type
+          // Just say it is valid because we can not contradict it
+          return true;
+        }
+
+        // Check if types are correct
+        if (!cdAttrType.equals(odAttrType)) {
           return false;
         }
+        // Check if all list elements have the same type
+        String listElementType = ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType();
+        for (var element : ((ASTODList) odAttr.getODValue()).getODValueList()) {
+          // Compare list element type to with type of all elements in object list attribute
+          if (!listElementType.equals(getObjectAttributeTypeByAST(element))) {
+            return false;
+          }
+        }
       }
-    }
 
+    }
     // Check types
     return cdAttrType.equals(odAttrType);
   }
@@ -440,6 +442,7 @@ public class ClassMatcher {
     for (var cdEnum : cd.getCDDefinition().getCDEnumsList()) {
       // Check if we can find
       if (cdEnum.getSymbol().getInternalQualifiedName().equals(name)) {
+        Log.warn(name);
         return true;
       }
     }
