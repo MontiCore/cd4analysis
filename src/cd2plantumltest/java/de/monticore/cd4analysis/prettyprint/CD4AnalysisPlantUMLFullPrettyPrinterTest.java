@@ -10,6 +10,7 @@ import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -61,7 +62,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
       "QuantifiedNamedAssociations"
     })
   public void completeModel(String input) throws IOException {
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
 
@@ -70,8 +71,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -84,7 +85,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected:\n"+expected);
 
-    Assert.assertEquals(expected, output);
+    Assertions.assertEquals(expected, output);
   }
 
   /**
@@ -114,7 +115,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/noOptions/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/noOptions/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -122,8 +123,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -136,7 +137,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected, output);
+    Assertions.assertEquals(expected, output);
   }
 
   /**
@@ -166,7 +167,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttributes/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttributes/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -174,8 +175,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -188,7 +189,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected,output);
+    Assertions.assertEquals(expected,output);
   }
 
   /**
@@ -220,7 +221,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAssociations/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAssociations/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -228,8 +229,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -242,7 +243,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected,output);
+    Assertions.assertEquals(expected,output);
   }
 
   /**
@@ -272,7 +273,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showRoles/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showRoles/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -280,8 +281,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -294,7 +295,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected, output);
+    Assertions.assertEquals(expected, output);
   }
 
   /**
@@ -324,7 +325,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showCardinalities/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showCardinalities/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -332,8 +333,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -346,7 +347,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected,output);
+    Assertions.assertEquals(expected,output);
   }
 
   /**
@@ -378,7 +379,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showModifier/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showModifier/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -386,8 +387,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -400,7 +401,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected,output);
+    Assertions.assertEquals(expected,output);
   }
 
   /**
@@ -432,7 +433,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
-    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttshowMod/" + input + ".txt"));
+    Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttshowMod/" + input + ".plantuml"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
     var tool = new CD4AnalysisTool();
@@ -440,8 +441,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
       p.parseCDCompilationUnit(filePath);
+    Assertions.assertTrue(astcdCompilationUnit.isPresent());
 
-    checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     tool.createSymbolTable(node);
@@ -454,7 +455,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "");
     System.out.println("Expected: \n " +expected);
 
-    Assert.assertEquals(expected,output);
+    Assertions.assertEquals(expected,output);
   }
 
 
