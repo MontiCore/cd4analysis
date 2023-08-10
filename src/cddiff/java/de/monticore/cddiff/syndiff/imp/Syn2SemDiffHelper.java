@@ -399,6 +399,89 @@ public class Syn2SemDiffHelper {
         }
       }
     }
+    for(ASTCDClass astcdClass : srcCD.getCDDefinition().getCDClassesList()){
+      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+      for (ASTCDAttribute attribute : attributes){
+        for (ASTCDAttribute attribute1 : attributes){
+          if (attribute != attribute1
+            && attribute.getName().equals(attribute1.getName())
+            && !attribute.printType().equals(attribute1.printType())){
+            notInstanClassesSrc.add(astcdClass);
+            break;
+          }
+          break;
+        }
+      }
+    }
+    for(ASTCDClass astcdClass : tgtCD.getCDDefinition().getCDClassesList()) {
+      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+      for (ASTCDAttribute attribute : attributes) {
+        for (ASTCDAttribute attribute1 : attributes) {
+          if (attribute != attribute1
+            && attribute.getName().equals(attribute1.getName())
+            && !attribute.printType().equals(attribute1.printType())) {
+            notInstanClassesTgt.add(astcdClass);
+            break;
+          }
+          break;
+        }
+      }
+    }
+    //TODO: implement other case
+    //ask Max if target Role name and
+    for (ASTCDClass astcdClass : srcCD.getCDDefinition().getCDClassesList()){
+      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+      for (ASTCDAttribute attribute : attributes){
+        if (sameRoleNameAndClass(attribute.getName(), astcdClass)){
+          notInstanClassesSrc.add(astcdClass);
+          break;
+        }
+      }
+    }
+    for (ASTCDClass astcdClass : tgtCD.getCDDefinition().getCDClassesList()){
+      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+      for (ASTCDAttribute attribute : attributes){
+        if (sameRoleNameAndClassTgt(attribute.getName(), astcdClass)){
+          notInstanClassesTgt.add(astcdClass);
+          break;
+        }
+      }
+    }
+  }
+
+  private boolean sameRoleNameAndClass(String roleName, ASTCDClass astcdClass){
+    for (AssocStruct assocStruct : srcMap.get(astcdClass)){
+      if (assocStruct.getSide().equals(ClassSide.Left)){
+        if (assocStruct.getAssociation().getRight().getCDRole().getName().equals(roleName)
+          && getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName().equals(roleName)){
+          return true;
+        }
+      }
+      else {
+        if (assocStruct.getAssociation().getRight().getCDRole().getName().equals(roleName)
+          && getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName().equals(roleName)){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  private boolean sameRoleNameAndClassTgt(String roleName, ASTCDClass astcdClass){
+    for (AssocStruct assocStruct : trgMap.get(astcdClass)){
+      if (assocStruct.getSide().equals(ClassSide.Left)){
+        if (assocStruct.getAssociation().getRight().getCDRole().getName().equals(roleName)
+          && getConnectedClasses(assocStruct.getAssociation(), tgtCD).b.getName().equals(roleName)){
+          return true;
+        }
+      }
+      else {
+        if (assocStruct.getAssociation().getRight().getCDRole().getName().equals(roleName)
+          && getConnectedClasses(assocStruct.getAssociation(), tgtCD).b.getName().equals(roleName)){
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public static Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association, ASTCDCompilationUnit compilationUnit) {

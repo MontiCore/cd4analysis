@@ -647,6 +647,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
+  //TODO: add more test
   /**
    * Find all overlapping and all duplicated associations.
    * When comparing associations, we distinguish two cases:

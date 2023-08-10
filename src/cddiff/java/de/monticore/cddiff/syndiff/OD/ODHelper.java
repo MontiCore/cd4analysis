@@ -266,6 +266,8 @@ public class ODHelper {
     return artifactList;
   }
 
+  //TODO: add function for STA semantics
+  //TODO: add "diff" and instanceof to stereotype
   private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc){
     for (Pair<ASTCDAttribute, ASTCDAttribute> pair : diffStruc.getMatchedAttributes()){
       if (pair.a.equals(attribute)){
