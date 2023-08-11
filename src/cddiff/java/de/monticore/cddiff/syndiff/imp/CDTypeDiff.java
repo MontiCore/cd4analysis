@@ -34,10 +34,6 @@ public class CDTypeDiff implements ICDTypeDiff {
 
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
 
-  //Print help functions and strings
-  CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
-
   public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;

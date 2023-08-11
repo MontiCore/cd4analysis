@@ -1,22 +1,23 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.syndiff.interfaces;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cddiff.syndiff.imp.Actions;
+import de.monticore.cddiff.syndiff.imp.CDNodeDiff;
+import de.monticore.cddiff.syndiff.imp.DiffTypes;
 
-import javax.swing.*;
 import java.util.List;
 
-// TODO: Write comments
-public class CDPrintHelper {
+public interface ICDPrintDiff {
+  static final String COLOR_DELETE = "\033[1;31m";
 
-  protected static final String COLOR_DELETE = "\033[1;31m";
+  static final String COLOR_ADD = "\033[1;32m";
 
-  protected static final String COLOR_ADD = "\033[1;32m";
+  static final String COLOR_CHANGE = "\033[1;33m";
 
-  protected static final String COLOR_CHANGE = "\033[1;33m";
+  static final String RESET = "\033[0m";
 
-  protected static final String RESET = "\033[0m";
-
-  public String combineWithoutNulls(List<String> stringList) {
+  public static String combineWithoutNulls(List<String> stringList) {
     StringBuilder output = new StringBuilder();
 
     for (String field : stringList) {
