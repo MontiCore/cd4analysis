@@ -64,7 +64,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/allOptions/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
-
     var tool = new CD4AnalysisTool();
     tool.init();
 
@@ -217,8 +216,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     plantUMLConfig = new PlantUMLConfig(false, true, false, false, false);
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
-
-    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
 
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAssociations/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
@@ -376,8 +373,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
-
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/showModifier/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
@@ -430,8 +425,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     util = new PlantUMLPrettyPrintUtil(new IndentPrinter(), plantUMLConfig);
     printer = new CD4AnalysisPlantUMLFullPrettyPrinter(util);
 
-    String outputPath = Paths.get(getFilePath("plantuml/results/" + input + ".svg")).toAbsolutePath().toString();
-
     Path expectedPath = Paths.get(getFilePath("plantuml/expected/showAttshowMod/" + input + ".txt"));
     String filePath = getFilePath("cd4analysis/prettyprint/" + input + ".cd");
 
@@ -456,6 +449,5 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
 
     Assert.assertEquals(expected,output);
   }
-
 
 }
