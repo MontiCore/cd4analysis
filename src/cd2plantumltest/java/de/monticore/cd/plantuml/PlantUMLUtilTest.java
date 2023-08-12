@@ -23,7 +23,7 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
   @Test
   public void testWriteCdToPlantUmlModelFile() {
     String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
-    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath().toString(), "QuantifiedNamedAssociations.puml");
+    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath(), "QuantifiedNamedAssociations.plantuml");
     PlantUMLConfig config = new PlantUMLConfig();
 
     try {
@@ -53,7 +53,7 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
   @Test
   public void testWriteCdToPlantUmlSvg() {
     String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
-    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath().toString(), "QuantifiedNamedAssociations.svg");
+    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath(), "QuantifiedNamedAssociations.svg");
     PlantUMLConfig config = new PlantUMLConfig();
 
     try {

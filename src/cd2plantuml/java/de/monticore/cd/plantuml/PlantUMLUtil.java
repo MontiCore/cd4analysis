@@ -23,27 +23,6 @@ import net.sourceforge.plantuml.SourceStringReader;
 public class PlantUMLUtil {
   public static final String PLANTUML_EMPTY = "@startuml\n@enduml";
 
-  /*
-  /**
-   * this needs internet - it connects to the plantuml-server to render the image and downloads it
-   */
-  /*
-  public static void printCD2PlantUMLServer(String pathCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
-      throws IOException {
-
-    final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
-
-    final String plantUMLString = printCD2PlantUML(cdString, plantUMLConfig);
-    Transcoder t = TranscoderUtil.getDefaultTranscoder();
-    String url = "https://www.plantuml.com/plantuml/svg/" + t.encode(plantUMLString);
-    System.out.println(url);
-    BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-    String svg = IOUtils.toString(in, "UTF-8");
-    try (PrintWriter out = new PrintWriter(outputPathSVG)) {
-      out.println(svg);
-    }
-  }*/
-
   /**
    * this needs GraphViz/JDOT installed on your PC
    */
@@ -61,7 +40,7 @@ public class PlantUMLUtil {
     os.close();
 
     // The XML is stored into svg
-    final String svg = new String(os.toByteArray(), StandardCharsets.UTF_8);
+    final String svg = os.toString(StandardCharsets.UTF_8);
     try (PrintWriter out = new PrintWriter(outputPathSVG.toString())) {
       out.println(svg);
     }
@@ -86,7 +65,7 @@ public class PlantUMLUtil {
     os.close();
 
     // The XML is stored into svg
-    final String svg = new String(os.toByteArray(), StandardCharsets.UTF_8);
+    final String svg = os.toString(StandardCharsets.UTF_8);
     try (PrintWriter out = new PrintWriter(outputPathSVG.toString())) {
       out.println(svg);
     }
