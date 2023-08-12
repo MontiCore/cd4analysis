@@ -20,6 +20,9 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
+  /**
+   * Checks if the PlantUMLUtil.writeCdToPlantUmlModelFile works correctly and does print a .plantuml file into the correct output folder.
+   */
   @Test
   public void testWriteCdToPlantUmlModelFile() {
     String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
@@ -50,6 +53,9 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
     }
   }
 
+  /**
+   * Checks if the PlantUMLUtil.writeCdToPlantUmlModelFile works correctly and does print a .svg file into the correct output folder.
+   */
   @Test
   public void testWriteCdToPlantUmlSvg() {
     String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
