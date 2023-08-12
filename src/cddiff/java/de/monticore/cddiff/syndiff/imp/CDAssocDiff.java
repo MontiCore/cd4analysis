@@ -143,22 +143,6 @@ public class CDAssocDiff implements ICDAssocDiff {
         + getDirection(getSrcElem());
   }
 
-  public static AssocDirection getDirection(ASTCDAssociation association) {
-    if (association.getCDAssocDir() == null) {
-      return AssocDirection.Unspecified;
-    }
-    if (association.getCDAssocDir().isBidirectional()) {
-      return AssocDirection.BiDirectional;
-    }
-    if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
-      return AssocDirection.RightToLeft;
-    }
-    if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
-      return AssocDirection.LeftToRight;
-    }
-    return null;
-  }
-
   @Override
   public String cardDiff() {
     ASTCDAssociation newAssoc = getSrcElem();
