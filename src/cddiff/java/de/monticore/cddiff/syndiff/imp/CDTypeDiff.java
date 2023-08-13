@@ -171,8 +171,7 @@ public class CDTypeDiff implements ICDTypeDiff {
   public Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(){
     List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttribute()){
-      if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
-        && isDeleted(attribute, helper.getSrcCD())){
+      if (isDeleted(attribute, helper.getSrcCD())){
         pairList.add(attribute);
       }
     }
@@ -186,9 +185,7 @@ public class CDTypeDiff implements ICDTypeDiff {
    * @return false if found in inheritance hierarchy or the class is now abstract and the structure is refactored
    */
   public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit) {
-    if (isAttributInSuper(attribute, getSrcElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())) {
-      return false;
-    } else {
+    if (!isAttributInSuper(attribute, getSrcElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())) {
       if (!getSrcElem().getModifier().isAbstract()) {
         return true;
       }
@@ -218,8 +215,8 @@ public class CDTypeDiff implements ICDTypeDiff {
           conditionSatisfied = false;
         }
       }
-      return false;
     }
+    return false;
   }
 
   /**
@@ -230,99 +227,39 @@ public class CDTypeDiff implements ICDTypeDiff {
    */
   @Override
   public Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff) {
-    if (!getSrcElem().getModifier().isAbstract()) {
-      return new Pair<>((ASTCDClass) getSrcElem(), (ASTCDAttribute) memberDiff.getSrcElem());//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
-    } else { //class is abstract and can't be instantiated - get a subclass
-      return new Pair<>(minDiffWitness((ASTCDClass) getSrcElem()), (ASTCDAttribute) memberDiff.getSrcElem());//add to Diff List new Pair(astcdClass, memberDiff.getElem1())
-    }
+    return new Pair<>((ASTCDClass) getSrcElem(), (ASTCDAttribute) memberDiff.getSrcElem());//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
   }
 
-  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
-    assert helper.getSrcCD() !=null;
-    Set<ASTCDClass> set = getSpannedInheritance(astcdClass, helper.getSrcCD());
-
-    ASTCDClass closestClass = null;
-    int closestDepth = Integer.MAX_VALUE;
-
-    for (ASTCDClass cdClass : set) {
-      if (!cdClass.getModifier().isAbstract()
-        && !helper.getNotInstanClassesSrc().contains(astcdClass)) {
-        int depth = getDepthOfClass(cdClass, astcdClass);
-        if (depth < closestDepth) {
-          closestClass = cdClass;
-          closestDepth = depth;
-        }
-      }
-    }
-
-    return closestClass;
-  }
-
-  public int getDepthOfClass(ASTCDClass classNode, ASTCDClass rootClass) {
-    if (classNode == null || rootClass == null) {
-      return -1; // or any other suitable value to indicate an invalid depth
-    }
-
-    if (classNode == rootClass) {
-      return 0; // base case: classNode is the root class
-    }
-
-    int maxDepth = -1;
-    for (ASTCDType directSuperClass : CDInheritanceHelper.getDirectSuperClasses(classNode, (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope())) {
-      if (directSuperClass instanceof ASTCDClass) {
-        int depth = getDepthOfClass((ASTCDClass) directSuperClass, rootClass);
-        if (depth >= 0 && depth > maxDepth) {
-          maxDepth = depth;
-        }
-      }
-    }
-
-    return maxDepth >= 0 ? maxDepth + 1 : -1; // add 1 to the maximum depth found
-  }
-  public int calculateClassDepth(ASTCDClass rootClass, ASTCDClass targetClass) {
-    // Check if the target class is the root class
-    if (rootClass.getName().equals(targetClass.getName())) {
-      return 0;
-    }
-
-    // Get the direct superclasses of the target class
-    Set<ASTCDClass> superClasses = CDDiffUtil.getAllSuperclasses(targetClass, helper.getSrcCD().getCDDefinition().getCDClassesList());
-
-    // If the target class has no superclasses, it is not in the hierarchy
-    if (superClasses.isEmpty()) {
-      return -1;
-    }
-
-    // Recursively calculate the depth for each direct superclass
-    List<Integer> depths = new ArrayList<>();
-    for (ASTCDClass superClass : superClasses) {
-      int depth = calculateClassDepth(rootClass, superClass);
-      if (depth >= 0) {
-        depths.add(depth + 1);
-      }
-    }
-
-    // Return the maximum depth from the direct superclasses
-    if (depths.isEmpty()) {
-      return -1;
-    } else {
-      return depths.stream().max(Integer::compare).get();
-    }
-  }
-
-  //this doesn't belong here
-  @Override
-  public List<ASTCDClass> getClassesForEnum(ASTCDCompilationUnit compilationUnit) {
-    List<ASTCDClass> classList = new ArrayList<>();
-    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()){
-      for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()){
-        if (attribute.getMCType().printType().equals(getSrcElem().toString())){
-          classList.add(astcdClass);
-        }
-      }
-    }
-    return classList;
-  }
+//  public int calculateClassDepth(ASTCDClass rootClass, ASTCDClass targetClass) {
+//    // Check if the target class is the root class
+//    if (rootClass.getSymbol().getInternalQualifiedName().equals(targetClass.getSymbol().getInternalQualifiedName())) {
+//      return 0;
+//    }
+//
+//    // Get the direct superclasses of the target class
+//    Set<ASTCDClass> superClasses = CDDiffUtil.getAllSuperclasses(targetClass, helper.getSrcCD().getCDDefinition().getCDClassesList());
+//
+//    // If the target class has no superclasses, it is not in the hierarchy
+//    if (superClasses.isEmpty()) {
+//      return -1;
+//    }
+//
+//    // Recursively calculate the depth for each direct superclass
+//    List<Integer> depths = new ArrayList<>();
+//    for (ASTCDClass superClass : superClasses) {
+//      int depth = calculateClassDepth(rootClass, superClass);
+//      if (depth >= 0) {
+//        depths.add(depth + 1);
+//      }
+//    }
+//
+//    // Return the maximum depth from the direct superclasses
+//    if (depths.isEmpty()) {
+//      return -1;
+//    } else {
+//      return depths.stream().max(Integer::compare).get();
+//    }
+//  }
 
   @Override
   public ASTCDType isClassNeeded() {
@@ -374,8 +311,7 @@ public class CDTypeDiff implements ICDTypeDiff {
   public Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes(){
     List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getAddedAttributes()){
-      if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) srcElem)
-        &&isAdded(attribute, helper.getTgtCD())){
+      if (isAdded(attribute, helper.getTgtCD())){
         pairList.add(attribute);
       }
     }

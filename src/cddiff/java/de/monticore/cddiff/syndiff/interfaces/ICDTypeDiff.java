@@ -59,14 +59,6 @@ public interface ICDTypeDiff {
   Pair<ASTCDClass, List<ASTCDAttribute>> changedAttribute();
 
   /**
-   * Get all classes that use the ASTCDEnum as an attribute. We use this function when the typeDiff
-   * is between enums.
-   *
-   * @return list of those classes.
-   */
-  List<ASTCDClass> getClassesForEnum(ASTCDCompilationUnit compilationUnit);
-
-  /**
    * Check the difference in the modifier of the classes. It must also save the information for
    * building the object diagrams.
    *

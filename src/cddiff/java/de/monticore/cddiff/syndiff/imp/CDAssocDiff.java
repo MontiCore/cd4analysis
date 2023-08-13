@@ -368,17 +368,17 @@ public class CDAssocDiff implements ICDAssocDiff {
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(getSrcElem(), compilationUnit);
       if (getSrcElem().getCDAssocDir().isBidirectional()){
         Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), compilationUnit);
-        if (pair.a.getName().equals(pairOld.a.getName())
-          && !pair.b.getName().equals(pairOld.b.getName())){
+        if (pair.a.getSymbol().getInternalQualifiedName().equals(pairOld.a.getSymbol().getInternalQualifiedName())
+          && !pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.b.getSymbol().getInternalQualifiedName())){
           return new Pair<>(getSrcElem(), pair.b);
-        } else if (pair.a.getName().equals(pairOld.b.getName())
-          && !pair.b.getName().equals(pairOld.a.getName())) {
+        } else if (pair.a.getSymbol().getInternalQualifiedName().equals(pairOld.b.getSymbol().getInternalQualifiedName())
+          && !pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.a.getSymbol().getInternalQualifiedName())) {
           return new Pair<>(getSrcElem(), pair.b);
-        } else if (pair.b.getName().equals(pairOld.b.getName())
-          && !pair.a.getName().equals(pairOld.a.getName())) {
+        } else if (pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.b.getSymbol().getInternalQualifiedName())
+          && !pair.a.getName().equals(pairOld.a.getSymbol().getInternalQualifiedName())) {
           return new Pair<>(getSrcElem(), pair.a);
-        } else if (pair.b.getName().equals(pairOld.a.getName())
-          && !pair.a.getName().equals(pairOld.b.getName())) {
+        } else if (pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.a.getSymbol().getInternalQualifiedName())
+          && !pair.a.getSymbol().getInternalQualifiedName().equals(pairOld.b.getSymbol().getInternalQualifiedName())) {
           return new Pair<>(getSrcElem(), pair.a);
         }
       } else if (getSrcElem().getCDAssocDir().isDefinitiveNavigableRight()){

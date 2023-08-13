@@ -1,27 +1,31 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
-
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
-import de.monticore.cdassociation._ast.*;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
-import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
 import de.monticore.cddiff.syndiff.datastructures.*;
+import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.matcher.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
+
 import java.util.*;
+
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociation;
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociationInReverse;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
 public class CDSyntaxDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
@@ -350,8 +354,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (AssocStruct assocStruct : getHelper().getTrgMap().get(astcdClass)){
       if (areZeroAssocs(assocStruct, assocStruct)) {
         for (AssocStruct baseAssoc : getHelper().getSrcMap().get(subClass)) {
-          if (Syn2SemDiffHelper.sameAssociationType(baseAssoc.getAssociation(), assocStruct.getAssociation())
-            || Syn2SemDiffHelper.sameAssociationTypeInReverse(baseAssoc.getAssociation(), assocStruct.getAssociation())) {
+          if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(baseAssoc.getAssociation(), assocStruct.getAssociation())
+            || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(baseAssoc.getAssociation(), assocStruct.getAssociation())) {
             isContained = true;
           }
         }
@@ -359,6 +363,22 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
           return true;
         } else {
           isContained = false;
+        }
+      }
+      List<ASTCDClass> subClasses = getSpannedInheritance(srcCD, subClass);
+      for (ASTCDClass sub : subClasses) {
+        if (findMatchedClass(sub) != null) {
+          for (AssocStruct assocStruct1 : getHelper().getSrcMap().get(sub)) {
+            if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(assocStruct1.getAssociation(), assocStruct.getAssociation())
+              || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(assocStruct1.getAssociation(), assocStruct.getAssociation())) {
+              isContained = true;
+            }
+          }
+          if (!isContained) {
+            return true;
+          } else {
+            isContained = false;
+          }
         }
       }
     }
@@ -444,8 +464,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (AssocStruct assocStruct : getHelper().getSrcMap().get(astcdClass)) {
       if (areZeroAssocs(assocStruct, assocStruct)) {
         for (AssocStruct baseAssoc : getHelper().getTrgMap().get(subClass)) {
-          if (Syn2SemDiffHelper.sameAssociationType(baseAssoc.getAssociation(), assocStruct.getAssociation())
-            || Syn2SemDiffHelper.sameAssociationTypeInReverse(baseAssoc.getAssociation(), assocStruct.getAssociation())) {
+          if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(baseAssoc.getAssociation(), assocStruct.getAssociation())
+            || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(baseAssoc.getAssociation(), assocStruct.getAssociation())) {
             isContained = true;
           }
         }
@@ -454,9 +474,35 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         } else {
           isContained = false;
         }
+        ASTCDClass matchedClass = findMatchedClass(subClass);
+        List<ASTCDClass> subClasses = getSpannedInheritance(tgtCD, matchedClass);
+        for (ASTCDClass sub : subClasses) {
+          if (findMatchedClass(sub) != null) {
+            for (AssocStruct assocStruct1 : getHelper().getTrgMap().get(sub)) {
+              if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(assocStruct1.getAssociation(), assocStruct.getAssociation())
+                || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(assocStruct1.getAssociation(), assocStruct.getAssociation())) {
+                isContained = true;
+              }
+            }
+            if (!isContained) {
+              return true;
+            } else {
+              isContained = false;
+            }
+          }
+        }
       }
     }
     return false;
+  }
+
+  private ASTCDClass findMatchedSrc(ASTCDClass astcdClass){
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
+      if (pair.b.equals(astcdClass)){
+        return pair.a;
+      }
+    }
+    return null;
   }
 
   public ASTCDClass isAssocDeleted(ASTCDAssociation association, ASTCDClass astcdClass) {
@@ -495,10 +541,11 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return null;
   }
 
+  //add those to deleted/added inheritance - done
   private boolean isContainedInSuper(ASTCDAssociation association, ASTCDClass astcdClass){
     for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)){
-      if (Syn2SemDiffHelper.sameAssociationType(assocStruct.getAssociation(), association)
-        || Syn2SemDiffHelper.sameAssociationTypeInReverse(assocStruct.getAssociation(), association)){
+      if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(assocStruct.getAssociation(), association)
+        || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(assocStruct.getAssociation(), association)){
         return true;
       }
     }
@@ -509,8 +556,8 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (ASTCDClass subClass : getSpannedInheritance(srcCD, astcdClass)){
       boolean isContained = false;
       for (AssocStruct assocStruct : helper.getSrcMap().get(subClass)){
-        if (Syn2SemDiffHelper.sameAssociationType(assocStruct.getAssociation(), association)
-          || Syn2SemDiffHelper.sameAssociationTypeInReverse(assocStruct.getAssociation(), association)){
+        if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(assocStruct.getAssociation(), association)
+          || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(assocStruct.getAssociation(), association)){
           isContained = true;
           break;
         }
@@ -522,7 +569,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return null;
   }
 
-  //TODO: look again at added/deleted assocs for missing cases
+  //look again at added/deleted assocs for missing cases - done
   //add check if we can derive a diff - the class isn't abstract(or not part of notInstantiatableSrc) or this is is true for some subclass
   //List isn't needed - just one class
   //for that check if we have an association from the source target with the same association type and the class isn't abstract
@@ -633,7 +680,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     boolean different = false;
     for (ASTCDClass class1 : oldCLasses){
       for (ASTCDClass class2 : newClasses){
-        if (class1.getName().equals(class2.getName())){
+        if (class1.getSymbol().getInternalQualifiedName().equals(class2.getSymbol().getInternalQualifiedName())){
           different = true;
           break;
         }
@@ -644,7 +691,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
     for (ASTCDClass class1 : newClasses){
       for (ASTCDClass class2 : oldCLasses){
-        if (class1.getName().equals(class2.getName())){
+        if (class1.getSymbol().getInternalQualifiedName().equals(class2.getSymbol().getInternalQualifiedName())){
           different = true;
           break;
         }
@@ -729,6 +776,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    */
   @Override
   public boolean isAddedAssoc(ASTCDAssociation astcdAssociation) {
+    //TODO: might have to be changed
     //TODO: ask Tsveti
     //List<ASTCDAssociation> list = typeMatcher.getMatchedElements(astcdAssociation);
     //this must replace first if()
@@ -830,7 +878,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     }
   }
 
-  //TODO: allow to call this for one CD
   //TODO: add more test
   /**
    * Find all overlapping and all duplicated associations.
@@ -965,8 +1012,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       deleteAssocsFromSrc(pair.a, pair.b);
     }
     for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
-      setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
-      mergeAssocs(pair.getAssociation(), pair.getSuperAssoc());
+      if (!helper.getNotInstanClassesSrc().contains(pair.getAstcdClass())) {
+        setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
+        mergeAssocs(pair.getAssociation(), pair.getSuperAssoc());
+      }
     }
     for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
       helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
@@ -985,8 +1034,10 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       deleteAssocsFromTgt(pair.a, pair.b);
     }
     for (DeleteStruc pair : tgtAssocsToMergeWithDelete) {
-      setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
-      mergeAssocs(pair.getAssociation(), pair.getSuperAssoc());
+      if (!helper.getNotInstanClassesTgt().contains(pair.getAstcdClass())) {
+        setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
+        mergeAssocs(pair.getAssociation(), pair.getSuperAssoc());
+      }
     }
     for (DeleteStruc pair : tgtAssocsToMergeWithDelete) {
       helper.getTrgMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
@@ -1036,18 +1087,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
   }
-
-//  public List<Pair<ASTCDClass, Set<ASTCDAttribute>>> allNewAttributes(){
-//    List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list = new ArrayList<>();
-//    for (Pair<ASTCDClass, List<ASTCDClass>> inheritanceDiff : addedInheritance){
-//      Pair<ASTCDClass, Set<ASTCDAttribute>> pair = newAttributes(inheritanceDiff);
-//      if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.a)
-//        && !pair.b.isEmpty()){
-//        list.add(pair);
-//      }
-//    }
-//    return mergeSets(list);
-//  }
 
   public Pair<ASTCDClass, Set<ASTCDAttribute>> newAttributes(InheritanceDiff inheritanceDiff) {
     Set<ASTCDClass> classes = new HashSet<>();
@@ -1212,44 +1251,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return classList;
   }
 
-  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> addedAttributeList() {
-    List<Pair<ASTCDClass, List<ASTCDAttribute>>> list = new ArrayList<>();
-    for (CDTypeDiff typeDiff : changedClasses) {
-      if (typeDiff.getSrcElem() instanceof ASTCDClass
-        && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
-        && typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)) {
-        list.add(typeDiff.addedAttributes());
-      }
-    }
-    return list;
-  }
-
-  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> deletedAttributeList(){
-    List<Pair<ASTCDClass, List<ASTCDAttribute>>> list = new ArrayList<>();
-    for (CDTypeDiff typeDiff : changedClasses) {
-      if (typeDiff.getSrcElem() instanceof ASTCDClass
-        && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
-        && typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
-        list.add(typeDiff.deletedAttributes());
-      }
-    }
-    return list;
-  }
-
-  public List<EnumStruc> addedConstantsList(){
-    List<EnumStruc> list = new ArrayList<>();
-    for (CDTypeDiff typeDiff : changedClasses){
-      if (typeDiff.getSrcElem() instanceof ASTCDEnum){
-        ASTCDClass astcdClass = null;
-        ASTCDAttribute attribute = null;
-        for (ASTCDEnumConstant enumConstant : typeDiff.getAddedConstants()){
-          list.add(new EnumStruc(astcdClass, attribute, enumConstant));
-        }
-      }
-    }
-    return list;
-  }
-
   public List<Pair<ASTCDClass, List<ASTCDAttribute>>> changedAttributeList() {
     List<Pair<ASTCDClass, List<ASTCDAttribute>>> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses) {
@@ -1279,62 +1280,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return false;
   }
 
-  public List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> changedRoleNameList() {
-    List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> list = new ArrayList<>();
-    for (CDAssocDiff assocDiff : changedAssocs){
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
-        if (srcAndTgtExist(assocDiff)) {
-          //list.addAll(assocDiff.getRoleDiff());
-        }
-      }
-    }
-    return list;
-  }
-
-//  public List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> changedCardinalityList() {
-//    List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
-//    for (CDAssocDiff assocDiff : changedAssocs){
-//      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_MULTIPLICITY)) {
-//        if (srcAndTgtExist(assocDiff)) {
-//          list.addAll(assocDiff.getCardDiff());
-//        }
-//      }
-//    }
-//    return list;
-//  }
-
-  public List<Pair<ASTCDAssociation, ASTCDClass>> changedTargetList() {
-    List<Pair<ASTCDAssociation, ASTCDClass>> list = new ArrayList<>();
-    for (CDAssocDiff assocDiff : changedAssocs){
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_TARGET)) {
-        if (srcAndTgtExist(assocDiff)) {
-          list.add(assocDiff.getChangedTgtClass());
-        }
-      }
-    }
-    return list;
-  }
-
-  public List<ASTCDAssociation> changedDirectionList() {
-    List<ASTCDAssociation> list = new ArrayList<>();
-    for (CDAssocDiff assocDiff : changedAssocs){
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)) {
-        if (srcAndTgtExist(assocDiff)
-          && assocDiff.isDirectionChanged()) {
-          Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
-          AssocStruct association = assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.a);
-          AssocStruct assocStruct = assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.b);
-          if (association != null){
-            list.add(association.getAssociation());
-          } else if (assocStruct != null){
-            list.add(assocStruct.getAssociation());
-          }
-        }
-      }
-    }
-    return list;
-  }
-
   public List<TypeDiffStruc> changedTypes(){
     List<TypeDiffStruc> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses){
@@ -1342,64 +1287,94 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       diff.setBaseDiff(typeDiff.getBaseDiffs());
       if (typeDiff.getSrcElem() instanceof ASTCDEnum){
         diff.setAddedConstants(typeDiff.newConstants());
-      } else {
-        if (typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)){
-          diff.setMemberDiff(typeDiff.changedAttribute());
-          List<Pair<ASTCDAttribute, ASTCDAttribute>> pairs = new ArrayList<>();
-          for (ASTCDAttribute attribute : typeDiff.changedAttribute().b){
-            pairs.add(new Pair<>(attribute, typeDiff.getOldAttribute(attribute)));
+      } else if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())) {
+        if (typeDiff.getSrcElem().getModifier().isAbstract()) {
+          ASTCDClass instanSubClass = helper.minDiffWitness((ASTCDClass) typeDiff.getSrcElem());
+          if (instanSubClass != null) {
+            if (typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
+              diff.setMemberDiff(typeDiff.changedAttribute());
+              List<Pair<ASTCDAttribute, ASTCDAttribute>> pairs = new ArrayList<>();
+              for (ASTCDAttribute attribute : typeDiff.changedAttribute().b) {
+                pairs.add(new Pair<>(attribute, typeDiff.getOldAttribute(attribute)));
+              }
+              diff.setMatchedAttributes(pairs);
+            }
+            if (typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)) {
+              diff.setAddedAttributes(typeDiff.addedAttributes());
+            }
+            if (typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
+              diff.setDeletedAttributes(typeDiff.deletedAttributes());
+            }
+            if (typeDiff.getBaseDiffs().contains(DiffTypes.STEREOTYPE_DIFFERENCE)) {
+              diff.setChangedStereotype(typeDiff.isClassNeeded());
+            }
           }
-          diff.setMatchedAttributes(pairs);
-        }
-        if (typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)){
-          diff.setAddedAttributes(typeDiff.addedAttributes());
-        }
-        if (typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)){
-          diff.setDeletedAttributes(typeDiff.deletedAttributes());
-        }
-        if (typeDiff.getBaseDiffs().contains(DiffTypes.STEREOTYPE_DIFFERENCE)){
-          diff.setChangedStereotype(typeDiff.isClassNeeded());
         }
       }
     }
     return list;
   }
 
-  public List<AssocDiffStruc> changedAssoc(){
+  public List<AssocDiffStruc> changedAssoc() {
     List<AssocDiffStruc> list = new ArrayList<>();
     for (CDAssocDiff assocDiff : changedAssocs) {
-      AssocDiffStruc diff = new AssocDiffStruc();
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
-        if (srcAndTgtExist(assocDiff)) {
-          diff.setChangedRoleNames(assocDiff.getRoleDiff().b);
-        }
+      Pair<ASTCDClass, ASTCDClass> pairDef = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
+      Pair<ASTCDClass, ASTCDClass> pair = null;
+      if (pairDef.a.getModifier().isAbstract() || pairDef.b.getModifier().isAbstract()) {
+        pair = getClassesForAssoc(pairDef);
+      } else {
+        pair = pairDef;
       }
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)) {
-        if (srcAndTgtExist(assocDiff)
-          && assocDiff.isDirectionChanged()) {
-          diff.setChangedDir(true);
+      if (!helper.getNotInstanClassesSrc().contains(pair.a) && !helper.getNotInstanClassesSrc().contains(pair.b)) {
+        AssocDiffStruc diff = new AssocDiffStruc();
+        if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
+          if (srcAndTgtExist(assocDiff)) {
+            diff.setChangedRoleNames(assocDiff.getRoleDiff().b);
+          }
         }
-      }
+        if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)) {
+          if (srcAndTgtExist(assocDiff)
+            && assocDiff.isDirectionChanged()) {
+            diff.setChangedDir(true);
+          }
+        }
 
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_TARGET)) {
-        if (srcAndTgtExist(assocDiff)) {
-          diff.setChangedTgt(assocDiff.getChangedTgtClass().b);
+        if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_TARGET)) {
+          if (srcAndTgtExist(assocDiff)) {
+            diff.setChangedTgt(assocDiff.getChangedTgtClass().b);
+          }
         }
-      }
-      // NOT LEFT MULTIPLICITY, DO ALSO FOR RIGHT MULTIPLICITY
-      //Done
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_LEFT_MULTIPLICITY)) {
-        if (srcAndTgtExist(assocDiff)) {
-          diff.setChangedCard(assocDiff.getCardDiff().b);
+        // NOT LEFT MULTIPLICITY, DO ALSO FOR RIGHT MULTIPLICITY
+        //Done
+        if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_LEFT_MULTIPLICITY)) {
+          if (srcAndTgtExist(assocDiff)) {
+            diff.setChangedCard(assocDiff.getCardDiff().b);
+          }
         }
-      }
-      if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_RIGHT_MULTIPLICITY)) {
-        if (srcAndTgtExist(assocDiff)) {
-          diff.setChangedCard(assocDiff.getCardDiff().b);
+        if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_RIGHT_MULTIPLICITY)) {
+          if (srcAndTgtExist(assocDiff)) {
+            diff.setChangedCard(assocDiff.getCardDiff().b);
+          }
         }
+
       }
     }
     return list;
+  }
+
+  private Pair<ASTCDClass, ASTCDClass> getClassesForAssoc(Pair<ASTCDClass, ASTCDClass> pair){
+    ASTCDClass left = null;
+    ASTCDClass right = null;
+    if (pair.a.getModifier().isAbstract()){
+      left = helper.minDiffWitness(pair.a);
+    }
+    if (pair.b.getModifier().isAbstract()){
+      right = helper.minDiffWitness(pair.b);
+    }
+    if (left != null && right != null){
+      return new Pair<>(left, right);
+    }
+    return null;
   }
 
   public List<ASTCDClass> srcExistsTgtNot(){

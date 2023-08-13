@@ -292,6 +292,49 @@ public class Syn2SemDiffHelper {
     return mergedList;
   }
 
+//  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
+//    assert srcCD != null;
+//    List<ASTCDClass> set = getSpannedInheritance(srcCD, astcdClass);
+//
+//    ASTCDClass closestClass = null;
+//    int closestDepth = Integer.MAX_VALUE;
+//
+//    for (ASTCDClass cdClass : set) {
+//      if (!cdClass.getModifier().isAbstract()
+//        && !notInstanClassesSrc.contains(astcdClass)) {
+//        int depth = getDepthOfClass(cdClass, astcdClass);
+//        if (depth < closestDepth) {
+//          closestClass = cdClass;
+//          closestDepth = depth;
+//        }
+//      }
+//    }
+//
+//    return closestClass;
+//  }
+//
+//  public int getDepthOfClass(ASTCDClass classNode, ASTCDClass rootClass) {
+//    if (classNode == null || rootClass == null) {
+//      return -1; // or any other suitable value to indicate an invalid depth
+//    }
+//
+//    if (classNode == rootClass) {
+//      return 0; // base case: classNode is the root class
+//    }
+//
+//    int maxDepth = -1;
+//    for (ASTCDType directSuperClass : CDInheritanceHelper.getDirectSuperClasses(classNode, (ICD4CodeArtifactScope) scrcCD.getEnclosingScope())) {
+//      if (directSuperClass instanceof ASTCDClass) {
+//        int depth = getDepthOfClass((ASTCDClass) directSuperClass, rootClass);
+//        if (depth >= 0 && depth > maxDepth) {
+//          maxDepth = depth;
+//        }
+//      }
+//    }
+//
+//    return maxDepth >= 0 ? maxDepth + 1 : -1; // add 1 to the maximum depth found
+//  }
+
   /**
    * Check if the target classes of the two associations are in an inheritance relation
    * @param association base association
@@ -451,6 +494,77 @@ public class Syn2SemDiffHelper {
       && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
       && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()))
       && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+  }
+
+  /**
+   * This function is a less restrictive version of sameAssociation in CDAssociationHelper.
+   * We check if the first association has the same navigation and role names.
+   * The cardinalities of the first do not need to be same, but they have to be
+   * 'contained' in the cardinalities of the second association
+   * @param assoc1 first association
+   * @param assoc2 second association
+   * @return true, if all conditions are fulfilled
+   */
+  public static boolean sameAssociationTypeWithClasses(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    if (assoc1.getLeftQualifiedName().getQName().equals(assoc2.getLeftQualifiedName().getQName())
+      && assoc1
+      .getRightQualifiedName()
+      .getQName()
+      .equals(assoc2.getRightQualifiedName().getQName())) {
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
+        return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+          //&& assoc1.getRight().getCDCardinality().equals(assoc2.getLeft().getCDCardinality())
+          && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+      }
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+          //&& assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality())
+          && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+      }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+        && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+        && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()))
+        && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+    }
+    return false;
+  }
+
+  /**
+   * 'sameAssociationType' for reversed directions
+   * @param assoc1 first association
+   * @param assoc2 second association
+   * @return true, if all conditions are fulfilled
+   */
+  public static boolean sameAssociationTypeInReverseWithClasses(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+
+    if (assoc1.getLeftQualifiedName().getQName().equals(assoc2.getRightQualifiedName().getQName())
+      && assoc1
+      .getRightQualifiedName()
+      .getQName()
+      .equals(assoc2.getLeftQualifiedName().getQName())) {
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
+        return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+          && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+      }
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+          && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+      }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+        && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+        && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()))
+        && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+    }
+    return false;
   }
 
   /**
@@ -656,8 +770,6 @@ public class Syn2SemDiffHelper {
                 assocForSubClass.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
               assocForSubClass.setName("");
-              //TODO: problem if I use the same datastructure for composition
-              //maybe add !...isComposition()
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
                 assocForSubClass.getLeft().setCDCardinality(new ASTCDCardMult());
               }
@@ -703,8 +815,6 @@ public class Syn2SemDiffHelper {
         }
       }
     }
-    //TODO: implement other case
-    //ask Max if target Role name and
     for (ASTCDClass astcdClass : srcCD.getCDDefinition().getCDClassesList()){
       List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
       for (ASTCDAttribute attribute : attributes){

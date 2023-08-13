@@ -73,6 +73,7 @@ public class ODHelper {
     return objectSet;
   }
 
+  //TODO: number of associations from class to class
   //TODO: add checks if class is abstract - search for subclass (some functions already do this)
   public List<ASTODArtifact> generateODs(
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD){
@@ -81,7 +82,7 @@ public class ODHelper {
     for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
       String comment = "A new associations has been added to the diagram."
-        + "\nThis association allows a new relation between the classes" + pair.a.getName() + "and" + pair.b.getName() + "and their subclasses";
+        + "\nThis association allows a new relation between the classes" + pair.a.getSymbol().getInternalQualifiedName() + "and" + pair.b.getSymbol().getInternalQualifiedName() + "and their subclasses";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association),
         generateElements(association, null, "", "", "added association", comment),
         null);
@@ -89,7 +90,7 @@ public class ODHelper {
     }
 
     for (ASTCDClass astcdClass : syntaxDiff.addedClassList()){
-      String comment = "A new class has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
+      String comment = "A new class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
         generateElements(null, astcdClass, "", "", "", comment),
         null);
@@ -97,7 +98,7 @@ public class ODHelper {
     }
 
     for (Pair<ASTCDAssociation, ASTCDClass> association : syntaxDiff.deletedAssocList()){
-      String comment = "The association between the classes" + association.b.getName() + "and" + association.b.getName() + "has been removed from the diagram.";
+      String comment = "The association between the classes" + association.b.getSymbol().getInternalQualifiedName() + "and" + association.b.getSymbol().getInternalQualifiedName() + "has been removed from the diagram.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association.a),
         generateElements(association.a, null, "", "", "deleted association", comment),
         null);
@@ -111,36 +112,8 @@ public class ODHelper {
         null);
       artifactList.add(astodArtifact);
     }
-//
-//    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.addedAttributeList()){
-//      String comment = "A new attribute" + pair.b.getName() + " has been added to the class" + pair.a.getName() + "."
-//        + "\nThis attribute couldn't be found in any of the old superclasses or in all of the old subclasses";
-//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_ATTRIBUTE), generateElements(null, pair.a, "", "", "", comment), null);
-//      artifactList.add(astodArtifact);
-//    }
-//
-//    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.deletedAttributeList()){
-//      String comment = "The old attribute " + pair.b.getName() + " has been removed from the class" + pair.a.getName() + "."
-//        + "\nThis attribute couldn't be found in any of the new superclasses or in all of the new subclasses";
-//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.REMOVED_ATTRIBUTE), generateElements(null, pair.a, "", "", "", comment), null);
-//      artifactList.add(astodArtifact);
-//    }
-//
-//    for (EnumStruc enumStruc : syntaxDiff.addedConstantsList()){
-//      String comment = "In the Enum " + enumStruc.getAttribute().printType() + " the constant " + enumStruc.getEnumConstant().toString() + " has been added."
-//        + "\nNow we can create an object for example of type " + enumStruc.getAstcdClass().getName() + " where the attribute has the constant";
-//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.ADDED_CONSTANTS), generateElements(null, enumStruc.getAstcdClass(), "", "", "", comment), null);
-//      artifactList.add(astodArtifact);
-//    }
-//
-//    for (Pair<ASTCDClass, ASTCDAttribute> pair : syntaxDiff.changedAttributeList()){
-//      String comment = "The type of the attribute" + pair.b.getName() + " in the class" + pair.a.getName() + " has been changed to " + pair.b.printType() + ".";
-//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(DiffTypes.CHANGED_ATTRIBUTE), generateElements(null, pair.a, "", "as", "", comment), null);
-//      artifactList.add(astodArtifact);
-//    }
-//
     for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
-      String comment = "In tgtCD the class" + astcdClass.getName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
+      String comment = "In tgtCD the class" + astcdClass.getSymbol().getInternalQualifiedName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
         generateElements(null, astcdClass, "", "", "", comment),
         null);
@@ -157,7 +130,7 @@ public class ODHelper {
     //implement a function that
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
       if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
-        StringBuilder comment = new StringBuilder("In the class the following is changed: ");
+        StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
         if (typeDiffStruc.getAddedAttributes() != null) {
           comment.append("\nadded attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
@@ -193,7 +166,7 @@ public class ODHelper {
          ASTCDClass subClass = helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
          if (subClass != null){
            StringBuilder comment = new StringBuilder("For the abstract class "
-             + typeDiffStruc.getAstcdType().getName()
+             + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
              + " the following is changed: ");
            if (typeDiffStruc.getAddedAttributes() != null) {
              comment.append("\nadded attributes - ");
@@ -225,13 +198,13 @@ public class ODHelper {
       }
     }
 
-    //TODO: implement a function that searches for an instantiatable class with enum attribute
+    //implement a function that searches for an instantiatable class with enum attribute - done
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
       if (typeDiffStruc.getAddedConstants() != null){
         for (ASTCDEnumConstant constant : typeDiffStruc.getAddedConstants().b){
           ASTCDClass astcdClass = getClassForEnum((ASTCDEnum) typeDiffStruc.getAstcdType());
           if (astcdClass != null){
-            String comment = "In the enum the following constant is added: " + constant.getName();
+            String comment = "In the enum " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following constant is added: " + constant.getName();
             ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
               generateElements(null, astcdClass, "", "", "", comment),
               null);
@@ -242,7 +215,8 @@ public class ODHelper {
     }
 
     for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
-      String comment = "In the association the following is changed: ";
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), srcCD);
+      String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
       if (assocDiffStruc.isChangedDir()){
         comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
       }
@@ -253,7 +227,7 @@ public class ODHelper {
         comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
       }
       if (assocDiffStruc.getChangedTgt() != null){
-        comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getName();
+        comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
         generateElements(assocDiffStruc.getAssociation(), null, "", "", "", comment),
@@ -262,9 +236,7 @@ public class ODHelper {
     }
     return artifactList;
   }
-  //TODO: implement a function that searches for an instantiatable class with enum attribute
-
-  //TODO: add function for STA semantics
+  //add function for STA semantics - done
   //TODO: add "diff" and instanceof to stereotype
   private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc){
     for (Pair<ASTCDAttribute, ASTCDAttribute> pair : diffStruc.getMatchedAttributes()){
