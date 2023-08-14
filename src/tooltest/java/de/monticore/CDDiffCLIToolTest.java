@@ -116,10 +116,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testNoSemDiff() {
     // given 2 CDs that are semantically equivalent
-    final String cd1 =
-        TOOL_PATH + "/cddiff/SimilarManagers/CDSimilarManagerv1" + ".cd";
-    final String cd2 =
-        TOOL_PATH + "/cddiff/SimilarManagers/CDSimilarManagerv2" + ".cd";
+    final String cd1 = TOOL_PATH + "/cddiff/SimilarManagers/CDSimilarManagerv1" + ".cd";
+    final String cd2 = TOOL_PATH + "/cddiff/SimilarManagers/CDSimilarManagerv2" + ".cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -308,10 +306,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testNoOpenWorldDiff4Abstract2Interface() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 =
-        TOOL_PATH + "/cddiff/Abstract2Interface" + "/AbstractPerson.cd";
-    final String cd2 =
-        TOOL_PATH + "/cddiff/Abstract2Interface" + "/InterfacePerson.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Abstract2Interface" + "/AbstractPerson.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Abstract2Interface" + "/InterfacePerson.cd";
     final String output = "./target/generated/cddiff-test/CLITestAbstract2InterfaceNoOWDiff";
 
     for (String cwDiffOption : cwDiffOptions) {

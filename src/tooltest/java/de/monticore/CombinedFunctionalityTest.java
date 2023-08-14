@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CombinedFunctionalityTest {
@@ -47,8 +46,7 @@ public class CombinedFunctionalityTest {
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
   @Test
   public void testMaCoCo() {
-    String base_path =
-        "src/tooltest/resources/de/monticore/macoco/";
+    String base_path = "src/tooltest/resources/de/monticore/macoco/";
 
     Set<ASTCDCompilationUnit> mergeSet =
         Arrays.stream(new File(base_path + "parts/").listFiles())

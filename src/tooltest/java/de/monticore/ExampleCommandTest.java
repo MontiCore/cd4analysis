@@ -254,7 +254,8 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testTwoCDsComparisonExample1() {
     final String fileName = "src/tooltest/resources/doc/MyEmployees1.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--semdiff", "src/tooltest/resources/doc/MyEmployees2.cd"});
+    CD4CodeTool.main(
+        new String[] {"-i", fileName, "--semdiff", "src/tooltest/resources/doc/MyEmployees2.cd"});
     assertEquals(0, Log.getErrorCount());
   }
 
@@ -303,7 +304,10 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testTwoCDsMergeExample1() {
     final String fileName = "src/tooltest/resources/doc/Teaching.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--merge", "src/tooltest/resources/doc/Management.cd", "-pp"});
+    CD4CodeTool.main(
+        new String[] {
+          "-i", fileName, "--merge", "src/tooltest/resources/doc/Management.cd", "-pp"
+        });
     assertTrue(getErr(), getErr().isEmpty());
   }
 

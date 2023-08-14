@@ -42,7 +42,7 @@ public class ToolTest extends OutTestBasis {
 
   @Test
   public void testHelp() throws IOException, ParseException {
-    final File file = new File(  TOOL_PATH + "cd/Complete.cd");
+    final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
     final String fileName = file.toString();
     CD4CodeTool.main(new String[] {"-i", fileName, "-h", "-f", "false"});
@@ -53,7 +53,7 @@ public class ToolTest extends OutTestBasis {
 
   @Test
   public void testToolNoBuiltInTypes() throws IOException, ParseException {
-    final File file = new File(  TOOL_PATH + "cd/Complete.cd");
+    final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
     final String fileName = file.toString();
 
@@ -65,7 +65,7 @@ public class ToolTest extends OutTestBasis {
 
   @Test
   public void testSymbolPath() throws IOException, ParseException {
-    final File file = new File(  TOOL_PATH + "cd/Complete.cd");
+    final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
     final String fileName = file.toString();
 
@@ -78,7 +78,7 @@ public class ToolTest extends OutTestBasis {
   @Test
   @Ignore // TODO MB
   public void testToolPlantUML() throws IOException, ParseException {
-    final File file = new File(  TOOL_PATH + "cd/Complete.cd");
+    final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
     final String fileName = file.toString();
 
@@ -94,7 +94,7 @@ public class ToolTest extends OutTestBasis {
   @Test
   @Ignore // TODO MB
   public void testToolPlantUML2() throws IOException, ParseException {
-    final File file = new File(  TOOL_PATH + "cd/Complete.cd");
+    final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
     final String fileName = file.toString();
 
@@ -117,7 +117,7 @@ public class ToolTest extends OutTestBasis {
   @Test
   @Ignore // TODO MB
   public void testToolPlantUML3() throws IOException, ParseException {
-    final File file = new File(  TOOL_PATH + "cd/Complete.cd");
+    final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
     final String fileName = file.toString();
 
