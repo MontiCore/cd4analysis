@@ -4,33 +4,59 @@ package de.monticore.cd2smt;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import de.se_rwth.commons.logging.Log;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
-public class CD2SMTGeneratorTest extends CDDiffTestBasis {
+public class CD2SMTGeneratorTest {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
   ASTCDCompilationUnit astCD;
   CD2SMTGenerator cd2SMTGenerator;
   Context context;
+
+  @Before
+  public void init() {
+    Log.init();
+    Log.enableFailQuick(false);
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().clear();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+  }
 
   void setup(String fileName) {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     context = new Context(cfg);
 
-    astCD = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
+    try {
+      Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
+      Assert.assertTrue(optCD.isPresent());
+      astCD = optCD.get();
+      (new CD4AnalysisAfterParseTrafo()).transform(astCD);
+    } catch (IOException e){
+      Assert.fail(e.getMessage());
+    }
     CD2SMTMill.initDefault();
     cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(astCD, context);

@@ -16,7 +16,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaser() throws RecognitionException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "--gen",
       "-o",
       "target/generated/auction"
@@ -28,9 +28,9 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaserTemplatePath() throws RecognitionException, IOException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp",
-      "src/test/resources/templatePath",
+      "src/tooltest/resources/templatePath",
       "--gen",
       "-o",
       "target/generated/auctionTP"
@@ -49,7 +49,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaserConfigTemplate() throws RecognitionException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "-ct",
       "cd2java.CD2Java",
       "--gen",
@@ -63,7 +63,7 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaserTopMechanism() throws RecognitionException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "-ct",
       "cd2java.CD2Java",
       "--gen",
@@ -80,10 +80,10 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
       throws RecognitionException, IOException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp",
-      "src/test/resources/templatePath",
-      "src/test/resources/templatePath2",
+      "src/tooltest/resources/templatePath",
+      "src/tooltest/resources/templatePath2",
       "-ct",
       "cd2java.CD2JavaTestCT",
       "--gen",
@@ -106,10 +106,10 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
       throws RecognitionException, IOException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp",
-      "src/test/resources/templatePath",
-      "src/test/resources/templatePath2",
+      "src/tooltest/resources/templatePath",
+      "src/tooltest/resources/templatePath2",
       "-ct",
       "cd2java.CD2Java",
       "--gen",
@@ -132,11 +132,11 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
       throws RecognitionException, IOException {
     String[] input = {
       "-i",
-      "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "src/tooltest/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp",
-      "src/test/resources/templatePath",
+      "src/tooltest/resources/templatePath",
       "-fp",
-      "src/test/resources/templatePath2",
+      "src/tooltest/resources/templatePath2",
       "-ct",
       "cd2java.CD2Java",
       "--gen",

@@ -21,6 +21,7 @@ import org.junit.Test;
 
 public class CDDiffCLIToolTest {
 
+  private static final String TOOL_PATH = "src/tooltest/resources/de/monticore/";
   final String[] owDiffOptions = {"alloy-based", "reduction-based"};
 
   final String[] cwDiffOptions = {"", "--rule-based"};
@@ -32,8 +33,8 @@ public class CDDiffCLIToolTest {
 
   @Test
   public void testChain() {
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees2.cd";
+    final String cd2 = TOOL_PATH + "cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/chain";
     String[] args = {
       "-i", cd1, "--merge", cd2, "--semdiff", cd2, "-o", output, "-pp", "Employees12.cd"
@@ -46,8 +47,8 @@ public class CDDiffCLIToolTest {
 
   @Test
   public void testSyntaxDiff() {
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees2.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees1.cd";
     CD4CodeTool.main(new String[] {"-i", cd1, "--syntaxdiff", cd2, "--show", "all"});
 
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
@@ -57,8 +58,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testSemDiff() {
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees2.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -116,9 +117,9 @@ public class CDDiffCLIToolTest {
   public void testNoSemDiff() {
     // given 2 CDs that are semantically equivalent
     final String cd1 =
-        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/CDSimilarManagerv1" + ".cd";
+        TOOL_PATH + "/cddiff/SimilarManagers/CDSimilarManagerv1" + ".cd";
     final String cd2 =
-        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/CDSimilarManagerv2" + ".cd";
+        TOOL_PATH + "/cddiff/SimilarManagers/CDSimilarManagerv2" + ".cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -164,8 +165,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testDefaultSemDiff() {
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees2.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithDefaultDiff";
 
     // when CD4CodeTool is used to compute the semantic difference
@@ -208,8 +209,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testOpenWorldDiff() {
     // given 2 CDs such that the first is simply missing an association defined in the second
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees0.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees0.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithOWDiff";
     for (String cwDiffOption : cwDiffOptions) {
       for (String owDiffOption : owDiffOptions) {
@@ -255,8 +256,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testNoOpenWorldDiff() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees2.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -308,9 +309,9 @@ public class CDDiffCLIToolTest {
   public void testNoOpenWorldDiff4Abstract2Interface() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
     final String cd1 =
-        "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface" + "/AbstractPerson.cd";
+        TOOL_PATH + "/cddiff/Abstract2Interface" + "/AbstractPerson.cd";
     final String cd2 =
-        "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface" + "/InterfacePerson.cd";
+        TOOL_PATH + "/cddiff/Abstract2Interface" + "/InterfacePerson.cd";
     final String output = "./target/generated/cddiff-test/CLITestAbstract2InterfaceNoOWDiff";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -360,8 +361,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testNoOpenWorldDiffWithPackages() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees8.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees7.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithPackagesAndNoOWDiff";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -413,8 +414,8 @@ public class CDDiffCLIToolTest {
   public void testValidityOfSemDiffWithPackages() {
 
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees4.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees3.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees4.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees3.cd";
     final String output = "target/generated/cddiff-test/ValidityOfCDDiffWithPackages";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -464,8 +465,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testValidityOfOW2CWReduction() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd";
+    final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees7.cd";
+    final String cd2 = TOOL_PATH + "/cddiff/Employees/Employees8.cd";
     final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction";
 
     for (String cwDiffOption : cwDiffOptions) {
@@ -515,8 +516,8 @@ public class CDDiffCLIToolTest {
   @Test
   public void testValidityOfOW2CWReduction2() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd";
+    final String cd1 = "src/tooltest/resources/doc/DigitalTwin3.cd";
+    final String cd2 = "src/tooltest/resources/doc/DigitalTwin2.cd";
     final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction2";
 
     // when CD4CodeTool is used to compute the semantic difference

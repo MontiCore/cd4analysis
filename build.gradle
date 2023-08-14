@@ -182,20 +182,17 @@ dependencies {
   cddiffImplementation(sourceSets.main.output.classesDirs)
 
   cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
-  cddifftestImplementation(sourceSets.test.output.classesDirs)
 
   // dependencies for cdmerge
   cdmergeImplementation(sourceSets.main.output.classesDirs)
 
   cdmergetestImplementation(sourceSets.cdmerge.output.classesDirs)
-  cdmergetestImplementation(sourceSets.test.output.classesDirs)
 
   //dependencies for cd2smt
   cd2smtImplementation(sourceSets.cddiff.output.classesDirs)
   cd2smtImplementation 'tools.aqua:z3-turnkey:4.11.2'
 
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
-  cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
 
   //dependencies for trafo
   trafoImplementation project(path)
@@ -205,6 +202,7 @@ dependencies {
   toolImplementation(sourceSets.cddiff.output.classesDirs)
   toolImplementation(sourceSets.cdmerge.output.classesDirs)
   tooltestImplementation(sourceSets.tool.output.classesDirs)
+  tooltestImplementation(sourceSets.test.output.classesDirs)
 }
 
 allprojects {

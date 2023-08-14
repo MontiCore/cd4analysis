@@ -45,14 +45,13 @@ public class CombinedFunctionalityTest {
   }
 
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
-  @Disabled
   @Test
   public void testMaCoCo() {
     String base_path =
-        "src/test/resources/de/monticore/cd4analysis/examples/industrial_strength_models/";
+        "src/tooltest/resources/de/monticore/macoco/";
 
     Set<ASTCDCompilationUnit> mergeSet =
-        Arrays.stream(new File(base_path + "MaCoCoMerge/").listFiles())
+        Arrays.stream(new File(base_path + "parts/").listFiles())
             .map(f -> parseCDModel(f.getAbsolutePath()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 

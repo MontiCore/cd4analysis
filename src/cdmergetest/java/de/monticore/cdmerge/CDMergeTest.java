@@ -34,7 +34,7 @@ public class CDMergeTest extends BaseTest {
 
   @Test
   public void testMotivatingExample() {
-    final String srcDir = "doc/";
+    final String srcDir = "src/cdmergetest/resources/class_diagrams/CDMergeTest/";
     Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
     try {
       inputSet.add(loadModel(srcDir + "Teaching.cd"));
