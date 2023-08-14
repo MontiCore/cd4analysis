@@ -12,7 +12,10 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
+import de.monticore.cddiff.syndiff.OD.Builder;
+import de.monticore.cddiff.syndiff.OD.Package;
 import de.monticore.cddiff.syndiff.datastructures.*;
+import de.monticore.odbasis._ast.ASTODAttribute;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
@@ -34,6 +37,8 @@ public class Syn2SemDiffHelper {
   }
   public Syn2SemDiffHelper() {
   }
+
+  private Builder builder = new Builder();
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
@@ -290,6 +295,41 @@ public class Syn2SemDiffHelper {
     }
 
     return mergedList;
+  }
+
+  public static List<String> splitStringByCharacter(String input, char character) {
+    List<String> result = new ArrayList<>();
+
+    StringBuilder currentString = new StringBuilder();
+    for (char c : input.toCharArray()) {
+      if (c == character) {
+        result.add(currentString.toString());
+        currentString = new StringBuilder();
+      } else {
+        currentString.append(c);
+      }
+    }
+
+    result.add(currentString.toString());
+    return result;
+  }
+
+  public static boolean isPackageInSet(Package pack, Set<Package> set){
+    for (Package p : set){
+      if (p.getSrcClass().equals(pack.getSrcClass()) && p.getTgtClass().equals(pack.getTgtClass()) && p.getAssociation().equals(pack.getAssociation())){
+        return true;
+      }
+    }
+    return isPackegeInSetReversed(pack, set);
+  }
+
+  public static boolean isPackegeInSetReversed(Package pack, Set<Package> set){
+    for (Package p : set){
+      if (p.getSrcClass().equals(pack.getTgtClass()) && p.getTgtClass().equals(pack.getSrcClass()) && p.getAssociation().equals(pack.getAssociation())){
+        return true;
+      }
+    }
+    return false;
   }
 
 //  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
@@ -1107,5 +1147,14 @@ public class Syn2SemDiffHelper {
         }
       }
     }
+  }
+
+  public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
+    List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+    List<ASTODAttribute> odAttributes = new ArrayList<>();
+    for (ASTCDAttribute attribute : attributes) {
+      odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
+    }
+    return odAttributes;
   }
 }

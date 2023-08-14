@@ -776,8 +776,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    */
   @Override
   public boolean isAddedAssoc(ASTCDAssociation astcdAssociation) {
-    //TODO: might have to be changed
-    //TODO: ask Tsveti
     //List<ASTCDAssociation> list = typeMatcher.getMatchedElements(astcdAssociation);
     //this must replace first if()
     //so just check if the list isn't empty?
@@ -837,6 +835,39 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       }
     }
 
+    return true;
+  }
+
+  public boolean isAssocAdded(ASTCDAssociation association){
+    Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, getSrcCD());
+    ASTCDClass matchedRight = findMatchedClass(pair.b);
+    ASTCDClass matchedLeft = findMatchedClass(pair.a);
+    if (matchedLeft != null && matchedRight != null) {
+      AssocStruct matchedAssocStruc = getAssocStrucForClass(matchedLeft, association);
+      assert matchedAssocStruc != null;
+      if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        for (AssocStruct assocStruct : helper.getTrgMap().get(matchedRight)) {
+          if (Syn2SemDiffHelper.sameAssociationType(assocStruct.getAssociation(), association)
+            && (helper.inInheritanceRelation(matchedAssocStruc, assocStruct) || sameTgt(matchedAssocStruc, assocStruct))) {
+            return false;
+          }
+          else if (allSubclassesHaveIt(association, matchedRight) != null){
+            return false;
+          }
+        }
+      }
+      if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
+        for (AssocStruct assocStruct : helper.getTrgMap().get(matchedLeft)) {
+          if ((Syn2SemDiffHelper.sameAssociationType(assocStruct.getAssociation(), association)
+            && (helper.inInheritanceRelation(matchedAssocStruc, assocStruct) || sameTgt(matchedAssocStruc, assocStruct)))) {
+            return false;
+          }
+          else if (allSubclassesHaveIt(association, matchedLeft) != null){
+            return false;
+          }
+        }
+      }
+    }
     return true;
   }
 
@@ -1263,10 +1294,6 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  // check if somewhere the comparison should be with unmatchedAssoc
-  //if no match is found for src, we don't look anymore at this
-  //if no match in tgt is found, we just add this assoc to diff
-  //TODO: add check if the classes can be instantiated to added/deleted attributes, also for super?
   public boolean srcAndTgtExist(CDAssocDiff assocDiff){
     Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
     if (assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.a) != null
@@ -1387,9 +1414,25 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     return list;
   }
 
-  //TODO: CDSyntax2SemDiff4ASTODHelper
-  //TODO: getInternalQualifiedName for ASTCDType
+  //function that checks for each ASTCDCLass if the superclasses in the new and in the old diagram are the same
+  public List<ASTCDClass> getSTADiff(){
+    List<ASTCDClass> list = new ArrayList<>();
+    for (ASTCDClass astcdClass : helper.getSrcCD().getCDDefinition().getCDClassesList()){
+      ASTCDClass matchedClass = findMatchedClass(astcdClass);
+      if (matchedClass != null){
+        List<ASTCDClass> superClasses = getSuperClasses(helper.getSrcCD(), astcdClass);
+        List<ASTCDClass> matchedSuperClasses = getSuperClasses(helper.getTgtCD(), matchedClass);
+        Set<ASTCDClass> superClassesSet = new HashSet<>(superClasses);
+        Set<ASTCDClass> matchedSuperClassesSet = new HashSet<>(matchedSuperClasses);
+        if (!superClassesSet.equals(matchedSuperClassesSet)){
+          list.add(astcdClass);
+        }
+      }
+    }
+    return list;
+  }
 
+  //TODO: CDSyntax2SemDiff4ASTODHelper
 
 
 
