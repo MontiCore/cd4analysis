@@ -80,6 +80,7 @@ trigger-montiarc-dev:
   trigger:
     project: monticore/montiarc/core
     branch: develop
+    strategy: depend
   only:
     - develop
 
@@ -88,6 +89,7 @@ trigger-umlp:
   trigger:
     project: monticore/umlp
     branch: dev
+    strategy: depend
   only:
     - develop
 

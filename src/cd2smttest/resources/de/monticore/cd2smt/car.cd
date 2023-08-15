@@ -1,5 +1,5 @@
 import java.lang.* ;
- classdiagram STTest {
+ classdiagram car {
 
     class BigCar extends Car {
       boolean  isBig;

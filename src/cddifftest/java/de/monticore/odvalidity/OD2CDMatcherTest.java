@@ -32,7 +32,6 @@ public class OD2CDMatcherTest {
     CD4CodeMill.globalScope().init();
     Log.init();
     Log.enableFailQuick(false);
-    String resources = "src/test/resources";
     cdModel1 = new File(resources + validCDModel);
     odModel1 = new File(resources + validODModel);
   }

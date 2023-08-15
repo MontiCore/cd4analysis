@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+package work;
+classdiagram MyWorkplace {
+	class Person {
+		int id;
+		String name;
+	}	
+	class Employee extends Person {
+	  int salary;
+	}
+	class Office;
+	class Manager;
+
+	association management Manager -> (manages) Employee;
+	association Employee -- Office;
+}

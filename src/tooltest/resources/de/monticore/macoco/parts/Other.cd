@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 /* Originated by MontiCore/RWTH Aachen (CC BY 4.0)*/
 
-package de.monticore.be.domain;
-
 import java.time.ZonedDateTime;
 
 classdiagram Other {

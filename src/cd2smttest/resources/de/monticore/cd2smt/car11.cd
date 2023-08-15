@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 import java.lang.* ;
- classdiagram STTest {
+ classdiagram car11 {
     class Car {
       double price;
       String  manufacturer;

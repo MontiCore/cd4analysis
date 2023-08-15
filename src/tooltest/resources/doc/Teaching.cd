@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Teaching {
+  class Professor{
+    String name;
+    String mail;
+  }
+  class Lecture {
+    int credits;
+  }
+  class Student {
+    long matrNr;
+  }
+  association [1] Professor (lecturer) <-> (holds) Lecture;
+  association attendance [*] Lecture <- Student;
+}

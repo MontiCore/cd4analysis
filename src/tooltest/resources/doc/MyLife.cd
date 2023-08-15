@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+// package monticore;
+
+import MyAddress.Address;
+import java.lang.String;
+import java.util.List;
+import java.util.Date;
+
+classdiagram MyLife {
+  abstract class Person {
+    int age;
+    Date birthday;
+    List<String> nickNames;
+  }
+  class PhoneNumber;
+  package uni {
+    class Student extends Person {
+      StudentStatus status;
+      -> Address [1..*] {ordered};
+    }
+    class Grade;
+    enum StudentStatus { ENROLLED, FINISHED; }
+    composition uni.Student -> uni.Grade [*];
+    association phonebook uni.Student [java.lang.String] -> PhoneNumber;
+  }
+  association [0..1] Person (parent) <-> (child) Person [*];
+}

@@ -129,9 +129,11 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testDigitalTwins() {
     // Parse Test Modules
-    final ASTCDCompilationUnit astV1 = parseModel("doc/DigitalTwin3.cd");
+    final ASTCDCompilationUnit astV1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 = parseModel("doc/DigitalTwin2.cd");
+    final ASTCDCompilationUnit astV2 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts

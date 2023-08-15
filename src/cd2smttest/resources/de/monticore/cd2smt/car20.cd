@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 import java.lang.* ;
-classdiagram Enumeration {
+classdiagram car20 {
 class Car {
   String name ;
   Color color;

@@ -1,0 +1,22 @@
+classdiagram Driver{
+
+  abstract class Entity;
+
+  class Person extends Entity {
+    java.util.Date birthday;
+    String address;
+  }
+
+  class Employee extends Person;
+
+  class Company extends Entity;
+
+  class Car {
+    String licensePlate;
+  }
+
+  association [1] Entity (owner) <-> (owns) Car [*];
+  association [*] Person (driver) -> (drives) Car [*];
+  association Employee -> (worksFor) Company [1..*];
+
+}
