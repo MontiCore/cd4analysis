@@ -1,10 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram CDAttributeInInterfaceNotPublicValid {
+classdiagram CDAttributeInInterfacePublicInvalid {
 
   interface Foo {
     private int i;
     protected boolean b;
+    public char c;
   }
 
   class Bar {
