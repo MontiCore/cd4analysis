@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAttributeInInterfaceIsPublicInvalid {
+
+  interface Foo {
+    private int i;
+  }
+
+  interface Bar {
+    protected int i;
+  }
+
+}

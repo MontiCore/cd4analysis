@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram CDAttributeInInterfacePublicValid {
+classdiagram CDAttributeInInterfaceIsPublicValid {
 
   interface Foo {
     public int i;

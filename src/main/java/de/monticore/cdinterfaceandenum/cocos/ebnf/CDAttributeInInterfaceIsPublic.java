@@ -9,7 +9,7 @@ import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDInterfaceCo
 import de.monticore.cdinterfaceandenum._util.CDInterfaceAndEnumTypeDispatcher;
 import de.se_rwth.commons.logging.Log;
 
-public class CDAttributeInInterfacePublic implements CDInterfaceAndEnumASTCDInterfaceCoCo {
+public class CDAttributeInInterfaceIsPublic implements CDInterfaceAndEnumASTCDInterfaceCoCo {
 
   public static final String ERROR_CODE = "0xCDCF7";
 
