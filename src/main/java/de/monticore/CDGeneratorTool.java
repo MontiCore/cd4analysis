@@ -202,6 +202,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         asts.forEach(this::mapCD4CImports);
 
         asts.forEach(ast -> addGettersAndSetters(ast, glex));
+        asts.forEach(this::makeMethodsInInterfacesAbstract);
 
         asts.forEach(ast -> hpp.processValue(tc, ast, configTemplateArgs));
       }
@@ -362,6 +363,14 @@ public class CDGeneratorTool extends CD4CodeTool {
                         .collect(Collectors.toList())
                         .contains(m.getName()))
             .forEach(c::addCDMember);
+      }
+    }
+  }
+
+  public void makeMethodsInInterfacesAbstract(ASTCDCompilationUnit ast) {
+    for (ASTCDInterface cdInterface: ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTCDMethod method: cdInterface.getCDMethodList()) {
+        method.getModifier().setAbstract(true);
       }
     }
   }
