@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAttributeInInterfaceInitializedValid {
+  interface A {
+    int i = 5;
+  }
+}
