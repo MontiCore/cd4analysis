@@ -12,16 +12,18 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
-import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
-import de.monticore.cddiff.syndiff.datastructures.AssocCardinality;
-import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
-import de.monticore.cddiff.syndiff.datastructures.ClassSide;
+import de.monticore.cddiff.syndiff.OD.Builder;
+import de.monticore.cddiff.syndiff.OD.Package;
+import de.monticore.cddiff.syndiff.datastructures.*;
+import de.monticore.odbasis._ast.ASTODAttribute;
+import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 
 public class Syn2SemDiffHelper {
 
@@ -35,6 +37,8 @@ public class Syn2SemDiffHelper {
   }
   public Syn2SemDiffHelper() {
   }
+
+  private Builder builder = new Builder();
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
@@ -45,6 +49,361 @@ public class Syn2SemDiffHelper {
   private ASTCDCompilationUnit srcCD;
 
   private ASTCDCompilationUnit tgtCD;
+
+  public static AssocDirection getDirection(ASTCDAssociation association) {
+    if (association.getCDAssocDir() == null) {
+      return AssocDirection.Unspecified;
+    }
+    if (association.getCDAssocDir().isBidirectional()) {
+      return AssocDirection.BiDirectional;
+    }
+    if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      return AssocDirection.RightToLeft;
+    }
+    if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
+      return AssocDirection.LeftToRight;
+    }
+    return null;
+  }
+
+  static void setBiDirRoleName(AssocStruct association, AssocStruct superAssoc){
+    if (!association.getDirection().equals(AssocDirection.BiDirectional)
+      && superAssoc.getDirection().equals(AssocDirection.BiDirectional)) {
+      if (association.getSide().equals(ClassSide.Left) && superAssoc.getSide().equals(ClassSide.Left)) {
+        association.getAssociation().getLeft().setCDRole(superAssoc.getAssociation().getLeft().getCDRole());
+      } else if (association.getSide().equals(ClassSide.Left) && superAssoc.getSide().equals(ClassSide.Right)) {
+        association.getAssociation().getLeft().setCDRole(superAssoc.getAssociation().getRight().getCDRole());
+      } else if (association.getSide().equals(ClassSide.Right) && superAssoc.getSide().equals(ClassSide.Left)) {
+        association.getAssociation().getRight().setCDRole(superAssoc.getAssociation().getLeft().getCDRole());
+      } else {
+        association.getAssociation().getRight().setCDRole(superAssoc.getAssociation().getRight().getCDRole());
+      }
+    }
+  }
+
+  static void mergeAssocs(AssocStruct association, AssocStruct superAssoc){
+    ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
+    CardinalityStruc cardinalities = getCardinalities(association, superAssoc);
+    AssocCardinality cardinalityLeft = Syn2SemDiffHelper.intersectCardinalities(Syn2SemDiffHelper.cardToEnum(cardinalities.getLeftCardinalities().a), Syn2SemDiffHelper.cardToEnum(cardinalities.getLeftCardinalities().b));
+    AssocCardinality cardinalityRight = Syn2SemDiffHelper.intersectCardinalities(Syn2SemDiffHelper.cardToEnum(cardinalities.getRightCardinalities().a), Syn2SemDiffHelper.cardToEnum(cardinalities.getRightCardinalities().b));
+    association.getAssociation().setCDAssocDir(direction);
+    if (association.getSide().equals(ClassSide.Left)) {
+      association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityLeft)));
+      association.getAssociation().getRight().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityRight)));
+    } else {
+      association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityRight)));
+      association.getAssociation().getRight().setCDCardinality(createCardinality(Objects.requireNonNull(cardinalityLeft)));
+    }
+  }
+
+  /**
+   * Modified version of the function inConflict in CDAssociationHelper.
+   * In the map, all association that can be created from a class
+   * are saved in the values for this class (key).
+   * Because of that we don't need to check if the source classes of both
+   * associations are in an inheritance relation.
+   * @param association association from the class
+   * @param superAssociation superAssociation for that class
+   * @return true, if the role names in target direction are the same
+   */
+  public static boolean isInConflict(AssocStruct association, AssocStruct superAssociation){
+    ASTCDAssociation srcAssoc = association.getAssociation();
+    ASTCDAssociation targetAssoc = superAssociation.getAssociation();
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
+    }
+
+    return false;
+  }
+
+  public static boolean sameRoleNames(AssocStruct assocDown, AssocStruct assocUp){
+    if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Left)){
+      return assocDown.getAssociation().getLeft().getCDRole().toString().equals(assocUp.getAssociation().getLeft().getCDRole().toString());
+    } else if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Right)) {
+      return assocDown.getAssociation().getLeft().getCDRole().toString().equals(assocUp.getAssociation().getRight().getCDRole().toString());
+    } else if (assocDown.getSide().equals(ClassSide.Right) && assocUp.getSide().equals(ClassSide.Left)){
+      return assocDown.getAssociation().getRight().getCDRole().toString().equals(assocUp.getAssociation().getLeft().getCDRole().toString());
+    } else {
+      return assocDown.getAssociation().getRight().getCDRole().toString().equals(assocUp.getAssociation().getRight().getCDRole().toString());
+    }
+  }
+
+  /**
+   * Given the two associations, get the role name that causes the conflict
+   * @param association base association
+   * @param superAssociation association from superclass
+   * @return role name
+   */
+  public static ASTCDRole getConflict(AssocStruct association, AssocStruct superAssociation){
+    ASTCDAssociation srcAssoc = association.getAssociation();
+    ASTCDAssociation targetAssoc = superAssociation.getAssociation();
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight())){
+      return srcAssoc.getRight().getCDRole();
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft())){
+      return srcAssoc.getLeft().getCDRole();
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft())){
+      return srcAssoc.getRight().getCDRole();
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+      && matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight())){
+      return srcAssoc.getLeft().getCDRole();
+    }
+
+    return null;
+  }
+
+  /**
+   * Merge the directions of two associations
+   * @param association association from the class
+   * @param superAssociation association from the class or superAssociation
+   * @return merged direction in ASTCDAssocDir
+   */
+  public static ASTCDAssocDir mergeAssocDir(AssocStruct association, AssocStruct superAssociation){
+    if (association.getDirection().equals(AssocDirection.BiDirectional) || superAssociation.getDirection().equals(AssocDirection.BiDirectional)){
+      return new ASTCDBiDir();
+    } else if (association.getDirection().equals(AssocDirection.LeftToRight)) {
+      if (superAssociation.getDirection().equals(AssocDirection.LeftToRight)){
+        return new ASTCDLeftToRightDir();
+      }
+      if (superAssociation.getDirection().equals(AssocDirection.RightToLeft)){
+        return new ASTCDBiDir();
+      }
+    } else if (association.getDirection().equals(AssocDirection.RightToLeft)){
+      if (superAssociation.getDirection().equals(AssocDirection.RightToLeft)){
+        return new ASTCDRightToLeftDir();
+      }
+      if (superAssociation.getDirection().equals(AssocDirection.LeftToRight)){
+        return new ASTCDBiDir();
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Group corresponding cardinalities
+   * @param association association
+   * @param superAssociation association
+   * @return structure with two pairs of corresponding cardinalities
+   */
+  public static CardinalityStruc getCardinalities(AssocStruct association, AssocStruct superAssociation){
+    if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()),
+        new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()));
+    } else if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Right)){
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()),
+        new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()));
+    } else if (association.getSide().equals(ClassSide.Right) && superAssociation.getSide().equals(ClassSide.Left)){
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()),
+        new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()));
+    } else {
+      return new CardinalityStruc(new Pair<>(association.getAssociation().getRight().getCDCardinality(), superAssociation.getAssociation().getRight().getCDCardinality()),
+        new Pair<>(association.getAssociation().getLeft().getCDCardinality(), superAssociation.getAssociation().getLeft().getCDCardinality()));
+    }
+  }
+
+  /**
+   * Transform the internal cardinality to original
+   * @param assocCardinality cardinality to transform
+   * @return cardinality with type ASTCDCardinality
+   */
+  public static ASTCDCardinality createCardinality(AssocCardinality assocCardinality){
+    if (assocCardinality.equals(AssocCardinality.One)){
+      return new ASTCDCardOne();
+    } else if (assocCardinality.equals(AssocCardinality.Optional)) {
+      return new ASTCDCardOpt();
+    } else if (assocCardinality.equals(AssocCardinality.AtLeastOne)) {
+      return new ASTCDCardAtLeastOne();
+    } else {
+      return new ASTCDCardMult();
+    }
+  }
+
+  /**
+   * Check if the associations allow 0 objects from target class
+   * @param association association
+   * @param superAssociation association
+   * @return true if the condition is fulfilled
+   */
+  public static boolean areZeroAssocs(AssocStruct association, AssocStruct superAssociation){
+    if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
+      return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getRight().getCDCardinality().isMult() || superAssociation.getAssociation().getRight().getCDCardinality().isOpt());
+    } else if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Right)){
+      return (association.getAssociation().getRight().getCDCardinality().isMult() || association.getAssociation().getRight().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getLeft().getCDCardinality().isMult() || superAssociation.getAssociation().getLeft().getCDCardinality().isOpt());
+    } else if (association.getSide().equals(ClassSide.Right) && superAssociation.getSide().equals(ClassSide.Left)){
+      return (association.getAssociation().getLeft().getCDCardinality().isMult() || association.getAssociation().getLeft().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getRight().getCDCardinality().isMult() || superAssociation.getAssociation().getRight().getCDCardinality().isOpt());
+    } else {
+      return (association.getAssociation().getLeft().getCDCardinality().isMult() || association.getAssociation().getLeft().getCDCardinality().isOpt())
+        && (superAssociation.getAssociation().getLeft().getCDCardinality().isMult() || superAssociation.getAssociation().getLeft().getCDCardinality().isOpt());
+    }
+  }
+
+  public static List<Pair<ASTCDClass, Set<ASTCDAttribute>>> mergeSets(List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list) {
+    Map<ASTCDClass, Set<ASTCDAttribute>> classMap = new HashMap<>();
+
+    for (Pair<ASTCDClass, Set<ASTCDAttribute>> pair : list) {
+      ASTCDClass cdClass = pair.a;
+      Set<ASTCDAttribute> attributeSet = pair.b;
+
+      // Check if the class already exists in the map
+      if (classMap.containsKey(cdClass)) {
+        Set<ASTCDAttribute> mergedSet = classMap.get(cdClass);
+        mergedSet.addAll(attributeSet);
+      } else {
+        // Add the class and its attribute set to the map
+        classMap.put(cdClass, new HashSet<>(attributeSet));
+      }
+    }
+
+    List<Pair<ASTCDClass, Set<ASTCDAttribute>>> mergedList = new ArrayList<>();
+    for (Map.Entry<ASTCDClass, Set<ASTCDAttribute>> entry : classMap.entrySet()) {
+      ASTCDClass cdClass = entry.getKey();
+      Set<ASTCDAttribute> attributeSet = entry.getValue();
+      mergedList.add(new Pair<>(cdClass, attributeSet));
+    }
+
+    return mergedList;
+  }
+
+  public static List<String> splitStringByCharacter(String input, char character) {
+    List<String> result = new ArrayList<>();
+
+    StringBuilder currentString = new StringBuilder();
+    for (char c : input.toCharArray()) {
+      if (c == character) {
+        result.add(currentString.toString());
+        currentString = new StringBuilder();
+      } else {
+        currentString.append(c);
+      }
+    }
+
+    result.add(currentString.toString());
+    return result;
+  }
+
+  public static boolean isPackageInSet(Package pack, Set<Package> set){
+    for (Package p : set){
+      if (p.getSrcClass().equals(pack.getSrcClass()) && p.getTgtClass().equals(pack.getTgtClass()) && p.getAssociation().equals(pack.getAssociation())){
+        return true;
+      }
+    }
+    return isPackegeInSetReversed(pack, set);
+  }
+
+  public static boolean isPackegeInSetReversed(Package pack, Set<Package> set){
+    for (Package p : set){
+      if (p.getSrcClass().equals(pack.getTgtClass()) && p.getTgtClass().equals(pack.getSrcClass()) && p.getAssociation().equals(pack.getAssociation())){
+        return true;
+      }
+    }
+    return false;
+  }
+
+//  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
+//    assert srcCD != null;
+//    List<ASTCDClass> set = getSpannedInheritance(srcCD, astcdClass);
+//
+//    ASTCDClass closestClass = null;
+//    int closestDepth = Integer.MAX_VALUE;
+//
+//    for (ASTCDClass cdClass : set) {
+//      if (!cdClass.getModifier().isAbstract()
+//        && !notInstanClassesSrc.contains(astcdClass)) {
+//        int depth = getDepthOfClass(cdClass, astcdClass);
+//        if (depth < closestDepth) {
+//          closestClass = cdClass;
+//          closestDepth = depth;
+//        }
+//      }
+//    }
+//
+//    return closestClass;
+//  }
+//
+//  public int getDepthOfClass(ASTCDClass classNode, ASTCDClass rootClass) {
+//    if (classNode == null || rootClass == null) {
+//      return -1; // or any other suitable value to indicate an invalid depth
+//    }
+//
+//    if (classNode == rootClass) {
+//      return 0; // base case: classNode is the root class
+//    }
+//
+//    int maxDepth = -1;
+//    for (ASTCDType directSuperClass : CDInheritanceHelper.getDirectSuperClasses(classNode, (ICD4CodeArtifactScope) scrcCD.getEnclosingScope())) {
+//      if (directSuperClass instanceof ASTCDClass) {
+//        int depth = getDepthOfClass((ASTCDClass) directSuperClass, rootClass);
+//        if (depth >= 0 && depth > maxDepth) {
+//          maxDepth = depth;
+//        }
+//      }
+//    }
+//
+//    return maxDepth >= 0 ? maxDepth + 1 : -1; // add 1 to the maximum depth found
+//  }
+
+  /**
+   * Check if the target classes of the two associations are in an inheritance relation
+   * @param association base association
+   * @param superAssociation association from superclass
+   * @return true, if they fulfill the condition
+   */
+  public boolean inInheritanceRelation(AssocStruct association, AssocStruct superAssociation){
+    if (association.getSide().equals(ClassSide.Left)
+      && superAssociation.getSide().equals(ClassSide.Left)){
+      return isSuperOf(association.getAssociation().getRightQualifiedName().getQName(),
+        superAssociation.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope())
+        || isSuperOf(superAssociation.getAssociation().getRightQualifiedName().getQName(), association.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+      //do I also need to check the other way around
+    } else if (association.getSide().equals(ClassSide.Left)
+      && superAssociation.getSide().equals(ClassSide.Right)) {
+      return isSuperOf(association.getAssociation().getRightQualifiedName().getQName(),
+        superAssociation.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope())
+        || isSuperOf(superAssociation.getAssociation().getLeftQualifiedName().getQName(), association.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+    } else if (association.getSide().equals(ClassSide.Right)
+      && superAssociation.getSide().equals(ClassSide.Left)){
+      return isSuperOf(association.getAssociation().getLeftQualifiedName().getQName(),
+        superAssociation.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope())
+        || isSuperOf(superAssociation.getAssociation().getRightQualifiedName().getQName(), association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+    } else {
+      return isSuperOf(association.getAssociation().getLeftQualifiedName().getQName(),
+        superAssociation.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope())
+        || isSuperOf(superAssociation.getAssociation().getLeftQualifiedName().getQName(), association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+    }
+  }
 
   /**
    * Get all attributes that need to be added from inheritance structure to an object of a given type
@@ -175,6 +534,77 @@ public class Syn2SemDiffHelper {
       && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
       && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()))
       && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+  }
+
+  /**
+   * This function is a less restrictive version of sameAssociation in CDAssociationHelper.
+   * We check if the first association has the same navigation and role names.
+   * The cardinalities of the first do not need to be same, but they have to be
+   * 'contained' in the cardinalities of the second association
+   * @param assoc1 first association
+   * @param assoc2 second association
+   * @return true, if all conditions are fulfilled
+   */
+  public static boolean sameAssociationTypeWithClasses(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    if (assoc1.getLeftQualifiedName().getQName().equals(assoc2.getLeftQualifiedName().getQName())
+      && assoc1
+      .getRightQualifiedName()
+      .getQName()
+      .equals(assoc2.getRightQualifiedName().getQName())) {
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
+        return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+          //&& assoc1.getRight().getCDCardinality().equals(assoc2.getLeft().getCDCardinality())
+          && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+      }
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+          //&& assoc1.getLeft().getCDCardinality().equals(assoc2.getRight().getCDCardinality())
+          && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+      }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+        && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+        && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()))
+        && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+    }
+    return false;
+  }
+
+  /**
+   * 'sameAssociationType' for reversed directions
+   * @param assoc1 first association
+   * @param assoc2 second association
+   * @return true, if all conditions are fulfilled
+   */
+  public static boolean sameAssociationTypeInReverseWithClasses(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+
+    if (assoc1.getLeftQualifiedName().getQName().equals(assoc2.getRightQualifiedName().getQName())
+      && assoc1
+      .getRightQualifiedName()
+      .getQName()
+      .equals(assoc2.getLeftQualifiedName().getQName())) {
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
+        return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+          && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+      }
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight()
+        && !assoc2.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        return matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+          && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+      }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
+        && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
+        && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()))
+        && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()));
+    }
+    return false;
   }
 
   /**
@@ -380,8 +810,6 @@ public class Syn2SemDiffHelper {
                 assocForSubClass.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
               assocForSubClass.setName("");
-              //TODO: problem if I use the same datastructure for composition
-              //maybe add !...isComposition()
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
                 assocForSubClass.getLeft().setCDCardinality(new ASTCDCardMult());
               }
@@ -427,8 +855,6 @@ public class Syn2SemDiffHelper {
         }
       }
     }
-    //TODO: implement other case
-    //ask Max if target Role name and
     for (ASTCDClass astcdClass : srcCD.getCDDefinition().getCDClassesList()){
       List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
       for (ASTCDAttribute attribute : attributes){
@@ -656,4 +1082,79 @@ public class Syn2SemDiffHelper {
 //      return depths.stream().max(Integer::compare).get();
 //    }
 //  }
+  public String getSuperClasses(ASTCDClass astcdClass){
+    List<ASTCDClass> superClasses = getSuperClasses(srcCD, astcdClass);
+    StringBuilder string = new StringBuilder();
+    for (int i = superClasses.size() - 1; i >= 0; i--) {
+      ASTCDClass element = superClasses.get(i);
+      string.append(element.getName())
+        .append(" ");
+    }
+    return string.deleteCharAt(string.length() - 1).toString();
+  }
+
+  public void findOverlappingAssocsForCD(ASTCDCompilationUnit compilationUnit){
+    Set<ASTCDClass> srcToDelete = new HashSet<>();
+    Set<Pair<ASTCDClass, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
+    Set<Pair<AssocStruct, AssocStruct>> srcAssocsToMerge = new HashSet<>();
+    Set<DeleteStruc> srcAssocsToMergeWithDelete = new HashSet<>();
+    for (ASTCDClass astcdClass : getSrcMap().keySet()) {
+      for (AssocStruct association : getSrcMap().get(astcdClass)) {
+        if (!association.isSuperAssoc()) {
+          for (AssocStruct superAssoc : getSrcMap().get(astcdClass)) {
+            if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
+              if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
+                if (!sameRoleNames(association, superAssoc)) {
+                  Log.error("Bad overlapping found");
+                }
+                //same target role names and target classes are in inheritance relation
+                //associations need to be merged
+                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
+              } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
+                //two associations with same target role names, but target classes are not in inheritance relation
+                //if trg cardinality on one of them is 0..1 or 0..* then such association can't exist
+                //if trg cardinality on one of them is 1 or 1..* then such association can't exist and also no objects of this type can exist
+                if (areZeroAssocs(association, superAssoc)) {
+                  //such association can't exist
+                  //delete
+                  srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                  //Do I need to give some output about the class
+                } else {
+                  //such class can't exist
+                  //delete
+                  updateSrc(astcdClass);
+                  srcToDelete.add(astcdClass);
+                }
+              }
+            } else if (!association.equals(superAssoc)) {
+              //comparison between direct associations
+              if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
+                srcAssocsToMerge.add(new Pair<>(association, superAssoc));
+              } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
+                if (areZeroAssocs(association, superAssoc)) {
+                  srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                } else {
+                  updateSrc(astcdClass);
+                  srcToDelete.add(astcdClass);
+                }
+              }
+              else if (sameAssociation(association.getAssociation(), superAssoc.getAssociation())
+                || sameAssociationInReverse(association.getAssociation(), superAssoc.getAssociation())){
+                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
+    List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+    List<ASTODAttribute> odAttributes = new ArrayList<>();
+    for (ASTCDAttribute attribute : attributes) {
+      odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
+    }
+    return odAttributes;
+  }
 }

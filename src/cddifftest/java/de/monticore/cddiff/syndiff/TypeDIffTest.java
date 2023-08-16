@@ -9,6 +9,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
+import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
@@ -198,7 +199,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDMemberDiff memberDiff = new CDMemberDiff(attributeNew, attributeOld);
 
     // Invoke the method
-    System.out.println(typeDiff.minDiffWitness(aNew).getName());
+    System.out.println(syntaxDiff.helper.minDiffWitness(aNew).getName());
     Pair<ASTCDClass, ASTCDAttribute> result = typeDiff.findMemberDiff(memberDiff);
 
     // Assert the result
