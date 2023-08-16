@@ -3,7 +3,6 @@ package de.monticore.testcdinterfaceandenum.cocos;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDAttributeInInterfaceInitialized;
-import de.monticore.cdinterfaceandenum.cocos.ebnf.CDAttributeInInterfaceNotPublic;
 import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
