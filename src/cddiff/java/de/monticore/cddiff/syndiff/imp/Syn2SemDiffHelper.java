@@ -316,8 +316,9 @@ public class Syn2SemDiffHelper {
 
   public static boolean isPackageInSet(Package pack, Set<Package> set){
     for (Package p : set){
-      if (p.getSrcClass().equals(pack.getSrcClass()) && p.getTgtClass().equals(pack.getTgtClass()) && p.getAssociation().equals(pack.getAssociation())){
-        return true;
+      //if (p.getSrcClass().equals(pack.getSrcClass()) && p.getTgtClass().equals(pack.getTgtClass()) && p.getAssociation().equals(pack.getAssociation())){
+      if (p.getSrcClass().equals(pack.getSrcClass()) && p.getAssociation().equals(pack.getAssociation())){
+          return true;
       }
     }
     return isPackegeInSetReversed(pack, set);
@@ -1156,5 +1157,14 @@ public class Syn2SemDiffHelper {
       odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
     }
     return odAttributes;
+  }
+
+  public ASTCDClass getCDClass(ASTCDCompilationUnit compilationUnit, String className) {
+    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      if (astcdClass.getName().equals(className)) {
+        return astcdClass;
+      }
+    }
+    return null;
   }
 }
