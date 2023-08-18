@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static de.monticore.odbasis.utils.SimpleAttributeFactory.*;
 
@@ -39,20 +40,20 @@ public class Builder implements IODBuilder{
   }
   @Override
   public ASTODAttribute buildAttr(String type, String name, String value) {
-    if (Objects.equals(type, "enum")) {
-      return createEnumAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Objects.equals(type, "string")){
+    if (Objects.equals(type, "String")){
       return createSimpleStringAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Objects.equals(type, "list")) {
+    } else if (Pattern.matches("List<(.*)>", type)) {
       return createListAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Objects.equals(type, "set")){
+    } else if (Pattern.matches("Set<(.*)>", type)){
       return createSetAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Objects.equals(type, "optional")) {
+    } else if (Pattern.matches("Optional<(.*)>", type)) {
       return createOptionalAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Objects.equals(type, "map")) {
+    } else if (Pattern.matches("Map<(.*),(.*)>", type)) {
       return createMapAttribute(ODBasisMill.modifierBuilder().build(), name, value);
     }
-    return null;
+    else { //enum
+      return createEnumAttribute(ODBasisMill.modifierBuilder().build(), name, value);
+    }
   }
   private ASTODAttribute createListAttribute(ASTModifier modifier, String name, String value){
     ASTODList astodList = OD4ReportMill.oDListBuilder()

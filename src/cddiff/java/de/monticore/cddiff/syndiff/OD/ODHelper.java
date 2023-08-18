@@ -255,21 +255,25 @@ public class ODHelper {
                   if (containingPackage != null) {
                     if (containingPackage.b == ClassSide.Left) {
                       if (pair.getSide().equals(ClassSide.Left)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b
+                        && containingPackage.a.getSrcClass() != astodObject) {
                         toFind = containingPackage.a.getSrcClass();
                         break;
                       } else if (pair.getSide().equals(ClassSide.Right)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a
+                        && containingPackage.a.getSrcClass() != astodObject) {
                         toFind = containingPackage.a.getSrcClass();
                         break;
                       }
                     } else if (containingPackage.b == ClassSide.Right) {
                       if (pair.getSide().equals(ClassSide.Left)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b
+                        && containingPackage.a.getTgtClass() != astodObject) {
                         toFind = containingPackage.a.getTgtClass();
                         break;
                       } else if (pair.getSide().equals(ClassSide.Right)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a
+                        && containingPackage.a.getTgtClass() != astodObject) {
                         toFind = containingPackage.a.getTgtClass();
                         break;
                       }
@@ -300,21 +304,25 @@ public class ODHelper {
                   if (containingPackage != null) {
                     if (containingPackage.b == ClassSide.Left) {
                       if (pair.getSide().equals(ClassSide.Left)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b
+                        && containingPackage.a.getSrcClass() != astodObject) {
                         toFind = containingPackage.a.getSrcClass();
                         break;
                       } else if (pair.getSide().equals(ClassSide.Right)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).a == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a
+                        && containingPackage.a.getSrcClass() != astodObject) {
                         toFind = containingPackage.a.getSrcClass();
                         break;
                       }
                     } else if (containingPackage.b == ClassSide.Right) {
                       if (pair.getSide().equals(ClassSide.Left)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).b
+                        && containingPackage.a.getTgtClass() != astodObject) {
                         toFind = containingPackage.a.getTgtClass();
                         break;
                       } else if (pair.getSide().equals(ClassSide.Right)
-                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a) {
+                        && getConnectedClasses(containingPackage.a.getAstcdAssociation(), helper.getSrcCD()).b == getConnectedClasses(pair.getAssociation(), helper.getSrcCD()).a
+                        && containingPackage.a.getTgtClass() != astodObject) {
                         toFind = containingPackage.a.getTgtClass();
                         break;
                       }

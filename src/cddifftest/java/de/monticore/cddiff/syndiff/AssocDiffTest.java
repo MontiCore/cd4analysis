@@ -11,12 +11,13 @@ import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AssocDiffTest extends CDDiffTestBasis {
-  //@Test
+  @Test
   public void testCD10() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD101.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD102.cd");
@@ -42,7 +43,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     Assert.assertNotNull(result);
   }
 
-  //@Test
+  @Test
   public void testCD5() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD51.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD52.cd");
@@ -68,7 +69,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     Assert.assertNotNull(list);
   }
 
-  //@Test
+  @Test
   public void testCD7() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD71.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD72.cd");
@@ -92,7 +93,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     //Assert.assertEquals(list2, result2);
   }
 
-  //@Test
+  @Test
   public void testCD8() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD81.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD82.cd");

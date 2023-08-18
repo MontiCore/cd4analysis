@@ -83,14 +83,21 @@ public class Package {
     return isProcessedRight;
   }
 
-  //TODO: add regex for special cases in ODBuilder and add values to primitive type here
-  //TODO: Check how Integer, Long, Float, Double, Boolean are written(make a diagram and print type)
+  //add regex for special cases in ODBuilder and add values to primitive type here - done
+  //Check how Integer, Long, Float, Double, Boolean are written(make a diagram and print type) - done
   public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
     List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
-      ASTCDAttribute att = new ASTCDAttribute();
-      odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
+      switch (attribute.printType()){
+        case "int": int value = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value));
+        case "long": long value1 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value1));
+        case "float": float value2 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value2));
+        case "double": double value3 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value3));
+        case "boolean": boolean value4 = true; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value4));
+        case "String": String value5 = "test"; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value5));
+        default: odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
+      }
     }
     return odAttributes;
   }
