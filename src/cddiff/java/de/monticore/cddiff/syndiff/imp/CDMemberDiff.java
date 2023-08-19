@@ -5,7 +5,6 @@ import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cddiff.syndiff.interfaces.ICDMemberDiff;
-import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
@@ -19,7 +18,7 @@ import java.util.Optional;
 
 
 // TODO: Write Comments
-public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrintDiff {
+public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
   private final ASTNode srcElem;
   private final ASTNode tgtElem;
   private List<DiffTypes> baseDiff;
@@ -71,7 +70,7 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
   private double calculateDiffSize() {
     double size = diffList.size() / 3.0;
     for (CDNodeDiff diff : diffList) {
-      if (diff.isPresent() && diff.getTgtValue().isPresent()) {
+      if (diff.checkForAction() && diff.getTgtValue().isPresent()) {
         if (diff.getTgtValue().get() instanceof ASTCDAttribute
           || diff.getTgtValue().get() instanceof ASTMCQualifiedName
           || diff.getTgtValue().get() instanceof ASTCDClass) {
@@ -98,7 +97,7 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
     List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
 
     // Modifier, non-optional
-    if (!(pp.prettyprint(cd1Element.getModifier()).length() < 1 && pp.prettyprint(cd2Element.getModifier()).length() < 1)) {
+    if (!(pp.prettyprint(cd1Element.getModifier()).isEmpty() && pp.prettyprint(cd2Element.getModifier()).isEmpty())) {
       diffs.add(setModifier(cd1Element.getModifier(), cd2Element.getModifier()));
     }
 
@@ -106,11 +105,11 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
     Optional<ASTMCType> cd1Type = Optional.of(cd1Element.getMCType());
     Optional<ASTMCType> cd2Type = Optional.of(cd2Element.getMCType());
     CDNodeDiff<ASTMCType, ASTMCType> attributeType = new CDNodeDiff<>(cd1Type, cd2Type);
-    if (attributeType.isPresent()) {
+    if (attributeType.checkForAction()) {
       diffs.add(attributeType);
     }
-    ppType1 = ICDPrintDiff.getColorCode(attributeType) + pp.prettyprint(cd1Type.get()) + RESET;
-    ppType2 = ICDPrintDiff.getColorCode(attributeType) + pp.prettyprint(cd2Type.get()) + RESET;
+    ppType1 = getColorCode(attributeType) + pp.prettyprint(cd1Type.get()) + RESET;
+    ppType2 = getColorCode(attributeType) + pp.prettyprint(cd2Type.get()) + RESET;
 
     // Name, non-optional
     Optional<ASTCDAttribute> cd1Name = Optional.of(cd1Element);
@@ -123,11 +122,11 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
       attributeName = new CDNodeDiff<>(Actions.CHANGED, cd1Name, cd2Name);
     }
 
-    if (attributeName.isPresent()) {
+    if (attributeName.checkForAction()) {
       diffs.add(attributeName);
     }
-    ppName1 = ICDPrintDiff.getColorCode(attributeName) + cd1Name.get().getName() + RESET;
-    ppName2 = ICDPrintDiff.getColorCode(attributeName) + cd2Name.get().getName() + RESET;
+    ppName1 = getColorCode(attributeName) + cd1Name.get().getName() + RESET;
+    ppName2 = getColorCode(attributeName) + cd2Name.get().getName() + RESET;
 
     return diffs;
   }
@@ -144,12 +143,12 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
     if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {name = new CDNodeDiff<>(Actions.CHANGED, cd1Name, cd2Name);
     }
 
-    if (name.isPresent()) {
+    if (name.checkForAction()) {
       diffs.add(name);
     }
 
-    ppName1 = ICDPrintDiff.getColorCode(name) + cd1Name.get().getName() + RESET;
-    ppName2 = ICDPrintDiff.getColorCode(name) + cd2Name.get().getName() + RESET;
+    ppName1 = getColorCode(name) + cd1Name.get().getName() + RESET;
+    ppName2 = getColorCode(name) + cd2Name.get().getName() + RESET;
 
     return diffs;
   }
@@ -173,12 +172,12 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
     ASTModifier cd1Modi, ASTModifier cd2Modi) {
     CDNodeDiff<ASTModifier, ASTModifier> modifier = new CDNodeDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
 
-    if (!(pp.prettyprint(cd1Modi).length() < 1)) {
-      ppModifier1 = ICDPrintDiff.getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
+    if (!(pp.prettyprint(cd1Modi).isEmpty())) {
+      ppModifier1 = getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
     }
 
-    if (!(pp.prettyprint(cd2Modi).length() < 1)) {
-      ppModifier2 = ICDPrintDiff.getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
+    if (!(pp.prettyprint(cd2Modi).isEmpty())) {
+      ppModifier2 = getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
     }
 
     return modifier;
@@ -193,8 +192,8 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
 
   private void setAttributeStrings() {
 
-    this.cd1SelfbuildString = ICDPrintDiff.combineWithoutNulls(Arrays.asList(ppModifier1, ppType1, ppName1));
-    this.cd2SelfbuildString = ICDPrintDiff.combineWithoutNulls(Arrays.asList(ppModifier2, ppType2, ppName2));
+    this.cd1SelfbuildString = insertSpaceBetweenStrings(Arrays.asList(ppModifier1, ppType1, ppName1));
+    this.cd2SelfbuildString = insertSpaceBetweenStrings(Arrays.asList(ppModifier2, ppType2, ppName2));
     this.interpretation = "Interpretation: ";
   }
 

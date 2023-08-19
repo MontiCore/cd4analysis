@@ -7,10 +7,8 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
-import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
 import de.monticore.cddiff.syndiff.interfaces.ICDTypeDiff;
 import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
@@ -26,7 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 // TODO: Write comments
-public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDiff {
+public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   private final ASTCDType srcElem;
   private final ASTCDType tgtElem;
   private List<CDMemberDiff> changedMembers;
@@ -615,7 +613,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
   // NEW
   private void createDefaultDiffList(ASTCDType tgtElem, ASTCDType srcElem) {
     List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
-    interpretation.append("Interpretation: ");
+    diffType.append("Interpretation: ");
 
     // Modifier, non-optional
     if (!(pp.prettyprint(tgtElem.getModifier()).length() < 1
@@ -632,16 +630,16 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
       className = new CDNodeDiff<>(Actions.CHANGED, cd1Name, cd2Name);
     }
 
-    ppName1 = ICDPrintDiff.getColorCode(className) + cd1Name.get().getName() + RESET;
-    ppName2 = ICDPrintDiff.getColorCode(className) + cd2Name.get().getName() + RESET;
+    ppName1 = getColorCode(className) + cd1Name.get().getName() + RESET;
+    ppName2 = getColorCode(className) + cd2Name.get().getName() + RESET;
 
     ppName1NC = cd1Name.get().getName();
     ppName2NC = cd2Name.get().getName();
 
-    if (className.isPresent()) {
+    if (className.checkForAction()) {
       diffs.add(className);
       if (className.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Name")
           .append(": ")
           .append(className.getDiff().get())
@@ -655,7 +653,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
       .getSymbol()
       .getInternalQualifiedName()
       .equals(cd2Name.get().getSymbol().getInternalQualifiedName())) {
-      interpretation
+      diffType
         .append("Package")
         .append(": ")
         .append(DiffTypes.RELOCATION)
@@ -669,17 +667,17 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
     CDNodeDiff<ASTModifier, ASTModifier> modifier = new CDNodeDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
 
     if (!(pp.prettyprint(cd1Modi).length() < 1)) {
-      ppModifier1 = ICDPrintDiff.getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
+      ppModifier1 = getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
       ppModifier1NC = pp.prettyprint(cd1Modi);
     }
     if (!(pp.prettyprint(cd2Modi).length() < 1)) {
-      ppModifier2 = ICDPrintDiff.getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
+      ppModifier2 = getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
       ppModifier2NC = pp.prettyprint(cd2Modi);
     }
 
-    if (modifier.isPresent() && modifier.getAction().isPresent()) {
+    if (modifier.checkForAction() && modifier.getAction().isPresent()) {
       if (modifier.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Modifier")
           .append(": ")
           .append(modifier.getDiff().get())
@@ -726,15 +724,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
         : Optional.empty();
     CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedDiff = new CDNodeDiff<>(cd1Extend, cd2Extend);
 
-    cd1Extend.ifPresent(initial -> ppExtended1 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
-    cd2Extend.ifPresent(initial -> ppExtended2 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd1Extend.ifPresent(initial -> ppExtended1 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd2Extend.ifPresent(initial -> ppExtended2 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
     cd1Extend.ifPresent(initial -> ppExtended1NC = pp.prettyprint(initial));
     cd2Extend.ifPresent(initial -> ppExtended2NC = pp.prettyprint(initial));
 
-    if (extendedDiff.isPresent()) {
+    if (extendedDiff.checkForAction()) {
       diffList.add(extendedDiff);
       if (extendedDiff.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Extended")
           .append(": ")
           .append(extendedDiff.getDiff().get())
@@ -752,17 +750,17 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
     CDNodeDiff<ASTMCObjectType, ASTMCObjectType> interfaceDiff = new CDNodeDiff<>(cd1Imple, cd2Imple);
 
     cd1Imple.ifPresent(
-      inter -> ppInter1 = ICDPrintDiff.getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
+      inter -> ppInter1 = getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
     cd2Imple.ifPresent(
-      inter -> ppInter2 = ICDPrintDiff.getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
+      inter -> ppInter2 = getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
 
     cd1Imple.ifPresent(inter -> ppInter1NC = " implements " + pp.prettyprint(inter));
     cd2Imple.ifPresent(inter -> ppInter2NC = " implements " + pp.prettyprint(inter));
 
-    if (interfaceDiff.isPresent()) {
+    if (interfaceDiff.checkForAction()) {
       diffList.add(interfaceDiff);
       if (interfaceDiff.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Interface")
           .append(": ")
           .append(interfaceDiff.getDiff().get())
@@ -782,15 +780,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
         : Optional.empty();
     CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedDiff = new CDNodeDiff<>(cd1Extend, cd2Extend);
 
-    cd1Extend.ifPresent(initial -> ppExtended1 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
-    cd2Extend.ifPresent(initial -> ppExtended2 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd1Extend.ifPresent(initial -> ppExtended1 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd2Extend.ifPresent(initial -> ppExtended2 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
     cd1Extend.ifPresent(initial -> ppExtended1NC = pp.prettyprint(initial));
     cd2Extend.ifPresent(initial -> ppExtended2NC = pp.prettyprint(initial));
 
-    if (extendedDiff.isPresent()) {
+    if (extendedDiff.checkForAction()) {
       diffList.add(extendedDiff);
       if (extendedDiff.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Extended")
           .append(": ")
           .append(extendedDiff.getDiff().get())
@@ -809,15 +807,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
         : Optional.empty();
     CDNodeDiff<ASTMCObjectType, ASTMCObjectType> interfaceDiff = new CDNodeDiff<>(cd1Imple, cd2Imple);
 
-    cd1Imple.ifPresent(inter -> ppInter1 = ICDPrintDiff.getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
-    cd2Imple.ifPresent(inter -> ppInter2 = ICDPrintDiff.getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
+    cd1Imple.ifPresent(inter -> ppInter1 = getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
+    cd2Imple.ifPresent(inter -> ppInter2 = getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
     cd1Imple.ifPresent(inter -> ppInter1NC = " implements " + pp.prettyprint(inter));
     cd2Imple.ifPresent(inter -> ppInter2NC = " implements " + pp.prettyprint(inter));
 
-    if (interfaceDiff.isPresent()) {
+    if (interfaceDiff.checkForAction()) {
       diffList.add(interfaceDiff);
       if (interfaceDiff.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Interface")
           .append(": ")
           .append(interfaceDiff.getDiff().get())
@@ -836,15 +834,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
         : Optional.empty();
     CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedDiff = new CDNodeDiff<>(cd1Extend, cd2Extend);
 
-    cd1Extend.ifPresent(initial -> ppExtended1 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
-    cd2Extend.ifPresent(initial -> ppExtended2 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd1Extend.ifPresent(initial -> ppExtended1 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd2Extend.ifPresent(initial -> ppExtended2 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
     cd1Extend.ifPresent(initial -> ppExtended1NC = pp.prettyprint(initial));
     cd2Extend.ifPresent(initial -> ppExtended2NC = pp.prettyprint(initial));
 
-    if (extendedDiff.isPresent()) {
+    if (extendedDiff.checkForAction()) {
       diffList.add(extendedDiff);
       if (extendedDiff.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Extended")
           .append(": ")
           .append(extendedDiff.getDiff().get())
@@ -863,15 +861,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
         : Optional.empty();
     CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedDiff = new CDNodeDiff<>(cd1Extend, cd2Extend);
 
-    cd1Extend.ifPresent(initial -> ppExtended1 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
-    cd2Extend.ifPresent(initial -> ppExtended2 = ICDPrintDiff.getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd1Extend.ifPresent(initial -> ppExtended1 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
+    cd2Extend.ifPresent(initial -> ppExtended2 = getColorCode(extendedDiff) + pp.prettyprint(initial) + RESET);
     cd1Extend.ifPresent(initial -> ppExtended1NC = pp.prettyprint(initial));
     cd2Extend.ifPresent(initial -> ppExtended2NC = pp.prettyprint(initial));
 
-    if (extendedDiff.isPresent()) {
+    if (extendedDiff.checkForAction()) {
       diffList.add(extendedDiff);
       if (extendedDiff.getDiff().isPresent()) {
-        interpretation
+        diffType
           .append("Extended")
           .append(": ")
           .append(extendedDiff.getDiff().get())
@@ -893,10 +891,10 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff, ICDPrintDif
     StringBuilder bodyCD1NC = new StringBuilder();
     StringBuilder bodyCD2NC = new StringBuilder();
 
-    String signatureCD1 = ICDPrintDiff.combineWithoutNulls(Arrays.asList(ppModifier1, keywordCD1, ppName1, ppExtended1, ppInter1));
-    String signatureCD2 = ICDPrintDiff.combineWithoutNulls(Arrays.asList(ppModifier2, keywordCD2, ppName2, ppExtended2, ppInter2));
-    String signatureCD1NC = ICDPrintDiff.combineWithoutNulls(Arrays.asList(ppModifier1NC, keywordCD1NC, ppName1NC, ppExtended1NC, ppInter1NC));
-    String signatureCD2NC = ICDPrintDiff.combineWithoutNulls(Arrays.asList(ppModifier2NC, keywordCD2NC, ppName2NC, ppExtended2NC, ppInter2NC));
+    String signatureCD1 = insertSpaceBetweenStrings(Arrays.asList(ppModifier1, keywordCD1, ppName1, ppExtended1, ppInter1));
+    String signatureCD2 = insertSpaceBetweenStrings(Arrays.asList(ppModifier2, keywordCD2, ppName2, ppExtended2, ppInter2));
+    String signatureCD1NC = insertSpaceBetweenStrings(Arrays.asList(ppModifier1NC, keywordCD1NC, ppName1NC, ppExtended1NC, ppInter1NC));
+    String signatureCD2NC = insertSpaceBetweenStrings(Arrays.asList(ppModifier2NC, keywordCD2NC, ppName2NC, ppExtended2NC, ppInter2NC));
 
     String bodyOffset = "     ";
     String bodyOffsetDel = "-    ";

@@ -4,28 +4,20 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cddiff.syndiff.interfaces.ICDNodeDiff;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
 
 /** TODO: Write Comments */
-public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> implements ICDNodeDiff<SrcType, TgtType> {
+public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
   protected DiffTypes difference;
-
   protected Actions action;
-
   protected final Optional<SrcType> srcValue;
-
   protected final Optional<TgtType> tgtValue;
-
-  @Override
-  public boolean isPresent() {
+  public boolean checkForAction() {
     return getAction().isPresent();
   }
-
-  @Override
   public Optional<DiffTypes> getDiff() {
     if (difference == null) {
       return Optional.empty();
@@ -33,8 +25,6 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> implem
       return Optional.of(difference);
     }
   }
-
-  @Override
   public Optional<Actions> getAction() {
     if (action == null) {
       return Optional.empty();
@@ -42,40 +32,30 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> implem
       return Optional.of(action);
     }
   }
-
-  @Override
   public Optional<SrcType> getSrcValue() {
     return srcValue;
   }
-
-  @Override
   public Optional<TgtType> getTgtValue() {
     return tgtValue;
   }
-
   public CDNodeDiff(Optional<SrcType> srcValue, Optional<TgtType> tgtValue) {
     this.srcValue = srcValue;
     this.tgtValue = tgtValue;
     this.action = findAction();
     findDiffType();
   }
-
   public CDNodeDiff(Actions action, Optional<SrcType> srcValue, Optional<TgtType> tgtValue) {
     this.srcValue = srcValue;
     this.tgtValue = tgtValue;
     this.action = action;
   }
-
   protected Actions findAction() {
     if (srcValue.isPresent() && tgtValue.isPresent() && !srcValue.get().deepEquals(tgtValue.get())) {
       return Actions.CHANGED;
-
-    } else if (srcValue.isPresent() && !tgtValue.isPresent()) {
+    } else if (srcValue.isPresent() && tgtValue.isEmpty()) {
       return Actions.ADDED;
-
-    } else if (!srcValue.isPresent() && tgtValue.isPresent()) {
+    } else if (srcValue.isEmpty() && tgtValue.isPresent()) {
       return Actions.REMOVED;
-
     } else {
       return null;
     }

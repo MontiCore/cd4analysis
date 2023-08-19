@@ -1,29 +1,32 @@
 package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4codebasis._ast.ASTCDConstructor;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syntaxdiff.ASTNodeDiff;
-import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Write comments
-public class CDDiffHelper {
+public class CDDiffHelper implements ICDPrintDiff {
 
-  protected StringBuilder interpretation = new StringBuilder();
+  protected static final String COLOR_DELETE = "\033[1;31m";
 
-  public StringBuilder getInterpretation() {
-    return interpretation;
+  protected static final String COLOR_ADD = "\033[1;32m";
+
+  protected static final String COLOR_CHANGE = "\033[1;33m";
+
+  protected static final String RESET = "\033[0m";
+  protected StringBuilder diffType = new StringBuilder();
+
+  public StringBuilder getDiffType() {
+    return diffType;
   }
 
-  public void setInterpretation(StringBuilder builder) {
-    this.interpretation = builder;
+  public void setDiffType(StringBuilder builder) {
+    this.diffType = builder;
   }
 
   protected double diffSize;
@@ -48,50 +51,42 @@ public class CDDiffHelper {
     return breakingChange;
   }
 
-  protected List<DiffTypes> interpretationList = new ArrayList<>();
+  protected List<DiffTypes> diffTypesList = new ArrayList<>();
 
-  public List<DiffTypes> getInterpretationList() {
-    return interpretationList;
+  public List<DiffTypes> getDiffTypesList() {
+    return diffTypesList;
   }
 
-  public void setInterpretationList(List<DiffTypes> newInterpretationList) {
-    this.interpretationList = newInterpretationList;
+  public void setDiffTypesList(List<DiffTypes> newInterpretationList) {
+    this.diffTypesList = newInterpretationList;
   }
 
-  static double addWeightToDiffSize(
-    List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> diffList) {
-    double size = 0.0;
-    boolean foundSignatureNameDiff = false;
-    int associationNameCounter = 0;
-    for (CDNodeDiff<? extends ASTNode, ? extends ASTNode> diff : diffList) {
-      if (diff.isPresent() && diff.getTgtValue().isPresent()) {
+  @Override
+  public String insertSpaceBetweenStrings(List<String> stringList) {
+    StringBuilder output = new StringBuilder();
 
-        ASTNode type = diff.getTgtValue().get();
-
-        // CDMember / Fields
-        if (type instanceof ASTCDAttribute) {
-          size += 1;
-        } else
-
-          // Main Signature Names
-          if (type instanceof ASTCDType) {
-            size += 2;
-            foundSignatureNameDiff = true;
-          } else
-            // Association participant names
-            if (type instanceof ASTMCQualifiedName) {
-              size += 1;
-              associationNameCounter += 1;
-            }
+    for (String field : stringList) {
+      if (!(field == null)) {
+        output.append(field).append(" ");
       }
     }
-    if ((!foundSignatureNameDiff) && (associationNameCounter == 0)) {
-      size -= 2;
+    if (!stringList.isEmpty()) {
+      return output.substring(0, output.length() - 1);
     }
-    if (associationNameCounter > 0) {
-      size -= (2 - associationNameCounter);
+    return output.toString();
+  }
+
+  static String getColorCode(CDNodeDiff<? extends ASTNode, ? extends ASTNode> diff) {
+    if (diff.getAction().isPresent()) {
+      if (diff.getAction().get().equals(Actions.REMOVED)) {
+        return COLOR_DELETE;
+      } else if (diff.getAction().get().equals(Actions.ADDED)) {
+        return COLOR_ADD;
+      } else if (diff.getAction().get().equals(Actions.CHANGED)) {
+        return COLOR_CHANGE;
+      }
     }
-    return size;
+    return "";
   }
 
 }

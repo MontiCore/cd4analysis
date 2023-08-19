@@ -1703,7 +1703,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
         // TODO: boolean
-        CDAssocDiff diffAssoc = new CDAssocDiff(srcAssoc, tgtAssoc, false);
+        CDAssocDiff diffAssoc = new CDAssocDiff(srcAssoc, tgtAssoc);
         if (!diffAssoc.getBaseDiff().isEmpty()) {
           changedAssocs.add(diffAssoc);
         }

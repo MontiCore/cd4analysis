@@ -31,7 +31,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, false);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
     // Invoke the method
     Pair<ASTCDAssociation, ASTCDClass> result = assocDiff.getChangedTgtClass();
     //List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
@@ -57,7 +57,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, false);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
     // Invoke the method
     boolean result = assocDiff.isDirectionChanged();
     //List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> result2 = assocDiff.getRoleDiff();
@@ -79,7 +79,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, false);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
     // Invoke the method
     //boolean result = assocDiff.changedTgtClass();
    // List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
@@ -103,7 +103,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, true);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
     // Invoke the method
     //List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
 
