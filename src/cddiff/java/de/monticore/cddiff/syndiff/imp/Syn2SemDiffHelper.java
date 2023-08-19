@@ -316,8 +316,9 @@ public class Syn2SemDiffHelper {
 
   public static boolean isPackageInSet(Package pack, Set<Package> set){
     for (Package p : set){
-      if (p.getSrcClass().equals(pack.getSrcClass()) && p.getTgtClass().equals(pack.getTgtClass()) && p.getAssociation().equals(pack.getAssociation())){
-        return true;
+      //if (p.getSrcClass().equals(pack.getSrcClass()) && p.getTgtClass().equals(pack.getTgtClass()) && p.getAssociation().equals(pack.getAssociation())){
+      if (p.getSrcClass().equals(pack.getSrcClass()) && p.getAssociation().equals(pack.getAssociation())){
+          return true;
       }
     }
     return isPackegeInSetReversed(pack, set);
@@ -331,49 +332,6 @@ public class Syn2SemDiffHelper {
     }
     return false;
   }
-
-//  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
-//    assert srcCD != null;
-//    List<ASTCDClass> set = getSpannedInheritance(srcCD, astcdClass);
-//
-//    ASTCDClass closestClass = null;
-//    int closestDepth = Integer.MAX_VALUE;
-//
-//    for (ASTCDClass cdClass : set) {
-//      if (!cdClass.getModifier().isAbstract()
-//        && !notInstanClassesSrc.contains(astcdClass)) {
-//        int depth = getDepthOfClass(cdClass, astcdClass);
-//        if (depth < closestDepth) {
-//          closestClass = cdClass;
-//          closestDepth = depth;
-//        }
-//      }
-//    }
-//
-//    return closestClass;
-//  }
-//
-//  public int getDepthOfClass(ASTCDClass classNode, ASTCDClass rootClass) {
-//    if (classNode == null || rootClass == null) {
-//      return -1; // or any other suitable value to indicate an invalid depth
-//    }
-//
-//    if (classNode == rootClass) {
-//      return 0; // base case: classNode is the root class
-//    }
-//
-//    int maxDepth = -1;
-//    for (ASTCDType directSuperClass : CDInheritanceHelper.getDirectSuperClasses(classNode, (ICD4CodeArtifactScope) scrcCD.getEnclosingScope())) {
-//      if (directSuperClass instanceof ASTCDClass) {
-//        int depth = getDepthOfClass((ASTCDClass) directSuperClass, rootClass);
-//        if (depth >= 0 && depth > maxDepth) {
-//          maxDepth = depth;
-//        }
-//      }
-//    }
-//
-//    return maxDepth >= 0 ? maxDepth + 1 : -1; // add 1 to the maximum depth found
-//  }
 
   /**
    * Check if the target classes of the two associations are in an inheritance relation
@@ -666,14 +624,14 @@ public class Syn2SemDiffHelper {
           copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
         }
         if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+          if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left));
           }
         } if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+          if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right));
           }
           else {
@@ -695,15 +653,15 @@ public class Syn2SemDiffHelper {
           copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
         }
         if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
+          if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left));
           }
         } if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right));
+          if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
+            getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right) );
           }
           else {
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.RightToLeft, ClassSide.Right));
@@ -737,7 +695,7 @@ public class Syn2SemDiffHelper {
               if (!copyAssoc.getRight().isPresentCDCardinality()){
                 copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
               }
-              if (association.getCDAssocDir().isBidirectional()) {
+              if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left, true));
               }
               else {
@@ -758,7 +716,7 @@ public class Syn2SemDiffHelper {
               if (!copyAssoc.getRight().isPresentCDCardinality()){
                 copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
               }
-              if (association.getCDAssocDir().isBidirectional()) {
+              if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right, true));
               }
               else {
@@ -794,7 +752,7 @@ public class Syn2SemDiffHelper {
               if (!assocForSubClass.getRight().isPresentCDCardinality()){
                 association.getRight().setCDCardinality(new ASTCDCardMult());
               }
-              if (association.getCDAssocDir().isBidirectional()) {
+              if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Left, true));
               }
               else {
@@ -816,7 +774,7 @@ public class Syn2SemDiffHelper {
               if (!assocForSubClass.getRight().isPresentCDCardinality()){
                 association.getRight().setCDCardinality(new ASTCDCardMult());
               }
-              if (association.getCDAssocDir().isBidirectional()) {
+              if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Right, true));
               }
               else {
@@ -1010,78 +968,49 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
-  public ASTCDClass minDiffWitness(ASTCDClass astcdClass){
-    assert srcCD != null;
-    List<ASTCDClass> set = getSpannedInheritance(srcCD, astcdClass);
+  public ASTCDClass minDiffWitness(
+    ASTCDClass baseClass) {
 
-    ASTCDClass closestClass = null;
-    int closestDepth = Integer.MAX_VALUE;
+    List<ASTCDClass> subClasses = getSpannedInheritance(srcCD, baseClass);
 
-    for (ASTCDClass cdClass : set) {
-      if (!cdClass.getModifier().isAbstract()
-        && notInstanClassesSrc.contains(astcdClass)) {
-        int depth = getDepthOfClass(cdClass, astcdClass);
-        if (depth < closestDepth) {
-          closestClass = cdClass;
-          closestDepth = depth;
+    int lowestCount = Integer.MAX_VALUE;
+    ASTCDClass subclassWithLowestCount = null;
+
+    for (ASTCDClass subclass : subClasses) {
+      if (!subclass.getModifier().isAbstract() && !notInstanClassesSrc.contains(subclass)) {
+        int attributeCount = getAllAttr(baseClass).b.size();
+        int associationCount = getAssociationCount(subclass);
+        int totalCount = attributeCount + associationCount;
+
+        if (totalCount < lowestCount) {
+          lowestCount = totalCount;
+          subclassWithLowestCount = subclass;
         }
       }
     }
 
-    return closestClass;
+    return subclassWithLowestCount;
   }
 
-  public int getDepthOfClass(ASTCDClass classNode, ASTCDClass rootClass) {
-    if (classNode == null || rootClass == null) {
-      return -1; // or any other suitable value to indicate an invalid depth
-    }
-
-    if (classNode == rootClass) {
-      return 0; // base case: classNode is the root class
-    }
-
-    int maxDepth = -1;
-    for (ASTCDType directSuperClass : CDInheritanceHelper.getDirectSuperClasses(classNode, (ICD4CodeArtifactScope) srcCD.getEnclosingScope())) {
-      if (directSuperClass instanceof ASTCDClass) {
-        int depth = getDepthOfClass((ASTCDClass) directSuperClass, rootClass);
-        if (depth >= 0 && depth > maxDepth) {
-          maxDepth = depth;
+  private int getAssociationCount(ASTCDClass astcdClass) {
+    int count = 0;
+    for (AssocStruct assocStruct : srcMap.get(astcdClass)) {
+      if (assocStruct.getSide().equals(ClassSide.Left)) {
+        if (assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne()
+          || assocStruct.getAssociation().getRight().getCDCardinality().isOne()){
+          count++;
+        }
+      }
+      else {
+        if (assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne()
+          || assocStruct.getAssociation().getLeft().getCDCardinality().isOne()){
+          count++;
         }
       }
     }
-
-    return maxDepth >= 0 ? maxDepth + 1 : -1; // add 1 to the maximum depth found
+    return count;
   }
-//  public int calculateClassDepth(ASTCDClass rootClass, ASTCDClass targetClass) {
-//    // Check if the target class is the root class
-//    if (rootClass.getName().equals(targetClass.getName())) {
-//      return 0;
-//    }
-//
-//    // Get the direct superclasses of the target class
-//    Set<ASTCDClass> superClasses = CDDiffUtil.getAllSuperclasses(targetClass, helper.getSrcCD().getCDDefinition().getCDClassesList());
-//
-//    // If the target class has no superclasses, it is not in the hierarchy
-//    if (superClasses.isEmpty()) {
-//      return -1;
-//    }
-//
-//    // Recursively calculate the depth for each direct superclass
-//    List<Integer> depths = new ArrayList<>();
-//    for (ASTCDClass superClass : superClasses) {
-//      int depth = calculateClassDepth(rootClass, superClass);
-//      if (depth >= 0) {
-//        depths.add(depth + 1);
-//      }
-//    }
-//
-//    // Return the maximum depth from the direct superclasses
-//    if (depths.isEmpty()) {
-//      return -1;
-//    } else {
-//      return depths.stream().max(Integer::compare).get();
-//    }
-//  }
+
   public String getSuperClasses(ASTCDClass astcdClass){
     List<ASTCDClass> superClasses = getSuperClasses(srcCD, astcdClass);
     StringBuilder string = new StringBuilder();
@@ -1156,5 +1085,14 @@ public class Syn2SemDiffHelper {
       odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
     }
     return odAttributes;
+  }
+
+  public ASTCDClass getCDClass(ASTCDCompilationUnit compilationUnit, String className) {
+    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      if (astcdClass.getName().equals(className)) {
+        return astcdClass;
+      }
+    }
+    return null;
   }
 }

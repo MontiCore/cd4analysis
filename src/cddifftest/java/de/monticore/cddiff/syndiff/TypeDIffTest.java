@@ -53,6 +53,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     for (ASTCDClass astcdClass : compilationUnitNew.getCDDefinition().getCDClassesList()){
       System.out.println(astcdClass.getName());
     }
+    System.out.println(attributeNew.printType());
     //Assert.assertTrue(syntaxDiff.getHelper().getSrcMap().containsKey(aNew));
     //Assert.assertNull(result3);
   }
@@ -76,6 +77,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
     // Invoke the method
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
 
