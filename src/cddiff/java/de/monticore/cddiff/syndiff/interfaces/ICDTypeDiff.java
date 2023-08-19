@@ -14,7 +14,7 @@ public interface ICDTypeDiff {
 
   List<ASTCDAttribute> getAddedAttributes();
 
-  List<ASTCDAttribute> getDeletedAttribute();
+  List<ASTCDAttribute> getDeletedAttributes();
 
   List<ASTCDEnumConstant> getAddedConstants();
 

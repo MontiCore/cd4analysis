@@ -48,13 +48,13 @@ public class CDDiffHelper {
     return breakingChange;
   }
 
-  protected List<Actions> interpretationList = new ArrayList<>();
+  protected List<DiffTypes> interpretationList = new ArrayList<>();
 
-  public List<Actions> getInterpretationList() {
+  public List<DiffTypes> getInterpretationList() {
     return interpretationList;
   }
 
-  public void setInterpretationList(List<Actions> newInterpretationList) {
+  public void setInterpretationList(List<DiffTypes> newInterpretationList) {
     this.interpretationList = newInterpretationList;
   }
 

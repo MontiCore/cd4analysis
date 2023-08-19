@@ -47,13 +47,12 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
 
-  //Printer help functions and strings
+  //Print
   private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   protected static final String CHANGED_ASSOCIATION = "\u001B[33m";
   final String RESET = "\u001B[0m";
   String stringSrcAssoc;
   String stringTgtAssoc;
-  //What if both sides are changed
   String srcAssocName;
   String tgtAssocName;
   String srcTypeLeft;
@@ -71,6 +70,7 @@ public class CDAssocDiff implements ICDAssocDiff {
   String srcCardinalityRight;
   String tgtCardinalityLeft;
   String tgtCardinalityRight;
+  //Print end
 
   public CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, boolean isReversed) {
     this.srcElem = srcElem;
@@ -559,7 +559,6 @@ public class CDAssocDiff implements ICDAssocDiff {
     return null;
   }
 
-  //TODO CompilationUnit??
   protected boolean getTypes(String srcElem, String tgt) {
     Optional<CDTypeSymbol> srcTypeSymbol = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem);
     Optional<CDTypeSymbol> tgtTypeSymbol = tgtCD.getEnclosingScope().resolveCDTypeDown(tgt);

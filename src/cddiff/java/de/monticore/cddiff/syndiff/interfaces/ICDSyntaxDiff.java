@@ -23,10 +23,6 @@ public interface ICDSyntaxDiff {
 
   List<ASTCDClass> getDeletedClasses();
 
-  List<ASTCDInterface> getAddedInterfaces();
-
-  List<ASTCDInterface> getDeletedInterfaces();
-
   List<ASTCDEnum> getAddedEnums();
 
   List<ASTCDEnum> getDeletedEnums();

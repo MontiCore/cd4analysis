@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
 
+  protected MatchingStrategy<ASTCDAttribute> attrMatcher;
   private final ASTCDCompilationUnit srcCD;
   private final ASTCDCompilationUnit tgtCD;
 
@@ -38,7 +39,7 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
         && tgtElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(tgtCD))) {
       for (ASTCDAttribute srcAttr : srcElem.getCDAttributeList()) {
         for (ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()) {
-          if (srcAttr.getName().equals(tgtAttr.getName())) {
+          if (attrMatcher.isMatched(srcAttr,tgtAttr)) {
             matchedAttributes.add(srcAttr);
           }
         }

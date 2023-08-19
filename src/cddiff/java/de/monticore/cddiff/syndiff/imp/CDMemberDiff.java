@@ -70,7 +70,7 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff, ICDPrin
 
   private double calculateDiffSize() {
     double size = diffList.size() / 3.0;
-    for (CDNodeDiff<? extends ASTNode, ? extends ASTNode> diff : diffList) {
+    for (CDNodeDiff diff : diffList) {
       if (diff.isPresent() && diff.getTgtValue().isPresent()) {
         if (diff.getTgtValue().get() instanceof ASTCDAttribute
           || diff.getTgtValue().get() instanceof ASTMCQualifiedName

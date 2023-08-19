@@ -11,8 +11,7 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
 
 /** TODO: Write Comments */
-public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>
-    implements ICDNodeDiff<SrcType, TgtType> {
+public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> implements ICDNodeDiff<SrcType, TgtType> {
   protected DiffTypes difference;
 
   protected Actions action;
@@ -68,9 +67,7 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>
   }
 
   protected Actions findAction() {
-    if (srcValue.isPresent()
-        && tgtValue.isPresent()
-        && !srcValue.get().deepEquals(tgtValue.get())) {
+    if (srcValue.isPresent() && tgtValue.isPresent() && !srcValue.get().deepEquals(tgtValue.get())) {
       return Actions.CHANGED;
 
     } else if (srcValue.isPresent() && !tgtValue.isPresent()) {
