@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram STTest {
+classdiagram car18 {
 
    interface AutoInterface1;
    interface ColorInterface1;

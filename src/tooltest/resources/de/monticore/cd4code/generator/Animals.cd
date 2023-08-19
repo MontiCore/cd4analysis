@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram Animals {
+  enum Name{bob, dave;}
+  enum State{ripe, unripe;}
+
+  abstract class Animal{
+    Name name;
+  }
+
+  class Fruit{
+    State state;
+  }
+  
+  class Ape extends Animal;
+
+  class Banana;
+
+  association [1] Animal -> (eats) Fruit [1..*];
+  association [1] Ape -> (eats) Banana [1];
+}

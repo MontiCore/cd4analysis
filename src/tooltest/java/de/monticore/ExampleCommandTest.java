@@ -46,10 +46,10 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testExampleCommands1and3() {
-    String fileName = "doc/MyAddress.cd";
+    String fileName = "src/tooltest/resources/doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     CD4CodeMill.globalScope().clear();
-    fileName = "doc/MyLife.cd";
+    fileName = "src/tooltest/resources/doc/MyLife.cd";
     CD4CodeTool.main(
         new String[] {
           "-i", fileName, "--path", outputPath + "symbols", "-o", outputPath + "out", "--gen"
@@ -62,10 +62,10 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testExampleCommands1and2() {
-    String fileName = "doc/MyAddress.cd";
+    String fileName = "src/tooltest/resources/doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     CD4CodeMill.globalScope().clear();
-    fileName = "doc/MyLife.cd";
+    fileName = "src/tooltest/resources/doc/MyLife.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "--path", outputPath + "symbols", "-pp"});
     assertTrue(getErr(), getErr().isEmpty());
   }
@@ -73,7 +73,7 @@ public class ExampleCommandTest extends OutTestBasis {
   /** Step1: Getting started for command: java -jar MCCD.jar -i src/MyExample.cd */
   @Test
   public void testGettingStartedExample() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName});
     assertTrue(getErr(), getErr().isEmpty());
   }
@@ -81,7 +81,7 @@ public class ExampleCommandTest extends OutTestBasis {
   /** Step2: Pretty printing for command: java -jar MCCD.jar -i src/MyExample.cd -pp */
   @Test
   public void testPrettyPrintingExample1() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-pp"});
     assertTrue(getErr(), getErr().isEmpty());
   }
@@ -92,11 +92,11 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testPrettyPrintingExample2() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-pp", outputPath + "MyExample.cd"});
     assertTrue(Files.exists(Paths.get(outputPath + "MyExample.cd")));
     assertTrue(
-        loadAndCheckCD("doc/MyExample.cd")
+        loadAndCheckCD("src/tooltest/resources/doc/MyExample.cd")
             .deepEquals(loadAndCheckCD(outputPath + "MyExample.cd"), false));
     assertTrue(getErr(), getErr().isEmpty());
   }
@@ -104,7 +104,7 @@ public class ExampleCommandTest extends OutTestBasis {
   /** Step3: storing symbols for command: java -jar MCCD.jar -i src/MyExample.cd -s */
   @Test
   public void testStoringSymbolsExample1() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
 
     // copy the CD into test-directory
     CD4CodeTool.main(new String[] {"-i", fileName, "-pp", outputPath + "MyExample.cd"});
@@ -124,7 +124,7 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testStoringSymbolsExample2() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
 
     // execute the command at test
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym"});
@@ -140,7 +140,7 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testAddingFieldSymbolsExample1() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
     CD4CodeTool.main(
         new String[] {
           "-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym", "--fieldfromrole", "all"
@@ -155,7 +155,7 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testAddingFieldSymbolsExample2() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
     CD4CodeTool.main(
         new String[] {
           "-i",
@@ -175,7 +175,7 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testStoringSymbolsPerPathsExample1() {
-    String fileName = "doc/MyLife.cd";
+    String fileName = "src/tooltest/resources/doc/MyLife.cd";
     try {
       CD4CodeTool.main(new String[] {"-i", fileName});
     } catch (Error e) {
@@ -194,11 +194,11 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testStoringSymbolsPerPathsExample2() {
-    String fileName = "doc/MyAddress.cd";
+    String fileName = "src/tooltest/resources/doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     assertTrue(getErr(), getErr().isEmpty());
     CD4CodeMill.globalScope().clear();
-    fileName = "doc/MyLife.cd";
+    fileName = "src/tooltest/resources/doc/MyLife.cd";
     CD4CodeTool.main(
         new String[] {"-i", fileName, "--defaultpackage", "--path", outputPath + "symbols"});
     assertTrue(getErr(), getErr().isEmpty());
@@ -209,7 +209,7 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testGenerateJavaExample2() {
-    String fileName = "doc/MyExample.cd";
+    String fileName = "src/tooltest/resources/doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "--gen", "-o", outputPath + "out"});
     ASTCDCompilationUnit cd = loadAndCheckCD(fileName);
     cd.getCDDefinition()
@@ -229,7 +229,7 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testGenerateJavaExample3() {
-    String fileName = "doc/MyCompany.cd";
+    String fileName = "src/tooltest/resources/doc/MyCompany.cd";
     CD4CodeTool.main(
         new String[] {
           "-i", fileName, "-o", outputPath + "out", "--gen", "--fieldfromrole", "navigable"
@@ -253,8 +253,9 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsComparisonExample1() {
-    final String fileName = "doc/MyEmployees1.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--semdiff", "doc/MyEmployees2.cd"});
+    final String fileName = "src/tooltest/resources/doc/MyEmployees1.cd";
+    CD4CodeTool.main(
+        new String[] {"-i", fileName, "--semdiff", "src/tooltest/resources/doc/MyEmployees2.cd"});
     assertEquals(0, Log.getErrorCount());
   }
 
@@ -264,8 +265,8 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsComparisonExample2() {
-    final String cd1 = "doc/MyEmployees1.cd";
-    final String cd2 = "doc/MyEmployees2.cd";
+    final String cd1 = "src/tooltest/resources/doc/MyEmployees1.cd";
+    final String cd2 = "src/tooltest/resources/doc/MyEmployees2.cd";
     CD4CodeTool.main(
         new String[] {"-i", cd1, "--semdiff", cd2, "--difflimit", "20", "-o", outputPath + "out"});
 
@@ -302,8 +303,11 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsMergeExample1() {
-    final String fileName = "doc/Teaching.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--merge", "doc/Management.cd", "-pp"});
+    final String fileName = "src/tooltest/resources/doc/Teaching.cd";
+    CD4CodeTool.main(
+        new String[] {
+          "-i", fileName, "--merge", "src/tooltest/resources/doc/Management.cd", "-pp"
+        });
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -313,13 +317,13 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsMergeExample2() {
-    final String fileName = "doc/Teaching.cd";
+    final String fileName = "src/tooltest/resources/doc/Teaching.cd";
     CD4CodeTool.main(
         new String[] {
           "-i",
           fileName,
           "--merge",
-          "doc/Management.cd",
+          "src/tooltest/resources/doc/Management.cd",
           "-o",
           outputPath + "out",
           "-pp",

@@ -249,7 +249,8 @@ public class ClassMatcher {
       }
 
       // Handle lists
-      if ((odAttr.getODValue() instanceof ASTODList) && (cdAttr.getMCType() instanceof ASTMCListType)) {
+      if ((odAttr.getODValue() instanceof ASTODList)
+          && (cdAttr.getMCType() instanceof ASTMCListType)) {
         // Handle special case that list has no elements
         var elementList = ((ASTODList) odAttr.getODValue()).getODValueList();
         if (elementList.size() == 0 && cdAttr.getMCType() instanceof ASTMCListType) {
@@ -264,7 +265,8 @@ public class ClassMatcher {
           return false;
         }
         // Check if all list elements have the same type
-        String listElementType = ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType();
+        String listElementType =
+            ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType();
         for (var element : ((ASTODList) odAttr.getODValue()).getODValueList()) {
           // Compare list element type to with type of all elements in object list attribute
           if (!listElementType.equals(getObjectAttributeTypeByAST(element))) {
@@ -272,7 +274,6 @@ public class ClassMatcher {
           }
         }
       }
-
     }
     // Check types
     return cdAttrType.equals(odAttrType);

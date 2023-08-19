@@ -34,7 +34,7 @@ public class CDMergeTest extends BaseTest {
 
   @Test
   public void testMotivatingExample() {
-    final String srcDir = "doc/";
+    final String srcDir = "src/cdmergetest/resources/class_diagrams/CDMergeTest/";
     Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
     try {
       inputSet.add(loadModel(srcDir + "Teaching.cd"));
@@ -74,9 +74,8 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MergeDriveAndEmployment", params);
 
-
     Assert.assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
-    Assert.assertTrue(mergedCD.deepEquals(expected,false));
+    Assert.assertTrue(mergedCD.deepEquals(expected, false));
   }
 }

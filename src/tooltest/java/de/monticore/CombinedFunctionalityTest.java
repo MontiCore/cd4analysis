@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CombinedFunctionalityTest {
@@ -45,14 +44,12 @@ public class CombinedFunctionalityTest {
   }
 
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
-  @Disabled
   @Test
   public void testMaCoCo() {
-    String base_path =
-        "src/test/resources/de/monticore/cd4analysis/examples/industrial_strength_models/";
+    String base_path = "src/tooltest/resources/de/monticore/macoco/";
 
     Set<ASTCDCompilationUnit> mergeSet =
-        Arrays.stream(new File(base_path + "MaCoCoMerge/").listFiles())
+        Arrays.stream(new File(base_path + "parts/").listFiles())
             .map(f -> parseCDModel(f.getAbsolutePath()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 

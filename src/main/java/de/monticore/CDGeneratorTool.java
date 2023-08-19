@@ -114,9 +114,9 @@ public class CDGeneratorTool extends CD4CodeTool {
       }
 
       Collection<ICD4CodeArtifactScope> scopes =
-        asts.stream()
-          .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
-          .collect(Collectors.toList());
+          asts.stream()
+              .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
+              .collect(Collectors.toList());
       asts.forEach(this::completeSymbolTable);
 
       if (cmd.hasOption("c")) {
@@ -125,30 +125,36 @@ public class CDGeneratorTool extends CD4CodeTool {
         Log.enableFailQuick(true);
       }
 
-      String fieldFromRole = cmd.hasOption("fieldfromrole") ? cmd.getOptionValue("fieldfromrole") : "navigable";
+      String fieldFromRole =
+          cmd.hasOption("fieldfromrole") ? cmd.getOptionValue("fieldfromrole") : "navigable";
       switch (fieldFromRole) {
-        case "all": { // add FieldSymbols for all the CDRoleSymbols
-          final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
-            new CDAssociationCreateFieldsFromAllRoles();
-          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
-          traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
-          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
-          asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
-          break;
-        }
-        case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
-          final CDAssociationCreateFieldsFromNavigableRoles
-            cdAssociationCreateFieldsFromNavigableRoles =
-            new CDAssociationCreateFieldsFromNavigableRoles();
-          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
-          traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
-          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
-          asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
-          break;
-        }
+        case "all":
+          { // add FieldSymbols for all the CDRoleSymbols
+            final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
+                new CDAssociationCreateFieldsFromAllRoles();
+            final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+            traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+            traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+            asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
+            break;
+          }
+        case "navigable":
+          { // add FieldSymbols only for navigable CDRoleSymbols
+            final CDAssociationCreateFieldsFromNavigableRoles
+                cdAssociationCreateFieldsFromNavigableRoles =
+                    new CDAssociationCreateFieldsFromNavigableRoles();
+            final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+            traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+            traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+            asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
+            break;
+          }
         case "none":
         default:
-          Log.error(String.format("0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.", fieldFromRole));
+          Log.error(
+              String.format(
+                  "0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.",
+                  fieldFromRole));
       }
 
       if (cmd.hasOption("s")) {
@@ -196,6 +202,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         asts.forEach(this::mapCD4CImports);
 
         asts.forEach(ast -> addGettersAndSetters(ast, glex));
+        asts.forEach(this::makeMethodsInInterfacesAbstract);
 
         asts.forEach(ast -> hpp.processValue(tc, ast, configTemplateArgs));
       }
@@ -263,10 +270,10 @@ public class CDGeneratorTool extends CD4CodeTool {
             .build());
 
     options.addOption(
-      Option.builder("fieldfromrole")
-        .desc("Configures if explicit field symbols should be added for associations")
-        .hasArg()
-        .build());
+        Option.builder("fieldfromrole")
+            .desc("Configures if explicit field symbols should be added for associations")
+            .hasArg()
+            .build());
 
     return options;
   }
@@ -360,6 +367,14 @@ public class CDGeneratorTool extends CD4CodeTool {
     }
   }
 
+  public void makeMethodsInInterfacesAbstract(ASTCDCompilationUnit ast) {
+    for (ASTCDInterface cdInterface: ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTCDMethod method: cdInterface.getCDMethodList()) {
+        method.getModifier().setAbstract(true);
+      }
+    }
+  }
+
   public String[] splitPathEntries(String composedPath) {
     Preconditions.checkNotNull(composedPath);
 
@@ -384,10 +399,11 @@ public class CDGeneratorTool extends CD4CodeTool {
     CD4C cd4c = CD4C.getInstance();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    imports.add(MCBasicTypesMill.mCImportStatementBuilder()
-      .setMCQualifiedName(
-        MCQualifiedNameFacade.createQualifiedName("de.se_rwth.commons.logging.Log"))
-      .build());
+    imports.add(
+        MCBasicTypesMill.mCImportStatementBuilder()
+            .setMCQualifiedName(
+                MCQualifiedNameFacade.createQualifiedName("de.se_rwth.commons.logging.Log"))
+            .build());
 
     for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTMCImportStatement i : imports) {

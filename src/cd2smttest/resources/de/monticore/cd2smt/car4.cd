@@ -1,5 +1,5 @@
 import java.lang.* ;
-classdiagram STTest {
+classdiagram car4 {
  class Car {
   boolean isExpensive ;
   String name;
