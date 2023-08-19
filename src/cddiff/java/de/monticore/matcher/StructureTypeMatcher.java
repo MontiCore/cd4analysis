@@ -11,12 +11,9 @@ import java.util.stream.Collectors;
 
 public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
 
-  protected MatchingStrategy<ASTCDAttribute> attrMatcher;
-  private final ASTCDCompilationUnit srcCD;
   private final ASTCDCompilationUnit tgtCD;
 
-  public StructureTypeMatcher(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    this.srcCD = srcCD;
+  public StructureTypeMatcher(ASTCDCompilationUnit tgtCD) {
     this.tgtCD = tgtCD;
   }
 
@@ -35,18 +32,15 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     List<ASTCDAttribute> matchedAttributes = new ArrayList<>();
-    if (srcElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(srcCD))
-        && tgtElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(tgtCD))) {
+    if (tgtElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(tgtCD))) {
       for (ASTCDAttribute srcAttr : srcElem.getCDAttributeList()) {
         for (ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()) {
-          if (attrMatcher.isMatched(srcAttr,tgtAttr)) {
+          if (srcAttr.getName().equals(tgtAttr.getName())) {
             matchedAttributes.add(srcAttr);
           }
         }
       }
-      if (matchedAttributes.size() >= (0.2 * srcElem.getCDAttributeList().size())) {
-        return true;
-      }
+        return matchedAttributes.size() >= (0.2 * srcElem.getCDAttributeList().size());
     }
     return false;
   }
@@ -54,10 +48,8 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
   public double getAverageForCD(ASTCDCompilationUnit cd) {
     List<ASTCDAttribute> attributes = new ArrayList<>();
     for (ASTCDClass tgtType : tgtCD.getCDDefinition().getCDClassesList()) {
-      for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
-        attributes.add(tgtAttr);
-      }
+      attributes.addAll(tgtType.getCDAttributeList());
     }
-    return attributes.size() / cd.getCDDefinition().getCDClassesList().size();
+    return (double) attributes.size() / cd.getCDDefinition().getCDClassesList().size();
   }
 }

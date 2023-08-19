@@ -29,7 +29,7 @@ public class Matcher {
       ASTCDType tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
-    StructureTypeMatcher structureTypeMatcher = new StructureTypeMatcher(srcCD, tgtCD);
+    StructureTypeMatcher structureTypeMatcher = new StructureTypeMatcher(tgtCD);
     return structureTypeMatcher.isMatched(srcElem, tgtElem);
   }
 
