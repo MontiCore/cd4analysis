@@ -38,23 +38,25 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   //Print
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+
   private String
-    tgtAssocType,tgtAssocName,tgtAssocLeftCardinality,tgtAssocLeftType,tgtAssocLeftRole,
-    tgtAssocDirection,
-    tgtAssocRightCardinality,tgtAssocRightType,tgtAssocRightRole;
-  private String
-    srcAssocType,srcAssocName,srcAssocLeftCardinality,srcAssocLeftType,srcAssocLeftRole,
+    srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole,
     srcAssocDirection,
-    srcAssocRightCardinality,srcAssocRightType,srcAssocRightRole,tgtAssoc,srcAssoc;
+    srcAssocRightCardinality, srcAssocRightType, srcAssocRightRole, tgtAssoc, srcAssoc;
+
+  private String
+    tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole,
+    tgtAssocDirection,
+    tgtAssocRightCardinality, tgtAssocRightType, tgtAssocRightRole;
   //Print end
 
   public CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
 
-    assoDiff(tgtElem, srcElem);
+    assocDiff(tgtElem, srcElem);
 
-    for (CDNodeDiff<?, ?> diff : diffList) {
+    for (CDNodeDiff<?,?> diff : diffList) {
       if (diff.checkForAction() && diff.getDiff().isPresent()) {
         diffTypesList.add(diff.getDiff().get());
       }
@@ -442,7 +444,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
 
   /*--------------------------------------------------------------------*/
 
-  private void assoDiff(ASTCDAssociation tgtAssoc, ASTCDAssociation srcAssoc) {
+  private void assocDiff(ASTCDAssociation tgtAssoc, ASTCDAssociation srcAssoc) {
 
     List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
     diffType.append("The difference type is: ");
