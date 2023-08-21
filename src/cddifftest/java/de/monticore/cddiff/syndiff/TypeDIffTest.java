@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -13,6 +15,11 @@ import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
@@ -208,5 +215,44 @@ public class TypeDIffTest extends CDDiffTestBasis {
     // Assert the result
     System.out.println(result);
     Assert.assertNotNull(result);
+  }
+
+  /*--------------------------------------------------------------------*/
+  //Syntax Diff Tests
+
+  public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/";
+  protected ASTCDCompilationUnit tgt;
+  protected ASTCDCompilationUnit src;
+  @Test
+  public void testType1() {
+    parseModels("Source1.cd", "Refinement1.cd");
+
+    ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
+    ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
+
+    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1);
+    System.out.println(typeDiff.printCD1());
+    System.out.println(typeDiff.printCD2());
+  }
+
+  public void parseModels(String concrete, String ref) {
+    try {
+      Optional<ASTCDCompilationUnit> src =
+        CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
+      if (src.isPresent() && tgt.isPresent()) {
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
+        src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
+        tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
+        this.tgt = tgt.get();
+        this.src = src.get();
+      } else {
+        fail("Could not parse CDs.");
+      }
+
+    } catch (IOException e) {
+      fail(e.getMessage());
+    }
   }
 }

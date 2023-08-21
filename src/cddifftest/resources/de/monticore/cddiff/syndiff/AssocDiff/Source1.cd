@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram Source1 {
+  class A;
+
+  class B;
+
+  association new [1] A (a) -> (b) B [*];
+}

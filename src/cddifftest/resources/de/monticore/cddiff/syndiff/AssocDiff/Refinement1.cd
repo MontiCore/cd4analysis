@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram Refinement1 {
+  class A;
+
+  class C;
+
+  association old [*] A (c) -> (b) C [1];
+}

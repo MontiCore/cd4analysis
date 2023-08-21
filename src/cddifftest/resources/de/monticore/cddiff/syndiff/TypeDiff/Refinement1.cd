@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram Refinement1 {
+  class A{
+    double c;
+    double b;
+  }
+}
