@@ -239,7 +239,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
 
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
-    System.out.println(typeDiff.printCD1());
+    System.out.println(typeDiff.printCD2());
     System.out.println(typeDiff.getBaseDiff());
     //System.out.println(typeDiff.getChangedMembers());
     //System.out.println(typeDiff.getMatchedAttributes());

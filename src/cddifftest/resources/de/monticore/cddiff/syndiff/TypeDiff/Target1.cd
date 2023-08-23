@@ -1,8 +1,10 @@
 import java.lang.String;
 
 classdiagram Target1 {
-  class A{
+  class A implements B{
     double c;
     double b;
   }
+
+  class B{}
 }

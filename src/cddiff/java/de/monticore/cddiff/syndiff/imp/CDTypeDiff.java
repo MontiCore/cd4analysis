@@ -449,22 +449,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
    * @param tgtType a type in the old CD
    */
   public void loadAllAddedAttributes(ASTCDType srcType, ASTCDType tgtType) {
-    //loadAllInheritedAttributes(srcType, tgtType);
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
       boolean addedNotFound = true;
-      boolean inheritedFound = false;
+      if(inheritedAttributes.contains(srcAttr)) {
+        addedNotFound = false;
+      }
       for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
         if (srcAttr.getName().equals(tgtAttr.getName())) {
           addedNotFound = false;
           break;
-        }
-      }
-      for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
-        for (ASTCDAttribute a : x.getCDAttributeList()) {
-          if (a.getName().equals(srcAttr.getName())) {
-            inheritedFound = true;
-            break;
-          }
         }
       }
       if (addedNotFound) {
@@ -473,37 +466,30 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
           baseDiff.add(DiffTypes.ADDED_ATTRIBUTE);
         }
       }
-      if(inheritedFound) {
-        inheritedAttributes.add(srcAttr);
-        if(!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
-          baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
-        }
-      }
     }
-
   }
 
   private void loadAllInheritedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+    List<ASTCDAttribute> superAttr = new ArrayList<>();
     for (ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
-      for (ASTCDAttribute superClassAttr : x.getCDAttributeList()) {
-        boolean found = false;
-        for (ASTCDAttribute localAttribute : srcType.getCDAttributeList()) {
-          if (localAttribute.getName().equals(superClassAttr.getName())) {
-            found = true;
-            break;
+      superAttr.addAll(x.getCDAttributeList());
+    }
+    if(!superAttr.isEmpty()) {
+      for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
+        boolean inheritedFound = false;
+        for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
+          for (ASTCDAttribute a : x.getCDAttributeList()) {
+            if (a.getName().equals(srcAttr.getName())) {
+              inheritedFound = true;
+              break;
+            }
           }
         }
-        if (found) {
-          addedAttributes.add(superClassAttr);
-          inheritedAttributes.add(superClassAttr);
-          //TODO: redundant list diffTypesList
-          if (!diffTypesList.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
-            diffTypesList.add(DiffTypes.INHERITED_ATTRIBUTE);
-            diffType.append(DiffTypes.INHERITED_ATTRIBUTE).append(" ");
-          }
-
+        if(inheritedFound) {
+          inheritedAttributes.add(srcAttr);
+          if(!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
             baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
-
+          }
         }
       }
     }
@@ -772,9 +758,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
         for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
           if (srcAttr.getName().equals(tgtAttr.getName())) {
-
               matchedAttributes.add(new Pair(srcAttr, tgtAttr));
-
           }
         }
       }
@@ -790,6 +774,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   }
 
   public void loadAllLists(ASTCDType srcType, ASTCDType tgtType) {
+    loadAllInheritedAttributes(srcType, tgtType);
     loadAllAddedAttributes(srcType, tgtType);
     loadAllDeletedAttributes(srcType, tgtType);
     loadAllChangedMembers(srcType, tgtType);
