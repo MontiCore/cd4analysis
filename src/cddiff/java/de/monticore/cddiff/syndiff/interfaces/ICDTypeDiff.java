@@ -11,17 +11,12 @@ import java.util.Set;
 
 public interface ICDTypeDiff {
   List<CDMemberDiff> getChangedMembers();
-
   List<ASTCDAttribute> getAddedAttributes();
-
+  List<ASTCDAttribute> getInheritedAttributes();
   List<ASTCDAttribute> getDeletedAttributes();
-
   List<ASTCDEnumConstant> getAddedConstants();
-
   List<ASTCDEnumConstant> getDeletedConstants();
-
   List<Pair<ASTCDAttribute, ASTCDAttribute>> getMatchedAttributes();
-
   List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
 
   ASTCDType getSrcElem();
@@ -32,8 +27,8 @@ public interface ICDTypeDiff {
 
   void setAddedAttributes(List<ASTCDAttribute> addedAttributes);
 
-  void setDeletedAttribute(List<ASTCDAttribute> deletedAttribute);
-
+  void setDeletedAttributes(List<ASTCDAttribute> deletedAttribute);
+  void setInheritedAttributes(List<ASTCDAttribute> deletedAttribute);
   void setAddedConstants(List<ASTCDEnumConstant> addedConstants);
 
   void setDeletedConstants(List<ASTCDEnumConstant> deletedConstants);

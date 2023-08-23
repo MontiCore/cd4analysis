@@ -1,6 +1,6 @@
 import java.lang.String;
 
-classdiagram Refinement1 {
+classdiagram Target1 {
   class A;
 
   class C;

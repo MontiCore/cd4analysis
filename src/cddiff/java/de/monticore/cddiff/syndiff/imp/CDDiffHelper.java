@@ -18,6 +18,8 @@ public class CDDiffHelper implements ICDPrintDiff {
 
   protected static final String COLOR_CHANGE = "\033[1;33m";
 
+  protected static final String COLOR_INHERITED = "\033[1;35m";
+
   protected static final String RESET = "\033[0m";
   protected StringBuilder diffType = new StringBuilder();
 

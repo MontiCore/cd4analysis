@@ -41,7 +41,7 @@ public class MemberDiffTest {
   protected ASTCDCompilationUnit src;
   @Test
   public void testMember1() {
-    parseModels("Source1.cd", "Refinement1.cd");
+    parseModels("Source1.cd", "Target1.cd");
 
     ASTCDClass cNew = CDTestHelper.getClass("Customer", src.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("Customer", tgt.getCDDefinition());

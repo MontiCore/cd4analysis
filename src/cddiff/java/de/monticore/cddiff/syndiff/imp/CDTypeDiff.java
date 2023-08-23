@@ -27,14 +27,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   private List<CDMemberDiff> changedMembers;
   private List<ASTCDAttribute> addedAttributes;
   private List<ASTCDAttribute> deletedAttributes;
+  private List<ASTCDAttribute> inheritedAttributes;
   private List<ASTCDEnumConstant> addedConstants;
   private List<ASTCDEnumConstant> deletedConstants;
   private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes;
   private List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> matchedConstants;
   private List<DiffTypes> baseDiff;
+  ICD4CodeArtifactScope scopeSrcCD;
+  ICD4CodeArtifactScope scopeTgtCD;
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
-  ICD4CodeArtifactScope scopecd1;
-  ICD4CodeArtifactScope scopecd2;
 
   //Print
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -45,22 +46,26 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     keywordCD1, keywordCD2;
   //Print end
 
-  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem) {
+  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem,
+                    ICD4CodeArtifactScope scopeSrcCD,
+                    ICD4CodeArtifactScope scopeTgtCD) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
+    this.scopeSrcCD = scopeSrcCD;
+    this.scopeTgtCD = scopeTgtCD;
     this.baseDiff = new ArrayList<>();
+    //TODO: Initialize them in the functions!
     this.matchedAttributes = new ArrayList<>();
     this.matchedConstants = new ArrayList<>();
     this.changedMembers = new ArrayList<>();
-    this.addedAttributes = new ArrayList<>();
     this.addedConstants = new ArrayList<>();
-    //this.deletedAttributes = loadAllAddedOrDeletedElements(matchedAttributes, tgtElem.getCDAttributeList())
+    this.inheritedAttributes = new ArrayList<>();
+    this.addedAttributes = new ArrayList<>();
+    this.deletedAttributes = new ArrayList<>();
     this.deletedConstants = new ArrayList<>();
 
     //Compare modifier and name of the types
     createDefaultDiffList(srcElem, tgtElem);
-    //Compare types by extensions and implementations of other types
-    createAdditionalDiff(srcElem, tgtElem);
     //Load all matching elements from both types
     addAllMatchedElements(srcElem, tgtElem);
     //Find all added, deleted and changed attributes and constants
@@ -105,8 +110,17 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   }
 
   @Override
-  public void setDeletedAttribute(List<ASTCDAttribute> deletedAttribute) {
+  public void setDeletedAttributes(List<ASTCDAttribute> deletedAttribute) {
     this.deletedAttributes = deletedAttribute;
+  }
+
+  public List<ASTCDAttribute> getInheritedAttributes() {
+    return inheritedAttributes;
+  }
+
+  @Override
+  public void setInheritedAttributes(List<ASTCDAttribute> inheritedAttributes) {
+    this.inheritedAttributes = inheritedAttributes;
   }
 
   @Override
@@ -406,49 +420,6 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   }
 
   /*--------------------------------------------------------------------*/
-
-  private void createAdditionalDiff(ASTCDType srcElem, ASTCDType tgtElem) {
-    if ((srcElem instanceof ASTCDClass) && (tgtElem instanceof ASTCDClass)) {
-      keywordCD1 = "class";
-      keywordCD2 = "class";
-      createClassDiff((ASTCDClass) srcElem, (ASTCDClass) tgtElem);
-    } else if (srcElem instanceof ASTCDInterface && tgtElem instanceof ASTCDInterface) {
-      keywordCD1 = "interface";
-      keywordCD2 = "interface";
-      createInterfaceDiff((ASTCDInterface) srcElem, (ASTCDInterface) tgtElem);
-    } else if (srcElem instanceof ASTCDEnum && tgtElem instanceof ASTCDEnum) {
-      keywordCD1 = "enum";
-      keywordCD2 = "enum";
-      createEnumDiff((ASTCDEnum) srcElem, (ASTCDEnum) tgtElem);
-    }
-  }
-
-  private List<ASTCDAttribute> addInheritedAttributes(
-    Set<ASTCDType> superClasses, List<ASTCDAttribute> attributeList) {
-    for (ASTCDType x : superClasses) {
-      List<ASTCDAttribute> inheritedAttributes = x.getCDAttributeList();
-
-      for (ASTCDAttribute inheritedAttribute : inheritedAttributes) {
-        String name = inheritedAttribute.getName();
-        boolean found = false;
-        for (ASTCDAttribute localAttribute : attributeList) {
-          if (localAttribute.getName().equals(name)) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          attributeList.add(inheritedAttribute);
-          if (!diffTypesList.contains(DiffTypes.ATTRIBUTE_INHERITED)) {
-            diffTypesList.add(DiffTypes.ATTRIBUTE_INHERITED);
-            diffType.append(DiffTypes.ATTRIBUTE_INHERITED).append(" ");
-          }
-        }
-      }
-    }
-    return attributeList;
-  }
-
   /**
    * Add all attributes to the list changedMembers which have been changed.
    *
@@ -469,24 +440,6 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     }
   }
 
-  protected static List<ASTCDAttribute> loadAllAddedOrDeletedElements(
-    List<CDMemberDiff> matchs, List<ASTCDAttribute> elementList) {
-    List<ASTCDAttribute> output = new ArrayList<>();
-    for (ASTCDAttribute element : elementList) {
-      boolean found = false;
-      for (CDMemberDiff diff : matchs) {
-        if (diff.getTgtElem().equals(element) || diff.getSrcElem().equals(element)) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        output.add(element);
-      }
-    }
-    return output;
-  }
-
   /**
    * Add all attributes to the list addedAttributes which have not been in the tgtType, but are in
    * the srcType
@@ -495,6 +448,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
    * @param tgtType a type in the old CD
    */
   public void loadAllAddedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+    loadAllInheritedAttributes(srcType, tgtType);
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
       boolean notFound = true;
       for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
@@ -503,10 +457,45 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
           break;
         }
       }
+      for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
+        for (ASTCDAttribute a : x.getCDAttributeList()) {
+          if (a.getName().equals(srcAttr.getName())) {
+            notFound = false;
+            break;
+          }
+        }
+      }
       if (notFound) {
         addedAttributes.add(srcAttr);
         if(!baseDiff.contains(DiffTypes.ADDED_ATTRIBUTE)) {
-          baseDiff.contains(DiffTypes.ADDED_ATTRIBUTE);
+          baseDiff.add(DiffTypes.ADDED_ATTRIBUTE);
+        }
+      }
+    }
+
+  }
+
+  private void loadAllInheritedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+    for (ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
+      for (ASTCDAttribute superClassAttr : x.getCDAttributeList()) {
+        boolean found = false;
+        for (ASTCDAttribute localAttribute : srcType.getCDAttributeList()) {
+          if (localAttribute.getName().equals(superClassAttr.getName())) {
+            found = true;
+            break;
+          }
+        }
+        if (found) {
+          addedAttributes.add(superClassAttr);
+          inheritedAttributes.add(superClassAttr);
+          //TODO: redundant list diffTypesList
+          if (!diffTypesList.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+            diffTypesList.add(DiffTypes.INHERITED_ATTRIBUTE);
+            diffType.append(DiffTypes.INHERITED_ATTRIBUTE).append(" ");
+          }
+          if (!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+            baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
+          }
         }
       }
     }
@@ -531,7 +520,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       if (notFound) {
         deletedAttributes.add(tgtAttr);
         if(!baseDiff.contains(DiffTypes.REMOVED_ATTRIBUTE)) {
-          baseDiff.contains(DiffTypes.REMOVED_ATTRIBUTE);
+          baseDiff.add(DiffTypes.REMOVED_ATTRIBUTE);
         }
       }
     }
@@ -618,6 +607,20 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
         .append(": ")
         .append(DiffTypes.RELOCATION)
         .append(" ");
+    }
+
+    if ((srcElem instanceof ASTCDClass) && (tgtElem instanceof ASTCDClass)) {
+      keywordCD1 = "class";
+      keywordCD2 = "class";
+      createClassDiff((ASTCDClass) srcElem, (ASTCDClass) tgtElem);
+    } else if (srcElem instanceof ASTCDInterface && tgtElem instanceof ASTCDInterface) {
+      keywordCD1 = "interface";
+      keywordCD2 = "interface";
+      createInterfaceDiff((ASTCDInterface) srcElem, (ASTCDInterface) tgtElem);
+    } else if (srcElem instanceof ASTCDEnum && tgtElem instanceof ASTCDEnum) {
+      keywordCD1 = "enum";
+      keywordCD2 = "enum";
+      createEnumDiff((ASTCDEnum) srcElem, (ASTCDEnum) tgtElem);
     }
 
     this.diffList = diffs;

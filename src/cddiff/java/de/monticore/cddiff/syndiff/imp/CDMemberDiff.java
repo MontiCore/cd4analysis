@@ -43,8 +43,6 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
     if ((tgtElem instanceof ASTCDEnumConstant) && (srcElem instanceof ASTCDEnumConstant)) {
       memberDiff((ASTCDEnumConstant) tgtElem, (ASTCDEnumConstant) srcElem);
     }
-
-    setBaseDiff(baseDiff);
   }
 
   @Override

@@ -1672,7 +1672,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   public void addAllChangedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     for (ASTCDType srcClass : srcCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDType tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
-        CDTypeDiff diffClass = new CDTypeDiff(srcClass, tgtClass);
+        //CDTypeDiff diffClass = new CDTypeDiff(srcClass, tgtClass);
         // TODO Easier way to call all the functions from the class to fill the list baseDiff!!!!!
         // diffClass.addAllChangedMembers(srcClass, tgtClass);
         // diffClass.addAllAddedAttributes(srcClass, tgtClass);
@@ -1687,9 +1687,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         //    diffClass.addAllDeletedConstants(srcClass,tgtClass);
         //  }
         // }
-        if (!diffClass.getBaseDiff().isEmpty()) {
-          changedClasses.add(diffClass);
-        }
+        //if (!diffClass.getBaseDiff().isEmpty()) {
+          //changedClasses.add(diffClass);
+        //}
       }
     }
   }

@@ -138,7 +138,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
   protected ASTCDCompilationUnit src;
   @Test
   public void testAssoc1() {
-    parseModels("Source1.cd", "Refinement1.cd");
+    parseModels("Source1.cd", "Target1.cd");
 
     ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
