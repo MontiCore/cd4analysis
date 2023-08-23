@@ -231,8 +231,13 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
 
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1);
+    CDMemberDiff memberDiff = new CDMemberDiff(astcdClass, astcdClass1);
     System.out.println(typeDiff.printCD1());
-    System.out.println(typeDiff.printCD2());
+    //System.out.println(typeDiff.getAddedAttributes());
+    //System.out.println(typeDiff.getDeletedAttributes());
+    System.out.println(typeDiff.getBaseDiff());
+    //System.out.println(typeDiff.getChangedMembers());
+    //System.out.println(typeDiff.getMatchedAttributes());
   }
 
   public void parseModels(String concrete, String ref) {

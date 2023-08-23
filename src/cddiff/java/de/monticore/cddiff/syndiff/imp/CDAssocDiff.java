@@ -72,7 +72,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       }
     }
 
-    setBaseDiff(baseDiff);
     setStrings();
   }
 
@@ -479,19 +478,20 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     this.tgtAssocType = getColorCode(assocType) + pp.prettyprint(tgtAssocType.get()) + RESET;
 
 
-    Optional<ASTCDAssociation> srcName = Optional.of(srcAssoc);
-    Optional<ASTCDAssociation> tgtName = Optional.of(tgtAssoc);
-    CDNodeDiff<ASTCDAssociation, ASTCDAssociation> assocName = new CDNodeDiff<>(srcName, tgtName);
+    //Association Name
+    Optional<ASTCDAssociation> srcAssocName = Optional.of(srcAssoc);
+    Optional<ASTCDAssociation> tgtAssocName = Optional.of(tgtAssoc);
+    CDNodeDiff<ASTCDAssociation, ASTCDAssociation> assocName = new CDNodeDiff<>(srcAssocName, tgtAssocName);
 
-    if (!srcName.get().getName().equals(tgtName.get().getName())) {
+    if (!srcAssocName.get().getName().equals(tgtAssocName.get().getName())) {
       if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_NAME)) {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
       }
-      assocName = new CDNodeDiff<>(Actions.CHANGED, srcName, tgtName);
+      assocName = new CDNodeDiff<>(Actions.CHANGED, srcAssocName, tgtAssocName);
     }
 
-    srcAssocName = getColorCode(assocName) + srcName.get().getName() + RESET;
-    tgtAssocName = getColorCode(assocName) + tgtName.get().getName() + RESET;
+    this.srcAssocName = getColorCode(assocName) + srcAssocName.get().getName() + RESET;
+    this.tgtAssocName = getColorCode(assocName) + tgtAssocName.get().getName() + RESET;
 
     // Association Direction
     Optional<ASTCDAssocDir> srcAssocDir = Optional.of(srcAssoc.getCDAssocDir());

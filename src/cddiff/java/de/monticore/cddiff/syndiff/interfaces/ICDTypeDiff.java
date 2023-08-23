@@ -38,9 +38,9 @@ public interface ICDTypeDiff {
 
   void setDeletedConstants(List<ASTCDEnumConstant> deletedConstants);
 
-  List<DiffTypes> getBaseDiffs();
+  List<DiffTypes> getBaseDiff();
 
-  public void setBaseDiffs(List<DiffTypes> baseDiffs);
+  public void setBaseDiff(List<DiffTypes> baseDiff);
 
   /**
    * Compute the spanned inheritance of a given class.

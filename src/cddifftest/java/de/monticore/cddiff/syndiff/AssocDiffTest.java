@@ -149,7 +149,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     System.out.println(associationDiff.printSrcAssoc());
     System.out.println(associationDiff.printTgtAssos());
     System.out.println(associationDiff.getBaseDiff());
-    System.out.println(associationDiff.getDiffTypesList());
+    //System.out.println(associationDiff.getDiffTypesList());
   }
 
   public void parseModels(String concrete, String ref) {

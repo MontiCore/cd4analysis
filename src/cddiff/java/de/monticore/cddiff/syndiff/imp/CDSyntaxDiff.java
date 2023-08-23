@@ -1,7 +1,5 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getSpannedInheritance;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
@@ -17,12 +15,9 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
-import de.monticore.cddiff.syndiff.datastructures.CardinalityStruc;
 import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
 import de.monticore.cddiff.syndiff.datastructures.*;
-import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
 import de.monticore.matcher.MatchingStrategy;
@@ -1117,7 +1112,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     if (diff instanceof CDTypeDiff) {
       CDTypeDiff obj = (CDTypeDiff) diff;
       StringBuilder stringBuilder = new StringBuilder();
-      for (DiffTypes type : obj.getBaseDiffs()) {
+      for (DiffTypes type : obj.getBaseDiff()) {
         switch (type) {
           case STEREOTYPE_DIFFERENCE:
             stringBuilder.append(obj.sterDiff());
@@ -1523,7 +1518,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     for (CDTypeDiff typeDiff : changedClasses) {
       if (typeDiff.getSrcElem() instanceof ASTCDClass
         && !helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())
-        && typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
+        && typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
         list.add(typeDiff.deletedAttributes( ));
       }
     }
@@ -1547,14 +1542,14 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
     List<TypeDiffStruc> list = new ArrayList<>();
     for (CDTypeDiff typeDiff : changedClasses){
       TypeDiffStruc diff = new TypeDiffStruc();
-      diff.setBaseDiff(typeDiff.getBaseDiffs());
+      diff.setBaseDiff(typeDiff.getBaseDiff());
       if (typeDiff.getSrcElem() instanceof ASTCDEnum){
         diff.setAddedConstants(typeDiff.newConstants());
       } else if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())) {
         if (typeDiff.getSrcElem().getModifier().isAbstract()) {
           ASTCDClass instanSubClass = helper.minDiffWitness((ASTCDClass) typeDiff.getSrcElem());
           if (instanSubClass != null) {
-            if (typeDiff.getBaseDiffs().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
+            if (typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE)) {
               diff.setMemberDiff(typeDiff.changedAttribute());
               List<Pair<ASTCDAttribute, ASTCDAttribute>> pairs = new ArrayList<>();
               for (ASTCDAttribute attribute : typeDiff.changedAttribute().b) {
@@ -1562,13 +1557,13 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
               }
               diff.setMatchedAttributes(pairs);
             }
-            if (typeDiff.getBaseDiffs().contains(DiffTypes.ADDED_ATTRIBUTE)) {
+            if (typeDiff.getBaseDiff().contains(DiffTypes.ADDED_ATTRIBUTE)) {
               diff.setAddedAttributes(typeDiff.addedAttributes());
             }
-            if (typeDiff.getBaseDiffs().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
+            if (typeDiff.getBaseDiff().contains(DiffTypes.REMOVED_ATTRIBUTE)) {
               diff.setDeletedAttributes(typeDiff.deletedAttributes());
             }
-            if (typeDiff.getBaseDiffs().contains(DiffTypes.STEREOTYPE_DIFFERENCE)) {
+            if (typeDiff.getBaseDiff().contains(DiffTypes.STEREOTYPE_DIFFERENCE)) {
               diff.setChangedStereotype(typeDiff.isClassNeeded());
             }
           }
@@ -1679,9 +1674,9 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
       for (ASTCDType tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
         CDTypeDiff diffClass = new CDTypeDiff(srcClass, tgtClass);
         // TODO Easier way to call all the functions from the class to fill the list baseDiff!!!!!
-        diffClass.addAllChangedMembers(srcClass, tgtClass);
-        diffClass.addAllAddedAttributes(srcClass, tgtClass);
-        diffClass.addAllDeletedAttributes(srcClass, tgtClass);
+        // diffClass.addAllChangedMembers(srcClass, tgtClass);
+        // diffClass.addAllAddedAttributes(srcClass, tgtClass);
+        // diffClass.addAllDeletedAttributes(srcClass, tgtClass);
         // for (ASTCDEnum srcEnum : srcClass.getCDDefinition().getCDEnumsList()) {
         //  for (ASTCDEnum tgtEnum : tgtClass.getCDDefinition().getCDEnumsList()) {
         //    diffClass.addAllAddedConstants(srcClass, tgtClass);
@@ -1692,7 +1687,7 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
         //    diffClass.addAllDeletedConstants(srcClass,tgtClass);
         //  }
         // }
-        if (!diffClass.getBaseDiffs().isEmpty()) {
+        if (!diffClass.getBaseDiff().isEmpty()) {
           changedClasses.add(diffClass);
         }
       }
