@@ -54,6 +54,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     this.scopeSrcCD = scopeSrcCD;
     this.scopeTgtCD = scopeTgtCD;
     this.baseDiff = new ArrayList<>();
+    this.diffList = new ArrayList<>();
     //TODO: Initialize them in the functions!
     this.matchedAttributes = new ArrayList<>();
     this.matchedConstants = new ArrayList<>();
@@ -448,27 +449,34 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
    * @param tgtType a type in the old CD
    */
   public void loadAllAddedAttributes(ASTCDType srcType, ASTCDType tgtType) {
-    loadAllInheritedAttributes(srcType, tgtType);
+    //loadAllInheritedAttributes(srcType, tgtType);
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
-      boolean notFound = true;
+      boolean addedNotFound = true;
+      boolean inheritedFound = false;
       for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
         if (srcAttr.getName().equals(tgtAttr.getName())) {
-          notFound = false;
+          addedNotFound = false;
           break;
         }
       }
       for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
         for (ASTCDAttribute a : x.getCDAttributeList()) {
           if (a.getName().equals(srcAttr.getName())) {
-            notFound = false;
+            inheritedFound = true;
             break;
           }
         }
       }
-      if (notFound) {
+      if (addedNotFound) {
         addedAttributes.add(srcAttr);
         if(!baseDiff.contains(DiffTypes.ADDED_ATTRIBUTE)) {
           baseDiff.add(DiffTypes.ADDED_ATTRIBUTE);
+        }
+      }
+      if(inheritedFound) {
+        inheritedAttributes.add(srcAttr);
+        if(!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+          baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
         }
       }
     }
@@ -493,9 +501,9 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
             diffTypesList.add(DiffTypes.INHERITED_ATTRIBUTE);
             diffType.append(DiffTypes.INHERITED_ATTRIBUTE).append(" ");
           }
-          if (!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+
             baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
-          }
+
         }
       }
     }
@@ -596,19 +604,6 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       }
     }
 
-    if (cd1Name.get().getName().equals(cd2Name.get().getName())
-      && !cd1Name
-      .get()
-      .getSymbol()
-      .getInternalQualifiedName()
-      .equals(cd2Name.get().getSymbol().getInternalQualifiedName())) {
-      diffType
-        .append("Package")
-        .append(": ")
-        .append(DiffTypes.RELOCATION)
-        .append(" ");
-    }
-
     if ((srcElem instanceof ASTCDClass) && (tgtElem instanceof ASTCDClass)) {
       keywordCD1 = "class";
       keywordCD2 = "class";
@@ -698,8 +693,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
         : Optional.empty();
     CDNodeDiff<ASTMCObjectType, ASTMCObjectType> implementedClassDiff = new CDNodeDiff<>(cd1Imple, cd2Imple);
 
-    cd1Imple.ifPresent(inter -> ppInter1 = getColorCode(implementedClassDiff) + " implements " + pp.prettyprint(inter) + RESET);
-    cd2Imple.ifPresent(inter -> ppInter2 = getColorCode(implementedClassDiff) + " implements " + pp.prettyprint(inter) + RESET);
+    cd1Imple.ifPresent(inter -> ppInter1 = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    cd2Imple.ifPresent(inter -> ppInter2 = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
 
 
     if (implementedClassDiff.checkForAction()) {
@@ -750,8 +745,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
         : Optional.empty();
     CDNodeDiff<ASTMCObjectType, ASTMCObjectType> enumDiff = new CDNodeDiff<>(cd1Imple, cd2Imple);
 
-    cd1Imple.ifPresent(inter -> ppInter1 = getColorCode(enumDiff) + " implements " + pp.prettyprint(inter) + RESET);
-    cd2Imple.ifPresent(inter -> ppInter2 = getColorCode(enumDiff) + " implements " + pp.prettyprint(inter) + RESET);
+    cd1Imple.ifPresent(inter -> ppInter1 = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    cd2Imple.ifPresent(inter -> ppInter2 = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
 
     if (enumDiff.checkForAction()) {
       diffList.add(enumDiff);
@@ -937,6 +932,30 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
               + x.get_SourcePositionStart().getColumn()));
 
         addAttri.append(COLOR_ADD).append(addedAttribute).append(RESET);
+        add.put(
+          addAttri.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
+      }
+    }
+
+    if(inheritedAttributes!= null) {
+      for (ASTCDAttribute x : inheritedAttributes) {
+        StringBuilder addAttri = new StringBuilder();
+        String addedAttribute = pp.prettyprint(x);
+        if (addedAttribute.contains("\n")) {
+          addedAttribute = addedAttribute.split("\n")[0];
+        }
+        addNC.put(
+          bodyOffsetAdd + addedAttribute,
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
+
+        addAttri.append(COLOR_INHERITED).append(addedAttribute).append(RESET);
         add.put(
           addAttri.toString(),
           Integer.valueOf(

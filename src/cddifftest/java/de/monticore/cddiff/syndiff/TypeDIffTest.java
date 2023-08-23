@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -13,9 +14,11 @@ import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
+import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -30,13 +33,15 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
+    ICD4CodeArtifactScope scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    ICD4CodeArtifactScope scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
 
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
     ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
-    CDTypeDiff typeDiff1 = new CDTypeDiff(aNew, aOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
+    CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, scopeNew, scopeOld);
+    CDTypeDiff typeDiff1 = new CDTypeDiff(aNew, aOld, scopeNew, scopeOld);
     // Prepare test data
     assert bNew != null;
     ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
@@ -224,8 +229,6 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
-  protected ICD4CodeArtifactScope scopeSrcCD;
-  protected ICD4CodeArtifactScope scopeTgtCD;
   @Test
   public void testType1() {
     parseModels("Source1.cd", "Target1.cd");
@@ -250,16 +253,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
     ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
     ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
-    ASTCDAttribute inheritedAttr = CDTestHelper.getAttribute(astcdClass, "d");
 
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
     System.out.println(typeDiff.printCD2());
-    System.out.println(typeDiff.printCD1());
+    //System.out.println(typeDiff.printCD1());
     System.out.println(typeDiff.getBaseDiff());
-    System.out.println(typeDiff.getInheritedAttributes());
-    //Assert.assertTrue(typeDiff.getInheritedAttributes().contains(inheritedAttr));
-    //System.out.println(typeDiff.getChangedMembers());
-    //System.out.println(typeDiff.getMatchedAttributes());
   }
 
   public void parseModels(String concrete, String ref) {

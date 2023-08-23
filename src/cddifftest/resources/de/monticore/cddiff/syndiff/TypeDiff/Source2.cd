@@ -8,4 +8,6 @@ classdiagram Source2 {
   }
 
   class B;
+
+  class C;
 }
