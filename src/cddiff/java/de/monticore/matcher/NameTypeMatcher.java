@@ -36,11 +36,10 @@ public class NameTypeMatcher implements MatchingStrategy<ASTCDType> {
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    if ((srcElem.getSymbol().getInternalQualifiedName())
-        .equals(tgtElem.getSymbol().getInternalQualifiedName())) {
+    if (srcElem.getName().equals(tgtElem.getName())) {
       return true;
     } else {
-      System.out.println("Types names do not match!");
+      System.out.println(srcElem.getName() + " does not match with " + tgtElem.getName() + "");
     }
     return false;
   }

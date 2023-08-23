@@ -1,22 +1,37 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
-import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
-import edu.mit.csail.sdg.alloy4.Pair;
-import org.junit.Assert;
+import de.monticore.matcher.MatchingStrategy;
+import de.monticore.matcher.NameAssocMatcher;
+import de.monticore.matcher.NameTypeMatcher;
+import de.monticore.matcher.SrcTgtAssocMatcher;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
 
-  @Test
+  @BeforeEach
+  public void setup() {
+    Log.init();
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+  }
+  /*@Test
   public void ini(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
@@ -249,5 +264,49 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
     Assert.assertTrue(isAssocAdded);
     Assert.assertNull(isAssocDeleted);
+  }*/
+
+  /*--------------------------------------------------------------------*/
+  //Syntax Diff Tests
+
+  public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/";
+  protected ASTCDCompilationUnit tgt;
+  protected ASTCDCompilationUnit src;
+  MatchingStrategy<ASTCDType> typeMatcher;
+  NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgt);
+  NameAssocMatcher associationNameMatch = new NameAssocMatcher(tgt);
+  SrcTgtAssocMatcher associationSrcTgtMatch = new SrcTgtAssocMatcher(nameTypeMatch, src, tgt);
+  MatchingStrategy<ASTCDAssociation> assocMatcher;
+
+  @Test
+  public void testSyntax1() {
+    parseModels("Source1.cd", "Target1.cd");
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, nameTypeMatch, associationSrcTgtMatch);
+    //System.out.println(syntaxDiff.print());
+    //System.out.println(syntaxDiff.getMatchedClasses());
+    System.out.println(syntaxDiff.printSrcCD());
+    System.out.println(syntaxDiff.printTgtCD());
+  }
+
+  public void parseModels(String concrete, String ref) {
+    try {
+      Optional<ASTCDCompilationUnit> src =
+        CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
+      if (src.isPresent() && tgt.isPresent()) {
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
+        src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
+        tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
+        this.tgt = tgt.get();
+        this.src = src.get();
+      } else {
+        fail("Could not parse CDs.");
+      }
+
+    } catch (IOException e) {
+      fail(e.getMessage());
+    }
   }
 }

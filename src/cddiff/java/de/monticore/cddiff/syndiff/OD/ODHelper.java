@@ -380,7 +380,7 @@ public class ODHelper {
 
   //number of associations from class to class - done
   //TODO: add checks if class is abstract - search for subclass (some functions already do this) - done for changedTypes and changedAssociations
-  public List<ASTODArtifact> generateODs(
+  /*public List<ASTODArtifact> generateODs(
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD){
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     List<ASTODArtifact> artifactList = new ArrayList<>();
@@ -572,7 +572,7 @@ public class ODHelper {
       artifactList.add(astodArtifact);
     }
     return artifactList;
-  }
+  }*/
   //add function for STA semantics - done
   //TODO: add "diff" and instanceof to stereotype
   private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc){

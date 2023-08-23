@@ -1,0 +1,20 @@
+import java.lang.String;
+
+classdiagram Source1 {
+  class A extends B{
+    int a;
+    int b;
+    int c;
+    int e;
+  }
+
+  class B extends C{
+    int i;
+  }
+
+  class C{}
+
+  class E{}
+
+  association newAdded [*] A (c) -> (d) C [1];
+}

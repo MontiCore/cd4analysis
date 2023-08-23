@@ -1,0 +1,19 @@
+import java.lang.String;
+
+classdiagram Target1 {
+  class A extends C{
+    double a;
+    double b;
+    double c;
+    int d;
+  }
+
+  class B extends C{}
+
+  class C extends D{
+    int i;
+  }
+
+  class D{}
+
+}

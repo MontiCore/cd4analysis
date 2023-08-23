@@ -3,7 +3,6 @@ import java.lang.String;
 classdiagram Source2 {
   class A implements B{
     int d;
-    int b;
   }
 
   class B{}
