@@ -27,6 +27,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
+  @BeforeEach
+  public void setup() {
+    Log.init();
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+  }
   //TODO: add test for added/deleted inheritance
   @Test
   public void testCD2() {
@@ -241,6 +249,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
     System.out.println(typeDiff.printCD2());
     System.out.println(typeDiff.getBaseDiff());
+    System.out.println(typeDiff.getSuperTypes());
     //System.out.println(typeDiff.getChangedMembers());
     //System.out.println(typeDiff.getMatchedAttributes());
   }
@@ -256,6 +265,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
     System.out.println(typeDiff.printCD2());
+    System.out.println(typeDiff.getSuperTypes());
     //System.out.println(typeDiff.printCD1());
     System.out.println(typeDiff.getBaseDiff());
   }

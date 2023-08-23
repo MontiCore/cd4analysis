@@ -2,7 +2,10 @@ import java.lang.String;
 
 classdiagram Source1 {
   class A implements B{
-    int b;
+    int a;
+    double b;
+    int d;
+    int e;
   }
 
   class B{}
