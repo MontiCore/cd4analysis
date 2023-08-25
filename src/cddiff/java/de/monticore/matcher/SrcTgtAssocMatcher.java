@@ -63,30 +63,34 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
 
-    boolean match=false;
+    boolean match = false;
 
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
-        || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
         && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
-        || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
-      match = match || checkReference(
-              srcElem.getLeftQualifiedName().getQName(),
-              tgtElem.getLeftQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(srcElem.getRight(), tgtElem.getRight());
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getLeftQualifiedName().getQName(),
+                      tgtElem.getLeftQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(srcElem.getRight(), tgtElem.getRight());
     }
 
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
         && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
-      match = match || checkReference(
-              srcElem.getRightQualifiedName().getQName(),
-              tgtElem.getRightQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(srcElem.getLeft(), tgtElem.getLeft());
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getRightQualifiedName().getQName(),
+                      tgtElem.getRightQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(srcElem.getLeft(), tgtElem.getLeft());
     }
 
     return match;
@@ -98,30 +102,34 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
 
-    boolean match=false;
+    boolean match = false;
 
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
-        || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
         && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
-      match = match || checkReference(
-              srcElem.getRightQualifiedName().getQName(),
-              tgtElem.getLeftQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(tgtElem.getRight(), srcElem.getLeft());
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getRightQualifiedName().getQName(),
+                      tgtElem.getLeftQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(tgtElem.getRight(), srcElem.getLeft());
     }
 
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
         && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
-        || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
-      match = match ||  checkReference(
-              srcElem.getLeftQualifiedName().getQName(),
-              tgtElem.getRightQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(tgtElem.getLeft(), srcElem.getRight());
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getLeftQualifiedName().getQName(),
+                      tgtElem.getRightQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(tgtElem.getLeft(), srcElem.getRight());
     }
 
     return match;
