@@ -261,7 +261,43 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
     Assert.assertTrue(isAssocAdded);
     Assert.assertNull(isAssocDeleted);
-  }*/
+  }
+
+  wenn wir eine Assoc mit keiner Richtung , was man kann machen kann, man überprüft
+
+
+wenn
+
+——
+—->
+
+das match nur nahc rechts matchen
+
+oder
+—->
+——
+
+
+Kardinalitäten prüfen!!!!
+Assocs names one color obwohl sie nicht geändert sind!!!!
+
+
+Utre s Presi!!
+proverete koi metodi sa nujni i izpolzvani, ako ne, iztriite gi
+
+premesti Strings v DiffHelper
+instanceof!!!! wegmachen!
+
+Tezi:
+Optional<ASTMCType> cd1Type = Optional.of(tgtElem.getMCType());
+Optional<ASTMCType> cd2Type = Optional.of(srcElem.getMCType());
+CDNodeDiff<ASTMCType, ASTMCType> attributeType = new CDNodeDiff<>(cd1Type, cd2Type);
+
+gi transformirai v
+CDNodeDiff<ASTModifier, ASTModifier> modifierDiff = new CDNodeDiff<>(Optional.of(tgtElem.getModifier()), Optional.of(srcElem.getModifier()));
+
+
+  */
 
   /*--------------------------------------------------------------------*/
   //Syntax Diff Tests
