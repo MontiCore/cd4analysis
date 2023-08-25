@@ -506,35 +506,36 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
   }
 
   public ASTCDClass isAssocDeleted(ASTCDAssociation association, ASTCDClass astcdClass) {
-    AssocStruct assocStruct = getAssocStrucForClass(astcdClass, association);
-    assert assocStruct != null;
-    if (assocStruct.getDirection().equals(AssocDirection.BiDirectional)) {
-      if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())
-        && !(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
-        if (!astcdClass.getModifier().isAbstract() && !isContainedInSuper(association, astcdClass)) {
-          return astcdClass;
-        } else {
-          return allSubclassesHaveIt(association, astcdClass);
+    AssocStruct assocStruct = getAssocStrucForClassTgt(astcdClass, association);
+    if (assocStruct != null) {//if assocStruc is null, then the association is deleted because of overlapping
+      if (assocStruct.getDirection().equals(AssocDirection.BiDirectional)) {
+        if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+          || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())
+          && !(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+          || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
+          if (!astcdClass.getModifier().isAbstract() && !isContainedInSuper(association, astcdClass)) {
+            return astcdClass;
+          } else {
+            return allSubclassesHaveIt(association, astcdClass);
+          }
         }
-      }
-    } else if (assocStruct.getSide().equals(ClassSide.Left)) {
-      if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())) {
-        if (!astcdClass.getModifier().isAbstract() && !isContainedInSuper(association, astcdClass)) {
-          return astcdClass;
-        } else {
-          return allSubclassesHaveIt(association, astcdClass);
+      } else if (assocStruct.getSide().equals(ClassSide.Left)) {
+        if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+          || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())) {
+          if (!astcdClass.getModifier().isAbstract() && !isContainedInSuper(association, astcdClass)) {
+            return astcdClass;
+          } else {
+            return allSubclassesHaveIt(association, astcdClass);
+          }
         }
-      }
-    } else {
-      if (!(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
-        if (!astcdClass.getModifier().isAbstract() && !isContainedInSuper(association, astcdClass)) {
-          return astcdClass;
-        } else {
-          return allSubclassesHaveIt(association, astcdClass);
+      } else {
+        if (!(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+          || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
+          if (!astcdClass.getModifier().isAbstract() && !isContainedInSuper(association, astcdClass)) {
+            return astcdClass;
+          } else {
+            return allSubclassesHaveIt(association, astcdClass);
+          }
         }
       }
     }
@@ -656,6 +657,16 @@ public class CDSyntaxDiff implements ICDSyntaxDiff {
    */
   private AssocStruct getAssocStrucForClass(ASTCDClass astcdClass, ASTCDAssociation association){
     for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)){
+      if (sameAssociationType(assocStruct.getAssociation(), association)
+        || sameAssociationTypeInReverse(assocStruct.getAssociation(), association)){
+        return assocStruct;
+      }
+    }
+    return null;
+  }
+
+  public AssocStruct getAssocStrucForClassTgt(ASTCDClass astcdClass, ASTCDAssociation association){
+    for (AssocStruct assocStruct : helper.getTrgMap().get(astcdClass)){
       if (sameAssociationType(assocStruct.getAssociation(), association)
         || sameAssociationTypeInReverse(assocStruct.getAssociation(), association)){
         return assocStruct;

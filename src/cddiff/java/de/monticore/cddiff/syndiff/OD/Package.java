@@ -22,7 +22,7 @@ public class Package {
   private final ASTCDAssociation astcdAssociation;
   private final ClassSide side;
   private final Builder builder = new Builder();
-  private final Syn2SemDiffHelper helper = new Syn2SemDiffHelper();
+  private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   public Package(ASTCDClass srcClass, ASTCDClass tgtClass, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
     this.srcClass = builder.buildObj("", srcClass.getName(), Syn2SemDiffHelper.splitStringByCharacter(helper.getSuperClasses(srcClass), ','), getAttributesOD(srcClass));
     this.tgtClass = builder.buildObj("", tgtClass.getName(), Syn2SemDiffHelper.splitStringByCharacter(helper.getSuperClasses(tgtClass), ','), getAttributesOD(tgtClass));
@@ -61,6 +61,15 @@ public class Package {
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
   }
+  public Package(ASTODObject srcClass){
+    this.srcClass = srcClass;
+    this.tgtClass = null;
+    this.association = null;
+    this.astcdAssociation = null;
+    this.side = ClassSide.Left;
+    this.isProcessedLeft = true;
+    this.isProcessedRight = false;
+  }
   public ASTODObject getSrcClass() {
     return srcClass;
   }
@@ -96,7 +105,9 @@ public class Package {
         case "double": double value3 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value3));
         case "boolean": boolean value4 = true; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value4));
         case "String": String value5 = "test"; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value5));
-        default: odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
+        case "Integer": int value6 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value6));
+        case "Double": double value7 = 1.0; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value7));
+        default: odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), " "));
       }
     }
     return odAttributes;

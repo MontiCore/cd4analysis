@@ -583,7 +583,8 @@ public class CDAssocDiff implements ICDAssocDiff {
 
   @Override
   public String buildStrings(List<String> stringList) {
-    return buildStrings(stringList) + ";";
+    //return buildStrings(stringList) + ";";
+    return "";
   }
 
   public String printHelperSrcCD() {
