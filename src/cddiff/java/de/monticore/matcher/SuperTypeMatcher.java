@@ -31,12 +31,12 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
   }
 
   /**
-   * A boolean method which checks the source class of the srcCD is a sub class pf the srcClass of
+   * A boolean method which checks if the source class of the srcCD is a subclass of the srcClass of
    * the tgtCD and if the associations are the same
    *
    * @param srcElem element from srcCD
    * @param tgtElem element from tgtCD
-   * @return true if the source class of the tgtCD is a sub class of the tgt of the srcCD and if the
+   * @return true if the source class of the tgtCD is a subclass of the tgt of the srcCD and if the
    *     associations are the same
    */
   @Override
