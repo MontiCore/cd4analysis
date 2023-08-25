@@ -7,6 +7,6 @@ classdiagram CD6{
 
   class C extends B{}
 
-  association first A -> (r) B [0..1];
-  association second [*] C (r) <- A;
+  association A -> (r) B [0..1];
+  association [*] C (r) <- A;
 }

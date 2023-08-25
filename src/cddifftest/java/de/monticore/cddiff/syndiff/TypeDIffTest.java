@@ -47,6 +47,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
     nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
@@ -64,8 +67,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     assert aOld != null;
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
@@ -92,6 +94,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD12.cd");
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
     nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
     associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
 
@@ -108,8 +113,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
 
     // Invoke the method
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
 
@@ -124,7 +128,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
     nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
     associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
-
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
     ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
@@ -137,8 +142,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     assert aOld != null;
     ASTCDAttribute astcdAttribute = CDTestHelper.getAttribute(aOld, "age");
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
     syntaxDiff.getHelper().setMaps();
     //Error in getAllSuper(only in setMaps()) from CDDiffUtil - Nullpointer
 

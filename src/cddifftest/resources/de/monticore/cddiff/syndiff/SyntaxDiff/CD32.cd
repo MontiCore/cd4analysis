@@ -10,5 +10,5 @@ classdiagram CD32{
 
   class D{}
 
-  association first D -> (r) B;
+  association D -> (r) B;
 }
