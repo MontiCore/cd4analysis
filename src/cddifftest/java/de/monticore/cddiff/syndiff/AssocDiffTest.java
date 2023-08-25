@@ -4,24 +4,15 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
-import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
-import de.monticore.cddiff.syndiff.datastructures.ClassSide;
-import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.se_rwth.commons.logging.Log;
-import edu.mit.csail.sdg.alloy4.Pair;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -130,6 +121,8 @@ public class AssocDiffTest extends CDDiffTestBasis {
     //Assert.assertEquals(list, result2);
   }*/
 
+
+
   /*--------------------------------------------------------------------*/
   //Syntax Diff Tests
 
@@ -147,7 +140,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
     CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld);
     System.out.println(associationDiff.printSrcAssoc());
-    System.out.println(associationDiff.printTgtAssos());
+    System.out.println(associationDiff.printTgtAssoc());
     System.out.println(associationDiff.getBaseDiff());
     //System.out.println(associationDiff.getDiffTypesList());
   }

@@ -21,14 +21,15 @@ public class CDDiffHelper implements ICDPrintDiff {
   protected static final String COLOR_INHERITED = "\033[1;35m";
 
   protected static final String RESET = "\033[0m";
+
   protected StringBuilder diffType = new StringBuilder();
 
   public StringBuilder getDiffType() {
     return diffType;
   }
 
-  public void setDiffType(StringBuilder builder) {
-    this.diffType = builder;
+  public void setDiffType(StringBuilder diffType) {
+    this.diffType = diffType;
   }
 
   protected double diffSize;
@@ -41,16 +42,10 @@ public class CDDiffHelper implements ICDPrintDiff {
     this.diffSize += value;
   }
 
-  protected List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> diffList;
+  protected List<CDNodeDiff<?,?>> diffList;
 
-  public List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> getDiffList() {
+  public List<CDNodeDiff<?,?>> getDiffList() {
     return diffList;
-  }
-
-  protected int breakingChange = 0;
-
-  public int getBreakingChange() {
-    return breakingChange;
   }
 
   protected List<DiffTypes> diffTypesList = new ArrayList<>();
@@ -78,7 +73,7 @@ public class CDDiffHelper implements ICDPrintDiff {
     return output.toString();
   }
 
-  static String getColorCode(CDNodeDiff<? extends ASTNode, ? extends ASTNode> diff) {
+  static String getColorCode(CDNodeDiff<?,?> diff) {
     if (diff.getAction().isPresent()) {
       if (diff.getAction().get().equals(Actions.REMOVED)) {
         return COLOR_DELETE;

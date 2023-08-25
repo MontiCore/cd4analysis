@@ -148,7 +148,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     for (Pair<ASTCDAssociation,ASTCDAssociation> x : matchedAssocs) {
       CDAssocDiff a = new CDAssocDiff(x.a, x.b);
-      onlyCD1Sort.add(org.apache.commons.lang3.tuple.Pair.of(a.getTgtElem().get_SourcePositionStart().getLine(), a.printTgtAssos()));
+      onlyCD1Sort.add(org.apache.commons.lang3.tuple.Pair.of(a.getTgtElem().get_SourcePositionStart().getLine(), a.printTgtAssoc()));
       onlyCD2Sort.add(org.apache.commons.lang3.tuple.Pair.of(a.getTgtElem().get_SourcePositionStart().getLine(), a.printSrcAssoc()));
     }
 
@@ -1915,7 +1915,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     // Add either coloured or plain
     if (coloured) {
-      tmp.append(x.printTgtAssos());
+      tmp.append(x.printTgtAssoc());
     }
     // Header for second element
     tmp.append(System.lineSeparator())

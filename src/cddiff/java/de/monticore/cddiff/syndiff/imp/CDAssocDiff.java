@@ -11,8 +11,6 @@ import de.monticore.cddiff.syndiff.interfaces.ICDAssocDiff;
 import de.monticore.cddiff.syndiff.datastructures.AssocCardinality;
 import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
-import de.monticore.cddiff.syntaxdiff.ASTNodeDiff;
-import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -45,6 +43,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   private AssocStruct tgtStruc;
   private boolean mustBeCompared;
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
   //Print
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
@@ -285,7 +284,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   }
 
   /**
-   * CHeck if the old association allowed 0 objects
+   * Check if the old association allowed 0 objects
    * @param association association
    * @return true if condition is fulfilled
    */
@@ -433,6 +432,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       }
     }
   }
+
   public boolean changedTgtClass(ASTCDCompilationUnit compilationUnit){
     Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), compilationUnit);
     Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), compilationUnit);
@@ -483,11 +483,25 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     Optional<ASTCDAssociation> tgtAssocName = Optional.of(tgtAssoc);
     CDNodeDiff<ASTCDAssociation, ASTCDAssociation> assocName = new CDNodeDiff<>(srcAssocName, tgtAssocName);
 
-    if (!srcAssocName.get().getName().equals(tgtAssocName.get().getName())) {
+    /*if (!srcAssocName.get().getName().equals(tgtAssocName.get().getName())) {
       if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_NAME)) {
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
       }
       assocName = new CDNodeDiff<>(Actions.CHANGED, srcAssocName, tgtAssocName);
+    }*/
+
+    if (assocName.checkForAction()) {
+      synDiffs.add(assocName);
+      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_NAME)) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
+      }
+      if (assocName.getDiff().isPresent()) {
+        diffType
+          .append("Type")
+          .append(": ")
+          .append(assocType.getDiff().get())
+          .append(", ");
+      }
     }
 
     this.srcAssocName = getColorCode(assocName) + srcAssocName.get().getName() + RESET;
@@ -496,7 +510,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // Association Direction
     Optional<ASTCDAssocDir> srcAssocDir = Optional.of(srcAssoc.getCDAssocDir());
     Optional<ASTCDAssocDir> tgtAssocDir = Optional.of(tgtAssoc.getCDAssocDir());
-
     CDNodeDiff<ASTCDAssocDir, ASTCDAssocDir> assocDirDiff = new CDNodeDiff<>(tgtAssocDir, srcAssocDir);
 
     if (assocDirDiff.checkForAction()) {
@@ -514,16 +527,17 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
 
     // Check if direction '->' was changed to '<-' or if direction '<-' was changed to '->'.
-    // If yes, then add weight for calculating the smallest diff for each side combination.
+    // If yes, then add weight for calculating the smallest diff for each side combination
+    // If yes, then set isReversed to true, so it can say that there is not a difference, otherwise it is just like that
     int weightDirection = 0;
     if ((tgtAssocDir.get().isDefinitiveNavigableRight()
-      && !tgtAssocDir.get().isDefinitiveNavigableLeft())
-      && (!srcAssocDir.get().isDefinitiveNavigableRight()
-      && srcAssocDir.get().isDefinitiveNavigableLeft())
-      || (!tgtAssocDir.get().isDefinitiveNavigableRight()
-      && tgtAssocDir.get().isDefinitiveNavigableLeft())
-      && (srcAssocDir.get().isDefinitiveNavigableRight()
-      && !srcAssocDir.get().isDefinitiveNavigableLeft())) {
+          && !tgtAssocDir.get().isDefinitiveNavigableLeft())
+          && (!srcAssocDir.get().isDefinitiveNavigableRight()
+          && srcAssocDir.get().isDefinitiveNavigableLeft())
+          || (!tgtAssocDir.get().isDefinitiveNavigableRight()
+          && tgtAssocDir.get().isDefinitiveNavigableLeft())
+          && (srcAssocDir.get().isDefinitiveNavigableRight()
+          && !srcAssocDir.get().isDefinitiveNavigableLeft())) {
       isReversed = true;
       weightDirection = 1;
     }
@@ -540,7 +554,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // If we have the assoc1: [1] A (a) -> [*] B (b)
     // and assoc2: [*] A (c) -> [1] C (b),
     // we match assoc1 and assoc2, but tmpOriginal.size() = 4, tmpReverse.size() = 4, weightDirection = 0,
-    // so we have to get into the first 'if', but 4 + 0 = 4, so we add the =
+    // so we have to get into the first 'if', but 4 + 0 = 4, so we add the '='
     if ((tmpOriginalDir.size() + weightDirection) <= tmpReverseDir.size()) {
       synDiffs.addAll(tmpOriginalDir);
 
@@ -569,14 +583,13 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     this.diffList = synDiffs;
   }
 
-  public List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> getAssocSideDiff(ASTCDAssocSide srcAssocSide, ASTCDAssocSide tgtAssocSide, boolean readyForPrinting) {
+  public List<CDNodeDiff<?,?>> getAssocSideDiff(ASTCDAssocSide srcAssocSide, ASTCDAssocSide tgtAssocSide, boolean readyForPrinting) {
 
     List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
 
     // Cardinality
     Optional<ASTCDCardinality> srcAssocCardinality = (srcAssocSide.isPresentCDCardinality()) ? Optional.of(srcAssocSide.getCDCardinality()) : Optional.empty();
     Optional<ASTCDCardinality> tgtAssocCardinality = (tgtAssocSide.isPresentCDCardinality()) ? Optional.of(tgtAssocSide.getCDCardinality()) : Optional.empty();
-
     CDNodeDiff<ASTCDCardinality, ASTCDCardinality> assocCardinality = new CDNodeDiff<>(tgtAssocCardinality, srcAssocCardinality);
 
     if (assocCardinality.checkForAction()) {
@@ -597,7 +610,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // QualifiedType
     Optional<ASTMCQualifiedName> srcAssocType = Optional.of(srcAssocSide.getMCQualifiedType().getMCQualifiedName());
     Optional<ASTMCQualifiedName> tgtAssocType = Optional.of(tgtAssocSide.getMCQualifiedType().getMCQualifiedName());
-
     CDNodeDiff<ASTMCQualifiedName, ASTMCQualifiedName> type = new CDNodeDiff<>(tgtAssocType, srcAssocType);
 
     if (type.checkForAction()) {
@@ -611,7 +623,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // CDRole
     Optional<ASTCDRole> srcAssocRole = (srcAssocSide.isPresentCDRole()) ? Optional.of(srcAssocSide.getCDRole()) : Optional.empty();
     Optional<ASTCDRole> tgtAssocRole = (tgtAssocSide.isPresentCDRole()) ? Optional.of(tgtAssocSide.getCDRole()) : Optional.empty();
-
     CDNodeDiff<ASTCDRole, ASTCDRole> assocRole = new CDNodeDiff<>(srcAssocRole, tgtAssocRole);
 
     if (assocRole.checkForAction()) {
@@ -676,7 +687,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     return srcAssoc;
   }
 
-  public String printTgtAssos() {
+  public String printTgtAssoc() {
     return tgtAssoc;
   }
 

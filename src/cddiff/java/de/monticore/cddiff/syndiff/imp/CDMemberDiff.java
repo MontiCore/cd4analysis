@@ -51,9 +51,7 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
   }
 
   @Override
-  public void setBaseDiff(List<DiffTypes> baseDiff) {
-    this.baseDiff = baseDiff;
-  }
+  public void setBaseDiff(List<DiffTypes> baseDiff) { this.baseDiff = baseDiff;}
 
   @Override
   public ASTNode getSrcElem() {
@@ -83,7 +81,23 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
 
     // Modifier
     if (!(pp.prettyprint(tgtElem.getModifier()).isEmpty() && pp.prettyprint(srcElem.getModifier()).isEmpty())) {
-      synDiffs.add(checkModifierDiff(tgtElem.getModifier(), srcElem.getModifier()));
+      CDNodeDiff<ASTModifier, ASTModifier> modifierDiff = new CDNodeDiff<>(Optional.of(tgtElem.getModifier()), Optional.of(srcElem.getModifier()));
+
+      if (!(pp.prettyprint(tgtElem.getModifier()).isEmpty())) {
+        if (!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
+          baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
+        }
+        tgtMemberModifier = getColorCode(modifierDiff) + pp.prettyprint(tgtElem.getModifier()) + RESET;
+      }
+
+      if (!(pp.prettyprint(srcElem.getModifier()).isEmpty())) {
+        if (!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
+          baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
+        }
+        srcMemberModifier = getColorCode(modifierDiff) + pp.prettyprint(srcElem.getModifier()) + RESET;
+      }
+
+      synDiffs.add(modifierDiff);
     }
 
     // MCType
