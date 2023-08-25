@@ -21,7 +21,6 @@ import de.monticore.umlstereotype._ast.ASTStereotypeBuilder;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.splitStringByCharacter;
@@ -49,7 +48,7 @@ public class ODHelper {
     List<ASTODObject> unprocessedObjects = findUnprocessedObjects(packages);
     while (!unprocessedObjects.isEmpty()){
       for (ASTODObject astodObject : unprocessedObjects){
-        packages.addAll(createChains(helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()), astodObject, packages));
+        packages.addAll(createChainsNew(helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()), astodObject, packages));
       }
       unprocessedObjects = findUnprocessedObjects(packages);
     }
@@ -81,11 +80,14 @@ public class ODHelper {
 
   public Set<ASTODElement> getObjectsForOD(ASTCDClass astcdClass){
     Set<ASTODElement> set = new HashSet<>();
-    Set<Package> packages = createChains(astcdClass, null, new HashSet<>());
+    Set<Package> packages = createChains(new HashSet<>(), helper.getSrcMap().get(astcdClass));
+    System.out.print(packages.size());
     List<ASTODObject> unprocessedObjects = findUnprocessedObjects(packages);
     while (!unprocessedObjects.isEmpty()){
+      System.out.print(packages.size());
       for (ASTODObject astodObject : unprocessedObjects){
-        packages.addAll(createChains(helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()), astodObject, packages));
+        assert helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()) != null;
+        packages.addAll(createChainsNew(helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()), astodObject, packages));
       }
       unprocessedObjects = findUnprocessedObjects(packages);
     }
@@ -124,7 +126,7 @@ public class ODHelper {
 
     List<ASTODObject> unprocessedObjects = new ArrayList<>();
     for (Map.Entry<ASTODObject, Set<Boolean>> entry : unprocessedMap.entrySet()) {
-      if (!entry.getValue().contains(true)) { // Object unprocessed in only one side
+      if (entry.getValue().contains(true)) { // Object unprocessed in only one side
         unprocessedObjects.add(entry.getKey());
       }
     }
@@ -373,6 +375,13 @@ public class ODHelper {
     return objectSet;
   }
 
+  /**
+   * Create remaining chains for existing object
+   * @param astcdClass type of object
+   * @param astodObject existing object
+   * @param objectSet existing set
+   * @return set with new chains
+   */
   public Set<Package> createChainsNew(ASTCDClass astcdClass, ASTODObject astodObject, Set<Package> objectSet){
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
     Set<Pair<Package, ClassSide>> createdPackages = getContainingPackages(astodObject, objectSet);
@@ -381,18 +390,63 @@ public class ODHelper {
     }
     if (list.isEmpty()){
       //add an empty package with true
+      Package pack = new Package(astodObject);
+      objectSet.add(pack);
+    } else {
+      objectSet.addAll(createChainsForObject(astodObject, objectSet, list));
+    }
+    return objectSet;
+  }
+
+  public Set<Package> createChainsForObject(ASTODObject object, Set<Package> objectSet, List<AssocStruct> list){
+    boolean addedPackages = false;
+    for (AssocStruct assocStruct : list) {
+      switch (assocStruct.getSide()) {
+        case Left:
+          if (assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne()
+            || assocStruct.getAssociation().getRight().getCDCardinality().isOne()) {
+            ASTODObject tgtObject = getObjectForLink(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, assocStruct.getAssociation(), objectSet);
+            Package pack;
+            if (tgtObject != null){
+              pack = new Package(object,
+                tgtObject,
+                assocStruct.getAssociation(), ClassSide.Left, true, false);
+            } else {
+              pack = new Package(object,
+                Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b,
+                assocStruct.getAssociation(), ClassSide.Left, true, false);
+            }
+            objectSet.add(pack);
+            addedPackages = true;
+          }
+        case Right:
+          if (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+            || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne()){
+            ASTODObject tgtObject = getObjectForLink(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, assocStruct.getAssociation(), objectSet);
+            Package pack;
+            if (tgtObject != null){
+              pack = new Package(tgtObject,
+                object,
+                assocStruct.getAssociation(), ClassSide.Right, false, true);
+            } else {
+              pack = new Package(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a,
+                object,
+                assocStruct.getAssociation(), ClassSide.Right, false, true);
+            }
+            objectSet.add(pack);
+            addedPackages = true;
+          }
+      }
     }
     return objectSet;
   }
 
   /**
    * Create chains for a new object
-   * @param astcdClass class of object
    * @param objectSet existing set
    * @return set with new chains
    */
-  public Set<Package> createChains(ASTCDClass astcdClass, Set<Package> objectSet) {
-    List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
+  public Set<Package> createChains(Set<Package> objectSet, List<AssocStruct> list) {
     for (AssocStruct assocStruct : list) {
       switch (assocStruct.getSide()) {
         case Left:
@@ -431,6 +485,7 @@ public class ODHelper {
                 srcClass,
                 assocStruct.getAssociation(), ClassSide.Right, false, true);
             }
+            objectSet.add(pack);
           }
       }
     }

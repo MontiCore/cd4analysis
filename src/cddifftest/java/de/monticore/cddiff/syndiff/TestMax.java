@@ -1,8 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -13,15 +11,11 @@ import de.monticore.cddiff.syndiff.OD.Package;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.odbasis._ast.ASTODElement;
-import de.monticore.odbasis._ast.ASTODObject;
-import de.monticore.odlink._ast.ASTODLink;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
-
-import static de.monticore.cddiff.syndiff.OD.ODHelper.findUnprocessedObjects;
 
 public class TestMax extends CDDiffTestBasis {
 
@@ -231,7 +225,7 @@ public class TestMax extends CDDiffTestBasis {
 
   @Test
   public void testBuilder(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
@@ -243,15 +237,13 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-//    Set<Package> packages = odHelper.createChains(a2a3, 1, 2);
-//    List<Package> packages1 = new ArrayList<>(packages);
-//    System.out.println(packages);
-//    System.out.println(Syn2SemDiffHelper.getConnectedClasses(packages1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(packages1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-//    System.out.println(Syn2SemDiffHelper.getConnectedClasses(packages1.get(1).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(packages1.get(1).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-    Set<Package> test = odHelper.getObj(a2a3, 1, 2);
+    Set<Package> test = odHelper.createChains(new HashSet<>(), diff.getHelper().getSrcMap().get(a2));
     List<Package> test1 = new ArrayList<>(test);
     System.out.println(Syn2SemDiffHelper.getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
+    System.out.print(test1.size());
     System.out.println(Syn2SemDiffHelper.getConnectedClasses(test1.get(1).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(test1.get(1).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-    System.out.println(Syn2SemDiffHelper.getConnectedClasses(test1.get(2).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(test1.get(2).getAstcdAssociation(), diff.getSrcCD()).b.getName());
+//    Set<ASTODElement> set = odHelper.getObjectsForOD(a2);
+//    List<ASTODElement> list = new ArrayList<>(set);
+//    System.out.println(list);
   }
 }

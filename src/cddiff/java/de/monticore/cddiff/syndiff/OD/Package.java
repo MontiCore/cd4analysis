@@ -9,9 +9,11 @@ import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class Package {
   private final ASTODObject srcClass;
@@ -98,17 +100,7 @@ public class Package {
     List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
-      switch (attribute.printType()){
-        case "int": int value = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value));
-        case "long": long value1 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value1));
-        case "float": float value2 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value2));
-        case "double": double value3 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value3));
-        case "boolean": boolean value4 = true; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value4));
-        case "String": String value5 = "test"; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value5));
-        case "Integer": int value6 = 1; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value6));
-        case "Double": double value7 = 1.0; odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), value7));
-        default: odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), " "));
-      }
+      odAttributes.add(builder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
     }
     return odAttributes;
   }
