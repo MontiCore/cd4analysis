@@ -12,49 +12,34 @@ import de.monticore.odlink._ast.ASTODLinkBuilder;
 import de.monticore.odlink._ast.ASTODLinkLeftSideBuilder;
 import de.monticore.odlink._ast.ASTODLinkRightSideBuilder;
 import de.monticore.umlmodifier._ast.ASTModifier;
+import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.regex.Pattern;
-
-import static de.monticore.odbasis.utils.SimpleAttributeFactory.*;
+import java.util.*;
 
 public class Builder implements IODBuilder{
   @Override
-  public ASTODAttribute buildAttr(String type, String name, int value) {
-    return createSimpleIntegerAttribute(ODBasisMill.modifierBuilder().build(), name, (value));
-  }
-  @Override
-  public ASTODAttribute buildAttr(String type, String name, float value) {
-    return createSimpleFloatAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-  }
-  @Override
-  public ASTODAttribute buildAttr(String type, String name, double value) {
-    return createSimpleDoubleAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-  }
-  @Override
-  public ASTODAttribute buildAttr(String type, String name, boolean value) {
-    return createSimpleBooleanAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-  }
-  @Override
   public ASTODAttribute buildAttr(String type, String name, String value) {
-    if (Objects.equals(type, "String")){
-      return createSimpleStringAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Pattern.matches("List<(.*)>", type)) {
-      return createListAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Pattern.matches("Set<(.*)>", type)){
-      return createSetAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Pattern.matches("Optional<(.*)>", type)) {
-      return createOptionalAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    } else if (Pattern.matches("Map<(.*),(.*)>", type)) {
-      return createMapAttribute(ODBasisMill.modifierBuilder().build(), name, value);
+    Optional<ASTODAttribute> attribute = null;
+    try{
+      attribute = OD4ReportMill.parser().parse_StringODAttribute(type+ " " + name + "=" + value +";");
+    } catch (Exception exception){
+      Log.error("Attributes couldn't be created");
     }
-    else { //enum
-      return createEnumAttribute(ODBasisMill.modifierBuilder().build(), name, value);
-    }
+    assert Objects.requireNonNull(attribute).isPresent();
+    return attribute.get();
   }
+  @Override
+  public ASTODAttribute buildAttr(String type, String name) {
+    Optional<ASTODAttribute> attribute = null;
+    try{
+      attribute = OD4ReportMill.parser().parse_StringODAttribute(type+ " " + name + ";");
+    } catch (Exception exception){
+      Log.error("Attributes couldn't be created");
+    }
+    assert Objects.requireNonNull(attribute).isPresent();
+    return attribute.get();
+  }
+
   private ASTODAttribute createListAttribute(ASTModifier modifier, String name, String value){
     ASTODList astodList = OD4ReportMill.oDListBuilder()
       .addODValue(OD4ReportMill.oDSimpleAttributeValueBuilder()
