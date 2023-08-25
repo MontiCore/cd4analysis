@@ -1,0 +1,180 @@
+package de.monticore.cddiff.syndiff.imp;
+
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruc;
+import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
+import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruc;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import edu.mit.csail.sdg.alloy4.Pair;
+
+import java.util.List;
+
+public class TestHelper {
+
+  private final CDSyntaxDiff syntaxDiff;
+
+  public TestHelper(CDSyntaxDiff syntaxDiff) {
+    this.syntaxDiff = syntaxDiff;
+  }
+  public void addedAssocs(){
+    for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
+      Pair<ASTCDClass, ASTCDClass> classes = Syn2SemDiffHelper.getConnectedClasses(association, syntaxDiff.getSrcCD());
+      System.out.println("The association between the classes " + classes.a.getSymbol().getInternalQualifiedName() + " and " + classes.b.getSymbol().getInternalQualifiedName() + " has been added to the diagram.");
+      System.out.println("=======================================================");
+      }
+    }
+
+    public void addedClasses(){
+      for (ASTCDClass astcdClass : syntaxDiff.addedClassList()){
+        System.out.println("A new class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been added to the diagram.");
+        System.out.println("=======================================================");
+      }
+    }
+
+    public void inheritanceDiffs(){
+      for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()){
+        ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
+        if (!syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
+          astcdClass = syntaxDiff.helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
+        }
+          System.out.println("For the class " + astcdClass.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed");
+          System.out.println("=======================================================");
+        }
+      }
+
+
+      public void srcExistsTgtNot(){
+        for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
+          System.out.println("In tgtCD the class" + astcdClass.getSymbol().getInternalQualifiedName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.");
+          System.out.println("=======================================================");
+        }
+      }
+
+      public void changedTypes() {
+        for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()) {
+          if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
+            StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
+            if (typeDiffStruc.getAddedAttributes() != null) {
+              comment.append("\nadded attributes - ");
+              for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
+                comment.append(attribute.getName());
+              }
+            }
+            if (typeDiffStruc.getMemberDiff() != null) {
+              comment.append("\nchanged attributes - ");
+              for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
+                comment.append(attribute.getName())
+                  .append(" from ")
+                  .append(getOldAtt(attribute, typeDiffStruc)
+                    .printType()).append(" to ")
+                  .append(attribute.printType());
+              }
+            }
+            if (typeDiffStruc.getChangedStereotype() != null) {
+              comment.append("\nchanged stereotype - ");
+            }
+            if (typeDiffStruc.getDeletedAttributes() != null) {
+              comment.append("\ndeleted attributes - ");
+              for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
+                comment.append(attribute.getName());
+              }
+            }
+            System.out.println(comment);
+            System.out.println("=======================================================");
+          } else {
+            ASTCDClass subClass = syntaxDiff.helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
+            if (subClass != null) {
+              StringBuilder comment = new StringBuilder("For the abstract class "
+                + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                + " the following is changed: ");
+              if (typeDiffStruc.getAddedAttributes() != null) {
+                comment.append("\nadded attributes - ");
+                for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
+                  comment.append(attribute.getName());
+                }
+              }
+              if (typeDiffStruc.getMemberDiff() != null) {
+                comment.append("\nchanged attributes - ");
+                for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
+                  comment.append(attribute.getName())
+                    .append(" from ")
+                    .append(getOldAtt(attribute, typeDiffStruc).printType())
+                    .append(" to ")
+                    .append(attribute.printType());
+                }
+              }
+              if (typeDiffStruc.getDeletedAttributes() != null) {
+                comment.append("\ndeleted attributes - ");
+                for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
+                  comment.append(attribute.getName());
+                }
+              }
+              System.out.println(comment);
+              System.out.println("=======================================================");
+            }
+          }
+        }
+      }
+
+    public void addedConstants(){
+      for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
+        if (typeDiffStruc.getAddedConstants() != null){
+          for (ASTCDEnumConstant constant : typeDiffStruc.getAddedConstants().b){
+            ASTCDClass astcdClass = getClassForEnum((ASTCDEnum) typeDiffStruc.getAstcdType());
+            if (astcdClass != null){
+              System.out.println("In the enum " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following constant is added: " + constant.getName());
+              System.out.println("=======================================================");
+            }
+          }
+        }
+      }
+    }
+
+
+    public void changedAssocs(){
+    for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), syntaxDiff.getSrcCD());
+      String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
+      if (assocDiffStruc.isChangedDir()){
+        comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
+      }
+      if (assocDiffStruc.getChangedCard() != null){
+        comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
+      }
+      if (assocDiffStruc.getChangedRoleNames() != null){
+        comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
+      }
+      if (assocDiffStruc.getChangedTgt() != null){
+        comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
+      }
+      System.out.println(comment);
+      System.out.println("=======================================================");
+    }
+  }
+
+  private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc){
+    for (Pair<ASTCDAttribute, ASTCDAttribute> pair : diffStruc.getMatchedAttributes()){
+      if (pair.a.equals(attribute)){
+        return pair.b;
+      }
+    }
+    return null;
+  }
+
+  private ASTCDClass getClassForEnum(ASTCDEnum astcdEnum){
+    for (ASTCDClass astcdClass : syntaxDiff.helper.getSrcCD().getCDDefinition().getCDClassesList()) {
+      if (!astcdClass.getModifier().isAbstract()) {
+        List<ASTCDAttribute> attributes = syntaxDiff.helper.getAllAttr(astcdClass).b;
+        for (ASTCDAttribute attribute : attributes) {
+          if (attribute.printType().equals(astcdEnum.getName())) {
+            return astcdClass;
+          }
+        }
+      }
+    }
+    return null;
+  }
+}
