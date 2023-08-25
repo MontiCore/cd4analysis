@@ -8,10 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
-import de.monticore.matcher.MatchingStrategy;
-import de.monticore.matcher.NameAssocMatcher;
-import de.monticore.matcher.NameTypeMatcher;
-import de.monticore.matcher.SrcTgtAssocMatcher;
+import de.monticore.matcher.*;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -273,14 +270,18 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
   MatchingStrategy<ASTCDType> typeMatcher;
-  NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgt);
-  NameAssocMatcher associationNameMatch = new NameAssocMatcher(tgt);
-  SrcTgtAssocMatcher associationSrcTgtMatch = new SrcTgtAssocMatcher(nameTypeMatch, src, tgt);
+  NameTypeMatcher nameTypeMatch;
+  NameAssocMatcher associationNameMatch;
+  SrcTgtAssocMatcher associationSrcTgtMatch;
   MatchingStrategy<ASTCDAssociation> assocMatcher;
 
   @Test
   public void testSyntax1() {
     parseModels("Source1.cd", "Target1.cd");
+    nameTypeMatch = new NameTypeMatcher(tgt);
+    associationSrcTgtMatch =
+        new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, src, tgt), src,
+            tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, nameTypeMatch, associationSrcTgtMatch);
     //System.out.println(syntaxDiff.print());
