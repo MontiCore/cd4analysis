@@ -99,8 +99,8 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     addAllDeletedClasses(srcCD, tgtCD);
     addAllAddedEnums(srcCD, tgtCD);
     addAllDeletedEnums(srcCD, tgtCD);
-    addAllAddedAssocs(srcCD, tgtCD);
-    addAllDeletedAssocs(srcCD, tgtCD);
+    addAllAddedAssocs(srcCD, tgtCD, assocMatcher);
+    addAllDeletedAssocs(srcCD, tgtCD, assocMatcher);
     addAllMatchedClasses(srcCD, tgtCD, typeMatcher);
     addAllMatchedInterfaces(srcCD, tgtCD, typeMatcher);
     addAllMatchedAssocs(srcCD, tgtCD, assocMatcher);
@@ -1790,11 +1790,11 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   }
 
   //FERTIG
-  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, MatchingStrategy<ASTCDAssociation> assocMatcher) {
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
       boolean notFound = true;
       for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-        if (srcAssoc.getName().equals(tgtAssoc.getName())) {
+        if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
           notFound = false;
           break;
         }
@@ -1806,11 +1806,11 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   }
 
   //FERTIG
-  public void addAllDeletedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public void addAllDeletedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, MatchingStrategy<ASTCDAssociation> assocMatcher) {
     for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
       boolean notFound = true;
       for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-        if (srcAssoc.getName().equals(tgtAssoc.getName())) {
+        if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
           notFound = false;
           break;
         }

@@ -50,8 +50,6 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
 
     if (check(srcElem, tgtElem, srcCD, tgtCD) || checkReverse(srcElem, tgtElem, srcCD, tgtCD)) {
       return true;
-    } else {
-      System.out.println("There is a problem with isMatched() in SrcTgtAssocMatcher!");
     }
     return false;
   }
@@ -181,12 +179,10 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
       ASTCDType tgtType = tgtTypeSymbol.get().getAstNode();
       return typeMatcher.isMatched(srcType, tgtType);
     }
-    Log.error("Could not resolve match source classes!");
     return false;
   }
 
   protected boolean checkRole(ASTCDAssocSide srcElem, ASTCDAssocSide tgtElem) {
-
     return CDDiffUtil.inferRole(srcElem).equals(CDDiffUtil.inferRole(tgtElem));
   }
 }

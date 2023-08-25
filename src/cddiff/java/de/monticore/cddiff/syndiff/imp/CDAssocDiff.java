@@ -65,16 +65,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
 
     assocDiff(srcElem, tgtElem);
 
-    if(srcElem.getName().isEmpty()){
-      srcElem.setName("");;
-      srcAssocName = srcElem.getName();
-    }
-
-    if(tgtElem.getName().isEmpty()){
-      tgtElem.setName("");;
-      tgtAssocName = tgtElem.getName();
-    }
-
     for (CDNodeDiff<?,?> diff : diffList) {
       if (diff.checkForAction() && diff.getDiff().isPresent()) {
         diffTypesList.add(diff.getDiff().get());

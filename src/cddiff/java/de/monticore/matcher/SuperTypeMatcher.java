@@ -43,8 +43,6 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     if (checkSuperClass(srcElem, tgtElem, srcCD)) {
       return true;
-    } else {
-      Log.error("There is a problem with isMatched() in MatchAssocSubSuperTyp!");
     }
     return false;
   }
@@ -63,8 +61,6 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
 
     if (superType) {
       return true;
-    } else {
-      Log.error("There is a problem with checkSuperClass()!");
     }
     return false;
   }

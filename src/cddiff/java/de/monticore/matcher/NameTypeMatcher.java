@@ -38,8 +38,6 @@ public class NameTypeMatcher implements MatchingStrategy<ASTCDType> {
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     if (srcElem.getName().equals(tgtElem.getName())) {
       return true;
-    } else {
-      System.out.println(srcElem.getName() + " does not match with " + tgtElem.getName() + "");
     }
     return false;
   }
