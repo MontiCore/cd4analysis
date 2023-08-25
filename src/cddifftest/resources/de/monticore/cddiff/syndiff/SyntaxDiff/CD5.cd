@@ -7,6 +7,6 @@ classdiagram CD5{
 
   class C{}
 
-  association A -> (r) B [*];
-  association A <-> (r) C [0..1];
+  association first A -> (r) B [*];
+  association second A <-> (r) C [0..1];
 }

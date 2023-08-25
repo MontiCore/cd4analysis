@@ -9,6 +9,6 @@ classdiagram CD7{
 
   class D extends B{}
 
-  association A (q) <-> (r) B [*];
-  association C (k) <-> (r) D [0..1];
+  association first A (q) <-> (r) B [*];
+  association second C (k) <-> (r) D [0..1];
 }

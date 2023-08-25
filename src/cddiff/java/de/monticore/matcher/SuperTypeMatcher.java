@@ -41,7 +41,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    if (checkSuperClass(srcElem, tgtElem, tgtCD)) {
+    if (checkSuperClass(srcElem, tgtElem, srcCD)) {
       return true;
     } else {
       Log.error("There is a problem with isMatched() in MatchAssocSubSuperTyp!");
@@ -55,11 +55,11 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @param tgtElem element from tgtCD
    * @return true if srcClass from tgtCD is a Super Class of srcClass from srcCd
    */
-  public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
+  public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit srcCD) {
 
     boolean superType =
-        CDDiffUtil.getAllSuperTypes(tgtElem, tgtCD.getCDDefinition()).stream()
-            .anyMatch(tgtSuper -> typeMatcher.isMatched(srcElem, tgtSuper));
+        CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
+            .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
 
     if (superType) {
       return true;

@@ -7,6 +7,6 @@ classdiagram CD4{
 
   class C extends B{}
 
-  association A -> (r) B [0..1];
-  association A <-> (r) C [*];
+  association new A -> (r) B [0..1];
+  association old A <-> (r) C [*];
 }

@@ -10,5 +10,5 @@ classdiagram CD31{
 
   class D{}
 
-  association D -> (r) A;
+  association first D -> (r) A;
 }

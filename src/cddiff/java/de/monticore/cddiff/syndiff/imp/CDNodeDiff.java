@@ -63,7 +63,6 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
 
   private void findDiffType() {
     if (tgtValue.isPresent()) {
-
       // IF input for tgtValue is Modifier
       if (tgtValue.get() instanceof ASTModifier) {
         ASTModifier tgtModifier = (ASTModifier) tgtValue.get();
@@ -201,31 +200,33 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
           }
         }
       }
-    } else { // IF (old) tgtValue is not present
-      if (srcValue.isPresent()) {
-        if (srcValue.get() instanceof ASTModifier) {
-          if (((ASTModifier) srcValue.get()).isPublic()) {
-            this.difference = DiffTypes.EQUAL;
-          }
-        }
-        if (srcValue.get() instanceof ASTCDCardinality) {
-          if (((ASTCDCardinality) srcValue.get()).getLowerBound() == 0
-              && ((ASTCDCardinality) srcValue.get()).getUpperBound() == 0) {
-            // [*] to [0..*]
-            this.difference = DiffTypes.EQUAL_INTERVAL;
-          } else {
-            // [*] to [n..m] (n != 0) or ( m != inf)
-            this.difference = DiffTypes.RESTRICT_INTERVAL;
-          }
-        }
-        if (srcValue.get() instanceof ASTCDRole) {
-          this.difference = DiffTypes.REFINEMENT;
-        }
-        if (srcValue.get() instanceof ASTMCType) {
-          this.difference = DiffTypes.TYPE_CHANGE;
-          // Todo: check for Sub/Supertype
+    }
+    else if (srcValue.isPresent()) {
+      if (srcValue.get() instanceof ASTModifier) {
+        if (((ASTModifier) srcValue.get()).isPublic()) {
+          this.difference = DiffTypes.EQUAL;
         }
       }
+      if (srcValue.get() instanceof ASTCDCardinality) {
+        if (((ASTCDCardinality) srcValue.get()).getLowerBound() == 0
+            && ((ASTCDCardinality) srcValue.get()).getUpperBound() == 0) {
+          // [*] to [0..*]
+          this.difference = DiffTypes.EQUAL_INTERVAL;
+        } else {
+          // [*] to [n..m] (n != 0) or ( m != inf)
+          this.difference = DiffTypes.RESTRICT_INTERVAL;
+        }
+      }
+      if (srcValue.get() instanceof ASTCDRole) {
+        this.difference = DiffTypes.REFINEMENT;
+      }
+      if (srcValue.get() instanceof ASTMCType) {
+        this.difference = DiffTypes.TYPE_CHANGE;
+        // Todo: check for Sub/Supertype
+      }
+    }
+    else {
+      this.difference = null;
     }
   }
 }

@@ -1831,7 +1831,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
         if (typeMatcher.isMatched(srcInterface, tgtInterface)) {
-          matchedInterfaces.add(new Pair(srcInterface, tgtInterface));
+          matchedInterfaces.add(new Pair<>(srcInterface, tgtInterface));
           break;
         }
       }
@@ -1844,7 +1844,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
         if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-          matchedAssocs.add(new Pair(srcAssoc, tgtAssoc));
+          matchedAssocs.add(new Pair<>(srcAssoc, tgtAssoc));
           break;
         }
       }
@@ -1934,11 +1934,6 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       .append(System.lineSeparator());
     return tmp;
   }
-  //public void print() {System.out.println(outPutAll);}
-
-  //public void printCD1() {System.out.println(cd1Colored);}
-
-  //public void printCD2() {System.out.println(cd2Colored);}
 
   public String print() {
     return outPutAll.toString();

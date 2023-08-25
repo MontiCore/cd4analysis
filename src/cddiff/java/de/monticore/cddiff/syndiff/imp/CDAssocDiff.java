@@ -65,6 +65,16 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
 
     assocDiff(srcElem, tgtElem);
 
+    if(srcElem.getName().isEmpty()){
+      srcElem.setName("");;
+      srcAssocName = srcElem.getName();
+    }
+
+    if(tgtElem.getName().isEmpty()){
+      tgtElem.setName("");;
+      tgtAssocName = tgtElem.getName();
+    }
+
     for (CDNodeDiff<?,?> diff : diffList) {
       if (diff.checkForAction() && diff.getDiff().isPresent()) {
         diffTypesList.add(diff.getDiff().get());
@@ -476,36 +486,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
     this.srcAssocType = getColorCode(assocType) + pp.prettyprint(srcAssocType.get()) + RESET;
     this.tgtAssocType = getColorCode(assocType) + pp.prettyprint(tgtAssocType.get()) + RESET;
-
-
-    //Association Name
-    Optional<ASTCDAssociation> srcAssocName = Optional.of(srcAssoc);
-    Optional<ASTCDAssociation> tgtAssocName = Optional.of(tgtAssoc);
-    CDNodeDiff<ASTCDAssociation, ASTCDAssociation> assocName = new CDNodeDiff<>(srcAssocName, tgtAssocName);
-
-    /*if (!srcAssocName.get().getName().equals(tgtAssocName.get().getName())) {
-      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_NAME)) {
-        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
-      }
-      assocName = new CDNodeDiff<>(Actions.CHANGED, srcAssocName, tgtAssocName);
-    }*/
-
-    if (assocName.checkForAction()) {
-      synDiffs.add(assocName);
-      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_NAME)) {
-        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
-      }
-      if (assocName.getDiff().isPresent()) {
-        diffType
-          .append("Type")
-          .append(": ")
-          .append(assocType.getDiff().get())
-          .append(", ");
-      }
-    }
-
-    this.srcAssocName = getColorCode(assocName) + srcAssocName.get().getName() + RESET;
-    this.tgtAssocName = getColorCode(assocName) + tgtAssocName.get().getName() + RESET;
 
     // Association Direction
     Optional<ASTCDAssocDir> srcAssocDir = Optional.of(srcAssoc.getCDAssocDir());

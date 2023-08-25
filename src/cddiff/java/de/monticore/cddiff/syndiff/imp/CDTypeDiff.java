@@ -476,7 +476,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   private void loadAllInheritedAttributes(ASTCDType srcType, ASTCDType tgtType, ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
       boolean inheritedFound = false;
-      for(ASTCDType x : getDirectSuperClasses(tgtType, scopeTgtCD)) {
+      for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
         superTypes.add(x);
         for (ASTCDAttribute a : x.getCDAttributeList()) {
           if (a.getName().equals(srcAttr.getName())) {

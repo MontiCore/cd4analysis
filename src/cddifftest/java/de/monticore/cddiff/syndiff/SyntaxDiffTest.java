@@ -4,21 +4,32 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import de.monticore.matcher.*;
 import de.se_rwth.commons.logging.Log;
+import edu.mit.csail.sdg.alloy4.Pair;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
+
+  NameTypeMatcher nameTypeMatch;
+  SrcTgtAssocMatcher associationSrcTgtMatch;
 
   @BeforeEach
   public void setup() {
@@ -28,16 +39,19 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-  /*@Test
+  @Test
   public void ini(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
+
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
 
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
     System.out.println("------------");
@@ -54,11 +68,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     for (AssocStruct astcdClass : syntaxDiff.getHelper().getSrcMap().get(classC)){
@@ -79,11 +96,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD2.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
@@ -98,12 +118,15 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD3.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD3.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC).size());
@@ -123,11 +146,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD4.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD4.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classA));
@@ -146,11 +172,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD5.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD5.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classA));
@@ -165,11 +194,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD6.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD6.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     for (AssocStruct astcdClass : syntaxDiff.getHelper().getSrcMap().get(classA)){
@@ -189,11 +221,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
@@ -208,11 +243,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD12.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classD = CDTestHelper.getClass("D", compilationUnitNew.getCDDefinition());
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     assert classD != null;
@@ -228,11 +266,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD22.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classD = CDTestHelper.getClass("D", compilationUnitOld.getCDDefinition());
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     boolean isClassDeleted = syntaxDiff.isClassDeleted(classD, classA);
@@ -245,13 +286,16 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD32.cd");
 
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
     ASTCDClass classD1 = CDTestHelper.getClass("D", compilationUnitNew.getCDDefinition());
     ASTCDClass classD2 = CDTestHelper.getClass("D", compilationUnitOld.getCDDefinition());
     ASTCDAssociation associationNew = CDTestHelper.getAssociation(classD1, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation associationOld = CDTestHelper.getAssociation(classD2, "r", compilationUnitOld.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     assert associationNew != null;
@@ -261,7 +305,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
     Assert.assertTrue(isAssocAdded);
     Assert.assertNull(isAssocDeleted);
-  }  */
+  }
 
   /*--------------------------------------------------------------------*/
   //Syntax Diff Tests
@@ -269,19 +313,13 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
-  MatchingStrategy<ASTCDType> typeMatcher;
-  NameTypeMatcher nameTypeMatch;
-  NameAssocMatcher associationNameMatch;
-  SrcTgtAssocMatcher associationSrcTgtMatch;
-  MatchingStrategy<ASTCDAssociation> assocMatcher;
+
 
   @Test
   public void testSyntax1() {
     parseModels("Source1.cd", "Target1.cd");
     nameTypeMatch = new NameTypeMatcher(tgt);
-    associationSrcTgtMatch =
-        new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, src, tgt), src,
-            tgt);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, src, tgt), src, tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, nameTypeMatch, associationSrcTgtMatch);
     //System.out.println(syntaxDiff.print());

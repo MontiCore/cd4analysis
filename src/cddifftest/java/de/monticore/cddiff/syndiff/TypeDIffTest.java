@@ -13,6 +13,9 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
+import de.monticore.matcher.NameTypeMatcher;
+import de.monticore.matcher.SrcTgtAssocMatcher;
+import de.monticore.matcher.SuperTypeMatcher;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
@@ -26,6 +29,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
+  NameTypeMatcher nameTypeMatch;
+  SrcTgtAssocMatcher associationSrcTgtMatch;
+  ICD4CodeArtifactScope scopeNew;
+  ICD4CodeArtifactScope scopeOld;
   @BeforeEach
   public void setup() {
     Log.init();
@@ -35,13 +42,15 @@ public class TypeDIffTest extends CDDiffTestBasis {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
   //TODO: add test for added/deleted inheritance
-  /*@Test
+  @Test
   public void testCD2() {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
-    ICD4CodeArtifactScope scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    ICD4CodeArtifactScope scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
 
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
@@ -61,7 +70,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     syntaxDiff.getHelper().setMaps();
     //ASTCDType result3 = typeDiff.isClassNeeded();
 
@@ -83,6 +92,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD12.cd");
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
 
     ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
@@ -111,6 +122,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD3(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
 
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
@@ -123,7 +136,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
     assert aOld != null;
     ASTCDAttribute astcdAttribute = CDTestHelper.getAttribute(aOld, "age");
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
@@ -207,7 +220,10 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD71.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD72.cd");
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
     CDTypeDiff typeDiff = new CDTypeDiff(aNew, aOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
@@ -228,7 +244,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     // Assert the result
     System.out.println(result);
     Assert.assertNotNull(result);
-  }*/
+  }
 
   /*--------------------------------------------------------------------*/
   //Syntax Diff Tests
