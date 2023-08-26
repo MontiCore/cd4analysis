@@ -482,10 +482,10 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
         assocName = new CDNodeDiff<>(Actions.CHANGED, srcName, tgtName);
       }
     }
-    if(srcName.isPresent() && !tgtName.isPresent()) {
+    if(srcName.isPresent() && tgtName.isEmpty()) {
       assocName = new CDNodeDiff<>(Actions.ADDED, srcName, tgtName);
     }
-    if(!srcName.isPresent() && tgtName.isPresent()) {
+    if(srcName.isEmpty() && tgtName.isPresent()) {
       assocName = new CDNodeDiff<>(Actions.REMOVED, srcName, tgtName);
     }
 
@@ -497,6 +497,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
 
     if (assocName.checkForAction()) {
+      baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
       synDiffs.add(assocName);
       if (assocName.getDiff().isPresent()) {
         diffType
