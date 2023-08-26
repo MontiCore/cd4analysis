@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -10,6 +11,9 @@ import de.monticore.cddiff.syndiff.OD.ODHelper;
 import de.monticore.cddiff.syndiff.OD.Package;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.*;
+import de.monticore.matcher.NameTypeMatcher;
+import de.monticore.matcher.SrcTgtAssocMatcher;
+import de.monticore.matcher.SuperTypeMatcher;
 import de.monticore.odbasis._ast.ASTODElement;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
@@ -19,13 +23,25 @@ import java.util.*;
 
 public class TestMax extends CDDiffTestBasis {
 
+  NameTypeMatcher nameTypeMatch;
+  SrcTgtAssocMatcher associationSrcTgtMatch;
+  ICD4CodeArtifactScope scopeNew;
+  ICD4CodeArtifactScope scopeOld;
+
   @Test
   public void test5(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
+
     diff.getHelper().setMaps();
     //TestHelper testHelper = new TestHelper(diff);
     ASTCDClass a = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
@@ -64,20 +80,20 @@ public class TestMax extends CDDiffTestBasis {
 
     assert a != null;
     boolean isClassAdded = diff.isSupClass(a);
-    CDTypeDiff typeDiff = new CDTypeDiff(a2, a2old);
+    CDTypeDiff typeDiff = new CDTypeDiff(a2, a2old, scopeNew, scopeOld);
     boolean addedAtt = typeDiff.isAdded(i, compilationUnitNew);
 
-    CDTypeDiff typeDiff2 = new CDTypeDiff(a3, a3old);
+    CDTypeDiff typeDiff2 = new CDTypeDiff(a3, a3old, scopeNew, scopeOld);
     boolean addedAtt2 = typeDiff2.isAdded(s, compilationUnitNew);
-    CDTypeDiff typeDiff3 = new CDTypeDiff(a4, a4old);
+    CDTypeDiff typeDiff3 = new CDTypeDiff(a4, a4old, scopeNew, scopeOld);
     typeDiff3.setChangedMembers(new ArrayList<>());
     Pair<ASTCDClass, List<ASTCDAttribute>> changedAtt = typeDiff3.changedAttribute();
 
-    CDAssocDiff assocDiff = new CDAssocDiff(a1a2, a1a2old, false);
+    CDAssocDiff assocDiff = new CDAssocDiff(a1a2, a1a2old);
     Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cradDiff = assocDiff.getCardDiff();
-    CDAssocDiff assocDiff2 = new CDAssocDiff(a2a4, a2a4old, false);
+    CDAssocDiff assocDiff2 = new CDAssocDiff(a2a4, a2a4old);
     Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff2 = assocDiff2.getCardDiff();
-    CDAssocDiff assocDiff3 = new CDAssocDiff(a2a3, a2a3old, false);
+    CDAssocDiff assocDiff3 = new CDAssocDiff(a2a3, a2a3old);
     Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff3 = assocDiff3.getCardDiff();
 
     Assert.assertFalse(isClassAdded);
@@ -99,7 +115,15 @@ public class TestMax extends CDDiffTestBasis {
   public void test10(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -107,7 +131,15 @@ public class TestMax extends CDDiffTestBasis {
   public void test15(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/15A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/15B.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -115,7 +147,15 @@ public class TestMax extends CDDiffTestBasis {
   public void test20(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/20A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/20B.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -123,7 +163,15 @@ public class TestMax extends CDDiffTestBasis {
   public void test25(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/25A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/25B.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -131,7 +179,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testDE(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/DEv2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/DEv1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -139,7 +195,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testEA(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/EAv2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/EAv1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -147,7 +211,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testEMT(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/EMTv1.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/EMTv2.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -155,7 +227,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary1(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -163,7 +243,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary2(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV3.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV2.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -171,7 +259,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary3(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV4.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV3.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -179,7 +275,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary4(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV5.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV4.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -187,7 +291,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testManagement(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/ManagementV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/ManagementV1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -195,7 +307,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testMyCompany(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyCompanyV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyCompanyV1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -203,7 +323,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testMyExample(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyExampleV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyExampleV1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -211,7 +339,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testMyLife(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -219,7 +355,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testTeaching(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/TeachingV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/TeachingV1.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -227,9 +371,15 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld), compilationUnitNew, compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, nameTypeMatch, associationSrcTgtMatch);
     diff.getHelper().setMaps();
 
     ODHelper odHelper = new ODHelper();
