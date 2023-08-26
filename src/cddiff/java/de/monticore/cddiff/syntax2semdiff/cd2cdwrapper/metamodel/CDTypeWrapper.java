@@ -85,7 +85,7 @@ public class CDTypeWrapper implements Cloneable {
         .noneMatch(
             e ->
                 e.getName().equals(astcdAttribute.getName())
-                    && e.printType().equals(astcdAttribute.printType()))) {
+                    && e.printType().equals(astcdAttribute.getMCType().printType()))) {
       this.editedElement.addCDMember(astcdAttribute);
     }
 
@@ -94,7 +94,7 @@ public class CDTypeWrapper implements Cloneable {
         .anyMatch(
             e ->
                 e.getName().equals(astcdAttribute.getName())
-                    && !e.printType().equals(astcdAttribute.printType()))) {
+                    && !e.printType().equals(astcdAttribute.getMCType().printType()))) {
       this.status = CDStatus.LOCKED;
     }
   }

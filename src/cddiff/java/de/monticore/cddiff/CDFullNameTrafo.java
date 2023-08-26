@@ -174,13 +174,13 @@ public class CDFullNameTrafo {
     Optional<CDTypeSymbol> optSymbol;
 
     while (currentScope != artifactScope){
-      optSymbol = currentScope.resolveCDTypeDown(attribute.printType());
+      optSymbol = currentScope.resolveCDTypeDown(attribute.getMCType().printType());
       if (optSymbol.isPresent()){
         break;
       }
       currentScope = currentScope.getEnclosingScope();
     }
-    optSymbol = currentScope.resolveCDTypeDown(attribute.printType());
+    optSymbol = currentScope.resolveCDTypeDown(attribute.getMCType().printType());
     optSymbol.ifPresent(cdTypeSymbol -> attribute.setMCType(CD4CodeMill.mCQualifiedTypeBuilder()
         .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(cdTypeSymbol.getFullName()))
         .build()));

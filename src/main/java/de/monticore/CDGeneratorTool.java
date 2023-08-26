@@ -368,8 +368,8 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   public void makeMethodsInInterfacesAbstract(ASTCDCompilationUnit ast) {
-    for (ASTCDInterface cdInterface: ast.getCDDefinition().getCDInterfacesList()) {
-      for (ASTCDMethod method: cdInterface.getCDMethodList()) {
+    for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTCDMethod method : cdInterface.getCDMethodList()) {
         method.getModifier().setAbstract(true);
       }
     }

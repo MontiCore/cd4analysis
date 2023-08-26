@@ -14,11 +14,10 @@ public class CDAttributeInInterfaceInitialized implements CDInterfaceAndEnumASTC
 
   @Override
   public void check(ASTCDInterface node) {
-    for (ASTCDAttribute attribute: node.getCDAttributeList()) {
+    for (ASTCDAttribute attribute : node.getCDAttributeList()) {
       if (!attribute.isPresentInitial()) {
         Log.error(String.format(ERROR_CODE + ERROR_MSG, attribute.get_SourcePositionStart()));
       }
     }
   }
-
 }

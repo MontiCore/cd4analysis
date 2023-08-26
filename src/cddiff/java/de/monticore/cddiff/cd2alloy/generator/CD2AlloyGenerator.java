@@ -373,7 +373,7 @@ public class CD2AlloyGenerator {
     Set<String> puTypes = new HashSet<>();
     for (ASTCDAttribute astcdAttribute : attributeUnion) {
       // TODO: Im Tech.-Report sind enums drin, im Beispiel nicht, klären!
-      String typeName = CDDiffUtil.escape2Alloy(astcdAttribute.printType());
+      String typeName = CDDiffUtil.escape2Alloy(astcdAttribute.getMCType().printType());
       if (!ciTypes.contains(typeName) && !enumNameUnion.contains(typeName)) {
         puTypes.add(typeName);
       }
@@ -902,7 +902,7 @@ public class CD2AlloyGenerator {
             .append(", ");
         predicate.append(astcdAttribute.getName()).append(", ");
         predicate
-            .append(executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute.printType()), cd))
+            .append(executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute.getMCType().printType()), cd))
             .append("]")
             .append(System.lineSeparator());
       }

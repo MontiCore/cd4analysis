@@ -60,56 +60,38 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
       ASTCDAssociation tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
-    if (tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
-        && srcElem.getCDAssocDir().isDefinitiveNavigableRight()) {
-      return checkReference(
-              srcElem.getLeftQualifiedName().getQName(),
-              tgtElem.getLeftQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(srcElem.getRight(), tgtElem.getRight());
+
+    boolean match = false;
+
+    if ((tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
+        && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getLeftQualifiedName().getQName(),
+                      tgtElem.getLeftQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(srcElem.getRight(), tgtElem.getRight());
     }
 
-    if (tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        && srcElem.getCDAssocDir().isDefinitiveNavigableLeft()) {
-      return checkReference(
-              srcElem.getRightQualifiedName().getQName(),
-              tgtElem.getRightQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(srcElem.getLeft(), tgtElem.getLeft());
+    if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
+        && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getRightQualifiedName().getQName(),
+                      tgtElem.getRightQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(srcElem.getLeft(), tgtElem.getLeft());
     }
 
-    if (!tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
-            && !srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
-            && !srcElem.getCDAssocDir().isDefinitiveNavigableRight()) {
-      return (checkReference(
-                  srcElem.getRightQualifiedName().getQName(),
-                  tgtElem.getRightQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getLeft(), srcElem.getLeft()))
-          || (checkReference(
-                  srcElem.getLeftQualifiedName().getQName(),
-                  tgtElem.getLeftQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getRight(), srcElem.getRight()))
-          || (checkReference(
-                  srcElem.getRightQualifiedName().getQName(),
-                  tgtElem.getLeftQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getRight(), srcElem.getLeft()))
-          || (checkReference(
-                  srcElem.getLeftQualifiedName().getQName(),
-                  tgtElem.getRightQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getLeft(), srcElem.getRight()));
-    }
-    return false;
+    return match;
   }
 
   protected boolean checkReverse(
@@ -117,56 +99,38 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
       ASTCDAssociation tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
-    if (tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
-        && srcElem.getCDAssocDir().isDefinitiveNavigableLeft()) {
-      return checkReference(
-              srcElem.getRightQualifiedName().getQName(),
-              tgtElem.getLeftQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(tgtElem.getRight(), srcElem.getLeft());
+
+    boolean match = false;
+
+    if ((tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
+        && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getRightQualifiedName().getQName(),
+                      tgtElem.getLeftQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(tgtElem.getRight(), srcElem.getLeft());
     }
 
-    if (tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
-        && srcElem.getCDAssocDir().isDefinitiveNavigableRight()) {
-      return checkReference(
-              srcElem.getLeftQualifiedName().getQName(),
-              tgtElem.getRightQualifiedName().getQName(),
-              srcCD,
-              tgtCD)
-          && checkRole(tgtElem.getLeft(), srcElem.getRight());
+    if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
+            || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
+        && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
+            || !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())) {
+      match =
+          match
+              || checkReference(
+                      srcElem.getLeftQualifiedName().getQName(),
+                      tgtElem.getRightQualifiedName().getQName(),
+                      srcCD,
+                      tgtCD)
+                  && checkRole(tgtElem.getLeft(), srcElem.getRight());
     }
 
-    if ((!tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
-            && !srcElem.getCDAssocDir().isDefinitiveNavigableLeft())
-        || (!tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
-            && !srcElem.getCDAssocDir().isDefinitiveNavigableRight())) {
-      return (checkReference(
-                  srcElem.getRightQualifiedName().getQName(),
-                  tgtElem.getRightQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getLeft(), srcElem.getLeft()))
-          || (checkReference(
-                  srcElem.getLeftQualifiedName().getQName(),
-                  tgtElem.getLeftQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD))
-              && checkRole(tgtElem.getRight(), srcElem.getRight())
-          || (checkReference(
-                  srcElem.getRightQualifiedName().getQName(),
-                  tgtElem.getLeftQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getRight(), srcElem.getLeft()))
-          || (checkReference(
-                  srcElem.getLeftQualifiedName().getQName(),
-                  tgtElem.getRightQualifiedName().getQName(),
-                  srcCD,
-                  tgtCD)
-              && checkRole(tgtElem.getLeft(), srcElem.getRight()));
-    }
-    return false;
+    return match;
   }
 
   protected boolean checkReference(

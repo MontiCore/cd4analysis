@@ -59,7 +59,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
             OD4ReportMill.mCQualifiedTypeBuilder()
                 .setMCQualifiedName(
                     OD4ReportMill.mCQualifiedNameBuilder()
-                        .addParts(astcdAttribute.printType())
+                        .addParts(astcdAttribute.getMCType().printType())
                         .build())
                 .build())
         .setComplete("=")
@@ -80,9 +80,9 @@ public class CDSyntax2SemDiff4ASTODHelper {
             .getEditedElement()
             .getCDAttributeList()) {
       // set attribute
-      if (Pattern.matches("List<(.*)>", astcdAttribute.printType())) {
+      if (Pattern.matches("List<(.*)>", astcdAttribute.getMCType().printType())) {
         // List<> attribute
-        Matcher listMatcher = Pattern.compile("List<(.*)>").matcher(astcdAttribute.printType());
+        Matcher listMatcher = Pattern.compile("List<(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (listMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, listMatcher.group(1), false);
           ASTODList oDValue =
@@ -97,9 +97,9 @@ public class CDSyntax2SemDiff4ASTODHelper {
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
-      } else if (Pattern.matches("Set<(.*)>", astcdAttribute.printType())) {
+      } else if (Pattern.matches("Set<(.*)>", astcdAttribute.getMCType().printType())) {
         // Set<> attribute
-        Matcher setMatcher = Pattern.compile("Set<(.*)>").matcher(astcdAttribute.printType());
+        Matcher setMatcher = Pattern.compile("Set<(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (setMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, "Set_" + setMatcher.group(1), false);
           ASTODSimpleAttributeValue oDValue =
@@ -109,9 +109,9 @@ public class CDSyntax2SemDiff4ASTODHelper {
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
-      } else if (Pattern.matches("Optional<(.*)>", astcdAttribute.printType())) {
+      } else if (Pattern.matches("Optional<(.*)>", astcdAttribute.getMCType().printType())) {
         // Optional<> attribute
-        Matcher optMatcher = Pattern.compile("Optional<(.*)>").matcher(astcdAttribute.printType());
+        Matcher optMatcher = Pattern.compile("Optional<(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (optMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, optMatcher.group(1), false);
           ASTODSimpleAttributeValue oDValue =
@@ -121,9 +121,9 @@ public class CDSyntax2SemDiff4ASTODHelper {
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
-      } else if (Pattern.matches("Map<(.*),(.*)>", astcdAttribute.printType())) {
+      } else if (Pattern.matches("Map<(.*),(.*)>", astcdAttribute.getMCType().printType())) {
         // Map<,> attribute
-        Matcher mapMatcher = Pattern.compile("Map<(.*),(.*)>").matcher(astcdAttribute.printType());
+        Matcher mapMatcher = Pattern.compile("Map<(.*),(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (mapMatcher.find()) {
           String kValue = createValue(cdw, cDTypeDiff, mapMatcher.group(1), false);
           String vValue = createValue(cdw, cDTypeDiff, mapMatcher.group(2), false);
@@ -156,12 +156,12 @@ public class CDSyntax2SemDiff4ASTODHelper {
         String value;
         if (cDTypeDiff.isPresent()) {
           if (cDTypeDiff.get().getCDDiffKind() == CDTypeDiffKind.CDDIFF_ENUM) {
-            value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), true);
+            value = createValue(cdw, cDTypeDiff, astcdAttribute.getMCType().printType(), true);
           } else {
-            value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), false);
+            value = createValue(cdw, cDTypeDiff, astcdAttribute.getMCType().printType(), false);
           }
         } else {
-          value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), false);
+          value = createValue(cdw, cDTypeDiff, astcdAttribute.getMCType().printType(), false);
         }
         ASTODSimpleAttributeValue oDValue =
             OD4ReportMill.oDSimpleAttributeValueBuilder()
