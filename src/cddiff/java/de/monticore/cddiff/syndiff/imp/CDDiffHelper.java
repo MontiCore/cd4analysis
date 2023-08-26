@@ -1,10 +1,6 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import de.monticore.ast.ASTNode;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.ArrayList;
 import java.util.List;

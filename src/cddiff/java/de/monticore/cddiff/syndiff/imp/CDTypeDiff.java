@@ -1,6 +1,5 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import static de.monticore.cddiff.CDDiffUtil.getAllSuperTypes;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 import de.monticore.cd4code.CD4CodeMill;
