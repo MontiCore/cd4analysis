@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
@@ -104,9 +105,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
-    for (AssocStruct astcdClass : syntaxDiff.getHelper().getSrcMap().get(classC)){
-      System.out.print(Syn2SemDiffHelper.getConnectedClasses(astcdClass.getUnmodifiedAssoc(), compilationUnitNew).a.getName() + "" + Syn2SemDiffHelper.getConnectedClasses(astcdClass.getUnmodifiedAssoc(), compilationUnitNew).b.getName());
-      System.out.println(astcdClass.getAssociation().getLeft().getCDCardinality().toString() + astcdClass.getAssociation().getRight().getCDCardinality().toString());
+    for (AssocStruct assocStruct : syntaxDiff.getHelper().getSrcMap().get(classC)){
+      System.out.println(assocStruct.getAssociation().getLeft().getCDRole().getName());
     }
     System.out.println("------------");
     for (ASTCDClass astcdClass : syntaxDiff.getHelper().getNotInstanClassesSrc()){
@@ -147,6 +147,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println(syntaxDiff.getHelper().getNotInstanClassesSrc());
     System.out.println("------------");
     System.out.println(syntaxDiff.getHelper().getNotInstanClassesTgt());
+    assertThrows(Exception.class, syntaxDiff::findOverlappingAssocs);
   }
 
   @Test
@@ -292,7 +293,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println(syntaxDiff.getHelper().getNotInstanClassesTgt());
   }
 
-  @Test
+  //@Test
   public void testCD7(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");

@@ -6,7 +6,7 @@ classdiagram CD1 {
     Integer i;
   }
 
-  class A3 extends A2 {
+  class A3 {
     String s;
   }
 

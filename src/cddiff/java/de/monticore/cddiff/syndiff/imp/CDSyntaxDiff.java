@@ -1405,7 +1405,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         boolean isContained = false;
         for (ASTCDAttribute attribute1 : getHelper().getAllAttr(inheritanceDiff.getAstcdClasses().b).b) {
           if (attribute.getName().equals(attribute1.getName())
-            && attribute.printType().equals(attribute1.printType())) {
+            && attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
             isContained = true;
             break;
           }
@@ -1438,7 +1438,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         boolean isContained = false;
         for (ASTCDAttribute attribute1 : getHelper().getAllAttr(inheritanceDiff.getAstcdClasses().a).b) {
           if (attribute.getName().equals(attribute1.getName())
-            && attribute.printType().equals(attribute1.printType())) {
+            && attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
             isContained = true;
           }
         }

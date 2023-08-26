@@ -135,13 +135,13 @@ public class Syn2SemDiffHelper {
 
   public static boolean sameRoleNames(AssocStruct assocDown, AssocStruct assocUp){
     if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Left)){
-      return assocDown.getAssociation().getLeft().getCDRole().toString().equals(assocUp.getAssociation().getLeft().getCDRole().toString());
+      return assocDown.getAssociation().getLeft().getCDRole().getName().equals(assocUp.getAssociation().getLeft().getCDRole().getName());
     } else if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Right)) {
-      return assocDown.getAssociation().getLeft().getCDRole().toString().equals(assocUp.getAssociation().getRight().getCDRole().toString());
+      return assocDown.getAssociation().getLeft().getCDRole().getName().equals(assocUp.getAssociation().getRight().getCDRole().getName());
     } else if (assocDown.getSide().equals(ClassSide.Right) && assocUp.getSide().equals(ClassSide.Left)){
-      return assocDown.getAssociation().getRight().getCDRole().toString().equals(assocUp.getAssociation().getLeft().getCDRole().toString());
+      return assocDown.getAssociation().getRight().getCDRole().getName().equals(assocUp.getAssociation().getLeft().getCDRole().getName());
     } else {
-      return assocDown.getAssociation().getRight().getCDRole().toString().equals(assocUp.getAssociation().getRight().getCDRole().toString());
+      return assocDown.getAssociation().getRight().getCDRole().getName().equals(assocUp.getAssociation().getRight().getCDRole().getName());
     }
   }
 
@@ -430,7 +430,7 @@ public class Syn2SemDiffHelper {
   public static boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDClass astcdClass){
     for (ASTCDAttribute att : astcdClass.getCDAttributeList()){
       if ((att.getName().equals(attribute.getName())
-        && att.printType().equals(attribute.printType()))){
+        && att.getMCType().printType().equals(attribute.getMCType().printType()))){
         return true;
       }
     }
@@ -791,7 +791,7 @@ public class Syn2SemDiffHelper {
         for (ASTCDAttribute attribute1 : attributes){
           if (attribute != attribute1
             && attribute.getName().equals(attribute1.getName())
-            && !attribute.printType().equals(attribute1.printType())){
+            && !attribute.getMCType().printType().equals(attribute1.getMCType().printType())){
             notInstanClassesSrc.add(astcdClass);
             break;
           }
@@ -805,7 +805,7 @@ public class Syn2SemDiffHelper {
         for (ASTCDAttribute attribute1 : attributes) {
           if (attribute != attribute1
             && attribute.getName().equals(attribute1.getName())
-            && !attribute.printType().equals(attribute1.printType())) {
+            && !attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
             notInstanClassesTgt.add(astcdClass);
             break;
           }
@@ -1082,7 +1082,7 @@ public class Syn2SemDiffHelper {
     List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
-      odAttributes.add(builder.buildAttr(attribute.printType(), attribute.getName(), null));
+      odAttributes.add(builder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
     }
     return odAttributes;
   }

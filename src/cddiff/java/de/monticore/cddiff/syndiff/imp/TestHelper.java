@@ -11,6 +11,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TestHelper {
 
@@ -68,9 +69,9 @@ public class TestHelper {
               for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
                 comment.append(attribute.getName())
                   .append(" from ")
-                  .append(getOldAtt(attribute, typeDiffStruc)
-                    .printType()).append(" to ")
-                  .append(attribute.printType());
+                  .append(Objects.requireNonNull(getOldAtt(attribute, typeDiffStruc))
+                    .getMCType().printType()).append(" to ")
+                  .append(attribute.getMCType().printType());
               }
             }
             if (typeDiffStruc.getChangedStereotype() != null) {
@@ -101,9 +102,9 @@ public class TestHelper {
                 for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
                   comment.append(attribute.getName())
                     .append(" from ")
-                    .append(getOldAtt(attribute, typeDiffStruc).printType())
+                    .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
                     .append(" to ")
-                    .append(attribute.printType());
+                    .append(attribute.getMCType().printType());
                 }
               }
               if (typeDiffStruc.getDeletedAttributes() != null) {
@@ -169,7 +170,7 @@ public class TestHelper {
       if (!astcdClass.getModifier().isAbstract()) {
         List<ASTCDAttribute> attributes = syntaxDiff.helper.getAllAttr(astcdClass).b;
         for (ASTCDAttribute attribute : attributes) {
-          if (attribute.printType().equals(astcdEnum.getName())) {
+          if (attribute.getMCType().printType().equals(astcdEnum.getName())) {
             return astcdClass;
           }
         }

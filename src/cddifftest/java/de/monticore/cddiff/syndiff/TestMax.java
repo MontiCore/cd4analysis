@@ -571,13 +571,12 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<Package> test = odHelper.createChains(new HashSet<>(), diff.getHelper().getSrcMap().get(a2));
-    List<Package> test1 = new ArrayList<>(test);
-    System.out.println(Syn2SemDiffHelper.getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-    System.out.print(test1.size());
-    System.out.println(Syn2SemDiffHelper.getConnectedClasses(test1.get(1).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(test1.get(1).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-//    Set<ASTODElement> set = odHelper.getObjectsForOD(a2);
-//    List<ASTODElement> list = new ArrayList<>(set);
-//    System.out.println(list);
+//    for (AssocStruct assocStruct : diff.getHelper().getSrcMap().get(a2)) {
+//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
+//    }
+//    Set<Package> test = odHelper.createChains(new HashSet<>(), diff.getHelper().getSrcMap().get(a2));
+//    List<Package> test1 = new ArrayList<>(test);
+//    System.out.println(getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
+    Set<ASTODElement> set = odHelper.getObjectsForOD(a2);
   }
 }
