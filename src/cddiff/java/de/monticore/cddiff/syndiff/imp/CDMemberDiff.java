@@ -20,10 +20,6 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
   private final ASTNode srcElem;
   private final ASTNode tgtElem;
   private List<DiffTypes> baseDiff;
-  boolean check = false;
-  public boolean isCheck() {
-    return check;
-  }
 
   //Print
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -38,10 +34,10 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
     this.baseDiff = new ArrayList<>();
 
     if ((tgtElem instanceof ASTCDAttribute) && (srcElem instanceof ASTCDAttribute)) {
-      memberDiff((ASTCDAttribute) tgtElem, (ASTCDAttribute) srcElem);
+      memberDiff((ASTCDAttribute) srcElem, (ASTCDAttribute) tgtElem);
     }
     if ((tgtElem instanceof ASTCDEnumConstant) && (srcElem instanceof ASTCDEnumConstant)) {
-      memberDiff((ASTCDEnumConstant) tgtElem, (ASTCDEnumConstant) srcElem);
+      memberDiff((ASTCDEnumConstant) srcElem, (ASTCDEnumConstant) tgtElem);
     }
   }
 
@@ -66,35 +62,35 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
   /*--------------------------------------------------------------------*/
 
   public void memberDiff(ASTCDAttribute tgtElem, ASTCDAttribute srcElem) {
-    this.diffList = createDiffList(tgtElem, srcElem);
+    this.diffList = createDiffList(srcElem, tgtElem);
     setAttributeStrings();
   }
 
   public void memberDiff(ASTCDEnumConstant tgtElem, ASTCDEnumConstant srcElem) {
-    this.diffList = createDiffList(tgtElem, srcElem);
+    this.diffList = createDiffList(srcElem, tgtElem);
     setEnumStrings();
   }
 
-  private List<CDNodeDiff<?,?>> createDiffList(ASTCDAttribute tgtElem, ASTCDAttribute srcElem) {
+  private List<CDNodeDiff<?,?>> createDiffList(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
 
     List<CDNodeDiff<?,?>> synDiffs = new ArrayList<>();
 
     // Modifier
-    if (!(pp.prettyprint(tgtElem.getModifier()).isEmpty() && pp.prettyprint(srcElem.getModifier()).isEmpty())) {
-      CDNodeDiff<ASTModifier, ASTModifier> modifierDiff = new CDNodeDiff<>(Optional.of(tgtElem.getModifier()), Optional.of(srcElem.getModifier()));
-
-      if (!(pp.prettyprint(tgtElem.getModifier()).isEmpty())) {
-        if (!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
-          baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
-        }
-        tgtMemberModifier = getColorCode(modifierDiff) + pp.prettyprint(tgtElem.getModifier()) + RESET;
-      }
+    if (!(pp.prettyprint(srcElem.getModifier()).isEmpty() && pp.prettyprint(tgtElem.getModifier()).isEmpty())) {
+      CDNodeDiff<ASTModifier, ASTModifier> modifierDiff = new CDNodeDiff<>(Optional.of(srcElem.getModifier()), Optional.of(tgtElem.getModifier()));
 
       if (!(pp.prettyprint(srcElem.getModifier()).isEmpty())) {
         if (!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
           baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
         }
         srcMemberModifier = getColorCode(modifierDiff) + pp.prettyprint(srcElem.getModifier()) + RESET;
+      }
+
+      if (!(pp.prettyprint(tgtElem.getModifier()).isEmpty())) {
+        if (!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
+          baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
+        }
+        tgtMemberModifier = getColorCode(modifierDiff) + pp.prettyprint(tgtElem.getModifier()) + RESET;
       }
 
       synDiffs.add(modifierDiff);
@@ -109,7 +105,6 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
         baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_TYPE);
       }
       synDiffs.add(attributeType);
-      check = true;
     }
     tgtMemberType = getColorCode(attributeType) + pp.prettyprint(cd1Type.get()) + RESET;
     srcMemberType = getColorCode(attributeType) + pp.prettyprint(cd2Type.get()) + RESET;
@@ -133,66 +128,42 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
     return synDiffs;
   }
 
-  private List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> createDiffList(
-    ASTCDEnumConstant cd1Element, ASTCDEnumConstant cd2Element) {
+  private List<CDNodeDiff<? extends ASTNode, ? extends ASTNode>> createDiffList(ASTCDEnumConstant srcEnum, ASTCDEnumConstant tgtEnum) {
     List<CDNodeDiff<?,?>> synDiffs = new ArrayList<>();
 
     // Name
-    Optional<ASTCDEnumConstant> cd1Name = Optional.of(cd1Element);
-    Optional<ASTCDEnumConstant> cd2Name = Optional.of(cd2Element);
-    CDNodeDiff<ASTCDEnumConstant, ASTCDEnumConstant> name = new CDNodeDiff<>(null, cd1Name, cd2Name);
+    Optional<ASTCDEnumConstant> srcEnumConst = Optional.of(srcEnum);
+    Optional<ASTCDEnumConstant> tgtEnumConst = Optional.of(tgtEnum);
+    CDNodeDiff<ASTCDEnumConstant, ASTCDEnumConstant> name = new CDNodeDiff<>(null, srcEnumConst, tgtEnumConst);
 
-    if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
-      check = true;
-      name = new CDNodeDiff<>(Actions.CHANGED, cd1Name, cd2Name);
+    if (!srcEnumConst.get().getName().equals(tgtEnumConst.get().getName())) {
+      name = new CDNodeDiff<>(Actions.CHANGED, srcEnumConst, tgtEnumConst);
     }
 
     if (name.checkForAction()) {
       synDiffs.add(name);
     }
 
-    tgtMemberName = getColorCode(name) + cd1Name.get().getName() + RESET;
-    srcMemberName = getColorCode(name) + cd2Name.get().getName() + RESET;
+    srcMemberName = getColorCode(name) + srcEnum.getName() + RESET;
+    tgtMemberName = getColorCode(name) + tgtEnum.getName() + RESET;
 
     return synDiffs;
   }
 
-  protected CDNodeDiff<ASTModifier, ASTModifier> checkModifierDiff(ASTModifier cd1Modi, ASTModifier cd2Modi) {
-    CDNodeDiff<ASTModifier, ASTModifier> modifier = new CDNodeDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
-
-    if (!(pp.prettyprint(cd1Modi).isEmpty())) {
-      if(!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
-        baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
-      }
-      tgtMemberModifier = getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
-    }
-
-    if (!(pp.prettyprint(cd2Modi).isEmpty())) {
-      if(!baseDiff.contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
-        baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER);
-      }
-      srcMemberModifier = getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
-    }
-
-    return modifier;
-  }
-
   private void setAttributeStrings() {
-    this.tgtMemberString = insertSpaceBetweenStrings(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName));
-    this.srcMemberString = insertSpaceBetweenStrings(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName));
+    this.srcMemberString = insertSpaceBetweenStrings(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName)) + ";";
+    this.tgtMemberString = insertSpaceBetweenStrings(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName)) + ";";
   }
 
   private void setEnumStrings() {
-
-    this.tgtMemberString = tgtMemberName;
-    this.srcMemberString = srcMemberName;
+    this.srcMemberString = insertSpaceBetweenStrings(Arrays.asList(srcMemberName)) + ";";
+    this.tgtMemberString = insertSpaceBetweenStrings(Arrays.asList(tgtMemberName)) + ";";
   }
 
-  public String printCD1Element() {
-    return tgtMemberString;
-  }
-
-  public String printCD2Element() {
+  public String printSrcMember() {
     return srcMemberString;
+  }
+  public String printTgtMember() {
+    return tgtMemberString;
   }
 }

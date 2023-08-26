@@ -1,7 +1,13 @@
 import java.lang.String;
 
 classdiagram Source3 {
-  public class A extends B{}
+  public class A{}
 
-  class B{}
+  private class B implements C{}
+
+  class C implements E{}
+
+  class D{}
+
+  class E{}
 }

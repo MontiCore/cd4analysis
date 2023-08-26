@@ -1004,6 +1004,7 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
                   + ""
                   + x.get_SourcePositionStart().getColumn()));
     }
+
     for (ASTCDAttribute x : deletedAttributes) {
       StringBuilder delAttri = new StringBuilder();
       String deletedAttribute = pp.prettyprint(x);
@@ -1047,6 +1048,7 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
                   + ""
                   + x.get_SourcePositionStart().getColumn()));
     }
+
     for (ASTCDAttribute x : addedAttributes) {
       StringBuilder addAttri = new StringBuilder();
       String addedAttribute = pp.prettyprint(x);

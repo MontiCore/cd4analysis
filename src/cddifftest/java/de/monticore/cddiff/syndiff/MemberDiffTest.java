@@ -53,7 +53,6 @@ public class MemberDiffTest {
 
     CDMemberDiff memberDiff = new CDMemberDiff(attributeNew,attributeOld);
     System.out.println(memberDiff.getBaseDiff());
-    Assert.assertTrue(memberDiff.isCheck());
   }
 
   public void parseModels(String concrete, String ref) {

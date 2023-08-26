@@ -30,12 +30,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   private final ASTCDAssociation tgtElem;
   private boolean isReversed;
 
-  //Please, ignore the following two line of codes, used for testing
-  public boolean check = false;
-  public boolean isCheck() {
-    return check;
-  }
-
   private List<DiffTypes> baseDiff;
 
   //use them to check if a search has been made
@@ -535,7 +529,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       tgtAssocDirection = getColorCode(assocDirDiff) + pp.prettyprint(tgtAssocDir.get()) + RESET;
 
       isReversed = false;
-      check = true;
     } else {
       synDiffs.addAll(tmpReverseDir);
 

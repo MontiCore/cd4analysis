@@ -13,6 +13,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.matcher.NameTypeMatcher;
 import de.monticore.matcher.SrcTgtAssocMatcher;
 import de.monticore.matcher.SuperTypeMatcher;
@@ -256,37 +257,92 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
+
+  //Test for all kinds of changes in attributes
   @Test
   public void testType1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
-    ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
+    ASTCDClass astcdClass11 = CDTestHelper.getClass("A", src.getCDDefinition());
+    ASTCDClass astcdClass12 = CDTestHelper.getClass("A", tgt.getCDDefinition());
+    ASTCDClass astcdClass21 = CDTestHelper.getClass("B", src.getCDDefinition());
+    ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
     ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
     ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
 
-    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
-    System.out.println(typeDiff.printTgtCD());
-    //System.out.println(typeDiff.getChangedMembers());
-    //System.out.println(typeDiff.getMatchedAttributes());
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, scopeSrcCD, scopeTgtCD);
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, scopeSrcCD, scopeTgtCD);
+
+    System.out.println(typeDiff1.printSrcCD());
+    System.out.println(typeDiff2.printSrcCD());
+    System.out.println("--------------------------------");
+    System.out.println(typeDiff1.printTgtCD());
+    System.out.println(typeDiff2.printTgtCD());
   }
 
+  //Tests for all kinds of changes in enum constants
   @Test
   public void testType2() {
     parseModels("Source2.cd", "Target2.cd");
 
-    ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
-    ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
+    ASTCDClass astcdClass11 = CDTestHelper.getClass("A", src.getCDDefinition());
+    ASTCDClass astcdClass12 = CDTestHelper.getClass("A", tgt.getCDDefinition());
+    ASTCDClass astcdClass21 = CDTestHelper.getClass("B", src.getCDDefinition());
+    ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
+    ASTCDEnum astcdEnum31 = CDTestHelper.getEnum("EnumsCheck", src.getCDDefinition());
+    ASTCDEnum astcdEnum32 = CDTestHelper.getEnum("EnumsCheck", tgt.getCDDefinition());
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
     ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
     ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
 
-    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
-    System.out.println(typeDiff.printTgtCD());
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, scopeSrcCD, scopeTgtCD);
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, scopeSrcCD, scopeTgtCD);
+    CDTypeDiff typeDiff3 = new CDTypeDiff(astcdEnum31, astcdEnum32, scopeSrcCD, scopeTgtCD);
+
+    System.out.println(typeDiff1.printSrcCD());
+    System.out.println(typeDiff2.printSrcCD());
+    System.out.println(typeDiff3.printSrcCD());
+    System.out.println("--------------------------------");
+    System.out.println(typeDiff1.printTgtCD());
+    System.out.println(typeDiff2.printTgtCD());
+    System.out.println(typeDiff3.printTgtCD());
   }
 
+  // Test for change of modifiers, extensions, and implementations
   @Test
   public void testType3() {
     parseModels("Source3.cd", "Target3.cd");
+
+    ASTCDClass astcdClass11 = CDTestHelper.getClass("A", src.getCDDefinition());
+    ASTCDClass astcdClass12 = CDTestHelper.getClass("A", tgt.getCDDefinition());
+    ASTCDClass astcdClass21 = CDTestHelper.getClass("B", src.getCDDefinition());
+    ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
+    ASTCDClass astcdClass31 = CDTestHelper.getClass("C", src.getCDDefinition());
+    ASTCDClass astcdClass32 = CDTestHelper.getClass("C", tgt.getCDDefinition());
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+    ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
+    ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
+
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, scopeSrcCD, scopeTgtCD);
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, scopeSrcCD, scopeTgtCD);
+    CDTypeDiff typeDiff3 = new CDTypeDiff(astcdClass31, astcdClass32, scopeSrcCD, scopeTgtCD);
+    System.out.println(typeDiff1.printSrcCD());
+    System.out.println(typeDiff2.printSrcCD());
+    System.out.println(typeDiff3.printSrcCD());
+    System.out.println("--------------------------------");
+    System.out.println(typeDiff1.printTgtCD());
+    System.out.println(typeDiff2.printTgtCD());
+    System.out.println(typeDiff3.printTgtCD());
+  }
+
+  // Test for inherited attributes
+  @Test
+  public void testType4() {
+    parseModels("Source4.cd", "Target4.cd");
 
     ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());

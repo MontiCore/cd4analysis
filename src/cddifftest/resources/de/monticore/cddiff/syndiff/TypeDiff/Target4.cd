@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram Target4 {
+  class A implements B{}
+
+  class B implements C{
+    double b;
+  }
+
+  class C{
+    int a;
+  }
+}

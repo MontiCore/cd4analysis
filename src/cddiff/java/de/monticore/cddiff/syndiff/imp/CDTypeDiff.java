@@ -68,7 +68,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     //Load all matching elements from both types
     addAllMatchedElements(srcElem, tgtElem);
     //Find inherited attributes
-    loadAllInheritedAttributes(srcElem, tgtElem, scopeSrcCD, scopeTgtCD);
+    loadAllInheritedAttributes(srcElem, tgtElem, scopeTgtCD);
     //Find all added, deleted and changed attributes and constants
     loadAllLists(srcElem, tgtElem);
     //Set Strings for printing
@@ -422,22 +422,48 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
   /*--------------------------------------------------------------------*/
   /**
-   * Add all attributes to the list changedMembers which have been changed.
-   *
-   * @param srcType a type in the new CD
-   * @param tgtType a type in the old CD
+   * Add all attributes to the list changedMembers which have been changed.   *
    */
-  public void loadAllChangedMembers(ASTCDType srcType, ASTCDType tgtType) {
-    boolean changedMember = false;
+  public void loadAllChangedMembers() {
+    boolean changedAttribute = false;
     for(Pair<ASTCDAttribute,ASTCDAttribute> x : matchedAttributes){
       CDMemberDiff diffAttribute = new CDMemberDiff(x.a, x.b);
-      if(diffAttribute.getBaseDiff()!= null) {
+      if(diffAttribute.getBaseDiff() != null) {
         changedMembers.add(diffAttribute);
-        changedMember = true;
+        changedAttribute = true;
       }
     }
-    if(changedMember) {
+    if(changedAttribute) {
       baseDiff.add(DiffTypes.CHANGED_ATTRIBUTE);
+    }
+  }
+
+  private void loadAllInheritedAttributes(ASTCDType srcType, ASTCDType tgtType, ICD4CodeArtifactScope scopeTgtCD) {
+    for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
+      boolean inheritedFound = false;
+      for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
+        for (ASTCDAttribute a : x.getCDAttributeList()) {
+          if (a.getName().equals(srcAttr.getName())) {
+            inheritedFound = true;
+            break;
+          }
+        }
+      }
+      if(inheritedFound) {
+        inheritedAttributes.add(srcAttr);
+        if(!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+          baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
+        }
+      }
+    }
+  }
+
+  public void loadAllAddedElements(ASTCDType srcType, ASTCDType tgtType){
+    if(srcType instanceof ASTCDClass && tgtType instanceof ASTCDClass){
+      loadAllAddedAttributes((ASTCDClass) srcType, (ASTCDClass) tgtType);
+    }
+    if(srcType instanceof ASTCDEnum && tgtType instanceof ASTCDEnum){
+      loadAllAddedConstants((ASTCDEnum) srcType, (ASTCDEnum) tgtType);
     }
   }
 
@@ -445,10 +471,10 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
    * Add all attributes to the list addedAttributes which have not been in the tgtType, but are in
    * the srcType
    *
-   * @param srcType a type in the new CD
-   * @param tgtType a type in the old CD
+   * @param srcType a class in the new CD
+   * @param tgtType a class in the old CD
    */
-  public void loadAllAddedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+  public void loadAllAddedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
       boolean addedNotFound = true;
       if(inheritedAttributes.contains(srcAttr)) {
@@ -468,30 +494,41 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       }
     }
   }
-  public List<ASTCDType> superTypes = new ArrayList<>();
-  public List<ASTCDType> getSuperTypes(){
-    return superTypes;
-  }
-  private void loadAllInheritedAttributes(ASTCDType srcType, ASTCDType tgtType, ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {
-    for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
-      boolean inheritedFound = false;
-      for(ASTCDType x : getAllSuper(tgtType, scopeTgtCD)) {
-        superTypes.add(x);
-        for (ASTCDAttribute a : x.getCDAttributeList()) {
-          if (a.getName().equals(srcAttr.getName())) {
-            inheritedFound = true;
-            break;
-          }
+
+  /**
+   * Add all enum constants to the list addedConstants which have not been in the tgtType, but are in
+   * the srcType
+   *
+   * @param srcType an enum in the new CD
+   * @param tgtType an enum in the old CD
+   */
+  public void loadAllAddedConstants(ASTCDEnum srcType, ASTCDEnum tgtType) {
+    for (ASTCDEnumConstant srcConst : srcType.getCDEnumConstantList()) {
+      boolean notFound = true;
+      for (ASTCDEnumConstant tgtConst : tgtType.getCDEnumConstantList()) {
+        if (srcConst.getName().equals(tgtConst.getName())) {
+          notFound = false;
+          break;
         }
       }
-      if(inheritedFound) {
-        inheritedAttributes.add(srcAttr);
-        if(!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
-          baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
+      if (notFound) {
+        addedConstants.add(srcConst);
+        if(!baseDiff.contains(DiffTypes.ADDED_CONSTANT)) {
+          baseDiff.add(DiffTypes.ADDED_CONSTANT);
         }
       }
     }
   }
+
+  public void loadAllDeletedElements(ASTCDType srcType, ASTCDType tgtType){
+    if(srcType instanceof ASTCDClass && tgtType instanceof ASTCDClass){
+      loadAllDeletedAttributes((ASTCDClass) srcType, (ASTCDClass) tgtType);
+    }
+    if(srcType instanceof ASTCDEnum && tgtType instanceof ASTCDEnum){
+      loadAllDeletedConstants((ASTCDEnum) srcType, (ASTCDEnum) tgtType);
+    }
+  }
+
   /**
    * Add all attributes to the list deletedAttributes which have been in the tgtType, but aren't
    * anymore in the srcType
@@ -499,7 +536,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
    * @param srcType a type in the new CD
    * @param tgtType a type in the old CD
    */
-  public void loadAllDeletedAttributes(ASTCDType srcType, ASTCDType tgtType) {
+  public void loadAllDeletedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
       boolean notFound = true;
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
@@ -517,63 +554,65 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     }
   }
 
-  /*public void loadAllAddedConstants(ASTCDType srcEnum, ASTCDType tgtEnum) {
-    for (ASTCDEnumConstant firstConstant : ((ASTCDEnum)srcEnum).getCDEnumConstantList()) {
+  /**
+   * Add all enum constants to the list deletedConstants which have been in the tgtType, but aren't
+   * anymore in the srcType
+   *
+   * @param srcType a type in the new CD
+   * @param tgtType a type in the old CD
+   */
+  public void loadAllDeletedConstants(ASTCDEnum srcType, ASTCDEnum tgtType) {
+    for (ASTCDEnumConstant tgtConst : tgtType.getCDEnumConstantList()) {
       boolean notFound = true;
-      for (ASTCDEnumConstant secondConstant : ((ASTCDEnum)tgtEnum).getCDEnumConstantList()) {
-        if (firstConstant.getName().equals(secondConstant.getName())) {
+      for (ASTCDEnumConstant srcConst : srcType.getCDEnumConstantList()) {
+        if (tgtConst.getName().equals(srcConst.getName())) {
           notFound = false;
           break;
         }
       }
       if (notFound) {
-        addedConstants.add(firstConstant);
-        if(!baseDiff.contains(DiffTypes.ADDED_CONSTANT)) {
-          baseDiff.contains(DiffTypes.ADDED_CONSTANT);
-        }
-      }
-    }
-  }*/
-
-  /*public void loadAllDeletedConstants(ASTCDType srcEnum, ASTCDType tgtEnum) {
-    for (ASTCDEnumConstant firstConstant : ((ASTCDEnum)tgtEnum).getCDEnumConstantList()) {
-      boolean notFound = true;
-      for (ASTCDEnumConstant secondConstant : ((ASTCDEnum)srcEnum).getCDEnumConstantList()) {
-        if (firstConstant.getName().equals(secondConstant.getName())) {
-          notFound = false;
-          break;
-        }
-      }
-      if (notFound) {
-        deletedConstants.add(firstConstant);
+        deletedConstants.add(tgtConst);
         if(!baseDiff.contains(DiffTypes.DELETED_CONSTANT)) {
-          baseDiff.contains(DiffTypes.DELETED_CONSTANT);
+          baseDiff.add(DiffTypes.DELETED_CONSTANT);
         }
       }
     }
+  }
 
-  }*/
   private void createDefaultDiffList(ASTCDType srcElem, ASTCDType tgtElem) {
     List<CDNodeDiff<?,?>> diffs = new ArrayList<>();
     diffType.append("Interpretation: ");
 
-    // Modifier, non-optional
-    if (!(pp.prettyprint(srcElem.getModifier()).length() < 1
-      && pp.prettyprint(tgtElem.getModifier()).length() < 1)) {
-      diffs.add(setModifier(srcElem.getModifier(), tgtElem.getModifier()));
+    // Modifier
+    Optional<ASTModifier> srcModifier = (pp.prettyprint(srcElem.getModifier()).length() > 1) ? Optional.of(srcElem.getModifier()) : Optional.empty();
+    Optional<ASTModifier> tgtModifier = (pp.prettyprint(tgtElem.getModifier()).length() > 1) ? Optional.of(tgtElem.getModifier()) : Optional.empty();
+    CDNodeDiff<ASTModifier, ASTModifier> modifier = new CDNodeDiff<>(srcModifier, tgtModifier);
+
+    srcModifier.ifPresent(initial -> this.srcModifier = getColorCode(modifier) + pp.prettyprint(srcElem.getModifier()) + RESET);
+    tgtModifier.ifPresent(initial -> this.tgtModifier = getColorCode(modifier) + pp.prettyprint(tgtElem.getModifier()) + RESET);
+
+    if (modifier.checkForAction()) {
+      if (modifier.getDiff().isPresent()) {
+        diffs.add(modifier);
+        diffType
+          .append("Modifier")
+          .append(": ")
+          .append(modifier.getDiff().get())
+          .append(" ");
+      }
     }
 
-    // Name, non-optional
-    Optional<ASTCDType> cd1Name = Optional.of(tgtElem);
-    Optional<ASTCDType> cd2Name = Optional.of(srcElem);
-    CDNodeDiff<ASTCDType, ASTCDType> className = new CDNodeDiff<>(null, cd1Name, cd2Name);
+    // Name
+    Optional<ASTCDType> srcName = Optional.of(srcElem);
+    Optional<ASTCDType> tgtName = Optional.of(tgtElem);
+    CDNodeDiff<ASTCDType, ASTCDType> className = new CDNodeDiff<>(null, srcName, tgtName);
 
-    if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
-      className = new CDNodeDiff<>(Actions.CHANGED, cd1Name, cd2Name);
+    if (!srcName.get().getName().equals(tgtName.get().getName())) {
+      className = new CDNodeDiff<>(Actions.CHANGED, srcName, tgtName);
     }
 
-    srcName = getColorCode(className) + cd1Name.get().getName() + RESET;
-    tgtName = getColorCode(className) + cd2Name.get().getName() + RESET;
+    this.srcName = getColorCode(className) + srcName.get().getName() + RESET;
+    this.tgtName = getColorCode(className) + tgtName.get().getName() + RESET;
 
     if (className.checkForAction()) {
       diffs.add(className);
@@ -603,33 +642,6 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     this.diffList = diffs;
   }
 
-  boolean isEmpty = true;
-  public boolean isEmpty() {
-    return isEmpty;
-  }
-
-  protected CDNodeDiff<ASTModifier, ASTModifier> setModifier(ASTModifier srcModifier, ASTModifier tgtModifier) {
-    CDNodeDiff<ASTModifier, ASTModifier> modifier = new CDNodeDiff<>(Optional.of(srcModifier), Optional.of(tgtModifier));
-
-    if (modifier.getSrcValue().isPresent()) {
-      this.srcModifier = getColorCode(modifier) + pp.prettyprint(srcModifier) + RESET;
-    }
-    if (modifier.getTgtValue().isPresent()) {
-      this.tgtModifier = getColorCode(modifier) + pp.prettyprint(tgtModifier) + RESET;
-    }
-
-    if (modifier.checkForAction() && modifier.getAction().isPresent()) {
-      if (modifier.getDiff().isPresent()) {
-        diffType
-          .append("Modifier")
-          .append(": ")
-          .append(modifier.getDiff().get())
-          .append(" ");
-      }
-    }
-    return modifier;
-  }
-
   public void createClassDiff(ASTCDClass srcElem, ASTCDClass tgtElem) {
     createDiffList(srcElem, tgtElem);
   }
@@ -643,19 +655,14 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   }
 
   private void createDiffList(ASTCDClass srcElem, ASTCDClass tgtElem) {
-    // Extended, optional
-    Optional<ASTCDExtendUsage> cd1Extend =
-      (srcElem.isPresentCDExtendUsage())
-        ? Optional.of(srcElem.getCDExtendUsage())
-        : Optional.empty();
-    Optional<ASTCDExtendUsage> cd2Extend =
-      (tgtElem.isPresentCDExtendUsage())
-        ? Optional.of(tgtElem.getCDExtendUsage())
-        : Optional.empty();
-    CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedClassDiff = new CDNodeDiff<>(cd1Extend, cd2Extend);
 
-    cd1Extend.ifPresent(initial -> srcExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
-    cd2Extend.ifPresent(initial -> tgtExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
+    // Extended
+    Optional<ASTCDExtendUsage> srcElemExtends = (srcElem.isPresentCDExtendUsage()) ? Optional.of(srcElem.getCDExtendUsage()) : Optional.empty();
+    Optional<ASTCDExtendUsage> tgtElemExtends = (tgtElem.isPresentCDExtendUsage()) ? Optional.of(tgtElem.getCDExtendUsage()) : Optional.empty();
+    CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedClassDiff = new CDNodeDiff<>(srcElemExtends, tgtElemExtends);
+
+    srcElemExtends.ifPresent(initial -> srcExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
+    tgtElemExtends.ifPresent(initial -> tgtExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
 
     if (extendedClassDiff.checkForAction()) {
       diffList.add(extendedClassDiff);
@@ -668,17 +675,13 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       }
     }
 
-    // Implements, optional
-    Optional<ASTMCObjectType> cd1Imple = (srcElem.isPresentCDInterfaceUsage())
-        ? Optional.of(srcElem.getInterfaceList().get(0))
-        : Optional.empty();
-    Optional<ASTMCObjectType> cd2Imple = (tgtElem.isPresentCDInterfaceUsage())
-        ? Optional.of(tgtElem.getInterfaceList().get(0))
-        : Optional.empty();
-    CDNodeDiff<ASTMCObjectType, ASTMCObjectType> implementedClassDiff = new CDNodeDiff<>(cd1Imple, cd2Imple);
+    // Implements
+    Optional<ASTMCObjectType> srcElemImplements = (srcElem.isPresentCDInterfaceUsage()) ? Optional.of(srcElem.getInterfaceList().get(0)) : Optional.empty();
+    Optional<ASTMCObjectType> tgtElemImplements = (tgtElem.isPresentCDInterfaceUsage()) ? Optional.of(tgtElem.getInterfaceList().get(0)) : Optional.empty();
+    CDNodeDiff<ASTMCObjectType, ASTMCObjectType> implementedClassDiff = new CDNodeDiff<>(srcElemImplements, tgtElemImplements);
 
-    cd1Imple.ifPresent(inter -> srcImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
-    cd2Imple.ifPresent(inter -> tgtImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
 
 
     if (implementedClassDiff.checkForAction()) {
@@ -694,17 +697,17 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   }
 
   private void createDiffList(ASTCDInterface srcElem, ASTCDInterface tgtElem) {
-    // Extended, optional
-    Optional<ASTCDExtendUsage> cd1Extend = (srcElem.isPresentCDExtendUsage())
-        ? Optional.of(srcElem.getCDExtendUsage())
-        : Optional.empty();
-    Optional<ASTCDExtendUsage> cd2Extend = (tgtElem.isPresentCDExtendUsage())
-        ? Optional.of(tgtElem.getCDExtendUsage())
-        : Optional.empty();
-    CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> interfaceDiff = new CDNodeDiff<>(cd1Extend, cd2Extend);
 
-    cd1Extend.ifPresent(initial -> srcExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
-    cd2Extend.ifPresent(initial -> tgtExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
+    // Extended
+    Optional<ASTCDExtendUsage> srcElemExtends = (srcElem.isPresentCDExtendUsage())
+        ? Optional.of(srcElem.getCDExtendUsage()) : Optional.empty();
+
+    Optional<ASTCDExtendUsage> tgtElemExtends = (tgtElem.isPresentCDExtendUsage())
+        ? Optional.of(tgtElem.getCDExtendUsage()) : Optional.empty();
+    CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> interfaceDiff = new CDNodeDiff<>(srcElemExtends, tgtElemExtends);
+
+    srcElemExtends.ifPresent(initial -> srcExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
+    tgtElemExtends.ifPresent(initial -> tgtExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
 
     if (interfaceDiff.checkForAction()) {
       diffList.add(interfaceDiff);
@@ -720,16 +723,16 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
   private void createDiffList(ASTCDEnum srcElem, ASTCDEnum tgtElem) {
     // Implements, optional
-    Optional<ASTMCObjectType> cd1Imple = (srcElem.isPresentCDInterfaceUsage())
+    Optional<ASTMCObjectType> srcElemImplements = (srcElem.isPresentCDInterfaceUsage())
         ? Optional.of(srcElem.getInterfaceList().get(0))
         : Optional.empty();
-    Optional<ASTMCObjectType> cd2Imple = (tgtElem.isPresentCDInterfaceUsage())
+    Optional<ASTMCObjectType> tgtElemImplements = (tgtElem.isPresentCDInterfaceUsage())
         ? Optional.of(tgtElem.getInterfaceList().get(0))
         : Optional.empty();
-    CDNodeDiff<ASTMCObjectType, ASTMCObjectType> enumDiff = new CDNodeDiff<>(cd1Imple, cd2Imple);
+    CDNodeDiff<ASTMCObjectType, ASTMCObjectType> enumDiff = new CDNodeDiff<>(srcElemImplements, tgtElemImplements);
 
-    cd1Imple.ifPresent(inter -> srcImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
-    cd2Imple.ifPresent(inter -> tgtImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
 
     if (enumDiff.checkForAction()) {
       diffList.add(enumDiff);
@@ -755,7 +758,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
         for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
           if (srcAttr.getName().equals(tgtAttr.getName())) {
-              matchedAttributes.add(new Pair(srcAttr, tgtAttr));
+              matchedAttributes.add(new Pair<>(srcAttr, tgtAttr));
           }
         }
       }
@@ -763,7 +766,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       for (ASTCDEnumConstant srcEnumConstant : ((ASTCDEnum) srcType).getCDEnumConstantList()) {
         for (ASTCDEnumConstant tgtEnumConstant : ((ASTCDEnum) tgtType).getCDEnumConstantList()) {
           if (srcEnumConstant.getName().equals(tgtEnumConstant.getName())) {
-            matchedConstants.add(new Pair(srcEnumConstant, tgtEnumConstant));
+            matchedConstants.add(new Pair<>(srcEnumConstant, tgtEnumConstant));
           }
         }
       }
@@ -771,29 +774,22 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   }
 
   public void loadAllLists(ASTCDType srcType, ASTCDType tgtType) {
-    loadAllAddedAttributes(srcType, tgtType);
-    loadAllDeletedAttributes(srcType, tgtType);
-    loadAllChangedMembers(srcType, tgtType);
-    //loadAllAddedConstants(srcType, tgtType);
-    //loadAllDeletedConstants(srcType, tgtType);
+    loadAllAddedElements(srcType, tgtType);
+    loadAllDeletedElements(srcType, tgtType);
+    loadAllChangedMembers();
   }
 
   private void setStrings() {
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
-    StringBuilder outputCD1 = new StringBuilder();
-    StringBuilder outputCD2 = new StringBuilder();
+    StringBuilder outputTgtCD = new StringBuilder();
+    StringBuilder outputSrcCD = new StringBuilder();
 
-    StringBuilder bodyCD1 = new StringBuilder();
-    StringBuilder bodyCD2 = new StringBuilder();
+    StringBuilder bodyTgtCD = new StringBuilder();
+    StringBuilder bodySrcCD = new StringBuilder();
 
-    String signatureCD1 = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
-    String signatureCD2 = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
-
-    String bodyOffset = "     ";
-    String bodyOffsetDel = "-    ";
-    String bodyOffsetAdd = "+    ";
-    String bodyOffsetChange = "~    ";
+    String signatureSrcCD = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
+    String signatureTgtCD = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
 
     Map<String, Integer> add = new HashMap<>();
     Map<String, Integer> matchDel = new HashMap<>();
@@ -802,14 +798,14 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     for (CDMemberDiff x : changedMembers) {
       matchDel.put(
-        x.printCD1Element(),
+        x.printTgtMember(),
         Integer.valueOf(
           x.getTgtElem().get_SourcePositionStart().getLine()
             + ""
             + x.getTgtElem().get_SourcePositionStart().getColumn()));
-      String tmp = bodyOffset + pp.prettyprint(x.getTgtElem());
+      String tmp = "\t" + pp.prettyprint(x.getTgtElem());
       if (!x.getDiffList().isEmpty()) {
-        tmp = bodyOffsetChange + "  " + pp.prettyprint(x.getTgtElem());
+        tmp = "\t" + pp.prettyprint(x.getTgtElem());
       }
       if (tmp.contains("\n")) {
         tmp = tmp.split("\n")[0];
@@ -824,14 +820,14 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     for (CDMemberDiff x : changedMembers) {
       add.put(
-        x.printCD2Element(),
+        x.printSrcMember(),
         Integer.valueOf(
           x.getSrcElem().get_SourcePositionStart().getLine()
             + ""
             + x.getSrcElem().get_SourcePositionStart().getColumn()));
-      String tmp = bodyOffset + pp.prettyprint(x.getSrcElem());
+      String tmp = "\t" + pp.prettyprint(x.getSrcElem());
       if (!x.getDiffList().isEmpty()) {
-        tmp = bodyOffsetChange + "  " + pp.prettyprint(x.getSrcElem());
+        tmp = "\t" + pp.prettyprint(x.getSrcElem());
       }
       if (tmp.contains("\n")) {
         tmp = tmp.split("\n")[0];
@@ -844,35 +840,23 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
             + x.getSrcElem().get_SourcePositionStart().getColumn()));
     }
 
-    if(deletedConstants != null) {
-      for (ASTCDEnumConstant x : getDeletedConstants()) {
-        StringBuilder delEnumConstant = new StringBuilder();
-        String deletedEnumConstant = pp.prettyprint(x);
-        if (deletedEnumConstant.contains("\n")) {
-          deletedEnumConstant = deletedEnumConstant.split("\n")[0];
+    if(addedAttributes!= null) {
+      for (ASTCDAttribute x : addedAttributes) {
+        StringBuilder addAttri = new StringBuilder();
+        String addedAttribute = pp.prettyprint(x);
+        if (addedAttribute.contains("\n")) {
+          addedAttribute = addedAttribute.split("\n")[0];
         }
-
-        delEnumConstant.append(COLOR_DELETE).append(deletedEnumConstant).append(RESET);
-        matchDel.put(
-          delEnumConstant.toString(),
+        addNC.put(
+          "\t" + addedAttribute,
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
               + ""
               + x.get_SourcePositionStart().getColumn()));
-      }
-    }
 
-    if(addedConstants != null) {
-      for (ASTCDEnumConstant x : getAddedConstants()) {
-        StringBuilder addEnumConst = new StringBuilder();
-        String addedEnumConstant = pp.prettyprint(x);
-        if (addedEnumConstant.contains("\n")) {
-          addedEnumConstant = addedEnumConstant.split("\n")[0];
-        }
-
-        addEnumConst.append(COLOR_ADD).append(addedEnumConstant).append(RESET);
+        addAttri.append(COLOR_ADD).append(addedAttribute).append(RESET);
         add.put(
-          addEnumConst.toString(),
+          addAttri.toString(),
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
               + ""
@@ -898,23 +882,18 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       }
     }
 
-    if(addedAttributes!= null) {
-      for (ASTCDAttribute x : addedAttributes) {
-        StringBuilder addAttri = new StringBuilder();
-        String addedAttribute = pp.prettyprint(x);
-        if (addedAttribute.contains("\n")) {
-          addedAttribute = addedAttribute.split("\n")[0];
-        }
-        addNC.put(
-          bodyOffsetAdd + addedAttribute,
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
 
-        addAttri.append(COLOR_ADD).append(addedAttribute).append(RESET);
+    if(addedConstants != null) {
+      for (ASTCDEnumConstant x : getAddedConstants()) {
+        StringBuilder addEnumConst = new StringBuilder();
+        String addedEnumConstant = pp.prettyprint(x);
+        if (addedEnumConstant.contains("\n")) {
+          addedEnumConstant = addedEnumConstant.split("\n")[0];
+        }
+
+        addEnumConst.append(COLOR_ADD).append(addedEnumConstant).append(RESET);
         add.put(
-          addAttri.toString(),
+          addEnumConst.toString(),
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
               + ""
@@ -922,23 +901,41 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       }
     }
 
-    if(inheritedAttributes!= null) {
+    if(deletedConstants != null) {
+      for (ASTCDEnumConstant x : getDeletedConstants()) {
+        StringBuilder delEnumConstant = new StringBuilder();
+        String deletedEnumConstant = pp.prettyprint(x);
+        if (deletedEnumConstant.contains("\n")) {
+          deletedEnumConstant = deletedEnumConstant.split("\n")[0];
+        }
+
+        delEnumConstant.append(COLOR_DELETE).append(deletedEnumConstant).append(RESET);
+        matchDel.put(
+          delEnumConstant.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
+      }
+    }
+
+    if(inheritedAttributes != null) {
       for (ASTCDAttribute x : inheritedAttributes) {
-        StringBuilder addAttri = new StringBuilder();
-        String addedAttribute = pp.prettyprint(x);
-        if (addedAttribute.contains("\n")) {
-          addedAttribute = addedAttribute.split("\n")[0];
+        StringBuilder inhAttr = new StringBuilder();
+        String inheritedAttribute = pp.prettyprint(x);
+        if (inheritedAttribute.contains("\n")) {
+          inheritedAttribute = inheritedAttribute.split("\n")[0];
         }
         addNC.put(
-          bodyOffsetAdd + addedAttribute,
+          "\t" + inheritedAttribute,
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
               + ""
               + x.get_SourcePositionStart().getColumn()));
 
-        addAttri.append(COLOR_INHERITED).append(addedAttribute).append(RESET);
+        inhAttr.append(COLOR_INHERITED).append(inheritedAttribute).append(RESET);
         add.put(
-          addAttri.toString(),
+          inhAttr.toString(),
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
               + ""
@@ -946,43 +943,29 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
       }
     }
 
-    Map<Integer, String> matchAndDelete =
-      matchDel.entrySet().stream()
-        .sorted(Map.Entry.comparingByValue())
-        .collect(
-          Collectors.toMap(
-            Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    matchAndDelete.forEach(
-      (k, v) -> bodyCD1.append(bodyOffset).append(v).append(System.lineSeparator()));
+    Map<Integer, String> matchAndDelete = matchDel.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
+    matchAndDelete.forEach((k, v) -> bodyTgtCD.append("\t").append(v).append(System.lineSeparator()));
 
-    Map<Integer, String> matchAndAdd =
-      add.entrySet().stream()
-        .sorted(Map.Entry.comparingByValue())
-        .collect(
-          Collectors.toMap(
-            Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    matchAndAdd.forEach(
-      (k, v) -> bodyCD2.append(bodyOffset).append(v).append(System.lineSeparator()));
+    Map<Integer, String> matchAndAdd = add.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
+    matchAndAdd.forEach((k, v) -> bodySrcCD.append("\t").append(v).append(System.lineSeparator()));
 
-
-
-    outputCD1.append(signatureCD1);
-    if (!bodyCD1.toString().isEmpty()) {
-      outputCD1.append("{ ").append(System.lineSeparator()).append(bodyCD1).append("}");
+    outputTgtCD.append(signatureTgtCD);
+    if (!bodyTgtCD.toString().isEmpty()) {
+      outputTgtCD.append("{ ").append(System.lineSeparator()).append(bodyTgtCD).append("}");
     } else {
-      outputCD1.append(";");
+      outputTgtCD.append("{ ").append("}");
     }
 
-    srcPrint = outputCD1.toString();
+    tgtPrint = outputTgtCD.toString();
 
-    outputCD2.append(signatureCD2);
-    if (!bodyCD2.toString().isEmpty()) {
-      outputCD2.append("{ ").append(System.lineSeparator()).append(bodyCD2).append("}");
+    outputSrcCD.append(signatureSrcCD);
+    if (!bodySrcCD.toString().isEmpty()) {
+      outputSrcCD.append("{ ").append(System.lineSeparator()).append(bodySrcCD).append("}");
     } else {
-      outputCD2.append(";");
+      outputSrcCD.append("{ ").append("}");
     }
 
-    tgtPrint = outputCD2.toString();
+    srcPrint = outputSrcCD.toString();
   }
   public String printSrcCD() { return srcPrint; }
 

@@ -1,9 +1,12 @@
 import java.lang.String;
 
 classdiagram Target2 {
+  enum EnumsCheck{a, b, d, e;}
+
   class A implements B{}
 
   class B{
-    int d;
+    EnumsCheck b;
+    EnumsCheck e;
   }
 }
