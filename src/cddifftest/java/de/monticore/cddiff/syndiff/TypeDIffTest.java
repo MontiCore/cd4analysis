@@ -267,8 +267,6 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
     System.out.println(typeDiff.printTgtCD());
-    System.out.println(typeDiff.getBaseDiff());
-    System.out.println(typeDiff.getSuperTypes());
     //System.out.println(typeDiff.getChangedMembers());
     //System.out.println(typeDiff.getMatchedAttributes());
   }
@@ -284,9 +282,6 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, scopeSrcCD, scopeTgtCD);
     System.out.println(typeDiff.printTgtCD());
-    System.out.println(typeDiff.getSuperTypes());
-    //System.out.println(typeDiff.printCD1());
-    System.out.println(typeDiff.getBaseDiff());
   }
 
   @Test
