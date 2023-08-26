@@ -4,24 +4,37 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
+import de.monticore.matcher.*;
 import de.se_rwth.commons.logging.Log;
+import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class AssocDiffTest extends CDDiffTestBasis {
+  NameTypeMatcher nameTypeMatch;
+  StructureTypeMatcher structureTypeMatch;
+  SuperTypeMatcher superTypeMatch;
+  NameAssocMatcher nameAssocMatch;
+  SrcTgtAssocMatcher associationSrcTgtMatch;
+  List<MatchingStrategy<ASTCDType>> typeMatchers;
+  List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
   @BeforeEach
   public void setup() {
     Log.init();
@@ -30,18 +43,29 @@ public class AssocDiffTest extends CDDiffTestBasis {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-  /*@Test
+  @Test
   public void testCD10() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD101.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD102.cd");
-
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
+    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
+    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
+    typeMatchers = new ArrayList<>();
+    typeMatchers.add(nameTypeMatch);
+    typeMatchers.add(structureTypeMatch);
+    typeMatchers.add(superTypeMatch);
+    assocMatchers = new ArrayList<>();
+    assocMatchers.add(nameAssocMatch);
+    assocMatchers.add(associationSrcTgtMatch);
     ASTCDClass astcdClass = CDTestHelper.getClass("Q", compilationUnitNew.getCDDefinition());
     ASTCDClass astcdClass1 = CDTestHelper.getClass("Q", compilationUnitOld.getCDDefinition());
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
 
     CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
@@ -60,14 +84,25 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testCD5() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD51.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD52.cd");
-
+    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
+    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
+    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
+    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
+    typeMatchers = new ArrayList<>();
+    typeMatchers.add(nameTypeMatch);
+    typeMatchers.add(structureTypeMatch);
+    typeMatchers.add(superTypeMatch);
+    assocMatchers = new ArrayList<>();
+    assocMatchers.add(nameAssocMatch);
+    assocMatchers.add(associationSrcTgtMatch);
     ASTCDClass astcdClass = CDTestHelper.getClass("S", compilationUnitNew.getCDDefinition());
     ASTCDClass astcdClass1 = CDTestHelper.getClass("S", compilationUnitOld.getCDDefinition());
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
 
     CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
@@ -123,7 +158,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     // Assert the result
     List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();
     //Assert.assertEquals(list, result2);
-  }*/
+  }
 
 
 
