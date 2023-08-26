@@ -65,8 +65,8 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   public Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
 
   public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,
-                      MatchingStrategy<ASTCDType> typeMatcher,
-                      MatchingStrategy<ASTCDAssociation> assocMatcher) {
+                      List<MatchingStrategy<ASTCDType>> typeMatchers,
+                      List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
     helper.setSrcCD(srcCD);
@@ -99,11 +99,11 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     addAllDeletedClasses(srcCD, tgtCD);
     addAllAddedEnums(srcCD, tgtCD);
     addAllDeletedEnums(srcCD, tgtCD);
-    addAllAddedAssocs(srcCD, tgtCD, assocMatcher);
-    addAllDeletedAssocs(srcCD, tgtCD, assocMatcher);
-    addAllMatchedClasses(srcCD, tgtCD, typeMatcher);
-    addAllMatchedInterfaces(srcCD, tgtCD, typeMatcher);
-    addAllMatchedAssocs(srcCD, tgtCD, assocMatcher);
+    addAllAddedAssocs(srcCD, tgtCD, assocMatchers);
+    addAllDeletedAssocs(srcCD, tgtCD, assocMatchers);
+    addAllMatchedClasses(srcCD, tgtCD, typeMatchers);
+    addAllMatchedInterfaces(srcCD, tgtCD, typeMatchers);
+    addAllMatchedAssocs(srcCD, tgtCD, assocMatchers);
 
     StringBuilder initial = new StringBuilder();
     StringBuilder classPrints = new StringBuilder();
@@ -527,7 +527,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       for (ASTCDClass classToCheck : classesToCheck){
         for (ASTCDAttribute attribute : attributes){
           if (Syn2SemDiffHelper.isAttContainedInClass(attribute, classToCheck)){
-
+            //TODO: add function
           } else {
             Set<ASTCDClass> classes = CDDiffUtil.getAllSuperclasses(classToCheck, helper.getSrcCD().getCDDefinition().getCDClassesList());
             classes.remove(astcdClass);
@@ -1790,12 +1790,17 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   }
 
   //FERTIG
-  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, MatchingStrategy<ASTCDAssociation> assocMatcher) {
+  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
       boolean notFound = true;
       for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-        if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-          notFound = false;
+        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
+          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+            notFound = false;
+            break;
+          }
+        }
+        if(!notFound) {
           break;
         }
       }
@@ -1806,12 +1811,17 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   }
 
   //FERTIG
-  public void addAllDeletedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, MatchingStrategy<ASTCDAssociation> assocMatcher) {
+  public void addAllDeletedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
     for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
       boolean notFound = true;
       for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-        if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-          notFound = false;
+        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
+          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+            notFound = false;
+            break;
+          }
+        }
+        if(!notFound) {
           break;
         }
       }
@@ -1821,43 +1831,52 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     }
   }
 
-  //FERTIG
-  public void addAllMatchedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,
-                                   MatchingStrategy<ASTCDType> typeMatcher) {
+  public void addAllMatchedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
     List<ASTCDClass> tgtClasses = tgtCD.getCDDefinition().getCDClassesList();
     for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDClass tgtClass : tgtClasses) {
-        if (typeMatcher.isMatched(srcClass, tgtClass)) {
-          matchedClasses.add(new Pair(srcClass, tgtClass));
-          tgtClasses.remove(tgtClass);
-          break;
+        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
+          if (typeMatcher.isMatched(srcClass, tgtClass)) {
+            matchedClasses.add(new Pair<>(srcClass, tgtClass));
+            tgtClasses.remove(tgtClass);
+            break;
+          }
         }
+        break;
       }
     }
   }
 
   //FERTIG
-  public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,
-                                      MatchingStrategy<ASTCDType> typeMatcher) {
+  public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
+    List<ASTCDInterface> tgtInterfaces = tgtCD.getCDDefinition().getCDInterfacesList();
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
-      for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
-        if (typeMatcher.isMatched(srcInterface, tgtInterface)) {
-          matchedInterfaces.add(new Pair<>(srcInterface, tgtInterface));
-          break;
+      for (ASTCDInterface tgtInterface : tgtInterfaces) {
+        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
+          if (typeMatcher.isMatched(srcInterface, tgtInterface)) {
+            matchedInterfaces.add(new Pair<>(srcInterface, tgtInterface));
+            tgtInterfaces.remove(tgtInterface);
+            break;
+          }
         }
+        break;
       }
     }
   }
 
   //FERTIG
-  public void addAllMatchedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,
-                                  MatchingStrategy<ASTCDAssociation> assocMatcher) {
+  public void addAllMatchedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
+    List<ASTCDAssociation> tgtAssocs = tgtCD.getCDDefinition().getCDAssociationsList();
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-      for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-        if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-          matchedAssocs.add(new Pair<>(srcAssoc, tgtAssoc));
-          break;
+      for (ASTCDAssociation tgtAssoc : tgtAssocs) {
+        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
+          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+            matchedAssocs.add(new Pair<>(srcAssoc, tgtAssoc));
+            tgtAssocs.remove(tgtAssoc);
+            break;
+          }
         }
+        break;
       }
     }
   }

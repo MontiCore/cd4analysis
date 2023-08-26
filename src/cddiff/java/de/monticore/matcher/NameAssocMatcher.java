@@ -38,8 +38,6 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
     if (tgtElem.isPresentName() && srcElem.isPresentName()) {
       if (tgtElem.getName().equals(srcElem.getName())) {
         return true;
-      } else {
-        System.out.println("Association names do not match!");
       }
     }
     return false;
