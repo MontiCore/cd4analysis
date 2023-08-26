@@ -6,6 +6,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.interfaces.ICDAssocDiff;
 import de.monticore.cddiff.syndiff.datastructures.AssocCardinality;
@@ -470,6 +471,41 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
     this.srcAssocType = getColorCode(assocType) + pp.prettyprint(srcAssocType.get()) + RESET;
     this.tgtAssocType = getColorCode(assocType) + pp.prettyprint(tgtAssocType.get()) + RESET;
+
+    // Name
+    Optional<ASTCDAssociation> srcName = (srcAssoc.isPresentName()) ? Optional.of(srcAssoc) : Optional.empty();
+    Optional<ASTCDAssociation> tgtName = (tgtAssoc.isPresentName()) ? Optional.of(tgtAssoc) : Optional.empty();
+    CDNodeDiff<ASTCDAssociation, ASTCDAssociation> assocName = new CDNodeDiff<>(null, srcName, tgtName);
+
+    if(srcName.isPresent() && tgtName.isPresent()) {
+      if (!srcName.get().getName().equals(tgtName.get().getName())) {
+        assocName = new CDNodeDiff<>(Actions.CHANGED, srcName, tgtName);
+      }
+    }
+    if(srcName.isPresent() && !tgtName.isPresent()) {
+      assocName = new CDNodeDiff<>(Actions.ADDED, srcName, tgtName);
+    }
+    if(!srcName.isPresent() && tgtName.isPresent()) {
+      assocName = new CDNodeDiff<>(Actions.REMOVED, srcName, tgtName);
+    }
+
+    if(srcName.isPresent()) {
+      this.srcAssocName = getColorCode(assocName) + srcName.get().getName() + RESET;
+    }
+    if(tgtName.isPresent()) {
+      this.tgtAssocName = getColorCode(assocName) + tgtName.get().getName() + RESET;
+    }
+
+    if (assocName.checkForAction()) {
+      synDiffs.add(assocName);
+      if (assocName.getDiff().isPresent()) {
+        diffType
+          .append("Name")
+          .append(": ")
+          .append(assocName.getDiff().get())
+          .append(" ");
+      }
+    }
 
     // Association Direction
     Optional<ASTCDAssocDir> srcAssocDir = Optional.of(srcAssoc.getCDAssocDir());
