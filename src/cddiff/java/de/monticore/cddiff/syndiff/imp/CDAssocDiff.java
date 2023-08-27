@@ -51,6 +51,9 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole,
     tgtAssocDirection,
     tgtAssocRightCardinality, tgtAssocRightType, tgtAssocRightRole;
+
+  int srcLineOfCode;
+  int tgtLineOfCode;
   //Print end
 
   public CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
@@ -580,6 +583,10 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
         tgtAssocDirection = getColorCode(assocDirDiff) + pp.prettyprint(tgtAssocDir.get()) + RESET;
       }
     }
+
+    srcLineOfCode = srcAssoc.get_SourcePositionStart().getLine();
+    tgtLineOfCode = tgtAssoc.get_SourcePositionStart().getLine();
+
     this.diffList = synDiffs;
   }
 
@@ -669,12 +676,14 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // Build Source String
     srcAssoc =
       insertSpaceBetweenStrings(
-        Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality));
+        Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality)) +
+        " (Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";;
 
     // Build Target String
     tgtAssoc =
       insertSpaceBetweenStrings(
-        Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality));
+        Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality)) +
+        " (Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";;
 
   }
 
