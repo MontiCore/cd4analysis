@@ -5,6 +5,7 @@ classdiagram Source1 {
     double b;
     int d;
     int e;
+    String s;
     List<int> number;
   }
 
