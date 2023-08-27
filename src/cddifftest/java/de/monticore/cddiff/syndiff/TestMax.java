@@ -57,72 +57,83 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
 
     diff.getHelper().setMaps();
-    //TestHelper testHelper = new TestHelper(diff);
-    ASTCDClass a = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
-    ASTCDClass a1 = CDTestHelper.getClass("A1", compilationUnitNew.getCDDefinition());
-    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
-    ASTCDClass a3 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
-    ASTCDClass a4 = CDTestHelper.getClass("A4", compilationUnitNew.getCDDefinition());
-
-    ASTCDClass a1old = CDTestHelper.getClass("A1", compilationUnitOld.getCDDefinition());
-    ASTCDClass a2old = CDTestHelper.getClass("A2", compilationUnitOld.getCDDefinition());
-    ASTCDClass a5 = CDTestHelper.getClass("A5", compilationUnitOld.getCDDefinition());
-    ASTCDClass a3old = CDTestHelper.getClass("A3", compilationUnitOld.getCDDefinition());
-    ASTCDClass a4old = CDTestHelper.getClass("A4", compilationUnitOld.getCDDefinition());
-
-    assert a2 != null;
-    ASTCDAttribute i = CDTestHelper.getAttribute(a2, "i");
-    assert a3 != null;
-    ASTCDAttribute s = CDTestHelper.getAttribute(a3, "s");
-    assert a4 != null;
-    ASTCDAttribute doub = CDTestHelper.getAttribute(a4, "d");
-    assert a4old != null;
-
-
-
-    ASTCDAssociation a1a2 = CDTestHelper.getAssociation(a1, "a2", compilationUnitNew.getCDDefinition());
-    ASTCDAssociation a2a4 = CDTestHelper.getAssociation(a2, "a4", compilationUnitNew.getCDDefinition());
-    ASTCDAssociation a4a3 = CDTestHelper.getAssociation(a4, "a3", compilationUnitNew.getCDDefinition());
-    ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    ASTCDAssociation a1a2old = CDTestHelper.getAssociation(a1old, "a2", compilationUnitOld.getCDDefinition());
-    ASTCDAssociation a2a4old = CDTestHelper.getAssociation(a2old, "a4", compilationUnitOld.getCDDefinition());
-    ASTCDAssociation a2a3old = CDTestHelper.getAssociation(a2old, "a3", compilationUnitOld.getCDDefinition());
-    ASTCDAssociation a3a5old = CDTestHelper.getAssociation(a3old, "a5", compilationUnitOld.getCDDefinition());
-
-
-
-    assert a != null;
-    boolean isClassAdded = diff.isSupClass(a);
-    CDTypeDiff typeDiff = new CDTypeDiff(a2, a2old, scopeNew, scopeOld);
-    boolean addedAtt = typeDiff.isAdded(i, compilationUnitNew);
-
-    CDTypeDiff typeDiff2 = new CDTypeDiff(a3, a3old, scopeNew, scopeOld);
-    boolean addedAtt2 = typeDiff2.isAdded(s, compilationUnitNew);
-    CDTypeDiff typeDiff3 = new CDTypeDiff(a4, a4old, scopeNew, scopeOld);
-    typeDiff3.setChangedMembers(new ArrayList<>());
-    Pair<ASTCDClass, List<ASTCDAttribute>> changedAtt = typeDiff3.changedAttribute();
-
-    CDAssocDiff assocDiff = new CDAssocDiff(a1a2, a1a2old);
-    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cradDiff = assocDiff.getCardDiff();
-    CDAssocDiff assocDiff2 = new CDAssocDiff(a2a4, a2a4old);
-    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff2 = assocDiff2.getCardDiff();
-    CDAssocDiff assocDiff3 = new CDAssocDiff(a2a3, a2a3old);
-    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff3 = assocDiff3.getCardDiff();
-
-    Assert.assertFalse(isClassAdded);
-    Assert.assertTrue(addedAtt);
-    Assert.assertTrue(addedAtt2);
-    System.out.println(changedAtt);
-    System.out.println(cradDiff);
-    System.out.println(cardDiff2);
-    System.out.println(cardDiff3);
-
-    assert a4a3 != null;
-    boolean isAddedAssoc = diff.isAddedAssoc(a4a3);
-    ASTCDClass isAssocDeleted = diff.isAssocDeleted(a3a5old, a3old);
-    Assert.assertTrue(isAddedAssoc);
-    System.out.println(isAssocDeleted);
+    diff.findOverlappingAssocs();
+//    //TestHelper testHelper = new TestHelper(diff);
+//    ASTCDClass a = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
+//    ASTCDClass a1 = CDTestHelper.getClass("A1", compilationUnitNew.getCDDefinition());
+//    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
+//    ASTCDClass a3 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
+//    ASTCDClass a4 = CDTestHelper.getClass("A4", compilationUnitNew.getCDDefinition());
+//
+//    ASTCDClass a1old = CDTestHelper.getClass("A1", compilationUnitOld.getCDDefinition());
+//    ASTCDClass a2old = CDTestHelper.getClass("A2", compilationUnitOld.getCDDefinition());
+//    ASTCDClass a5 = CDTestHelper.getClass("A5", compilationUnitOld.getCDDefinition());
+//    ASTCDClass a3old = CDTestHelper.getClass("A3", compilationUnitOld.getCDDefinition());
+//    ASTCDClass a4old = CDTestHelper.getClass("A4", compilationUnitOld.getCDDefinition());
+//
+//    assert a2 != null;
+//    ASTCDAttribute i = CDTestHelper.getAttribute(a2, "i");
+//    assert a3 != null;
+//    ASTCDAttribute s = CDTestHelper.getAttribute(a3, "s");
+//    assert a4 != null;
+//    ASTCDAttribute doub = CDTestHelper.getAttribute(a4, "d");
+//    assert a4old != null;
+//
+//
+//
+//    ASTCDAssociation a1a2 = CDTestHelper.getAssociation(a1, "a2", compilationUnitNew.getCDDefinition());
+//    ASTCDAssociation a2a4 = CDTestHelper.getAssociation(a2, "a4", compilationUnitNew.getCDDefinition());
+//    ASTCDAssociation a4a3 = CDTestHelper.getAssociation(a4, "a3", compilationUnitNew.getCDDefinition());
+//    ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
+//
+//    ASTCDAssociation a1a2old = CDTestHelper.getAssociation(a1old, "a2", compilationUnitOld.getCDDefinition());
+//    ASTCDAssociation a2a4old = CDTestHelper.getAssociation(a2old, "a4", compilationUnitOld.getCDDefinition());
+//    ASTCDAssociation a2a3old = CDTestHelper.getAssociation(a2old, "a3", compilationUnitOld.getCDDefinition());
+//    ASTCDAssociation a3a5old = CDTestHelper.getAssociation(a3old, "a5", compilationUnitOld.getCDDefinition());
+//
+//
+//
+//    assert a != null;
+//    boolean isClassAdded = diff.isSupClass(a);
+//    CDTypeDiff typeDiff = new CDTypeDiff(a2, a2old, scopeNew, scopeOld);
+//    boolean addedAtt = typeDiff.isAdded(i, compilationUnitNew);
+//
+//    CDTypeDiff typeDiff2 = new CDTypeDiff(a3, a3old, scopeNew, scopeOld);
+//    boolean addedAtt2 = typeDiff2.isAdded(s, compilationUnitNew);
+//    CDTypeDiff typeDiff3 = new CDTypeDiff(a4, a4old, scopeNew, scopeOld);
+//    typeDiff3.setChangedMembers(new ArrayList<>());
+//    Pair<ASTCDClass, List<ASTCDAttribute>> changedAtt = typeDiff3.changedAttribute();
+//
+//    CDAssocDiff assocDiff = new CDAssocDiff(a1a2, a1a2old);
+//    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cradDiff = assocDiff.getCardDiff();
+//    CDAssocDiff assocDiff2 = new CDAssocDiff(a2a4, a2a4old);
+//    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff2 = assocDiff2.getCardDiff();
+//    CDAssocDiff assocDiff3 = new CDAssocDiff(a2a3, a2a3old);
+//    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff3 = assocDiff3.getCardDiff();
+//
+//    Assert.assertFalse(isClassAdded);
+//    Assert.assertTrue(addedAtt);
+//    Assert.assertTrue(addedAtt2);
+//    System.out.println(changedAtt);
+//    System.out.println(cradDiff);
+//    System.out.println(cardDiff2);
+//    System.out.println(cardDiff3);
+//
+//    assert a4a3 != null;
+//    boolean isAddedAssoc = diff.isAddedAssoc(a4a3);
+//    ASTCDClass isAssocDeleted = diff.isAssocDeleted(a3a5old, a3old);
+//    Assert.assertTrue(isAddedAssoc);
+//    System.out.println(isAssocDeleted);
+    System.out.println(diff.getChangedAssocs());
+    System.out.println(diff.getChangedClasses());
+    TestHelper testHelper = new TestHelper(diff);
+    testHelper.addedAssocs();
+    testHelper.addedClasses();
+    testHelper.addedConstants();
+    testHelper.changedAssocs();
+    testHelper.changedTypes();
+    //testHelper.inheritanceDiffs();
+    testHelper.srcExistsTgtNot();
   }
 
   @Test
@@ -148,7 +159,16 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(associationSrcTgtMatch);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    diff.getHelper().setMaps();
+    diff.findOverlappingAssocs();
     TestHelper testHelper = new TestHelper(diff);
+    testHelper.addedAssocs();
+    testHelper.addedClasses();
+    testHelper.addedConstants();
+    testHelper.changedAssocs();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.srcExistsTgtNot();
   }
 
   @Test
@@ -543,7 +563,7 @@ public class TestMax extends CDDiffTestBasis {
 
   @Test
   public void testBuilder(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
@@ -568,8 +588,8 @@ public class TestMax extends CDDiffTestBasis {
 
     ODHelper odHelper = new ODHelper();
 
-    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
-    ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
+    ASTCDClass a2 = CDTestHelper.getClass("A4", compilationUnitNew.getCDDefinition());
+    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
 //    for (AssocStruct assocStruct : diff.getHelper().getSrcMap().get(a2)) {
 //      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
@@ -577,6 +597,6 @@ public class TestMax extends CDDiffTestBasis {
 //    Set<Package> test = odHelper.createChains(new HashSet<>(), diff.getHelper().getSrcMap().get(a2));
 //    List<Package> test1 = new ArrayList<>(test);
 //    System.out.println(getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-    Set<ASTODElement> set = odHelper.getObjectsForOD(a2);
+    Set<ASTODElement> set = odHelper.getObjForOD(a2);
   }
 }
