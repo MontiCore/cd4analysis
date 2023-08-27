@@ -41,7 +41,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   private String
     srcModifier, srcType, srcName, srcExtends, srcImplements,
     tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements,
-    srcPrint, tgtPrint, srcPrintOnlyAdded;
+    srcPrint, tgtPrint, srcPrintOnlyAdded, tgtPrintOnlyDeleted, srcPrintOnlyChanged, tgtPrintOnlyChanged;
   //Print end
 
   public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem,
@@ -792,10 +792,16 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     StringBuilder outputTgtCD = new StringBuilder();
     StringBuilder outputSrcCD = new StringBuilder();
     StringBuilder onlyAddedOutputSrcCD = new StringBuilder();
+    StringBuilder onlyDeletedOutputTgtCD = new StringBuilder();
+    StringBuilder onlyChangedOutputSrcCD = new StringBuilder();
+    StringBuilder onlyChangedOutputTgtCD = new StringBuilder();
 
     StringBuilder bodyTgtCD = new StringBuilder();
     StringBuilder bodySrcCD = new StringBuilder();
     StringBuilder onlyAddedBody = new StringBuilder();
+    StringBuilder onlyDeletedBody = new StringBuilder();
+    StringBuilder onlyChangedBodySrc = new StringBuilder();
+    StringBuilder onlyChangedBodyTgt = new StringBuilder();
 
     String signatureSrcCD = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
     String signatureTgtCD = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
@@ -803,9 +809,18 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     Map<String, Integer> forSrc = new HashMap<>();
     Map<String, Integer> forTgt = new HashMap<>();
     Map<String, Integer> onlyAdded = new HashMap<>();
+    Map<String, Integer> onlyDeleted = new HashMap<>();
+    Map<String, Integer> onlyChangedSrc = new HashMap<>();
+    Map<String, Integer> onlyChangedTgt = new HashMap<>();
 
     for (CDMemberDiff x : changedMembers) {
       forSrc.put(
+        x.printSrcMember(),
+        Integer.valueOf(
+          x.getSrcElem().get_SourcePositionStart().getLine()
+            + ""
+            + x.getSrcElem().get_SourcePositionStart().getColumn()));
+      onlyChangedSrc.put(
         x.printSrcMember(),
         Integer.valueOf(
           x.getSrcElem().get_SourcePositionStart().getLine()
@@ -827,7 +842,12 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
           x.getTgtElem().get_SourcePositionStart().getLine()
             + ""
             + x.getTgtElem().get_SourcePositionStart().getColumn()));
-
+      onlyChangedTgt.put(
+        x.printTgtMember(),
+        Integer.valueOf(
+          x.getTgtElem().get_SourcePositionStart().getLine()
+            + ""
+            + x.getTgtElem().get_SourcePositionStart().getColumn()));
       String tmp = "\t" + pp.prettyprint(x.getTgtElem());
       if (!x.getBaseDiff().isEmpty()) {
         tmp = "\t" + pp.prettyprint(x.getTgtElem());
@@ -878,6 +898,12 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
             x.get_SourcePositionStart().getLine()
               + ""
               + x.get_SourcePositionStart().getColumn()));
+        onlyDeleted.put(
+          delAttri.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
       }
     }
 
@@ -897,6 +923,12 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
             x.get_SourcePositionStart().getLine()
               + ""
               + x.get_SourcePositionStart().getColumn()));
+        onlyAdded.put(
+          addEnumConst.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
       }
     }
 
@@ -910,6 +942,12 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
         delEnumConstant.append(COLOR_DELETE).append(deletedEnumConstant).append(RESET);
         forTgt.put(
+          delEnumConstant.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
+        onlyDeleted.put(
           delEnumConstant.toString(),
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
@@ -950,13 +988,21 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     Map<Integer, String> onlyAddedMap = onlyAdded.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
     onlyAddedMap.forEach((k, v) -> onlyAddedBody.append("\t").append(v).append(System.lineSeparator()));
 
+    Map<Integer, String> onlyDeletedMap = onlyDeleted.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
+    onlyDeletedMap.forEach((k, v) -> onlyDeletedBody.append("\t").append(v).append(System.lineSeparator()));
+
+    Map<Integer, String> onlyChangedMapSrc = onlyChangedSrc.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
+    onlyChangedMapSrc.forEach((k, v) -> onlyChangedBodySrc.append("\t").append(v).append(System.lineSeparator()));
+
+    Map<Integer, String> onlyChangedMapTgt = onlyChangedTgt.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
+    onlyChangedMapTgt.forEach((k, v) -> onlyChangedBodyTgt.append("\t").append(v).append(System.lineSeparator()));
+
     outputTgtCD.append(signatureTgtCD);
     if (!bodyTgtCD.toString().isEmpty()) {
       outputTgtCD.append("{ ").append(System.lineSeparator()).append(bodyTgtCD).append("}");
     } else {
       outputTgtCD.append(" {} ");
     }
-
     tgtPrint = outputTgtCD.toString();
 
     outputSrcCD.append(signatureSrcCD);
@@ -965,7 +1011,6 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     } else {
       outputSrcCD.append(" {}");
     }
-
     srcPrint = outputSrcCD.toString();
 
     onlyAddedOutputSrcCD.append(signatureSrcCD);
@@ -974,13 +1019,42 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     } else {
       onlyAddedOutputSrcCD.append(" {}");
     }
-
     srcPrintOnlyAdded = onlyAddedOutputSrcCD.toString();
+
+    onlyDeletedOutputTgtCD.append(signatureSrcCD);
+    if (!onlyDeletedBody.toString().isEmpty()) {
+      onlyDeletedOutputTgtCD.append("{ ").append(System.lineSeparator()).append(onlyDeletedBody).append("}");
+    } else {
+      onlyDeletedOutputTgtCD.append(" {}");
+    }
+    tgtPrintOnlyDeleted = onlyDeletedOutputTgtCD.toString();
+
+    onlyChangedOutputSrcCD.append(signatureSrcCD);
+    if (!onlyChangedBodySrc.toString().isEmpty()) {
+      onlyChangedOutputSrcCD.append("{ ").append(System.lineSeparator()).append(onlyChangedBodySrc).append("}");
+    } else {
+      onlyChangedOutputSrcCD.append(" {}");
+    }
+    srcPrintOnlyChanged = onlyChangedOutputSrcCD.toString();
+
+    onlyChangedOutputTgtCD.append(signatureSrcCD);
+    if (!onlyChangedBodyTgt.toString().isEmpty()) {
+      onlyChangedOutputTgtCD.append("{ ").append(System.lineSeparator()).append(onlyChangedBodyTgt).append("}");
+    } else {
+      onlyChangedOutputTgtCD.append(" {}");
+    }
+    tgtPrintOnlyChanged = onlyChangedOutputTgtCD.toString();
 
   }
   public String printSrcCD() { return srcPrint; }
 
-  public String printOnlyAddedSrc() { return srcPrintOnlyAdded; }
+  public String printOnlyAdded() { return srcPrintOnlyAdded; }
+
+  public String printOnlyDeleted() { return tgtPrintOnlyDeleted; }
+
+  public String printOnlyChangedFromSrc() { return srcPrintOnlyChanged; }
+
+  public String printOnlyChangedFromTgt() { return tgtPrintOnlyChanged; }
 
   public String printTgtCD() { return tgtPrint; }
 }

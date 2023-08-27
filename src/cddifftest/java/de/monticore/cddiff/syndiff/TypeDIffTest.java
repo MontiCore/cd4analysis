@@ -310,12 +310,26 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, scopeSrcCD, scopeTgtCD);
     CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, scopeSrcCD, scopeTgtCD);
 
-    System.out.println(typeDiff1.printOnlyAddedSrc());
-    System.out.println(typeDiff2.printOnlyAddedSrc());
     System.out.println("--------------------------------");
+    System.out.println("Print changed");
+    System.out.println(typeDiff1.printOnlyChangedFromSrc());
+    System.out.println(typeDiff2.printOnlyChangedFromSrc());
+    System.out.println(typeDiff1.printOnlyChangedFromTgt());
+    System.out.println(typeDiff2.printOnlyChangedFromTgt());
+    System.out.println("--------------------------------");
+    System.out.println("Print deleted");
+    System.out.println(typeDiff1.printOnlyDeleted());
+    System.out.println(typeDiff2.printOnlyDeleted());
+    System.out.println(typeDiff1.printOnlyDeleted());
+    System.out.println(typeDiff2.printOnlyDeleted());
+    System.out.println("--------------------------------");
+    System.out.println("Print added");
+    System.out.println(typeDiff1.printOnlyAdded());
+    System.out.println(typeDiff2.printOnlyAdded());
+    System.out.println("--------------------------------");
+    System.out.println("Print diffs");
     System.out.println(typeDiff1.printSrcCD());
     System.out.println(typeDiff2.printSrcCD());
-    System.out.println("--------------------------------");
     System.out.println(typeDiff1.printTgtCD());
     System.out.println(typeDiff2.printTgtCD());
   }
