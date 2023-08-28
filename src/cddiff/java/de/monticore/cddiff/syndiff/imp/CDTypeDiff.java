@@ -38,8 +38,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
   //Print
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   private String
-    srcModifier, srcType, srcName, srcExtends, srcImplements,
-    tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements,
+    srcModifier, srcType, srcName, srcExtends, srcImplements, srcModifierNC, srcTypeNC, srcNameNC, srcExtendsNC, srcImplementsNC,
+    tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements, tgtModifierNC, tgtTypeNC, tgtNameNC, tgtExtendsNC, tgtImplementsNC,
     srcPrint, tgtPrint, srcPrintOnlyAdded, tgtPrintOnlyDeleted, srcPrintOnlyChanged, tgtPrintOnlyChanged;
   //Print end
 
@@ -569,6 +569,9 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     srcModifier.ifPresent(initial -> this.srcModifier = getColorCode(modifier) + pp.prettyprint(srcType.getModifier()) + RESET);
     tgtModifier.ifPresent(initial -> this.tgtModifier = getColorCode(modifier) + pp.prettyprint(tgtType.getModifier()) + RESET);
 
+    srcModifier.ifPresent(initial -> this.srcModifierNC = pp.prettyprint(srcType.getModifier()));
+    tgtModifier.ifPresent(initial -> this.tgtModifierNC = pp.prettyprint(tgtType.getModifier()));
+
     if (modifier.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_CLASS_MODIFIER)) {
         baseDiff.add(DiffTypes.CHANGED_CLASS_MODIFIER);
@@ -586,6 +589,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     this.srcName = getColorCode(className) + srcName.get().getName() + RESET;
     this.tgtName = getColorCode(className) + tgtName.get().getName() + RESET;
+    this.srcNameNC = srcName.get().getName() + RESET;
+    this.tgtNameNC = tgtName.get().getName() + RESET;
 
     if (className.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_CLASS_NAME)) {
@@ -594,16 +599,16 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     }
 
     if ((srcType instanceof ASTCDClass) && (tgtType instanceof ASTCDClass)) {
-      this.srcType = "class";
-      this.tgtType = "class";
+      this.srcType = this.srcTypeNC = "class";
+      this.tgtType = this.tgtTypeNC = "class";
       createClassDiff((ASTCDClass) srcType, (ASTCDClass) tgtType);
     } else if (srcType instanceof ASTCDInterface && tgtType instanceof ASTCDInterface) {
-      this.srcType = "interface";
-      this.tgtType = "interface";
+      this.srcType = this.srcTypeNC = "interface";
+      this.tgtType = this.tgtTypeNC = "interface";
       createInterfaceDiff((ASTCDInterface) srcType, (ASTCDInterface) tgtType);
     } else if (srcType instanceof ASTCDEnum && tgtType instanceof ASTCDEnum) {
-      this.srcType = "enum";
-      this.tgtType = "enum";
+      this.srcType = this.srcTypeNC = "enum";
+      this.tgtType = this.tgtTypeNC = "enum";
       createEnumDiff((ASTCDEnum) srcType, (ASTCDEnum) tgtType);
     }
   }
@@ -629,6 +634,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     srcElemExtends.ifPresent(initial -> srcExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
     tgtElemExtends.ifPresent(initial -> tgtExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
+    srcElemExtends.ifPresent(initial -> this.srcExtendsNC = pp.prettyprint(initial));
+    tgtElemExtends.ifPresent(initial -> this.tgtExtendsNC = pp.prettyprint(initial));
 
     if (extendedClassDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_EXTENDS)) {
@@ -643,6 +650,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
     tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    srcElemImplements.ifPresent(inter -> this.srcImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
+    tgtElemImplements.ifPresent(inter -> this.tgtImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
 
 
     if (implementedClassDiff.checkForAction()) {
@@ -661,6 +670,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     srcElemExtends.ifPresent(initial -> srcExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
     tgtElemExtends.ifPresent(initial -> tgtExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
+    srcElemExtends.ifPresent(initial -> this.srcExtendsNC = pp.prettyprint(initial));
+    tgtElemExtends.ifPresent(initial -> this.tgtExtendsNC = pp.prettyprint(initial));
 
     if (interfaceDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_EXTENDS)) {
@@ -677,6 +688,8 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
 
     srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
     tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    srcElemImplements.ifPresent(inter -> this.srcImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
+    tgtElemImplements.ifPresent(inter -> this.tgtImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
 
     if (enumDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_IMPLEMENTS)) {
@@ -736,7 +749,9 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     StringBuilder onlyChangedBodyTgt = new StringBuilder();
 
     String signatureSrcCD = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
+    String signatureSrcCDNC = insertSpaceBetweenStrings(Arrays.asList(srcModifierNC, srcTypeNC, srcNameNC, srcExtendsNC, srcImplementsNC));
     String signatureTgtCD = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
+    String signatureTgtCDNC = insertSpaceBetweenStrings(Arrays.asList(tgtModifierNC, tgtTypeNC, tgtNameNC, tgtExtendsNC, tgtImplementsNC));
 
     Map<String, Integer> forSrc = new HashMap<>();
     Map<String, Integer> forTgt = new HashMap<>();
@@ -945,19 +960,15 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     }
     srcPrint = outputSrcCD.toString();
 
-    onlyAddedOutputSrcCD.append(signatureSrcCD);
+    onlyAddedOutputSrcCD.append(signatureSrcCDNC);
     if (!onlyAddedBody.toString().isEmpty()) {
       onlyAddedOutputSrcCD.append("{ ").append(System.lineSeparator()).append(onlyAddedBody).append("}");
-    } else {
-      onlyAddedOutputSrcCD.append(" {}");
     }
     srcPrintOnlyAdded = onlyAddedOutputSrcCD.toString();
 
-    onlyDeletedOutputTgtCD.append(signatureSrcCD);
+    onlyDeletedOutputTgtCD.append(signatureTgtCDNC);
     if (!onlyDeletedBody.toString().isEmpty()) {
       onlyDeletedOutputTgtCD.append("{ ").append(System.lineSeparator()).append(onlyDeletedBody).append("}");
-    } else {
-      onlyDeletedOutputTgtCD.append(" {}");
     }
     tgtPrintOnlyDeleted = onlyDeletedOutputTgtCD.toString();
 
