@@ -233,6 +233,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       //assoc not reversed
       if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
         list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
+        assert !list.isEmpty();
       }
       if (!isContainedIn(cardToEnum(getSrcElem().getRight().getCDCardinality()), cardToEnum(getTgtElem().getRight().getCDCardinality()))){
         list.add(new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getRight().getCDCardinality()))));
@@ -245,6 +246,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
         list.add(new Pair<>(ClassSide.Right, findUniqueNumber(getTypeOfCard(getSrcElem().getRight().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
       }
     }
+    System.out.println("Cardinality diff is: " + list);
     return new Pair<>(srcElem, list);
   }
 
@@ -411,6 +413,8 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
   }
 
+  //TODO: check if this works for super/subclasses
+  //TODO: same function for src
   public boolean changedTgtClass(ASTCDCompilationUnit compilationUnit){
     Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), compilationUnit);
     Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), compilationUnit);

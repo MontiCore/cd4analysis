@@ -17,6 +17,8 @@ public class TestHelper {
 
   private final CDSyntaxDiff syntaxDiff;
 
+  private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
   public TestHelper(CDSyntaxDiff syntaxDiff) {
     this.syntaxDiff = syntaxDiff;
   }
@@ -38,14 +40,14 @@ public class TestHelper {
     public void inheritanceDiffs(){
       for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()){
         ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
-        if (!syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
+        if (syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
           astcdClass = syntaxDiff.helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
         }
           System.out.println("For the class " + astcdClass.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed");
           System.out.println("=======================================================");
         }
       }
-
+      //TODO: check is minDiffWitness is not null
 
       public void srcExistsTgtNot(){
         for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
@@ -136,7 +138,9 @@ public class TestHelper {
 
 
     public void changedAssocs(){
+    System.out.println("Changed associations:" + syntaxDiff.changedAssoc());
     for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
+      System.out.println("To check: " + assocDiffStruc.getAssociation());
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), syntaxDiff.getSrcCD());
       String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
       if (assocDiffStruc.isChangedDir()){
@@ -153,6 +157,23 @@ public class TestHelper {
       }
       System.out.println(comment);
       System.out.println("=======================================================");
+    }
+  }
+
+  public void staDiff(){
+    for (ASTCDClass astcdClass : syntaxDiff.getSTADiff()){
+      System.out.println("The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has changed superclasses.");
+      System.out.println("=======================================================");
+    }
+  }
+
+  public void deletedAssocs(){
+    for (Pair<ASTCDAssociation, ASTCDClass> pair : syntaxDiff.deletedAssocList()) {
+      ASTCDClass astcdClass = pair.b;
+      if (astcdClass.getModifier().isAbstract()) {
+        astcdClass = helper.minDiffWitness(astcdClass);
+      }
+      System.out.println("An association for the class " + pair.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.");
     }
   }
 

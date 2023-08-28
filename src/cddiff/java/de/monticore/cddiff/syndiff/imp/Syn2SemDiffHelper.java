@@ -921,8 +921,7 @@ public class Syn2SemDiffHelper {
       || cardinality2.equals(AssocCardinality.Multiple)){
       return true;
     } else if (cardinality1.equals(AssocCardinality.Optional)){
-      return !cardinality2.equals(AssocCardinality.One)
-        && !cardinality2.equals(AssocCardinality.AtLeastOne);
+      return cardinality2.equals(AssocCardinality.Optional);
     } else if (cardinality1.equals(AssocCardinality.AtLeastOne)){
       return cardinality2.equals(AssocCardinality.AtLeastOne);
     } else{
@@ -968,8 +967,7 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
-  public ASTCDClass minDiffWitness(
-    ASTCDClass baseClass) {
+  public ASTCDClass minDiffWitness(ASTCDClass baseClass) {
 
     List<ASTCDClass> subClasses = getSpannedInheritance(srcCD, baseClass);
 
@@ -1075,6 +1073,31 @@ public class Syn2SemDiffHelper {
           }
         }
       }
+    }
+    for (ASTCDClass astcdClass : srcToDelete) {
+      System.out.println("Class " + astcdClass.getName() + " and all subclasses must be deleted");
+    }
+    for (Pair<ASTCDClass, ASTCDRole> pair : srcAssocsToDelete) {
+      System.out.println("Associations from class " + pair.a.getSymbol().getInternalQualifiedName() + " with role " + pair.b.getName() + " must be deleted");
+    }
+    for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
+      System.out.println("Association between" + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
+        + " and " + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName()
+        + " must be merged with association between "
+        + getConnectedClasses(pair.getSuperAssoc().getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
+        + " and " + getConnectedClasses(pair.getSuperAssoc().getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName());
+    }
+    for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
+      System.out.println("Association between" + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
+        + " and " + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName()
+        + " must be deleted");
+    }
+    for (Pair<AssocStruct, AssocStruct> pair : srcAssocsToMerge) {
+      System.out.println("Association between" + getConnectedClasses(pair.a.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
+        + " and " + getConnectedClasses(pair.a.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName()
+        + " must be merged with association between "
+        + getConnectedClasses(pair.b.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
+        + " and " + getConnectedClasses(pair.b.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName());
     }
   }
 
