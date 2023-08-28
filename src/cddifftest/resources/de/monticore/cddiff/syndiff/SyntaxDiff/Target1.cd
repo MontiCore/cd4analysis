@@ -17,4 +17,5 @@ classdiagram Target1 {
   class D{}
 
   association [0..1] A -> C [1..*];
+  association [*] A -> D [1];
 }

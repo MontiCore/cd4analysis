@@ -474,15 +474,10 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, scopeSrcCD, scopeTgtCD, typeMatchers, assocMatchers);
     //System.out.println(syntaxDiff.print());
-    System.out.println("Matched Assocs");
-    System.out.println(syntaxDiff.getMatchedAssocs());
-    System.out.println("Matched Classes");
-    System.out.println(syntaxDiff.getMatchedClasses());
-    System.out.println("Changed Classes");
-    System.out.println(syntaxDiff.getChangedClasses());
     System.out.println(syntaxDiff.printSrcCD());
     System.out.println(syntaxDiff.printTgtCD());
     System.out.println(syntaxDiff.getBaseDiff());
+    System.out.println(syntaxDiff.print());
   }
 
   public void parseModels(String concrete, String ref) {

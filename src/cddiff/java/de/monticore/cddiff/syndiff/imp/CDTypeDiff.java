@@ -978,15 +978,11 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     tgtPrintOnlyChanged = onlyChangedOutputTgtCD.toString();
 
   }
-  public String printSrcCD() { return srcPrint; }
 
   public String printOnlyAdded() { return srcPrintOnlyAdded; }
-
   public String printOnlyDeleted() { return tgtPrintOnlyDeleted; }
-
   public String printOnlyChangedFromSrc() { return srcPrintOnlyChanged; }
-
   public String printOnlyChangedFromTgt() { return tgtPrintOnlyChanged; }
-
+  public String printSrcCD() { return srcPrint; }
   public String printTgtCD() { return tgtPrint; }
 }

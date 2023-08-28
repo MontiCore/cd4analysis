@@ -17,4 +17,5 @@ classdiagram Source1 {
   class E{}
 
   association [*] A -> C [1];
+  association [*] A -> B [1];
 }
