@@ -1,6 +1,8 @@
 import java.lang.String;
 
 classdiagram Target1 {
+  enum Deleted {a, b, c;}
+
   class A extends C{
     double a;
     double b;

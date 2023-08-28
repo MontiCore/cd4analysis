@@ -1,11 +1,15 @@
 import java.lang.String;
 
 classdiagram Source1 {
+  enum Deleted {a, b;}
+
   class A extends B{
     int a;
     int b;
     int c;
     int e;
+    double added1;
+    double added2;
   }
 
   class B extends C{
@@ -14,8 +18,16 @@ classdiagram Source1 {
 
   class C{}
 
-  class E{}
+  class E{
+    int pitch;
+    String addedSomething;
+    String addedAnotherThing;
+  }
+
+  class J{}
 
   association [*] A -> C [1];
   association [*] A -> B [1];
+  association [*] A -> E [1];
+  association [*] A -> J [1];
 }
