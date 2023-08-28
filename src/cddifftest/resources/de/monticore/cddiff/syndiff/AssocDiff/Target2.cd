@@ -7,5 +7,5 @@ classdiagram Target2 {
 
   class Customer;
 
-  association  CustomerService  [*] Customer (consults) <- (isConsultedBy) Woman [1..*];
+  association  CustomerService  [1..*] Customer (consults) <- (isConsultedBy) Woman [1..*];
 }
