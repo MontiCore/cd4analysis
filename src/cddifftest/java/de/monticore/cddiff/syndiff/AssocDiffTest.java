@@ -193,22 +193,10 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "consults", src.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "consults", tgt.getCDDefinition());
 
-    nameTypeMatch = new NameTypeMatcher(tgt);
-    structureTypeMatch = new StructureTypeMatcher(tgt);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, src, tgt);
-    nameAssocMatch = new NameAssocMatcher(tgt);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, src, tgt);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, typeMatchers, assocMatchers);
-    System.out.println(syntaxDiff.printSrcCD());
-    System.out.println(syntaxDiff.printTgtCD());
+    CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld);
+    System.out.println(associationDiff.printSrcAssoc());
+    System.out.println(associationDiff.printTgtAssoc());
+    System.out.println(associationDiff.getBaseDiff());
   }
 
   public void parseModels(String concrete, String ref) {
