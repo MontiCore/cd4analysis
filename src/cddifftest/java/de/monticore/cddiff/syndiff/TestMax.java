@@ -54,7 +54,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
 
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
@@ -124,8 +124,22 @@ public class TestMax extends CDDiffTestBasis {
 //    ASTCDClass isAssocDeleted = diff.isAssocDeleted(a3a5old, a3old);
 //    Assert.assertTrue(isAddedAssoc);
 //    System.out.println(isAssocDeleted);
+
+    System.out.println("Show matched assocs");
+    System.out.println(diff.getMatchedAssocs());
+    System.out.println("Show changed associations");
     System.out.println(diff.getChangedAssocs());
+    //association [*] A1 -> A2 [0..1];
+    //association [1] A2 <-> A3 [1];
+    //association [1..*] A4 <-> A2 [*];
+    System.out.println("Show matched classes");
+    System.out.println(diff.getMatchedClasses());
+    System.out.println("Show changed classes");
     System.out.println(diff.getChangedClasses());
+    // class A1
+    // class A2
+    // class A3 extends A2
+    // class A4
     TestHelper testHelper = new TestHelper(diff);
     testHelper.addedAssocs();
     testHelper.addedClasses();
@@ -158,7 +172,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
     TestHelper testHelper = new TestHelper(diff);
@@ -193,7 +207,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -219,7 +233,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -245,7 +259,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -271,7 +285,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -297,7 +311,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -323,7 +337,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -349,7 +363,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -375,7 +389,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -401,7 +415,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -427,7 +441,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -453,7 +467,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -479,7 +493,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -505,7 +519,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -531,7 +545,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -557,7 +571,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -583,7 +597,7 @@ public class TestMax extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     diff.getHelper().setMaps();
 
     ODHelper odHelper = new ODHelper();

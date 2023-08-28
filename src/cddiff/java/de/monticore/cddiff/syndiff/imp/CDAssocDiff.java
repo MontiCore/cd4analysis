@@ -4,9 +4,11 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.interfaces.ICDAssocDiff;
 import de.monticore.cddiff.syndiff.datastructures.AssocCardinality;
@@ -463,13 +465,15 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
 
     if (assocName.checkForAction()) {
-      baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
+      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_NAME)) {
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_NAME);
+      }
     }
 
     // Association Direction
     Optional<ASTCDAssocDir> srcAssocDir = Optional.of(srcAssoc.getCDAssocDir());
     Optional<ASTCDAssocDir> tgtAssocDir = Optional.of(tgtAssoc.getCDAssocDir());
-    CDNodeDiff<ASTCDAssocDir, ASTCDAssocDir> assocDirDiff = new CDNodeDiff<>(tgtAssocDir, srcAssocDir);
+    CDNodeDiff<ASTCDAssocDir, ASTCDAssocDir> assocDirDiff = new CDNodeDiff<>(srcAssocDir, tgtAssocDir);
 
     if (assocDirDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_DIRECTION)){
@@ -533,7 +537,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // Cardinality
     Optional<ASTCDCardinality> srcAssocCardinality = (srcAssocSide.isPresentCDCardinality()) ? Optional.of(srcAssocSide.getCDCardinality()) : Optional.empty();
     Optional<ASTCDCardinality> tgtAssocCardinality = (tgtAssocSide.isPresentCDCardinality()) ? Optional.of(tgtAssocSide.getCDCardinality()) : Optional.empty();
-    CDNodeDiff<ASTCDCardinality, ASTCDCardinality> assocCardinality = new CDNodeDiff<>(tgtAssocCardinality, srcAssocCardinality);
+    CDNodeDiff<ASTCDCardinality, ASTCDCardinality> assocCardinality = new CDNodeDiff<>(srcAssocCardinality, tgtAssocCardinality);
 
     if (assocCardinality.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CARDINALITY)){
@@ -545,12 +549,9 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // QualifiedType
     Optional<ASTMCQualifiedName> srcAssocType = Optional.of(srcAssocSide.getMCQualifiedType().getMCQualifiedName());
     Optional<ASTMCQualifiedName> tgtAssocType = Optional.of(tgtAssocSide.getMCQualifiedType().getMCQualifiedName());
-    CDNodeDiff<ASTMCQualifiedName, ASTMCQualifiedName> type = new CDNodeDiff<>(tgtAssocType, srcAssocType);
+    CDNodeDiff<ASTMCQualifiedName, ASTMCQualifiedName> type = new CDNodeDiff<>(srcAssocType, tgtAssocType);
 
     if (type.checkForAction()) {
-      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)){
-        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-      }
       diffs.add(type);
     }
 
@@ -560,9 +561,10 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     CDNodeDiff<ASTCDRole, ASTCDRole> assocRole = new CDNodeDiff<>(srcAssocRole, tgtAssocRole);
 
     if (assocRole.checkForAction()) {
-      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)) {
+      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_ROLE)){
         baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_ROLE);
       }
+      diffs.add(assocRole);
     }
 
     if (readyForPrinting) {

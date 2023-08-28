@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -35,6 +36,8 @@ public class AssocDiffTest extends CDDiffTestBasis {
   SrcTgtAssocMatcher associationSrcTgtMatch;
   List<MatchingStrategy<ASTCDType>> typeMatchers;
   List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
+  ICD4CodeArtifactScope scopeNew;
+  ICD4CodeArtifactScope scopeOld;
   @BeforeEach
   public void setup() {
     Log.init();
@@ -65,7 +68,9 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
 
     CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
@@ -102,7 +107,9 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
 
     CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
@@ -172,10 +179,8 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
-    ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
-    ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "b", src.getCDDefinition());
-    ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "b", tgt.getCDDefinition());
+    ASTCDAssociation assocNew = src.getCDDefinition().getCDAssociationsList().get(0);
+    ASTCDAssociation assocOld = tgt.getCDDefinition().getCDAssociationsList().get(0);
 
     CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld);
     System.out.println(associationDiff.printSrcAssoc());
@@ -197,6 +202,41 @@ public class AssocDiffTest extends CDDiffTestBasis {
     System.out.println(associationDiff.printSrcAssoc());
     System.out.println(associationDiff.printTgtAssoc());
     System.out.println(associationDiff.getBaseDiff());
+  }
+
+  @Test
+  public void testAssoc3() {
+    parseModels("Source3.cd", "Target3.cd");
+
+    ASTCDAssociation assocNew = src.getCDDefinition().getCDAssociationsList().get(0);
+    ASTCDAssociation assocOld = tgt.getCDDefinition().getCDAssociationsList().get(0);
+
+    nameTypeMatch = new NameTypeMatcher(tgt);
+    structureTypeMatch = new StructureTypeMatcher(tgt);
+    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, src, tgt);
+    nameAssocMatch = new NameAssocMatcher(tgt);
+    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, src, tgt);
+    typeMatchers = new ArrayList<>();
+    typeMatchers.add(nameTypeMatch);
+    typeMatchers.add(structureTypeMatch);
+    typeMatchers.add(superTypeMatch);
+    assocMatchers = new ArrayList<>();
+    assocMatchers.add(nameAssocMatch);
+    assocMatchers.add(associationSrcTgtMatch);
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+    ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
+    ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, scopeSrcCD, scopeTgtCD, typeMatchers, assocMatchers);
+    System.out.println(syntaxDiff.printSrcCD());
+    System.out.println(syntaxDiff.printTgtCD());
+    System.out.println(syntaxDiff.getBaseDiff());
+    System.out.println("Matched Assocs");
+    System.out.println(syntaxDiff.getMatchedAssocs());
+    System.out.println("Matched Classes");
+    System.out.println(syntaxDiff.getMatchedClasses());
+    //System.out.println(associationDiff.getDiffTypesList());
   }
 
   public void parseModels(String concrete, String ref) {

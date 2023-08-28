@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -36,6 +37,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   SrcTgtAssocMatcher associationSrcTgtMatch;
   List<MatchingStrategy<ASTCDType>> typeMatchers;
   List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
+  ICD4CodeArtifactScope scopeNew;
+  ICD4CodeArtifactScope scopeOld;
+
 
 
   @BeforeEach
@@ -67,8 +71,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
     System.out.println("------------");
@@ -101,8 +106,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     for (AssocStruct assocStruct : syntaxDiff.getHelper().getSrcMap().get(classC)){
@@ -138,8 +144,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
@@ -172,8 +179,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC).size());
@@ -209,8 +217,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classA));
@@ -245,8 +254,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classA));
@@ -277,8 +287,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     for (AssocStruct astcdClass : syntaxDiff.getHelper().getSrcMap().get(classA)){
@@ -314,8 +325,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classC = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     System.out.println(syntaxDiff.getHelper().getSrcMap().get(classC));
@@ -347,7 +359,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     assert classD != null;
@@ -380,7 +394,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDClass classA = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     boolean isClassDeleted = syntaxDiff.isClassDeleted(classD, classA);
@@ -412,7 +428,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDAssociation associationOld = CDTestHelper.getAssociation(classD2, "r", compilationUnitOld.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, typeMatchers, assocMatchers);
+    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
+    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     assert associationNew != null;
@@ -449,11 +467,22 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, typeMatchers, assocMatchers);
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+    ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
+    ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, scopeSrcCD, scopeTgtCD, typeMatchers, assocMatchers);
     //System.out.println(syntaxDiff.print());
-    //System.out.println(syntaxDiff.getMatchedClasses());
+    System.out.println("Matched Assocs");
+    System.out.println(syntaxDiff.getMatchedAssocs());
+    System.out.println("Matched Classes");
+    System.out.println(syntaxDiff.getMatchedClasses());
+    System.out.println("Changed Classes");
+    System.out.println(syntaxDiff.getChangedClasses());
     System.out.println(syntaxDiff.printSrcCD());
     System.out.println(syntaxDiff.printTgtCD());
+    System.out.println(syntaxDiff.getBaseDiff());
   }
 
   public void parseModels(String concrete, String ref) {

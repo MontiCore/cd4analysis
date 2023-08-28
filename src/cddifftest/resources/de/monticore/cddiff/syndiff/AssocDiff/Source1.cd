@@ -5,5 +5,5 @@ classdiagram Source1 {
 
   class B;
 
-  association new [1] A (a) -> (b) B [*];
+  association [1] A -> B [*];
 }
