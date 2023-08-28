@@ -46,6 +46,8 @@ public interface ICDSyntaxDiff {
   ASTCDCompilationUnit getTgtCD();
 
   void setTgtCD(ASTCDCompilationUnit tgtCD);
+  List<DiffTypes> getBaseDiff();
+  public void setBaseDiff(List<DiffTypes> baseDiff);
 
   void setChangedClasses(List<CDTypeDiff> changedCLasses);
 
