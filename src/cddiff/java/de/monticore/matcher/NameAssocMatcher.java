@@ -36,9 +36,7 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
   @Override
   public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (tgtElem.isPresentName() && srcElem.isPresentName()) {
-      if (tgtElem.getName().equals(srcElem.getName())) {
-        return true;
-      }
+      return tgtElem.getName().equals(srcElem.getName());
     }
     return false;
   }
