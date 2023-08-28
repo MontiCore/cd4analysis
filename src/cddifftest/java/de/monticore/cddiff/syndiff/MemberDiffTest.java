@@ -43,16 +43,17 @@ public class MemberDiffTest {
   public void testMember1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    ASTCDClass cNew = CDTestHelper.getClass("Customer", src.getCDDefinition());
-    ASTCDClass cOld = CDTestHelper.getClass("Customer", tgt.getCDDefinition());
+    ASTCDClass cNew = CDTestHelper.getClass("A", src.getCDDefinition());
+    ASTCDClass cOld = CDTestHelper.getClass("A", tgt.getCDDefinition());
 
-    assert cNew != null;
     ASTNode attributeNew = CDTestHelper.getAttribute(cNew, "a");
-    assert cOld != null;
     ASTNode attributeOld = CDTestHelper.getAttribute(cOld, "a");
 
-    CDMemberDiff memberDiff = new CDMemberDiff(attributeNew,attributeOld);
-    System.out.println(memberDiff.getBaseDiff());
+
+    CDMemberDiff attrDiff = new CDMemberDiff(attributeNew,attributeOld);
+    System.out.println(attrDiff.printSrcMember());
+    System.out.println(attrDiff.printTgtMember());
+    System.out.println(attrDiff.getBaseDiff());
   }
 
   public void parseModels(String concrete, String ref) {
