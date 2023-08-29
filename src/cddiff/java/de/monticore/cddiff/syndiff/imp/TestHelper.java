@@ -58,41 +58,9 @@ public class TestHelper {
 
       public void changedTypes() {
         for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()) {
-          if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
-            StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
-            if (typeDiffStruc.getAddedAttributes() != null) {
-              comment.append("\nadded attributes - ");
-              for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
-                comment.append(attribute.getName());
-              }
-            }
-            if (typeDiffStruc.getMemberDiff() != null) {
-              comment.append("\nchanged attributes - ");
-              for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
-                comment.append(attribute.getName())
-                  .append(" from ")
-                  .append(Objects.requireNonNull(getOldAtt(attribute, typeDiffStruc))
-                    .getMCType().printType()).append(" to ")
-                  .append(attribute.getMCType().printType());
-              }
-            }
-            if (typeDiffStruc.getChangedStereotype() != null) {
-              comment.append("\nchanged stereotype - ");
-            }
-            if (typeDiffStruc.getDeletedAttributes() != null) {
-              comment.append("\ndeleted attributes - ");
-              for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
-                comment.append(attribute.getName());
-              }
-            }
-            System.out.println(comment);
-            System.out.println("=======================================================");
-          } else {
-            ASTCDClass subClass = syntaxDiff.helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
-            if (subClass != null) {
-              StringBuilder comment = new StringBuilder("For the abstract class "
-                + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
-                + " the following is changed: ");
+          if (!(typeDiffStruc.getAstcdType() instanceof ASTCDEnum)) {
+            if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
+              StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
               if (typeDiffStruc.getAddedAttributes() != null) {
                 comment.append("\nadded attributes - ");
                 for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
@@ -104,10 +72,13 @@ public class TestHelper {
                 for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
                   comment.append(attribute.getName())
                     .append(" from ")
-                    .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
-                    .append(" to ")
+                    .append(Objects.requireNonNull(getOldAtt(attribute, typeDiffStruc))
+                      .getMCType().printType()).append(" to ")
                     .append(attribute.getMCType().printType());
                 }
+              }
+              if (typeDiffStruc.getChangedStereotype() != null) {
+                comment.append("\nchanged stereotype - ");
               }
               if (typeDiffStruc.getDeletedAttributes() != null) {
                 comment.append("\ndeleted attributes - ");
@@ -117,6 +88,37 @@ public class TestHelper {
               }
               System.out.println(comment);
               System.out.println("=======================================================");
+            } else {
+              ASTCDClass subClass = syntaxDiff.helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
+              if (subClass != null) {
+                StringBuilder comment = new StringBuilder("For the abstract class "
+                  + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                  + " the following is changed: ");
+                if (typeDiffStruc.getAddedAttributes() != null) {
+                  comment.append("\nadded attributes - ");
+                  for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
+                    comment.append(attribute.getName());
+                  }
+                }
+                if (typeDiffStruc.getMemberDiff() != null) {
+                  comment.append("\nchanged attributes - ");
+                  for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
+                    comment.append(attribute.getName())
+                      .append(" from ")
+                      .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
+                      .append(" to ")
+                      .append(attribute.getMCType().printType());
+                  }
+                }
+                if (typeDiffStruc.getDeletedAttributes() != null) {
+                  comment.append("\ndeleted attributes - ");
+                  for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
+                    comment.append(attribute.getName());
+                  }
+                }
+                System.out.println(comment);
+                System.out.println("=======================================================");
+              }
             }
           }
         }
@@ -138,9 +140,8 @@ public class TestHelper {
 
 
     public void changedAssocs(){
-    System.out.println("Changed associations:" + syntaxDiff.changedAssoc());
     for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
-      System.out.println("To check: " + assocDiffStruc.getAssociation());
+      assert assocDiffStruc.getAssociation() != null;
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), syntaxDiff.getSrcCD());
       String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
       if (assocDiffStruc.isChangedDir()){
@@ -173,7 +174,8 @@ public class TestHelper {
       if (astcdClass.getModifier().isAbstract()) {
         astcdClass = helper.minDiffWitness(astcdClass);
       }
-      System.out.println("An association for the class " + pair.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.");
+      System.out.println("An association for the class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.");
+      System.out.println("=======================================================");
     }
   }
 

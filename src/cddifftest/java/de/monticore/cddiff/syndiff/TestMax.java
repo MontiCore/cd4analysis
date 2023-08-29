@@ -10,6 +10,7 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.OD.ODHelper;
 import de.monticore.cddiff.syndiff.OD.Package;
+import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.matcher.*;
@@ -21,7 +22,7 @@ import org.junit.Test;
 import java.util.*;
 
 public class TestMax extends CDDiffTestBasis {
-  //@Test
+  @Test
   public void test5(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
@@ -32,7 +33,6 @@ public class TestMax extends CDDiffTestBasis {
 
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
-//    //TestHelper testHelper = new TestHelper(diff);
 //    ASTCDClass a = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
 //    ASTCDClass a1 = CDTestHelper.getClass("A1", compilationUnitNew.getCDDefinition());
 //    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
@@ -111,6 +111,14 @@ public class TestMax extends CDDiffTestBasis {
 //    System.out.println(diff.getChangedAssocs().get(0).getBaseDiff());
 //    System.out.println(Syn2SemDiffHelper.getConnectedClasses(diff.getChangedAssocs().get(0).getSrcElem(), diff.getSrcCD()).a.getName() + " "
 //      + Syn2SemDiffHelper.getConnectedClasses(diff.getChangedAssocs().get(0).getSrcElem(), diff.getSrcCD()).b.getName());
+//    for (AssocStruct assocStruct : diff.helper.getTrgMap().get(a3old)){
+//      System.out.println(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diff.getTgtCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diff.getTgtCD()).b.getName());
+//    }
+//    System.out.println("=======================================================");
+//    for (AssocStruct assocStruct : diff.helper.getSrcMap().get(a3)){
+//      System.out.println(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
+//    }
+
     TestHelper testHelper = new TestHelper(diff);
     testHelper.staDiff();
     testHelper.deletedAssocs();

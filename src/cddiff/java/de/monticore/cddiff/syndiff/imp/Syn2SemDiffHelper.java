@@ -110,24 +110,17 @@ public class Syn2SemDiffHelper {
     ASTCDAssociation srcAssoc = association.getAssociation();
     ASTCDAssociation targetAssoc = superAssociation.getAssociation();
 
-    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
-      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+    if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Left)){
       return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
     }
-
-    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
-      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
-      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
-    }
-
-    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
-      && targetAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+    if (association.getSide().equals(ClassSide.Left) && superAssociation.getSide().equals(ClassSide.Right)){
       return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
     }
-
-    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
-      && targetAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+    if (association.getSide().equals(ClassSide.Right) && superAssociation.getSide().equals(ClassSide.Left)){
       return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
+    }
+    if (association.getSide().equals(ClassSide.Right) && superAssociation.getSide().equals(ClassSide.Right)){
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
     }
 
     return false;
@@ -151,6 +144,7 @@ public class Syn2SemDiffHelper {
    * @param superAssociation association from superclass
    * @return role name
    */
+  //TODO: same as isInConflict
   public static ASTCDRole getConflict(AssocStruct association, AssocStruct superAssociation){
     ASTCDAssociation srcAssoc = association.getAssociation();
     ASTCDAssociation targetAssoc = superAssociation.getAssociation();
@@ -675,6 +669,7 @@ public class Syn2SemDiffHelper {
       Set<ASTCDType> superClasses = CDDiffUtil.getAllSuperTypes(astcdClass, getSrcCD().getCDDefinition());
       superClasses.remove(astcdClass);
       for (ASTCDType superClass : superClasses){//getAllSuperTypes CDDffUtils
+        System.out.println("superClass: " + superClass.getName());
         if (superClass instanceof ASTCDClass){
           ASTCDClass superC = (ASTCDClass) superClass;
           for (ASTCDAssociation association : getSrcCD().getCDDefinition().getCDAssociationsListForType(superClass)){
@@ -683,6 +678,10 @@ public class Syn2SemDiffHelper {
               && association.getCDAssocDir().isDefinitiveNavigableRight())){
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+              System.out.println("Base assoc has classes: " + getConnectedClasses(association, getSrcCD()).a.getSymbol().getInternalQualifiedName()
+                + " and " + getConnectedClasses(association, getSrcCD()).b.getSymbol().getInternalQualifiedName());
+              System.out.println("Copy assoc has classes: " + getConnectedClasses(copyAssoc, getSrcCD()).a.getSymbol().getInternalQualifiedName()
+                + " and " + getConnectedClasses(copyAssoc, getSrcCD()).b.getSymbol().getInternalQualifiedName());
               if (copyAssoc.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
                 char firstChar = astcdClass.getName().charAt(0);
                 String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
@@ -696,6 +695,8 @@ public class Syn2SemDiffHelper {
                 copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
               }
               if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
+                System.out.println("Putting copy assoc in: " + getConnectedClasses(copyAssoc, getSrcCD()).a.getSymbol().getInternalQualifiedName()
+                  + " and " + getConnectedClasses(copyAssoc, getSrcCD()).b.getSymbol().getInternalQualifiedName());
                 getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left, true));
               }
               else {
@@ -703,7 +704,7 @@ public class Syn2SemDiffHelper {
               }
             } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               ASTCDAssociation copyAssoc = association.deepClone();
-              copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
+              copyAssoc.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
               if (copyAssoc.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
                 char firstChar = astcdClass.getName().charAt(0);
                 String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
@@ -737,9 +738,9 @@ public class Syn2SemDiffHelper {
           for (ASTCDAssociation association : getTgtCD().getCDDefinition().getCDAssociationsListForType(superClass)){
             Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association, getTgtCD());
             if ((pair.a.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
-              ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
               //change left side from superClass to subClass
               ASTCDAssociation assocForSubClass = association.deepClone();
+              assocForSubClass.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
               if (assocForSubClass.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
                 char firstChar = astcdClass.getName().charAt(0);
                 String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
@@ -759,9 +760,9 @@ public class Syn2SemDiffHelper {
                 getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.LeftToRight, ClassSide.Left, true));
               }
             } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
-              ASTCDAssociationBuilder builder = CD4CodeMill.cDAssociationBuilder();
               //change right side from superClass to subclass
               ASTCDAssociation assocForSubClass = association.deepClone();
+              assocForSubClass.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
               if (assocForSubClass.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
                 char firstChar = astcdClass.getName().charAt(0);
                 String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);

@@ -258,7 +258,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assert associationNew != null;
     boolean isAssocAdded = syntaxDiff.isAddedAssoc(associationNew);
     assert associationOld != null;
-    Pair<ASTCDAssociation, List<ASTCDClass>> isAssocDeleted = syntaxDiff.deletedAssoc(associationOld);
+    ASTCDClass isAssocDeleted = syntaxDiff.isAssocDeleted(associationOld, classD2);
 
     Assert.assertTrue(isAssocAdded);
     Assert.assertNull(isAssocDeleted);

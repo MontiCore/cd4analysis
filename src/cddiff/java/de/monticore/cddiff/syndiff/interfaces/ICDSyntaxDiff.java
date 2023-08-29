@@ -84,13 +84,6 @@ public interface ICDSyntaxDiff {
   boolean isSupClass(ASTCDClass astcdClass);
 
   /**
-   * Check if a deleted @param astcdAssociation was needed in cd2, but not in cd1.
-   *
-   * @return true if we have a case where we can instantiate a class without instantiating another.
-   */
-  boolean isNotNeededAssoc(ASTCDAssociation astcdAssociation);
-
-  /**
    * Similar case - the association @param astcdAssociation is needed in cd1, but not in cd2.
    *
    * @return true if a class instantiate another one by @param association.
