@@ -158,20 +158,21 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD4(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
-
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
     ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
     CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
     CDTypeDiff typeDiff2 = new CDTypeDiff(cNew, cOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
+
     // Prepare test data
     assert bNew != null;
     ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
     assert cOld != null;
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(cOld, "name");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
 
     // Invoke the method
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
@@ -188,15 +189,15 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
-
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
     ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
     CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
     CDTypeDiff typeDiff2 = new CDTypeDiff(cNew, cOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
     // Prepare test data
     assert bNew != null;
     ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");

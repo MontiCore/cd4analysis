@@ -760,33 +760,33 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   protected void computeNewSyntaxDiff() {
 
     // clone the current CD
-    ASTCDCompilationUnit ast1 = ast.deepClone();
+    ASTCDCompilationUnit srcCD = ast.deepClone();
 
-    ICD4CodeArtifactScope scopeNew = (ICD4CodeArtifactScope) ast1.getEnclosingScope();
+    ICD4CodeArtifactScope scopeNew = (ICD4CodeArtifactScope) srcCD.getEnclosingScope();
 
     // parse the second .cd-file
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
+    ASTCDCompilationUnit tgtCD = parse(cmd.getOptionValue("syndiff"));
 
-    ICD4CodeArtifactScope scopeOld = (ICD4CodeArtifactScope) ast2.getEnclosingScope();
+    ICD4CodeArtifactScope scopeOld = (ICD4CodeArtifactScope) tgtCD.getEnclosingScope();
 
-    if (ast2 == null) {
+    if (tgtCD == null) {
       Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
       return;
     }
 
     // use fully qualified names for attributes and associations
-    new CDFullNameTrafo().transform(ast1);
-    new CDFullNameTrafo().transform(ast2);
+    new CDFullNameTrafo().transform(srcCD);
+    new CDFullNameTrafo().transform(tgtCD);
 
-    ast1 = ast1.deepClone();
-    ast2 = ast2.deepClone();
+    srcCD = srcCD.deepClone();
+    tgtCD = tgtCD.deepClone();
 
-    new CD4CodeDirectCompositionTrafo().transform(ast1);
-    new CD4CodeDirectCompositionTrafo().transform(ast2);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+    new CD4CodeDirectCompositionTrafo().transform(srcCD);
+    new CD4CodeDirectCompositionTrafo().transform(tgtCD);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(srcCD);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(tgtCD);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2, scopeNew, scopeOld);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, scopeNew, scopeOld);
 
     String printOption = cmd.getOptionValue("show", "diff");
 
