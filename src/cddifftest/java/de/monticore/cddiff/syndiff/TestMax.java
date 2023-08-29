@@ -21,14 +21,6 @@ import org.junit.Test;
 import java.util.*;
 
 public class TestMax extends CDDiffTestBasis {
-
-  NameTypeMatcher nameTypeMatch;
-  StructureTypeMatcher structureTypeMatch;
-  SuperTypeMatcher superTypeMatch;
-  NameAssocMatcher nameAssocMatch;
-  SrcTgtAssocMatcher associationSrcTgtMatch;
-  List<MatchingStrategy<ASTCDType>> typeMatchers;
-  List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
   ICD4CodeArtifactScope scopeNew;
   ICD4CodeArtifactScope scopeOld;
 
@@ -41,20 +33,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
 
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
@@ -158,20 +138,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
     TestHelper testHelper = new TestHelper(diff);
@@ -193,20 +161,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -219,20 +175,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -245,20 +189,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -271,20 +203,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -297,20 +217,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -323,20 +231,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
     testHelper.staDiff();
     testHelper.deletedAssocs();
@@ -358,20 +254,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -384,20 +268,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -410,20 +282,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -436,20 +296,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -462,20 +310,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -488,20 +324,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -514,20 +338,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -540,20 +352,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -566,20 +366,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -592,20 +380,8 @@ public class TestMax extends CDDiffTestBasis {
 
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     diff.getHelper().setMaps();
 
     ODHelper odHelper = new ODHelper();

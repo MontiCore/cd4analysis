@@ -31,13 +31,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
-  NameTypeMatcher nameTypeMatch;
-  StructureTypeMatcher structureTypeMatch;
-  SuperTypeMatcher superTypeMatch;
-  NameAssocMatcher nameAssocMatch;
-  SrcTgtAssocMatcher associationSrcTgtMatch;
-  List<MatchingStrategy<ASTCDType>> typeMatchers;
-  List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
   ICD4CodeArtifactScope scopeNew;
   ICD4CodeArtifactScope scopeOld;
   @BeforeEach
@@ -56,21 +49,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
@@ -89,7 +69,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
     boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     syntaxDiff.getHelper().setMaps();
     //ASTCDType result3 = typeDiff.isClassNeeded();
 
@@ -140,25 +120,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD3(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
-
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
-
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
+
     ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
     ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
@@ -170,7 +136,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
     assert aOld != null;
     ASTCDAttribute astcdAttribute = CDTestHelper.getAttribute(aOld, "age");
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
 
     syntaxDiff.getHelper().setMaps();
     //Error in getAllSuper(only in setMaps()) from CDDiffUtil - Nullpointer
@@ -257,20 +223,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
     scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
     scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-    nameTypeMatch = new NameTypeMatcher(compilationUnitOld);
-    structureTypeMatch = new StructureTypeMatcher(compilationUnitOld);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, compilationUnitNew, compilationUnitOld);
-    nameAssocMatch = new NameAssocMatcher(compilationUnitOld);
-    associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, compilationUnitNew, compilationUnitOld);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
-    assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatch);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
     ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
     ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
     CDTypeDiff typeDiff = new CDTypeDiff(aNew, aOld, (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope(), (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope());
@@ -325,14 +279,14 @@ public class TypeDIffTest extends CDDiffTestBasis {
     System.out.println(typeDiff2.printOnlyChangedFromTgt());
     System.out.println("--------------------------------");
     System.out.println("Print deleted");
-    System.out.println(typeDiff1.printOnlyDeleted());
-    System.out.println(typeDiff2.printOnlyDeleted());
-    System.out.println(typeDiff1.printOnlyDeleted());
-    System.out.println(typeDiff2.printOnlyDeleted());
+    //System.out.println(typeDiff1.printOnlyDeleted());
+    //System.out.println(typeDiff2.printOnlyDeleted());
+    //System.out.println(typeDiff1.printOnlyDeleted());
+    //System.out.println(typeDiff2.printOnlyDeleted());
     System.out.println("--------------------------------");
     System.out.println("Print added");
-    System.out.println(typeDiff1.printOnlyAdded());
-    System.out.println(typeDiff2.printOnlyAdded());
+    //System.out.println(typeDiff1.printOnlyAdded());
+    //System.out.println(typeDiff2.printOnlyAdded());
     System.out.println("--------------------------------");
     System.out.println("Print diffs");
     System.out.println(typeDiff1.printSrcCD());

@@ -40,7 +40,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   private String
     srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole,
     srcAssocDirection,
-    srcAssocRightCardinality, srcAssocRightType, srcAssocRightRole, tgtAssoc, srcAssoc;
+    srcAssocRightCardinality, srcAssocRightType, srcAssocRightRole, tgtAssoc, srcAssoc, tgtAssocDeleted, srcAssocAdded;
   private String
     tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole,
     tgtAssocDirection,
@@ -595,17 +595,29 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   }
 
   private void setStrings() {
+
     // Build Source String
     srcAssoc =
       insertSpaceBetweenStrings(
         Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality)) +
-        " (Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";;
+        " (Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";
 
     // Build Target String
     tgtAssoc =
       insertSpaceBetweenStrings(
         Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality)) +
-        " (Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";;
+        " (Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";
+
+    srcAssocAdded =
+      insertSpaceBetweenStringsAndGreen(
+        Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality)) +
+        "(Added on line " +  srcLineOfCode + " in srcCD)";
+
+    // Build Target String
+    tgtAssocDeleted =
+      insertSpaceBetweenStringsAndRed(
+        Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality)) +
+        "(Removed from line " +  srcLineOfCode + " in tgtCD)";
 
   }
 
@@ -614,13 +626,27 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     return super.insertSpaceBetweenStrings(stringList) + ";";
   }
 
+  @Override
+  public String insertSpaceBetweenStringsAndGreen(List<String> stringList) {
+    return super.insertSpaceBetweenStringsAndGreen(stringList) + COLOR_ADD + "; ";
+  }
+
+  @Override
+  public String insertSpaceBetweenStringsAndRed(List<String> stringList) {
+    return super.insertSpaceBetweenStringsAndRed(stringList) + COLOR_DELETE + "; ";
+  }
+
   public String printSrcAssoc() {
     return srcAssoc;
   }
 
-  public String printTgtAssoc() {
-    return tgtAssoc;
+  public String printAddedAssoc() {
+    return srcAssocAdded;
   }
 
+  public String printDeletedAssoc() {
+    return tgtAssocDeleted;
+  }
 
+  public String printTgtAssoc() { return tgtAssoc; }
 }

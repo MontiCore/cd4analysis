@@ -1,22 +1,23 @@
 import java.lang.String;
 
 classdiagram Source1 {
-  enum Deleted {a, b;}
+  enum EnumsCheck{deleted, inherited, d, added;}
+
+  enum AddedEnumCheck{enumOne;}
 
   class A extends B{
-    int a;
-    int b;
-    int c;
-    int e;
-    double added1;
-    double added2;
+    int changed;
+    double added;
   }
 
   class B extends C{
     int i;
+    EnumsCheck inherited;
   }
 
-  class C{}
+  class C{
+    EnumsCheck added;
+  }
 
   class E{
     int pitch;

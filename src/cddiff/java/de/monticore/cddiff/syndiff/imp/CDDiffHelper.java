@@ -69,6 +69,35 @@ public class CDDiffHelper implements ICDPrintDiff {
     return output.toString();
   }
 
+  @Override
+  public String insertSpaceBetweenStringsAndGreen(List<String> stringList){
+    StringBuilder output = new StringBuilder();
+
+    for (String field : stringList) {
+      if (!(field == null)) {
+        output.append(COLOR_ADD).append(field).append(" ");
+      }
+    }
+    if (!stringList.isEmpty()) {
+      return output.substring(0, output.length() - 1);
+    }
+    return output.toString();
+  }
+  @Override
+  public String insertSpaceBetweenStringsAndRed(List<String> stringList){
+    StringBuilder output = new StringBuilder();
+
+    for (String field : stringList) {
+      if (!(field == null)) {
+        output.append(COLOR_DELETE).append(field).append(" ");
+      }
+    }
+    if (!stringList.isEmpty()) {
+      return output.substring(0, output.length() - 1);
+    }
+    return output.toString();
+  }
+
   static String getColorCode(CDNodeDiff<?,?> diff) {
     if (diff.getAction().isPresent()) {
       if (diff.getAction().get().equals(Actions.REMOVED)) {

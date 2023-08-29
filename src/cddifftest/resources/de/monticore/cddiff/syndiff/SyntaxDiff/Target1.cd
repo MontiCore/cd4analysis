@@ -1,22 +1,29 @@
 import java.lang.String;
 
 classdiagram Target1 {
-  enum Deleted {a, b, c;}
+  enum EnumsCheck{deleted, inherited, c, added;}
+
+  enum DeletedEnumCheck{enumTwo;}
 
   class A extends C{
-    double a;
-    double b;
-    double c;
-    int d;
+    EnumsCheck deleted;
+    double changed;
+    double deletedDouble;
   }
 
   class B extends C{}
 
   class C extends D{
     int i;
+    EnumsCheck inherited;
   }
 
-  class D{}
+  class D{
+    String stringOne;
+    String stringTwo;
+  }
+
+  class K{}
 
   association [0..1] A -> C [1..*];
   association [*] A -> D [1];

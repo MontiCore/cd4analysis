@@ -858,7 +858,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     if(addedConstants != null) {
       for (ASTCDEnumConstant x : getAddedConstants()) {
         StringBuilder addEnumConst = new StringBuilder();
-        String addedEnumConstant = pp.prettyprint(x) + " (Added on line " +  x.get_SourcePositionStart().getLine() + " in srcCD)";
+        String addedEnumConstant = pp.prettyprint(x) + "; (Added on line " +  x.get_SourcePositionStart().getLine() + " in srcCD)";
         if (addedEnumConstant.contains("\n")) {
           addedEnumConstant = addedEnumConstant.split("\n")[0];
         }
@@ -882,7 +882,7 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     if(deletedConstants != null) {
       for (ASTCDEnumConstant x : getDeletedConstants()) {
         StringBuilder delEnumConstant = new StringBuilder();
-        String deletedEnumConstant = pp.prettyprint(x) + " (Deleted from line " +  x.get_SourcePositionStart().getLine() + "in tgtCD)";
+        String deletedEnumConstant = pp.prettyprint(x) + "; (Deleted from line " +  x.get_SourcePositionStart().getLine() + " in tgtCD)";
         if (deletedEnumConstant.contains("\n")) {
           deletedEnumConstant = deletedEnumConstant.split("\n")[0];
         }
