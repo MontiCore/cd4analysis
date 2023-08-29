@@ -77,6 +77,11 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   CDCardOne        implements CDCardinality = {noSpace(2,3) && getToken(2).equals("1")}? "[" Digits "]"; // matches "[1]"
   CDCardAtLeastOne implements CDCardinality = {noSpace(2,3,4,5) && getToken(2).equals("1") }? "[" Digits "." "." "*" "]"; // matches "[1..*]"
   CDCardOpt        implements CDCardinality = {noSpace(2,3,4,5) && getToken(2).equals("0") && getToken(5).equals("1") }? "[" Digits "." "." Digits "]"; // matches "[0..1]"
+  CDCardOther      implements CDCardinality = {noSpace(2,3,4,5)
+                                               && !(getToken(2).equals("1") && getToken(3).equals("]"))
+                                               && !(getToken(2).equals("1") && getToken(3).equals("."))
+                                               && !(getToken(2).equals("0") && getToken(5).equals("1"))
+                                               }? "[" lower:Digits "." "." upper:Digits "]";
 
   splittoken "[*]";
 
