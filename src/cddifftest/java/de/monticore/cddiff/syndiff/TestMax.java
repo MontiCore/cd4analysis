@@ -125,29 +125,28 @@ public class TestMax extends CDDiffTestBasis {
 //    Assert.assertTrue(isAddedAssoc);
 //    System.out.println(isAssocDeleted);
 
-    System.out.println("Show matched assocs");
-    System.out.println(diff.getMatchedAssocs());
-    System.out.println("Show changed associations");
-    System.out.println(diff.getChangedAssocs());
-    //association [*] A1 -> A2 [0..1];
-    //association [1] A2 <-> A3 [1];
-    //association [1..*] A4 <-> A2 [*];
-    System.out.println("Show matched classes");
-    System.out.println(diff.getMatchedClasses());
-    System.out.println("Show changed classes");
-    System.out.println(diff.getChangedClasses());
-    // class A1
-    // class A2
-    // class A3 extends A2
-    // class A4
+//    System.out.println("Show matched assocs");
+//    System.out.println(diff.getMatchedAssocs());
+//    System.out.println("Show changed associations");
+//    System.out.println(diff.getChangedAssocs());
+//    System.out.println("Show matched classes");
+//    System.out.println(diff.getMatchedClasses());
+//    System.out.println("Show changed classes");
+//    System.out.println(diff.getChangedClasses());
+//    System.out.println("=======================================================");
+//    System.out.println(diff.getChangedAssocs().get(0).getBaseDiff());
+//    System.out.println(Syn2SemDiffHelper.getConnectedClasses(diff.getChangedAssocs().get(0).getSrcElem(), diff.getSrcCD()).a.getName() + " "
+//      + Syn2SemDiffHelper.getConnectedClasses(diff.getChangedAssocs().get(0).getSrcElem(), diff.getSrcCD()).b.getName());
     TestHelper testHelper = new TestHelper(diff);
-    testHelper.addedAssocs();
-    testHelper.addedClasses();
-    testHelper.addedConstants();
-    testHelper.changedAssocs();
-    testHelper.changedTypes();
-    //testHelper.inheritanceDiffs();
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test
@@ -339,6 +338,15 @@ public class TestMax extends CDDiffTestBasis {
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld, typeMatchers, assocMatchers);
     TestHelper testHelper = new TestHelper(diff);
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test
