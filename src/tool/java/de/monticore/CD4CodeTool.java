@@ -32,7 +32,7 @@ import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDFullNameTrafo;
-import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
@@ -155,11 +155,19 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        if (cmd.hasOption("syntaxdiff")) {
+        /*if (cmd.hasOption("syntaxdiff")) {
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
           computeSyntaxDiff();
+          CD4CodeMill.globalScope().clear();
+        }*/
+
+        if (cmd.hasOption("syndiff")) {
+          if (useBuiltInTypes) {
+            BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+          }
+          computeNewSyntaxDiff();
           CD4CodeMill.globalScope().clear();
         }
 
@@ -696,7 +704,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
-  protected void computeSyntaxDiff() {
+  /*protected void computeSyntaxDiff() {
 
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
@@ -745,6 +753,48 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     if (printOption.equals("nocolor")) {
       syntaxDiff.printNoColour();
+    }
+  }*/
+
+  /** perform syndiff of 2 CDs */
+  protected void computeNewSyntaxDiff() {
+
+    // clone the current CD
+    ASTCDCompilationUnit ast1 = ast.deepClone();
+
+    ICD4CodeArtifactScope scopeNew = (ICD4CodeArtifactScope) ast1.getEnclosingScope();
+
+    // parse the second .cd-file
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
+
+    ICD4CodeArtifactScope scopeOld = (ICD4CodeArtifactScope) ast2.getEnclosingScope();
+
+    if (ast2 == null) {
+      Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
+      return;
+    }
+
+    // use fully qualified names for attributes and associations
+    new CDFullNameTrafo().transform(ast1);
+    new CDFullNameTrafo().transform(ast2);
+
+    ast1 = ast1.deepClone();
+    ast2 = ast2.deepClone();
+
+    new CD4CodeDirectCompositionTrafo().transform(ast1);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2, scopeNew, scopeOld);
+
+    String printOption = cmd.getOptionValue("show", "diff");
+
+    if (printOption.equals("added")) {
+      syntaxDiff.printOnlyAdded();
+    }
+    if (printOption.equals("deleted")) {
+      syntaxDiff.printOnlyDeleted();
     }
   }
 
