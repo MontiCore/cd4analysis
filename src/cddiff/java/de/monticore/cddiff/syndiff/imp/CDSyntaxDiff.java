@@ -8,7 +8,6 @@ import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
@@ -56,6 +55,8 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   SrcTgtAssocMatcher associationSrcTgtMatch;
   List<MatchingStrategy<ASTCDType>> typeMatchers;
   List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
+  ICD4CodeArtifactScope scopeSrcCD;
+  ICD4CodeArtifactScope scopeTgtCD;
   //Print
   protected StringBuilder outPutAll;
   protected StringBuilder tgtCDColored;
@@ -69,9 +70,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   }
 
   public Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
-  public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,
-                      ICD4CodeArtifactScope scopeSrcCD,
-                      ICD4CodeArtifactScope scopeTgtCD) {
+  public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
     helper.setSrcCD(srcCD);
@@ -103,7 +102,8 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     assocMatchers = new ArrayList<>();
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
-
+    scopeSrcCD = (ICD4CodeArtifactScope) srcCD.getEnclosingScope();
+    scopeTgtCD = (ICD4CodeArtifactScope) tgtCD.getEnclosingScope();
 
     // Trafo to make in-class declarations of compositions appear in the association list
     new CD4CodeDirectCompositionTrafo().transform(srcCD);

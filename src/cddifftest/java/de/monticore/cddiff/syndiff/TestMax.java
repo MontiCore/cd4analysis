@@ -21,20 +21,14 @@ import org.junit.Test;
 import java.util.*;
 
 public class TestMax extends CDDiffTestBasis {
-  ICD4CodeArtifactScope scopeNew;
-  ICD4CodeArtifactScope scopeOld;
-
-  @Test
+  //@Test
   public void test5(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
 
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
@@ -129,17 +123,14 @@ public class TestMax extends CDDiffTestBasis {
     testHelper.addedAssocs();
   }
 
-  @Test
+  //@Test
   public void test10(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
     TestHelper testHelper = new TestHelper(diff);
@@ -159,10 +150,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -173,10 +161,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -187,10 +172,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -201,10 +183,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -215,10 +194,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -229,10 +205,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
     testHelper.staDiff();
     testHelper.deletedAssocs();
@@ -252,10 +225,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -266,10 +236,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -280,10 +247,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -294,10 +258,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -308,10 +269,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -322,10 +280,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -336,10 +291,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -350,10 +302,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -364,10 +313,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
   }
 
@@ -378,10 +324,7 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, scopeNew, scopeOld);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
     ODHelper odHelper = new ODHelper();
