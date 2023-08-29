@@ -32,7 +32,7 @@ import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDFullNameTrafo;
-import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
@@ -154,13 +154,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        if (cmd.hasOption("syntaxdiff")) {
+        /*if (cmd.hasOption("syntaxdiff")) {
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
           computeSyntaxDiff();
           CD4CodeMill.globalScope().clear();
-        }
+        }*/
 
         if (cmd.hasOption("syndiff")) {
           if (useBuiltInTypes) {
@@ -703,7 +703,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
-  protected void computeSyntaxDiff() {
+  /*protected void computeSyntaxDiff() {
 
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
@@ -753,7 +753,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     if (printOption.equals("nocolor")) {
       syntaxDiff.printNoColour();
     }
-  }
+  }*/
 
   /** All Print Options for NEW Syntax Diff **/
   protected void computeNewSyntaxDiff() {
@@ -761,8 +761,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     /** Clone the current (new) CD **/
     ASTCDCompilationUnit ast1 = ast.deepClone();
 
+    ICD4CodeArtifactScope scopeNew = (ICD4CodeArtifactScope) ast1.getEnclosingScope();
+
     /** Parse the second (old) CD **/
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
+
+    ICD4CodeArtifactScope scopeOld = (ICD4CodeArtifactScope) ast2.getEnclosingScope();
 
     /** Check if the parse option has been successful **/
     if (ast2 == null) {
@@ -783,19 +787,28 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2, scopeNew, scopeOld);
 
     String printOption = cmd.getOptionValue("show", "diff");
     if (printOption.equals("diff")) {
       syntaxDiff.print();
     }
-    if (printOption.equals("cd1")) {
-      syntaxDiff.printCD1();
+    if (printOption.equals("old")) {
+      syntaxDiff.printTgtCD();
     }
-    if (printOption.equals("cd2")) {
-      syntaxDiff.printCD2();
+    if (printOption.equals("new")) {
+      syntaxDiff.printSrcCD();
     }
-    if (printOption.equals("both")) {
+    if (printOption.equals("added")) {
+      syntaxDiff.printOnlyAdded();
+    }
+    if (printOption.equals("deleted")) {
+      syntaxDiff.printOnlyAdded();
+    }
+    if (printOption.equals("changed")) {
+      //syntaxDiff.printOnlyChanged();
+    }
+    /*if (printOption.equals("both")) {
       syntaxDiff.printCD1();
       syntaxDiff.printCD2();
     }
@@ -807,7 +820,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     if (printOption.equals("nocolor")) {
       syntaxDiff.printNoColour();
-    }
+    }*/
   }
 
   /** perform merge of 2 CDs */
