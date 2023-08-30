@@ -1237,33 +1237,27 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   /*--------------------------------------------------------------------*/
 
   public void addAllMatchedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
-    List<ASTCDClass> tgtClasses = tgtCD.getCDDefinition().getCDClassesList();
     for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
-      for (ASTCDClass tgtClass : tgtClasses) {
+      for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
           if (typeMatcher.isMatched(srcClass, tgtClass)) {
             matchedClasses.add(new Pair<>(srcClass, tgtClass));
-            tgtClasses.remove(tgtClass);
             break;
           }
         }
-        break;
       }
     }
   }
 
   public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
-    List<ASTCDInterface> tgtInterfaces = tgtCD.getCDDefinition().getCDInterfacesList();
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
-      for (ASTCDInterface tgtInterface : tgtInterfaces) {
+      for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
           if (typeMatcher.isMatched(srcInterface, tgtInterface)) {
             matchedInterfaces.add(new Pair<>(srcInterface, tgtInterface));
-            tgtInterfaces.remove(tgtInterface);
             break;
           }
         }
-        break;
       }
     }
   }
