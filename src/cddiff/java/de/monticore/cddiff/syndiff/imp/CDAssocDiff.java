@@ -483,6 +483,9 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       }
     }
 
+    //TODO: IMPROVE getAsssocDiff!!!!!!! SIMPLIFY IT!!!!!!!! if match => check which sides => put THEM in getAssocDiff()!!!
+    // if reversed/not reversed, match, put them in getAssocDiff()!!!!
+
     // Check if direction '->' was changed to '<-' or if direction '<-' was changed to '->'.
     // If yes, then add weight for calculating the smallest diff for each side combination
     // If yes, then set isReversed to true, so it can say that there is not a difference, otherwise it is just like that
@@ -508,7 +511,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     // and assoc2: [*] A (c) -> (b) C [1] ,
     // we match assoc1 and assoc2, but tmpOriginal.size() = 4, tmpReverse.size() = 4, weightDirection = 0,
     // so we have to get into the first 'if', but 4 + 0 = 4, so we add the '='
-    if ((tmpOriginalDir.size() + weightDirection) <= tmpReverseDir.size()) {
+    if ((tmpOriginalDir.size() + weightDirection) < tmpReverseDir.size()) {
       getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getLeft(), true);
       getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getRight(), true);
 
@@ -554,6 +557,9 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     CDNodeDiff<ASTMCQualifiedName, ASTMCQualifiedName> type = new CDNodeDiff<>(srcAssocType, tgtAssocType);
 
     if (type.checkForAction()) {
+      if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)){
+        baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+      }
       diffs.add(type);
     }
 
