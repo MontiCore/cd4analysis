@@ -2,6 +2,7 @@ package de.monticore.cddiff.syndiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -14,6 +15,7 @@ import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import de.monticore.matcher.*;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
@@ -275,11 +277,16 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   @Test
   public void testSyntax1() {
     parseModels("Source1.cd", "Target1.cd");
-
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
+    for(Pair<ASTCDClass, ASTCDClass> pair : syntaxDiff.getMatchedClasses()) {
+      System.out.println(pp.prettyprint(pair.a));
+      System.out.println(pp.prettyprint(pair.b));
+      System.out.println("------");
+    }
     //System.out.println(syntaxDiff.printSrcCD());
     //System.out.println(syntaxDiff.printTgtCD());
     //System.out.println(syntaxDiff.getBaseDiff());

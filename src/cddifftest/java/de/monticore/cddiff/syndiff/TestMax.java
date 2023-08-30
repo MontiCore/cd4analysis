@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -15,6 +16,7 @@ import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.*;
 import de.monticore.matcher.*;
 import de.monticore.odbasis._ast.ASTODElement;
+import de.monticore.prettyprint.IndentPrinter;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
 import org.junit.Test;
@@ -131,14 +133,19 @@ public class TestMax extends CDDiffTestBasis {
     testHelper.addedAssocs();
   }
 
-  //@Test
+  @Test
   public void test10(){
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    for(Pair<ASTCDClass, ASTCDClass> pair : diff.getMatchedClasses()) {
+      System.out.println(pp.prettyprint(pair.a));
+      System.out.println(pp.prettyprint(pair.b));
+    }
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
     TestHelper testHelper = new TestHelper(diff);

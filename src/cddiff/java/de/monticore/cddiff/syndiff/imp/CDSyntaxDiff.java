@@ -1241,13 +1241,11 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
                                     List<MatchingStrategy<ASTCDType>> typeMatchers,
                                     List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
     //Match classes
-    List<ASTCDClass> tgtClasses = tgtCD.getCDDefinition().getCDClassesList();
     for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
           if (typeMatcher.isMatched(srcClass, tgtClass)) {
             matchedClasses.add(new Pair<>(srcClass, tgtClass));
-            tgtClasses.remove(tgtClass);
             break;
           }
         }
@@ -1255,20 +1253,16 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       }
     }
       //Match interfaces
-    List<ASTCDInterface> tgtInterfaces = tgtCD.getCDDefinition().getCDInterfacesList();
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
           if (typeMatcher.isMatched(srcInterface, tgtInterface)) {
             matchedInterfaces.add(new Pair<>(srcInterface, tgtInterface));
-            tgtInterfaces.remove(tgtInterface);
             break;
           }
         }
-        break;
       }
     }
-
       //Match enums
     for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
       for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
