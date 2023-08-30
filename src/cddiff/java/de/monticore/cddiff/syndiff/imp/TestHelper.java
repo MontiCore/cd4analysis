@@ -61,7 +61,7 @@ public class TestHelper {
           if (!(typeDiffStruc.getAstcdType() instanceof ASTCDEnum)) {
             if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
               StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
-              if (typeDiffStruc.getAddedAttributes() != null) {
+              if (!typeDiffStruc.getAddedAttributes().b.isEmpty()) {
                 comment.append("\nadded attributes - ");
                 for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
                   comment.append(attribute.getName());
@@ -80,7 +80,7 @@ public class TestHelper {
               if (typeDiffStruc.getChangedStereotype() != null) {
                 comment.append("\nchanged stereotype - ");
               }
-              if (typeDiffStruc.getDeletedAttributes() != null) {
+              if (!typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
                 comment.append("\ndeleted attributes - ");
                 for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
                   comment.append(attribute.getName());
@@ -141,16 +141,15 @@ public class TestHelper {
 
   public void changedAssocs() {
     for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()) {
-      assert assocDiffStruc.getAssociation() != null;
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), syntaxDiff.getSrcCD());
       String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
       if (assocDiffStruc.isChangedDir()) {
         comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
       }
-      if (assocDiffStruc.getChangedCard() != null) {
+      if (!assocDiffStruc.getChangedCard().isEmpty()) {
         comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
       }
-      if (assocDiffStruc.getChangedRoleNames() != null) {
+      if (!assocDiffStruc.getChangedRoleNames().isEmpty()) {
         comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
       }
       if (assocDiffStruc.getChangedTgt() != null) {

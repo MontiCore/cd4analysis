@@ -228,6 +228,8 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     List<Pair<ClassSide, Integer>> list = new ArrayList<>();
     if (!isReversed){
       //assoc not reversed
+      System.out.println("classes are:"+ getConnectedClasses(getSrcElem(), helper.getSrcCD()).a.getName() + " and " + getConnectedClasses(getSrcElem(), helper.getSrcCD()).b.getName());
+      System.out.println(!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality())));
       if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
         list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
       }
@@ -380,29 +382,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       }
     }
     return null;
-  }
-
-  //Why did I made this?
-  public Pair<Boolean, ASTCDClass> isCardZero(){
-    if (!isReversed){
-      if (getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a.getSymbol().getInternalQualifiedName()
-        .equals(getConnectedClasses(getTgtElem(), Syn2SemDiffHelper.getInstance().getTgtCD()).a.getSymbol().getInternalQualifiedName())){
-        return new Pair<>((getTgtElem().getLeft().getCDCardinality().isOpt()
-          || getTgtElem().getLeft().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).b);
-      } else {
-        return new Pair<>((getTgtElem().getRight().getCDCardinality().isOpt()
-          || getTgtElem().getRight().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a);
-      }
-    } else {
-      if (getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a.getSymbol().getInternalQualifiedName()
-        .equals(getConnectedClasses(getTgtElem(), Syn2SemDiffHelper.getInstance().getTgtCD()).b.getSymbol().getInternalQualifiedName())){
-        return new Pair<>((getTgtElem().getRight().getCDCardinality().isOpt()
-          || getTgtElem().getRight().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a);
-      } else {
-        return new Pair<>((getTgtElem().getLeft().getCDCardinality().isOpt()
-          || getTgtElem().getLeft().getCDCardinality().isMult()), getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).b);
-      }
-    }
   }
 
   //TODO: check if this works for super/subclasses

@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.syndiff.datastructures.*;
+import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.DiffTypes;
 import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
@@ -459,7 +460,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
       if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
         StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
-        if (typeDiffStruc.getAddedAttributes() != null) {
+        if (!typeDiffStruc.getAddedAttributes().b.isEmpty()) {
           comment.append("\nadded attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
             comment.append(attribute.getName());
@@ -478,7 +479,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         if (typeDiffStruc.getChangedStereotype() != null) {
           comment.append("\nchanged stereotype - ");
         }
-        if (typeDiffStruc.getDeletedAttributes() != null) {
+        if (!typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
           comment.append("\ndeleted attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
             comment.append(attribute.getName());
@@ -496,7 +497,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
            StringBuilder comment = new StringBuilder("For the abstract class "
              + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
              + " the following is changed: ");
-           if (typeDiffStruc.getAddedAttributes() != null) {
+           if (!typeDiffStruc.getAddedAttributes().b.isEmpty()) {
              comment.append("\nadded attributes - ");
              for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
                comment.append(attribute.getName());
@@ -512,7 +513,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
                  .append(attribute.getMCType().printType());
              }
            }
-           if (typeDiffStruc.getDeletedAttributes() != null) {
+           if (!typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
              comment.append("\ndeleted attributes - ");
              for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
                comment.append(attribute.getName());
@@ -548,10 +549,10 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       if (assocDiffStruc.isChangedDir()){
         comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
       }
-      if (assocDiffStruc.getChangedCard() != null){
+      if (!assocDiffStruc.getChangedCard().isEmpty()){
         comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
       }
-      if (assocDiffStruc.getChangedRoleNames() != null){
+      if (!assocDiffStruc.getChangedRoleNames().isEmpty()){
         comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
       }
       if (assocDiffStruc.getChangedTgt() != null){
@@ -561,6 +562,29 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         generateElements(assocDiffStruc.getAssociation(), null, "", "", "", comment),
         null);
       artifactList.add(astodArtifact);
+    }
+
+    for (CDAssocDiff assocDiff : syntaxDiff.getChangedAssocs()) {
+      if (syntaxDiff.helper.srcAssocExistsTgtNot(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
+        String comment = "An association between the classes "
+          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+          + " has been added from the diagram.";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
+          generateElements(assocDiff.getSrcElem(), null, "", "", "", comment),
+          null);
+        artifactList.add(astodArtifact);
+      }
+      if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
+        String comment = "An association between the classes "
+          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+          + " has been removed from the diagram.";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
+          generateElements(assocDiff.getSrcElem(), null, "", "", "", comment),
+          null);
+        artifactList.add(astodArtifact);
+      }
     }
 
     if (staDiff){

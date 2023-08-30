@@ -1002,7 +1002,7 @@ public class Syn2SemDiffHelper {
       || cardinality2.equals(AssocCardinality.Multiple)){
       return true;
     } else if (cardinality1.equals(AssocCardinality.Optional)){
-      return cardinality2.equals(AssocCardinality.Optional);
+      return !cardinality2.equals(AssocCardinality.One);
     } else if (cardinality1.equals(AssocCardinality.AtLeastOne)){
       return cardinality2.equals(AssocCardinality.AtLeastOne);
     } else{
