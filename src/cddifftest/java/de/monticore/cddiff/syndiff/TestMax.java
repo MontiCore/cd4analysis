@@ -142,10 +142,6 @@ public class TestMax extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    for(Pair<ASTCDClass, ASTCDClass> pair : diff.getMatchedClasses()) {
-      System.out.println(pp.prettyprint(pair.a));
-      System.out.println(pp.prettyprint(pair.b));
-    }
     diff.getHelper().setMaps();
     diff.findOverlappingAssocs();
     TestHelper testHelper = new TestHelper(diff);

@@ -282,11 +282,6 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    for(Pair<ASTCDClass, ASTCDClass> pair : syntaxDiff.getMatchedClasses()) {
-      System.out.println(pp.prettyprint(pair.a));
-      System.out.println(pp.prettyprint(pair.b));
-      System.out.println("------");
-    }
     //System.out.println(syntaxDiff.printSrcCD());
     //System.out.println(syntaxDiff.printTgtCD());
     //System.out.println(syntaxDiff.getBaseDiff());
