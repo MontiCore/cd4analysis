@@ -293,6 +293,18 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println("----------------------------");
   }
 
+  @Test
+  public void testSyntax2() {
+    parseModels("Source2.cd", "Target2.cd");
+
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
+    System.out.println(syntaxDiff.printSrcCD());
+    System.out.println(syntaxDiff.printTgtCD());
+  }
+
   public void parseModels(String concrete, String ref) {
     try {
       Optional<ASTCDCompilationUnit> src =

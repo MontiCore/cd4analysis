@@ -1236,7 +1236,11 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
   /*--------------------------------------------------------------------*/
 
-  public void addAllMatchedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
+  public void addAllMatchedElements(ASTCDCompilationUnit srcCD,
+                                    ASTCDCompilationUnit tgtCD,
+                                    List<MatchingStrategy<ASTCDType>> typeMatchers,
+                                    List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
+    //Match classes
     for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
@@ -1247,9 +1251,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         }
       }
     }
-  }
-
-  public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
+    //Match interfaces
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
@@ -1260,9 +1262,17 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         }
       }
     }
-  }
-
-  public void addAllMatchedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
+    //Match enums
+    for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
+      for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
+        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
+          if (typeMatcher.isMatched(srcEnum, tgtEnum)) {
+            matchedEnums.add(new Pair<>(srcEnum, tgtEnum));
+          }
+        }
+      }
+    }
+    //Match associations
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
         for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
@@ -1274,19 +1284,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     }
   }
 
-  public void addAllMatchedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
-    for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
-      for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
-        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
-          if (typeMatcher.isMatched(srcEnum, tgtEnum)) {
-            matchedEnums.add(new Pair<>(srcEnum, tgtEnum));
-          }
-        }
-      }
-    }
-  }
-
-  public void addAllchangedTypes(ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {
+  public void addAllChangedElements(ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {
     for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
       CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, scopeSrcCD, scopeTgtCD);
       if(!typeDiff.getBaseDiff().isEmpty()){
@@ -1301,9 +1299,6 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         baseDiff.addAll(typeDiff.getBaseDiff());
       }
     }
-  }
-
-  public void addAllChangedAssocs() {
     for(Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs){
       CDAssocDiff assocDiff = new CDAssocDiff(pair.a, pair.b);
       if(!assocDiff.getBaseDiff().isEmpty()){
@@ -1313,122 +1308,69 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     }
   }
 
-  public void addAllAddedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
-      boolean notFound = true;
-      for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
-        if (srcClass.getName().equals(tgtClass.getName())) {
-          notFound = false;
-          break;
-        }
-      }
-      if (notFound) {
-        addedClasses.add(srcClass);
-        if(!baseDiff.contains(DiffTypes.ADDED_CLASS)){
-          baseDiff.add(DiffTypes.ADDED_CLASS);
-        }
-      }
-    }
-  }
-
-  public void addAllDeletedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
-      boolean notFound = true;
-      for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
-        if (srcClass.getName().equals(tgtClass.getName())) {
-          notFound = false;
-          break;
-        }
-      }
-      if (notFound) {
-        deletedClasses.add(tgtClass);
-        if(!baseDiff.contains(DiffTypes.REMOVED_CLASS)){
-          baseDiff.add(DiffTypes.REMOVED_CLASS);
-        }
-      }
-    }
-  }
-
-  public void addAllAddedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
-      boolean notFound = true;
-      for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
-        if (srcEnum.getName().equals(tgtEnum.getName())) {
-          notFound = false;
-          break;
-        }
-      }
-      if (notFound) {
-        addedEnums.add(srcEnum);
-        if(!baseDiff.contains(DiffTypes.ADDED_ENUM)){
-          baseDiff.add(DiffTypes.ADDED_ENUM);
-        }
-      }
-    }
-  }
-
-  public void addAllDeletedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
-      boolean notFound = true;
-      for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
-        if (srcEnum.getName().equals(tgtEnum.getName())) {
-          notFound = false;
-          break;
-        }
-      }
-      if (notFound) {
-        deletedEnums.add(tgtEnum);
-        if(!baseDiff.contains(DiffTypes.REMOVED_ENUM)){
-          baseDiff.add(DiffTypes.REMOVED_ENUM);
-        }
-      }
-    }
-  }
-
-  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
-    for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-      boolean notFound = true;
-      for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
-          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-            notFound = false;
-            break;
+  public void addAllAddedOrDeletedElements(ASTCDCompilationUnit srcCD,
+                                           ASTCDCompilationUnit tgtCD,
+                                           List<MatchingStrategy<ASTCDType>> typeMatchers,
+                                           List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
+    //Firstly, clone the lists of classes, then add to the lists all added or deleted classes
+    List<ASTCDClass> srcClasses = srcCD.getCDDefinition().getCDClassesList();
+    List<ASTCDClass> tgtClasses = tgtCD.getCDDefinition().getCDClassesList();
+    List<ASTCDClass> srcClassesToRemove = new ArrayList<>();
+    List<ASTCDClass> tgtClassesToRemove = new ArrayList<>();
+    for (ASTCDClass srcClass : srcClasses) {
+      for (ASTCDClass tgtClass : tgtClasses) {
+        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
+          if (typeMatcher.isMatched(srcClass, tgtClass)) {
+            srcClassesToRemove.add(srcClass);
+            tgtClassesToRemove.add(tgtClass);
           }
         }
-        if(!notFound) {
-          break;
-        }
-      }
-      if (notFound) {
-        addedAssocs.add(srcAssoc);
-        if(!baseDiff.contains(DiffTypes.ADDED_ASSOCIATION)){
-          baseDiff.add(DiffTypes.ADDED_ASSOCIATION);
-        }
       }
     }
-  }
+    srcClasses.removeAll(srcClassesToRemove);
+    tgtClasses.removeAll(tgtClassesToRemove);
+    addedClasses.addAll(srcClasses);
+    deletedClasses.addAll(tgtClasses);
 
-  public void addAllDeletedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
-    for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-      boolean notFound = true;
-      for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
-          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-            notFound = false;
-            break;
+    //Secondly, clone the lists of enums, then add to the lists all added or deleted classes
+    List<ASTCDEnum> srcEnums = srcCD.getCDDefinition().getCDEnumsList();
+    List<ASTCDEnum> tgtEnums = tgtCD.getCDDefinition().getCDEnumsList();
+    List<ASTCDEnum> srcEnumsToRemove = new ArrayList<>();
+    List<ASTCDEnum> tgtEnumsToRemove = new ArrayList<>();
+    for (ASTCDEnum srcEnum : srcEnums) {
+      for (ASTCDEnum tgtEnum : tgtEnums) {
+        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
+          if (typeMatcher.isMatched(srcEnum, tgtEnum)) {
+            srcEnumsToRemove.add(srcEnum);
+            tgtEnumsToRemove.add(tgtEnum);
           }
         }
-        if(!notFound) {
-          break;
-        }
       }
-      if (notFound) {
-        deletedAssocs.add(tgtAssoc);
-        if(!baseDiff.contains(DiffTypes.REMOVED_ASSOCIATION)){
-          baseDiff.add(DiffTypes.REMOVED_ASSOCIATION);
+    }
+    srcEnums.removeAll(srcEnumsToRemove);
+    tgtEnums.removeAll(tgtEnumsToRemove);
+    addedEnums.addAll(srcEnums);
+    deletedEnums.addAll(tgtEnums);
+
+    //Thirdly, clone the lists of associations, then add to the lists all added or deleted associations
+    List<ASTCDAssociation> srcAssocs = srcCD.getCDDefinition().getCDAssociationsList();
+    List<ASTCDAssociation> tgtAssocs = tgtCD.getCDDefinition().getCDAssociationsList();
+    List<ASTCDAssociation> srcAssocsToRemove = new ArrayList<>();
+    List<ASTCDAssociation> tgtAssocsToRemove = new ArrayList<>();
+    for (ASTCDAssociation srcAssoc : srcAssocs) {
+      for (ASTCDAssociation tgtAssoc : tgtAssocs) {
+        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
+          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
+            srcAssocsToRemove.add(srcAssoc);
+            tgtAssocsToRemove.add(tgtAssoc);
+          }
         }
       }
     }
+    srcAssocs.removeAll(srcAssocsToRemove);
+    tgtAssocs.removeAll(tgtAssocsToRemove);
+    addedAssocs.addAll(srcAssocs);
+    deletedAssocs.addAll(tgtAssocs);
   }
 
   public void addAllAddedInheritance(ICD4CodeArtifactScope srcCDScope,
@@ -1494,20 +1436,29 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
                             ICD4CodeArtifactScope tgtCDScope,
                             List<MatchingStrategy<ASTCDType>> typeMatchers,
                             List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
-    addAllMatchedClasses(srcCD, tgtCD, typeMatchers);
-    addAllMatchedInterfaces(srcCD, tgtCD, typeMatchers);
-    addAllMatchedAssocs(srcCD, tgtCD, assocMatchers);
-    addAllMatchedEnums(srcCD, tgtCD, typeMatchers);
-    addAllchangedTypes(srcCDScope, tgtCDScope);
-    addAllChangedAssocs();
-    addAllAddedClasses(srcCD, tgtCD);
-    addAllDeletedClasses(srcCD, tgtCD);
-    addAllAddedEnums(srcCD, tgtCD);
-    addAllDeletedEnums(srcCD, tgtCD);
-    addAllAddedAssocs(srcCD, tgtCD, assocMatchers);
-    addAllDeletedAssocs(srcCD, tgtCD, assocMatchers);
+    addAllMatchedElements(srcCD, tgtCD, typeMatchers, assocMatchers);
+    addAllChangedElements(srcCDScope, tgtCDScope);
+    addAllAddedOrDeletedElements(srcCD, tgtCD, typeMatchers, assocMatchers);
     addAllAddedInheritance(srcCDScope, tgtCDScope, typeMatchers);
     addAllDeletedInheritance(srcCDScope, tgtCDScope, typeMatchers);
+    if(!addedClasses.isEmpty()){
+      baseDiff.add(DiffTypes.ADDED_CLASS);
+    }
+    if(!deletedClasses.isEmpty()){
+      baseDiff.add(DiffTypes.REMOVED_CLASS);
+    }
+    if(!addedEnums.isEmpty()){
+      baseDiff.add(DiffTypes.ADDED_ENUM);
+    }
+    if(!deletedEnums.isEmpty()){
+      baseDiff.add(DiffTypes.REMOVED_ENUM);
+    }
+    if(!addedAssocs.isEmpty()){
+      baseDiff.add(DiffTypes.ADDED_ASSOCIATION);
+    }
+    if(!deletedAssocs.isEmpty()){
+      baseDiff.add(DiffTypes.REMOVED_ASSOCIATION);
+    }
   }
 
   private void setStrings(ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {

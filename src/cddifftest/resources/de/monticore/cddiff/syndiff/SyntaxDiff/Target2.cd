@@ -1,0 +1,17 @@
+import java.lang.String;
+
+classdiagram Target2 {
+  class B{}
+
+  class D{}
+
+  class J{}
+  class K{}
+
+  enum DeletedEnum;
+
+  enum MatchedEnum;
+
+  association B -> D;
+  association J -> K;
+}
