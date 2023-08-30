@@ -26,5 +26,6 @@ classdiagram Target1 {
   class K{}
 
   association [0..1] A -> C [1..*];
+  association old [*] A -> B [1];
   association [*] A -> D [1];
 }

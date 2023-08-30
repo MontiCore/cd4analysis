@@ -15,8 +15,6 @@ import java.util.List;
 public interface ICDSyntaxDiff {
   List<CDTypeDiff> getChangedTypes();
 
-  List<CDTypeDiff> getChangedClasses();
-
   List<CDAssocDiff> getChangedAssocs();
 
   List<ASTCDClass> getAddedClasses();
@@ -49,7 +47,7 @@ public interface ICDSyntaxDiff {
   List<DiffTypes> getBaseDiff();
   public void setBaseDiff(List<DiffTypes> baseDiff);
 
-  void setChangedClasses(List<CDTypeDiff> changedCLasses);
+  void setChangedTypes(List<CDTypeDiff> changedTypes);
 
   void setChangedAssocs(List<CDAssocDiff> changedAssocs);
 

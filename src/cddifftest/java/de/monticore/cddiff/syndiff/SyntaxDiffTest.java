@@ -289,6 +289,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println("----------------------------");
     System.out.println(syntaxDiff.printOnlyDeleted());
     System.out.println("----------------------------");
+    System.out.println(syntaxDiff.printOnlyChanged());
+    System.out.println("----------------------------");
   }
 
   public void parseModels(String concrete, String ref) {
