@@ -189,9 +189,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     }
   }
 
-  //TODO: check if somewhere the comparisson should be with unmatchedAssoc
-  //TODO: if no match is found for src, we don't look anymore at this
-  //if no match in tgt is found, we just add this assoc to diff
   public AssocStruct findMatchingAssocStructSrc(ASTCDAssociation association, ASTCDClass associatedClass) {
     Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getSrcCD());
     for (AssocStruct assocStruct : helper.getSrcMap().get(associatedClass)) {
@@ -385,10 +382,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     return null;
   }
 
-  public boolean isOldSuperOfNew(){
-    return false;
-  }
-
+  //Why did I made this?
   public Pair<Boolean, ASTCDClass> isCardZero(){
     if (!isReversed){
       if (getConnectedClasses(getSrcElem(), Syn2SemDiffHelper.getInstance().getSrcCD()).a.getSymbol().getInternalQualifiedName()

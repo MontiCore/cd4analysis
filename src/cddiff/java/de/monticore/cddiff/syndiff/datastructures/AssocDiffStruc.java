@@ -17,14 +17,6 @@ public class AssocDiffStruc {
   public AssocDiffStruc() {
   }
 
-  public AssocDiffStruc(ASTCDAssociation association, List<Pair<ClassSide, Integer>> changedCard, List<Pair<ClassSide, ASTCDRole>> changedRoleNames, ASTCDClass changedTgt, boolean changedDir) {
-    this.association = association;
-    this.changedCard = changedCard;
-    this.changedRoleNames = changedRoleNames;
-    this.changedTgt = changedTgt;
-    this.changedDir = changedDir;
-  }
-
   public List<Pair<ClassSide, Integer>> getChangedCard() {
     return changedCard;
   }

@@ -139,25 +139,41 @@ public class TestHelper {
     }
 
 
-    public void changedAssocs(){
-    for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
+  public void changedAssocs() {
+    for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()) {
       assert assocDiffStruc.getAssociation() != null;
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), syntaxDiff.getSrcCD());
       String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
-      if (assocDiffStruc.isChangedDir()){
+      if (assocDiffStruc.isChangedDir()) {
         comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
       }
-      if (assocDiffStruc.getChangedCard() != null){
+      if (assocDiffStruc.getChangedCard() != null) {
         comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
       }
-      if (assocDiffStruc.getChangedRoleNames() != null){
+      if (assocDiffStruc.getChangedRoleNames() != null) {
         comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
       }
-      if (assocDiffStruc.getChangedTgt() != null){
+      if (assocDiffStruc.getChangedTgt() != null) {
         comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
       System.out.println(comment);
       System.out.println("=======================================================");
+    }
+    for (CDAssocDiff assocDiff : syntaxDiff.getChangedAssocs()) {
+      if (syntaxDiff.helper.srcAssocExistsTgtNot(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
+        System.out.println("An association between the classes "
+          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+          + " has been added from the diagram.");
+        System.out.println("=======================================================");
+      }
+      if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
+        System.out.println("An association between the classes "
+          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+          + " has been removed from the diagram.");
+        System.out.println("=======================================================");
+      }
     }
   }
 
