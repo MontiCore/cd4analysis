@@ -10,7 +10,6 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
 import de.monticore.cddiff.syndiff.datastructures.*;
@@ -512,7 +511,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   }
 
   public ASTCDClass isAssocDeleted(ASTCDAssociation association, ASTCDClass astcdClass) {
-    AssocStruct assocStruct = getAssocStrucForClassTgt(astcdClass, association);
+    AssocStruct assocStruct = new Syn2SemDiffHelper().getAssocStrucForClassTgt(astcdClass, association);
     if (assocStruct != null) {//if assocStruc is null, then the association is deleted because of overlapping
       if (assocStruct.getSide().equals(ClassSide.Left)) {
         if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
@@ -560,32 +559,6 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       }
       if (!isContained){
         return subClass;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Get the AssocStruc that has the same type
-   * @param astcdClass class to search in
-   * @param association association to match with
-   * @return matched association, if found
-   */
-  private AssocStruct getAssocStrucForClass(ASTCDClass astcdClass, ASTCDAssociation association){
-    for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)){
-      if (sameAssociationType(assocStruct.getAssociation(), association)
-        || sameAssociationTypeInReverse(assocStruct.getAssociation(), association)){
-        return assocStruct;
-      }
-    }
-    return null;
-  }
-
-  public AssocStruct getAssocStrucForClassTgt(ASTCDClass astcdClass, ASTCDAssociation association){
-    for (AssocStruct assocStruct : helper.getTrgMap().get(astcdClass)){
-      if (CDAssociationHelper.sameAssociation(assocStruct.getAssociation(), association)
-        || CDAssociationHelper.sameAssociationInReverse(assocStruct.getAssociation(), association)){
-        return assocStruct;
       }
     }
     return null;
@@ -698,7 +671,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     ASTCDClass matchedRight = findMatchedClass(pair.b);
     ASTCDClass matchedLeft = findMatchedClass(pair.a);
     if (matchedLeft != null && matchedRight != null) {
-      AssocStruct matchedAssocStruc = getAssocStrucForClass(matchedLeft, association);
+      AssocStruct matchedAssocStruc = new Syn2SemDiffHelper().getAssocStrucForClass(matchedLeft, association);
       assert matchedAssocStruc != null;
       if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
         for (AssocStruct assocStruct : helper.getTrgMap().get(matchedRight)) {
@@ -1124,10 +1097,8 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     if (assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.a) != null
       || assocDiff.findMatchingAssocStructSrc(assocDiff.getSrcElem(), pair.b) != null){
       Pair<ASTCDClass, ASTCDClass> pair2 = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getTgtElem(), tgtCD);
-      if ((assocDiff.findMatchingAssocStructTgt(assocDiff.getTgtElem(), pair2.a) != null
-        || assocDiff.findMatchingAssocStructTgt(assocDiff.getTgtElem(), pair2.b) != null)){
-        return true;
-      }
+      return assocDiff.findMatchingAssocStructTgt(assocDiff.getTgtElem(), pair2.a) != null
+        || assocDiff.findMatchingAssocStructTgt(assocDiff.getTgtElem(), pair2.b) != null;
     }
     return false;
   }
@@ -1176,7 +1147,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     List<AssocDiffStruc> list = new ArrayList<>();
     for (CDAssocDiff assocDiff : changedAssocs) {
       Pair<ASTCDClass, ASTCDClass> pairDef = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
-      Pair<ASTCDClass, ASTCDClass> pair = null;
+      Pair<ASTCDClass, ASTCDClass> pair;
       if (pairDef.a.getModifier().isAbstract() || pairDef.b.getModifier().isAbstract()) {
         pair = getClassesForAssoc(pairDef);
       } else {

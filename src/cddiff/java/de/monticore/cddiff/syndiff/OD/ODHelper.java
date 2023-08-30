@@ -33,12 +33,6 @@ public class ODHelper {
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private final Builder builder = new Builder();
 
-  //TODO: change ODBuilder with value
-  //TODO: tests from ValidationAndPerfornce
-
-
-  //function that creates List<Pair<ASTODObject, List<Package>>> that orders the packages of each object from a set of packages
-  //function that creates List<Pair<ASTODObject, List<Package>>> that orders the packages of each object from a set of packages
   public static Map<ASTODObject, Integer> findUniqueASTODObjects(Set<Package> packages) {
     Map<ASTODObject, Integer> objectCountMap = new HashMap<>();
 
@@ -71,9 +65,6 @@ public class ODHelper {
         unprocessedObjects.add(entry.getKey());
       }
     }
-    if (unprocessedObjects.isEmpty()) {
-      return null;
-    }
     return unprocessedObjects;
   }
 
@@ -102,8 +93,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
   private static void countASTODObjects(Package pack, Map<ASTODObject, Integer> objectCountMap) {
     objectCountMap.put(pack.getSrcClass(), objectCountMap.getOrDefault(pack.getSrcClass(), 0) + 1);
     objectCountMap.put(pack.getTgtClass(), objectCountMap.getOrDefault(pack.getTgtClass(), 0) + 1);
-//    objectCountMap.put(pack.getAssociation(), objectCountMap.getOrDefault(pack.getAssociation(), 0) + 1);
-//    objectCountMap.put(pack.getAstcdAssociation(), objectCountMap.getOrDefault(pack.getAstcdAssociation(), 0) + 1);
   }
 
   public static Pair<Package, ClassSide> findContainingPackage(Set<Package> packages, ASTODObject astodObject) {
@@ -159,97 +148,44 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return objectSet;
   }
 
+  //Get objects for class
   public Set<ASTODElement> getObjForOD(ASTCDClass astcdClass) {
     Set<ASTODElement> set = new HashSet<>();
     Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>());
-    System.out.println("Created packages are:");
-    for (Package pack : packages) {
-      System.out.println(pack.getSrcClass().getMCObjectType().printType());
-      System.out.println(pack.getTgtClass().getMCObjectType().printType());
-      System.out.println("====================================");
-    }
-    System.out.println("END");
-    Set<ASTODObject> unprocessedObjects = findUnprocessedObjects(packages);
-    System.out.println("Unprocessed objects are:");
-    assert unprocessedObjects != null;
-    for (ASTODObject astodObject : unprocessedObjects) {
-      System.out.println(astodObject.getMCObjectType().printType());
-    }
-    System.out.println("END");
-    while (findUnprocessedObjects(packages) != null) {
-      System.out.println("BEGINNING");
+    while (!findUnprocessedObjects(packages).isEmpty()) {
       for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
         packages.addAll(createChainsForExistingObj(astodObject, packages));
       }
-//      for (Package pack : packages) {
-//        System.out.println(pack.getSrcClass().getMCObjectType().printType());
-//        if (pack.getTgtClass() != null) {
-//          System.out.println(pack.getTgtClass().getMCObjectType().printType());
-//        }
-//        System.out.println("====================================");
-//      }
-//      System.out.println(findUnprocessedObjects(packages));
-//      List<ASTODObject> list = new ArrayList<>(findProcessedObjects(packages));
-//      System.out.println(list.get(0).getMCObjectType().printType());
-//      System.out.println("Unprocessed objects?" + (findUnprocessedObjects(packages) == null));
     }
-//    System.out.println("BEGINNING");
-//    for (ASTODObject astodObject : unprocessedObjects) {
-//      assert helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()) != null;
-//      packages.addAll(createChainsForExistingObj(astodObject, packages));
-//    }
-//    System.out.println("Created packages are:");
-//    for (Package pack: packages){
-//      System.out.println(pack.getSrcClass().getMCObjectType().printType());
-//      System.out.println(pack.getTgtClass().getMCObjectType().printType());
-//      System.out.println("====================================");
-//    }
-//    System.out.println("END");
-//    System.out.println("Unprocessed objects are:");
-//    for (ASTODObject astodObject : findUnprocessedObjects(packages)){
-//      System.out.println(astodObject.getMCObjectType().printType());
-//    }
-//    System.out.println("END");
-//    System.out.println("BEGINNING 2");
-//    for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
-//      assert helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()) != null;
-//      packages.addAll(createChainsForExistingObj(astodObject, packages));
-//    }
-//    System.out.println("Created packages are:");
-//    for (Package pack: packages){
-//      System.out.println(pack.getSrcClass().getMCObjectType().printType());
-//      if (pack.getTgtClass() != null){
-//        System.out.println(pack.getTgtClass().getMCObjectType().printType());
-//      }
-////      System.out.println(pack.getTgtClass().getMCObjectType().printType());
-//      System.out.println("====================================");
-//    }
-//    System.out.println("END");
-//    System.out.println("Unprocessed objects are:");
-//    System.out.println("Unprocessed objects?" + (findUnprocessedObjects(packages) == null));
-//    System.out.println("END");
-
-
-//    for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
-//      assert helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()) != null;
-//      packages.addAll(createChainsForExistingObj(astodObject, packages));
-//    }
-//    for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
-//      assert helper.getCDClass(helper.getSrcCD(), astodObject.getMCObjectType().printType()) != null;
-//      packages.addAll(createChainsForExistingObj(astodObject, packages));
-//    }
     for (Package pack : packages) {
       //unfold packages into set
       if (pack.getAssociation() != null) {
         set.add(pack.getAssociation());
         set.add(pack.getTgtClass());
-        System.out.println(pack.getTgtClass().getMCObjectType().printType());
       }
       set.add(pack.getSrcClass());
-      System.out.println(pack.getSrcClass().getMCObjectType().printType());
-      System.out.println("====================================");
     }
     return set;
+  }
+  //Get objects for association
+  public Pair<Set<ASTODElement>, ASTODLink> getObjForOD(ASTCDAssociation association , int cardinalityLeft, int cardinalityRight) {
+    Set<ASTODElement> set = new HashSet<>();
+    Set<Package> packages = createChains(association, cardinalityLeft, cardinalityRight);
+    ASTODLink link = packages.iterator().next().getAssociation();
+    while (!findUnprocessedObjects(packages).isEmpty()) {
+      for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
+        packages.addAll(createChainsForExistingObj(astodObject, packages));
+      }
+    }
+    for (Package pack : packages) {
+      //unfold packages into set
+      if (pack.getAssociation() != null) {
+        set.add(pack.getAssociation());
+        set.add(pack.getTgtClass());
+      }
+      set.add(pack.getSrcClass());
+    }
+    return new Pair<>(set, link);
   }
 
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> objectSet) {
@@ -306,11 +242,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
       }
     }
-    Set<ASTODObject> unprocessedObjects = findUnprocessedObjects(objectSet);
-    if (unprocessedObjects == null){
-      return null;
-    }
-    for (ASTODObject object : unprocessedObjects){
+    for (ASTODObject object : findUnprocessedObjects(objectSet)){
       if (helper.getCDClass(helper.getSrcCD(), tgtClass.getName()) == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
         if (!objectUsesAssoc(false, object, srcClass, association, getContainingPackages(object, objectSet))){
           return object;
@@ -453,12 +385,9 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return false;
   }
 
-  //number of associations from class to class - done
-  //TODO: add checks if class is abstract - search for subclass (some functions already do this) - done for changedTypes and changedAssociations
   public List<ASTODArtifact> generateODs(
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean staDiff){
-    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, );
-    CDSyntaxDiff syntaxDiff = null;
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     List<ASTODArtifact> artifactList = new ArrayList<>();
     for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
@@ -526,13 +455,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       artifactList.add(astodArtifact);
     }
 
-//    for (Pair<ASTCDClass, Set<ASTCDAttribute>> pair : syntaxDiff.allNewAttributes()){
-//      String comment = "In srcCD the class" + pair.a + " is a now a new subclass of at least one other and because of that it has the following new attributes: "
-//        +"\n" + pair.b.toString();
-//      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(DiffTypes.TGT_NOT_INSTANTIATABLE), generateElements(null, pair.a, "", "", "", comment), null);
-//      artifactList.add(astodArtifact);
-//    }
-
     //implement a function that
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
       if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
@@ -549,8 +471,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
             comment.append(attribute.getName())
               .append(" from ")
               .append(getOldAtt(attribute, typeDiffStruc)
-                .printType()).append(" to ")
-              .append(attribute.printType());
+                .getMCType().printType()).append(" to ")
+              .append(attribute.getMCType().printType());
           }
         }
         if (typeDiffStruc.getChangedStereotype() != null) {
@@ -585,9 +507,9 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
              for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
                comment.append(attribute.getName())
                  .append(" from ")
-                 .append(getOldAtt(attribute, typeDiffStruc).printType())
+                 .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
                  .append(" to ")
-                 .append(attribute.printType());
+                 .append(attribute.getMCType().printType());
              }
            }
            if (typeDiffStruc.getDeletedAttributes() != null) {
@@ -681,8 +603,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
                                              String text,
                                              String comment){
     Set<ASTODElement> elements;
-    //elements = getObjectsForOD(astcdClass);
-    elements = null;
+    elements = getObjForOD(astcdClass);
     ASTODObject matchedObject = null;
     for (ASTODElement element : elements) {
       if (element instanceof ASTODObject) {
@@ -720,8 +641,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
                                              String name,
                                              String text,
                                              String comment){
-    Pair<Set<ASTODElement>, ASTODLink> pair = null;
-      //getObjectsForOD(association, integers.get(0), integers.get(1));
+    Pair<Set<ASTODElement>, ASTODLink> pair = getObjForOD(association, integers.get(0), integers.get(1));
     Set<ASTODElement> elements;
     elements = pair.a;
 
@@ -760,15 +680,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       .build();
     return OD4ReportMill.oDArtifactBuilder().setObjectDiagram(astObjectDiagram).build();
   }
-  public ASTODAttribute createAttribute(String type, String name, ASTExpression value){
-    return builder.buildAttr(type, name, null);
-  }
-  public ASTODObject createObject(String id, String type, Collection<String> types, Collection<ASTODAttribute> attrs){
-    return builder.buildObj(id, type, types, attrs);
-  }
-  public ASTODLink createLink(ASTODObject srcObj, String roleName, ASTODObject trgObj, String direction){
-   return builder.buildLink(srcObj, roleName, "", trgObj, direction);
-  }
 
   public String oDTitleForAssoc(ASTCDAssociation association){
     String srcName;
@@ -798,11 +709,9 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return stringBuilder;
   }
   public static String printOD(ASTODArtifact astodArtifact) {
-    // pretty print the AST
     return OD4ReportMill.prettyPrint(astodArtifact, true);
   }
   public static List<String> printODs(List<ASTODArtifact> astODArtifacts) {
-    // pretty print the AST
     List<String> result = new ArrayList<>();
     for (ASTODArtifact od : astODArtifacts) {
       result.add(OD4ReportMill.prettyPrint(od, true));
