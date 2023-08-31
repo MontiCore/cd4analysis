@@ -9,14 +9,15 @@ import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
-import de.monticore.cddiff.syndiff.imp.DiffTypes;
 import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTStringLiteralBuilder;
 import de.monticore.od4report.OD4ReportMill;
-import de.monticore.odbasis._ast.*;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODElement;
+import de.monticore.odbasis._ast.ASTODObject;
+import de.monticore.odbasis._ast.ASTObjectDiagram;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import de.monticore.umlstereotype._ast.ASTStereoValueBuilder;
@@ -24,15 +25,17 @@ import de.monticore.umlstereotype._ast.ASTStereotypeBuilder;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.splitStringByCharacter;
 
 public class ODHelper {
   private int indexClass = 1;
   private int indexAssoc = 1;
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private final Builder builder = new Builder();
+
+  private Map<ASTCDClass, Integer> map = new HashMap<>();
 
   public static Map<ASTODObject, Integer> findUniqueASTODObjects(Set<Package> packages) {
     Map<ASTODObject, Integer> objectCountMap = new HashMap<>();
@@ -191,21 +194,17 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
 
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> objectSet) {
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
+    ASTODObject srcObject = builder.buildObj("", astcdClass.getName(),
+      splitStringByCharacter(helper.getSuperClasses(astcdClass), ','),
+      helper.getAttributesOD(astcdClass));
     for (AssocStruct assocStruct : list) {
-      ASTODObject srcObject = null;
       ASTODObject tgtObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)
         && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
         || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
-        srcObject = builder.buildObj("", Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getName(),
-          splitStringByCharacter(helper.getSuperClasses(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), ','),
-          helper.getAttributesOD(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         tgtObject = getObjectForTgt(astcdClass, Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, assocStruct.getAssociation(), objectSet);
       } else if (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
         || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
-        srcObject = builder.buildObj("", Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getName(),
-          splitStringByCharacter(helper.getSuperClasses(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), ','),
-          helper.getAttributesOD(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         tgtObject = getObjectForTgt(astcdClass, Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, assocStruct.getAssociation(), objectSet);
       }
       Package pack;
@@ -232,20 +231,74 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       }
       objectSet.add(pack);
     }
+    for (AssocStruct assocStruct : getOtherAssoc(astcdClass)){
+      ASTODObject realSrc;
+      if (assocStruct.getSide().equals(ClassSide.Left)){
+        realSrc = getObjectForSrc(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, astcdClass, assocStruct.getAssociation(), objectSet);
+      }
+      else {
+        realSrc = getObjectForSrc(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, astcdClass, assocStruct.getAssociation(), objectSet);
+      }
+      Package pack;
+      if (realSrc != null && srcObject != realSrc){
+        if (assocStruct.getSide().equals(ClassSide.Left)){
+          pack = new Package(realSrc,
+            srcObject,
+            assocStruct.getAssociation(), ClassSide.Left, true, false);
+        }
+        else {
+          pack = new Package(srcObject,
+            realSrc,
+            assocStruct.getAssociation(), ClassSide.Right, false, true);
+        }
+      }
+      else {
+        if (assocStruct.getSide().equals(ClassSide.Left)){
+          pack = new Package(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a,
+            srcObject,
+            assocStruct.getAssociation(), ClassSide.Left, true, false);
+        }
+        else {
+          pack = new Package(srcObject,
+            Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b,
+            assocStruct.getAssociation(), ClassSide.Right, false, true);
+        }
+        objectSet.add(pack);
+      }
+    }
     return objectSet;
   }
   public ASTODObject getObjectForTgt(ASTCDClass srcClass, ASTCDClass tgtClass, ASTCDAssociation association, Set<Package> objectSet){
     Set<ASTODObject> processedObjects = findProcessedObjects(objectSet);
     for (ASTODObject object : processedObjects){
-      if (helper.getCDClass(helper.getSrcCD(), tgtClass.getName()) == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
+      if (tgtClass == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
         if (!objectUsesAssoc(true, object, srcClass, association, getContainingPackages(object, objectSet))){
           return object;
         }
       }
     }
     for (ASTODObject object : findUnprocessedObjects(objectSet)){
-      if (helper.getCDClass(helper.getSrcCD(), tgtClass.getName()) == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
+      if (tgtClass == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
         if (!objectUsesAssoc(false, object, srcClass, association, getContainingPackages(object, objectSet))){
+          return object;
+        }
+      }
+    }
+    return null;
+  }
+
+  public ASTODObject getObjectForSrc(ASTCDClass srcClass, ASTCDClass tgtClass, ASTCDAssociation association, Set<Package> objectSet){
+    Set<ASTODObject> processedObjects = findProcessedObjects(objectSet);
+    for (ASTODObject object : processedObjects){
+      if (srcClass == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
+        if (!objectUsesAssoc(true, object, tgtClass, association, getContainingPackages(object, objectSet))){
+          return object;
+        }
+      }
+    }
+    for (ASTODObject object : findUnprocessedObjects(objectSet)){
+      if (srcClass == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())){
+        if (!objectUsesAssoc(false, object, tgtClass, association, getContainingPackages(object, objectSet))){
           return object;
         }
       }
@@ -304,6 +357,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return objectSet;
   }
 
+  //TODO: add other assocs
   public Set<Package> createChainsHelper(ASTODObject object, List<AssocStruct> list, Set<Package> objectSet){
     for (AssocStruct assocStruct : list) {
       ASTODObject tgtObject = null;
@@ -385,6 +439,29 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     }
     return false;
   }
+  private List<AssocStruct> getOtherAssoc(ASTCDClass astcdClass){
+    List<AssocStruct> list = new ArrayList<>();
+    for (ASTCDClass classToCheck : helper.getSrcMap().keySet()) {
+      if (classToCheck != astcdClass) {
+        for (AssocStruct assocStruct : helper.getSrcMap().get(classToCheck)) {
+          if (assocStruct.getSide().equals(ClassSide.Left)
+            && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
+            && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+            || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())
+            && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b == astcdClass) {
+            list.add(assocStruct);
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
+            && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
+            || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())
+            && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a == astcdClass) {
+            list.add(assocStruct);
+          }
+        }
+      }
+    }
+    return list;
+  }
 
   public List<ASTODArtifact> generateODs(
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean staDiff){
@@ -404,7 +481,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         String comment = "A new associations has been added to the diagram."
           + "\nThis association allows a new relation between the classes" + leftClass.getSymbol().getInternalQualifiedName() + "and" + rightClass.getSymbol().getInternalQualifiedName() + "and their subclasses";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association),
-          generateElements(association, null, "", "", "added association", comment),
+          generateElements(association, Arrays.asList(1, 1) , "", "", "added association", comment),
           null);
         artifactList.add(astodArtifact);
       }
@@ -558,8 +635,21 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       if (assocDiffStruc.getChangedTgt() != null){
         comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
+      ArrayList<Integer> list = new ArrayList<>();
+      if (assocDiffStruc.getChangedCard().isEmpty()){
+        list.add(1);
+        list.add(1);
+      }
+      else if (assocDiffStruc.getChangedCard().size() == 1){
+        list.add(assocDiffStruc.getChangedCard().get(0).b);
+        list.add(1);
+      }
+      else {
+        list.add(assocDiffStruc.getChangedCard().get(0).b);
+        list.add(assocDiffStruc.getChangedCard().get(1).b);
+      }
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-        generateElements(assocDiffStruc.getAssociation(), null, "", "", "", comment),
+        generateElements(assocDiffStruc.getAssociation(), list, "", "", "", comment),
         null);
       artifactList.add(astodArtifact);
     }
@@ -571,7 +661,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
           + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
           + " has been added from the diagram.";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
-          generateElements(assocDiff.getSrcElem(), null, "", "", "", comment),
+          generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), "", "", "", comment),
           null);
         artifactList.add(astodArtifact);
       }
@@ -580,10 +670,19 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
           + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
           + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
           + " has been removed from the diagram.";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
-          generateElements(assocDiff.getSrcElem(), null, "", "", "", comment),
-          null);
-        artifactList.add(astodArtifact);
+        Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD());
+        if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableRight()){
+          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.a),
+            generateElements(pair.a, "", "", "", comment),
+            null);
+          artifactList.add(astodArtifact);
+        }
+        if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()){
+          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
+            generateElements(pair.b, "", "", "", comment),
+            null);
+          artifactList.add(astodArtifact);
+        }
       }
     }
 
@@ -731,6 +830,12 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     String stringBuilder = "ClassDiff_" + indexClass + astcdClass.getSymbol().getInternalQualifiedName();
     indexClass++;
     return stringBuilder;
+  }
+
+  public String getNameForClass(ASTCDClass astcdClass){
+    map.putIfAbsent(astcdClass, 0);
+    map.put(astcdClass, map.get(astcdClass) + 1);
+    return astcdClass.getName() + map.get(astcdClass);
   }
   public static String printOD(ASTODArtifact astodArtifact) {
     return OD4ReportMill.prettyPrint(astodArtifact, true);

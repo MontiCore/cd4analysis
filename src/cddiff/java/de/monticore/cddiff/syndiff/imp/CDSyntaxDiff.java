@@ -907,6 +907,71 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       setBiDirRoleName(pair.a, pair.b);
       mergeAssocs(pair.a, pair.b);
     }
+    deleteCompositions();
+  }
+
+  public void deleteCompositions() {
+    for (ASTCDAssociation association : helper.getSrcCD().getCDDefinition().getCDAssociationsList()) {
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, getSrcCD());
+      if (association.getCDAssocDir().isDefinitiveNavigableRight() && association.getCDAssocType().isComposition()) {
+        AssocStruct assocStruct = getAssocStrucForBaseAssoc(pair.a, association);
+        if (assocStruct != null && helper.getNotInstanClassesSrc().contains(pair.a)) {
+          helper.updateSrc(pair.b);
+          for (ASTCDClass subClass : getSpannedInheritance(helper.getSrcCD(), pair.b)) {
+            helper.getSrcMap().removeAll(subClass);
+          }
+        }
+      }
+      if (association.getCDAssocDir().isDefinitiveNavigableLeft() && association.getCDAssocType().isComposition()) {
+        AssocStruct assocStruct = getAssocStrucForBaseAssoc(pair.b, association);
+        if (assocStruct != null && helper.getNotInstanClassesSrc().contains(pair.b)) {
+          helper.updateSrc(pair.a);
+          for (ASTCDClass subClass : getSpannedInheritance(helper.getSrcCD(), pair.a)) {
+            helper.getSrcMap().removeAll(subClass);
+          }
+        }
+      }
+    }
+
+    for (ASTCDAssociation association : helper.getTgtCD().getCDDefinition().getCDAssociationsList()){
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, getTgtCD());
+      if (association.getCDAssocDir().isDefinitiveNavigableRight() && association.getCDAssocType().isComposition()){
+        AssocStruct assocStruct = getAssocStrucForBaseTgt(pair.a, association);
+        if (assocStruct != null && helper.getNotInstanClassesTgt().contains(pair.a)){
+          helper.updateTgt(pair.b);
+          for (ASTCDClass subClass : getSpannedInheritance(helper.getTgtCD(), pair.b)) {
+            helper.getSrcMap().removeAll(subClass);
+          }
+        }
+      }
+      if (association.getCDAssocDir().isDefinitiveNavigableLeft() && association.getCDAssocType().isComposition()){
+        AssocStruct assocStruct = getAssocStrucForBaseTgt(pair.b, association);
+        if (assocStruct != null && helper.getNotInstanClassesTgt().contains(pair.b)){
+          helper.updateTgt(pair.a);
+          for (ASTCDClass subClass : getSpannedInheritance(helper.getTgtCD(), pair.a)) {
+            helper.getSrcMap().removeAll(subClass);
+          }
+        }
+      }
+    }
+  }
+
+  private AssocStruct getAssocStrucForBaseAssoc(ASTCDClass astcdClass, ASTCDAssociation association){
+    for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)){
+      if (sameAssociation(assocStruct.getUnmodifiedAssoc(), association)){
+        return assocStruct;
+      }
+    }
+    return null;
+  }
+
+  private AssocStruct getAssocStrucForBaseTgt(ASTCDClass astcdClass, ASTCDAssociation association){
+    for (AssocStruct assocStruct : helper.getTrgMap().get(astcdClass)){
+      if (sameAssociation(assocStruct.getUnmodifiedAssoc(), association)){
+        return assocStruct;
+      }
+    }
+    return null;
   }
 
   /**

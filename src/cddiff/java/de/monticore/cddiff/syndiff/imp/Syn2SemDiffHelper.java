@@ -749,7 +749,6 @@ public class Syn2SemDiffHelper {
       Set<ASTCDType> superClasses = CDDiffUtil.getAllSuperTypes(astcdClass, getSrcCD().getCDDefinition());
       superClasses.remove(astcdClass);
       for (ASTCDType superClass : superClasses){//getAllSuperTypes CDDffUtils
-        System.out.println("superClass: " + superClass.getName());
         if (superClass instanceof ASTCDClass){
           ASTCDClass superC = (ASTCDClass) superClass;
           for (ASTCDAssociation association : getSrcCD().getCDDefinition().getCDAssociationsListForType(superClass)){
@@ -758,25 +757,22 @@ public class Syn2SemDiffHelper {
               && association.getCDAssocDir().isDefinitiveNavigableRight())){
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-              System.out.println("Base assoc has classes: " + getConnectedClasses(association, getSrcCD()).a.getSymbol().getInternalQualifiedName()
-                + " and " + getConnectedClasses(association, getSrcCD()).b.getSymbol().getInternalQualifiedName());
-              System.out.println("Copy assoc has classes: " + getConnectedClasses(copyAssoc, getSrcCD()).a.getSymbol().getInternalQualifiedName()
-                + " and " + getConnectedClasses(copyAssoc, getSrcCD()).b.getSymbol().getInternalQualifiedName());
               if (copyAssoc.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = astcdClass.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                char firstChar = superC.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
                 copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
-              copyAssoc.setName("");
+              copyAssoc.setName(" ");
               if (!copyAssoc.getLeft().isPresentCDCardinality()){
                 copyAssoc.getLeft().setCDCardinality(new ASTCDCardMult());
               }
               if (!copyAssoc.getRight().isPresentCDCardinality()){
                 copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
               }
+              if (copyAssoc.getCDAssocType().isComposition()){
+                copyAssoc.getLeft().setCDCardinality(new ASTCDCardOne());
+              }
               if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
-                System.out.println("Putting copy assoc in: " + getConnectedClasses(copyAssoc, getSrcCD()).a.getSymbol().getInternalQualifiedName()
-                  + " and " + getConnectedClasses(copyAssoc, getSrcCD()).b.getSymbol().getInternalQualifiedName());
                 getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left, true));
               }
               else {
@@ -786,16 +782,19 @@ public class Syn2SemDiffHelper {
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
               if (copyAssoc.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = astcdClass.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                char firstChar = superC.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
                 copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
-              copyAssoc.setName("");
+              copyAssoc.setName(" ");
               if (!copyAssoc.getLeft().isPresentCDCardinality()){
                 copyAssoc.getLeft().setCDCardinality(new ASTCDCardMult());
               }
               if (!copyAssoc.getRight().isPresentCDCardinality()){
                 copyAssoc.getRight().setCDCardinality(new ASTCDCardMult());
+              }
+              if (copyAssoc.getCDAssocType().isComposition()){
+                copyAssoc.getLeft().setCDCardinality(new ASTCDCardOne());
               }
               if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right, true));
@@ -822,16 +821,19 @@ public class Syn2SemDiffHelper {
               ASTCDAssociation assocForSubClass = association.deepClone();
               assocForSubClass.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
               if (assocForSubClass.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = astcdClass.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                char firstChar = superC.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
                 assocForSubClass.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
-              assocForSubClass.setName("");
+              assocForSubClass.setName(" ");
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
                 assocForSubClass.getLeft().setCDCardinality(new ASTCDCardMult());
               }
               if (!assocForSubClass.getRight().isPresentCDCardinality()){
                 association.getRight().setCDCardinality(new ASTCDCardMult());
+              }
+              if (assocForSubClass.getCDAssocType().isComposition()){
+                assocForSubClass.getLeft().setCDCardinality(new ASTCDCardOne());
               }
               if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Left, true));
@@ -844,16 +846,19 @@ public class Syn2SemDiffHelper {
               ASTCDAssociation assocForSubClass = association.deepClone();
               assocForSubClass.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
               if (assocForSubClass.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = astcdClass.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + astcdClass.getName().substring(1);
+                char firstChar = superC.getName().charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
                 assocForSubClass.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
-              assocForSubClass.setName("");
+              assocForSubClass.setName(" ");
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
                 assocForSubClass.getLeft().setCDCardinality(new ASTCDCardMult());
               }
               if (!assocForSubClass.getRight().isPresentCDCardinality()){
                 association.getRight().setCDCardinality(new ASTCDCardMult());
+              }
+              if (assocForSubClass.getCDAssocType().isComposition()){
+                assocForSubClass.getLeft().setCDCardinality(new ASTCDCardOne());
               }
               if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
                 getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.BiDirectional, ClassSide.Right, true));
@@ -1099,89 +1104,6 @@ public class Syn2SemDiffHelper {
         .append(" ");
     }
     return string.deleteCharAt(string.length() - 1).toString();
-  }
-
-  //TODO: must be made static
-  //with static version of setMaps()??
-  public void findOverlappingAssocsForCD(ASTCDCompilationUnit compilationUnit){
-    Set<ASTCDClass> srcToDelete = new HashSet<>();
-    Set<Pair<ASTCDClass, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
-    Set<Pair<AssocStruct, AssocStruct>> srcAssocsToMerge = new HashSet<>();
-    Set<DeleteStruc> srcAssocsToMergeWithDelete = new HashSet<>();
-    for (ASTCDClass astcdClass : getSrcMap().keySet()) {
-      for (AssocStruct association : getSrcMap().get(astcdClass)) {
-        if (!association.isSuperAssoc()) {
-          for (AssocStruct superAssoc : getSrcMap().get(astcdClass)) {
-            if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
-              if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
-                if (!sameRoleNames(association, superAssoc)) {
-                  Log.error("Bad overlapping found");
-                }
-                //same target role names and target classes are in inheritance relation
-                //associations need to be merged
-                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
-              } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
-                //two associations with same target role names, but target classes are not in inheritance relation
-                //if trg cardinality on one of them is 0..1 or 0..* then such association can't exist
-                //if trg cardinality on one of them is 1 or 1..* then such association can't exist and also no objects of this type can exist
-                if (areZeroAssocs(association, superAssoc)) {
-                  //such association can't exist
-                  //delete
-                  srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                  //Do I need to give some output about the class
-                } else {
-                  //such class can't exist
-                  //delete
-                  updateSrc(astcdClass);
-                  srcToDelete.add(astcdClass);
-                }
-              }
-            } else if (!association.equals(superAssoc)) {
-              //comparison between direct associations
-              if (isInConflict(association, superAssoc) && inInheritanceRelation(association, superAssoc)) {
-                srcAssocsToMerge.add(new Pair<>(association, superAssoc));
-              } else if (isInConflict(association, superAssoc) && !inInheritanceRelation(association, superAssoc)) {
-                if (areZeroAssocs(association, superAssoc)) {
-                  srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                } else {
-                  updateSrc(astcdClass);
-                  srcToDelete.add(astcdClass);
-                }
-              }
-              else if (sameAssociation(association.getAssociation(), superAssoc.getAssociation())
-                || sameAssociationInReverse(association.getAssociation(), superAssoc.getAssociation())){
-                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
-              }
-            }
-          }
-        }
-      }
-    }
-    for (ASTCDClass astcdClass : srcToDelete) {
-      System.out.println("Class " + astcdClass.getName() + " and all subclasses must be deleted");
-    }
-    for (Pair<ASTCDClass, ASTCDRole> pair : srcAssocsToDelete) {
-      System.out.println("Associations from class " + pair.a.getSymbol().getInternalQualifiedName() + " with role " + pair.b.getName() + " must be deleted");
-    }
-    for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
-      System.out.println("Association between" + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
-        + " and " + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName()
-        + " must be merged with association between "
-        + getConnectedClasses(pair.getSuperAssoc().getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
-        + " and " + getConnectedClasses(pair.getSuperAssoc().getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName());
-    }
-    for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
-      System.out.println("Association between" + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
-        + " and " + getConnectedClasses(pair.getAssociation().getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName()
-        + " must be deleted");
-    }
-    for (Pair<AssocStruct, AssocStruct> pair : srcAssocsToMerge) {
-      System.out.println("Association between" + getConnectedClasses(pair.a.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
-        + " and " + getConnectedClasses(pair.a.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName()
-        + " must be merged with association between "
-        + getConnectedClasses(pair.b.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName()
-        + " and " + getConnectedClasses(pair.b.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName());
-    }
   }
 
   public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
