@@ -9,6 +9,7 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.types.check.FullSynthesizeFromMCCollectionTypes;
@@ -25,6 +26,10 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
   protected ISynthesize typeSynthesizer;
 
   public CD4CodeBasisSymbolTableCompleter(ISynthesize typeSynthesizer) {
+    this.typeSynthesizer = typeSynthesizer;
+  }
+
+  public CD4CodeBasisSymbolTableCompleter(int i) {
     this.typeSynthesizer = typeSynthesizer;
   }
 
@@ -76,9 +81,14 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
     }
   }
 
+  public void endVisit(ASTCDInterface node) {
+    node.getSymbol().getMethodSignatureList().forEach(m->m.setIsAbstract(true));
+  }
+
   protected void initialize_CDMethod(ASTCDMethod ast) {
     CDMethodSignatureSymbol symbol = ast.getSymbol();
     symbol.setIsMethod(true);
+    symbol.setIsAbstract(ast.getModifier().isAbstract());
 
     final TypeCheckResult typeResult = getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
     if (!typeResult.isPresentResult()) {
@@ -121,6 +131,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
   protected void initialize_CDConstructor(ASTCDConstructor ast) {
     CDMethodSignatureSymbol symbol = ast.getSymbol();
     symbol.setIsConstructor(true);
+    symbol.setIsAbstract(ast.getModifier().isAbstract());
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
 
     symbol.setType(
