@@ -16,10 +16,10 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
-public class Builder implements IODBuilder{
+public class ODBuilder implements IODBuilder{
   @Override
   public ASTODAttribute buildAttr(String type, String name, String value) {
-    Optional<ASTODAttribute> attribute = null;
+    Optional<ASTODAttribute> attribute = Optional.empty();
     try{
       attribute = OD4ReportMill.parser().parse_StringODAttribute(type+ " " + name + "=" + value +";");
     } catch (Exception exception){
@@ -30,7 +30,7 @@ public class Builder implements IODBuilder{
   }
   @Override
   public ASTODAttribute buildAttr(String type, String name) {
-    Optional<ASTODAttribute> attribute = null;
+    Optional<ASTODAttribute> attribute = Optional.empty();
     try{
       attribute = OD4ReportMill.parser().parse_StringODAttribute(type+ " " + name + ";");
     } catch (Exception exception){
@@ -147,31 +147,17 @@ public class Builder implements IODBuilder{
 
   @Override
   public ASTODObject buildObj(String id, String type, Collection<String> types, Collection<ASTODAttribute> attrs) {
-    if (!Objects.equals(id, "")){
-      return createNamedObject(id, type, types, attrs);
-    }
-    else {
-      return createUnnamedObject(id, type, types, attrs);
-    }
-  }
-
-  private ASTODObject createNamedObject(String id, String type, Collection<String> types, Collection<ASTODAttribute> attributes){
     ASTODNamedObjectBuilder objectBuilder = ODBasisMill.oDNamedObjectBuilder().setModifier(ODBasisMill.modifierBuilder().build()).setName(id);
 
     objectBuilder.setName(id);
 
-    objectBuilder.setMCObjectType(ODBasisMill.mCQualifiedTypeBuilder()
-      .setMCQualifiedName(ODBasisMill.mCQualifiedNameBuilder()
-        .setPartsList(Collections.singletonList(type))
-        .build())
-      .build());
-
-    objectBuilder.setODAttributesList(new ArrayList<>(attributes));
-    return objectBuilder.build();
-  }
-
-  private ASTODObject createUnnamedObject(String id, String type, Collection<String> types, Collection<ASTODAttribute> attributes){
-    ASTODAnonymousObjectBuilder objectBuilder = ODBasisMill.oDAnonymousObjectBuilder().setModifier(ODBasisMill.modifierBuilder().build());
+    objectBuilder.setModifier(OD4ReportMill.modifierBuilder()
+      .setStereotype(OD4ReportMill.stereotypeBuilder().addValues(OD4ReportMill.stereoValueBuilder()
+        .setName("instanceof")
+        .setContent(String.join(", ", types))
+        .setText(OD4ReportMill.stringLiteralBuilder()
+          .setSource(String.join(", ", types))
+          .build()).build()).build()).build());
 
     objectBuilder.setMCObjectType(ODBasisMill.mCQualifiedTypeBuilder()
       .setMCQualifiedName(ODBasisMill.mCQualifiedNameBuilder()
@@ -179,7 +165,7 @@ public class Builder implements IODBuilder{
         .build())
       .build());
 
-    objectBuilder.setODAttributesList(new ArrayList<>(attributes));
+    objectBuilder.setODAttributesList(new ArrayList<>(attrs));
     return objectBuilder.build();
   }
   @Override

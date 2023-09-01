@@ -228,8 +228,6 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     List<Pair<ClassSide, Integer>> list = new ArrayList<>();
     if (!isReversed){
       //assoc not reversed
-      System.out.println("classes are:"+ getConnectedClasses(getSrcElem(), helper.getSrcCD()).a.getName() + " and " + getConnectedClasses(getSrcElem(), helper.getSrcCD()).b.getName());
-      System.out.println(!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality())));
       if (!isContainedIn(cardToEnum(getSrcElem().getLeft().getCDCardinality()), cardToEnum(getTgtElem().getLeft().getCDCardinality()))){
         list.add(new Pair<>(ClassSide.Left, findUniqueNumber(getTypeOfCard(getSrcElem().getLeft().getCDCardinality()), getTypeOfCard(getTgtElem().getLeft().getCDCardinality()))));
       }
@@ -279,17 +277,17 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
     List<Pair<ClassSide, ASTCDRole>> list = new ArrayList<>();
     if (!isReversed){
       //assoc not reversed
-      if (!Objects.equals(getSrcElem().getLeft().getCDRole(), getTgtElem().getLeft().getCDRole())) {
+      if (!Objects.equals(getSrcElem().getLeft().getCDRole().getName(), getTgtElem().getLeft().getCDRole().getName())) {
         list.add(new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole()));
       }
-      if (!Objects.equals(getSrcElem().getRight().getCDRole(), getTgtElem().getRight().getCDRole())) {
+      if (!Objects.equals(getSrcElem().getRight().getCDRole().getName(), getTgtElem().getRight().getCDRole().getName())) {
         list.add(new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole()));
       }
     } else {
-      if (!Objects.equals(getSrcElem().getLeft().getCDRole(), getTgtElem().getRight().getCDRole())) {
+      if (!Objects.equals(getSrcElem().getLeft().getCDRole().getName(), getTgtElem().getRight().getCDRole().getName())) {
         list.add(new Pair<>(ClassSide.Left, getSrcElem().getLeft().getCDRole()));
       }
-      if (!Objects.equals(getSrcElem().getRight().getCDRole(), getTgtElem().getLeft().getCDRole())) {
+      if (!Objects.equals(getSrcElem().getRight().getCDRole().getName(), getTgtElem().getLeft().getCDRole().getName())) {
         list.add(new Pair<>(ClassSide.Right, getSrcElem().getRight().getCDRole()));
       }
     }
@@ -403,6 +401,151 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
       return isSuperOf(pairNew.a.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
     }
     return false;
+  }
+
+  public ASTCDClass changedSrc(){
+    Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
+    Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
+    if (!isReversed) {
+      if (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        if (changedToSuper(pairNew.b, pairOld.b)) {
+          if (!pairNew.b.getModifier().isAbstract()) {
+            return pairNew.b;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.b);
+            for (ASTCDClass subclass : subclassesA) {
+              if (!subclass.getModifier().isAbstract()) {
+                if (helper.findMatchedClass(subclass) != null
+                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                  return subclass;
+                }
+              }
+            }
+          }
+        } else if (changedToSub(pairNew.b, pairOld.b)) {
+          if (!pairNew.b.getModifier().isAbstract() && !helper.isContainedInSuper(srcElem, pairNew.b)) {
+            return pairNew.b;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.b);
+            for (ASTCDClass subclass : subclassesA) {
+              ASTCDClass matchedClass = helper.findMatchedClass(subclass);
+              if (matchedClass != null
+                && !matchedClass.getModifier().isAbstract()
+                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                return helper.findMatchedSrc(subclass);
+              }
+            }
+          }
+        }
+      } else if (srcElem.getCDAssocDir().isDefinitiveNavigableRight()) {
+        if (changedToSuper(pairNew.a, pairOld.a)) {
+          if (!pairNew.a.getModifier().isAbstract()) {
+            return pairNew.a;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.a);
+            for (ASTCDClass subclass : subclassesA) {
+              if (!subclass.getModifier().isAbstract()) {
+                if (helper.findMatchedClass(subclass) != null
+                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                  return subclass;
+                }
+              }
+            }
+          }
+        } else if (changedToSub(pairNew.a, pairOld.a)) {
+          if (!pairNew.a.getModifier().isAbstract() && !helper.isContainedInSuper(srcElem, pairNew.a)) {
+            return pairNew.a;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.a);
+            for (ASTCDClass subclass : subclassesA) {
+              ASTCDClass matchedClass = helper.findMatchedClass(subclass);
+              if (matchedClass != null
+                && !matchedClass.getModifier().isAbstract()
+                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                return helper.findMatchedSrc(subclass);
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+  public ASTCDClass changedTgt(){
+    Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
+    Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
+    if (!isReversed) {
+      if (srcElem.getCDAssocDir().isDefinitiveNavigableRight()) {
+        if (changedToSuper(pairNew.b, pairOld.b)) {
+          if (!pairNew.b.getModifier().isAbstract()) {
+            return pairNew.b;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.b);
+            for (ASTCDClass subclass : subclassesA) {
+              if (!subclass.getModifier().isAbstract()) {
+                if (helper.findMatchedClass(subclass) != null
+                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                  return subclass;
+                }
+              }
+            }
+          }
+        } else if (changedToSub(pairNew.b, pairOld.b)) {
+          if (!pairNew.b.getModifier().isAbstract() && !helper.isContainedInSuper(srcElem, pairNew.b)) {
+            return pairNew.b;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.b);
+            for (ASTCDClass subclass : subclassesA) {
+              ASTCDClass matchedClass = helper.findMatchedClass(subclass);
+              if (matchedClass != null
+                && !matchedClass.getModifier().isAbstract()
+                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                return helper.findMatchedSrc(subclass);
+              }
+            }
+          }
+        }
+      } else if (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        if (changedToSuper(pairNew.a, pairOld.a)) {
+          if (!pairNew.a.getModifier().isAbstract()) {
+            return pairNew.a;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.a);
+            for (ASTCDClass subclass : subclassesA) {
+              if (!subclass.getModifier().isAbstract()) {
+                if (helper.findMatchedClass(subclass) != null
+                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                  return subclass;
+                }
+              }
+            }
+          }
+        } else if (changedToSub(pairNew.a, pairOld.a)) {
+          if (!pairNew.a.getModifier().isAbstract() && !helper.isContainedInSuper(srcElem, pairNew.a)) {
+            return pairNew.a;
+          } else {
+            List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.a);
+            for (ASTCDClass subclass : subclassesA) {
+              ASTCDClass matchedClass = helper.findMatchedClass(subclass);
+              if (matchedClass != null
+                && !matchedClass.getModifier().isAbstract()
+                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                return helper.findMatchedSrc(subclass);
+              }
+            }
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  public boolean changedToSuper(ASTCDClass classNew, ASTCDClass classOld){
+    return isSuperOf(classNew.getName(), classOld.getName(), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
+  }
+
+  public boolean changedToSub(ASTCDClass classNew, ASTCDClass classOld){
+    return isSuperOf(classOld.getName(), classNew.getName(), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
   }
 
   /*--------------------------------------------------------------------*/

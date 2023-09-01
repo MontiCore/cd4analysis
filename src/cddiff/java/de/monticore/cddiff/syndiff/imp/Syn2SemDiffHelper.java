@@ -12,12 +12,9 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
-import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
-import de.monticore.cddiff.syndiff.OD.Builder;
-import de.monticore.cddiff.syndiff.OD.Package;
+import de.monticore.cddiff.syndiff.OD.ODBuilder;
 import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.odbasis._ast.ASTODAttribute;
-import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
@@ -39,7 +36,7 @@ public class Syn2SemDiffHelper {
   public Syn2SemDiffHelper() {
   }
 
-  private Builder builder = new Builder();
+  private ODBuilder ODBuilder = new ODBuilder();
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
@@ -50,6 +47,35 @@ public class Syn2SemDiffHelper {
   private ASTCDCompilationUnit srcCD;
 
   private ASTCDCompilationUnit tgtCD;
+
+  public ASTCDClass findMatchedClass(ASTCDClass astcdClass){
+    ASTCDClass matchedClass = null;
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
+      if(pair.a.equals(astcdClass)){
+        matchedClass = pair.b;
+      }
+    }
+    return matchedClass;
+  }
+
+  public ASTCDClass findMatchedSrc(ASTCDClass astcdClass){
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
+      if (pair.b.equals(astcdClass)){
+        return pair.a;
+      }
+    }
+    return null;
+  }
+
+  public List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses() {
+    return matchedClasses;
+  }
+
+  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) {
+    this.matchedClasses = matchedClasses;
+  }
+
+  private List<Pair<ASTCDClass, ASTCDClass>> matchedClasses;
 
   public static AssocDirection getDirection(ASTCDAssociation association) {
     if (association.getCDAssocDir() == null) {
@@ -286,21 +312,32 @@ public class Syn2SemDiffHelper {
     return mergedList;
   }
 
-  public static List<String> splitStringByCharacter(String input, char character) {
-    List<String> result = new ArrayList<>();
-
-    StringBuilder currentString = new StringBuilder();
-    for (char c : input.toCharArray()) {
-      if (c == character) {
-        result.add(currentString.toString());
-        currentString = new StringBuilder();
-      } else {
-        currentString.append(c);
+  //add those to deleted/added inheritance - done
+  public boolean isContainedInSuper(ASTCDAssociation association, ASTCDClass astcdClass){
+    for (AssocStruct assocStruct : srcMap.get(astcdClass)){
+      if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(assocStruct.getAssociation(), association)
+        || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(assocStruct.getAssociation(), association)){
+        return true;
       }
     }
+    return false;
+  }
 
-    result.add(currentString.toString());
-    return result;
+  public ASTCDClass allSubclassesHaveIt(ASTCDAssociation association, ASTCDClass astcdClass){
+    for (ASTCDClass subClass : getSpannedInheritance(srcCD, astcdClass)){
+      boolean isContained = false;
+      for (AssocStruct assocStruct : srcMap.get(subClass)){
+        if (Syn2SemDiffHelper.sameAssociationTypeWithClasses(assocStruct.getAssociation(), association)
+          || Syn2SemDiffHelper.sameAssociationTypeInReverseWithClasses(assocStruct.getAssociation(), association)){
+          isContained = true;
+          break;
+        }
+      }
+      if (!isContained){
+        return subClass;
+      }
+    }
+    return null;
   }
 
   public AssocStruct getAssocStrucForClassTgt(ASTCDClass astcdClass, ASTCDAssociation association){
@@ -1095,22 +1132,21 @@ public class Syn2SemDiffHelper {
     return count;
   }
 
-  public String getSuperClasses(ASTCDClass astcdClass){
+  public List<String> getSuperClasses(ASTCDClass astcdClass){
     List<ASTCDClass> superClasses = getSuperClasses(srcCD, astcdClass);
-    StringBuilder string = new StringBuilder();
+    List<String> classes = new ArrayList<>();
     for (int i = superClasses.size() - 1; i >= 0; i--) {
-      ASTCDClass element = superClasses.get(i);
-      string.append(element.getName())
-        .append(" ");
+      String className = superClasses.get(i).getSymbol().getInternalQualifiedName().replace(".", "_");
+      classes.add(className);
     }
-    return string.deleteCharAt(string.length() - 1).toString();
+    return classes;
   }
 
   public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
     List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
-      odAttributes.add(builder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
+      odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
     }
     return odAttributes;
   }

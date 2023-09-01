@@ -1,0 +1,21 @@
+import java.lang.*;
+
+classdiagram Builder2 {
+
+  class A3 {
+    String s;
+  }
+
+  class A4 {
+    Double d;
+  }
+
+  class A1;
+  class A2;
+  class A5;
+
+  association [0..1] A4 -> A3 [1..*];
+  association [1] A1 <-> A3 [1..*];
+  association [0..1] A2 <-> A4 [1..*];
+  association [1] A5 (r) <-> (q) A5 [1..*];
+}
