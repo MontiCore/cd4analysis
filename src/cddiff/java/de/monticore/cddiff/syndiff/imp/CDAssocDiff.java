@@ -413,10 +413,11 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.b;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.b);
+            subclassesA.remove(helper.findMatchedSrc(pairOld.b));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), pairOld.b);
             for (ASTCDClass subclass : subclassesA) {
               if (!subclass.getModifier().isAbstract()) {
-                if (helper.findMatchedClass(subclass) != null
-                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                if (!inheritance.contains(helper.findMatchedClass(subclass))) {
                   return subclass;
                 }
               }
@@ -427,11 +428,14 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.b;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.b);
+            subclassesA.remove(helper.findMatchedClass(pairNew.b));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getSrcCD(), pairNew.b);
             for (ASTCDClass subclass : subclassesA) {
               ASTCDClass matchedClass = helper.findMatchedClass(subclass);
               if (matchedClass != null
+                && subclass.getModifier().isAbstract()
                 && !matchedClass.getModifier().isAbstract()
-                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                && !inheritance.contains(matchedClass)) {
                 return helper.findMatchedSrc(subclass);
               }
             }
@@ -443,10 +447,11 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.a;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.a);
+            subclassesA.remove(helper.findMatchedSrc(pairOld.a));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), pairOld.a);
             for (ASTCDClass subclass : subclassesA) {
               if (!subclass.getModifier().isAbstract()) {
-                if (helper.findMatchedClass(subclass) != null
-                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                if (!inheritance.contains(helper.findMatchedClass(subclass))) {
                   return subclass;
                 }
               }
@@ -457,11 +462,14 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.a;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.a);
+            subclassesA.remove(helper.findMatchedClass(pairNew.a));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getSrcCD(), pairNew.a);
             for (ASTCDClass subclass : subclassesA) {
               ASTCDClass matchedClass = helper.findMatchedClass(subclass);
               if (matchedClass != null
+                && subclass.getModifier().isAbstract()
                 && !matchedClass.getModifier().isAbstract()
-                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                && !inheritance.contains(matchedClass)) {
                 return helper.findMatchedSrc(subclass);
               }
             }
@@ -481,10 +489,11 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.b;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.b);
+            subclassesA.remove(helper.findMatchedSrc(pairOld.b));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), pairOld.b);
             for (ASTCDClass subclass : subclassesA) {
               if (!subclass.getModifier().isAbstract()) {
-                if (helper.findMatchedClass(subclass) != null
-                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                if (!inheritance.contains(helper.findMatchedClass(subclass))) {
                   return subclass;
                 }
               }
@@ -495,11 +504,14 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.b;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.b);
+            subclassesA.remove(helper.findMatchedClass(pairNew.b));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getSrcCD(), pairNew.b);
             for (ASTCDClass subclass : subclassesA) {
-              ASTCDClass matchedClass = helper.findMatchedClass(subclass);
+              ASTCDClass matchedClass = helper.findMatchedSrc(subclass);
               if (matchedClass != null
+                && subclass.getModifier().isAbstract()
                 && !matchedClass.getModifier().isAbstract()
-                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                && !inheritance.contains(matchedClass)) {
                 return helper.findMatchedSrc(subclass);
               }
             }
@@ -511,10 +523,11 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.a;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), pairNew.a);
+            subclassesA.remove(helper.findMatchedSrc(pairOld.a));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), pairOld.a);
             for (ASTCDClass subclass : subclassesA) {
               if (!subclass.getModifier().isAbstract()) {
-                if (helper.findMatchedClass(subclass) != null
-                  && helper.getAssocStrucForClassTgt(helper.findMatchedClass(subclass), srcElem) == null) {
+                if (!inheritance.contains(helper.findMatchedClass(subclass))) {
                   return subclass;
                 }
               }
@@ -525,11 +538,14 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
             return pairNew.a;
           } else {
             List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), pairOld.a);
+            subclassesA.remove(helper.findMatchedClass(pairNew.a));
+            List<ASTCDClass> inheritance = getSpannedInheritance(helper.getSrcCD(), pairNew.a);
             for (ASTCDClass subclass : subclassesA) {
               ASTCDClass matchedClass = helper.findMatchedClass(subclass);
               if (matchedClass != null
+                && subclass.getModifier().isAbstract()
                 && !matchedClass.getModifier().isAbstract()
-                && helper.getAssocStrucForClass(helper.findMatchedSrc(subclass), tgtElem) == null) {
+                && !inheritance.contains(matchedClass)) {
                 return helper.findMatchedSrc(subclass);
               }
             }

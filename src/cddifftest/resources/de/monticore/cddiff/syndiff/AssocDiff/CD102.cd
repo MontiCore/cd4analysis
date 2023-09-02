@@ -14,5 +14,5 @@ classdiagram CD102{
 
   class S extends Q{}
 
-  association old [1] Q -> (r) B [0..1];
+  association old [1] Q -> (r) C [0..1];
 }

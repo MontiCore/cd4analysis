@@ -1,0 +1,11 @@
+import java.lang.*;
+classdiagram CD8{
+
+  class A;
+
+  class B;
+
+  association A (q) -> (r) B [*];
+  association A (s) -> (t) B [*];
+  association A (q) -> (r) B [*];
+}

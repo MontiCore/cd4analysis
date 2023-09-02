@@ -278,9 +278,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       List<ASTCDAttribute> attributes = astcdClass.getCDAttributeList();
       for (ASTCDClass classToCheck : classesToCheck){
         for (ASTCDAttribute attribute : attributes){
-          if (Syn2SemDiffHelper.isAttContainedInClass(attribute, classToCheck)){
-            //TODO: add function
-          } else {
+          if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, classToCheck)){
             Set<ASTCDClass> classes = CDDiffUtil.getAllSuperclasses(classToCheck, helper.getSrcCD().getCDDefinition().getCDClassesList());
             classes.remove(astcdClass);
             boolean isContained = false;
@@ -759,21 +757,28 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
                   srcToDelete.add(astcdClass);
                 }
               }
-            } else if (!association.equals(superAssoc)) {
+            } else if (!association.equals(superAssoc)
+              && !superAssoc.isSuperAssoc()
+              && !association.isSuperAssoc()) {
               //comparison between direct associations
-              if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
+              if ((sameAssociation(association.getAssociation(), superAssoc.getAssociation())
+                || sameAssociationInReverse(association.getAssociation(), superAssoc.getAssociation()))
+                && !helper.isAdded(association, superAssoc, astcdClass, srcAssocsToMergeWithDelete)){
+                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
+              }
+              else if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
+                System.out.println("in inheritance relation");
                 srcAssocsToMerge.add(new Pair<>(association, superAssoc));
-              } else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)) {
+              }
+              else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)
+                && !getConnectedClasses(association.getAssociation(), srcCD).equals(getConnectedClasses(superAssoc.getAssociation(), srcCD))){
+                System.out.println("not in inheritance relation");
                 if (areZeroAssocs(association, superAssoc)) {
                   srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
                 } else {
                   helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
                 }
-              }
-              else if (sameAssociation(association.getAssociation(), superAssoc.getAssociation())
-                || sameAssociationInReverse(association.getAssociation(), superAssoc.getAssociation())){
-                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
               }
             }
           }

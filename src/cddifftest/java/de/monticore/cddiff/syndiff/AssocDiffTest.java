@@ -53,9 +53,9 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
     CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
     // Invoke the method
-    Pair<ASTCDAssociation, ASTCDClass> result = assocDiff.getChangedTgtClass();
+    ASTCDClass result = assocDiff.changedTgt();
     //List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
-    System.out.print(result.b.getName());
+    System.out.print(result.getName());
 
     // Assert the result
     List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> list = new ArrayList<>();

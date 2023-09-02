@@ -284,6 +284,18 @@ public class Syn2SemDiffHelper {
     }
   }
 
+  public boolean isAdded(AssocStruct assocStruct, AssocStruct assocStruct2, ASTCDClass astcdClass, Set<DeleteStruc> set){
+    for (DeleteStruc deleteStruc : set){
+      if (((deleteStruc.getAssociation().equals(assocStruct)
+        && deleteStruc.getSuperAssoc().equals(assocStruct2))
+        || ((deleteStruc.getAssociation().equals(assocStruct2) && deleteStruc.getSuperAssoc().equals(assocStruct))))
+        && deleteStruc.getAstcdClass().equals(astcdClass)){
+        return true;
+      }
+    }
+    return false;
+  }
+
   //Why did I add this?
   public static List<Pair<ASTCDClass, Set<ASTCDAttribute>>> mergeSets(List<Pair<ASTCDClass, Set<ASTCDAttribute>>> list) {
     Map<ASTCDClass, Set<ASTCDAttribute>> classMap = new HashMap<>();

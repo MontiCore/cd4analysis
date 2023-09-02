@@ -175,6 +175,9 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return new Pair<>(set, link);
   }
 
+  //TODO: if an association must be instantiated, but the class is abstract, a subclass must be found
+  //if none exists, the association cannot be instantiated
+  //implement a function that searches in a set for a subclass of a given class and checks the standard constraints
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> objectSet) {
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
     ASTODObject srcObject = ODBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"),
@@ -503,6 +506,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return list;
   }
 
+  //TODO: if an association cannot be instatiated with the given classes, then it should be instantiated with the minDiffWitness
+  //create such association
   public List<ASTODArtifact> generateODs(
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean staDiff){
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
@@ -521,7 +526,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         String comment = "A new associations has been added to the diagram."
           + "\nThis association allows a new relation between the classes" + leftClass.getSymbol().getInternalQualifiedName() + "and" + rightClass.getSymbol().getInternalQualifiedName() + "and their subclasses";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association),
-          generateElements(association, Arrays.asList(1, 1) , "", "", "added association", comment),
+          generateElements(association, Arrays.asList(1, 1) , comment),
           null);
         artifactList.add(astodArtifact);
       }
@@ -534,7 +539,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       }
       String comment = "A new class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, "", "", "", comment),
+        generateElements(astcdClass, comment),
         null);
       artifactList.add(astodArtifact);
     }
@@ -546,7 +551,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       }
       String comment = "An association for the class " + pair.b.getSymbol().getInternalQualifiedName()  + " has been removed from the diagram.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, "", "", "", comment),
+        generateElements(astcdClass, comment),
         null);
       artifactList.add(astodArtifact);
     }
@@ -559,7 +564,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
         String comment = "For the class " + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
-          generateElements(astcdClass, "", "", "", comment),
+          generateElements(astcdClass, comment),
           null);
         artifactList.add(astodArtifact);
       }
@@ -568,7 +573,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
       String comment = "In tgtCD the class" + astcdClass.getSymbol().getInternalQualifiedName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, "", "", "", comment),
+        generateElements(astcdClass, comment),
         null);
       artifactList.add(astodArtifact);
     }
@@ -604,7 +609,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
         ASTODArtifact astodArtifact;
           astodArtifact = generateArtifact(oDTitleForClass((ASTCDClass)typeDiffStruc.getAstcdType()),
-            generateElements((ASTCDClass) typeDiffStruc.getAstcdType(), "", "", "", comment.toString()),
+            generateElements((ASTCDClass) typeDiffStruc.getAstcdType(), comment.toString()),
             null);
         artifactList.add(astodArtifact);
       }
@@ -638,7 +643,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
            }
            ASTODArtifact astodArtifact;
              astodArtifact = generateArtifact(oDTitleForClass(subClass),
-               generateElements(subClass, "", "", "", comment.toString()), null);
+               generateElements(subClass, comment.toString()), null);
            artifactList.add(astodArtifact);
          }
       }
@@ -652,7 +657,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
           if (astcdClass != null){
             String comment = "In the enum " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following constant is added: " + constant.getName();
             ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-              generateElements(astcdClass, "", "", "", comment),
+              generateElements(astcdClass, comment),
               null);
             artifactList.add(astodArtifact);
           }
@@ -689,7 +694,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         list.add(assocDiffStruc.getChangedCard().get(1).b);
       }
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-        generateElements(assocDiffStruc.getAssociation(), list, "", "", "", comment),
+        generateElements(assocDiffStruc.getAssociation(), list, comment),
         null);
       artifactList.add(astodArtifact);
     }
@@ -701,7 +706,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
           + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
           + " has been added from the diagram.";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
-          generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), "", "", "", comment),
+          generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), comment),
           null);
         artifactList.add(astodArtifact);
       }
@@ -713,13 +718,13 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD());
         if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableRight()){
           ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.a),
-            generateElements(pair.a, "", "", "", comment),
+            generateElements(pair.a, comment),
             null);
           artifactList.add(astodArtifact);
         }
         if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()){
           ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
-            generateElements(pair.b, "", "", "", comment),
+            generateElements(pair.b, comment),
             null);
           artifactList.add(astodArtifact);
         }
@@ -730,7 +735,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       for (ASTCDClass astcdClass : syntaxDiff.getSTADiff()){
         String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " is part of a different inheritance tree.";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-          generateElements(astcdClass, "", "", "", comment),
+          generateElements(astcdClass, comment),
           null);
         artifactList.add(astodArtifact);
       }
@@ -762,9 +767,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return null;
   }
   public List<ASTODElement> generateElements(ASTCDClass astcdClass,
-                                             String content,
-                                             String name,
-                                             String text,
                                              String comment){
     Set<ASTODElement> elements;
     elements = getObjForOD(astcdClass);
@@ -778,19 +780,19 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     }
 
     //elements.remove(matchedObject);
-    ASTModifierBuilder modifierBuilder = new ASTModifierBuilder();
-    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
-    ASTStereotypeBuilder stereotypeBuilder = new ASTStereotypeBuilder();
-    ASTStringLiteralBuilder literalBuilder = new ASTStringLiteralBuilder();
-
-    valueBuilder.setContent(content);
-    valueBuilder.setName(name);
-    valueBuilder.setText(literalBuilder.setSource(text).build());
-
-    stereotypeBuilder.addValues(valueBuilder.build());
-    modifierBuilder.setStereotype(stereotypeBuilder.build());
-    assert matchedObject != null;
-    matchedObject.setModifier(modifierBuilder.build());
+//    ASTModifierBuilder modifierBuilder = new ASTModifierBuilder();
+//    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
+//    ASTStereotypeBuilder stereotypeBuilder = new ASTStereotypeBuilder();
+//    ASTStringLiteralBuilder literalBuilder = new ASTStringLiteralBuilder();
+//
+//    valueBuilder.setContent(content);
+//    valueBuilder.setName(name);
+//    valueBuilder.setText(literalBuilder.setSource(text).build());
+//
+//    stereotypeBuilder.addValues(valueBuilder.build());
+//    modifierBuilder.setStereotype(stereotypeBuilder.build());
+//    assert matchedObject != null;
+//    matchedObject.setModifier(modifierBuilder.build());
 
     CommentBuilder commentBuilder = new CommentBuilder();
     commentBuilder.setText(comment);
@@ -801,25 +803,22 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
 
   public List<ASTODElement> generateElements(ASTCDAssociation association,
                                              List<Integer> integers,
-                                             String content,
-                                             String name,
-                                             String text,
                                              String comment){
     Pair<Set<ASTODElement>, ASTODLink> pair = getObjForOD(association, integers.get(0), integers.get(1));
     Set<ASTODElement> elements;
     elements = pair.a;
 
     //associations.remove(association);
-    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
-    ASTStereotypeBuilder stereotypeBuilder = new ASTStereotypeBuilder();
-    ASTStringLiteralBuilder literalBuilder = new ASTStringLiteralBuilder();
-
-    valueBuilder.setContent(content);
-    valueBuilder.setName(name);
-    valueBuilder.setText(literalBuilder.setSource(text).build());
-
-    stereotypeBuilder.addValues(valueBuilder.build());
-    pair.b.setStereotype(stereotypeBuilder.build());
+//    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
+//    ASTStereotypeBuilder stereotypeBuilder = new ASTStereotypeBuilder();
+//    ASTStringLiteralBuilder literalBuilder = new ASTStringLiteralBuilder();
+//
+//    valueBuilder.setContent(content);
+//    valueBuilder.setName(name);
+//    valueBuilder.setText(literalBuilder.setSource(text).build());
+//
+//    stereotypeBuilder.addValues(valueBuilder.build());
+//    pair.b.setStereotype(stereotypeBuilder.build());
 
     CommentBuilder commentBuilder = new CommentBuilder();
     commentBuilder.setText(comment);
