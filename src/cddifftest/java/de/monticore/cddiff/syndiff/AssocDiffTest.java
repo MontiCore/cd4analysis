@@ -143,13 +143,11 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    ASTCDAssociation assocNew = src.getCDDefinition().getCDAssociationsList().get(0);
-    ASTCDAssociation assocOld = tgt.getCDDefinition().getCDAssociationsList().get(0);
 
-    CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld, src, tgt);
-    System.out.println(associationDiff.printSrcAssoc());
-    System.out.println(associationDiff.printTgtAssoc());
-    System.out.println(associationDiff.getBaseDiff());
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt);
+    System.out.println(synDiff.printSrcCD());
+    System.out.println(synDiff.printTgtCD());
+    System.out.println(synDiff.getBaseDiff());
   }
 
   @Test

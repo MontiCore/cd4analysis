@@ -5,15 +5,15 @@ classdiagram Target1 {
 
   enum DeletedEnumCheck{enumTwo;}
 
-  class A extends C{
+  class A{
     EnumsCheck deleted;
     double changed;
     double deletedDouble;
   }
 
-  class B extends C{}
+  class B{}
 
-  class C extends D{
+  class C{
     int i;
     EnumsCheck inherited;
   }

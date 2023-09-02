@@ -2,8 +2,9 @@ import java.lang.String;
 
 classdiagram Source1 {
   class A;
-
   class B;
+  class C;
+  class D;
 
-  association [1..*] A -> B [*];
+  association [1..*] A -> (b) D [*];
 }

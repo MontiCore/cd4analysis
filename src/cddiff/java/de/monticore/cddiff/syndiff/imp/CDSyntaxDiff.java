@@ -1505,12 +1505,12 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         }
         if(!found){
           addedClasses.add((ASTCDClass) srcSuperType);
+          if(!baseDiff.contains(DiffTypes.ADDED_INHERITANCE)){
+            baseDiff.add(DiffTypes.ADDED_INHERITANCE);
+          }
         }
       }
       addedInheritance.add(new Pair<>(pair.a, addedClasses));
-      if(!baseDiff.contains(DiffTypes.ADDED_INHERITANCE)){
-        baseDiff.add(DiffTypes.ADDED_INHERITANCE);
-      }
     }
   }
 
@@ -1533,12 +1533,12 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         }
         if(!found){
           deletedClasses.add((ASTCDClass) tgtSuperType);
+          if(!baseDiff.contains(DiffTypes.REMOVED_INHERITANCE)){
+            baseDiff.add(DiffTypes.REMOVED_INHERITANCE);
+          }
         }
       }
       deletedInheritance.add(new Pair<>(pair.b, deletedClasses));
-      if(!baseDiff.contains(DiffTypes.REMOVED_INHERITANCE)){
-        baseDiff.add(DiffTypes.REMOVED_INHERITANCE);
-      }
     }
   }
 

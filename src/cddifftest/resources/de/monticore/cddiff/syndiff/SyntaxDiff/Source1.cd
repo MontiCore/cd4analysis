@@ -5,12 +5,12 @@ classdiagram Source1 {
 
   enum AddedEnumCheck{enumOne;}
 
-  class A extends B{
+  class A{
     int changed;
     double added;
   }
 
-  class B extends C{
+  class B{
     int i;
     EnumsCheck inherited;
   }
