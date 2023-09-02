@@ -31,6 +31,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -762,28 +763,31 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
 
-    // parse the second .cd-file
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
+    try {
+      // parse the second .cd-file
+      ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
 
-    if (ast2 == null) {
-      Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
-      return;
+
+      if (ast2 == null) {
+        Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
+        return;
+      }
+
+      ast1 = ast1.deepClone();
+      ast2 = ast2.deepClone();
+
+      new CD4CodeDirectCompositionTrafo().transform(ast1);
+      new CD4CodeDirectCompositionTrafo().transform(ast2);
+      CDDiffUtil.refreshSymbolTable(ast1);
+      CDDiffUtil.refreshSymbolTable(ast2);
+
+      CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
+
+      System.out.println(syntaxDiff.printOnlyAdded());
+    } catch (Exception e) {
+      Log.error(e.getMessage(), e);
     }
 
-    ast1 = ast1.deepClone();
-    ast2 = ast2.deepClone();
-
-    new CD4CodeDirectCompositionTrafo().transform(ast1);
-    new CD4CodeDirectCompositionTrafo().transform(ast2);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
-
-    String printOption = cmd.getOptionValue("print", "added");
-    if (printOption.equals("added")) {
-      syntaxDiff.printOnlyAdded();
-    }
   }
 
   /** perform merge of 2 CDs */
