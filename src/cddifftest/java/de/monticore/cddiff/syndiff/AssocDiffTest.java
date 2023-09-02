@@ -51,7 +51,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, compilationUnitNew, compilationUnitOld);
     // Invoke the method
     ASTCDClass result = assocDiff.changedTgt();
     //List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
@@ -76,7 +76,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, compilationUnitNew, compilationUnitOld);
     // Invoke the method
     boolean result = assocDiff.isDirectionChanged();
     //List<Pair<ASTCDAssociation, Pair<ClassSide, ASTCDRole>>> result2 = assocDiff.getRoleDiff();
@@ -98,7 +98,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, compilationUnitNew, compilationUnitOld);
     // Invoke the method
     //boolean result = assocDiff.changedTgtClass();
    // List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
@@ -122,7 +122,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "r", compilationUnitNew.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "r", compilationUnitOld.getCDDefinition());
 
-    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld);
+    CDAssocDiff assocDiff = new CDAssocDiff(assocNew, assocOld, compilationUnitNew, compilationUnitOld);
     // Invoke the method
     //List<Pair<ASTCDAssociation, Pair<ClassSide, Integer>>> result2 = assocDiff.getCardDiff();
 
@@ -146,11 +146,10 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = src.getCDDefinition().getCDAssociationsList().get(0);
     ASTCDAssociation assocOld = tgt.getCDDefinition().getCDAssociationsList().get(0);
 
-    CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld);
+    CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld, src, tgt);
     System.out.println(associationDiff.printSrcAssoc());
     System.out.println(associationDiff.printTgtAssoc());
     System.out.println(associationDiff.getBaseDiff());
-    //System.out.println(associationDiff.getDiffTypesList());
   }
 
   @Test
@@ -162,7 +161,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDAssociation assocNew = CDTestHelper.getAssociation(astcdClass, "consults", src.getCDDefinition());
     ASTCDAssociation assocOld = CDTestHelper.getAssociation(astcdClass1, "consults", tgt.getCDDefinition());
 
-    CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld);
+    CDAssocDiff associationDiff = new CDAssocDiff(assocNew, assocOld, src, tgt);
     System.out.println(associationDiff.printSrcAssoc());
     System.out.println(associationDiff.printTgtAssoc());
     System.out.println(associationDiff.getBaseDiff());
@@ -172,21 +171,10 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc3() {
     parseModels("Source3.cd", "Target3.cd");
 
-    ASTCDAssociation assocNew = src.getCDDefinition().getCDAssociationsList().get(0);
-    ASTCDAssociation assocOld = tgt.getCDDefinition().getCDAssociationsList().get(0);
-
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
     System.out.println(syntaxDiff.printSrcCD());
     System.out.println(syntaxDiff.printTgtCD());
-    //System.out.println(syntaxDiff.getBaseDiff());
-    System.out.println("Matched Assocs");
-    System.out.println(syntaxDiff.getMatchedAssocs());
-    System.out.println("Matched Classes");
-    System.out.println(syntaxDiff.getMatchedClasses());
-    //System.out.println(associationDiff.getDiffTypesList());
+    System.out.println(syntaxDiff.getBaseDiff());
   }
 
   public void parseModels(String concrete, String ref) {

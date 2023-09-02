@@ -1360,7 +1360,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
   public void addAllChangedAssocs() {
     for(Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs){
-      CDAssocDiff assocDiff = new CDAssocDiff(pair.a, pair.b);
+      CDAssocDiff assocDiff = new CDAssocDiff(pair.a, pair.b, srcCD, tgtCD);
       if(!assocDiff.getBaseDiff().isEmpty()){
         changedAssocs.add(assocDiff);
         baseDiff.addAll(assocDiff.getBaseDiff());
@@ -1630,7 +1630,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     }
 
     for (Pair<ASTCDAssociation,ASTCDAssociation> x : matchedAssocs) {
-      CDAssocDiff a = new CDAssocDiff(x.a, x.b);
+      CDAssocDiff a = new CDAssocDiff(x.a, x.b, srcCD, tgtCD);
       onlyTgtCDSort.add(new Pair<>(a.getTgtElem().get_SourcePositionStart().getLine(), a.printTgtAssoc()));
       onlySrcCDSort.add(new Pair<>(a.getSrcElem().get_SourcePositionStart().getLine(), a.printSrcAssoc()));
     }
@@ -1735,7 +1735,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     if (!addedAssocs.isEmpty()) {
       for (ASTCDAssociation x : addedAssocs) {
-        CDAssocDiff diff = new CDAssocDiff(x, x);
+        CDAssocDiff diff = new CDAssocDiff(x, x, srcCD, srcCD);
         String tmp = diff.printAddedAssoc() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -1744,7 +1744,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     if (!deletedAssocs.isEmpty()) {
       for (ASTCDAssociation x : deletedAssocs) {
-        CDAssocDiff diff = new CDAssocDiff(x, x);
+        CDAssocDiff diff = new CDAssocDiff(x, x, tgtCD, tgtCD);
         String tmp = diff.printDeletedAssoc() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
