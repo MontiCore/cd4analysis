@@ -1,15 +1,6 @@
 package de.monticore.matcher;
 
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class SyntaxDiffBuilder<T> {
+public class CombinedMatching<T> {
 
   /*List<MatchingStrategy<T>> matcherList = new ArrayList<>();
 
