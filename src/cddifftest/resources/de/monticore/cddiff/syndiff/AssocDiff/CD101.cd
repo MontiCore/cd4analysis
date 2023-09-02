@@ -1,11 +1,13 @@
 import java.lang.*;
 classdiagram CD101{
 
-  class A{}
+  abstract class A{}
 
   class B extends A{}
 
   class C extends B{}
+
+  class D extends A{}
 
 
   class P{}

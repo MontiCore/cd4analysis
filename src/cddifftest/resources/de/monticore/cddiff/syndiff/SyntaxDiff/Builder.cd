@@ -1,6 +1,6 @@
 import java.lang.*;
 
-classdiagram CD1 {
+classdiagram Builder {
 
   class A2 {
     Integer i;

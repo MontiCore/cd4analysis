@@ -12,6 +12,7 @@ public class AssocDiffStruc {
   private List<Pair<ClassSide, Integer>> changedCard = null;
   private List<Pair<ClassSide, ASTCDRole>> changedRoleNames = null;
   private ASTCDClass changedTgt = null;
+  private ASTCDClass changedSrc = null;
   private boolean changedDir = false;
 
   public AssocDiffStruc() {
@@ -55,5 +56,13 @@ public class AssocDiffStruc {
 
   public void setAssociation(ASTCDAssociation association) {
     this.association = association;
+  }
+
+  public ASTCDClass getChangedSrc() {
+    return changedSrc;
+  }
+
+  public void setChangedSrc(ASTCDClass changedSrc) {
+    this.changedSrc = changedSrc;
   }
 }
