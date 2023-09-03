@@ -82,6 +82,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         AssociationStrategy.Strategy.ONE2ONE,
         InheritanceData.Strategy.ME);
   }
+
   @Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")

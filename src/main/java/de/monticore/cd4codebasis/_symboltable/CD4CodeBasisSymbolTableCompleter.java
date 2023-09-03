@@ -82,7 +82,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2, C
   }
 
   public void endVisit(ASTCDInterface node) {
-    node.getSymbol().getMethodSignatureList().forEach(m->m.setIsAbstract(true));
+    node.getSymbol().getMethodSignatureList().forEach(m -> m.setIsAbstract(true));
   }
 
   protected void initialize_CDMethod(ASTCDMethod ast) {
