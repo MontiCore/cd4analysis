@@ -1,0 +1,13 @@
+import java.lang.*;
+
+classdiagram Builder5 {
+
+  class A2 {}
+
+  abstract class A {}
+
+  class A1 extends A {}
+
+  association [1..*] A <- A2 [1];
+
+}

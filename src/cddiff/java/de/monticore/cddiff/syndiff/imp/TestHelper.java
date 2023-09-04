@@ -165,7 +165,8 @@ public class TestHelper {
       if (!assocDiffStruc.getChangedCard().isEmpty()) {
         comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
       }
-      if (!assocDiffStruc.getChangedRoleNames().isEmpty()) {
+      if (assocDiffStruc.getChangedRoleNames() != null
+        && !assocDiffStruc.getChangedRoleNames().isEmpty()) {
         comment = comment + "\nrole name -";
         Iterator<Pair<ClassSide, ASTCDRole>> roleName = assocDiffStruc.getChangedRoleNames().iterator();
         while (roleName.hasNext()) {

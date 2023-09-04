@@ -360,7 +360,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
           && !pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.a.getSymbol().getInternalQualifiedName())) {
           return new Pair<>(getSrcElem(), pair.b);
         } else if (pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.b.getSymbol().getInternalQualifiedName())
-          && !pair.a.getName().equals(pairOld.a.getSymbol().getInternalQualifiedName())) {
+          && !pair.a.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.a.getSymbol().getInternalQualifiedName())) {
           return new Pair<>(getSrcElem(), pair.a);
         } else if (pair.b.getSymbol().getInternalQualifiedName().equals(pairOld.a.getSymbol().getInternalQualifiedName())
           && !pair.a.getSymbol().getInternalQualifiedName().equals(pairOld.b.getSymbol().getInternalQualifiedName())) {
@@ -394,7 +394,7 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   public Pair<Boolean, ASTCDClass> hasOtherSubclasses(ASTCDClass superClass, ASTCDClass subClass) {
     List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), superClass);
     for (ASTCDClass subclass : subclassesA) {
-      if (subclass != subClass && !isSuperOf(subClass.getName(), subclass.getName(), helper.getSrcCD())) {
+      if (subclass != subClass && !isSuperOf(subClass.getSymbol().getInternalQualifiedName().replace(".", "_"), subclass.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSrcCD())) {
         return new Pair<>(true, subclass);
       }
     }
@@ -406,18 +406,18 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   public boolean changedTgtClass(ASTCDCompilationUnit compilationUnit){
     Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), compilationUnit);
     Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), compilationUnit);
-    if (pairNew.a.getName().equals(pairOld.a.getName())
-      && !pairNew.b.getName().equals(pairOld.b.getName())){
-      return isSuperOf(pairNew.b.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-    } else if (pairNew.a.getName().equals(pairOld.b.getName())
-      && !pairNew.b.getName().equals(pairOld.a.getName())) {
-      return isSuperOf(pairNew.b.getName(), pairOld.a.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-    } else if (pairNew.b.getName().equals(pairOld.b.getName())
-      && !pairNew.a.getName().equals(pairOld.a.getName())) {
-      return isSuperOf(pairNew.a.getName(), pairOld.a.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
-    } else if (pairNew.b.getName().equals(pairOld.a.getName())
-      && !pairNew.a.getName().equals(pairOld.b.getName())) {
-      return isSuperOf(pairNew.a.getName(), pairOld.b.getName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    if (pairNew.a.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.a.getSymbol().getInternalQualifiedName().replace(".", "_"))
+      && !pairNew.b.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.b.getSymbol().getInternalQualifiedName().replace(".", "_"))){
+      return isSuperOf(pairNew.b.getSymbol().getInternalQualifiedName().replace(".", "_"), pairOld.b.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.a.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.b.getSymbol().getInternalQualifiedName().replace(".", "_"))
+      && !pairNew.b.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.a.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
+      return isSuperOf(pairNew.b.getSymbol().getInternalQualifiedName().replace(".", "_"), pairOld.a.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.b.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.b.getSymbol().getInternalQualifiedName().replace(".", "_"))
+      && !pairNew.a.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.a.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
+      return isSuperOf(pairNew.a.getSymbol().getInternalQualifiedName().replace(".", "_"), pairOld.a.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+    } else if (pairNew.b.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.a.getSymbol().getInternalQualifiedName().replace(".", "_"))
+      && !pairNew.a.getSymbol().getInternalQualifiedName().replace(".", "_").equals(pairOld.b.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
+      return isSuperOf(pairNew.a.getSymbol().getInternalQualifiedName().replace(".", "_"), pairOld.b.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
     }
     return false;
   }
@@ -576,11 +576,11 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
   }
 
   public boolean changedToSuper(ASTCDClass classNew, ASTCDClass classOld){
-    return isSuperOf(classNew.getName(), classOld.getName(), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
+    return isSuperOf(classNew.getSymbol().getInternalQualifiedName().replace(".", "_"), classOld.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
   }
 
   public boolean changedToSub(ASTCDClass classNew, ASTCDClass classOld){
-    return isSuperOf(classOld.getName(), classNew.getName(), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
+    return isSuperOf(classOld.getSymbol().getInternalQualifiedName().replace(".", "_"), classNew.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
   }
 
   /*--------------------------------------------------------------------*/
