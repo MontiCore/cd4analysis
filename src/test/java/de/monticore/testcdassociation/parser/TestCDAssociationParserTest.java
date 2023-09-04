@@ -3,9 +3,9 @@ package de.monticore.testcdassociation.parser;
 
 import static org.junit.Assert.*;
 
-import de.monticore.cdassociation._ast.ASTCDAssocDir;
-import de.monticore.cdassociation._ast.ASTCDAssocType;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -38,6 +38,80 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
   public void parseCDMember() throws IOException {
     final Optional<ASTCDMember> astcdMember = p.parse_StringCDMember("-> (r) B [*];");
     checkNullAndPresence(p, astcdMember);
+  }
+
+  @Test
+  public void parseCardinalitiesMult() throws IOException {
+    ASTCDAssociation mult = p.parse_StringCDAssociation("association [*] A -> S [*];").get();
+      var traverser = CDAssociationMill.inheritanceTraverser();
+      var visitor = new CDAssociationVisitor2() {
+        @Override
+        public void visit(ASTCDCardinality node) {
+          assertTrue(node instanceof ASTCDCardMult);
+        }
+      };
+      traverser.add4CDAssociation(visitor);
+      mult.accept(traverser);
+  }
+
+  @Test
+  public void parseCardinalitiesOne() throws IOException {
+    ASTCDAssociation one = p.parse_StringCDAssociation("association [1] A -> S [1];").get();
+    var traverser = CDAssociationMill.inheritanceTraverser();
+    var visitor = new CDAssociationVisitor2() {
+      @Override
+      public void visit(ASTCDCardinality node) {
+        assertTrue(node instanceof ASTCDCardOne);
+      }
+    };
+    traverser.add4CDAssociation(visitor);
+    one.accept(traverser);
+  }
+
+  @Test
+  public void parseCardinalitiesAtLeastOne() throws IOException {
+    ASTCDAssociation atLeastOne = p.parse_StringCDAssociation("association [1..*] A -> S [1..*];").get();
+    var traverser = CDAssociationMill.inheritanceTraverser();
+    var visitor = new CDAssociationVisitor2() {
+      @Override
+      public void visit(ASTCDCardinality node) {
+        assertTrue(node instanceof ASTCDCardAtLeastOne);
+      }
+    };
+    traverser.add4CDAssociation(visitor);
+    atLeastOne.accept(traverser);
+  }
+
+  @Test
+  public void parserCardinalitiesOpt() throws IOException {
+    ASTCDAssociation opt = p.parse_StringCDAssociation("association [0..1] A -> S [0..1];").get();
+    var traverser = CDAssociationMill.inheritanceTraverser();
+    var visitor = new CDAssociationVisitor2() {
+      @Override
+      public void visit(ASTCDCardinality node) {
+        assertTrue(node instanceof ASTCDCardOpt);
+      }
+    };
+    traverser.add4CDAssociation(visitor);
+    opt.accept(traverser);
+  }
+
+  @Test
+  public void parserCardinalitiesOther() throws IOException {
+    ASTCDAssociation other = p.parse_StringCDAssociation("association [2..3] A -> S [4..5];").get();
+    var traverser = CDAssociationMill.inheritanceTraverser();
+    var visitor = new CDAssociationVisitor2() {
+      @Override
+      public void visit(ASTCDCardinality node) {
+        assertTrue(node instanceof ASTCDCardOther);
+        assertTrue(
+          (node.toCardinality().getLowerBound() == 2 && node.toCardinality().getUpperBound() == 3)
+          || (node.toCardinality().getLowerBound() == 4 && node.toCardinality().getUpperBound() == 5)
+        );
+      }
+    };
+    traverser.add4CDAssociation(visitor);
+    other.accept(traverser);
   }
 
   @Test

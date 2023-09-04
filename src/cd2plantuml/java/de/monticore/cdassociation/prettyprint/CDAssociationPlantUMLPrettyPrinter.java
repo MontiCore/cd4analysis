@@ -230,6 +230,28 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   }
 
   @Override
+  public void visit(ASTCDCardOther node) {
+    if(node.toCardinality().isMany()) {
+      print("*");
+    } else {
+      String card = "";
+      card += node.toCardinality().getLowerBound();
+      if (node.toCardinality().isNoUpperLimit()){
+        card+= "..*";
+      }
+      else if (node.toCardinality().getUpperBound() > node.toCardinality().getLowerBound()) {
+        card+= ".." + node.toCardinality().getUpperBound();
+      }
+      print(card);
+    }
+  }
+
+  @Override
+  public void traverse(ASTCDCardOther node) {
+    // No-Op
+  }
+
+  @Override
   public void visit(ASTCDOrdered node) {
     print("ordered");
   }

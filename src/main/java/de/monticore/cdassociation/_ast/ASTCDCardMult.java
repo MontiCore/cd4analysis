@@ -15,6 +15,7 @@ public class ASTCDCardMult extends ASTCDCardMultTOP {
     return CardinalityMill.cardinalityBuilder()
         .setLowerBoundLitAbsent()
         .setUpperBoundLitAbsent()
+        .setMany(true)
         .setNoUpperLimit(true)
         .build();
   }
