@@ -4,8 +4,10 @@ package de.monticore.testcdassociation.symboltable;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotEquals;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.MCPath;
@@ -111,4 +113,27 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
             "de.monticore.cdassociation.symboltable.SerializationCD.namedAssocWithRoles");
     assertTrue(assoc2.isPresent());
   }
+
+
+  /**
+   * Checks new cardinalities that are not [*], [1], [0..1], [1..*]
+   */
+  @Test
+  public void testCreateCardinalityFromString() {
+    // Single literals other than "*" or "1"
+    assertEquals("[2]",
+        CDAssociationMill.prettyPrint(
+            new CDCardinalityDeSer().createFromString("[2]"), false));
+
+    // Finite ranges besides "[0..1]"
+    assertEquals("[13..20]",
+        CDAssociationMill.prettyPrint(
+            new CDCardinalityDeSer().createFromString("[13..20]"), false));
+
+    // Infinite ranges not starting from "1"
+    assertEquals("[9..*]",
+        CDAssociationMill.prettyPrint(
+            new CDCardinalityDeSer().createFromString("[9..*]"), false));
+  }
+
 }
