@@ -902,7 +902,8 @@ public class CD2AlloyGenerator {
             .append(", ");
         predicate.append(astcdAttribute.getName()).append(", ");
         predicate
-            .append(executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute.getMCType().printType()), cd))
+            .append(
+                executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute.getMCType().printType()), cd))
             .append("]")
             .append(System.lineSeparator());
       }
