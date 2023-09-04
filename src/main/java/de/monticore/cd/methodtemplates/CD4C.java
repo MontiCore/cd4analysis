@@ -202,7 +202,7 @@ public class CD4C {
     if(attrOpt.isPresent()){
       ASTCDAttribute attr = attrOpt.get();
       if(!attr.isPresentInitial() && !body.isEmpty()){
-       config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, new StringHookPoint(body));
+       config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, attr, new StringHookPoint(body));
       }
     }
 
