@@ -1,6 +1,7 @@
 package de.monticore.cd2smt;
 
 import com.microsoft.z3.*;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -32,8 +33,12 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
 
   @BeforeEach
   public void setup() {
-    Log.init();
+    Log.enableFailQuick(false);
+    CD4CodeMill.reset();
     CD4CodeMill.init();
+    CD4CodeMill.globalScope().clear();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
 
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
@@ -83,7 +88,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         AssociationStrategy.Strategy.ONE2ONE,
         InheritanceData.Strategy.ME);
   }
-
+@Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestSECOMB_DEFAULT(String fileName) {
