@@ -4,6 +4,7 @@ package de.monticore.cd.methodtemplates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import de.monticore.cd.codegen.CD2JavaTemplates;
 import de.monticore.cd.codegen.methods.AccessorDecorator;
 import de.monticore.cd.codegen.methods.MutatorDecorator;
 import de.monticore.cd4code.CD4CodeMill;
@@ -195,9 +196,17 @@ public class CD4C {
 
     final TemplateHookPoint templateHookPoint = new TemplateHookPoint(template, arguments);
     TemplateController controller = new TemplateController(this.config, template);
-    templateHookPoint.processValue(controller, astcdType);
+    String body = templateHookPoint.processValue(controller, astcdType);
     CD4CTemplateHelper helper = methodQueue.pop();
-    return helper.astcdAttribute;
+    Optional<ASTCDAttribute> attrOpt = helper.astcdAttribute;
+    if(attrOpt.isPresent()){
+      ASTCDAttribute attr = attrOpt.get();
+      if(!attr.isPresentInitial() && !body.isEmpty()){
+       config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, new StringHookPoint(body));
+      }
+    }
+
+    return attrOpt;
   }
 
   /**
