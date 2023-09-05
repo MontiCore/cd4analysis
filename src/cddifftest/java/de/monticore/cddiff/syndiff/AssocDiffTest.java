@@ -3,18 +3,15 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
-import de.monticore.matcher.*;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
@@ -145,7 +142,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(synDiff.printSrcCD());
+    System.out.println(synDiff.printDiff());
     System.out.println(synDiff.printTgtCD());
     System.out.println(synDiff.getBaseDiff());
   }
@@ -170,7 +167,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     parseModels("Source3.cd", "Target3.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printSrcCD());
+    System.out.println(syntaxDiff.printDiff());
     System.out.println(syntaxDiff.printTgtCD());
     System.out.println(syntaxDiff.getBaseDiff());
   }
