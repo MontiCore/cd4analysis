@@ -737,28 +737,17 @@ public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
 
     srcAssocAdded =  "//added association, L:" + srcLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStringsAndGreen(
-        Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality))
-      + System.lineSeparator();
+        Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality));
 
     // Build Target String
     tgtAssocDeleted = "//removed association, L:" + tgtLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStringsAndRed(
-        Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality))
-      + System.lineSeparator();
+        Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality));
 
     // Build Assoc Diff
     assocDiff = srcAssoc + System.lineSeparator() + tgtAssoc + System.lineSeparator();
 
   }
-
-  /*public String formatBaseDiff() {
-    List<String> interpretations = new ArrayList<>();
-    for(DiffTypes x : getBaseDiff()) {
-      String tmp = x.toString().replace("_", " ");
-      interpretations.add(tmp.toLowerCase());
-    }
-    return (interpretations.toString()).substring(1, interpretations.size() - 1);
-  }*/
 
   @Override
   public String insertSpaceBetweenStrings(List<String> stringList) {

@@ -5,6 +5,6 @@ classdiagram Target1 {
   class B;
   class C;
 
-  association [1..*] A -> (b) B [1..*];
-  association [1..*] C <- A [*] ;
+  association [1..*] A -> B [1..*];
+  association [1..*] A -> C [*] ;
 }

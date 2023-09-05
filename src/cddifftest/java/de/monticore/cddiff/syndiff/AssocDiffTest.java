@@ -149,9 +149,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(synDiff.printDiff());
-    System.out.println(synDiff.printTgtCD());
-    System.out.println(synDiff.getBaseDiff());
+    System.out.println(synDiff.printOnlyChanged());
   }
 
   @Test
@@ -174,7 +172,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     parseModels("Source3.cd", "Target3.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printDiff());
+    System.out.println(syntaxDiff.printSrcCD());
     System.out.println(syntaxDiff.printTgtCD());
     System.out.println(syntaxDiff.getBaseDiff());
   }
