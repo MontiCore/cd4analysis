@@ -1652,8 +1652,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     for(CDAssocDiff x : changedAssocs) {
       if(!x.getBaseDiff().isEmpty()) {
-        String tmp = x.printSrcAssoc();
-        onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
+        onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printDiffAssoc()));
       }
     }
 
@@ -1739,6 +1738,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         String tmp = diff.printAddedAssoc() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
@@ -1748,6 +1748,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         String tmp = diff.printDeletedAssoc() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 

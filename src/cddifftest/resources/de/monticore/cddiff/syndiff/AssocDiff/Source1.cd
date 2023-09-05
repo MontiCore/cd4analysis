@@ -6,5 +6,6 @@ classdiagram Source1 {
   class C;
   class D;
 
-  association [1..*] A -> (b) D [*];
+  association [1..*] A -> D [*];
+  association [1..*] A -> B [*];
 }
