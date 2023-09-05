@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
-import de.monticore.cd.codegen.methods.MethodDecorator;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -20,12 +19,16 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -36,8 +39,12 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor2;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,12 +57,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 public class CDGeneratorTool extends CD4CodeTool {
 
@@ -201,8 +202,9 @@ public class CDGeneratorTool extends CD4CodeTool {
 
         asts.forEach(this::mapCD4CImports);
 
-        asts.forEach(ast -> addGettersAndSetters(ast, glex));
+        asts.forEach(this::addGettersAndSetters);
         asts.forEach(this::makeMethodsInInterfacesAbstract);
+        asts.forEach(this::correctMCTypesForGeneration);
 
         asts.forEach(ast -> hpp.processValue(tc, ast, configTemplateArgs));
       }
@@ -350,19 +352,85 @@ public class CDGeneratorTool extends CD4CodeTool {
    *
    * @param ast the input ast
    */
-  public void addGettersAndSetters(ASTCDCompilationUnit ast, GlobalExtensionManagement glex) {
-    MethodDecorator methodDecorator = new MethodDecorator(glex);
+  public void addGettersAndSetters(ASTCDCompilationUnit ast) {
     for (ASTCDClass c : ast.getCDDefinition().getCDClassesList()) {
       for (ASTCDAttribute attribute : c.getCDAttributeList()) {
-        List<ASTCDMethod> result = methodDecorator.decorate(attribute);
-        result.stream()
-            .filter(
-                m ->
-                    !c.getCDMethodList().stream()
-                        .map(ASTCDMethod::getName)
-                        .collect(Collectors.toList())
-                        .contains(m.getName()))
-            .forEach(c::addCDMember);
+        CD4C.getInstance().addMethods(c, attribute, true, true);
+      }
+    }
+  }
+
+  /**
+   * in order to generate compilable java code it is necessary to adjust the types of variables like attributes,
+   * parameters and return types. this method creates a visitor to go over all those types and change their contents
+   * to be correct
+   * @param ast the input ast
+   */
+  public void correctMCTypesForGeneration(ASTCDCompilationUnit ast) {
+    CD4CodeTraverser traverser = CD4CodeMill.traverser();
+
+    ObjectVisitor visitor = new ObjectVisitor(ast.getCDDefinition().getName());
+    traverser.add4CDBasis(visitor);
+    traverser.add4CDInterfaceAndEnum(visitor);
+    traverser.add4CD4CodeBasis(visitor);
+    traverser.add4MCBasicTypes(visitor);
+
+    ast.accept(traverser);
+  }
+
+  /**
+   * visitor to go over all types of a diagram and adjust their contents to be in line with the generated java
+   * package structure and create compilable java code
+   */
+  private static class ObjectVisitor implements CDBasisVisitor2,
+    CD4CodeBasisVisitor2,
+    CDInterfaceAndEnumVisitor2,
+    MCBasicTypesVisitor2 {
+
+    protected ASTCDType context;
+
+    protected String astName;
+
+    public ObjectVisitor(String astName) {
+      this.astName = astName;
+    }
+
+    @Override
+    public void visit(ASTCDClass node) {
+      context = node;
+    }
+
+    @Override
+    public void visit(ASTCDInterface node) {
+      context = node;
+    }
+
+    @Override
+    public void visit(ASTCDEnum node) {
+      context = node;
+    }
+
+    @Override
+    public void visit(ASTMCQualifiedType node) {
+      if (node.getDefiningSymbol().isEmpty()) {
+        System.out.println("hi");
+      } else {
+        System.out.println("bye");
+      }
+      String typeFullName = node.getDefiningSymbol().isPresent()
+        ? node.getDefiningSymbol().get().getFullName()
+        : astName +"."+ node.getMCQualifiedName().getQName();
+      String typePackageName = typeFullName.lastIndexOf(".") == -1
+        ? typeFullName
+        : typeFullName.substring(0, typeFullName.lastIndexOf("."));
+      String typeName = typeFullName.substring(typeFullName.lastIndexOf(".") + 1);
+
+      String classPackageName = context.getSymbol().getPackageName();
+
+      if (typePackageName.equals(classPackageName)) {
+        node.setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(typeName));
+      } else {
+        node.setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(typeFullName));
       }
     }
   }
