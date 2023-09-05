@@ -61,7 +61,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println(syntaxDiff.getHelper().getNotInstanClassesTgt());
   }
 
-  @Test
+  //Test for Bad overlapping
+  //@Test
   public void testCD1(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");

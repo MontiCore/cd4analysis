@@ -805,10 +805,10 @@ public class Syn2SemDiffHelper {
             if ((pair.a.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName())
               && association.getCDAssocDir().isDefinitiveNavigableRight())){
               ASTCDAssociation copyAssoc = association.deepClone();
-              copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-              if (copyAssoc.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = superC.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
+              copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))).build());
+              if (copyAssoc.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getSymbol().getInternalQualifiedName().replace(".", "_").charAt(0)) + superC.getSymbol().getInternalQualifiedName().replace(".", "_").substring(1))){
+                char firstChar = superC.getSymbol().getInternalQualifiedName().replace(".", "_").charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getSymbol().getInternalQualifiedName().replace(".", "_").substring(1);
                 copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
               copyAssoc.setName(" ");
@@ -829,10 +829,10 @@ public class Syn2SemDiffHelper {
               }
             } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               ASTCDAssociation copyAssoc = association.deepClone();
-              copyAssoc.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-              if (copyAssoc.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = superC.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
+              copyAssoc.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))).build());
+              if (copyAssoc.getRight().getCDRole().getName().equals(Character.toLowerCase(superC.getSymbol().getInternalQualifiedName().replace(".", "_").charAt(0)) + superC.getSymbol().getInternalQualifiedName().replace(".", "_").substring(1))){
+                char firstChar = superC.getSymbol().getInternalQualifiedName().replace(".", "_").charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getSymbol().getInternalQualifiedName().replace(".", "_").substring(1);
                 copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
               copyAssoc.setName(" ");
@@ -868,10 +868,10 @@ public class Syn2SemDiffHelper {
             if ((pair.a.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableRight())){
               //change left side from superClass to subClass
               ASTCDAssociation assocForSubClass = association.deepClone();
-              assocForSubClass.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getName())).build());
-              if (assocForSubClass.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getName().charAt(0)) + superC.getName().substring(1))){
-                char firstChar = superC.getName().charAt(0);
-                String roleName = Character.toLowerCase(firstChar) + superC.getName().substring(1);
+              assocForSubClass.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))).build());
+              if (assocForSubClass.getLeft().getCDRole().getName().equals(Character.toLowerCase(superC.getSymbol().getInternalQualifiedName().replace(".", "_").charAt(0)) + superC.getSymbol().getInternalQualifiedName().replace(".", "_").substring(1))){
+                char firstChar = superC.getSymbol().getInternalQualifiedName().replace(".", "_").charAt(0);
+                String roleName = Character.toLowerCase(firstChar) + superC.getSymbol().getInternalQualifiedName().replace(".", "_").substring(1);
                 assocForSubClass.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(roleName).build());
               }
               assocForSubClass.setName(" ");

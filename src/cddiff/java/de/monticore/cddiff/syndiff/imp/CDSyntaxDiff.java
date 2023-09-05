@@ -991,7 +991,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     for (ASTCDClass astcdClass : inheritanceDiff.getNewDirectSuper()){
       boolean isContained = false;
       for (ASTCDClass astcdClass1 : inheritanceDiff.getOldDirectSuper()){
-        if (astcdClass.getName().equals(astcdClass1.getName())) {
+        if (astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_").equals(astcdClass1.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
           isContained = true;
           break;
         }
@@ -1024,7 +1024,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     for (ASTCDClass astcdClass : inheritanceDiff.getOldDirectSuper()){
       boolean isContained = false;
       for (ASTCDClass astcdClass1 : inheritanceDiff.getNewDirectSuper()){
-        if (astcdClass.getName().equals(astcdClass1.getName())) {
+        if (astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_").equals(astcdClass1.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
           isContained = true;
           break;
         }
@@ -1056,17 +1056,17 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   public boolean sameTgt(AssocStruct assocStruct, AssocStruct assocStruct2){
     if (assocStruct.getSide().equals(ClassSide.Left)){
       if (assocStruct2.getSide().equals(ClassSide.Left)){
-        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName()
-          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).b.getName());
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName().replace(".", "_")
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).b.getSymbol().getInternalQualifiedName().replace(".", "_"));
       } else {
-        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName()
-          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).a.getName());
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName().replace(".", "_")
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).a.getSymbol().getInternalQualifiedName().replace(".", "_"));
       }
     }
     else {
       if (assocStruct2.getSide().equals(ClassSide.Left)){
-        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getName()
-          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).b.getName());
+        return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName().replace(".", "_")
+          .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).b.getSymbol().getInternalQualifiedName().replace(".", "_"));
       } else {
         return Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getName()
           .equals(Syn2SemDiffHelper.getConnectedClasses(assocStruct2.getAssociation(), tgtCD).a.getName());

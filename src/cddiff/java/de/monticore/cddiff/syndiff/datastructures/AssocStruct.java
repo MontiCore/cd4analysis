@@ -26,6 +26,10 @@ public class AssocStruct {
     this.isSuperAssoc = isSuperAssoc;
   }
 
+  public AssocStruct deepClone(){
+    return new AssocStruct(this.association.deepClone(), this.direction, this.side, this.isSuperAssoc);
+  }
+
   public ASTCDAssociation getAssociation() {
     return association;
   }
