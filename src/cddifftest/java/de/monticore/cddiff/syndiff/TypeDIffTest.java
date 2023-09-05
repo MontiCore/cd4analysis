@@ -4,7 +4,6 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -15,7 +14,6 @@ import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.matcher.*;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import org.junit.Assert;
@@ -23,8 +21,6 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -262,34 +258,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
-    ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
-    ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
 
-    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, scopeSrcCD, scopeTgtCD);
-    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, scopeSrcCD, scopeTgtCD);
-
-    System.out.println("--------------------------------");
-    System.out.println("Print changed");
-    System.out.println(typeDiff1.printOnlyChangedFromSrc());
-    System.out.println(typeDiff2.printOnlyChangedFromSrc());
-    System.out.println(typeDiff1.printOnlyChangedFromTgt());
-    System.out.println(typeDiff2.printOnlyChangedFromTgt());
-    System.out.println("--------------------------------");
-    System.out.println("Print deleted");
-    //System.out.println(typeDiff1.printOnlyDeleted());
-    //System.out.println(typeDiff2.printOnlyDeleted());
-    //System.out.println(typeDiff1.printOnlyDeleted());
-    //System.out.println(typeDiff2.printOnlyDeleted());
-    System.out.println("--------------------------------");
-    System.out.println("Print added");
-    //System.out.println(typeDiff1.printOnlyAdded());
-    //System.out.println(typeDiff2.printOnlyAdded());
-    System.out.println("--------------------------------");
-    System.out.println("Print diffs");
-    System.out.println(typeDiff1.printSrcCD());
-    System.out.println(typeDiff2.printSrcCD());
-    System.out.println(typeDiff1.printTgtCD());
-    System.out.println(typeDiff2.printTgtCD());
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
+    System.out.println(syntaxDiff.printDiff());
   }
 
   //Tests for all kinds of changes in enum constants

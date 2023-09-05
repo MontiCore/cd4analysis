@@ -17,11 +17,11 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
   private List<DiffTypes> baseDiff;
   //Print
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-  private String srcMemberModifier, srcMemberType, srcMemberName;
+  private String srcMemberModifier, srcMemberType, srcMemberName, addedMember;
   int srcLineOfCode;
   private String tgtMemberModifier, tgtMemberType, tgtMemberName;
   int tgtLineOfCode;
-  private String srcMemberString, tgtMemberString;
+  private String srcMemberString, tgtMemberString, removedMember;
   //Print end
 
   public CDMemberDiff(ASTNode srcElem, ASTNode tgtElem) {
@@ -31,7 +31,12 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
 
     if ((srcElem instanceof ASTCDAttribute) && (tgtElem instanceof ASTCDAttribute)) {
       createDiffList((ASTCDAttribute) srcElem, (ASTCDAttribute) tgtElem);
-      setAttributeStrings();
+      setStrings();
+    }
+
+    if ((srcElem instanceof ASTCDEnumConstant) && (tgtElem instanceof ASTCDEnumConstant)) {
+      createDiffList((ASTCDEnumConstant) srcElem, (ASTCDEnumConstant) tgtElem);
+      setStrings();
     }
   }
 
@@ -94,13 +99,25 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
     tgtLineOfCode = tgtElem.get_SourcePositionStart().getLine();
   }
 
-  private void setAttributeStrings() {
-    this.srcMemberString = insertSpaceBetweenStrings(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName)) + "; " +
-      "(Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";
-    this.tgtMemberString = insertSpaceBetweenStrings(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName)) + "; " +
-      "(Line in srcCD: " +  srcLineOfCode + " | Line in tgtCD: " +  tgtLineOfCode + ")";
+  private void createDiffList(ASTCDEnumConstant srcElem, ASTCDEnumConstant tgtElem) {
+    // Name
+    srcMemberName = srcElem.getName() + RESET;
+    tgtMemberName = tgtElem.getName() + RESET;
+
+    srcLineOfCode = srcElem.get_SourcePositionStart().getLine();
+    tgtLineOfCode = tgtElem.get_SourcePositionStart().getLine();
+  }
+
+  private void setStrings() {
+    this.srcMemberString = "\t" + "//new, L: " + srcLineOfCode + System.lineSeparator() + "\t" + insertSpaceBetweenStrings(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName)) + "; ";
+    this.tgtMemberString = "\t" + "//old, L: " + tgtLineOfCode + System.lineSeparator() + "\t" + insertSpaceBetweenStrings(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName)) + "; ";
+    this.addedMember = "\t" + insertSpaceBetweenStringsAndGreen(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName)) + COLOR_ADD + ";";
+    this.removedMember = "\t" + insertSpaceBetweenStringsAndRed(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName)) + COLOR_DELETE +  ";";
   }
 
   public String printSrcMember() { return srcMemberString; }
+  public String printAddedMember() { return addedMember; }
   public String printTgtMember() { return tgtMemberString; }
+  public String printChangedMember() { return "\t" + "//changed attribute" + System.lineSeparator() + srcMemberString + System.lineSeparator() + tgtMemberString + System.lineSeparator(); }
+  public String printRemovedMember() { return removedMember; }
 }

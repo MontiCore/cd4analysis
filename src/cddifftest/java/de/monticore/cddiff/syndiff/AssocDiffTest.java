@@ -149,7 +149,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(synDiff.printOnlyChanged());
+    System.out.println(synDiff.printDiff());
   }
 
   @Test

@@ -1,14 +1,19 @@
 import java.lang.String;
 
 classdiagram Target1 {
-  class A implements B{
-    int c;
-    double s;
-    List<int> number;
-    int b;
+  enum DeletedEnum{c,d;}
+  enum MatchedEnum{k,l;}
+  class A{
+    double a;
+    String f;
   }
+  class D{}
+  class K{
+    int j;
+    DeletedEnum d;
+  }
+  class B{}
 
-  class B{
-    int e;
-  }
+  association match A -> (c) B;
+  association D -> K;
 }
