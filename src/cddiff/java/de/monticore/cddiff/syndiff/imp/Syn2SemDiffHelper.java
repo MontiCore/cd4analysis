@@ -48,6 +48,30 @@ public class Syn2SemDiffHelper {
 
   private ASTCDCompilationUnit tgtCD;
 
+  public List<AssocStruct> getOtherAssocFromSuper(ASTCDClass astcdClass){
+    List<AssocStruct> list = new ArrayList<>();
+    for (ASTCDClass classToCheck : srcMap.keySet()) {
+      if (classToCheck != astcdClass) {
+        for (AssocStruct assocStruct : srcMap.get(classToCheck)) {
+          if (assocStruct.getSide().equals(ClassSide.Left)
+            && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
+            && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+            || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())
+            && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).b == astcdClass) {
+            list.add(assocStruct.deepClone());
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
+            && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
+            || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())
+            && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), srcCD).a == astcdClass) {
+            list.add(assocStruct.deepClone());
+          }
+        }
+      }
+    }
+    return list;
+  }
+
   public ASTCDClass findMatchedClass(ASTCDClass astcdClass){
     ASTCDClass matchedClass = null;
     for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
@@ -1113,7 +1137,8 @@ public class Syn2SemDiffHelper {
       if (!subclass.getModifier().isAbstract() && !notInstanClassesSrc.contains(subclass)) {
         int attributeCount = getAllAttr(baseClass).b.size();
         int associationCount = getAssociationCount(subclass);
-        int totalCount = attributeCount + associationCount;
+        int otherAssocsCount = getOtherAssocFromSuper(subclass).size();
+        int totalCount = attributeCount + associationCount + otherAssocsCount;
 
         if (totalCount < lowestCount) {
           lowestCount = totalCount;
@@ -1129,14 +1154,16 @@ public class Syn2SemDiffHelper {
     int count = 0;
     for (AssocStruct assocStruct : srcMap.get(astcdClass)) {
       if (assocStruct.getSide().equals(ClassSide.Left)) {
-        if (assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne()
-          || assocStruct.getAssociation().getRight().getCDCardinality().isOne()){
+        if ((assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne()
+          || assocStruct.getAssociation().getRight().getCDCardinality().isOne())
+          && !getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName().equals(getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName())) {
           count++;
         }
       }
       else {
-        if (assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne()
-          || assocStruct.getAssociation().getLeft().getCDCardinality().isOne()){
+        if ((assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne()
+          || assocStruct.getAssociation().getLeft().getCDCardinality().isOne())
+          && !getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName().equals(getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName())){
           count++;
         }
       }

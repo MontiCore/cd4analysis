@@ -643,4 +643,34 @@ public class TestMax extends CDDiffTestBasis {
 //      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
 //    }
   }
+
+  @Test
+  public void testBuilder8(){
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder8.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    diff.getHelper().setMaps();
+
+    ODHelper odHelper = new ODHelper();
+
+    ASTCDClass a2 = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
+    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
+
+    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    for (ASTODElement element : set) {
+      if (element instanceof ASTODLink){
+        System.out.println("Link");
+        System.out.println(((ASTODLink) element).getLeftReferenceNames());
+        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
+        System.out.println(((ASTODLink) element).getRightReferenceNames());
+        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
+      }
+    }
+//    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
+//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
+//    }
+  }
 }
