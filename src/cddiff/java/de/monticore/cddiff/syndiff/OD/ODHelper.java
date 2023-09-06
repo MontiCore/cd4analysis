@@ -37,7 +37,16 @@ public class ODHelper {
   private final ODBuilder ODBuilder = new ODBuilder();
   private Map<ASTCDClass, Integer> map = new HashMap<>();
 
-  private final int maxNumberOfClasses = Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size());
+  private CDSyntaxDiff syntaxDiff;
+
+  private int maxNumberOfClasses = Integer.MAX_VALUE;
+
+  public ODHelper() {
+  }
+  public ODHelper(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    this.maxNumberOfClasses = Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size());
+  }
 
   public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
     Map<ASTODObject, Set<Boolean>> unprocessedMap = new HashMap<>();
@@ -866,7 +875,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
   //create such association
   public List<ASTODArtifact> generateODs(
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean staDiff){
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     List<ASTODArtifact> artifactList = new ArrayList<>();
     for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
@@ -912,20 +921,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       artifactList.add(astodArtifact);
     }
 
-    for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
-      if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
-        ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
-        if (inheritanceDiff.getAstcdClasses().a.getModifier().isAbstract()) {
-          astcdClass = helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
-        }
-        String comment = "For the class " + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
-          generateElements(inheritanceDiff.getAstcdClasses().a, comment),
-          null);
-        artifactList.add(astodArtifact);
-      }
-    }
-
     for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
       String comment = "In tgtCD the class" + astcdClass.getSymbol().getInternalQualifiedName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
@@ -936,7 +931,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
 
     //implement a function that
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
-      if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
+      if ((typeDiffStruc.getAstcdType() instanceof ASTCDClass)
+        && !typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
         StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
         if (typeDiffStruc.getAddedAttributes() != null
           && !typeDiffStruc.getAddedAttributes().b.isEmpty()) {
@@ -1101,6 +1097,20 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
           null);
         artifactList.add(astodArtifact);
       }
+
+      for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
+        if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
+          ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
+          if (inheritanceDiff.getAstcdClasses().a.getModifier().isAbstract()) {
+            astcdClass = helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
+          }
+          String comment = "For the class " + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed";
+          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
+            generateElements(inheritanceDiff.getAstcdClasses().a, comment),
+            null);
+          artifactList.add(astodArtifact);
+        }
+      }
     }
     return artifactList;
   }
@@ -1143,6 +1153,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
 
     ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
     valueBuilder.setName("diff");
+    valueBuilder.setContent("diffClass");
     matchedObject.getModifier().getStereotype().addValues(valueBuilder.build());
 
     CommentBuilder commentBuilder = new CommentBuilder();
@@ -1161,6 +1172,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
 
     ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
     valueBuilder.setName("diff");
+    valueBuilder.setContent("diffAssoc");
     pair.b.getStereotype().addValues(valueBuilder.build());
 
     CommentBuilder commentBuilder = new CommentBuilder();

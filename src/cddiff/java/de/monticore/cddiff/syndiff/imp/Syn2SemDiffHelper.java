@@ -1134,6 +1134,7 @@ public class Syn2SemDiffHelper {
     ASTCDClass subclassWithLowestCount = null;
 
     for (ASTCDClass subclass : subClasses) {
+      assert subclass != null;
       if (!subclass.getModifier().isAbstract() && !notInstanClassesSrc.contains(subclass)) {
         int attributeCount = getAllAttr(baseClass).b.size();
         int associationCount = getAssociationCount(subclass);

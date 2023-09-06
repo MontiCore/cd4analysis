@@ -3,19 +3,30 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syndiff.OD.ODHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.monticore.cddiff.syndiff.imp.TestHelper;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.odvalidity.OD2CDMatcher;
+import de.monticore.prettyprint.IndentPrinter;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
@@ -672,5 +683,37 @@ public class TestMax extends CDDiffTestBasis {
 //    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
 //      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
 //    }
+  }
+
+  @Test
+  public void testSem2OD(){
+    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
+    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
+
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+
+    ODHelper odHelper = new ODHelper(cd1, cd2);
+
+    // reduction-based
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(cd1, cd2);
+    List<ASTODArtifact> witnesses = odHelper.generateODs(cd1, cd2, false);
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher()
+        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
+
   }
 }

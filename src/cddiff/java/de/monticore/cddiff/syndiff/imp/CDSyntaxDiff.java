@@ -66,6 +66,8 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
+    CDDiffUtil.refreshSymbolTable(srcCD);
+    CDDiffUtil.refreshSymbolTable(tgtCD);
     helper.setSrcCD(srcCD);
     helper.setTgtCD(tgtCD);
     this.baseDiff = new ArrayList<>();
