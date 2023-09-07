@@ -763,29 +763,47 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
 
-    try {
-      // parse the second .cd-file
-      ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
+
+    // parse the second .cd-file
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syndiff"));
 
 
-      if (ast2 == null) {
-        Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
-        return;
-      }
+    if (ast2 == null) {
+      Log.error("0xCDD15: Failed to load CDs for `--syndiff`.");
+      return;
+    }
 
-      ast1 = ast1.deepClone();
-      ast2 = ast2.deepClone();
+    ast1 = ast1.deepClone();
+    ast2 = ast2.deepClone();
 
-      new CD4CodeDirectCompositionTrafo().transform(ast1);
-      new CD4CodeDirectCompositionTrafo().transform(ast2);
-      CDDiffUtil.refreshSymbolTable(ast1);
-      CDDiffUtil.refreshSymbolTable(ast2);
+    new CD4CodeDirectCompositionTrafo().transform(ast1);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+    CDDiffUtil.refreshSymbolTable(ast1);
+    CDDiffUtil.refreshSymbolTable(ast2);
 
-      CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
 
-      System.out.println(syntaxDiff.printOnlyAdded());
-    } catch (Exception e) {
-      Log.error(e.getMessage(), e);
+    String printOption = cmd.getOptionValue("print", "diff");
+    if (printOption.equals("added")) {
+      System.out.println(syntaxDiff.printOnlyAdded());;
+    }
+    if (printOption.equals("diff")) {
+      System.out.println(syntaxDiff.printDiff());
+    }
+    if (printOption.equals("new")) {
+      System.out.println(syntaxDiff.printSrcCD());
+    }
+    if (printOption.equals("old")) {
+      System.out.println(syntaxDiff.printDiff());
+    }
+    if (printOption.equals("deleted")) {
+      System.out.println(syntaxDiff.printOnlyDeleted());
+    }
+    if (printOption.equals("changed")) {}
+    if (printOption.equals("both")) {
+      System.out.println(syntaxDiff.printSrcCD());
+      System.out.println("___________________");
+      System.out.println(syntaxDiff.printTgtCD());
     }
 
   }
