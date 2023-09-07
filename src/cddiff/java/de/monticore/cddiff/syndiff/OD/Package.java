@@ -26,7 +26,7 @@ public class Package {
   public Package(ASTCDClass leftObject, String idSrc, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
     this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
     this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
-    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)).toString());
+    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
@@ -35,7 +35,7 @@ public class Package {
   public Package(ASTODObject leftObject, ASTODObject rightObject, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
     this.leftObject = leftObject;
     this.rightObject = rightObject;
-    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)).toString());
+    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
@@ -45,7 +45,7 @@ public class Package {
   public Package(ASTCDClass leftObject, String idSrc, ASTODObject rightObject, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
     this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
     this.rightObject = rightObject;
-    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)).toString());
+    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
@@ -55,7 +55,7 @@ public class Package {
   public Package(ASTODObject leftObject, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
     this.leftObject = leftObject;
     this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
-    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)).toString());
+    this.association = ODBuilder.buildLink(this.leftObject, association.getLeft().getCDRole().getName(), association.getRight().getCDRole().getName(), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;

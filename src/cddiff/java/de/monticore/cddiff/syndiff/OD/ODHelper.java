@@ -28,7 +28,7 @@ import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
 
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
 public class ODHelper {
   private int indexClass = 1;
@@ -191,8 +191,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
   //if none exists, the association cannot be instantiated
   //implement a function that searches in a set for a subclass of a given class and checks the standard constraints
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> objectSet) {
-    System.out.println("createChainsForNewClass " + astcdClass.getName());
-    System.out.println("objectSet size: " + objectSet.size());
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
     ASTODObject srcObject = ODBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"),
       helper.getSuperClasses(astcdClass),
@@ -217,10 +215,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         mustBeLinked = true;
         tgtObject = getObjectForTgt(astcdClass, srcObject, Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, assocStruct.getAssociation(), objectSet);
         tgtClass = Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
-      }
-      if (tgtObject != null){
-        System.out.println("tgtObject.a: ");
-        System.out.println(tgtObject.b.getLeftQualifiedName().getQName() + " " + tgtObject.b.getRightQualifiedName().getQName());
       }
       if (mustBeLinked) {
         Package pack = null;
@@ -304,7 +298,6 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         objectSet.add(pack);
       }
     }
-    System.out.println("objectSet size: " + objectSet.size());
     return objectSet;
   }
   public Pair<ASTODObject, ASTCDAssociation> getObjectForTgt(ASTCDClass srcClass, ASTODObject srcObject, ASTCDClass tgtClass, ASTCDAssociation association, Set<Package> objectSet) {
@@ -437,22 +430,83 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     if (assocToUse == null) {
       assocToUse = association.deepClone();
     }
-    System.out.println(srcObject.getMCObjectType().printType() + " " + getConnectedClasses(association, helper.getSrcCD()).a.getName() + " " + getConnectedClasses(association, helper.getSrcCD()).b.getName());
-      if (getConnectedClasses(association, helper.getSrcCD()).a == helper.getCDClass(helper.getSrcCD(), srcObject.getMCObjectType().printType())) {
+    if (getConnectedClasses(association, helper.getSrcCD()).a == helper.getCDClass(helper.getSrcCD(), srcObject.getMCObjectType().printType())) {
         assocToUse.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(subTgt.getSymbol().getInternalQualifiedName())).build());
       } else if (getConnectedClasses(association, helper.getSrcCD()).b == helper.getCDClass(helper.getSrcCD(), srcObject.getMCObjectType().printType())) {
         assocToUse.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(subTgt.getSymbol().getInternalQualifiedName())).build());
-      }
-      System.out.println("assocToUse for sub: " + subTgt.getSymbol().getInternalQualifiedName()+ " " + assocToUse.getLeftQualifiedName().getQName() + " " + assocToUse.getRightQualifiedName().getQName());
-    return new Pair<>(objectUsesAssoc(processed, srcObject, subTgt, assocToUse, containingSet), assocToUse);
+      }return new Pair<>(objectUsesAssoc(processed, srcObject, subTgt, assocToUse, containingSet), assocToUse);
   }
 
   public Set<Package> createChainsForExistingObj(ASTODObject object, Set<Package> objectSet){
-    System.out.println("createChainsForExistingObj " + object.getMCObjectType().printType());
+    System.out.println("Objects before createChainsForExistingObj");
+    for (Package pack : objectSet){
+      if (pack.getAstcdAssociation() != null){
+        System.out.println(pack.getLeftObject().getMCObjectType().printType());
+        System.out.print(" " + pack.getRightObject().getMCObjectType().printType());
+      }
+    }
+    System.out.println("createChainsForExistingObj " + object.getName());
     List<AssocStruct> list = helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()));
     Set<Pair<Package, ClassSide>> containingPackages = getContainingPackages(object, objectSet);
+    System.out.println("containingPackages " + containingPackages.size());
     for (Pair<Package, ClassSide> pair : containingPackages){
-      list.removeIf(assocStruct -> CDAssociationHelper.sameAssociation(pair.a.getAstcdAssociation(), assocStruct.getAssociation()) || CDAssociationHelper.sameAssociationInReverse(pair.a.getAstcdAssociation(), assocStruct.getAssociation()));
+      if (pair.a.getAstcdAssociation() != null){
+        System.out.println(pair.a.getLeftObject().getMCObjectType().printType() + " " + pair.a.getRightObject().getMCObjectType().printType());
+      }
+    }
+    System.out.println("list before" + list.size());
+    for (AssocStruct assocStruct : list){
+      System.out.println(assocStruct.getAssociation().getLeftQualifiedName().getQName() + " " + assocStruct.getAssociation().getRightQualifiedName().getQName());
+    }
+    for (Pair<Package, ClassSide> pair : containingPackages){
+      if (pair.a.getAstcdAssociation() != null) {
+        list.removeIf(assocStruct -> CDAssociationHelper.sameAssociation(pair.a.getAstcdAssociation(), assocStruct.getAssociation()) || CDAssociationHelper.sameAssociationInReverse(pair.a.getAstcdAssociation(), assocStruct.getAssociation()));
+      }
+    }
+    System.out.println("list after 1 " + list.size());
+    for (AssocStruct assocStruct : list){
+      System.out.println(assocStruct.getAssociation().getLeftQualifiedName().getQName() + " " + assocStruct.getAssociation().getRightQualifiedName().getQName());
+    }
+    List<AssocStruct> list1 = new ArrayList<>(list);
+    for (AssocStruct assocStruct : list1){
+      for (Pair<Package, ClassSide> pair : containingPackages) {
+        if (pair.a.getAstcdAssociation() != null) {
+          if (Objects.equals(object.getMCObjectType().printType(), "A3")){
+            System.out.println("A3");
+            System.out.println(assocStruct.getAssociation().getLeftQualifiedName().getQName() + " " + assocStruct.getAssociation().getRightQualifiedName().getQName());
+            System.out.println(pair.a.getAstcdAssociation().getLeftQualifiedName().getQName() + " " + pair.a.getAstcdAssociation().getRightQualifiedName().getQName());
+          }
+          if (assocStruct.getSide().equals(ClassSide.Left)
+            && pair.b.equals(ClassSide.Left)
+            && Syn2SemDiffHelper.sameAssociationType(assocStruct, pair.a.getAstcdAssociation(), pair.b)
+            && CDInheritanceHelper.isSuperOf(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+            , getConnectedClasses(pair.a.getAstcdAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(), helper.getSrcCD())) {
+            list.remove(assocStruct);
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && pair.b.equals(ClassSide.Right)
+            && sameAssociationType(assocStruct, pair.a.getAstcdAssociation(), pair.b)
+            && CDInheritanceHelper.isSuperOf(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+            , getConnectedClasses(pair.a.getAstcdAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(), helper.getSrcCD())) {
+            list.remove(assocStruct);
+          } else if (assocStruct.getSide().equals(ClassSide.Left)
+            && pair.b.equals(ClassSide.Right)
+            && Syn2SemDiffHelper.sameAssociationType(assocStruct, pair.a.getAstcdAssociation(), pair.b)
+            && CDInheritanceHelper.isSuperOf(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+            , getConnectedClasses(pair.a.getAstcdAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(), helper.getSrcCD())) {
+            list.remove(assocStruct);
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && pair.b.equals(ClassSide.Left)
+            && Syn2SemDiffHelper.sameAssociationType(assocStruct, pair.a.getAstcdAssociation(), pair.b)
+            && CDInheritanceHelper.isSuperOf(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+            , getConnectedClasses(pair.a.getAstcdAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(), helper.getSrcCD())) {
+            list.remove(assocStruct);
+          }
+        }
+      }
+    }
+    System.out.println("list after 2 " + list.size());
+    for (AssocStruct assocStruct : list){
+      System.out.println(assocStruct.getAssociation().getLeftQualifiedName().getQName() + " " + assocStruct.getAssociation().getRightQualifiedName().getQName());
     }
     Iterator<AssocStruct> iterator = list.iterator();
     while (iterator.hasNext()){
@@ -468,7 +522,7 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
       }
     }
-    System.out.println("list");
+    System.out.println("list after 3 " + list.size());
     for (AssocStruct assocStruct : list){
       System.out.println(assocStruct.getAssociation().getLeftQualifiedName().getQName() + " " + assocStruct.getAssociation().getRightQualifiedName().getQName());
     }
@@ -476,9 +530,11 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     List<AssocStruct> otherAssoc = getOtherAssoc(astcdClass, object, objectSet);
     List<AssocStruct> copy = new ArrayList<>(otherAssoc);
     for (Pair<Package, ClassSide> pack : containingPackages){
-      for (AssocStruct assocStruct : copy){
-        if (CDAssociationHelper.sameAssociation(pack.a.getAstcdAssociation(), assocStruct.getAssociation()) || CDAssociationHelper.sameAssociationInReverse(pack.a.getAstcdAssociation(), assocStruct.getAssociation())){
-          otherAssoc.remove(assocStruct);
+      if (pack.a.getAstcdAssociation() != null) {
+        for (AssocStruct assocStruct : copy) {
+          if (CDAssociationHelper.sameAssociation(pack.a.getAstcdAssociation(), assocStruct.getAssociation()) || CDAssociationHelper.sameAssociationInReverse(pack.a.getAstcdAssociation(), assocStruct.getAssociation())) {
+            otherAssoc.remove(assocStruct);
+          }
         }
       }
     }
@@ -662,31 +718,33 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
   public Pair<Boolean, ASTCDAssociation> objectUsesAssocSpecAbstract(boolean processed, ASTODObject srcObject, ASTODObject tgtObject, ASTCDClass subTgt, ASTCDAssociation association, Set<Pair<Package, ClassSide>> containingSet) {
     AssocStruct assocStruct = helper.findMatchingAssocStructSrc(association, helper.getCDClass(helper.getSrcCD(), srcObject.getMCObjectType().printType()));
     ASTCDAssociation assocToUse = null;
-    for (AssocStruct assocStructToMatch : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), srcObject.getMCObjectType().printType()))) {
-      if (assocStruct.getSide().equals(ClassSide.Left)
-        && assocStructToMatch.getSide().equals(ClassSide.Left)
-        && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).b == subTgt
-        && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.getAssociation().getRight())) {
-        assocToUse = assocStructToMatch.getAssociation().deepClone();
-        break;
-      } else if (assocStruct.getSide().equals(ClassSide.Left)
-        && assocStructToMatch.getSide().equals(ClassSide.Right)
-        && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).a == subTgt
-        && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.getAssociation().getLeft())) {
-        assocToUse = assocStructToMatch.getAssociation().deepClone();
-        break;
-      } else if (assocStruct.getSide().equals(ClassSide.Right)
-        && assocStructToMatch.getSide().equals(ClassSide.Left)
-        && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).b == subTgt
-        && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.getAssociation().getRight())) {
-        assocToUse = assocStructToMatch.getAssociation().deepClone();
-        break;
-      } else if (assocStruct.getSide().equals(ClassSide.Right)
-        && assocStructToMatch.getSide().equals(ClassSide.Right)
-        && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).a == subTgt
-        && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.getAssociation().getLeft())) {
-        assocToUse = assocStructToMatch.getAssociation().deepClone();
-        break;
+    if (assocStruct != null) {
+      for (AssocStruct assocStructToMatch : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), srcObject.getMCObjectType().printType()))) {
+        if (assocStruct.getSide().equals(ClassSide.Left)
+          && assocStructToMatch.getSide().equals(ClassSide.Left)
+          && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).b == subTgt
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.getAssociation().getRight())) {
+          assocToUse = assocStructToMatch.getAssociation().deepClone();
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Left)
+          && assocStructToMatch.getSide().equals(ClassSide.Right)
+          && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).a == subTgt
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.getAssociation().getLeft())) {
+          assocToUse = assocStructToMatch.getAssociation().deepClone();
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Right)
+          && assocStructToMatch.getSide().equals(ClassSide.Left)
+          && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).b == subTgt
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.getAssociation().getRight())) {
+          assocToUse = assocStructToMatch.getAssociation().deepClone();
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Right)
+          && assocStructToMatch.getSide().equals(ClassSide.Right)
+          && getConnectedClasses(assocStructToMatch.getAssociation(), helper.getSrcCD()).a == subTgt
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.getAssociation().getLeft())) {
+          assocToUse = assocStructToMatch.getAssociation().deepClone();
+          break;
+        }
       }
     }
     if (assocToUse == null){
