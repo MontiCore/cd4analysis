@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -686,6 +687,38 @@ public class TestMax extends CDDiffTestBasis {
   }
 
   @Test
+  public void testBuilder9(){
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
+    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
+    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    diff.getHelper().setMaps();
+
+    ODHelper odHelper = new ODHelper();
+
+    ASTCDClass a2 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
+    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
+
+    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+//    for (ASTODElement element : set) {
+//      if (element instanceof ASTODLink){
+//        System.out.println("Link");
+//        System.out.println(((ASTODLink) element).getLeftReferenceNames());
+//        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
+//        System.out.println(((ASTODLink) element).getRightReferenceNames());
+//        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
+//      }
+//    }
+    ASTODArtifact artifact = ODHelper.generateArtifact("test", new ArrayList<>(set), "someStereotype");
+    System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(artifact));
+//    for (AssocStruct assocStruct : diff.helper.getSrcMap().get(a2)){
+//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
+//    }
+  }
+
+  @Test
   public void testSem2OD(){
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
@@ -693,10 +726,10 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit original1 = cd1.deepClone();
     ASTCDCompilationUnit original2 = cd2.deepClone();
 
-    ODHelper odHelper = new ODHelper(cd1, cd2);
 
     // reduction-based
     ReductionTrafo trafo = new ReductionTrafo();
+    ODHelper odHelper = new ODHelper(cd1, cd2);
     trafo.transform(cd1, cd2);
     List<ASTODArtifact> witnesses = odHelper.generateODs(cd1, cd2, false);
 

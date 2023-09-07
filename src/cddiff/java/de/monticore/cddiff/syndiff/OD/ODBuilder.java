@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff.OD;
 
+import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odattribute._ast.ASTODList;
@@ -169,7 +170,7 @@ public class ODBuilder implements IODBuilder{
     return objectBuilder.build();
   }
   @Override
-  public ASTODLink buildLink(ASTODObject srcObj, String roleNameSrc, String roleNameTgt, ASTODObject trgObj, String direction) {
+  public ASTODLink buildLink(ASTODObject srcObj, String roleNameSrc, String roleNameTgt, ASTODObject trgObj, AssocDirection direction) {
     ASTODLinkBuilder linkBuilder = ODLinkMill.oDLinkBuilder();
 
     ASTODLinkLeftSideBuilder leftSideBuilder = ODLinkMill.oDLinkLeftSideBuilder().setModifier(ODBasisMill.modifierBuilder().build()).setODLinkQualifierAbsent().setRole(roleNameSrc);
@@ -184,11 +185,12 @@ public class ODBuilder implements IODBuilder{
     linkBuilder.setODLinkLeftSide(leftSideBuilder.build());
     linkBuilder.setODLinkRightSide(rightSideBuilder.build());
 
-    switch (direction){
-      case "<->": linkBuilder.setODLinkDirection(ODLinkMill.oDBiDirBuilder().build());
-      case "<-": linkBuilder.setODLinkDirection(ODLinkMill.oDRightToLeftDirBuilder().build());
-      case "->": linkBuilder.setODLinkDirection(ODLinkMill.oDLeftToRightDirBuilder().build());
-      default: linkBuilder.setODLinkDirection(ODLinkMill.oDUnspecifiedDirBuilder().build());
+    if(direction == AssocDirection.BiDirectional)
+      linkBuilder.setODLinkDirection(ODLinkMill.oDBiDirBuilder().build());//bidirektional
+    else if (direction == AssocDirection.LeftToRight){
+      linkBuilder.setODLinkDirection(ODLinkMill.oDLeftToRightDirBuilder().build());//links nach rechts
+    } else if (direction == AssocDirection.RightToLeft){
+      linkBuilder.setODLinkDirection(ODLinkMill.oDRightToLeftDirBuilder().build());//rechts nach links
     }
 
     linkBuilder.setLink(true);//nur links

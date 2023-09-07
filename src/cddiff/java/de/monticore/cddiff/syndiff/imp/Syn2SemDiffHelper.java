@@ -594,6 +594,7 @@ public class Syn2SemDiffHelper {
    * @return true, if all conditions are fulfilled
    */
   public static boolean sameAssociationType(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    //TODO: change to work with assocstructs
     if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft()
       && !assoc2.getCDAssocDir().isDefinitiveNavigableRight()) {
       return matchRoleNames(assoc1.getRight(), assoc2.getLeft())
@@ -612,6 +613,19 @@ public class Syn2SemDiffHelper {
       && matchRoleNames(assoc1.getLeft(), assoc2.getRight())
       && isContainedIn(cardToEnum(assoc1.getLeft().getCDCardinality()), cardToEnum(assoc2.getRight().getCDCardinality()))
       && isContainedIn(cardToEnum(assoc1.getRight().getCDCardinality()), cardToEnum(assoc2.getLeft().getCDCardinality()));
+  }
+
+  public static boolean sameAssociationType(AssocStruct assocStruct1, ASTCDAssociation association, ClassSide side){
+    if (((assocStruct1.getSide().equals(ClassSide.Left) && side.equals(ClassSide.Left))
+      || assocStruct1.getSide().equals(ClassSide.Right) && side.equals(ClassSide.Right))){
+      return matchRoleNames(assocStruct1.getAssociation().getLeft(), association.getLeft())
+        && matchRoleNames(assocStruct1.getAssociation().getRight(), association.getRight());
+    } else if (((assocStruct1.getSide().equals(ClassSide.Left) && side.equals(ClassSide.Right))
+      || assocStruct1.getSide().equals(ClassSide.Right) && side.equals(ClassSide.Left))){
+      return matchRoleNames(assocStruct1.getAssociation().getLeft(), association.getRight())
+        && matchRoleNames(assocStruct1.getAssociation().getRight(), association.getLeft());
+    }
+    return false;
   }
 
   /**
@@ -1036,8 +1050,13 @@ public class Syn2SemDiffHelper {
       compilationUnit
         .getEnclosingScope()
         .resolveCDTypeDown(association.getRightQualifiedName().getQName());
-    return new Pair<>(
-      (ASTCDClass) astcdClass.get().getAstNode(), (ASTCDClass) astcdClass1.get().getAstNode());
+    if (astcdClass.isPresent() && astcdClass1.isPresent()
+      && astcdClass.get().getAstNode() instanceof ASTCDClass
+      && astcdClass1.get().getAstNode() instanceof ASTCDClass) {
+      return new Pair<>(
+        (ASTCDClass) astcdClass.get().getAstNode(), (ASTCDClass) astcdClass1.get().getAstNode());
+    }
+    return null;
   }
 
   /**
