@@ -12,7 +12,9 @@ classdiagram Target1 {
     int j;
     DeletedEnum d;
   }
-  class B{}
+  class B{
+    int deleted;
+  }
 
   association match A -> (c) B;
   association D -> K;

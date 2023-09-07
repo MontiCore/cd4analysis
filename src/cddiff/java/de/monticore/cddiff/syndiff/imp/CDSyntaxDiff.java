@@ -106,7 +106,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     loadAllLists(srcCD, tgtCD, scopeSrcCD, scopeTgtCD, typeMatchers, assocMatchers);
     helper.setMatchedClasses(matchedClasses);
-    setStrings(scopeSrcCD, scopeTgtCD);
+    setStrings(scopeTgtCD);
   }
   @Override
   public ASTCDCompilationUnit getSrcCD() {
@@ -1337,16 +1337,16 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     }
   }
 
-  public void addAllchangedTypes(ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {
+  public void addAllchangedTypes(ICD4CodeArtifactScope scopeTgtCD) {
     for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
-      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, scopeSrcCD, scopeTgtCD);
+      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD);
       if(!typeDiff.getBaseDiff().isEmpty()){
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
       }
     }
     for(Pair<ASTCDEnum, ASTCDEnum> pair : matchedEnums){
-      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, scopeSrcCD, scopeTgtCD);
+      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD);
       if(!typeDiff.getBaseDiff().isEmpty()){
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
@@ -1549,7 +1549,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     addAllMatchedInterfaces(srcCD, tgtCD, typeMatchers);
     addAllMatchedAssocs(srcCD, tgtCD, assocMatchers);
     addAllMatchedEnums(srcCD, tgtCD, typeMatchers);
-    addAllchangedTypes(srcCDScope, tgtCDScope);
+    addAllchangedTypes(scopeTgtCD);
     addAllChangedAssocs();
     addAllAddedClasses(srcCD, tgtCD);
     addAllDeletedClasses(srcCD, tgtCD);
@@ -1561,17 +1561,17 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     addAllDeletedInheritance(srcCDScope, tgtCDScope, typeMatchers);
   }
 
-  private void setStrings(ICD4CodeArtifactScope scopeSrcCD, ICD4CodeArtifactScope scopeTgtCD) {
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
+  private void setStrings(ICD4CodeArtifactScope scopeTgtCD) {
     StringBuilder initialPrintAdd = new StringBuilder();
     StringBuilder initialPrintDelete = new StringBuilder();
     StringBuilder initialPrintChange = new StringBuilder();
+    StringBuilder initialPrintDiff = new StringBuilder();
     List<Pair<Integer, String>> onlySrcCDSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyTgtCDSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyAddedSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyDeletedSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyChangedSort = new ArrayList<>();
+    List<Pair<Integer, String>> diffSort = new ArrayList<>();
 
     initialPrintAdd
       .append(System.lineSeparator())
@@ -1588,6 +1588,13 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       .append(tgtCD.getCDDefinition().getName())
       .append(":");
     initialPrintChange
+      .append(System.lineSeparator())
+      .append("The following elements were changed while comparing ")
+      .append(srcCD.getCDDefinition().getName())
+      .append(" to ")
+      .append(tgtCD.getCDDefinition().getName())
+      .append(":");
+    initialPrintDiff
       .append(System.lineSeparator())
       .append("The following diffs were found while comparing ")
       .append(srcCD.getCDDefinition().getName())
@@ -1607,6 +1614,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       if(!x.getBaseDiff().isEmpty()) {
         onlySrcCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printSrcCD()));
         onlyTgtCDSort.add(new Pair<>(x.getTgtElem().get_SourcePositionStart().getLine(), x.printTgtCD()));
+        diffSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
         onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
       }
     }
@@ -1615,47 +1623,48 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       if(!x.getBaseDiff().isEmpty()) {
         onlySrcCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printDiffAssoc()));
         onlyTgtCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printDiffAssoc()));
+        diffSort.add(new Pair<>(x.getTgtElem().get_SourcePositionStart().getLine(), x.printDiffAssoc()));
         onlyChangedSort.add(new Pair<>(x.getTgtElem().get_SourcePositionStart().getLine(), x.printDiffAssoc()));
       }
     }
 
     if (!addedClasses.isEmpty()) {
       for (ASTCDClass x : addedClasses) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, scopeSrcCD, scopeTgtCD);
+        CDTypeDiff diff = new CDTypeDiff(x, x, tgtCD);
         String tmp = diff.printAddedType() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
     if (!deletedClasses.isEmpty()) {
       for (ASTCDClass x : deletedClasses) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, scopeSrcCD, scopeTgtCD);
+        CDTypeDiff diff = new CDTypeDiff(x, x, tgtCD);
         String tmp = diff.printRemovedType() + RESET;
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
     if (!addedEnums.isEmpty()) {
       for (ASTCDEnum x : addedEnums) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, scopeSrcCD, scopeTgtCD);
+        CDTypeDiff diff = new CDTypeDiff(x, x, tgtCD);
         String tmp = diff.printAddedType() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
     if (!deletedEnums.isEmpty()) {
       for (ASTCDEnum x : deletedEnums) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, scopeSrcCD, scopeTgtCD);
+        CDTypeDiff diff = new CDTypeDiff(x, x, tgtCD);
         String tmp = diff.printRemovedType() + RESET;
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
@@ -1665,7 +1674,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         String tmp = diff.printAddedAssoc() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
@@ -1675,7 +1684,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         String tmp = diff.printDeletedAssoc() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
@@ -1717,7 +1726,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
     }
     this.outputDeleted = outPutOnlyDeleted;
 
-    //--print diff
+    //--print changed
     onlyChangedSort.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyChanged = new StringBuilder();
     outPutOnlyChanged.append(initialPrintChange);
@@ -1725,6 +1734,15 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       outPutOnlyChanged.append(System.lineSeparator()).append(System.lineSeparator()).append(x.b);
     }
     this.outputChanged = outPutOnlyChanged;
+
+    //--print diff
+    diffSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutDiffString = new StringBuilder();
+    outPutDiffString.append(initialPrintDiff);
+    for (Pair<Integer, String> x : diffSort) {
+      outPutDiffString.append(System.lineSeparator()).append(System.lineSeparator()).append(x.b);
+    }
+    this.outputDiff = outPutDiffString;
   }
 
   //--print src
@@ -1736,7 +1754,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
   //--print deleted
   public String printOnlyDeleted() { return outputDeleted.toString(); }
   //--print diff
-  public String printDiff() { return outputChanged.toString(); }
+  public String printDiff() { return outputDiff.toString(); }
   //--print changed
-  //public String printOnlyChanged() { return outputChanged.toString(); }
+  public String printOnlyChanged() { return outputChanged.toString(); }
 }

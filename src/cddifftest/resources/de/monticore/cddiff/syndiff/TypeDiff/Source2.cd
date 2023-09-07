@@ -1,13 +1,14 @@
 import java.lang.String;
 
 classdiagram Source2 {
-  enum EnumsCheck{a, b, c, e;}
+  enum EnumsCheck{e;}
 
-  class A implements B{
+  class A extends B{
     EnumsCheck e;
+    int added;
+    double a;
+    int i;
   }
 
-  class B{
-    EnumsCheck a;
-  }
+  class B{}
 }
