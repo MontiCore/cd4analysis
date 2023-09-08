@@ -1050,13 +1050,12 @@ public class Syn2SemDiffHelper {
       compilationUnit
         .getEnclosingScope()
         .resolveCDTypeDown(association.getRightQualifiedName().getQName());
-    if (astcdClass.isPresent() && astcdClass1.isPresent()
-      && astcdClass.get().getAstNode() instanceof ASTCDClass
-      && astcdClass1.get().getAstNode() instanceof ASTCDClass) {
+//    if (astcdClass.isPresent() && astcdClass1.isPresent()
+//      && astcdClass.get().getAstNode() instanceof ASTCDClass
+//      && astcdClass1.get().getAstNode() instanceof ASTCDClass) {
       return new Pair<>(
         (ASTCDClass) astcdClass.get().getAstNode(), (ASTCDClass) astcdClass1.get().getAstNode());
-    }
-    return null;
+//    }
   }
 
   /**
