@@ -11,6 +11,7 @@ classdiagram Source1 {
   }
 
   class B{
+    double addedone;
     int i;
     EnumsCheck inherited;
   }

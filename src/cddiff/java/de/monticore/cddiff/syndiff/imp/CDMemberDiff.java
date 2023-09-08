@@ -118,6 +118,6 @@ public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
   public String printSrcMember() { return srcMemberString; }
   public String printAddedMember() { return addedMember; }
   public String printTgtMember() { return tgtMemberString; }
-  public String printChangedMember() { return "\t" + "//changed attribute" + System.lineSeparator() + srcMemberString + System.lineSeparator() + tgtMemberString + System.lineSeparator(); }
+  public String printChangedMember() { return "//changed attribute" + System.lineSeparator() + srcMemberString + System.lineSeparator() + tgtMemberString; }
   public String printRemovedMember() { return removedMember; }
 }

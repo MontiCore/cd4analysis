@@ -794,15 +794,16 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       System.out.println(syntaxDiff.printSrcCD());
     }
     if (printOption.equals("old")) {
-      System.out.println(syntaxDiff.printDiff());
+      System.out.println(syntaxDiff.printTgtCD());
     }
     if (printOption.equals("deleted")) {
       System.out.println(syntaxDiff.printOnlyDeleted());
     }
-    if (printOption.equals("changed")) {}
+    if (printOption.equals("changed")) {
+      System.out.println(syntaxDiff.printOnlyChanged());
+    }
     if (printOption.equals("both")) {
       System.out.println(syntaxDiff.printSrcCD());
-      System.out.println("___________________");
       System.out.println(syntaxDiff.printTgtCD());
     }
 
