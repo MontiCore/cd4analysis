@@ -1217,4 +1217,20 @@ public class Syn2SemDiffHelper {
     }
     return null;
   }
+
+  public boolean matchDirection(AssocStruct srcStruct, Pair<AssocStruct, ClassSide> tgtStruct){
+    if (((srcStruct.getSide().equals(ClassSide.Left) && tgtStruct.b.equals(ClassSide.Right))
+      || (srcStruct.getSide().equals(ClassSide.Right) && tgtStruct.b.equals(ClassSide.Left)))
+      && srcStruct.getDirection().equals(tgtStruct.a.getDirection())){
+      return true;
+    } else if (((srcStruct.getSide().equals(ClassSide.Left) && tgtStruct.b.equals(ClassSide.Left))
+      || (srcStruct.getSide().equals(ClassSide.Right) && tgtStruct.b.equals(ClassSide.Right)))
+      && ((srcStruct.getDirection().equals(AssocDirection.BiDirectional)
+      && tgtStruct.a.getDirection().equals(AssocDirection.BiDirectional))
+      || (srcStruct.getDirection().equals(AssocDirection.LeftToRight) && tgtStruct.a.getDirection().equals(AssocDirection.RightToLeft))
+      || (srcStruct.getDirection().equals(AssocDirection.RightToLeft) && tgtStruct.a.getDirection().equals(AssocDirection.LeftToRight)))){
+      return true;
+    }
+    return false;
+  }
 }
