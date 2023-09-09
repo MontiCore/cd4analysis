@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff.OD;
 
+import com.google.common.collect.ArrayListMultimap;
 import de.monticore.ast.CommentBuilder;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -7,6 +8,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
@@ -32,20 +34,14 @@ import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClas
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.sameAssociationType;
 
 public class ODHelperNew {
-  private int indexClass = 1;
-  private int indexAssoc = 1;
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private final ODBuilder odBuilder = new ODBuilder();
   private Map<ASTCDClass, Integer> map = new HashMap<>();
-
-  private CDSyntaxDiff syntaxDiff;
-
   private int maxNumberOfClasses = Integer.MAX_VALUE;
 
   public ODHelperNew() {
   }
   public ODHelperNew(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.maxNumberOfClasses = Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size());
   }
 
@@ -71,7 +67,7 @@ public class ODHelperNew {
   }
 
   public static Set<ASTODObject> findProcessedObjects(Set<Package> packages){
-Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
+    Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
 
     for (Package pack : packages) {
       if (pack.getLeftObject() != null) {
@@ -136,8 +132,9 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
   //Get objects for class
   public Set<ASTODElement> getObjForOD(ASTCDClass astcdClass) {
     Set<ASTODElement> set = new HashSet<>();
-    Map<ASTODObject, AssocStruct> map = new HashMap<>();
-    Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), map);
+    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap.create();
+    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
+    Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt);
     if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()){
       return null;
     }
@@ -188,7 +185,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return new Pair<>(set, link);
   }
 
-  public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> packages, Map<ASTODObject, AssocStruct> map) {
+  public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> packages,
+                                              ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
     ASTODObject srcObject = odBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"),
       helper.getSuperClasses(astcdClass),
       helper.getAttributesOD(astcdClass));
@@ -205,11 +203,13 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
         mustHaveAdded = true;
         if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-
-          tgtObject = getTgtObject(astcdClass, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, map);
+          tgtObject = getTgtObject(astcdClass,assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapTgt);
+        }
+        if (tgtObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapTgt);
         }
         if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          tgtObject = getSubTgtObject(astcdClass, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, map);
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapTgt);
         }
         if (tgtObject == null
           && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
@@ -224,7 +224,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
         if (tgtObject != null) {
           hasAdded = true;
-          map.put(tgtObject, assocStruct);
+          mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
+          mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Right));
           Package pack = new Package(srcObject, tgtObject, assocStruct.getAssociation(), ClassSide.Left, false, false);
           packages.add(pack);
         }
@@ -236,10 +237,10 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
         mustHaveAdded = true;
         if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          tgtObject = getTgtObject(astcdClass, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, map);
+          tgtObject = getTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapTgt);
         }
         if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          tgtObject = getSubTgtObject(astcdClass, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, map);
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapTgt);
         }
         if (tgtObject == null
           && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
@@ -255,7 +256,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
         if (tgtObject != null) {
           hasAdded = true;
-          map.put(tgtObject, assocStruct);
+          mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
+          mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Left));
           Package pack = new Package(tgtObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
           packages.add(pack);
         }
@@ -269,9 +271,9 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
       ASTODObject realSrcObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)){
         if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          realSrcObject = getRealSrc(astcdClass, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, packages);
+          realSrcObject = getRealSrc(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc);
         } else if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          realSrcObject = getSubRealSrc(astcdClass, helper.minDiffWitness(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), packages);
+          realSrcObject = getSubRealSrc(astcdClass,assocStruct, helper.minDiffWitness(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc);
         }
 
         if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
@@ -286,16 +288,17 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
 
         if (realSrcObject != null) {
-          map.put(realSrcObject, assocStruct);
+          mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
+          mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
           Package pack = new Package(realSrcObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
           packages.add(pack);
         }
 
       } else {
         if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()){
-          realSrcObject = getRealSrc(astcdClass, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, packages);
+          realSrcObject = getRealSrc(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc);
         } else if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()){
-          realSrcObject = getSubRealSrc(astcdClass, helper.minDiffWitness(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), packages);
+          realSrcObject = getSubRealSrc(astcdClass, assocStruct, helper.minDiffWitness(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc);
         }
 
         if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()){
@@ -310,7 +313,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
         }
 
         if (realSrcObject != null) {
-          map.put(realSrcObject, assocStruct);
+          mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
+          mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
           Package pack = new Package(srcObject, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
           packages.add(pack);
         }
@@ -323,44 +327,241 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return packages;
   }
 
-  public ASTODObject getTgtObject(ASTCDClass srcClass, ASTCDClass tgtToFind, Map<ASTODObject, AssocStruct> map){
-    List<ASTODObject> typeObjects =  getObjectsOfType(tgtToFind, map);
+  public ASTODObject getTgtObject(ASTCDClass srcClass, AssocStruct assocStruct, ASTCDClass tgtToFind, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> tgtMap){
+    List<ASTODObject> typeObjects =  getObjectsOfType(tgtToFind, tgtMap);
+    if (assocStruct.getSide().equals(ClassSide.Left)
+      && !typeObjects.isEmpty()
+      && (assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+      || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+      return typeObjects.get(0);
+    } else if (assocStruct.getSide().equals(ClassSide.Right)
+      && !typeObjects.isEmpty()
+      && (assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+      || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+      return typeObjects.get(0);
+    }
+    for (ASTODObject object: typeObjects){
+      boolean matched = false;
+      for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)){
+        if (assocStruct.getSide().equals(ClassSide.Left) //src of assocStruc on the left side
+          && assocStructToMatch.b.equals(ClassSide.Left) //tgt of assocStructToMatch on the left side!!!
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
+          && helper.matchDirection(assocStruct, assocStructToMatch)
+          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
+          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b))) {
+          matched = true;
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Right) //src of assocStruc on the right side
+          && assocStructToMatch.b.equals(ClassSide.Right) //tgt of assocStructToMatch on the right side!!!
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
+          && helper.matchDirection(assocStruct, assocStructToMatch)
+          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
+          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a))) {
+          matched = true;
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Left)
+          && assocStructToMatch.b.equals(ClassSide.Right)
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
+          && helper.matchDirection(assocStruct, assocStructToMatch)
+          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
+          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
+          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a))) {
+          matched = true;
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Right)
+          && assocStructToMatch.b.equals(ClassSide.Left)
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
+          && helper.matchDirection(assocStruct, assocStructToMatch)
+          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
+          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
+          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b))) {
+          matched = true;
+          break;
+        }
+      }
+      if (!matched){
+        return object;
+      }
+    }
     return null;
   }
 
-  public ASTODObject getSubTgtObject(ASTCDClass srcClass, ASTCDClass tgtToFind, Map<ASTODObject, AssocStruct> map){
-    List<ASTODObject> typeObjects =  getObjectsOfType(tgtToFind, map);
+  public ASTODObject getSubTgtObject(ASTCDClass srcClass, AssocStruct assocStruct, ASTCDClass tgtToFind, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> map) {
+    List<ASTCDClass> subClasses = Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), tgtToFind);
+    for (ASTCDClass subClass : subClasses) {
+      List<ASTODObject> objectsOfType = getObjectsOfType(subClass, map);
+      for (ASTODObject subObject : objectsOfType) {
+        boolean matched = false;
+        for (Pair<AssocStruct, ClassSide> subAssocStruct : map.get(subObject)) {
+          if (assocStruct.getSide().equals(ClassSide.Left)//src of assocStruc on the left side
+            && subAssocStruct.b.equals(ClassSide.Left)//tgt of assocStructToMatch on the left side!!!
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getRight())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getLeft())
+            && helper.matchDirection(assocStruct, subAssocStruct)
+            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b)) {
+            matched = true;
+            break;
+          } else if (assocStruct.getSide().equals(ClassSide.Left)
+            && subAssocStruct.b.equals(ClassSide.Right)
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getLeft())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getRight())
+            && helper.matchDirection(assocStruct, subAssocStruct)
+            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a)) {
+            matched = true;
+            break;
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && subAssocStruct.b.equals(ClassSide.Right)
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getRight())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getLeft())
+            && helper.matchDirection(assocStruct, subAssocStruct)
+            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a)) {
+            matched = true;
+            break;
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && subAssocStruct.b.equals(ClassSide.Left)
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getLeft())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getRight())
+            && helper.matchDirection(assocStruct, subAssocStruct)
+            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b)) {
+            matched = true;
+            break;
+          }
+        }
+        if (!matched) {
+          return subObject;
+        }
+      }
+    }
     return null;
   }
 
-  public ASTODObject getRealSrc(ASTCDClass srcClass, ASTCDClass srcToFind, Set<Package> packages){
-    for (Package pack : packages){
-      if (pack.getLeftObject() != null && pack.getLeftObject().getMCObjectType().printType().equals(srcToFind.getSymbol().getInternalQualifiedName())){
-        return pack.getLeftObject();
+  public ASTODObject getSubRealSrc(ASTCDClass srcClass, AssocStruct assocStruct, ASTCDClass srcToFind, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> srcMap){
+    List<ASTCDClass> subClasses = Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), srcToFind);
+    for (ASTCDClass subClass : subClasses){
+      List<ASTODObject> objectsOfType = getObjectsOfType(subClass, srcMap);
+      for (ASTODObject subObject : objectsOfType){
+        boolean matched = false;
+        for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(subObject)){
+          if (assocStruct.getSide().equals(ClassSide.Left)//src of assocStruc on the left side
+            && assocStructToMatch.b.equals(ClassSide.Left)//src of assocStructToMatch on the left side!!!
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
+            && helper.matchDirection(assocStruct, assocStructToMatch)
+            && isSubClass(srcClass, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)) {
+            matched = true;
+            break;
+          } else if (assocStruct.getSide().equals(ClassSide.Left)
+            && assocStructToMatch.b.equals(ClassSide.Right)
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
+            && helper.matchDirection(assocStruct, assocStructToMatch)
+            && isSubClass(srcClass, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)) {
+            matched = true;
+            break;
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && assocStructToMatch.b.equals(ClassSide.Right)
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
+            && helper.matchDirection(assocStruct, assocStructToMatch)
+            && isSubClass(srcClass, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)) {
+            matched = true;
+            break;
+          } else if (assocStruct.getSide().equals(ClassSide.Right)
+            && assocStructToMatch.b.equals(ClassSide.Left)
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
+            && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
+            && helper.matchDirection(assocStruct, assocStructToMatch)
+            && isSubClass(srcClass, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)) {
+            matched = true;
+            break;
+            }
+          }
+        if (!matched) {
+          return subObject;
+        }
       }
     }
     return null;
   }
 
   public List<AssocStruct> getTgtAssocs(ASTCDClass astcdClass, Set<Package> packages){
-    List<AssocStruct> assocStructs = new ArrayList<>();
-    for (Package pack : packages){
-      if (pack.getLeftObject() != null && pack.getLeftObject().getMCObjectType().printType().equals(astcdClass.getSymbol().getInternalQualifiedName())){
+    List<AssocStruct> assocStructs = new ArrayList<>(helper.getOtherAssocFromSuper(astcdClass));
+    Set<ASTCDClass> superClassSet = CDDiffUtil.getAllSuperclasses(astcdClass, helper.getSrcCD().getCDDefinition().getCDClassesList());
+    for (ASTCDClass superClass : superClassSet){
+      assocStructs.addAll(helper.getOtherAssocFromSuper(superClass));
+    }
+    List<AssocStruct> copy = new ArrayList<>(assocStructs);
+    for (AssocStruct assocStruct : copy){
+      for (AssocStruct assocStruct1 : copy){
+        if (assocStruct != assocStruct1 && isSubAssociation(assocStruct, assocStruct1)){
+          assocStructs.remove(assocStruct);
+        }
       }
     }
+
     return assocStructs;
   }
 
-  public ASTODObject getSubRealSrc(ASTCDClass srcClass, ASTCDClass srcToFind, Set<Package> packages){
-    for (Package pack : packages){
-      if (pack.getLeftObject() != null && pack.getLeftObject().getMCObjectType().printType().equals(srcToFind.getSymbol().getInternalQualifiedName())){
-        return pack.getLeftObject();
+  public ASTODObject getRealSrc(ASTCDClass srcToFind, AssocStruct assocStruct, ASTCDClass tgtClass, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> srcMap){
+    List<ASTODObject> typeObjects = getObjectsOfType(srcToFind, srcMap);
+    if (assocStruct.getSide().equals(ClassSide.Left)
+      && !typeObjects.isEmpty()
+      && (assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+      || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+      return typeObjects.get(0);
+    } else if (assocStruct.getSide().equals(ClassSide.Right)
+      && !typeObjects.isEmpty()
+      && (assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+      || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+      return typeObjects.get(0);
+    }
+    for (ASTODObject object : typeObjects){
+      for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)){
+        boolean matched = false;
+        if (assocStruct.getSide().equals(ClassSide.Left)//src of assocStruc on the left side
+          && assocStructToMatch.b.equals(ClassSide.Left)//src of assocStructToMatch on the left side!!!
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
+          && helper.matchDirection(assocStruct, assocStructToMatch)) {
+          matched = true;
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Left)
+          && assocStructToMatch.b.equals(ClassSide.Right)
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
+          && helper.matchDirection(assocStruct, assocStructToMatch)) {
+          matched = true;
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Right)
+          && assocStructToMatch.b.equals(ClassSide.Left)
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
+          && helper.matchDirection(assocStruct, assocStructToMatch)) {
+          matched = true;
+          break;
+        } else if (assocStruct.getSide().equals(ClassSide.Right)
+          && assocStructToMatch.b.equals(ClassSide.Right)
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
+          && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
+          && helper.matchDirection(assocStruct, assocStructToMatch)) {
+          matched = true;
+          break;
+        }
+        if (!matched){
+          return object;
+        }
       }
     }
     return null;
   }
 
-  public List<ASTODObject> getObjectsOfType(ASTCDClass astcdClass, Map<ASTODObject, AssocStruct> map){
+  public List<ASTODObject> getObjectsOfType(ASTCDClass astcdClass, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> map){
     List<ASTODObject> objects = new ArrayList<>();
     for (ASTODObject astodObject : map.keySet()){
       if (astodObject.getMCObjectType().printType().equals(astcdClass.getSymbol().getInternalQualifiedName())){
@@ -370,375 +571,47 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
     return objects;
   }
 
-  //TODO: if an association cannot be instatiated with the given classes, then it should be instantiated with the minDiffWitness
-  //create such association
-  public List<ASTODArtifact> generateODs(
-    ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean staDiff){
-    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
-    List<ASTODArtifact> artifactList = new ArrayList<>();
-    for (ASTCDAssociation association : syntaxDiff.addedAssocList()){
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
-      if (!helper.getNotInstanClassesSrc().contains(pair.a) && !helper.getNotInstanClassesSrc().contains(pair.b)) {
-        ASTCDClass leftClass = pair.a;
-        ASTCDClass rightClass = pair.b;
-        if (pair.a.getModifier().isAbstract()) {
-          leftClass = helper.minDiffWitness(pair.a);
-        }
-        if (pair.b.getModifier().isAbstract()) {
-          rightClass = helper.minDiffWitness(pair.b);
-        }
-        String comment = "A new associations has been added to the diagram."
-          + "\nThis association allows a new relation between the classes" + pair.a.getSymbol().getInternalQualifiedName() + "and" + pair.b.getSymbol().getInternalQualifiedName() + "and their subclasses";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association),
-          generateElements(association, Arrays.asList(1, 1) , comment),
-          null);
-        artifactList.add(astodArtifact);
-      }
-    }
-
-    for (ASTCDClass astcdClass1 : syntaxDiff.addedClassList()){
-      ASTCDClass astcdClass = astcdClass1;
-      if (astcdClass.getModifier().isAbstract()){
-        astcdClass = helper.minDiffWitness(astcdClass);
-      }
-      String comment = "A new class " + astcdClass1.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass1),
-        generateElements(astcdClass1, comment),
-        null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (Pair<ASTCDAssociation, ASTCDClass> pair : syntaxDiff.deletedAssocList()){
-      ASTCDClass astcdClass = pair.b;
-      if (astcdClass.getModifier().isAbstract()){
-        astcdClass = helper.minDiffWitness(astcdClass);
-      }
-      String comment = "An association for the class " + pair.b.getSymbol().getInternalQualifiedName()  + " has been removed from the diagram.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
-        generateElements(pair.b, comment),
-        null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()){
-      String comment = "In tgtCD the class" + astcdClass.getSymbol().getInternalQualifiedName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, comment),
-        null);
-      artifactList.add(astodArtifact);
-    }
-
-    //implement a function that
-    for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
-      if ((typeDiffStruc.getAstcdType() instanceof ASTCDClass)
-        && !typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
-        StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
-        if (typeDiffStruc.getAddedAttributes() != null
-          && !typeDiffStruc.getAddedAttributes().b.isEmpty()) {
-          comment.append("\nadded attributes - ");
-          for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
-            comment.append(attribute.getName());
-          }
-        }
-        if (typeDiffStruc.getMemberDiff() != null) {
-          comment.append("\nchanged attributes - ");
-          for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
-            comment.append(attribute.getName())
-              .append(" from ")
-              .append(getOldAtt(attribute, typeDiffStruc)
-                .getMCType().printType()).append(" to ")
-              .append(attribute.getMCType().printType());
-          }
-        }
-        if (typeDiffStruc.getChangedStereotype() != null) {
-          comment.append("\nchanged stereotype - ");
-        }
-        if (typeDiffStruc.getDeletedAttributes() != null
-          && !typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
-          comment.append("\ndeleted attributes - ");
-          for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
-            comment.append(attribute.getName());
-          }
-        }
-        ASTODArtifact astodArtifact;
-          astodArtifact = generateArtifact(oDTitleForClass((ASTCDClass)typeDiffStruc.getAstcdType()),
-            generateElements((ASTCDClass) typeDiffStruc.getAstcdType(), comment.toString()),
-            null);
-        artifactList.add(astodArtifact);
-      }
-//      else {
-//         ASTCDClass subClass = helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
-//         if (subClass != null){
-//           StringBuilder comment = new StringBuilder("For the abstract class "
-//             + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
-//             + " the following is changed: ");
-//           if (!typeDiffStruc.getAddedAttributes().b.isEmpty()) {
-//             comment.append("\nadded attributes - ");
-//             for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
-//               comment.append(attribute.getName());
-//             }
-//           }
-//           if (typeDiffStruc.getMemberDiff() != null) {
-//             comment.append("\nchanged attributes - ");
-//             for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
-//               comment.append(attribute.getName())
-//                 .append(" from ")
-//                 .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
-//                 .append(" to ")
-//                 .append(attribute.getMCType().printType());
-//             }
-//           }
-//           if (!typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
-//             comment.append("\ndeleted attributes - ");
-//             for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
-//               comment.append(attribute.getName());
-//             }
-//           }
-//           ASTODArtifact astodArtifact;
-//             astodArtifact = generateArtifact(oDTitleForClass(subClass),
-//               generateElements(subClass, comment.toString()), null);
-//           artifactList.add(astodArtifact);
-//         }
-//      }
-    }
-
-    //implement a function that searches for an instantiatable class with enum attribute - done
-    for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()){
-      if (typeDiffStruc.getAddedConstants() != null){
-        for (ASTCDEnumConstant constant : typeDiffStruc.getAddedConstants().b){
-          ASTCDClass astcdClass = getClassForEnum((ASTCDEnum) typeDiffStruc.getAstcdType());
-          if (astcdClass != null){
-            String comment = "In the enum " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following constant is added: " + constant.getName();
-            ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-              generateElements(astcdClass, comment),
-              null);
-            artifactList.add(astodArtifact);
-          }
-        }
-      }
-    }
-
-    for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()){
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), srcCD);
-      String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
-      if (assocDiffStruc.isChangedDir()){
-        comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
-      }
-      if (assocDiffStruc.getChangedCard() != null
-        && !assocDiffStruc.getChangedCard().isEmpty()){
-        comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
-      }
-      if (assocDiffStruc.getChangedRoleNames() != null
-        && !assocDiffStruc.getChangedRoleNames().isEmpty()){
-        comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
-      }
-      if (assocDiffStruc.getChangedTgt() != null){
-        comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
-      }
-      ArrayList<Integer> list = new ArrayList<>();
-      if (assocDiffStruc.getChangedCard() != null
-        && assocDiffStruc.getChangedCard().isEmpty()){
-        list.add(1);
-        list.add(1);
-      }
-      else if (assocDiffStruc.getChangedCard() != null
-        && assocDiffStruc.getChangedCard().size() == 1){
-        list.add(assocDiffStruc.getChangedCard().get(0).b);
-        list.add(1);
-      }
-      else if (assocDiffStruc.getChangedCard() != null){
-        list.add(assocDiffStruc.getChangedCard().get(0).b);
-        list.add(assocDiffStruc.getChangedCard().get(1).b);
-      }
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-        generateElements(assocDiffStruc.getAssociation(), list, comment),
-        null);
-      artifactList.add(astodArtifact);
-    }
-
-    for (CDAssocDiff assocDiff : syntaxDiff.getChangedAssocs()) {
-      if (syntaxDiff.helper.srcAssocExistsTgtNot(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
-        String comment = "An association between the classes "
-          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          + " has been added from the diagram.";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
-          generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), comment),
-          null);
-        artifactList.add(astodArtifact);
-      }
-      if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
-        String comment = "An association between the classes "
-          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          + " has been removed from the diagram.";
-        Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD());
-        if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableRight()){
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.a),
-            generateElements(pair.a, comment),
-            null);
-          artifactList.add(astodArtifact);
-        }
-        if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()){
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
-            generateElements(pair.b, comment),
-            null);
-          artifactList.add(astodArtifact);
-        }
-      }
-    }
-
-    if (staDiff){
-      for (ASTCDClass astcdClass : syntaxDiff.getSTADiff()){
-        String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " is part of a different inheritance tree.";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-          generateElements(astcdClass, comment),
-          null);
-        artifactList.add(astodArtifact);
-      }
-
-      for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
-        if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
-          ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
-          if (inheritanceDiff.getAstcdClasses().a.getModifier().isAbstract()) {
-            astcdClass = helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
-          }
-          String comment = "For the class " + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed";
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
-            generateElements(inheritanceDiff.getAstcdClasses().a, comment),
-            null);
-          artifactList.add(astodArtifact);
-        }
-      }
-    }
-    return artifactList;
+  public boolean isSubClass(ASTCDClass superClass, ASTCDClass subClass){
+    return CDInheritanceHelper.isSuperOf(superClass.getSymbol().getInternalQualifiedName(),
+      subClass.getSymbol().getInternalQualifiedName(), helper.getSrcCD()) && subClass != superClass;
   }
 
-  //TODO: add "diff" and instanceof to stereotype
-  //TODO:
-  private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc){
-    for (Pair<ASTCDAttribute, ASTCDAttribute> pair : diffStruc.getMatchedAttributes()){
-      if (pair.a.equals(attribute)){
-        return pair.b;
-      }
+  public boolean isSubAssociation(AssocStruct superAssoc, AssocStruct subAssoc){
+    if (subAssoc.getSide().equals(ClassSide.Left)
+      && superAssoc.getSide().equals(ClassSide.Left)
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getLeft())
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getRight())
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a)
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).b)) {
+      return true;
+    } else if (subAssoc.getSide().equals(ClassSide.Left)
+      && superAssoc.getSide().equals(ClassSide.Right)
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getRight())
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getLeft())
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).b)
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a)) {
+      return true;
+    } else if (subAssoc.getSide().equals(ClassSide.Right)
+      && superAssoc.getSide().equals(ClassSide.Left)
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getRight())
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getLeft())
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).b)
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a)) {
+      return true;
+    } else if (subAssoc.getSide().equals(ClassSide.Right)
+      && superAssoc.getSide().equals(ClassSide.Right)
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getLeft())
+      && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getRight())
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a)
+      && isSubClass(getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).b)) {
+      return true;
     }
-    return null;
-  }
-  private ASTCDClass getClassForEnum(ASTCDEnum astcdEnum){
-    for (ASTCDClass astcdClass : helper.getSrcCD().getCDDefinition().getCDClassesList()) {
-      if (!astcdClass.getModifier().isAbstract()) {
-        List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
-        for (ASTCDAttribute attribute : attributes) {
-          if (attribute.getMCType().printType().equals(astcdEnum.getName())) {
-            return astcdClass;
-          }
-        }
-      }
-    }
-    return null;
-  }
-  public List<ASTODElement> generateElements(ASTCDClass astcdClass,
-                                             String comment){
-    Set<ASTODElement> elements;
-    elements = getObjForOD(astcdClass);
-    ASTODObject matchedObject = null;
-    for (ASTODElement element : elements) {
-      if (element instanceof ASTODObject) {
-        if (((ASTODObject) element).getMCObjectType().printType().equals(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
-          matchedObject = (ASTODObject) element;
-        }
-      }
-    }
-
-    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
-    valueBuilder.setName("diff");
-    valueBuilder.setContent("diffClass");
-    matchedObject.getModifier().getStereotype().addValues(valueBuilder.build());
-
-    CommentBuilder commentBuilder = new CommentBuilder();
-    commentBuilder.setText(comment);
-    matchedObject.set_PostCommentList(List.of(commentBuilder.build()));
-
-    return new ArrayList<>(elements);
-  }
-
-  public List<ASTODElement> generateElements(ASTCDAssociation association,
-                                             List<Integer> integers,
-                                             String comment){
-    Pair<Set<ASTODElement>, ASTODLink> pair = getObjForOD(association, integers.get(0), integers.get(1));
-    Set<ASTODElement> elements;
-    elements = pair.a;
-
-    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
-    valueBuilder.setName("diff");
-    valueBuilder.setContent("diffAssoc");
-    pair.b.getStereotype().addValues(valueBuilder.build());
-
-    CommentBuilder commentBuilder = new CommentBuilder();
-    commentBuilder.setText(comment);
-    pair.b.set_PostCommentList(List.of(commentBuilder.build()));
-    return new ArrayList<>(elements);
-  }
-  public static ASTODArtifact generateArtifact(String name, List<ASTODElement> astodElementList, String stereotype){
-    ASTObjectDiagram astObjectDiagram =
-      OD4ReportMill.objectDiagramBuilder()
-      .setName(name)
-      .setODElementsList(astodElementList)
-      .setStereotype(
-        OD4ReportMill.stereotypeBuilder()
-          .addValues(
-            OD4ReportMill.stereoValueBuilder()
-              .setName("syntaxDiffCategory")
-              .setContent("diff" + stereotype)
-              .setText(
-                OD4ReportMill.stringLiteralBuilder().setSource("diff" + stereotype).build())
-              .build())
-          .build())
-      .build();
-    return OD4ReportMill.oDArtifactBuilder().setObjectDiagram(astObjectDiagram).build();
-  }
-
-  public String oDTitleForAssoc(ASTCDAssociation association){
-    String srcName;
-    String tgtName;
-    Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
-    if (association.getCDAssocDir().isBidirectional()){
-      srcName = pair.a.getSymbol().getInternalQualifiedName();
-      tgtName = pair.b.getSymbol().getInternalQualifiedName();
-    }
-    else {
-      if (association.getCDAssocDir().isDefinitiveNavigableLeft()){
-        srcName = pair.b.getSymbol().getInternalQualifiedName();
-        tgtName = pair.a.getSymbol().getInternalQualifiedName();
-      }
-      else {
-        srcName = pair.a.getSymbol().getInternalQualifiedName();
-        tgtName = pair.b.getSymbol().getInternalQualifiedName();
-      }
-    }
-    String stringBuilder = "AssocDiff_" + indexAssoc + srcName + "_" + tgtName;
-    indexAssoc++;
-    return stringBuilder;
-  }
-  public String oDTitleForClass(ASTCDClass astcdClass){
-    String stringBuilder = "ClassDiff_" + indexClass + astcdClass.getSymbol().getInternalQualifiedName();
-    indexClass++;
-    return stringBuilder;
+    return false;
   }
 
   public String getNameForClass(ASTCDClass astcdClass){
     map.putIfAbsent(astcdClass, 0);
     map.put(astcdClass, map.get(astcdClass) + 1);
     return astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_") + map.get(astcdClass);
-  }
-  public static String printOD(ASTODArtifact astodArtifact) {
-    return OD4ReportMill.prettyPrint(astodArtifact, true);
-  }
-  public static List<String> printODs(List<ASTODArtifact> astODArtifacts) {
-    List<String> result = new ArrayList<>();
-    for (ASTODArtifact od : astODArtifacts) {
-      result.add(OD4ReportMill.prettyPrint(od, true));
-    }
-    return result;
   }
 }
