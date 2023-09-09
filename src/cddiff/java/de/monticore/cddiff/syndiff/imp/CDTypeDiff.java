@@ -999,27 +999,27 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     String addedComment = "//added type, L:" + srcLineOfCode + System.lineSeparator();
     onlyAddedTypeOutput.append(addedComment).append(COLOR_ADD).append(signatureSrcCD);
     if (!onlyAddedTypeBody.toString().isEmpty()) {
-      onlyAddedTypeOutput.append(COLOR_ADD).append("{ ").append(System.lineSeparator()).append(onlyAddedTypeBody).append(COLOR_ADD).append("}");
+      onlyAddedTypeOutput.append(COLOR_ADD).append("{ ").append(System.lineSeparator()).append(onlyAddedTypeBody).append(COLOR_ADD).append("}").append(System.lineSeparator());
     } else {
-      onlyAddedTypeOutput.append(COLOR_ADD).append("{}");
+      onlyAddedTypeOutput.append(COLOR_ADD).append("{}").append(System.lineSeparator());
     }
     addedType = onlyAddedTypeOutput.toString();
 
     String removedComment = "//removed type, L:" + tgtLineOfCode + System.lineSeparator();
     onlyDeletedTypeOutput.append(removedComment).append(COLOR_DELETE).append(signatureSrcCD);
     if (!onlyDeletedTypeBody.toString().isEmpty()) {
-      onlyDeletedTypeOutput.append(COLOR_DELETE).append("{ ").append(System.lineSeparator()).append(onlyDeletedTypeBody).append(COLOR_DELETE).append("}");
+      onlyDeletedTypeOutput.append(COLOR_DELETE).append("{ ").append(System.lineSeparator()).append(onlyDeletedTypeBody).append(COLOR_DELETE).append("}").append(System.lineSeparator());
     } else {
-      onlyDeletedTypeOutput.append(COLOR_DELETE).append("{}");
+      onlyDeletedTypeOutput.append(COLOR_DELETE).append("{}").append(System.lineSeparator());
     }
     removedType = onlyDeletedTypeOutput.toString();
 
     String changedTypeComment = "//changed type, L:" + srcLineOfCode + System.lineSeparator();
     outputChangedClass.append(changedTypeComment).append(signatureSrcCD);
     if (!onlyChangedTypeBody.toString().isEmpty()) {
-      outputChangedClass.append("{ ").append(System.lineSeparator()).append(onlyChangedTypeBody).append("}");
+      outputChangedClass.append("{ ").append(System.lineSeparator()).append(onlyChangedTypeBody).append("}").append(System.lineSeparator());
     } else {
-      outputChangedClass.append("{}");
+      outputChangedClass.append("{}").append(System.lineSeparator());
     }
     classPrint = outputChangedClass.toString();
   }

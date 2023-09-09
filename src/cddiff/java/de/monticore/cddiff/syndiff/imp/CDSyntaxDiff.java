@@ -1611,11 +1611,16 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
         String tmp = x.printIfRemovedAttr();
         onlyDeletedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
       }
+      if(x.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE_TYPE) || x.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)
+        || x.getBaseDiff().contains(DiffTypes.CHANGED_CLASS_MODIFIER) || x.getBaseDiff().contains(DiffTypes.CHANGED_CLASS_NAME)
+        || x.getBaseDiff().contains(DiffTypes.CHANGED_TYPE_EXTENDS) || x.getBaseDiff().contains(DiffTypes.CHANGED_TYPE_IMPLEMENTS)) {
+        onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
+      }
       if(!x.getBaseDiff().isEmpty()) {
         onlySrcCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printSrcCD()));
         onlyTgtCDSort.add(new Pair<>(x.getTgtElem().get_SourcePositionStart().getLine(), x.printTgtCD()));
         diffSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
-        onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
+
       }
     }
 

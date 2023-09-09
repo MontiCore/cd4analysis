@@ -3,7 +3,7 @@ import java.lang.String;
 classdiagram Target2 {
   enum EnumsCheck{e;}
 
-  class A extends B{
+  class A{
     int a;
   }
 

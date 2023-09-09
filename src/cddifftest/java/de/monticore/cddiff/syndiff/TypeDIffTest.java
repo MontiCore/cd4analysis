@@ -281,10 +281,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
-    //System.out.println(diff.printSrcCD());
-    for(ASTCDAttribute a : typeDiff2.getDeletedAttributes()) {
-      System.out.println(pp.prettyprint(a));
-    }
+    System.out.println(diff.printOnlyAdded());
+
 
 
     /*System.out.println(typeDiff1.printSrcCD());

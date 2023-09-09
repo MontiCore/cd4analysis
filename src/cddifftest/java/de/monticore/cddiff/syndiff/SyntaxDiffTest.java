@@ -333,8 +333,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printSrcCD());
-    System.out.println(syntaxDiff.printTgtCD());
+    System.out.println(syntaxDiff.printOnlyChanged());
   }
 
   public void parseModels(String concrete, String ref) {
