@@ -1233,4 +1233,29 @@ public class Syn2SemDiffHelper {
     }
     return false;
   }
+
+  public boolean sameAssocStruct(AssocStruct srcStruct, AssocStruct tgtStruct){
+    if (srcStruct.getAssociation().getLeft().getCDRole().getName().equals(tgtStruct.getAssociation().getLeft().getCDRole().getName())
+      && srcStruct.getAssociation().getRight().getCDRole().getName().equals(tgtStruct.getAssociation().getRight().getCDRole().getName())
+      && matchDirection(srcStruct, new Pair<>(tgtStruct, tgtStruct.getSide()))){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean sameAssocStructInReverse(AssocStruct struct, AssocStruct tgtStruct){
+    if (struct.getAssociation().getLeft().getCDRole().getName().equals(tgtStruct.getAssociation().getRight().getCDRole().getName())
+      && struct.getAssociation().getRight().getCDRole().getName().equals(tgtStruct.getAssociation().getLeft().getCDRole().getName())
+      && matchDirection(struct, new Pair<>(tgtStruct, tgtStruct.getSide()))){
+      return true;
+    }
+    return false;
+  }
+
+  public int getClassSize(ASTCDClass astcdClass){
+    int attributeCount = getAllAttr(astcdClass).b.size();
+    int associationCount = getAssociationCount(astcdClass);
+    int otherAssocsCount = getOtherAssocFromSuper(astcdClass).size();
+    return attributeCount + associationCount + otherAssocsCount;
+  }
 }

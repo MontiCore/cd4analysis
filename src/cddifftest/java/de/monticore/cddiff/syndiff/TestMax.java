@@ -9,6 +9,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syndiff.OD.ODHelper;
+import de.monticore.cddiff.syndiff.OD.ODHelperNew;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
@@ -696,9 +697,9 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    ODHelperNew odHelper = new ODHelperNew();
 
-    ASTCDClass a2 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
+    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
     Set<ASTODElement> set = odHelper.getObjForOD(a2);
