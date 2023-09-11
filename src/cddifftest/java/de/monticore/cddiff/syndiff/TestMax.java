@@ -1,16 +1,13 @@
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syndiff.OD.ODHelper;
-import de.monticore.cddiff.syndiff.OD.ODHelperNew;
-import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
+import de.monticore.cddiff.syndiff.OD.DiffHelper;
+import de.monticore.cddiff.syndiff.OD.DiffWitnessGenerator;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
@@ -26,7 +23,6 @@ import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -461,7 +457,7 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A4", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
@@ -472,7 +468,7 @@ public class TestMax extends CDDiffTestBasis {
 //    Set<Package> test = odHelper.createChains(new HashSet<>(), diff.getHelper().getSrcMap().get(a2));
 //    List<Package> test1 = new ArrayList<>(test);
 //    System.out.println(getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -492,12 +488,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A5", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -517,12 +513,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A5", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -542,12 +538,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A5", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -572,12 +568,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -602,12 +598,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     System.out.println(set.size());
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
@@ -637,12 +633,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -667,12 +663,12 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelper odHelper = new ODHelper();
+    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
+    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
     for (ASTODElement element : set) {
       if (element instanceof ASTODLink){
         System.out.println("Link");
@@ -697,7 +693,7 @@ public class TestMax extends CDDiffTestBasis {
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
 
-    ODHelperNew odHelper = new ODHelperNew();
+    DiffWitnessGenerator odHelper = new DiffWitnessGenerator();
 
     ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
@@ -712,7 +708,7 @@ public class TestMax extends CDDiffTestBasis {
 //        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
 //      }
 //    }
-    ASTODArtifact artifact = ODHelper.generateArtifact("test", new ArrayList<>(set), "someStereotype");
+    ASTODArtifact artifact = DiffHelper.generateArtifact("test", new ArrayList<>(set), "someStereotype");
     if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, artifact)) {
       Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(artifact));
       Assertions.fail();
@@ -735,9 +731,9 @@ public class TestMax extends CDDiffTestBasis {
 
     // reduction-based
     ReductionTrafo trafo = new ReductionTrafo();
-    ODHelper odHelper = new ODHelper(cd1, cd2);
+    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
     trafo.transform(cd1, cd2);
-    List<ASTODArtifact> witnesses = odHelper.generateODs(cd1, cd2, false);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(cd1, cd2, false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -768,9 +764,9 @@ public class TestMax extends CDDiffTestBasis {
 
     // reduction-based
     ReductionTrafo trafo = new ReductionTrafo();
-    ODHelper odHelper = new ODHelper(cd1, cd2);
+    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
     trafo.transform(cd1, cd2);
-    List<ASTODArtifact> witnesses = odHelper.generateODs(cd1, cd2, false);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(cd1, cd2, false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {

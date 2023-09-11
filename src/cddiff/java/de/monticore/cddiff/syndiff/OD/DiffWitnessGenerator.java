@@ -3,7 +3,6 @@ package de.monticore.cddiff.syndiff.OD;
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
@@ -19,17 +18,17 @@ import java.util.*;
 
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
 
-public class ODHelperNew {
+public class DiffWitnessGenerator {
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private final ODBuilder odBuilder = new ODBuilder();
   private Map<ASTCDClass, Integer> map = new HashMap<>();
   private int maxNumberOfClasses = Integer.MAX_VALUE;
 
-  public ODHelperNew() {
+  public DiffWitnessGenerator() {
   }
 
-  public ODHelperNew(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    this.maxNumberOfClasses = Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size());
+  public DiffWitnessGenerator(int maxNumberOfClasses) {
+    this.maxNumberOfClasses = maxNumberOfClasses;
   }
 
   public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
