@@ -713,10 +713,48 @@ public class TestMax extends CDDiffTestBasis {
 //      }
 //    }
     ASTODArtifact artifact = ODHelper.generateArtifact("test", new ArrayList<>(set), "someStereotype");
-    System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(artifact));
+    if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, artifact)) {
+      Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(artifact));
+      Assertions.fail();
+    } else {
+      Log.println("Bravo!");
+    }
 //    for (AssocStruct assocStruct : diff.helper.getSrcMap().get(a2)){
 //      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
 //    }
+  }
+
+  @Test
+  public void testTest(){
+    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/TEST1.cd");
+    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/TEST2.cd");
+
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+
+
+    // reduction-based
+    ReductionTrafo trafo = new ReductionTrafo();
+    ODHelper odHelper = new ODHelper(cd1, cd2);
+    trafo.transform(cd1, cd2);
+    List<ASTODArtifact> witnesses = odHelper.generateODs(cd1, cd2, false);
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher()
+        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        System.out.println("Open World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test

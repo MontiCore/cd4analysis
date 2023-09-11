@@ -1218,7 +1218,7 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
-  public boolean matchDirection(AssocStruct srcStruct, Pair<AssocStruct, ClassSide> tgtStruct){
+  public boolean matchDirectionInReverse(AssocStruct srcStruct, Pair<AssocStruct, ClassSide> tgtStruct){
     if (((srcStruct.getSide().equals(ClassSide.Left) && tgtStruct.b.equals(ClassSide.Right))
       || (srcStruct.getSide().equals(ClassSide.Right) && tgtStruct.b.equals(ClassSide.Left)))
       && srcStruct.getDirection().equals(tgtStruct.a.getDirection())){
@@ -1229,6 +1229,22 @@ public class Syn2SemDiffHelper {
       && tgtStruct.a.getDirection().equals(AssocDirection.BiDirectional))
       || (srcStruct.getDirection().equals(AssocDirection.LeftToRight) && tgtStruct.a.getDirection().equals(AssocDirection.RightToLeft))
       || (srcStruct.getDirection().equals(AssocDirection.RightToLeft) && tgtStruct.a.getDirection().equals(AssocDirection.LeftToRight)))){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean matchDirection(AssocStruct srcStruct, Pair<AssocStruct, ClassSide> tgtStruct){
+    if (((srcStruct.getSide().equals(ClassSide.Left) && tgtStruct.b.equals(ClassSide.Left))
+      || (srcStruct.getSide().equals(ClassSide.Right) && tgtStruct.b.equals(ClassSide.Right)))
+      && srcStruct.getDirection().equals(tgtStruct.a.getDirection())){
+      return true;
+    } else if (((srcStruct.getSide().equals(ClassSide.Left) && tgtStruct.b.equals(ClassSide.Right))
+      || (srcStruct.getSide().equals(ClassSide.Right) && tgtStruct.b.equals(ClassSide.Left)))
+      && ((srcStruct.getDirection().equals(AssocDirection.BiDirectional)
+      && tgtStruct.a.getDirection().equals(AssocDirection.BiDirectional))
+      || (srcStruct.getDirection().equals(AssocDirection.LeftToRight) && tgtStruct.a.getDirection().equals(AssocDirection.RightToLeft))
+      || (srcStruct.getDirection().equals(AssocDirection.RightToLeft) && tgtStruct.a.getDirection().equals(AssocDirection.LeftToRight)))) {
       return true;
     }
     return false;
@@ -1246,7 +1262,7 @@ public class Syn2SemDiffHelper {
   public boolean sameAssocStructInReverse(AssocStruct struct, AssocStruct tgtStruct){
     if (struct.getAssociation().getLeft().getCDRole().getName().equals(tgtStruct.getAssociation().getRight().getCDRole().getName())
       && struct.getAssociation().getRight().getCDRole().getName().equals(tgtStruct.getAssociation().getLeft().getCDRole().getName())
-      && matchDirection(struct, new Pair<>(tgtStruct, tgtStruct.getSide()))){
+      && matchDirectionInReverse(struct, new Pair<>(tgtStruct, tgtStruct.getSide()))){
       return true;
     }
     return false;
