@@ -1199,7 +1199,8 @@ Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
   public List<ASTODElement> generateElements(ASTCDClass astcdClass,
                                              String comment){
     Set<ASTODElement> elements;
-    elements = getObjForOD(astcdClass);
+    ODHelperNew helper = new ODHelperNew();
+    elements = helper.getObjForOD(astcdClass);
     ASTODObject matchedObject = null;
     for (ASTODElement element : elements) {
       if (element instanceof ASTODObject) {
