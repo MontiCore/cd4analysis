@@ -1,6 +1,12 @@
 package de.monticore.matcher;
 
-public class CombinedMatching<T> {
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CombinedMatching {
 
   /*List<MatchingStrategy<T>> matcherList = new ArrayList<>();
 

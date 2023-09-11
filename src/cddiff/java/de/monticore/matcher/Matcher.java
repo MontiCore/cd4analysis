@@ -9,7 +9,6 @@ public class Matcher {
   public static boolean matchingAssocNameStrategy(
       ASTCDAssociation srcElem,
       ASTCDAssociation tgtElem,
-      ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
     NameAssocMatcher associationNameMatch = new NameAssocMatcher(tgtCD);
     return associationNameMatch.isMatched(srcElem, tgtElem);
@@ -18,7 +17,6 @@ public class Matcher {
   public static boolean matchingNameTypeStrategy(
       ASTCDType srcElem,
       ASTCDType tgtElem,
-      ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
     NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
     return nameTypeMatch.isMatched(srcElem, tgtElem);
@@ -27,7 +25,6 @@ public class Matcher {
   public static boolean matchingStructureTypeStrategy(
       ASTCDType srcElem,
       ASTCDType tgtElem,
-      ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
     StructureTypeMatcher structureTypeMatcher = new StructureTypeMatcher(tgtCD);
     return structureTypeMatcher.isMatched(srcElem, tgtElem);

@@ -715,6 +715,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
    * The second case is handled the same way. We distinguish the cases, because in the first one additional delete operation for the used datastructure must be executed.
    * The implementation can be changed o work without the cases.
    */
+
   @Override
   public void findOverlappingAssocs(){
     Set<ASTCDClass> srcToDelete = new HashSet<>();

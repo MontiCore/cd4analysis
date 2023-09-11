@@ -37,7 +37,6 @@ public class MatcherTest {
         Matcher.matchingAssocNameStrategy(
             src.getCDDefinition().getCDAssociationsList().get(0),
             tgt.getCDDefinition().getCDAssociationsList().get(0),
-            src,
             tgt));
   }
 
@@ -48,7 +47,6 @@ public class MatcherTest {
         Matcher.matchingNameTypeStrategy(
             src.getCDDefinition().getCDClassesList().get(0),
             tgt.getCDDefinition().getCDClassesList().get(0),
-            src,
             tgt));
   }
 
@@ -59,7 +57,6 @@ public class MatcherTest {
       Matcher.matchingStructureTypeStrategy(
         src.getCDDefinition().getCDClassesList().get(0),
         tgt.getCDDefinition().getCDClassesList().get(0),
-        src,
         tgt));
   }
 
@@ -70,7 +67,6 @@ public class MatcherTest {
       Matcher.matchingStructureTypeStrategy(
         src.getCDDefinition().getCDClassesList().get(0),
         tgt.getCDDefinition().getCDClassesList().get(0),
-        src,
         tgt));
   }
 
