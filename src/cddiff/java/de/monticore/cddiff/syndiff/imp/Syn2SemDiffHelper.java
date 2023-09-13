@@ -12,6 +12,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
+import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syndiff.OD.ODBuilder;
 import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -394,8 +395,12 @@ public class Syn2SemDiffHelper {
    */
   public AssocStruct getAssocStrucForClass(ASTCDClass astcdClass, ASTCDAssociation association){
     for (AssocStruct assocStruct : srcMap.get(astcdClass)){
-      if (sameAssociationType(assocStruct.getAssociation(), association)
-        || sameAssociationTypeInReverse(assocStruct.getAssociation(), association)){
+      if (getConnectedClasses(assocStruct.getAssociation(), srcCD).b == astcdClass
+        && (sameAssociationType(assocStruct, association, ClassSide.Right))){
+        return assocStruct;
+      }
+      if (getConnectedClasses(assocStruct.getAssociation(), srcCD).a == astcdClass
+        && (sameAssociationType(assocStruct, association, ClassSide.Left))){
         return assocStruct;
       }
     }
@@ -1004,6 +1009,7 @@ public class Syn2SemDiffHelper {
         }
       }
     }
+    reduceMaps();
   }
 
   private boolean sameRoleNameAndClass(String roleName, ASTCDClass astcdClass){
@@ -1068,7 +1074,8 @@ public class Syn2SemDiffHelper {
   public static List<ASTCDClass> getSpannedInheritance(ASTCDCompilationUnit compilationUnit, ASTCDClass astcdClass){
     List<ASTCDClass> subclasses = new ArrayList<>();
     for (ASTCDClass childClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-      if (childClass != astcdClass && (CDDiffUtil.getAllSuperTypes(childClass, compilationUnit.getCDDefinition())).contains(astcdClass)) {
+      if (childClass != astcdClass && !childClass.getSymbol().getInternalQualifiedName().equals("ASub4Diff")
+        && (CDInheritanceHelper.isSuperOf(astcdClass.getSymbol().getInternalQualifiedName(), childClass.getSymbol().getInternalQualifiedName(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope()))) {
         subclasses.add(childClass);
       }
     }
@@ -1152,7 +1159,6 @@ public class Syn2SemDiffHelper {
     ASTCDClass subclassWithLowestCount = null;
 
     for (ASTCDClass subclass : subClasses) {
-      assert subclass != null;
       if (!subclass.getModifier().isAbstract() && !notInstanClassesSrc.contains(subclass)) {
         int attributeCount = getAllAttr(baseClass).b.size();
         int associationCount = getAssociationCount(subclass);
@@ -1273,5 +1279,36 @@ public class Syn2SemDiffHelper {
     int associationCount = getAssociationCount(astcdClass);
     int otherAssocsCount = getOtherAssocFromSuper(astcdClass).size();
     return attributeCount + associationCount + otherAssocsCount;
+  }
+
+  public void reduceMaps(){
+    for (ASTCDClass astcdClass : srcMap.keySet()){
+      for (AssocStruct assocStruct : srcMap.get(astcdClass)){
+        for (AssocStruct assocStruct1 : srcMap.get(astcdClass)){
+          if (isLoopStruct(assocStruct1)
+             && assocStruct != assocStruct1){
+            if (assocStruct.getSide().equals(ClassSide.Left)
+              && assocStruct1.getSide().equals(ClassSide.Left)
+              && sameAssocStruct(assocStruct, assocStruct1)){
+              assocStruct.setToBeProcessed(false);
+            } else if (assocStruct.getSide().equals(ClassSide.Right)
+              && assocStruct1.getSide().equals(ClassSide.Right)){
+              assocStruct.setToBeProcessed(false);
+            } else if (assocStruct.getSide().equals(ClassSide.Left)
+              && assocStruct1.getSide().equals(ClassSide.Right)){
+              assocStruct.setToBeProcessed(false);
+            } else if (assocStruct.getSide().equals(ClassSide.Right)
+              && assocStruct1.getSide().equals(ClassSide.Left)){
+              assocStruct.setToBeProcessed(false);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public boolean isLoopStruct(AssocStruct assocStruct){
+    Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(assocStruct.getAssociation(), srcCD);
+    return pair.a.equals(pair.b);
   }
 }

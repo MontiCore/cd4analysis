@@ -70,6 +70,16 @@ public class Package {
     this.isProcessedLeft = true;
     this.isProcessedRight = false;
   }
+
+  public Package(ASTCDClass astcdClass, String id){
+    this.leftObject = ODBuilder.buildObj(id, astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(astcdClass), getAttributesOD(astcdClass));
+    this.rightObject = null;
+    this.association = null;
+    this.astcdAssociation = null;
+    this.side = ClassSide.Left;
+    this.isProcessedLeft = false;
+    this.isProcessedRight = false;
+  }
   public ASTODObject getLeftObject() {
     return leftObject;
   }

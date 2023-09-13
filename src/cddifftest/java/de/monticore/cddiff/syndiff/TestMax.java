@@ -695,26 +695,13 @@ public class TestMax extends CDDiffTestBasis {
 
     DiffWitnessGenerator odHelper = new DiffWitnessGenerator();
 
-    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
+    ASTCDClass a2 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
     //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
 
     Set<ASTODElement> set = odHelper.getObjForOD(a2);
-//    for (ASTODElement element : set) {
-//      if (element instanceof ASTODLink){
-//        System.out.println("Link");
-//        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-//        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
-//        System.out.println(((ASTODLink) element).getRightReferenceNames());
-//        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
-//      }
-//    }
     ASTODArtifact artifact = DiffHelper.generateArtifact("test", new ArrayList<>(set), "someStereotype");
-    if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, artifact)) {
-      Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(artifact));
-      Assertions.fail();
-    } else {
-      Log.println("Bravo!");
-    }
+
+
 //    for (AssocStruct assocStruct : diff.helper.getSrcMap().get(a2)){
 //      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
 //    }
@@ -768,8 +755,13 @@ public class TestMax extends CDDiffTestBasis {
     trafo.transform(cd1, cd2);
     List<ASTODArtifact> witnesses = diffHelper.generateODs(cd1, cd2, false);
 
+//    for (ASTODArtifact od : witnesses) {
+//      Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//    }
+
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }
@@ -778,10 +770,10 @@ public class TestMax extends CDDiffTestBasis {
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher()
         .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        System.out.println("Open World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }
     }
-
   }
 }

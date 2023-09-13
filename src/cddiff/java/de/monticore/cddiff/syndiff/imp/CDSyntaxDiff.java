@@ -106,6 +106,7 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
 
     loadAllLists(srcCD, tgtCD, scopeSrcCD, scopeTgtCD, typeMatchers, assocMatchers);
     helper.setMatchedClasses(matchedClasses);
+    helper.setMaps();
     setStrings(scopeTgtCD);
   }
   @Override
@@ -764,12 +765,10 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
                 srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
               }
               else if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
-                System.out.println("in inheritance relation");
                 srcAssocsToMerge.add(new Pair<>(association, superAssoc));
               }
               else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)
                 && !getConnectedClasses(association.getAssociation(), srcCD).equals(getConnectedClasses(superAssoc.getAssociation(), srcCD))){
-                System.out.println("not in inheritance relation");
                 if (areZeroAssocs(association, superAssoc)) {
                   srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
                 } else {
@@ -1090,23 +1089,24 @@ public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
       if (association.getCDAssocDir().isBidirectional()){
         ASTCDClass astcdClass = isAssocDeleted(association, pair.a);
         ASTCDClass astcdClass1 = isAssocDeleted(association, pair.b);
-        if (astcdClass != null){
-          list.add(new Pair<>(association, pair.a));
+        if (helper.findMatchedSrc(pair.a) != null
+          && astcdClass != null){
+          list.add(new Pair<>(association, helper.findMatchedSrc(pair.a)));
         }
-        else if (astcdClass1 != null){
-          list.add(new Pair<>(association, pair.b));
+        if (helper.findMatchedSrc(pair.a) != null && astcdClass1 != null){
+          list.add(new Pair<>(association, helper.findMatchedSrc(pair.b)));
         }
       }
       else if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
         ASTCDClass astcdClass = isAssocDeleted(association, pair.b);
-        if (astcdClass != null){
-          list.add(new Pair<>(association, pair.b));
+        if (helper.findMatchedSrc(pair.b) != null && astcdClass != null){
+          list.add(new Pair<>(association, helper.findMatchedSrc(pair.b)));
         }
       }
       else {
         ASTCDClass astcdClass = isAssocDeleted(association, pair.a);
-        if (astcdClass != null){
-          list.add(new Pair<>(association, pair.a));
+        if (helper.findMatchedSrc(pair.a) != null && astcdClass != null){
+          list.add(new Pair<>(association, helper.findMatchedSrc(pair.a)));
         }
       }
     }

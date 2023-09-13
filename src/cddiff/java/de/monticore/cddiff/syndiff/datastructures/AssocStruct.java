@@ -11,6 +11,8 @@ public class AssocStruct {
   boolean isSuperAssoc = false;
   ASTCDAssociation unmodifiedAssoc;
 
+  private boolean toBeProcessed = true;
+
   public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side) {
     this.association = association;
     this.direction = direction;
@@ -68,5 +70,13 @@ public class AssocStruct {
 
   public void setUnmodifiedAssoc(ASTCDAssociation unmodifiedAssoc) {
     this.unmodifiedAssoc = unmodifiedAssoc;
+  }
+
+  public boolean isToBeProcessed() {
+    return toBeProcessed;
+  }
+
+  public void setToBeProcessed(boolean toBeProcessed) {
+    this.toBeProcessed = toBeProcessed;
   }
 }
