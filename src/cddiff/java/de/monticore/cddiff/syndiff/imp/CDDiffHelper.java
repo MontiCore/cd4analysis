@@ -14,45 +14,7 @@ public class CDDiffHelper implements ICDPrintDiff {
 
   protected static final String COLOR_CHANGE = "\033[1;33m";
 
-  protected static final String COLOR_INHERITED = "\033[1;35m";
-
   protected static final String RESET = "\033[0m";
-
-  protected StringBuilder diffType = new StringBuilder();
-
-  public StringBuilder getDiffType() {
-    return diffType;
-  }
-
-  public void setDiffType(StringBuilder diffType) {
-    this.diffType = diffType;
-  }
-
-  protected double diffSize;
-
-  public double getDiffSize() {
-    return diffSize;
-  }
-
-  public void addDiffSize(int value) {
-    this.diffSize += value;
-  }
-
-  protected List<CDNodeDiff<?,?>> diffList;
-
-  public List<CDNodeDiff<?,?>> getDiffList() {
-    return diffList;
-  }
-
-  protected List<DiffTypes> diffTypesList = new ArrayList<>();
-
-  public List<DiffTypes> getDiffTypesList() {
-    return diffTypesList;
-  }
-
-  public void setDiffTypesList(List<DiffTypes> newInterpretationList) {
-    this.diffTypesList = newInterpretationList;
-  }
 
   @Override
   public String insertSpaceBetweenStrings(List<String> stringList) {
