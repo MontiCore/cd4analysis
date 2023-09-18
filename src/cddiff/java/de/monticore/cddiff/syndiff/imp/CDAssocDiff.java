@@ -1,6 +1,5 @@
 package de.monticore.cddiff.syndiff.imp;
 
-import de.monticore.ast.ASTNode;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
@@ -29,10 +28,9 @@ import java.util.Objects;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
-import static java.lang.System.lineSeparator;
 
 
-public class CDAssocDiff extends CDDiffHelper implements ICDAssocDiff {
+public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
   private final ASTCDAssociation srcElem;
   private final ASTCDAssociation tgtElem;
   private final ASTCDCompilationUnit srcCD;

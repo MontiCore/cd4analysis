@@ -2,11 +2,10 @@ package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
 
-import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Write comments
-public class CDDiffHelper implements ICDPrintDiff {
+public class CDPrintDiff implements ICDPrintDiff {
 
   protected static final String COLOR_DELETE = "\033[1;31m";
 

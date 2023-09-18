@@ -19,12 +19,7 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
       return Optional.of(action);
     }
   }
-  public Optional<SrcType> getSrcValue() {
-    return srcValue;
-  }
-  public Optional<TgtType> getTgtValue() {
-    return tgtValue;
-  }
+
   public CDNodeDiff(Optional<SrcType> srcValue, Optional<TgtType> tgtValue) {
     this.srcValue = srcValue;
     this.tgtValue = tgtValue;

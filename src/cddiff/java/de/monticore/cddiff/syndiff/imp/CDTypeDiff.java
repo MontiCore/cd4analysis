@@ -22,7 +22,7 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
+public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   private final ASTCDType srcElem;
   private final ASTCDType tgtElem;
   private List<CDMemberDiff> changedMembers;
@@ -51,7 +51,6 @@ public class CDTypeDiff extends CDDiffHelper implements ICDTypeDiff {
     this.tgtElem = tgtElem;
     this.tgtCD = tgtCD;
     this.baseDiff = new ArrayList<>();
-    this.diffList = new ArrayList<>();
     this.matchedAttributes = new ArrayList<>();
     this.matchedConstants = new ArrayList<>();
     this.changedMembers = new ArrayList<>();

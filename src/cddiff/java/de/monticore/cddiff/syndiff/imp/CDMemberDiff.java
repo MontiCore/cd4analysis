@@ -11,7 +11,7 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 
 import java.util.*;
 
-public class CDMemberDiff extends CDDiffHelper implements ICDMemberDiff {
+public class CDMemberDiff extends CDPrintDiff implements ICDMemberDiff {
   private final ASTNode srcElem;
   private final ASTNode tgtElem;
   private List<DiffTypes> baseDiff;

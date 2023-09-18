@@ -3,7 +3,6 @@ package de.monticore.cddiff.syndiff.imp;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getDirectSuperClasses;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getSpannedInheritance;
 
-import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -17,7 +16,6 @@ import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.matcher.*;
-import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
@@ -28,7 +26,7 @@ import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociationInRev
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
-public class CDSyntaxDiff extends CDDiffHelper implements ICDSyntaxDiff {
+public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
   private ASTCDCompilationUnit tgtCD;
   private List<CDTypeDiff> changedTypes;

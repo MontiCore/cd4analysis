@@ -14,41 +14,24 @@ import java.util.List;
 
 public interface ICDSyntaxDiff {
   List<CDTypeDiff> getChangedTypes();
-
   List<CDAssocDiff> getChangedAssocs();
-
   List<ASTCDClass> getAddedClasses();
-
   List<ASTCDClass> getDeletedClasses();
-
   List<ASTCDEnum> getAddedEnums();
-
   List<ASTCDEnum> getDeletedEnums();
-
   List<ASTCDAssociation> getAddedAssocs();
-
   List<ASTCDAssociation> getDeletedAssocs();
-
   List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses();
-
   List<Pair<ASTCDEnum, ASTCDEnum>> getMatchedEnums();
-
   List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces();
-
   List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs();
-
   ASTCDCompilationUnit getSrcCD();
-
   void setSrcCD(ASTCDCompilationUnit srcCD);
-
   ASTCDCompilationUnit getTgtCD();
-
   void setTgtCD(ASTCDCompilationUnit tgtCD);
   List<DiffTypes> getBaseDiff();
   public void setBaseDiff(List<DiffTypes> baseDiff);
-
   void setChangedTypes(List<CDTypeDiff> changedTypes);
-
   void setChangedAssocs(List<CDAssocDiff> changedAssocs);
 
   void setAddedClasses(List<ASTCDClass> addedClasses);
