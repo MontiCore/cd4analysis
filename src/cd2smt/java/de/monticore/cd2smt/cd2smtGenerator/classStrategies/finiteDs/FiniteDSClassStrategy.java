@@ -1,8 +1,8 @@
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies.finiteDs;
 
 import com.microsoft.z3.*;
-import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort.DSClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -10,28 +10,36 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import java.util.*;
 
 public class FiniteDSClassStrategy extends DSClassStrategy {
-  protected final int MAX = 5; // FIXME: 13.06.2023 delete
-  Map<ASTCDType, Integer> cardMap = new HashMap<>();
+
+  private final Map<ASTCDType, Integer> cardMap;
 
   @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     this.ast = ast;
     this.ctx = context;
-    initCardinalities();
     super.cd2smt(ast, context);
   }
 
   public FiniteDSClassStrategy() {
     typeMap = new HashMap<>();
+    this.cardMap = CD2SMTMill.getCardinalities();
   }
 
   @Override
   protected Sort declareSort(ASTCDType astcdType) {
-    Constructor[] constructor = new Constructor[cardMap.get(astcdType)];
-    for (int i = 0; i < cardMap.get(astcdType); i++) {
-      constructor[i] = mkconstructor(astcdType.getName() + "_" + i);
+
+    int size = cardMap.get(astcdType);
+    if (size > 0) {
+      Constructor[] constructor = new Constructor[size];
+      for (int i = 0; i < cardMap.get(astcdType); i++) {
+        constructor[i] = mkconstructor(astcdType.getName() + "_" + i);
+      }
+      return ctx.mkDatatypeSort(printSMTCDTypeName(astcdType), constructor);
+
+    } else {
+      return super.declareSort(astcdType);
+      // TODO: 19.06.2023 fixme this is a temporary solution
     }
-    return ctx.mkDatatypeSort(printSMTCDTypeName(astcdType), constructor);
   }
 
   protected Constructor<Sort> mkconstructor(String name) {
@@ -75,12 +83,5 @@ public class FiniteDSClassStrategy extends DSClassStrategy {
       }
     }
     return objectSet;
-  }
-
-  public void initCardinalities() {
-
-    for (ASTCDType astcdType : CDHelper.getASTCDTypes(ast.getCDDefinition())) {
-      cardMap.put(astcdType, 5);
-    }
   }
 }
