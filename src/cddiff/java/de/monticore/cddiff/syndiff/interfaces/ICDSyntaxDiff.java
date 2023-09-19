@@ -69,24 +69,8 @@ public interface ICDSyntaxDiff {
    *
    * @return true if a class instantiate another one by @param association.
    */
-  boolean isAddedAssoc(ASTCDAssociation astcdAssociation);
+  boolean isAssocAdded(ASTCDAssociation astcdAssociation);
 
-//  /**
-//   * Deleted Enum-classes always bring a semantical difference - a class can be instantiated without
-//   * attribute. Similar case for added ones.
-//   *
-//   * @param astcdEnum
-//   */
-//  List<ASTCDClass> getAttForEnum(ASTCDEnum astcdEnum);
-
-  /**
-   * Merge all duplicated associations that have the same role names @param duplicatedAssociations
-   * and put them in a multymap. This function must be used before handling association difference -
-   * possible inconsistent output. Must be done before overlappingAssocs.
-   *
-   * @return
-   */
-  //ArrayListMultimap<ASTCDAssociation, ASTCDAssociation> findDuplicatedAssociations();
 
   /**
    * Find all overlapping associations (same role name in target dir) and put them in a multymap.
@@ -95,29 +79,5 @@ public interface ICDSyntaxDiff {
    */
   void findOverlappingAssocs();
 
-  //  /**
-  //   *
-  //   * Based on the overlappingAssociations update the multymap with subclasses for each
-  // association.
-  //   * Search for a full matching between the subclasses in cd1 and cd2.
-  //   * If none is found, a semantic difference exists.
-  //   * This function must be used before handling association
-  //   * difference - possible inconsistent output.
-  //   */
-  //  void createSubClass();
 
-  /**
-   * Get the type of difference between two ASTCDTypes or ASTCDAssociations
-   *
-   * @param diff object of type CDAssocDiff or CDTypeDIff
-   * @return difference between the two objects
-   */
-  String findDiff(Object diff);
-
-//  /**
-//   * Get the two classes that are connected via the associations.
-//   *
-//   * @return pair of two classes.
-//   */
-////  Pair<ASTCDClass, ASTCDClass> getConnectedClasses(ASTCDAssociation association);
 }

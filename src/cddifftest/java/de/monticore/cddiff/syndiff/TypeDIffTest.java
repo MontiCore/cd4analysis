@@ -14,7 +14,6 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -39,7 +38,6 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-  //TODO: add test for added/deleted inheritance
   @Test
   public void testCD2() {
 
@@ -234,7 +232,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDMemberDiff memberDiff = new CDMemberDiff(attributeNew, attributeOld);
 
     // Invoke the method
-    System.out.println(syntaxDiff.helper.minDiffWitness(aNew).getName());
+    System.out.println(syntaxDiff.helper.minSubClass(aNew).getName());
     Pair<ASTCDClass, ASTCDAttribute> result = typeDiff.findMemberDiff(memberDiff);
 
     // Assert the result

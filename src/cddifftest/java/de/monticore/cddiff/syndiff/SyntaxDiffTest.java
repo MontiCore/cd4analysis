@@ -288,7 +288,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
     assert associationNew != null;
-    boolean isAssocAdded = syntaxDiff.isAddedAssoc(associationNew);
+    boolean isAssocAdded = syntaxDiff.isAssocAdded(associationNew);
     assert associationOld != null;
     ASTCDClass isAssocDeleted = syntaxDiff.isAssocDeleted(associationOld, classD2);
 
@@ -308,8 +308,6 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   public void testSyntax1() {
     parseModels("Source1.cd", "Target1.cd");
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
     //System.out.println(syntaxDiff.printSrcCD());

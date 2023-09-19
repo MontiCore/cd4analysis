@@ -19,7 +19,6 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.sameAssociationType;
 
 public class OldImlementations {
 //  public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
@@ -161,7 +160,7 @@ public class OldImlementations {
 //    return new Pair<>(set, link);
 //  }
 //
-//  //TODO: if an association must be instantiated, but the class is abstract, a subclass must be found
+//
 //  //if none exists, the association cannot be instantiated
 //  //implement a function that searches in a set for a subclass of a given class and checks the standard constraints
 //  public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> objectSet) {
@@ -280,7 +279,7 @@ public class OldImlementations {
 //    for (ASTODObject object : processedObjects) {
 //      if (tgtClass == helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType())
 //        && !helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()).getModifier().isAbstract()) {
-//        //TODO: other function - not objectUsesAssoc for tgt
+//
 //        if (!objectUsesAssoc(true, object, srcClass, association, getContainingPackages(object, objectSet))) {
 //          return new Pair<>(object, association);
 //        }
@@ -561,7 +560,7 @@ public class OldImlementations {
 //    return objectSet;
 //  }
 //
-//  //TODO: add other assocs
+//
 //  public Set<Package> createChainsHelper(ASTODObject object, List<AssocStruct> list, Set<Package> objectSet){
 //    if (list.isEmpty()){
 //      Package pack = new Package(object);

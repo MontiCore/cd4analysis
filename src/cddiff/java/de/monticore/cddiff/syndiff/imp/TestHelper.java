@@ -32,10 +32,10 @@ public class TestHelper {
       ASTCDClass leftClass = classes.a;
       ASTCDClass rightClass = classes.b;
       if (classes.a.getModifier().isAbstract()) {
-        leftClass = helper.minDiffWitness(classes.a);
+        leftClass = helper.minSubClass(classes.a);
       }
       if (classes.b.getModifier().isAbstract()) {
-        rightClass = helper.minDiffWitness(classes.b);
+        rightClass = helper.minSubClass(classes.b);
       }
       System.out.println("The association between the classes " + classes.a.getSymbol().getInternalQualifiedName() + " and " + classes.b.getSymbol().getInternalQualifiedName() + " has been added to the diagram.");
       System.out.println("=======================================================");
@@ -53,7 +53,7 @@ public class TestHelper {
     for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
       ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
       if (!syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
-        astcdClass = syntaxDiff.helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
+        astcdClass = syntaxDiff.helper.minSubClass(inheritanceDiff.getAstcdClasses().a);
       }
       if (astcdClass != null) {
         System.out.println("For the class " + astcdClass.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed");
@@ -61,7 +61,6 @@ public class TestHelper {
       }
     }
   }
-  //TODO: check is minDiffWitness is not null
 
   public void srcExistsTgtNot() {
     for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()) {
@@ -105,7 +104,7 @@ public class TestHelper {
           System.out.println(comment);
           System.out.println("=======================================================");
         } else {
-          ASTCDClass subClass = syntaxDiff.helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
+          ASTCDClass subClass = syntaxDiff.helper.minSubClass((ASTCDClass) typeDiffStruc.getAstcdType());
           if (subClass != null) {
             StringBuilder comment = new StringBuilder("For the abstract class "
               + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
@@ -212,7 +211,7 @@ public class TestHelper {
     for (Pair<ASTCDAssociation, ASTCDClass> pair : syntaxDiff.deletedAssocList()) {
       ASTCDClass astcdClass = pair.b;
       if (astcdClass.getModifier().isAbstract()) {
-        astcdClass = helper.minDiffWitness(astcdClass);
+        astcdClass = helper.minSubClass(astcdClass);
       }
       Pair<ASTCDClass, ASTCDClass> connectedClasses = Syn2SemDiffHelper.getConnectedClasses(pair.a, helper.getTgtCD());
       System.out.println("The association between the classes " + connectedClasses.a.getSymbol().getInternalQualifiedName() + connectedClasses.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.");

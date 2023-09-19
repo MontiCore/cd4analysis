@@ -137,33 +137,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   public void setBaseDiff(List<DiffTypes> baseDiff) {
     this.baseDiff = baseDiff;
   }
-  @Override
-  public String sterDiff() {
-    return "Modifier changed from "
-        + getTgtElem().getModifier()
-        + " to "
-        + getSrcElem().getModifier();
-  }
-  /**
-   * Compute the type difference of the changed attributes.
-   *
-   * @return old and new type for each changed pair.
-   */
-  public String attDiff() {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (CDMemberDiff member : getChangedMembers()) {
-      if (member.getSrcElem() instanceof ASTCDAttribute) {
-        ASTCDAttribute attribute1 = (ASTCDAttribute) member.getSrcElem();
-        ASTCDAttribute attribute2 = (ASTCDAttribute) member.getTgtElem();
-        stringBuilder
-            .append("Attribute type changed from ")
-            .append(attribute2.getMCType().printType())
-            .append(" to ")
-            .append(attribute1.getMCType().printType());
-      }
-    }
-    return stringBuilder.toString();
-  }
+
   public ASTCDAttribute getOldAttribute(ASTCDAttribute attribute){
     for (Pair<ASTCDAttribute, ASTCDAttribute> pair : matchedAttributes){
       if (attribute.equals(pair.a)){
@@ -201,7 +175,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
       if (!getSrcElem().getModifier().isAbstract()) {
         return true;
       }
-      Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getSrcElem(), compilationUnit);
+      List<ASTCDClass> classList = Syn2SemDiffHelper.getSpannedInheritance(compilationUnit, (ASTCDClass) getSrcElem());
       classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
@@ -245,41 +219,31 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   @Override
   public ASTCDType isClassNeeded() {
     ASTCDClass srcCLass = (ASTCDClass) getSrcElem();
-    if (!srcCLass.getModifier().isAbstract()){
+    if (!srcCLass.getModifier().isAbstract()) {
       return getSrcElem();
-    }
-    else{
-      //do we check if assocs make sense - assoc to abstract class
+    } else {
+      //wrong - check if those associations exist in the old CD - done
       if (Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), (ASTCDClass) getSrcElem()).isEmpty()) {
         Set<ASTCDClass> map = helper.getSrcMap().keySet();
         map.remove((ASTCDClass) getSrcElem());
         for (ASTCDClass astcdClass : map) {
-          for (AssocStruct mapPair : helper.getSrcMap().get(astcdClass)) {//Pair<AssocDirection, Pair<ClassSide, ASTCDAssociation>>
-            if (Objects.equals(mapPair.getDirection(), AssocDirection.LeftToRight)
-              && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), helper.getSrcCD()).b.equals(getSrcElem())
-              && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()) {
-              //add to Diff List - class can be instantiated without the abstract class
+          for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)) {
+            if (assocStruct.getSide().equals(ClassSide.Left)
+              && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.equals(srcElem)
+              && helper.findMatchedClass((ASTCDClass) srcElem) != null
+              && helper.classHasAssociationTgt(assocStruct.getAssociation(), helper.findMatchedClass((ASTCDClass) srcElem))) {
               return astcdClass;
-            } else if (Objects.equals(mapPair.getDirection(), AssocDirection.RightToLeft)
-              && Syn2SemDiffHelper.getConnectedClasses(mapPair.getAssociation(), helper.getSrcCD()).a.equals(getSrcElem())
-              && mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
-              //add to Diff List - class can be instantiated without the abstract class
+            } else if (assocStruct.getSide().equals(ClassSide.Right)
+              && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.equals(srcElem)
+              && helper.findMatchedClass((ASTCDClass) srcElem) != null
+              && helper.classHasAssociationTgt(assocStruct.getAssociation(), helper.findMatchedClass((ASTCDClass) srcElem))) {
               return astcdClass;
-            } else if (Objects.equals(mapPair.getDirection(), AssocDirection.BiDirectional)) {
-              if (Objects.equals(mapPair.getSide(), ClassSide.Left)
-                && mapPair.getAssociation().getRight().getCDCardinality().isAtLeastOne()) {
-                //add to Diff List - class can be instantiated without the abstract class
-                return astcdClass;
-              } else if (mapPair.getAssociation().getLeft().getCDCardinality().isAtLeastOne()) {
-                //add to Diff List - class can be instantiated without the abstract class
-                return astcdClass;
-              }
             }
+
           }
         }
       }
     }
-    //not implemented
     return null;
   }
 
@@ -312,7 +276,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     if (!getSrcElem().getModifier().isAbstract()){
       return true;
     }
-    Set<ASTCDClass> classList = getSpannedInheritance((ASTCDClass) getTgtElem(), compilationUnit);
+    List<ASTCDClass> classList = Syn2SemDiffHelper.getSpannedInheritance(compilationUnit, (ASTCDClass) getTgtElem());
     classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
@@ -338,28 +302,6 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
       }
     }
     return false;
-  }
-
-  /**
-   * Compute the spanned inheritance of a given class. That is we get all classes that are extending
-   * (not only direct) a class
-   *
-   * @param astcdClass compute subclasses of this class
-   * @param compilationUnit class diagram
-   * @return set of extending classes. The implementation is not efficient (no way to go from
-   *     subclasses to superclasses).
-   */
-  @Override
-  public Set<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass, ASTCDCompilationUnit compilationUnit) {
-    Set<ASTCDClass> subclasses = new HashSet<>();
-    for (ASTCDClass childClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-      if ((getAllSuper(
-              childClass, CD4CodeMill.scopesGenitorDelegator().createFromAST(compilationUnit)))
-          .contains(astcdClass)) {
-        subclasses.add(childClass);
-      }
-    }
-    return subclasses;
   }
 
   /**

@@ -39,7 +39,7 @@ public class DiffHelper {
     syntaxDiff.findOverlappingAssocs();
   }
 
-
+  //TODO: multi-instance and simple - remove superclasses
   //TODO: if an association cannot be instatiated with the given classes, then it should be instantiated with the minDiffWitness
   //create such association
   public List<ASTODArtifact> generateODs(
@@ -52,10 +52,10 @@ public class DiffHelper {
         ASTCDClass leftClass = pair.a;
         ASTCDClass rightClass = pair.b;
         if (pair.a.getModifier().isAbstract()) {
-          leftClass = helper.minDiffWitness(pair.a);
+          leftClass = helper.minSubClass(pair.a);
         }
         if (pair.b.getModifier().isAbstract()) {
-          rightClass = helper.minDiffWitness(pair.b);
+          rightClass = helper.minSubClass(pair.b);
         }
         String comment = "A new associations has been added to the diagram."
           + "\nThis association allows a new relation between the classes " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " and their subclasses";
@@ -71,19 +71,21 @@ public class DiffHelper {
     for (ASTCDClass astcdClass1 : syntaxDiff.addedClassList()) {
       ASTCDClass astcdClass = astcdClass1;
       if (astcdClass.getModifier().isAbstract()) {
-        astcdClass = helper.minDiffWitness(astcdClass);
+        astcdClass = helper.minSubClass(astcdClass);
       }
       String comment = "A new class " + astcdClass1.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass1),
         generateElements(astcdClass1, comment),
         null);
-      artifactList.add(astodArtifact);
+      if (astodArtifact != null) {
+        artifactList.add(astodArtifact);
+      }
     }
 
     for (Pair<ASTCDAssociation, ASTCDClass> pair : syntaxDiff.deletedAssocList()) {
       ASTCDClass astcdClass = pair.b;
       if (astcdClass.getModifier().isAbstract()) {
-        astcdClass = helper.minDiffWitness(astcdClass);
+        astcdClass = helper.minSubClass(astcdClass);
       }
       String comment = "An association for the class " + pair.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
@@ -215,7 +217,11 @@ public class DiffHelper {
       if (assocDiffStruc.getChangedTgt() != null) {
         comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
+      if (assocDiffStruc.getChangedSrc() != null) {
+        comment = comment + "\nchanged source - " + assocDiffStruc.getChangedSrc().getSymbol().getInternalQualifiedName();
+      }
       ArrayList<Integer> list = new ArrayList<>();
+      //TODO: if both cardinalities are changed, then two ODs must be generated
       if (assocDiffStruc.getChangedCard() != null
         && assocDiffStruc.getChangedCard().isEmpty()) {
         list.add(1);
@@ -255,7 +261,9 @@ public class DiffHelper {
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
           generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), comment),
           null);
-        artifactList.add(astodArtifact);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
       }
       if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
         String comment = "An association between the classes "
@@ -267,7 +275,9 @@ public class DiffHelper {
           ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.a),
             generateElements(pair.a, comment),
             null);
-          artifactList.add(astodArtifact);
+          if (astodArtifact != null) {
+            artifactList.add(astodArtifact);
+          }
         }
         if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()) {
           ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
@@ -295,7 +305,7 @@ public class DiffHelper {
         if (!helper.getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
           ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
           if (inheritanceDiff.getAstcdClasses().a.getModifier().isAbstract()) {
-            astcdClass = helper.minDiffWitness(inheritanceDiff.getAstcdClasses().a);
+            astcdClass = helper.minSubClass(inheritanceDiff.getAstcdClasses().a);
           }
           String comment = "For the class " + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed";
           ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
@@ -306,12 +316,49 @@ public class DiffHelper {
           }
         }
       }
+
+      AssocDiffs assocDiffs = syntaxDiff.getAssocDiffs();
+      for (ASTCDClass astcdClass : assocDiffs.getAllInSrc()) {
+        String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has associations that aren't in tgt.";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
+          generateElements(astcdClass, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
+      }
+      for (ASTCDClass astcdClass : assocDiffs.getAllInTgt()) {
+        String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has associations that aren't in src.";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
+          generateElements(astcdClass, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
+      }
+      for (ASTCDClass astcdClass : assocDiffs.getMixed()) {
+        String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has associations that aren't in src and associations that aren't in tgt.";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
+          generateElements(astcdClass, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
+      }
+
+      for (ASTCDClass astcdClass : syntaxDiff.tgtExistsSrcNot()){
+        String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " can be instantiated without at least one association, because the associated class cannot be instantiated (overlapping).";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
+          generateElements(astcdClass, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
+      }
     }
     return artifactList;
   }
 
-  //TODO: add "diff" and instanceof to stereotype
-  //TODO:
   private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc) {
     for (Pair<ASTCDAttribute, ASTCDAttribute> pair : diffStruc.getMatchedAttributes()) {
       if (pair.a.equals(attribute)) {

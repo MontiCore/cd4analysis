@@ -38,36 +38,10 @@ public interface ICDTypeDiff {
   public void setBaseDiff(List<DiffTypes> baseDiff);
 
   /**
-   * Compute the spanned inheritance of a given class.
-   * That is we get all classes that are extending (not only direct) a class
-   * @param astcdClass
-   * @param compilationUnit
-   * @return set of extending classes.
-   * The implementation is not efficient (no way to go from subclasses to superclasses).
-   */
-  abstract Set<ASTCDClass> getSpannedInheritance(ASTCDClass astcdClass, ASTCDCompilationUnit compilationUnit);
-
-  /**
    * Compute all changed attributes in all classes.
    * @return list of pairs of classes and changed attributes.
    */
   Pair<ASTCDClass, List<ASTCDAttribute>> changedAttribute();
-
-  /**
-   * Check the difference in the modifier of the classes. It must also save the information for
-   * building the object diagrams.
-   *
-   * @return A String with the old and new roles.
-   */
-  String sterDiff();
-
-  /**
-   * Check the difference in the attribute types of the classes. It must also save the information
-   * for building the object diagrams.
-   *
-   * @return A String with the old and new types.
-   */
-  String attDiff();
 
   /**
    * Check for each attribute in the list deletedAttribute if it
