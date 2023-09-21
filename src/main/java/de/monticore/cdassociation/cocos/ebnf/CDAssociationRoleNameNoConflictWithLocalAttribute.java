@@ -3,7 +3,6 @@ package de.monticore.cdassociation.cocos.ebnf;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -40,16 +39,8 @@ public class CDAssociationRoleNameNoConflictWithLocalAttribute
     Optional<CDTypeSymbol> type = referenceSide.getEnclosingScope()
       .resolveCDType(referenceSide.getMCQualifiedType().getMCQualifiedName().getQName());
 
-    Optional<ASTCDAttribute> attributeSameName = Optional.empty();
-    if (type.isPresent()) {
-      attributeSameName = type.get().getAstNode()
-        .getCDAttributeList()
-        .stream()
-        .filter(f -> f.getName().equals(roleSide.getCDRole().getName()))
-        .findAny();
-    }
-
-    if (attributeSameName.isPresent()) {
+    if (type.isPresent() &&
+      type.get().getSpannedScope().getFieldSymbols().containsKey(roleSide.getCDRole().getName())) {
       Log.error(
         String.format(
           "0xC4A27: Association role (%1$s) %2$s conflicts with attribute %1$s in reference Type %3$s.",
