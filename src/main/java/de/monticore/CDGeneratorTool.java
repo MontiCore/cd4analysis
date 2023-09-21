@@ -412,14 +412,9 @@ public class CDGeneratorTool extends CD4CodeTool {
 
     @Override
     public void visit(ASTMCQualifiedType node) {
-      if (node.getDefiningSymbol().isEmpty()) {
-        System.out.println("hi");
-      } else {
-        System.out.println("bye");
-      }
       String typeFullName = node.getDefiningSymbol().isPresent()
         ? node.getDefiningSymbol().get().getFullName()
-        : astName +"."+ node.getMCQualifiedName().getQName();
+        : node.getMCQualifiedName().getQName();
       String typePackageName = typeFullName.lastIndexOf(".") == -1
         ? typeFullName
         : typeFullName.substring(0, typeFullName.lastIndexOf("."));
