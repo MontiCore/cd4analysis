@@ -177,6 +177,14 @@ public class AssocDiffTest extends CDDiffTestBasis {
     System.out.println(syntaxDiff.getBaseDiff());
   }
 
+  @Test
+  public void testAssoc4() {
+    parseModels("Source4.cd", "Target4.cd");
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
+    System.out.println(syntaxDiff.getBaseDiff());
+  }
+
   public void parseModels(String concrete, String ref) {
     try {
       Optional<ASTCDCompilationUnit> src =

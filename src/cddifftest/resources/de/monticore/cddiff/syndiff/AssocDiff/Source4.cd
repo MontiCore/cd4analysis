@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram Source4 {
+  class A;
+  class B;
+  class C;
+  class D;
+
+  association matchOne A -> B; // Changed target class
+  association matchTwo A -> B; // Changed source class
+  association matchThree A -> B; // Changed target class
+  association matchFour A -> B; // Changed source class
+}
