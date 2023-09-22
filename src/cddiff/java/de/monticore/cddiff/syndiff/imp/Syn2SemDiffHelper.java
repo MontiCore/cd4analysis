@@ -11,12 +11,14 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
-import de.monticore.cddiff.syndiff.OD.DiffWitnessGenerator;
 import de.monticore.cddiff.syndiff.OD.ODBuilder;
 import de.monticore.cddiff.syndiff.datastructures.*;
+import de.monticore.od4report.OD4ReportMill;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
+import de.monticore.odbasis._ast.ASTODElement;
+import de.monticore.odbasis._ast.ASTODObject;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
@@ -105,9 +107,12 @@ public class Syn2SemDiffHelper {
       subClass.getSymbol().getInternalQualifiedName(), srcCD);
   }
 
+  //TODO: only for SRC
+  //TODO: ask Max if the two associations are the same, but the direction is different, should both be instantiated?
   public boolean isSubAssociation(AssocStruct superAssoc, AssocStruct subAssoc) {
     if (subAssoc.getSide().equals(ClassSide.Left)
       && superAssoc.getSide().equals(ClassSide.Left)
+      && matchDirection(superAssoc,  new Pair<>(subAssoc, subAssoc.getSide()))
       && matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getLeft())
       && matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getRight())
       && isSubclassWithSuper(getConnectedClasses(superAssoc.getAssociation(), srcCD).a, getConnectedClasses(subAssoc.getAssociation(), srcCD).a)
@@ -115,6 +120,7 @@ public class Syn2SemDiffHelper {
       return true;
     } else if (subAssoc.getSide().equals(ClassSide.Left)
       && superAssoc.getSide().equals(ClassSide.Right)
+      && matchDirection(superAssoc,  new Pair<>(subAssoc, subAssoc.getSide()))
       && matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getRight())
       && matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getLeft())
       && isSubclassWithSuper(getConnectedClasses(superAssoc.getAssociation(), srcCD).a, getConnectedClasses(subAssoc.getAssociation(), srcCD).b)
@@ -122,6 +128,7 @@ public class Syn2SemDiffHelper {
       return true;
     } else if (subAssoc.getSide().equals(ClassSide.Right)
       && superAssoc.getSide().equals(ClassSide.Left)
+      && matchDirection(superAssoc,  new Pair<>(subAssoc, subAssoc.getSide()))
       && matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getRight())
       && matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getLeft())
       && isSubclassWithSuper(getConnectedClasses(superAssoc.getAssociation(), srcCD).a, getConnectedClasses(subAssoc.getAssociation(), srcCD).b)
@@ -129,6 +136,7 @@ public class Syn2SemDiffHelper {
       return true;
     } else if (subAssoc.getSide().equals(ClassSide.Right)
       && superAssoc.getSide().equals(ClassSide.Right)
+      && matchDirection(superAssoc,  new Pair<>(subAssoc, subAssoc.getSide()))
       && matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getLeft())
       && matchRoleNames(superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getRight())
       && isSubclassWithSuper(getConnectedClasses(superAssoc.getAssociation(), srcCD).a, getConnectedClasses(subAssoc.getAssociation(), srcCD).a)
@@ -186,6 +194,21 @@ public class Syn2SemDiffHelper {
     return list;
   }
 
+  public List<AssocStruct> getAllOtherAssocsTgt(ASTCDClass astcdClass){
+    List<AssocStruct> list = new ArrayList<>();
+    for (ASTCDClass astcdClass1 : CDDiffUtil.getAllSuperclasses(astcdClass, tgtCD.getCDDefinition().getCDClassesList())){
+      list.addAll(getOtherAssocsTgt(astcdClass1));
+    }
+    return list;
+  }
+
+  public List<AssocStruct> getAllOtherAssocsSrc(ASTCDClass astcdClass){
+    List<AssocStruct> list = new ArrayList<>();
+    for (ASTCDClass astcdClass1 : CDDiffUtil.getAllSuperclasses(astcdClass, srcCD.getCDDefinition().getCDClassesList())){
+      list.addAll(getOtherAssocFromSuper(astcdClass1));
+    }
+    return list;
+  }
   public ASTCDClass findMatchedClass(ASTCDClass astcdClass){
     ASTCDClass matchedClass = null;
     for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
@@ -285,7 +308,7 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
-  public static boolean sameRoleNames(AssocStruct assocDown, AssocStruct assocUp){
+  public static boolean sameRoleNamesSrc(AssocStruct assocDown, AssocStruct assocUp){
     if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Left)){
       return assocDown.getAssociation().getLeft().getCDRole().getName().equals(assocUp.getAssociation().getLeft().getCDRole().getName());
     } else if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Right)) {
@@ -502,12 +525,7 @@ public class Syn2SemDiffHelper {
 
   public AssocStruct getAssocStrucForClassTgt(ASTCDClass astcdClass, ASTCDAssociation association){
     for (AssocStruct assocStruct : trgMap.get(astcdClass)){
-      if (getConnectedClasses(assocStruct.getAssociation(), tgtCD).b == astcdClass
-        && (sameAssociationType(assocStruct, association, ClassSide.Right))){
-        return assocStruct;
-      }
-      if (getConnectedClasses(assocStruct.getAssociation(), tgtCD).a == astcdClass
-        && (sameAssociationType(assocStruct, association, ClassSide.Left))){
+      if (sameAssociation(assocStruct.getAssociation(), association)){
         return assocStruct;
       }
     }
@@ -520,18 +538,29 @@ public class Syn2SemDiffHelper {
    * @param association association to match with
    * @return matched association, if found
    */
+  //TODO: check if the change brings somewhere a problem
   public AssocStruct getAssocStrucForClass(ASTCDClass astcdClass, ASTCDAssociation association){
     for (AssocStruct assocStruct : srcMap.get(astcdClass)){
-      if (getConnectedClasses(assocStruct.getAssociation(), srcCD).b == astcdClass
-        && (sameAssociationType(assocStruct, association, ClassSide.Right))){
-        return assocStruct;
-      }
-      if (getConnectedClasses(assocStruct.getAssociation(), srcCD).a == astcdClass
-        && (sameAssociationType(assocStruct, association, ClassSide.Left))){
+      if (sameAssociation(assocStruct.getAssociation(), association)){
         return assocStruct;
       }
     }
     return null;
+  }
+
+  public boolean sameAssociation(ASTCDAssociation association, ASTCDAssociation association2){
+    if (association.getLeftQualifiedName().getQName().equals(association2.getLeftQualifiedName().getQName())
+      && association
+      .getRightQualifiedName()
+      .getQName()
+      .equals(association2.getRightQualifiedName().getQName())) {
+      return matchRoleNames(association.getLeft(), association2.getLeft())
+        && matchRoleNames(association.getRight(), association2.getRight())
+        && Syn2SemDiffHelper.getDirection(association).equals(Syn2SemDiffHelper.getDirection(association2))
+        && cardToEnum(association.getLeft().getCDCardinality()).equals(cardToEnum(association2.getLeft().getCDCardinality()))
+        && cardToEnum(association.getRight().getCDCardinality()).equals(cardToEnum(association2.getRight().getCDCardinality()));
+    }
+    return false;
   }
 
   public boolean srcAssocExistsTgtNot(ASTCDAssociation association, ASTCDAssociation association2) {
@@ -669,19 +698,27 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
-  public static boolean sameAssociationType(AssocStruct assocStruct1, ASTCDAssociation association, ClassSide side){
-    if (((assocStruct1.getSide().equals(ClassSide.Left) && side.equals(ClassSide.Left))
-      || assocStruct1.getSide().equals(ClassSide.Right) && side.equals(ClassSide.Right))){
-      return matchRoleNames(assocStruct1.getAssociation().getLeft(), association.getLeft())
-        && matchRoleNames(assocStruct1.getAssociation().getRight(), association.getRight())
-        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getLeft().getCDCardinality()), cardToEnum(association.getLeft().getCDCardinality()))
-        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getRight().getCDCardinality()), cardToEnum(association.getRight().getCDCardinality()));
-    } else if (((assocStruct1.getSide().equals(ClassSide.Left) && side.equals(ClassSide.Right))
-      || assocStruct1.getSide().equals(ClassSide.Right) && side.equals(ClassSide.Left))){
-      return matchRoleNames(assocStruct1.getAssociation().getLeft(), association.getRight())
-        && matchRoleNames(assocStruct1.getAssociation().getRight(), association.getLeft())
-        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getLeft().getCDCardinality()), cardToEnum(association.getRight().getCDCardinality()))
-        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getRight().getCDCardinality()), cardToEnum(association.getLeft().getCDCardinality()));
+  //TODO: take sides out
+  //TODO: on used places wrong comparison is made with super of classes
+  public boolean sameAssociationType(AssocStruct assocStruct1, AssocStruct association){
+    if (((assocStruct1.getSide().equals(ClassSide.Left) && association.getSide().equals(ClassSide.Left))
+      || assocStruct1.getSide().equals(ClassSide.Right) && association.getSide().equals(ClassSide.Right))){
+      return matchRoleNames(assocStruct1.getAssociation().getLeft(), association.getAssociation().getLeft())
+        && matchRoleNames(assocStruct1.getAssociation().getRight(), association.getAssociation().getRight())
+        && matchDirection(assocStruct1, new Pair<>(association, association.getSide()))
+        && CDInheritanceHelper.isSuperOf(assocStruct1.getAssociation().getRightQualifiedName().getQName(),
+        association.getAssociation().getRightQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope())
+        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getLeft().getCDCardinality()), cardToEnum(association.getAssociation().getLeft().getCDCardinality()))
+        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getRight().getCDCardinality()), cardToEnum(association.getAssociation().getRight().getCDCardinality()));
+    } else if (((assocStruct1.getSide().equals(ClassSide.Left) && association.getSide().equals(ClassSide.Right))
+      || assocStruct1.getSide().equals(ClassSide.Right) && association.getSide().equals(ClassSide.Left))){
+      return matchRoleNames(assocStruct1.getAssociation().getLeft(), association.getAssociation().getRight())
+        && matchRoleNames(assocStruct1.getAssociation().getRight(), association.getAssociation().getLeft())
+        && matchDirection(assocStruct1, new Pair<>(association, association.getSide()))
+        && CDInheritanceHelper.isSuperOf(assocStruct1.getAssociation().getRightQualifiedName().getQName(),
+        association.getAssociation().getLeftQualifiedName().getQName(), (ICD4CodeArtifactScope) srcCD.getEnclosingScope())
+        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getLeft().getCDCardinality()), cardToEnum(association.getAssociation().getRight().getCDCardinality()))
+        && isContainedIn(cardToEnum(assocStruct1.getAssociation().getRight().getCDCardinality()), cardToEnum(association.getAssociation().getLeft().getCDCardinality()));
     }
     return false;
   }
@@ -1269,7 +1306,7 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
-  public boolean matchDirection(AssocStruct srcStruct, Pair<AssocStruct, ClassSide> tgtStruct){
+  public static boolean matchDirection(AssocStruct srcStruct, Pair<AssocStruct, ClassSide> tgtStruct){
     if (((srcStruct.getSide().equals(ClassSide.Left) && tgtStruct.b.equals(ClassSide.Left))
       || (srcStruct.getSide().equals(ClassSide.Right) && tgtStruct.b.equals(ClassSide.Right)))
       && srcStruct.getDirection() == tgtStruct.a.getDirection()){
@@ -1338,6 +1375,11 @@ public class Syn2SemDiffHelper {
 
   public boolean isLoopStruct(AssocStruct assocStruct){
     Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(assocStruct.getAssociation(), srcCD);
+    return pair.a.equals(pair.b);
+  }
+
+  public boolean isLoopStructTgt(AssocStruct assocStruct){
+    Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(assocStruct.getAssociation(), tgtCD);
     return pair.a.equals(pair.b);
   }
 
@@ -1418,6 +1460,24 @@ public class Syn2SemDiffHelper {
             trgMap.get(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a).remove(struct);
             break;
           }
+        }
+      }
+    }
+  }
+
+  public void makeSimpleSem(List<ASTODArtifact> list){
+    for (ASTODArtifact artifact : list){
+      for (ASTODElement element : artifact.getObjectDiagram().getODElementList()){
+        if (element instanceof ASTODObject){
+          String type = ((ASTODObject) element).getMCObjectType().printType();
+          ((ASTODObject) element).getModifier().getStereotype().removeValues("instanceof");
+          ((ASTODObject) element).setModifier(OD4ReportMill.modifierBuilder()
+            .setStereotype(OD4ReportMill.stereotypeBuilder().addValues(OD4ReportMill.stereoValueBuilder()
+              .setName("instanceof")
+              .setContent(String.join(type))
+              .setText(OD4ReportMill.stringLiteralBuilder()
+                .setSource(String.join(type))
+                .build()).build()).build()).build());
         }
       }
     }

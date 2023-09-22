@@ -34,8 +34,6 @@ public class TestMax extends CDDiffTestBasis {
   public void test5() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
 
@@ -123,8 +121,6 @@ public class TestMax extends CDDiffTestBasis {
   public void test10() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -151,8 +147,6 @@ public class TestMax extends CDDiffTestBasis {
   public void test15() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/15A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/15B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -171,8 +165,6 @@ public class TestMax extends CDDiffTestBasis {
   public void test20() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/20A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/20B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -191,8 +183,6 @@ public class TestMax extends CDDiffTestBasis {
   public void test25() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/25A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/25B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -211,8 +201,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testDE() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/DEv2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/DEv1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -231,8 +219,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testEA() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/EAv2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/EAv1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -251,8 +237,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testEMT() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/EMTv1.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/EMTv2.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -271,8 +255,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary1() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -291,8 +273,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary2() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV3.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV2.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -311,8 +291,7 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary3() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV4.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV3.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -331,8 +310,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testLibrary4() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV5.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cddiff/LibraryV4.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -351,8 +328,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testManagement() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/ManagementV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/ManagementV1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -371,8 +346,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testMyCompany() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyCompanyV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyCompanyV1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -391,8 +364,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testMyExample() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyExampleV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyExampleV1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -411,8 +382,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testMyLife() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -431,8 +400,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testTeaching() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/TeachingV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/TeachingV1.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     TestHelper testHelper = new TestHelper(diff);
@@ -451,8 +418,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -482,8 +447,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder2(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -507,8 +470,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder3(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder3.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -532,8 +493,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder4(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder4.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -562,8 +521,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder5(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder5.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -592,8 +549,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder6(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder6.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -627,8 +582,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder7(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder7.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -657,8 +610,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder8(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder8.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -687,8 +638,6 @@ public class TestMax extends CDDiffTestBasis {
   public void testBuilder9(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     diff.getHelper().setMaps();
@@ -720,7 +669,7 @@ public class TestMax extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     DiffHelper diffHelper = new DiffHelper(cd1, cd2);
     trafo.transform(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(cd1, cd2, false);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -753,7 +702,7 @@ public class TestMax extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     DiffHelper diffHelper = new DiffHelper(cd1, cd2);
     trafo.transform(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(cd1, cd2, false);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
 
 //    for (ASTODArtifact od : witnesses) {
 //      Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
