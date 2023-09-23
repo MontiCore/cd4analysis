@@ -167,7 +167,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     System.out.println(associationDiff.getBaseDiff());
   }
 
-  @Tes
+  @Test
   public void testAssoc3() {
     parseModels("Source3.cd", "Target3.cd");
 
