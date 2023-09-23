@@ -268,7 +268,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
     syntaxDiff.findOverlappingAssocs();
-    boolean isClassDeleted = syntaxDiff.isClassDeleted(classD, classA);
+    boolean isClassDeleted = syntaxDiff.isInheritanceDeleted(classD, classA);
 
     Assert.assertFalse(isClassDeleted);
   }
