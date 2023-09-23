@@ -10,7 +10,7 @@ package de.monticore;
    This includes directions, qualifiers, multiplicities and compositions.
 */
 
-component grammar CDAssociation extends de.monticore.CDBasis {
+component grammar CDAssociation extends de.monticore.CDBasis, de.monticore.Cardinality {
 
   /** The AssociationType is a separate NT to allow for extension later
    */
@@ -72,11 +72,14 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       Cardinality from de.monticore.Cardinality is not used, because we only
       want the simple variants here
   */
+  splittoken "..";
+
   interface CDCardinality;
-  CDCardMult       implements CDCardinality = "[*]";
-  CDCardOne        implements CDCardinality = {noSpace(2,3) && getToken(2).equals("1")}? "[" Digits "]"; // matches "[1]"
-  CDCardAtLeastOne implements CDCardinality = {noSpace(2,3,4,5) && getToken(2).equals("1") }? "[" Digits "." "." "*" "]"; // matches "[1..*]"
-  CDCardOpt        implements CDCardinality = {noSpace(2,3,4,5) && getToken(2).equals("0") && getToken(5).equals("1") }? "[" Digits "." "." Digits "]"; // matches "[0..1]"
+  CDCardMult       implements CDCardinality <100> = "[*]";
+  CDCardOne        implements CDCardinality <100> = {noSpace(2,3) && getToken(2).equals("1")}? "[" Digits "]"; // matches "[1]"
+  CDCardAtLeastOne implements CDCardinality <100> = {noSpace(2,3,4,5) && getToken(2).equals("1") }? "[" Digits "." "." "*" "]"; // matches "[1..*]"
+  CDCardOpt        implements CDCardinality <100> = {noSpace(2,3,4,5) && getToken(2).equals("0") && getToken(5).equals("1") }? "[" Digits "." "." Digits "]"; // matches "[0..1]"
+  CDCardOther      implements CDCardinality <50>  = Cardinality;
 
   splittoken "[*]";
 

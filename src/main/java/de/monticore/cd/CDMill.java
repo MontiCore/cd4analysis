@@ -10,6 +10,12 @@ import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
 import de.monticore.cd.prettyprint.CDTypeKindPrinter;
 
+/**
+ * @deprecated not part of the hierachy of languages
+ * thus, the visitors breack in some scenarios
+ * use other Mills of the CD4A-family.
+ */
+@Deprecated
 public class CDMill {
   protected static CDMill mill;
   protected static CDMill millCDElementVisitor;

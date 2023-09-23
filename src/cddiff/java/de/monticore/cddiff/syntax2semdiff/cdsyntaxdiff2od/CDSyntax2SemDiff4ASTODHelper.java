@@ -82,7 +82,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
       // set attribute
       if (Pattern.matches("List<(.*)>", astcdAttribute.getMCType().printType())) {
         // List<> attribute
-        Matcher listMatcher = Pattern.compile("List<(.*)>").matcher(astcdAttribute.getMCType().printType());
+        Matcher listMatcher =
+            Pattern.compile("List<(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (listMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, listMatcher.group(1), false);
           ASTODList oDValue =
@@ -99,7 +100,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
 
       } else if (Pattern.matches("Set<(.*)>", astcdAttribute.getMCType().printType())) {
         // Set<> attribute
-        Matcher setMatcher = Pattern.compile("Set<(.*)>").matcher(astcdAttribute.getMCType().printType());
+        Matcher setMatcher =
+            Pattern.compile("Set<(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (setMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, "Set_" + setMatcher.group(1), false);
           ASTODSimpleAttributeValue oDValue =
@@ -111,7 +113,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
 
       } else if (Pattern.matches("Optional<(.*)>", astcdAttribute.getMCType().printType())) {
         // Optional<> attribute
-        Matcher optMatcher = Pattern.compile("Optional<(.*)>").matcher(astcdAttribute.getMCType().printType());
+        Matcher optMatcher =
+            Pattern.compile("Optional<(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (optMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, optMatcher.group(1), false);
           ASTODSimpleAttributeValue oDValue =
@@ -123,7 +126,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
 
       } else if (Pattern.matches("Map<(.*),(.*)>", astcdAttribute.getMCType().printType())) {
         // Map<,> attribute
-        Matcher mapMatcher = Pattern.compile("Map<(.*),(.*)>").matcher(astcdAttribute.getMCType().printType());
+        Matcher mapMatcher =
+            Pattern.compile("Map<(.*),(.*)>").matcher(astcdAttribute.getMCType().printType());
         if (mapMatcher.find()) {
           String kValue = createValue(cdw, cDTypeDiff, mapMatcher.group(1), false);
           String vValue = createValue(cdw, cDTypeDiff, mapMatcher.group(2), false);

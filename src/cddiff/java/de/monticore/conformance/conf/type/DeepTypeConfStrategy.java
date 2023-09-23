@@ -42,14 +42,12 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
                 supertype ->
                     CDDiffUtil.getReferencingAssociations(supertype, conCD).stream()
                         .filter(
-                            assoc ->
-                                assoc.getLeftQualifiedName().equals(assoc.getRightQualifiedName())
-                                    || (assoc.getCDAssocDir().isDefinitiveNavigableRight()
+                            assoc -> (!assoc.getCDAssocDir().isDefinitiveNavigableLeft()
                                         && supertype
                                             .getSymbol()
                                             .getInternalQualifiedName()
                                             .contains(assoc.getLeftQualifiedName().getQName()))
-                                    || (assoc.getCDAssocDir().isDefinitiveNavigableLeft()
+                                    || (!assoc.getCDAssocDir().isDefinitiveNavigableRight()
                                         && supertype
                                             .getSymbol()
                                             .getInternalQualifiedName()

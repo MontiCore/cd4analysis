@@ -27,9 +27,12 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -175,7 +178,7 @@ public class CD4CTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testGenerateAttributeFromTemplate() {
+  public void testGenerateAttributeFromTemplate() throws IOException {
     // Build class for testing
     ASTCDClass clazz =
         CD4CodeMill.cDClassBuilder()
@@ -188,15 +191,28 @@ public class CD4CTest extends CD4CodeTestBasis {
         CD4C.getInstance()
             .addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.Attribute", "world");
 
+    ASTCDAttribute b =
+      CD4C.getInstance()
+        .addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.AttributeWithComplexInit", "world");
+
     checkLogError();
 
-    assertEquals(1, clazz.sizeCDMembers());
+    assertEquals(2, clazz.sizeCDMembers());
     ASTCDMember member = clazz.getCDMember(0);
     assertEquals(a, member);
+
+    ASTCDMember member2 = clazz.getCDMember(1);
+    assertEquals(b, member2);
 
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("AttributeFromTemplate.java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
+
+    Path outputFile = config.getOutputDirectory().toPath().resolve(output);
+    String content = IOUtils.toString(outputFile.toUri(), StandardCharsets.UTF_8);
+
+    assertTrue(content.contains("\"Hello world\""));
+    assertTrue(content.contains("= new String(\"Constructor use: world\");"));
   }
 
   @Test

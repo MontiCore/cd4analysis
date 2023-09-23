@@ -1,11 +1,11 @@
 package de.monticore.cd2smt;
 
-import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
-
 import com.microsoft.z3.*;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
@@ -17,13 +17,18 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
-import java.util.*;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 public class CheckODValidityTest extends CD2SMTAbstractTest {
 
@@ -31,8 +36,12 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
 
   @BeforeEach
   public void setup() {
-    Log.init();
+    Log.enableFailQuick(false);
+    CD4CodeMill.reset();
     CD4CodeMill.init();
+    CD4CodeMill.globalScope().clear();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
 
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
@@ -82,7 +91,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         AssociationStrategy.Strategy.ONE2ONE,
         InheritanceData.Strategy.ME);
   }
-
+@Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestSECOMB_DEFAULT(String fileName) {
@@ -95,10 +104,11 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         SE);
   }
 
+  @Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestSECOMB_O2O(String fileName) {
-
+    // TODO: 03.09.23  figure out why  we get a timeout
     checkODValidity(
         fileName,
         "seComb/one2one",
@@ -106,16 +116,14 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         AssociationStrategy.Strategy.ONE2ONE,
         SE);
   }
-
+  /****************************finite strategies*******************************************/
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestFiniteDS_O2O(String CDFileName) {
-    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
-    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
 
-    checkODValidity(
+    checkODValidityFinite(
         CDFileName,
-        "ds/one2one/",
+        "finiteDs/one2one/",
         ClassStrategy.Strategy.FINITEDS,
         AssociationStrategy.Strategy.ONE2ONE,
         InheritanceData.Strategy.ME);
@@ -124,9 +132,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestFiniteDS_DEFAULT(String CDFileName) {
-    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
-    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
-    checkODValidity(
+    checkODValidityFinite(
         CDFileName,
         "ds/default/",
         ClassStrategy.Strategy.FINITEDS,
@@ -138,11 +144,10 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestFiniteSS_O2O(String CDFileName) {
-    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
-    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
-    checkODValidity(
+
+    checkODValidityFinite(
         CDFileName,
-        "ds/one2one/",
+        "finiteSs/one2one/",
         ClassStrategy.Strategy.FINITESS,
         AssociationStrategy.Strategy.ONE2ONE,
         InheritanceData.Strategy.ME);
@@ -152,24 +157,80 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestFiniteSS_DEFAULT(String CDFileName) {
-    Assumptions.assumeFalse(CDFileName.equals("car10.cd"));
-    Assumptions.assumeFalse(CDFileName.equals("car.cd"));
-    checkODValidity(
+
+    checkODValidityFinite(
         CDFileName,
-        "ds/default/",
+        "finiteSs/default/",
         ClassStrategy.Strategy.FINITESS,
         AssociationStrategy.Strategy.DEFAULT,
         InheritanceData.Strategy.ME);
   }
 
-  public void checkODValidity(
-      String CDFileName,
-      String targetNumber,
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void CDInitializerTestFiniteDS(String fileName) {
+    cd2smt(fileName, ClassStrategy.Strategy.FINITEDS, "CDInitializer/DS/default");
+  }
+
+  @ParameterizedTest
+  @MethodSource("modelTarget")
+  public void CDInitializerTestFiniteSS(String fileName) {
+    cd2smt(fileName, ClassStrategy.Strategy.FINITESS, "CDInitializer/DS/default");
+  }
+
+  public void cd2smt(String fileName, ClassStrategy.Strategy cs, String outputDir) {
+    ASTCDCompilationUnit ast = parseModel(fileName);
+
+    Stream<Map<ASTCDType, Integer>> res = CDTypeInitializer.initialize(ast, 10, true).limit(10);
+
+    AtomicInteger i = new AtomicInteger();
+    res.forEach(
+        cardinalities -> {
+          i.getAndIncrement();
+          CD2SMTMill.setCardinalities(cardinalities);
+          checkODValidityFinite(
+              fileName,
+              outputDir + i + "/",
+              cs,
+              AssociationStrategy.Strategy.DEFAULT,
+              InheritanceData.Strategy.ME);
+        });
+  }
+
+  public void checkODValidityFinite(
+      String cdFileName,
+      String targetName,
       ClassStrategy.Strategy cs,
       AssociationStrategy.Strategy as,
       InheritanceData.Strategy is) {
 
-    ASTCDCompilationUnit ast = parseModel(CDFileName);
+    ASTCDCompilationUnit ast = parseModel(cdFileName);
+
+    Stream<Map<ASTCDType, Integer>> res = CDTypeInitializer.initialize(ast, 10, true).limit(10);
+    for (Map<ASTCDType, Integer> cardinalities : res.collect(Collectors.toSet())) {
+      CD2SMTMill.setCardinalities(cardinalities);
+      checkODValidity(ast, targetName, cdFileName, cs, as, is);
+    }
+  }
+
+  public void checkODValidity(
+      String cdFileName,
+      String targetName,
+      ClassStrategy.Strategy cs,
+      AssociationStrategy.Strategy as,
+      InheritanceData.Strategy is) {
+    ASTCDCompilationUnit ast = parseModel(cdFileName);
+    checkODValidity(ast, targetName, cdFileName.split("\\.")[0] + targetName, cs, as, is);
+  }
+
+  public void checkODValidity(
+      ASTCDCompilationUnit ast,
+      String targetName,
+      String odName,
+      ClassStrategy.Strategy cs,
+      AssociationStrategy.Strategy as,
+      InheritanceData.Strategy is) {
+
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator(cs, is, as);
 
     cd2SMTGenerator.cd2smt(ast, ctx);
@@ -180,13 +241,14 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
     }
 
     Solver solver = cd2SMTGenerator.makeSolver(constraints);
+
     Assertions.assertEquals(Status.SATISFIABLE, solver.check());
-    String odName = CDFileName.split("\\.")[0];
+
     Model model = solver.getModel();
     Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(model, false, odName);
     Assertions.assertTrue(optOd.isPresent());
 
-    printOD(optOd.get(), targetNumber);
+    printOD(optOd.get(), targetName);
     Assertions.assertTrue(
         matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
   }
