@@ -794,7 +794,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
       for (ASTCDAttribute x : deletedAttributes) {
         CDMemberDiff a = new CDMemberDiff(x, x);
         StringBuilder delAttri = new StringBuilder();
-        String comment = "\t" + "//deleted attribute, L: " + a.tgtLineOfCode + System.lineSeparator();
+        String comment = "//deleted attribute, L: " + a.tgtLineOfCode + System.lineSeparator();
         String deletedAttribute = a.printRemovedMember();
         delAttri.append(comment).append(COLOR_DELETE).append(deletedAttribute).append(RESET);
 
@@ -803,6 +803,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
 
         onlyDeleted.put(delAttri.toString(),Integer.valueOf(x.get_SourcePositionStart().getLine()
               + "" + x.get_SourcePositionStart().getColumn()));
+        onlyChanged.put(
+          delAttri.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
       }
     }
 
@@ -836,7 +842,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
 
     if(deletedConstants != null) {
-      for (ASTCDEnumConstant x : getDeletedConstants()) {
+      for (ASTCDEnumConstant x : deletedConstants) {
         CDMemberDiff a = new CDMemberDiff(x, x);
         StringBuilder delEnumConstant = new StringBuilder();
         String comment = "//removed enum constant, L: " + a.tgtLineOfCode + System.lineSeparator();
@@ -852,6 +858,13 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
               + x.get_SourcePositionStart().getColumn()));
 
         onlyDeleted.put(
+          delEnumConstant.toString(),
+          Integer.valueOf(
+            x.get_SourcePositionStart().getLine()
+              + ""
+              + x.get_SourcePositionStart().getColumn()));
+
+        onlyChanged.put(
           delEnumConstant.toString(),
           Integer.valueOf(
             x.get_SourcePositionStart().getLine()
@@ -877,6 +890,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
                   + ""
                   + x.get_SourcePositionStart().getColumn()));
             onlyAdded.put(
+              inhAttr.toString(),
+              Integer.valueOf(
+                x.get_SourcePositionStart().getLine()
+                  + ""
+                  + x.get_SourcePositionStart().getColumn()));
+            onlyChanged.put(
               inhAttr.toString(),
               Integer.valueOf(
                 x.get_SourcePositionStart().getLine()

@@ -313,14 +313,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     //System.out.println(syntaxDiff.printSrcCD());
     //System.out.println(syntaxDiff.printTgtCD());
     //System.out.println(syntaxDiff.getBaseDiff());
-    System.out.println("----------------------------");
-    System.out.println(syntaxDiff.printOnlyAdded());
+    //System.out.println("----------------------------");
+    //System.out.println(syntaxDiff.printOnlyAdded());
     //System.out.println(syntaxDiff.getChangedTypes());
-    System.out.println("----------------------------");
-    System.out.println(syntaxDiff.printOnlyDeleted());
-    System.out.println("----------------------------");
+    //System.out.println("----------------------------");
+    //System.out.println(syntaxDiff.printOnlyDeleted());
+    //System.out.println("----------------------------");
     System.out.println(syntaxDiff.printDiff());
-    System.out.println("----------------------------");
+    //System.out.println("----------------------------");
   }
 
   @Test

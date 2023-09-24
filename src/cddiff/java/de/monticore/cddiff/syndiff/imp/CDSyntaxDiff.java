@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff.imp;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getDirectSuperClasses;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getSpannedInheritance;
 
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -15,6 +16,7 @@ import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.matcher.*;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
@@ -1712,6 +1714,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   }
 
   private void setStrings(ICD4CodeArtifactScope scopeTgtCD) {
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     StringBuilder initialPrintAdd = new StringBuilder();
     StringBuilder initialPrintDelete = new StringBuilder();
     StringBuilder initialPrintChange = new StringBuilder();
@@ -1770,7 +1773,6 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
         onlySrcCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printSrcCD()));
         onlyTgtCDSort.add(new Pair<>(x.getTgtElem().get_SourcePositionStart().getLine(), x.printTgtCD()));
         diffSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
-
       }
     }
 
@@ -1893,9 +1895,9 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
     //--print diff
     diffSort.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutDiffString = new StringBuilder();
-    outPutDiffString.append(initialPrintDiff);
+    outPutDiffString.append(initialPrintDiff).append(System.lineSeparator());
     for (Pair<Integer, String> x : diffSort) {
-      outPutDiffString.append(System.lineSeparator()).append(System.lineSeparator()).append(x.b);
+      outPutDiffString.append(System.lineSeparator()).append(x.b);
     }
     this.outputDiff = outPutDiffString;
   }

@@ -1,35 +1,35 @@
 import java.lang.String;
 
 classdiagram Source1 {
-  enum EnumsCheck{deleted, inherited, d, added;}
+  enum EnumsCheck{matched, added;}
 
   enum AddedEnumCheck{enumOne;}
 
-  class A{
+  public class A{
+    EnumsCheck added;
     int changed;
     double added;
   }
 
-  class B{
-    double addedone;
-    int i;
-    EnumsCheck inherited;
+  class B extends C{
+    int inheritedAttribute;
+    EnumsCheck inheritedEnumConstant;
   }
 
   class C{
     EnumsCheck added;
   }
 
-  class E{
+  class AddedClassWithAttributes{
     int pitch;
     String addedSomething;
     String addedAnotherThing;
   }
 
-  class J{}
+  class AddedClassEmpty{}
 
   association [*] A -> C [1];
   association [*] A -> (b) B [1];
-  association [*] A -> E [1];
-  association [*] A -> J [1];
+  association [*] A -> AddedClassWithAttributes [1];
+  association [*] A -> AddedClassEmpty [1];
 }
