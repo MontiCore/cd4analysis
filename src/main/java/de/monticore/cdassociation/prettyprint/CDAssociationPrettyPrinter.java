@@ -172,18 +172,17 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void visit(ASTCDCardOther node) {
-    if(node.toCardinality().isMany()) {
+    if (node.toCardinality().isMany()) {
       print("[*]");
     } else {
       String card = "[";
       card += node.toCardinality().getLowerBound();
-      if (node.toCardinality().isNoUpperLimit()){
-        card+= "..*";
+      if (node.toCardinality().isNoUpperLimit()) {
+        card += "..*";
+      } else if (node.toCardinality().getUpperBound() > node.toCardinality().getLowerBound()) {
+        card += ".." + node.toCardinality().getUpperBound();
       }
-      else if (node.toCardinality().getUpperBound() > node.toCardinality().getLowerBound()) {
-        card+= ".." + node.toCardinality().getUpperBound();
-      }
-      card +="]";
+      card += "]";
       print(card);
     }
   }

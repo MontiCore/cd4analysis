@@ -31,7 +31,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,8 +191,9 @@ public class CD4CTest extends CD4CodeTestBasis {
             .addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.Attribute", "world");
 
     ASTCDAttribute b =
-      CD4C.getInstance()
-        .addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.AttributeWithComplexInit", "world");
+        CD4C.getInstance()
+            .addAttributeFromTemplate(
+                clazz, "de.monticore.cd.methodtemplates.AttributeWithComplexInit", "world");
 
     checkLogError();
 

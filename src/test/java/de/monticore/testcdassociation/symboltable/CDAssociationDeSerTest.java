@@ -114,26 +114,23 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
     assertTrue(assoc2.isPresent());
   }
 
-
-  /**
-   * Checks new cardinalities that are not [*], [1], [0..1], [1..*]
-   */
+  /** Checks new cardinalities that are not [*], [1], [0..1], [1..*] */
   @Test
   public void testCreateCardinalityFromString() {
     // Single literals other than "*" or "1"
-    assertEquals("[2]",
-        CDAssociationMill.prettyPrint(
-            new CDCardinalityDeSer().createFromString("[2]"), false));
+    assertEquals(
+        "[2]",
+        CDAssociationMill.prettyPrint(new CDCardinalityDeSer().createFromString("[2]"), false));
 
     // Finite ranges besides "[0..1]"
-    assertEquals("[13..20]",
+    assertEquals(
+        "[13..20]",
         CDAssociationMill.prettyPrint(
             new CDCardinalityDeSer().createFromString("[13..20]"), false));
 
     // Infinite ranges not starting from "1"
-    assertEquals("[9..*]",
-        CDAssociationMill.prettyPrint(
-            new CDCardinalityDeSer().createFromString("[9..*]"), false));
+    assertEquals(
+        "[9..*]",
+        CDAssociationMill.prettyPrint(new CDCardinalityDeSer().createFromString("[9..*]"), false));
   }
-
 }

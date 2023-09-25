@@ -13,14 +13,8 @@ public class ASTCDCardOne extends ASTCDCardOneTOP {
   @Override
   public ASTCardinality toCardinality() {
     return CardinalityMill.cardinalityBuilder()
-        .setLowerBoundLit(
-            CardinalityMill.natLiteralBuilder()
-                .setDigits("1")
-                .build())
-        .setUpperBoundLit(
-            CardinalityMill.natLiteralBuilder()
-                .setDigits("1")
-                .build())
+        .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits("1").build())
+        .setUpperBoundLit(CardinalityMill.natLiteralBuilder().setDigits("1").build())
         .setLowerBound(1)
         .setUpperBound(1)
         .build();

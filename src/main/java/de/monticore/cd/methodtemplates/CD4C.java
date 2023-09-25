@@ -199,10 +199,10 @@ public class CD4C {
     String body = templateHookPoint.processValue(controller, astcdType);
     CD4CTemplateHelper helper = methodQueue.pop();
     Optional<ASTCDAttribute> attrOpt = helper.astcdAttribute;
-    if(attrOpt.isPresent()){
+    if (attrOpt.isPresent()) {
       ASTCDAttribute attr = attrOpt.get();
-      if(!attr.isPresentInitial() && !body.isEmpty()){
-       config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, attr, new StringHookPoint(body));
+      if (!attr.isPresentInitial() && !body.isEmpty()) {
+        config.getGlex().replaceTemplate(CD2JavaTemplates.VALUE, attr, new StringHookPoint(body));
       }
     }
 

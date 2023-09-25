@@ -3,7 +3,6 @@ package de.monticore.cd2smt.Helper.visitor;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDCardMult;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 
 public class RemoveAssocCardinality implements CDAssociationVisitor2 {
