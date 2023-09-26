@@ -29,7 +29,7 @@ classdiagram Source1 {
   class AddedClassEmpty{}
 
   association [*] A -> C [1];
-  association [*] A -> (b) B [1];
+  association [1..*] A -> (b) B [1];
   association [*] A -> AddedClassWithAttributes [1];
   association [*] A -> AddedClassEmpty [1];
 }
