@@ -32,17 +32,14 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     List<ASTCDAttribute> matchedAttributes = new ArrayList<>();
-    if (tgtElem.getCDAttributeList().size() >= (0.3 * getAverageForCD(tgtCD))) {
-      for (ASTCDAttribute srcAttr : srcElem.getCDAttributeList()) {
-        for (ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()) {
-          if (srcAttr.getName().equals(tgtAttr.getName())) {
-            matchedAttributes.add(srcAttr);
-          }
+    for (ASTCDAttribute srcAttr : srcElem.getCDAttributeList()) {
+      for (ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()) {
+        if (srcAttr.getName().equals(tgtAttr.getName())) {
+          matchedAttributes.add(srcAttr);
         }
       }
-        return matchedAttributes.size() >= (0.2 * srcElem.getCDAttributeList().size());
     }
-    return false;
+    return matchedAttributes.size() >= (0.7) * getAverageForCD(tgtCD);
   }
 
   public double getAverageForCD(ASTCDCompilationUnit cd) {
