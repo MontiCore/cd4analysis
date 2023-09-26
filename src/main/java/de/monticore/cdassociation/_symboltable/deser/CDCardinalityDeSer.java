@@ -26,37 +26,37 @@ public class CDCardinalityDeSer {
     }
   }
 
-  protected ASTCDCardinality createNonStandardCardinality(String cardinality){
-    String card = cardinality.replaceAll("\\s","")
-        .replace("[","")
-        .replace("]","");
+  protected ASTCDCardinality createNonStandardCardinality(String cardinality) {
+    String card = cardinality.replaceAll("\\s", "").replace("[", "").replace("]", "");
     ASTCardinalityBuilder builder = CardinalityMill.cardinalityBuilder();
     String[] bounds = card.split("\\.\\.");
-    if (bounds.length < 1 || bounds.length > 2){
+    if (bounds.length < 1 || bounds.length > 2) {
       return null;
     }
     try {
-      builder.setMany(false).setLowerBound(Integer.parseInt(bounds[0]))
-          .setLowerBoundLit(
-              CardinalityMill.natLiteralBuilder().setDigits(bounds[0]).build());
-      if (bounds.length == 2){
-        if (bounds[1].equals("*")){
+      builder
+          .setMany(false)
+          .setLowerBound(Integer.parseInt(bounds[0]))
+          .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits(bounds[0]).build());
+      if (bounds.length == 2) {
+        if (bounds[1].equals("*")) {
           builder.setNoUpperLimit(true).setUpperBoundLitAbsent();
         } else {
-          builder.setNoUpperLimit(false).setUpperBound(Integer.parseInt(bounds[1]))
-              .setUpperBoundLit(
-                  CardinalityMill.natLiteralBuilder().setDigits(bounds[1]).build());
+          builder
+              .setNoUpperLimit(false)
+              .setUpperBound(Integer.parseInt(bounds[1]))
+              .setUpperBoundLit(CardinalityMill.natLiteralBuilder().setDigits(bounds[1]).build());
         }
       } else {
-        builder.setNoUpperLimit(false).setUpperBound(Integer.parseInt(bounds[0]))
+        builder
+            .setNoUpperLimit(false)
+            .setUpperBound(Integer.parseInt(bounds[0]))
             .setUpperBoundLitAbsent();
       }
       return CDAssociationMill.cDCardOtherBuilder().setCardinality(builder.build()).build();
-    } catch (NumberFormatException e){
+    } catch (NumberFormatException e) {
       e.printStackTrace();
     }
     return null;
   }
-
-
 }

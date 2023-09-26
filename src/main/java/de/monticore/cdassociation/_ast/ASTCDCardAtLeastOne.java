@@ -13,10 +13,7 @@ public class ASTCDCardAtLeastOne extends ASTCDCardAtLeastOneTOP {
   @Override
   public ASTCardinality toCardinality() {
     return CardinalityMill.cardinalityBuilder()
-        .setLowerBoundLit(
-            CardinalityMill.natLiteralBuilder()
-                .setDigits("1")
-                .build())
+        .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits("1").build())
         .setUpperBoundLitAbsent()
         .setLowerBound(1)
         .setNoUpperLimit(true)

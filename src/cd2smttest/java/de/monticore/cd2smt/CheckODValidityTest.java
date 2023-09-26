@@ -1,5 +1,7 @@
 package de.monticore.cd2smt;
 
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
+
 import com.microsoft.z3.*;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2smt.Helper.CDHelper;
@@ -17,18 +19,15 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 public class CheckODValidityTest extends CD2SMTAbstractTest {
 
@@ -91,7 +90,8 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
         AssociationStrategy.Strategy.ONE2ONE,
         InheritanceData.Strategy.ME);
   }
-@Disabled
+
+  @Disabled
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestSECOMB_DEFAULT(String fileName) {
