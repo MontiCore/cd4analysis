@@ -3,10 +3,14 @@ import java.lang.String;
 classdiagram Source1 {
   enum AddedEnum{a,b;}
   enum MatchedEnum{k,m;}
-  class A{
+  class A extends M{
     int a;
     String d;
+    int m;
   }
+
+  class M{}
+
   class C{
     int a;
     AddedEnum a;

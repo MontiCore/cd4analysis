@@ -696,7 +696,8 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     if (!addedAttributes.isEmpty()) {
       for (ASTCDAttribute x : addedAttributes) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
-        String tmp = diff.printAddedMember() + RESET;
+        String comment = "//added attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String tmp = comment + diff.printAddedMember() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -706,7 +707,8 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     if (!addedConstants.isEmpty()) {
       for (ASTCDEnumConstant x : addedConstants) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
-        String tmp = diff.printAddedMember() + RESET;
+        String comment = "//added enum constant, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String tmp = comment + diff.printAddedMember() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -716,7 +718,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     if (!deletedAttributes.isEmpty()) {
       for (ASTCDAttribute x : deletedAttributes) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
-        String tmp = diff.printRemovedMember() + RESET;
+        String comment = "";
+        if(inheritedAttributes.contains(x)){
+          comment = "//moved attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
+        } else{
+          comment = "//deleted attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
+        }
+        //String comment = "//deleted attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String tmp = comment + diff.printRemovedMember() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -726,20 +735,32 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     if (!deletedConstants.isEmpty()) {
       for (ASTCDEnumConstant x : deletedConstants) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
-        String tmp = diff.printRemovedMember() + RESET;
+        String comment = "//deleted enum constant, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String tmp = comment + diff.printRemovedMember() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
+    if (!inheritedAttributes.isEmpty()) {
+      for (ASTCDAttribute x : inheritedAttributes) {
+        CDMemberDiff diff = new CDMemberDiff(x, x);
+        String commentOne = "//inherited attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String tmpOne = commentOne + diff.printAddedMember() + RESET;
+        onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));
+        onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));
+        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));
+      }
+    }
+
     if (!changedMembers.isEmpty()) {
       for (CDMemberDiff x : changedMembers) {
         String tmp = x.printChangedMember() + RESET;
-        onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
-        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlySrcCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
+        onlyTgtCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
+        onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
+        onlyDiffSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
       }
     }
 
@@ -751,10 +772,10 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
         CDMemberDiff memberDiff = new CDMemberDiff(x.a, x.b);
 
         String tmp = memberDiff.printAddedMember() + RESET;
-        onlyForNewlyAddedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyForNewlyAddedTypes.add(new Pair<>(x.a.get_SourcePositionStart().getLine(), tmp));
 
         String tmpTwo = memberDiff.printRemovedMember() + RESET;
-        onlyForNewlyDeletedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpTwo));
+        onlyForNewlyDeletedTypes.add(new Pair<>(x.a.get_SourcePositionStart().getLine(), tmpTwo));
       }
     }
 
@@ -763,10 +784,10 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
         CDMemberDiff memberDiff = new CDMemberDiff(x.a, x.b);
 
         String tmp = memberDiff.printAddedMember() + RESET;
-        onlyForNewlyAddedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyForNewlyAddedTypes.add(new Pair<>(x.a.get_SourcePositionStart().getLine(), tmp));
 
         String tmpTwo = memberDiff.printRemovedMember() + RESET;
-        onlyForNewlyDeletedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpTwo));
+        onlyForNewlyDeletedTypes.add(new Pair<>(x.a.get_SourcePositionStart().getLine(), tmpTwo));
       }
     }
 

@@ -3,9 +3,14 @@ import java.lang.String;
 classdiagram Target1 {
   enum DeletedEnum{c,d;}
   enum MatchedEnum{k,l;}
-  class A{
+  class A extends M{
     double a;
     String f;
+  }
+
+  class M{
+    int m;
+    double deletedM;
   }
   class D{}
   class K{
