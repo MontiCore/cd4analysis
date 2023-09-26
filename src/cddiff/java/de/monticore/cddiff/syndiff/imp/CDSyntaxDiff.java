@@ -106,7 +106,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
     loadAllLists(srcCD, tgtCD, scopeSrcCD, scopeTgtCD, typeMatchers, assocMatchers);
     helper.setMatchedClasses(matchedClasses);
     helper.setMaps();
-    setStrings(scopeTgtCD);
+    setStrings();
   }
   @Override
   public ASTCDCompilationUnit getSrcCD() {
@@ -1713,8 +1713,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
     addAllDeletedInheritance(srcCDScope, tgtCDScope, typeMatchers);
   }
 
-  private void setStrings(ICD4CodeArtifactScope scopeTgtCD) {
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+  private void setStrings() {
     StringBuilder initialPrintAdd = new StringBuilder();
     StringBuilder initialPrintDelete = new StringBuilder();
     StringBuilder initialPrintChange = new StringBuilder();
@@ -1767,7 +1766,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
       if(!x.getBaseDiff().isEmpty()) {
         onlySrcCDSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printSrcCD()));
         onlyTgtCDSort.add(new Pair<>(x.getTgtElem().get_SourcePositionStart().getLine(), x.printTgtCD()));
-        diffSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
+        diffSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printDiffType()));
         onlyChangedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), x.printChangedType()));
       }
     }
@@ -1906,8 +1905,10 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   public String printOnlyAdded() { return outputAdded.toString(); }
   //--print deleted
   public String printOnlyDeleted() { return outputDeleted.toString(); }
-  //--print diff
-  public String printDiff() { return outputDiff.toString(); }
   //--print changed
   public String printOnlyChanged() { return outputChanged.toString(); }
+  //--print diff
+  public String printDiff() { return outputDiff.toString(); }
+
+
 }

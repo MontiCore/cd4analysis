@@ -7,6 +7,7 @@ import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.interfaces.ICDTypeDiff;
@@ -37,7 +38,10 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   ASTCDCompilationUnit tgtCD;
   int srcLineOfCode, tgtLineOfCode;
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
   //Print
+  protected StringBuilder outputSrc,outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff, outputNewlyAdded, outputNewlyDeleted;
+  //Print end
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   private String
     srcModifier, srcType, srcName, srcExtends, srcImplements, srcModifierNC, srcTypeNC, srcNameNC, srcExtendsNC, srcImplementsNC,
@@ -675,327 +679,234 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   }
 
   private void setStrings() {
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
-    StringBuilder outputTgtCD = new StringBuilder();
-    StringBuilder outputSrcCD = new StringBuilder();
-    StringBuilder onlyAddedOutputSrcCD = new StringBuilder();
-    StringBuilder onlyDeletedOutputTgtCD = new StringBuilder();
-    StringBuilder onlyAddedTypeOutput = new StringBuilder();
-    StringBuilder onlyDeletedTypeOutput = new StringBuilder();
-    StringBuilder outputChangedClass = new StringBuilder();
-
-    StringBuilder bodyTgtCD = new StringBuilder();
-    StringBuilder bodySrcCD = new StringBuilder();
-    StringBuilder onlyAddedBody = new StringBuilder();
-    StringBuilder onlyDeletedBody = new StringBuilder();
-    StringBuilder onlyAddedTypeBody = new StringBuilder();
-    StringBuilder onlyDeletedTypeBody = new StringBuilder();
-    StringBuilder onlyChangedTypeBody = new StringBuilder();
+    List<Pair<Integer, String>> onlySrcCDSort = new ArrayList<>();
+    List<Pair<Integer, String>> onlyTgtCDSort = new ArrayList<>();
+    List<Pair<Integer, String>> onlyAddedSort = new ArrayList<>();
+    List<Pair<Integer, String>> onlyDeletedSort = new ArrayList<>();
+    List<Pair<Integer, String>> onlyChangedSort = new ArrayList<>();
+    List<Pair<Integer, String>> onlyDiffSort = new ArrayList<>();
+    List<Pair<Integer, String>> onlyForNewlyAddedTypes = new ArrayList<>();
+    List<Pair<Integer, String>> onlyForNewlyDeletedTypes = new ArrayList<>();
 
     String signatureSrcCD = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
     String signatureSrcCDNC = insertSpaceBetweenStrings(Arrays.asList(srcModifierNC, srcTypeNC, srcNameNC, srcExtendsNC, srcImplementsNC));
     String signatureTgtCD = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
     String signatureTgtCDNC = insertSpaceBetweenStrings(Arrays.asList(tgtModifierNC, tgtTypeNC, tgtNameNC, tgtExtendsNC, tgtImplementsNC));
 
-    Map<String, Integer> forSrc = new HashMap<>();
-    Map<String, Integer> forTgt = new HashMap<>();
-    Map<String, Integer> onlyAdded = new HashMap<>();
-    Map<String, Integer> onlyDeleted = new HashMap<>();
-    Map<String, Integer> onlyAddedType = new HashMap<>();
-    Map<String, Integer> onlyDeletedType = new HashMap<>();
-    Map<String, Integer> onlyChanged = new HashMap<>();
-
-    for (CDMemberDiff x : changedMembers) {
-      forSrc.put(
-        x.printChangedMember(),
-        Integer.valueOf(
-          x.getSrcElem().get_SourcePositionStart().getLine()
-            + ""
-            + x.getSrcElem().get_SourcePositionStart().getColumn()));
-      forTgt.put(
-        x.printChangedMember(),
-        Integer.valueOf(
-          x.getTgtElem().get_SourcePositionStart().getLine()
-            + ""
-            + x.getTgtElem().get_SourcePositionStart().getColumn()));
-      onlyChanged.put(
-        x.printChangedMember(),
-        Integer.valueOf(
-          x.getTgtElem().get_SourcePositionStart().getLine()
-            + ""
-            + x.getTgtElem().get_SourcePositionStart().getColumn()));
-    }
-
-    for (Pair<ASTCDAttribute,ASTCDAttribute> x : matchedAttributes) {
-      CDMemberDiff a = new CDMemberDiff(x.a, x.b);
-      onlyAddedType.put(
-        a.printAddedMember(),
-        Integer.valueOf(
-          a.getSrcElem().get_SourcePositionStart().getLine()
-            + ""
-            + a.getSrcElem().get_SourcePositionStart().getColumn()));
-      onlyDeletedType.put(
-        a.printRemovedMember(),
-        Integer.valueOf(
-          a.getSrcElem().get_SourcePositionStart().getLine()
-            + ""
-            + a.getSrcElem().get_SourcePositionStart().getColumn()));
-    }
-
-    for (Pair<ASTCDEnumConstant,ASTCDEnumConstant> x : matchedConstants) {
-      CDMemberDiff a = new CDMemberDiff(x.a, x.b);
-      onlyAddedType.put(
-        a.printAddedMember(),
-        Integer.valueOf(
-          a.getSrcElem().get_SourcePositionStart().getLine()
-            + ""
-            + a.getSrcElem().get_SourcePositionStart().getColumn()));
-      onlyDeletedType.put(
-        a.printRemovedMember(),
-        Integer.valueOf(
-          a.getSrcElem().get_SourcePositionStart().getLine()
-            + ""
-            + a.getSrcElem().get_SourcePositionStart().getColumn()));
-    }
-
-    if(addedAttributes!= null) {
+    if (!addedAttributes.isEmpty()) {
       for (ASTCDAttribute x : addedAttributes) {
-        CDMemberDiff a = new CDMemberDiff(x, x);
-        StringBuilder addAttri = new StringBuilder();
-        String comment = "//added attribute, L: " + a.srcLineOfCode + System.lineSeparator();
-        String addedAttribute = a.printAddedMember();
-        addAttri.append(comment).append(COLOR_ADD).append(addedAttribute).append(RESET);
-
-        forSrc.put(
-          addAttri.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-
-        onlyAdded.put(
-          addAttri.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-
-        onlyChanged.put(
-          addAttri.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
+        CDMemberDiff diff = new CDMemberDiff(x, x);
+        String tmp = diff.printAddedMember() + RESET;
+        onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
-    if(deletedAttributes != null) {
-      for (ASTCDAttribute x : deletedAttributes) {
-        CDMemberDiff a = new CDMemberDiff(x, x);
-        StringBuilder delAttri = new StringBuilder();
-        String comment = "//deleted attribute, L: " + a.tgtLineOfCode + System.lineSeparator();
-        String deletedAttribute = a.printRemovedMember();
-        delAttri.append(comment).append(COLOR_DELETE).append(deletedAttribute).append(RESET);
-
-        forTgt.put(delAttri.toString(),Integer.valueOf(x.get_SourcePositionStart().getLine()
-              + "" + x.get_SourcePositionStart().getColumn()));
-
-        onlyDeleted.put(delAttri.toString(),Integer.valueOf(x.get_SourcePositionStart().getLine()
-              + "" + x.get_SourcePositionStart().getColumn()));
-        onlyChanged.put(
-          delAttri.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-      }
-    }
-
-    if(addedConstants != null) {
+    if (!addedConstants.isEmpty()) {
       for (ASTCDEnumConstant x : addedConstants) {
-        CDMemberDiff a = new CDMemberDiff(x, x);
-        StringBuilder addEnumConst = new StringBuilder();
-        String comment = "//added enum constant, L: " + a.srcLineOfCode + System.lineSeparator();
-        String addedEnumConstant = a.printAddedMember();
-
-        addEnumConst.append(comment).append(COLOR_ADD).append(addedEnumConstant).append(RESET);
-        forSrc.put(
-          addEnumConst.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-        onlyAdded.put(
-          addEnumConst.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-        onlyChanged.put(
-          addEnumConst.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
+        CDMemberDiff diff = new CDMemberDiff(x, x);
+        String tmp = diff.printAddedMember() + RESET;
+        onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
-    if(deletedConstants != null) {
+    if (!deletedAttributes.isEmpty()) {
+      for (ASTCDAttribute x : deletedAttributes) {
+        CDMemberDiff diff = new CDMemberDiff(x, x);
+        String tmp = diff.printRemovedMember() + RESET;
+        onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+      }
+    }
+
+    if (!deletedConstants.isEmpty()) {
       for (ASTCDEnumConstant x : deletedConstants) {
-        CDMemberDiff a = new CDMemberDiff(x, x);
-        StringBuilder delEnumConstant = new StringBuilder();
-        String comment = "//removed enum constant, L: " + a.tgtLineOfCode + System.lineSeparator();
-        String deletedEnumConstant = a.printRemovedMember();
-
-        delEnumConstant.append(comment).append(COLOR_DELETE).append(deletedEnumConstant).append(RESET);
-
-        forTgt.put(
-          delEnumConstant.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-
-        onlyDeleted.put(
-          delEnumConstant.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
-
-        onlyChanged.put(
-          delEnumConstant.toString(),
-          Integer.valueOf(
-            x.get_SourcePositionStart().getLine()
-              + ""
-              + x.get_SourcePositionStart().getColumn()));
+        CDMemberDiff diff = new CDMemberDiff(x, x);
+        String tmp = diff.printRemovedMember() + RESET;
+        onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
-    if(inheritedAttributes != null) {
-      for (ASTCDAttribute x : inheritedAttributes) {
-        for(Pair<ASTCDAttribute, ASTCDAttribute> pair : removedBcInh) {
-          if(pair.a.getName().equals(x.getName())) {
-
-            StringBuilder inhAttr = new StringBuilder();
-            String commentOne = "//inherited, L: " + x.get_SourcePositionStart().getLine() + System.lineSeparator();
-            String inheritedAttribute = "\t" + pp.prettyprint(x);
-            inhAttr.append(commentOne).append(COLOR_ADD).append(inheritedAttribute).append(RESET);
-
-            forSrc.put(
-              inhAttr.toString(),
-              Integer.valueOf(
-                x.get_SourcePositionStart().getLine()
-                  + ""
-                  + x.get_SourcePositionStart().getColumn()));
-            onlyAdded.put(
-              inhAttr.toString(),
-              Integer.valueOf(
-                x.get_SourcePositionStart().getLine()
-                  + ""
-                  + x.get_SourcePositionStart().getColumn()));
-            onlyChanged.put(
-              inhAttr.toString(),
-              Integer.valueOf(
-                x.get_SourcePositionStart().getLine()
-                  + ""
-                  + x.get_SourcePositionStart().getColumn()));
-          }
-        }
+    if (!changedMembers.isEmpty()) {
+      for (CDMemberDiff x : changedMembers) {
+        String tmp = x.printChangedMember() + RESET;
+        onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyChangedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
       }
     }
 
-    Map<Integer, String> forSrcMap = forSrc.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    forSrcMap.forEach((k, v) -> bodySrcCD.append(v).append(System.lineSeparator()));
+    //CDSyntaxDiff makes an CDTypeDiff object for each added class
+    //That means that all attributes match because they are the same
+    //That is why we can say for all matched attributes, add them in the list
+    if (!matchedAttributes.isEmpty()) {
+      for (Pair<ASTCDAttribute,ASTCDAttribute> x : matchedAttributes) {
+        CDMemberDiff memberDiff = new CDMemberDiff(x.a, x.b);
 
-    Map<Integer, String> forTgtMap = forTgt.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    forTgtMap.forEach((k, v) -> bodyTgtCD.append(v).append(System.lineSeparator()));
+        String tmp = memberDiff.printAddedMember() + RESET;
+        onlyForNewlyAddedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
 
-    Map<Integer, String> onlyAddedMap = onlyAdded.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    onlyAddedMap.forEach((k, v) -> onlyAddedBody.append(v).append(System.lineSeparator()));
+        String tmpTwo = memberDiff.printRemovedMember() + RESET;
+        onlyForNewlyDeletedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpTwo));
+      }
+    }
 
-    Map<Integer, String> onlyDeletedMap = onlyDeleted.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    onlyDeletedMap.forEach((k, v) -> onlyDeletedBody.append(v).append(System.lineSeparator()));
+    if (!matchedConstants.isEmpty()) {
+      for (Pair<ASTCDEnumConstant,ASTCDEnumConstant> x : matchedConstants) {
+        CDMemberDiff memberDiff = new CDMemberDiff(x.a, x.b);
 
-    Map<Integer, String> onlyAddedTypeMap = onlyAddedType.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    onlyAddedTypeMap.forEach((k, v) -> onlyAddedTypeBody.append(v).append(System.lineSeparator()));
+        String tmp = memberDiff.printAddedMember() + RESET;
+        onlyForNewlyAddedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
 
-    Map<Integer, String> onlyDeletedTypeMap = onlyDeletedType.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    onlyDeletedTypeMap.forEach((k, v) -> onlyDeletedTypeBody.append(v).append(System.lineSeparator()));
+        String tmpTwo = memberDiff.printRemovedMember() + RESET;
+        onlyForNewlyDeletedTypes.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpTwo));
+      }
+    }
 
-    Map<Integer, String> onlyChangedTypeMap = onlyChanged.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
-    onlyChangedTypeMap.forEach((k, v) -> onlyChangedTypeBody.append(v).append(System.lineSeparator()));
-
-    String newTypeComment = "//changed type, L:" + srcLineOfCode + System.lineSeparator();
-    outputSrcCD.append(newTypeComment).append(signatureSrcCD);
-    if (!bodySrcCD.toString().isEmpty()) {
-      outputSrcCD.append("{ ").append(System.lineSeparator()).append(bodySrcCD).append("}");
+    //--print src
+    onlySrcCDSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outputOnlySrc = new StringBuilder();
+    outputOnlySrc.append(signatureSrcCD).append("{");
+    if (!onlySrcCDSort.isEmpty()) {
+      for (Pair<Integer, String> x : onlySrcCDSort) {
+        outputOnlySrc.append(System.lineSeparator()).append(x.b);
+      }
+      outputOnlySrc.append(System.lineSeparator()).append("}").append(System.lineSeparator());
     } else {
-      outputSrcCD.append("{}");
+      outputOnlySrc.append("}").append(System.lineSeparator());
     }
-    srcPrint = outputSrcCD.toString();
+    this.outputSrc = outputOnlySrc;
 
-    outputTgtCD.append(signatureTgtCD);
-    if (!bodyTgtCD.toString().isEmpty()) {
-      outputTgtCD.append("{ ").append(System.lineSeparator()).append(bodyTgtCD).append("}");
+    //--print tgt
+    onlyTgtCDSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outputOnlyTgt = new StringBuilder();
+    outputOnlyTgt.append(signatureTgtCD).append("{");
+    if (!onlyTgtCDSort.isEmpty()) {
+      for (Pair<Integer, String> x : onlyTgtCDSort) {
+        outputOnlyTgt.append(System.lineSeparator()).append(x.b);
+      }
+      outputOnlyTgt.append(System.lineSeparator()).append("}").append(System.lineSeparator());
     } else {
-      outputTgtCD.append("{}");
+      outputOnlyTgt.append("}").append(System.lineSeparator());
     }
-    tgtPrint = outputTgtCD.toString();
+    this.outputTgt = outputOnlyTgt;
 
-    onlyAddedOutputSrcCD.append(signatureSrcCDNC);
-    if (!onlyAddedBody.toString().isEmpty()) {
-      onlyAddedOutputSrcCD.append("{ ").append(System.lineSeparator()).append(onlyAddedBody).append("}");
-    }
-    srcPrintOnlyAdded = onlyAddedOutputSrcCD.toString();
+    //--print added
+    // Two variants
+    // 1. We have newly added class with all its attributes
+    // 2. We have an already existing class, but we want to show only its added attributes
 
-    onlyDeletedOutputTgtCD.append(signatureTgtCDNC);
-    if (!onlyDeletedBody.toString().isEmpty()) {
-      onlyDeletedOutputTgtCD.append("{ ").append(System.lineSeparator()).append(onlyDeletedBody).append("}");
-    }
-    tgtPrintOnlyRemoved = onlyDeletedOutputTgtCD.toString();
-
-    String addedComment = "//added type, L:" + srcLineOfCode + System.lineSeparator();
-    onlyAddedTypeOutput.append(addedComment).append(COLOR_ADD).append(signatureSrcCD);
-    if (!onlyAddedTypeBody.toString().isEmpty()) {
-      onlyAddedTypeOutput.append(COLOR_ADD).append("{ ").append(System.lineSeparator()).append(onlyAddedTypeBody).append(COLOR_ADD).append("}").append(System.lineSeparator());
+    // This is for 1.
+    onlyForNewlyAddedTypes.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutOnlyNewlyAddedTypes = new StringBuilder();
+    outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append(signatureSrcCD).append("{");
+    if (!onlyForNewlyAddedTypes.isEmpty()) {
+      for (Pair<Integer, String> x : onlyForNewlyAddedTypes) {
+        outPutOnlyNewlyAddedTypes.append(System.lineSeparator()).append(x.b);
+      }
+      outPutOnlyNewlyAddedTypes.append(System.lineSeparator()).append("}").append(System.lineSeparator());
     } else {
-      onlyAddedTypeOutput.append(COLOR_ADD).append("{}").append(System.lineSeparator());
+      outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append("}").append(System.lineSeparator());
     }
-    addedType = onlyAddedTypeOutput.toString();
+    this.outputNewlyAdded = outPutOnlyNewlyAddedTypes;
 
-    String removedComment = "//removed type, L:" + tgtLineOfCode + System.lineSeparator();
-    onlyDeletedTypeOutput.append(removedComment).append(COLOR_DELETE).append(signatureSrcCD);
-    if (!onlyDeletedTypeBody.toString().isEmpty()) {
-      onlyDeletedTypeOutput.append(COLOR_DELETE).append("{ ").append(System.lineSeparator()).append(onlyDeletedTypeBody).append(COLOR_DELETE).append("}").append(System.lineSeparator());
+    // This is for 2.
+    onlyAddedSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutOnlyAddedAttributes = new StringBuilder();
+    outPutOnlyAddedAttributes.append(signatureSrcCD).append("{");
+    if (!onlyAddedSort.isEmpty()) {
+      for (Pair<Integer, String> x : onlyAddedSort) {
+        outPutOnlyAddedAttributes.append(System.lineSeparator()).append(x.b);
+      }
+      outPutOnlyAddedAttributes.append(System.lineSeparator()).append("}").append(System.lineSeparator());
     } else {
-      onlyDeletedTypeOutput.append(COLOR_DELETE).append("{}").append(System.lineSeparator());
+      outPutOnlyAddedAttributes.append("}").append(System.lineSeparator());
     }
-    removedType = onlyDeletedTypeOutput.toString();
+    this.outputAdded = outPutOnlyAddedAttributes;
 
-    String changedTypeComment = "//changed type, L:" + srcLineOfCode + System.lineSeparator();
-    outputChangedClass.append(changedTypeComment).append(signatureSrcCD);
-    if (!onlyChangedTypeBody.toString().isEmpty()) {
-      outputChangedClass.append("{ ").append(System.lineSeparator()).append(onlyChangedTypeBody).append("}").append(System.lineSeparator());
+    //--print deleted
+    // Two variants
+    // 1. We have full deleted class with all its attributes
+    // 2. We have an already existing class, but we want to show only its deleted attributes
+
+    // This is for 1.
+    onlyForNewlyDeletedTypes.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutOnlyNewlyDeletedTypes = new StringBuilder();
+    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(signatureTgtCD).append("{");
+    if (!onlyForNewlyDeletedTypes.isEmpty()) {
+      for (Pair<Integer, String> x : onlyForNewlyDeletedTypes) {
+        outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append(x.b);
+      }
+      outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append("}").append(System.lineSeparator());
     } else {
-      outputChangedClass.append("{}").append(System.lineSeparator());
+      outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append("}").append(System.lineSeparator());
     }
-    classPrint = outputChangedClass.toString();
+    this.outputNewlyDeleted = outPutOnlyNewlyDeletedTypes;
+
+    // This is for 2.
+    onlyDeletedSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutOnlyDeletedAttributes = new StringBuilder();
+    outPutOnlyDeletedAttributes.append(signatureTgtCD).append("{");
+    if (!onlyDeletedSort.isEmpty()) {
+      for (Pair<Integer, String> x : onlyDeletedSort) {
+        outPutOnlyDeletedAttributes.append(System.lineSeparator()).append(x.b);
+      }
+      outPutOnlyDeletedAttributes.append(System.lineSeparator()).append("}").append(System.lineSeparator());
+    } else {
+      outPutOnlyDeletedAttributes.append("}").append(System.lineSeparator());
+    }
+    this.outputDeleted = outPutOnlyDeletedAttributes;
+
+    //--print changed
+    onlyChangedSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutOnlyChanged = new StringBuilder();
+    outPutOnlyChanged.append(signatureSrcCD).append("{");
+    if (!onlyChangedSort.isEmpty()) {
+      for (Pair<Integer, String> x : onlyChangedSort) {
+        outPutOnlyChanged.append(System.lineSeparator()).append(x.b);
+      }
+      outPutOnlyChanged.append(System.lineSeparator()).append("}").append(System.lineSeparator());
+    } else {
+      outPutOnlyChanged.append("}").append(System.lineSeparator());
+    }
+    this.outputChanged = outPutOnlyChanged;
+
+    //--print diff
+    onlyDiffSort.sort(Comparator.comparing(p -> +p.a));
+    StringBuilder outPutOnlyDiff = new StringBuilder();
+    outPutOnlyDiff.append(signatureSrcCD).append("{");
+    if (!onlyDiffSort.isEmpty()) {
+      for (Pair<Integer, String> x : onlyDiffSort) {
+        outPutOnlyDiff.append(System.lineSeparator()).append(x.b);
+      }
+      outPutOnlyDiff.append(System.lineSeparator()).append("}").append(System.lineSeparator());
+    } else {
+      outPutOnlyDiff.append("}").append(System.lineSeparator());
+    }
+    this.outputDiff = outPutOnlyDiff;
   }
 
   //We use this method if we want to show only the added attributes
-  public String printIfAddedAttr() { return srcPrintOnlyAdded; }
+  public String printIfAddedAttr() { return outputAdded.toString(); }
   //We use this method if we want to show only the removed attributes
-  public String printIfRemovedAttr() { return tgtPrintOnlyRemoved; }
+  public String printIfRemovedAttr() { return outputDeleted.toString(); }
   //We use this method if we want to print the src class with its added and changed attributes
-  public String printSrcCD() { return srcPrint; }
+  public String printSrcCD() { return outputSrc.toString(); }
   //We use this method if we want to print the tgt class with its removed and changed attributes
-  public String printTgtCD() { return tgtPrint; }
+  public String printTgtCD() { return outputTgt.toString(); }
   //We use this method if we want to print a whole class which is newly added
-  public String printAddedType() { return addedType; }
+  public String printAddedType() { return outputNewlyAdded.toString(); }
   //We use this method if we want to print a whole class which is newly removed
-  public String printRemovedType() { return removedType; }
-  //We use this method if we want to print a class with its added, removed, and changed attributes
-  public String printChangedType() { return classPrint; }
+  public String printRemovedType() { return outputNewlyDeleted.toString(); }
+  //We use this method if we want to print a class with its added, removed, and changed attributes --print diff
+  public String printDiffType() { return outputDiff.toString(); }
+  //We use this method if we want to print a class only with its added and changed attributes --print changed
+  public String printChangedType() { return outputChanged.toString(); }
 }
