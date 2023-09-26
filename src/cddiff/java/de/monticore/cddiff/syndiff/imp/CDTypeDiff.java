@@ -44,10 +44,10 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   //Print end
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   private String
-    srcModifier, srcType, srcName, srcExtends, srcImplements, srcModifierNC, srcTypeNC, srcNameNC, srcExtendsNC, srcImplementsNC,
-    tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements, tgtModifierNC, tgtTypeNC, tgtNameNC, tgtExtendsNC, tgtImplementsNC,
-    srcPrint, tgtPrint, srcPrintOnlyAdded, tgtPrintOnlyRemoved, classPrint, addedType, removedType,
-    typeDiff;
+    srcModifier, srcType, srcName, srcExtends, srcImplements,
+    tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements;
+
+  public String modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete;
   //Print end
 
   public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
@@ -513,15 +513,17 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     CDNodeDiff<ASTModifier, ASTModifier> modifier = new CDNodeDiff<>(srcModifier, tgtModifier);
 
     srcModifier.ifPresent(initial -> this.srcModifier = getColorCode(modifier) + pp.prettyprint(srcType.getModifier()) + RESET);
+    srcModifier.ifPresent(initial -> this.modifierDelete = getColorCode(modifier) + pp.prettyprint(srcType.getModifier()) + RESET);
     tgtModifier.ifPresent(initial -> this.tgtModifier = getColorCode(modifier) + pp.prettyprint(tgtType.getModifier()) + RESET);
-
-    srcModifier.ifPresent(initial -> this.srcModifierNC = pp.prettyprint(srcType.getModifier()));
-    tgtModifier.ifPresent(initial -> this.tgtModifierNC = pp.prettyprint(tgtType.getModifier()));
 
     if (modifier.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_CLASS_MODIFIER)) {
         baseDiff.add(DiffTypes.CHANGED_CLASS_MODIFIER);
       }
+    }
+
+    if(modifier.findAction() == Actions.REMOVED){
+      this.modifierDelete = getColorCode(modifier) + pp.prettyprint(tgtType.getModifier()) + RESET;
     }
 
     // Name
@@ -535,8 +537,6 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
 
     this.srcName = getColorCode(className) + srcName.get().getName() + RESET;
     this.tgtName = getColorCode(className) + tgtName.get().getName() + RESET;
-    this.srcNameNC = srcName.get().getName() + RESET;
-    this.tgtNameNC = tgtName.get().getName() + RESET;
 
     if (className.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_CLASS_NAME)) {
@@ -544,17 +544,26 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
       }
     }
 
+    if(className.findAction() == Actions.REMOVED){
+      this.nameDelete = getColorCode(className) + tgtType.getName() + RESET;
+    } else {
+      this.nameDelete = getColorCode(className) + srcType.getName() + RESET;
+    }
+
     if ((srcType instanceof ASTCDClass) && (tgtType instanceof ASTCDClass)) {
-      this.srcType = this.srcTypeNC = "class";
-      this.tgtType = this.tgtTypeNC = "class";
+      this.srcType = "class";
+      this.tgtType = "class";
+      this.typeDelete = "class";
       createClassDiff((ASTCDClass) srcType, (ASTCDClass) tgtType);
     } else if (srcType instanceof ASTCDInterface && tgtType instanceof ASTCDInterface) {
-      this.srcType = this.srcTypeNC = "interface";
-      this.tgtType = this.tgtTypeNC = "interface";
+      this.srcType = "interface";
+      this.tgtType = "interface";
+      this.typeDelete = "interface";
       createInterfaceDiff((ASTCDInterface) srcType, (ASTCDInterface) tgtType);
     } else if (srcType instanceof ASTCDEnum && tgtType instanceof ASTCDEnum) {
-      this.srcType = this.srcTypeNC = "enum";
-      this.tgtType = this.tgtTypeNC = "enum";
+      this.srcType = "enum";
+      this.tgtType = "enum";
+      this.typeDelete = "enum";
       createEnumDiff((ASTCDEnum) srcType, (ASTCDEnum) tgtType);
     }
   }
@@ -579,14 +588,17 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     CDNodeDiff<ASTCDExtendUsage, ASTCDExtendUsage> extendedClassDiff = new CDNodeDiff<>(srcElemExtends, tgtElemExtends);
 
     srcElemExtends.ifPresent(initial -> srcExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
+    srcElemExtends.ifPresent(initial -> extendsDelete = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
     tgtElemExtends.ifPresent(initial -> tgtExtends = getColorCode(extendedClassDiff) + pp.prettyprint(initial) + RESET);
-    srcElemExtends.ifPresent(initial -> this.srcExtendsNC = pp.prettyprint(initial));
-    tgtElemExtends.ifPresent(initial -> this.tgtExtendsNC = pp.prettyprint(initial));
 
     if (extendedClassDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_EXTENDS)) {
         baseDiff.add(DiffTypes.CHANGED_TYPE_EXTENDS);
       }
+    }
+
+    if(extendedClassDiff.findAction() == Actions.REMOVED){
+      this.extendsDelete = getColorCode(extendedClassDiff) + pp.prettyprint(tgtElem.getCDExtendUsage()) + RESET;
     }
 
     // Implements
@@ -595,15 +607,17 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     CDNodeDiff<ASTMCObjectType, ASTMCObjectType> implementedClassDiff = new CDNodeDiff<>(srcElemImplements, tgtElemImplements);
 
     srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    srcElemImplements.ifPresent(inter -> implementsDelete = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
     tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
-    srcElemImplements.ifPresent(inter -> this.srcImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
-    tgtElemImplements.ifPresent(inter -> this.tgtImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
-
 
     if (implementedClassDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_IMPLEMENTS)) {
         baseDiff.add(DiffTypes.CHANGED_TYPE_IMPLEMENTS);
       }
+    }
+
+    if(implementedClassDiff.findAction() == Actions.REMOVED){
+      tgtElemImplements.ifPresent(inter -> implementsDelete = getColorCode(implementedClassDiff) + "implements " + pp.prettyprint(inter) + RESET);
     }
   }
 
@@ -616,13 +630,17 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
 
     srcElemExtends.ifPresent(initial -> srcExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
     tgtElemExtends.ifPresent(initial -> tgtExtends = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
-    srcElemExtends.ifPresent(initial -> this.srcExtendsNC = pp.prettyprint(initial));
-    tgtElemExtends.ifPresent(initial -> this.tgtExtendsNC = pp.prettyprint(initial));
 
     if (interfaceDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_EXTENDS)) {
         baseDiff.add(DiffTypes.CHANGED_TYPE_EXTENDS);
       }
+    }
+
+    if(interfaceDiff.findAction() == Actions.REMOVED){
+      tgtElemExtends.ifPresent(initial -> this.extendsDelete = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
+    } else {
+      srcElemExtends.ifPresent(initial -> this.extendsDelete = getColorCode(interfaceDiff) + pp.prettyprint(initial) + RESET);
     }
   }
 
@@ -634,13 +652,17 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
 
     srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
     tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
-    srcElemImplements.ifPresent(inter -> this.srcImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
-    tgtElemImplements.ifPresent(inter -> this.tgtImplementsNC = "implements " + pp.prettyprint(inter) + RESET);
 
     if (enumDiff.checkForAction()) {
       if(!baseDiff.contains(DiffTypes.CHANGED_TYPE_IMPLEMENTS)) {
         baseDiff.add(DiffTypes.CHANGED_TYPE_IMPLEMENTS);
       }
+    }
+
+    if(enumDiff.findAction() == Actions.REMOVED){
+      tgtElemImplements.ifPresent(inter -> tgtImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
+    } else {
+      srcElemImplements.ifPresent(inter -> srcImplements = getColorCode(enumDiff) + "implements " + pp.prettyprint(inter) + RESET);
     }
   }
 
@@ -689,9 +711,8 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     List<Pair<Integer, String>> onlyForNewlyDeletedTypes = new ArrayList<>();
 
     String signatureSrcCD = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
-    String signatureSrcCDNC = insertSpaceBetweenStrings(Arrays.asList(srcModifierNC, srcTypeNC, srcNameNC, srcExtendsNC, srcImplementsNC));
     String signatureTgtCD = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
-    String signatureTgtCDNC = insertSpaceBetweenStrings(Arrays.asList(tgtModifierNC, tgtTypeNC, tgtNameNC, tgtExtendsNC, tgtImplementsNC));
+    String signatureDiff = insertSpaceBetweenStrings(Arrays.asList(modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete));
 
     if (!addedAttributes.isEmpty()) {
       for (ASTCDAttribute x : addedAttributes) {
@@ -821,12 +842,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     // This is for 1.
     onlyForNewlyAddedTypes.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyNewlyAddedTypes = new StringBuilder();
-    outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append(signatureSrcCD).append("{");
+    outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append(signatureSrcCD).append(COLOR_ADD).append("{");
     if (!onlyForNewlyAddedTypes.isEmpty()) {
       for (Pair<Integer, String> x : onlyForNewlyAddedTypes) {
         outPutOnlyNewlyAddedTypes.append(System.lineSeparator()).append(x.b);
       }
-      outPutOnlyNewlyAddedTypes.append(System.lineSeparator()).append("}").append(System.lineSeparator());
+      outPutOnlyNewlyAddedTypes.append(System.lineSeparator()).append(COLOR_ADD).append("}").append(System.lineSeparator());
     } else {
       outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append("}").append(System.lineSeparator());
     }
@@ -854,12 +875,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     // This is for 1.
     onlyForNewlyDeletedTypes.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyNewlyDeletedTypes = new StringBuilder();
-    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(signatureTgtCD).append("{");
+    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(signatureTgtCD).append(COLOR_DELETE).append("{");
     if (!onlyForNewlyDeletedTypes.isEmpty()) {
       for (Pair<Integer, String> x : onlyForNewlyDeletedTypes) {
         outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append(x.b);
       }
-      outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append("}").append(System.lineSeparator());
+      outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append(COLOR_DELETE).append("}").append(System.lineSeparator());
     } else {
       outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append("}").append(System.lineSeparator());
     }
@@ -879,10 +900,13 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
     this.outputDeleted = outPutOnlyDeletedAttributes;
 
+    String comment = "//changed type, L: " + srcLineOfCode + System.lineSeparator();
+
     //--print changed
     onlyChangedSort.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyChanged = new StringBuilder();
-    outPutOnlyChanged.append(signatureSrcCD).append("{");
+
+    outPutOnlyChanged.append(comment).append(signatureSrcCD).append("{");
     if (!onlyChangedSort.isEmpty()) {
       for (Pair<Integer, String> x : onlyChangedSort) {
         outPutOnlyChanged.append(System.lineSeparator()).append(x.b);
@@ -896,7 +920,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     //--print diff
     onlyDiffSort.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyDiff = new StringBuilder();
-    outPutOnlyDiff.append(signatureSrcCD).append("{");
+    outPutOnlyDiff.append(comment).append(signatureDiff).append("{");
     if (!onlyDiffSort.isEmpty()) {
       for (Pair<Integer, String> x : onlyDiffSort) {
         outPutOnlyDiff.append(System.lineSeparator()).append(x.b);

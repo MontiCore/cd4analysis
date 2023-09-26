@@ -252,21 +252,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testType1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    ASTCDClass astcdClass11 = CDTestHelper.getClass("A", src.getCDDefinition());
-    ASTCDClass astcdClass12 = CDTestHelper.getClass("A", tgt.getCDDefinition());
-    ASTCDClass astcdClass21 = CDTestHelper.getClass("M", src.getCDDefinition());
-    ASTCDClass astcdClass22 = CDTestHelper.getClass("M", tgt.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
 
-    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
-    //System.out.println(syntaxDiff.printDiff());
-
-    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass11, astcdClass12, tgt);
-    System.out.println(typeDiff.printDiffType());
-
-    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt);
-    System.out.println(typeDiff2.printDiffType());
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
+    System.out.println(syntaxDiff.printDiff());
   }
 
   //Tests for all kinds of changes in enum constants

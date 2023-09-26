@@ -595,21 +595,21 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
   private void setStrings() {
 
     // Build Source String
-    srcAssoc = "//new, L:" + srcLineOfCode + System.lineSeparator() +
+    srcAssoc = "//new, L: " + srcLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStrings(
         Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality));
 
     // Build Target String
-    tgtAssoc = "//old, L:" + tgtLineOfCode + System.lineSeparator() +
+    tgtAssoc = "//old, L: " + tgtLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStrings(
         Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality));
 
-    srcAssocAdded =  "//added association, L:" + srcLineOfCode + System.lineSeparator() +
+    srcAssocAdded =  "//added association, L: " + srcLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStringsAndGreen(
         Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality)) + System.lineSeparator();
 
     // Build Target String
-    tgtAssocDeleted = "//removed association, L:" + tgtLineOfCode + System.lineSeparator() +
+    tgtAssocDeleted = "//removed association, L: " + tgtLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStringsAndRed(
         Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality)) + System.lineSeparator();
 
