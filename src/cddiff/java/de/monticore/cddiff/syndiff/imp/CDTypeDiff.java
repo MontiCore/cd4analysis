@@ -718,13 +718,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     if (!deletedAttributes.isEmpty()) {
       for (ASTCDAttribute x : deletedAttributes) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
-        String comment = "";
-        if(inheritedAttributes.contains(x)){
-          comment = "//moved attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
-        } else{
-          comment = "//deleted attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
-        }
-        //String comment = "//deleted attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String comment = "//deleted attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
         String tmp = comment + diff.printRemovedMember() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
