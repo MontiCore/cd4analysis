@@ -259,8 +259,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
-    System.out.println(syntaxDiff.printDiff());
+    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
+    //System.out.println(syntaxDiff.printDiff());
+
+    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass11, astcdClass12, tgt);
+    System.out.println(typeDiff.printChangedType());
   }
 
   //Tests for all kinds of changes in enum constants
