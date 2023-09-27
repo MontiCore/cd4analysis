@@ -36,9 +36,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    diff.getHelper().setMaps();
-    diff.findOverlappingAssocs();
 //    ASTCDClass a = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
 //    ASTCDClass a1 = CDTestHelper.getClass("A1", compilationUnitNew.getCDDefinition());
 //    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
@@ -119,29 +116,41 @@ public class TestMax extends CDDiffTestBasis {
 
   @Test
   public void test10() {
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
+    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
+    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
-    diff.findOverlappingAssocs();
-    TestHelper testHelper = new TestHelper(diff);
-    for (CDAssocDiff association : diff.getChangedAssocs()){
-      System.out.println(getConnectedClasses(association.getSrcElem(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(association.getSrcElem(), diff.getSrcCD()).b.getName());
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+
+
+    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+
+//    for (ASTODArtifact od : witnesses) {
+//      Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//    }
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
     }
-    for (CDTypeDiff typeDiff : diff.getChangedTypes()){
-      System.out.println(typeDiff.getSrcElem().getName());
-    }
-//    testHelper.staDiff();
-//    testHelper.deletedAssocs();
-//    testHelper.srcExistsTgtNot();
-//    testHelper.changedTypes();
-//    testHelper.inheritanceDiffs();
-//    testHelper.changedAssocs();
-//    testHelper.addedConstants();
-//    testHelper.addedClasses();
-//    testHelper.addedAssocs();
-  }
+
+    // reduction-based
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(cd1, cd2);
+
+//    for (ASTODArtifact od : witnesses) {
+//      if (!new OD2CDMatcher()
+//        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+//        System.out.println("Open World Fail");
+//        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//        Assertions.fail();
+//      }
+//    }
+}
 
   @Test
   public void test15() {
@@ -420,7 +429,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -449,7 +457,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -472,7 +479,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -495,7 +501,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -523,7 +528,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -551,7 +555,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -584,7 +587,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -612,7 +614,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
 
@@ -640,7 +641,6 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    diff.getHelper().setMaps();
 
     DiffWitnessGenerator odHelper = new DiffWitnessGenerator();
 
@@ -657,39 +657,6 @@ public class TestMax extends CDDiffTestBasis {
   }
 
   @Test
-  public void testTest(){
-    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/TEST1.cd");
-    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/TEST2.cd");
-
-    ASTCDCompilationUnit original1 = cd1.deepClone();
-    ASTCDCompilationUnit original2 = cd2.deepClone();
-
-
-    // reduction-based
-    ReductionTrafo trafo = new ReductionTrafo();
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    trafo.transform(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
-
-    for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
-        System.out.println("Closed World Fail");
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
-      }
-    }
-
-//    for (ASTODArtifact od : witnesses) {
-//      if (!new OD2CDMatcher()
-//        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-//        System.out.println("Open World Fail");
-//        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-//        Assertions.fail();
-//      }
-//    }
-  }
-
-  @Test
   public void testSem2OD(){
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
@@ -699,9 +666,8 @@ public class TestMax extends CDDiffTestBasis {
 
 
     // reduction-based
-    ReductionTrafo trafo = new ReductionTrafo();
+
     DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    trafo.transform(cd1, cd2);
     List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
 
 //    for (ASTODArtifact od : witnesses) {
@@ -716,6 +682,8 @@ public class TestMax extends CDDiffTestBasis {
       }
     }
 
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(cd1, cd2);
 //    for (ASTODArtifact od : witnesses) {
 //      if (!new OD2CDMatcher()
 //        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {

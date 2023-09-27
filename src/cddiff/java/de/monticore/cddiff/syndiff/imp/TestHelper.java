@@ -161,7 +161,8 @@ public class TestHelper {
       if (assocDiffStruc.isChangedDir()) {
         comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
       }
-      if (!assocDiffStruc.getChangedCard().isEmpty()) {
+      if (assocDiffStruc.getChangedCard() != null
+        && !assocDiffStruc.getChangedCard().isEmpty()) {
         comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
       }
       if (assocDiffStruc.getChangedRoleNames() != null
