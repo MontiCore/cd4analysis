@@ -1471,6 +1471,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
         for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
           if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
             matchedAssocs.add(new Pair<>(srcAssoc, tgtAssoc));
+            break;
           }
         }
       }

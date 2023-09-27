@@ -287,7 +287,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   //Syntax Diff Tests
 
   public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/";
-  public static final String pathDir = "src/cddifftest/resources/validation/cd4analysis/";
+  public static final String pathDir = "src/cddifftest/resources/validation/Performance/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
 
@@ -323,25 +323,12 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
   @Test
   public void testSyntax3() {
-    parseModels("Source4.cd", "Target4.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printDiff());
-  }
-
-  @Test
-  public void testSyntax4() {
-    parseMaxModels("ManagementV1.cd", "ManagementV2.cd");
+    parseMaxModels("10A.cd", "10B.cd");
 
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-
-    System.out.println(syntaxDiff.getChangedTypes().get(0).getChangedMembers());
-    System.out.println("-----------------------------");
-    System.out.println(syntaxDiff.printOnlyChanged());
-    System.out.println("-----------------------------");
     System.out.println(syntaxDiff.printDiff());
   }
 

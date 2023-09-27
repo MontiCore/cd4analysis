@@ -595,12 +595,12 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
   private void setStrings() {
 
     // Build Source String
-    srcAssoc = "//new, L: " + srcLineOfCode + System.lineSeparator() +
+    srcAssoc = "\t" + "//new, L: " + srcLineOfCode + System.lineSeparator() + "\t" +
       insertSpaceBetweenStrings(
         Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality));
 
     // Build Target String
-    tgtAssoc = "//old, L: " + tgtLineOfCode + System.lineSeparator() +
+    tgtAssoc = "\t" + "//old, L: " + tgtLineOfCode + System.lineSeparator() + "\t" +
       insertSpaceBetweenStrings(
         Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality));
 

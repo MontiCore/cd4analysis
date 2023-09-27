@@ -40,14 +40,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
 
   //Print
-  protected StringBuilder outputSrc,outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff, outputNewlyAdded, outputNewlyDeleted;
-  //Print end
+  private StringBuilder outputSrc,outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff, outputNewlyAdded, outputNewlyDeleted;
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   private String
     srcModifier, srcType, srcName, srcExtends, srcImplements,
     tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements;
-
-  public String modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete;
+  private String modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete;
   //Print end
 
   public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
@@ -127,11 +125,11 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   public void setDeletedConstants(List<ASTCDEnumConstant> deletedConstants) { this.deletedConstants = deletedConstants; }
   @Override
   public List<Pair<ASTCDAttribute, ASTCDAttribute>> getMatchedAttributes() {
-    return null;
+    return matchedAttributes;
   }
   @Override
   public List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants() {
-    return null;
+    return matchedConstants;
   }
   @Override
   public List<DiffTypes> getBaseDiff() {
@@ -344,7 +342,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   public void loadAllChangedMembers() {
     for(Pair<ASTCDAttribute,ASTCDAttribute> x : matchedAttributes){
       CDMemberDiff diffAttribute = new CDMemberDiff(x.a, x.b);
-      if(diffAttribute.getBaseDiff() != null) {
+      if(!diffAttribute.getBaseDiff().isEmpty()) {
         changedMembers.add(diffAttribute);
         baseDiff.addAll(diffAttribute.getBaseDiff());
       }
@@ -711,7 +709,9 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     List<Pair<Integer, String>> onlyForNewlyDeletedTypes = new ArrayList<>();
 
     String signatureSrcCD = insertSpaceBetweenStrings(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
+    String signatureSrcCDAddedClass = insertSpaceBetweenStringsAndGreen(Arrays.asList(srcModifier, srcType, srcName, srcExtends, srcImplements));
     String signatureTgtCD = insertSpaceBetweenStrings(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
+    String signatureTgtCDDeletedClass = insertSpaceBetweenStringsAndRed(Arrays.asList(tgtModifier, tgtType, tgtName, tgtExtends, tgtImplements));
     String signatureDiff = insertSpaceBetweenStrings(Arrays.asList(modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete));
 
     if (!addedAttributes.isEmpty()) {
@@ -839,10 +839,11 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     // 1. We have newly added class with all its attributes
     // 2. We have an already existing class, but we want to show only its added attributes
 
+    String addedComment = "//added type, L: " + srcLineOfCode + System.lineSeparator();
     // This is for 1.
     onlyForNewlyAddedTypes.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyNewlyAddedTypes = new StringBuilder();
-    outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append(signatureSrcCD).append(COLOR_ADD).append("{");
+    outPutOnlyNewlyAddedTypes.append(COLOR_ADD).append(addedComment).append(COLOR_ADD).append(signatureSrcCDAddedClass).append(COLOR_ADD).append("{");
     if (!onlyForNewlyAddedTypes.isEmpty()) {
       for (Pair<Integer, String> x : onlyForNewlyAddedTypes) {
         outPutOnlyNewlyAddedTypes.append(System.lineSeparator()).append(x.b);
@@ -875,7 +876,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     // This is for 1.
     onlyForNewlyDeletedTypes.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyNewlyDeletedTypes = new StringBuilder();
-    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(signatureTgtCD).append(COLOR_DELETE).append("{");
+    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(signatureTgtCDDeletedClass).append(COLOR_DELETE).append("{");
     if (!onlyForNewlyDeletedTypes.isEmpty()) {
       for (Pair<Integer, String> x : onlyForNewlyDeletedTypes) {
         outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append(x.b);
