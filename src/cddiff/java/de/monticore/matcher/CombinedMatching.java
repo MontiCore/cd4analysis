@@ -45,7 +45,13 @@ public class CombinedMatching<T> {
       List<T> foundSource = new ArrayList<>();
       List<T> foundTarget = new ArrayList<>();
       listWithAllWeights.sort(Comparator.comparing(p -> -p.c));
-
+      for(Triple<T,T,Double> x : listWithAllWeights){
+        if(x.a.equals(x.b)){
+          map1.put(x.a,x.b);
+          foundSource.add(x.a);
+          foundTarget.add(x.b);
+        }
+      }
 
       for(Triple<T,T,Double> x : listWithAllWeights){
         if(!foundSource.contains(x.a) && !foundTarget.contains(x.b)){
@@ -124,7 +130,7 @@ public class CombinedMatching<T> {
   public Double computeValueForMatching(T srcElem, T tgtElem){
     double weight = 0;
     if(srcElem instanceof ASTCDType){
-      if(((ASTCDType) srcElem).getName().equals(((ASTCDType) tgtElem).getName())){
+      /*if(((ASTCDType) srcElem).getName().equals(((ASTCDType) tgtElem).getName())){
         weight += ((ASTCDType) srcElem).getCDAttributeList().size() + 1;
         //tova nqma da raboti samo v sluchai ako stariqt klas e preimenuvan, syotvetno
         //trqbva da go matchnem po struktura, no v novata diagrama ima drug klas koito
@@ -133,8 +139,7 @@ public class CombinedMatching<T> {
         //no go pravim taka zashtoto inache moje da sa iztriti vsichki atributi v novata diagrama, no imeto da ostane syshtoto
         //no da se match-ne s drug klas s koito ne trqbva da se match-va, no s nego imat nad 10 attributa obshti syotvetno
         //strukturata izprevarva imeto
-      }
-
+      }*/
       for(ASTCDAttribute x : ((ASTCDType) srcElem).getCDAttributeList()){
         for(ASTCDAttribute y : ((ASTCDType) tgtElem).getCDAttributeList()){
           if(x.getName().equals(y.getName())){
