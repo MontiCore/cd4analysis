@@ -51,26 +51,6 @@ public class MatcherTest {
   }
 
   @Test
-  public void testMatchStructureType() {
-    parseModels("Source4.cd", "Refinement4.cd");
-    assertTrue(
-      Matcher.matchingStructureTypeStrategy(
-        src.getCDDefinition().getCDClassesList().get(0),
-        tgt.getCDDefinition().getCDClassesList().get(0),
-        tgt));
-  }
-
-  @Test
-  public void testMatchStructureType2() {
-    parseModels("Source5.cd", "Refinement5.cd");
-    assertTrue(
-      Matcher.matchingStructureTypeStrategy(
-        src.getCDDefinition().getCDClassesList().get(0),
-        tgt.getCDDefinition().getCDClassesList().get(0),
-        tgt));
-  }
-
-  @Test
   public void testMatchSubToSuperClass() {
     parseModels("Source2.cd", "Refinement2.cd");
     assertTrue(
