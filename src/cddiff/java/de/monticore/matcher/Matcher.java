@@ -22,14 +22,6 @@ public class Matcher {
     return nameTypeMatch.isMatched(srcElem, tgtElem);
   }
 
-  public static boolean matchingStructureTypeStrategy(
-      ASTCDType srcElem,
-      ASTCDType tgtElem,
-      ASTCDCompilationUnit tgtCD) {
-    StructureTypeMatcher structureTypeMatcher = new StructureTypeMatcher(tgtCD);
-    return structureTypeMatcher.isMatched(srcElem, tgtElem);
-  }
-
   public static boolean matchingAssocSubToSuperClass(
       ASTCDType srcElem,
       ASTCDType tgtElem,

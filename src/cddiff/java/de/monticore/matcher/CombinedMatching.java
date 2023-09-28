@@ -5,6 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import edu.mit.csail.sdg.alloy4.Pair;
+import org.antlr.v4.runtime.misc.Triple;
 
 import java.util.*;
 
@@ -13,49 +14,65 @@ public class CombinedMatching<T> {
   //A list with all matching strategies
   //Tuk zavisi dali izpolzvame za assocs ili za types
   List<MatchingStrategy<T>> matcherList = new ArrayList<>();
+  Map<T,T> map1 = new HashMap<>();
+  List<T> cd2Matched = new ArrayList<>();
+  //List<Pair<Pair<T,T>,Double>> listWithAllWeights = new ArrayList<>();
+  List<Triple<T,T,Double>> listWithAllWeights = new ArrayList<>();
+  boolean somethingWasChanged;
+  List<T> cd1ToMatch;
+  public CombinedMatching(List<T> listToMatch){
+    this.cd1ToMatch = listToMatch;
+    fillUpWeightList();
+    getMatchMap();
+    while(somethingWasChanged){
+      getMatchMap();
+    }
+  }
 
-  List<T> listWithAllEligableMatchingCandidates = new ArrayList<>();
-  //Syzdavame Map
-  //Kato input vzimame lista s neshta ot cd1 deto trqbva ada match-nem
-  Map<T,T> getMatchMap(List<T> cd1ToMatch) {
-    Map<T,T> map1 = new HashMap<T,T>();
-    List<T> cd2Matched = new ArrayList<>();
-    List<Pair<Pair<T,T>,Double>> listWithAllWeights = new ArrayList<>();
-
-      for(T srcElem : cd1ToMatch){
-        //Pylnim i osigurqvame ListWithValues
-        for (MatchingStrategy<T> matcher : matcherList) {
-          List<T> matchingElementsFromTgtCD = new ArrayList<>(matcher.getMatchedElements(srcElem));
-          for(T matchingElem : matchingElementsFromTgtCD) {
-            double weightValue = computeValueForMatching(srcElem, matchingElem);
-            listWithAllWeights.add(new Pair<>(new Pair<>(srcElem, matchingElem), weightValue));
-          }
+  public void fillUpWeightList(){
+    for(T srcElem : cd1ToMatch){
+      //Pylnim i osigurqvame listWithAllWeights
+      for (MatchingStrategy<T> matcher : matcherList) {
+        List<T> matchingElementsFromTgtCD = new ArrayList<>(matcher.getMatchedElements(srcElem));
+        for(T matchingElem : matchingElementsFromTgtCD) {
+          double weightValue = computeValueForMatching(srcElem, matchingElem);
+          listWithAllWeights.add(new Triple<>(srcElem, matchingElem, weightValue));
         }
       }
+    }
+  }
+
+  //Syzdavame Map
+  //Kato input vzimame lista s neshta ot cd1 deto trqbva ada match-nem
+  Map<T,T> getMatchMap() {
+      somethingWasChanged = false;
 
       for(T srcElem : cd1ToMatch){
         //Vzimame chastta ot ListWithValues, koqto se otnasq za current srcElem
-        List<Pair<Pair<T,T>,Double>> listWithAllWeightsForCurrentClass = new ArrayList<>();
-        List<Pair<Pair<T,T>,Double>> listWithAllWeightsForOtherClasses = new ArrayList<>();
-        for(Pair<Pair<T,T>,Double> x : listWithAllWeights){
-          if(x.a.a.equals(srcElem)){
-            listWithAllWeightsForCurrentClass.add(new Pair<>(new Pair<>(x.a.a, x.a.b),x.b));
+        //List<Pair<Pair<T,T>,Double>> listWithAllWeightsForCurrentClass = new ArrayList<>();
+        List<Triple<T,T,Double>> listWithAllWeightsForCurrentClass = new ArrayList<>();
+        //List<Pair<Pair<T,T>,Double>> listWithAllWeightsForOtherClasses = new ArrayList<>();
+        List<Triple<T,T,Double>> listWithAllWeightsForOtherClasses = new ArrayList<>();
+        for(Triple<T,T,Double> x : listWithAllWeights){
+          if(x.a.equals(srcElem)){
+            listWithAllWeightsForCurrentClass.add(new Triple<>(x.a,x.b,x.c));
           } else {
-            listWithAllWeightsForOtherClasses.add(new Pair<>(new Pair<>(x.a.a, x.a.b),x.b));
+            listWithAllWeightsForOtherClasses.add(new Triple<>(x.a,x.b,x.c));
           }
         }
 
-        listWithAllWeightsForCurrentClass.sort(Comparator.comparing(p -> +p.b));
-        T tmp = listWithAllWeightsForCurrentClass.get(0).a.b;
-        double tmpWeight = listWithAllWeightsForCurrentClass.get(0).b;
+        listWithAllWeightsForCurrentClass.sort(Comparator.comparing(p -> -p.c));
+        T tmp = listWithAllWeightsForCurrentClass.get(0).b;
+        double tmpWeight = listWithAllWeightsForCurrentClass.get(0).c;
         boolean notFoundBiggerValue = true;
-        for(Pair<Pair<T,T>,Double> x : listWithAllWeightsForOtherClasses){
-          if(tmp.equals(x.a.b)){
-            if(tmpWeight < x.b){
+        for(Triple<T,T,Double> x : listWithAllWeightsForOtherClasses){
+          if(tmp.equals(x.b)){
+            if(tmpWeight < x.c){
               notFoundBiggerValue = false;
             }
           }
         }
+
         if(!notFoundBiggerValue){
           break;
         } else {
@@ -63,7 +80,8 @@ public class CombinedMatching<T> {
             cd2Matched.add(tmp);
             cd1ToMatch.remove(srcElem);
             map1.put(srcElem, tmp);
-            listWithAllWeights.removeIf(x -> x.a.a.equals(listWithAllWeightsForCurrentClass.get(0).a.a));
+            listWithAllWeights.removeIf(x -> x.a.equals(listWithAllWeightsForCurrentClass.get(0).a));
+            somethingWasChanged = true;
           } else {
             break;
           }
@@ -98,7 +116,14 @@ public class CombinedMatching<T> {
     double weight = 0;
     if(srcElem instanceof ASTCDType){
       if(((ASTCDType) srcElem).getName().equals(((ASTCDType) tgtElem).getName())){
-        weight += 1;
+        weight += ((ASTCDType) srcElem).getCDAttributeList().size() + 1;
+        //tova nqma da raboti samo v sluchai ako stariqt klas e preimenuvan, syotvetno
+        //trqbva da go matchnem po struktura, no v novata diagrama ima drug klas koito
+        //se kazva po syshtiq nachin po koito nashiqt originalen klas se e kazval pyrvonachalno
+
+        //no go pravim taka zashtoto inache moje da sa iztriti vsichki atributi v novata diagrama, no imeto da ostane syshtoto
+        //no da se match-ne s drug klas s koito ne trqbva da se match-va, no s nego imat nad 10 attributa obshti syotvetno
+        //strukturata izprevarva imeto
       }
 
       for(ASTCDAttribute x : ((ASTCDType) srcElem).getCDAttributeList()){
