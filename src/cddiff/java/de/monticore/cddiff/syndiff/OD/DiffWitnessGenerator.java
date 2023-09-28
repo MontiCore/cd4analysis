@@ -677,7 +677,10 @@ public class DiffWitnessGenerator {
         return typeObjectsSrc.get(0);
       }
     }
-    for (ASTODObject object : typeObjects) {
+    List<ASTODObject> listToIterate = new ArrayList<>();
+    listToIterate.addAll(typeObjects);
+    listToIterate.addAll(typeObjectsSrc);
+    for (ASTODObject object : listToIterate) {
       boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)) {
         if (assocStruct.getSide().equals(ClassSide.Left) //not-searched class of assocStruc on the left side
@@ -726,13 +729,10 @@ public class DiffWitnessGenerator {
           break;
         }
       }
-      if (!matched) {
-        return object;
+      if (matched){
+        //go to next object
+        continue;
       }
-      typeObjectsSrc.remove(object);
-    }
-    for (ASTODObject object : typeObjectsSrc){
-      boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)){
         if (assocStruct.getSide().equals(ClassSide.Left)//not-searched class on the left side
           && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
@@ -847,7 +847,10 @@ public class DiffWitnessGenerator {
           }
         }
       }
-      for (ASTODObject subObject : objectsOfType) {
+      List<ASTODObject> listToIterate = new ArrayList<>();
+      listToIterate.addAll(objectsOfType);
+      listToIterate.addAll(objectsOfTypeSrc);
+      for (ASTODObject subObject : listToIterate) {
         boolean matched = false;
         for (Pair<AssocStruct, ClassSide> subAssocStruct : tgtMap.get(subObject)) {
           if (assocStruct.getSide().equals(ClassSide.Left)//not-searched class of assocStruc on the left side
@@ -892,13 +895,9 @@ public class DiffWitnessGenerator {
             break;
           }
         }
-        if (!matched) {
-          return subObject;
+        if (matched){
+          continue;
         }
-        objectsOfTypeSrc.remove(subObject);
-      }
-      for (ASTODObject subObject : objectsOfTypeSrc){
-        boolean matched = false;
         for (Pair<AssocStruct, ClassSide> subAssocStruct : srcMap.get(subObject)){
           if (assocStruct.getSide().equals(ClassSide.Left)//not-searched class of assocStruc on the left side
             && subAssocStruct.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
@@ -949,7 +948,10 @@ public class DiffWitnessGenerator {
     for (ASTCDClass subClass : subClasses) {
       List<ASTODObject> objectsOfType = getObjectsOfType(subClass, srcMap);
       List<ASTODObject> objectsOfTypeTgt = getObjectsOfType(subClass, tgtMap);
-      for (ASTODObject subObject : objectsOfType) {
+      List<ASTODObject> listToIterate = new ArrayList<>();
+      listToIterate.addAll(objectsOfType);
+      listToIterate.addAll(objectsOfTypeTgt);
+      for (ASTODObject subObject : listToIterate) {
         for (AssocStruct assocStructFromCLass : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), subObject.getMCObjectType().printType()))) {
           if (helper.isSubAssociation(assocStruct, assocStructFromCLass)) {
             assocStruct = assocStructFromCLass;
@@ -1022,13 +1024,9 @@ public class DiffWitnessGenerator {
             break;
           }
         }
-        if (!matched) {
-          return subObject;
+        if (matched) {
+          continue;
         }
-        objectsOfTypeTgt.remove(subObject);
-      }
-      for (ASTODObject subObject : objectsOfTypeTgt){
-        boolean matched = false;
         for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(subObject)) {
           if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
             && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
@@ -1122,7 +1120,10 @@ public class DiffWitnessGenerator {
         return typeObjects.get(0);
       }
     }
-    for (ASTODObject object : typeObjects) {
+    List<ASTODObject> listToIterate = new ArrayList<>();
+    listToIterate.addAll(typeObjects);
+    listToIterate.addAll(typeObjectsTgt);
+    for (ASTODObject object : listToIterate) {
       boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)) {
         if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
@@ -1171,13 +1172,9 @@ public class DiffWitnessGenerator {
           break;
         }
       }
-      if (!matched) {
-        return object;
+      if (matched) {
+        continue;
       }
-      typeObjectsTgt.remove(object);
-    }
-    for (ASTODObject object : typeObjectsTgt) {
-      boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)) {
         if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
           && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
@@ -1228,7 +1225,6 @@ public class DiffWitnessGenerator {
       if (!matched) {
         return object;
       }
-
     }
     return null;
   }
