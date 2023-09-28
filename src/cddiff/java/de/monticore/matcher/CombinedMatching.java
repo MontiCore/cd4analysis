@@ -2,9 +2,7 @@ package de.monticore.matcher;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import edu.mit.csail.sdg.alloy4.Pair;
 import org.antlr.v4.runtime.misc.Triple;
 
 import java.util.*;
@@ -14,22 +12,20 @@ public class CombinedMatching<T> {
   //A list with all matching strategies
   //Tuk zavisi dali izpolzvame za assocs ili za types
   List<MatchingStrategy<T>> matcherList = new ArrayList<>();
-  Map<T,T> map1 = new HashMap<>();
-  List<T> cd2Matched = new ArrayList<>();
-  //List<Pair<Pair<T,T>,Double>> listWithAllWeights = new ArrayList<>();
   List<Triple<T,T,Double>> listWithAllWeights = new ArrayList<>();
-  boolean somethingWasChanged;
+  Map<T,T> finalMap;
   List<T> cd1ToMatch;
   public CombinedMatching(List<T> listToMatch){
     this.cd1ToMatch = listToMatch;
     fillUpWeightList();
     getMatchMap();
-    while(somethingWasChanged){
-      getMatchMap();
-    }
   }
 
-  public void fillUpWeightList(){
+  public Map<T,T> getFinalMap(){
+    return finalMap;
+  }
+
+  private void fillUpWeightList(){
     for(T srcElem : cd1ToMatch){
       //Pylnim i osigurqvame listWithAllWeights
       for (MatchingStrategy<T> matcher : matcherList) {
@@ -44,8 +40,21 @@ public class CombinedMatching<T> {
 
   //Syzdavame Map
   //Kato input vzimame lista s neshta ot cd1 deto trqbva ada match-nem
-  Map<T,T> getMatchMap() {
-      somethingWasChanged = false;
+  private void getMatchMap() {
+      Map<T,T> map1 = new HashMap<>();
+      List<T> foundSource = new ArrayList<>();
+      List<T> foundTarget = new ArrayList<>();
+      listWithAllWeights.sort(Comparator.comparing(p -> -p.c));
+
+
+      for(Triple<T,T,Double> x : listWithAllWeights){
+        if(!foundSource.contains(x.a) && !foundTarget.contains(x.b)){
+          map1.put(x.a,x.b);
+          foundSource.add(x.a);
+          foundTarget.add(x.b);
+        }
+      }
+      /*somethingWasChanged = false;
 
       for(T srcElem : cd1ToMatch){
         //Vzimame chastta ot ListWithValues, koqto se otnasq za current srcElem
@@ -86,7 +95,7 @@ public class CombinedMatching<T> {
             break;
           }
         }
-      }
+      }*/
       /*for (T srcElem : cd1ToMatch) {
         listWithAllEligableMatchingCandidates.addAll(matcher.getMatchedElements(srcElem));
         List<Pair<Integer, T>> valuesForMatchingCandidates = new ArrayList<>();
@@ -109,7 +118,7 @@ public class CombinedMatching<T> {
           // cd2Matched.add(matcherList.get(0));
         }
       }*/
-    return map1;
+      this.finalMap = map1;
   }
 
   public Double computeValueForMatching(T srcElem, T tgtElem){
