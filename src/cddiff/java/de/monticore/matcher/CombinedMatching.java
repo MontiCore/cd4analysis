@@ -3,9 +3,13 @@ package de.monticore.matcher;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import org.antlr.v4.runtime.misc.Triple;
 
 import java.util.*;
+
+import static com.google.common.collect.Sets.intersection;
+
 
 public class CombinedMatching<T> {
 
@@ -130,30 +134,16 @@ public class CombinedMatching<T> {
   public Double computeValueForMatching(T srcElem, T tgtElem){
     double weight = 0;
     if(srcElem instanceof ASTCDType){
-      /*if(((ASTCDType) srcElem).getName().equals(((ASTCDType) tgtElem).getName())){
-        weight += ((ASTCDType) srcElem).getCDAttributeList().size() + 1;
-        //tova nqma da raboti samo v sluchai ako stariqt klas e preimenuvan, syotvetno
-        //trqbva da go matchnem po struktura, no v novata diagrama ima drug klas koito
-        //se kazva po syshtiq nachin po koito nashiqt originalen klas se e kazval pyrvonachalno
+        Set<ASTCDAttribute> tgtAttr = new HashSet<>(((ASTCDType) tgtElem).getCDAttributeList());
+        Set<ASTCDAttribute> srcAttr = new HashSet<>(((ASTCDType) srcElem).getCDAttributeList());
 
-        //no go pravim taka zashtoto inache moje da sa iztriti vsichki atributi v novata diagrama, no imeto da ostane syshtoto
-        //no da se match-ne s drug klas s koito ne trqbva da se match-va, no s nego imat nad 10 attributa obshti syotvetno
-        //strukturata izprevarva imeto
-      }*/
-      for(ASTCDAttribute x : ((ASTCDType) srcElem).getCDAttributeList()){
-        for(ASTCDAttribute y : ((ASTCDType) tgtElem).getCDAttributeList()){
-          if(x.getName().equals(y.getName())){
-            weight += 0.1;
-          }
-        }
-      }
-    }
-
-    if(srcElem instanceof ASTCDAssociation){
-      if(((ASTCDAssociation) srcElem).getName().equals(((ASTCDAssociation) tgtElem).getName())){
-        weight += 1;
-      }
+        Set<ASTCDAttribute> allAttributes = new HashSet<>();
+        allAttributes.addAll(tgtAttr);
+        allAttributes.addAll(srcAttr);
+        srcAttr.retainAll(tgtAttr);
+        weight += (double) srcAttr.size() / allAttributes.size();
     }
     return weight;
   }
+
 }
