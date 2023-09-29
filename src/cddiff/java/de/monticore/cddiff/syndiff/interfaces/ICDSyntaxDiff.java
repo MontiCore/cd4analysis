@@ -62,14 +62,14 @@ public interface ICDSyntaxDiff {
    *
    * @return true if the class fulfills those requirements.
    */
-  boolean isSupClass(ASTCDClass astcdClass);
+  ASTCDClass isSupClass(ASTCDClass astcdClass);
 
   /**
    * Similar case - the association @param astcdAssociation is needed in cd1, but not in cd2.
    *
    * @return true if a class instantiate another one by @param association.
    */
-  boolean isAssocAdded(ASTCDAssociation astcdAssociation);
+  List<ASTCDClass> isAssocAdded(ASTCDAssociation astcdAssociation);
 
 
   /**

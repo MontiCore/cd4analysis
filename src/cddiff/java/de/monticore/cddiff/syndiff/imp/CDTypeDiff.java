@@ -233,12 +233,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
             if (assocStruct.getSide().equals(ClassSide.Left)
               && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.equals(srcElem)
               && helper.findMatchedClass((ASTCDClass) srcElem) != null
-              && helper.classHasAssociationTgt(assocStruct.getAssociation(), helper.findMatchedClass((ASTCDClass) srcElem))) {
+              && helper.classHasAssociationSrcTgt(assocStruct, helper.findMatchedClass((ASTCDClass) srcElem))) {
               return astcdClass;
             } else if (assocStruct.getSide().equals(ClassSide.Right)
               && Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.equals(srcElem)
               && helper.findMatchedClass((ASTCDClass) srcElem) != null
-              && helper.classHasAssociationTgt(assocStruct.getAssociation(), helper.findMatchedClass((ASTCDClass) srcElem))) {
+              && helper.classHasAssociationSrcTgt(assocStruct, helper.findMatchedClass((ASTCDClass) srcElem))) {
               return astcdClass;
             }
 

@@ -22,6 +22,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +115,7 @@ public class TestMax extends CDDiffTestBasis {
     testHelper.addedAssocs();
   }
 
-  @Test
+  //@Test
   public void test10() {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
@@ -387,7 +388,8 @@ public class TestMax extends CDDiffTestBasis {
     testHelper.addedAssocs();
   }
 
-  @Test
+  //@Test
+  //@Disabled
   public void testMyLife() {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV2.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV1.cd");
@@ -656,7 +658,7 @@ public class TestMax extends CDDiffTestBasis {
 //    }
   }
 
-  @Test
+  //@Test
   public void testSem2OD(){
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");

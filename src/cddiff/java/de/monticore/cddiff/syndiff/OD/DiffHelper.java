@@ -41,8 +41,8 @@ public class DiffHelper {
   //create such association
   public List<ASTODArtifact> generateODs(boolean staDiff) {
     List<ASTODArtifact> artifactList = new ArrayList<>();
-    for (ASTCDAssociation association : syntaxDiff.addedAssocList()) {
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
+    for (Pair<ASTCDAssociation, List<ASTCDClass>> association : syntaxDiff.addedAssocList()) {
+      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association.a, helper.getSrcCD());
       if (!helper.getNotInstanClassesSrc().contains(pair.a) && !helper.getNotInstanClassesSrc().contains(pair.b)) {
         ASTCDClass leftClass = pair.a;
         ASTCDClass rightClass = pair.b;
@@ -54,8 +54,8 @@ public class DiffHelper {
         }
         String comment = "A new associations has been added to the diagram."
           + "\nThis association allows a new relation between the classes " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " and their subclasses";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association),
-          generateElements(association, Arrays.asList(1, 1), comment),
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association.a),
+          generateElements(association.a, Arrays.asList(1, 1), comment),
           null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
@@ -77,17 +77,19 @@ public class DiffHelper {
       }
     }
 
-    for (Pair<ASTCDAssociation, ASTCDClass> pair : syntaxDiff.deletedAssocList()) {
-      ASTCDClass astcdClass = pair.b;
-      if (astcdClass.getModifier().isAbstract()) {
-        astcdClass = helper.minSubClass(astcdClass);
-      }
-      String comment = "An association for the class " + pair.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
-        generateElements(pair.b, comment),
-        null);
-      if (astodArtifact != null) {
-        artifactList.add(astodArtifact);
+    for (Pair<ASTCDAssociation, List<ASTCDClass>> pair : syntaxDiff.deletedAssocList()) {
+      List<ASTCDClass> list = pair.b;
+      for (ASTCDClass astcdClass : list) {
+        if (astcdClass.getModifier().isAbstract()) {
+          astcdClass = helper.minSubClass(astcdClass);
+        }
+        String comment = "An association for the class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.";
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
+          generateElements(astcdClass, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
       }
     }
 
@@ -353,7 +355,7 @@ public class DiffHelper {
     }
 
     if (staDiff) {
-      for (ASTCDClass astcdClass : syntaxDiff.getSTADiff()) {
+      for (ASTCDClass astcdClass : syntaxDiff.hasDiffSuper()) {
         String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " is part of a different inheritance tree.";
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
           generateElements(astcdClass, comment),
