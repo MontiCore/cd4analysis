@@ -480,7 +480,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
    * target CD class (tgtType). It compares the attributes of tgtType with
    * the attributes of srcType and the inherited attributes to identify
    * deleted attributes and adds them to the deletedAttributes list. If
-   * DiffTypes.REMOVED_ATTRIBUTE is not already in the baseDiff list, it's added.
+   * DiffTypes.DELETED_ATTRIBUTE is not already in the baseDiff list, it's added.
    *
    * @param srcType  The source CD class containing attributes for comparison.
    * @param tgtType  The target CD class from which attributes are deleted.
