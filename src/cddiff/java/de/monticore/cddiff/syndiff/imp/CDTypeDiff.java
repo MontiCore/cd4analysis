@@ -4,14 +4,11 @@ import static de.monticore.cddiff.CDDiffUtil.getAllSuperTypes;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.interfaces.ICDTypeDiff;
-import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -21,7 +18,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   private final ASTCDType srcElem;
@@ -69,7 +65,7 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     //Find all added, deleted and changed attributes and constants
     loadAllLists(srcElem, tgtElem, tgtCD);
     //Set Strings for printing
-    setStrings();
+    setTypeStrings();
   }
 
   @Override
@@ -337,7 +333,9 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
 
   /*--------------------------------------------------------------------*/
   /**
-   * Add all attributes to the list changedMembers which have been changed.   *
+   * Loads all changed members by iterating through pairs of ASTCDAttribute objects
+   * in the matchedAttributes list and adding them to the changedMembers list if
+   * their baseDiff is not empty. It also adds their baseDiff to the baseDiff list.
    */
   public void loadAllChangedMembers() {
     for(Pair<ASTCDAttribute,ASTCDAttribute> x : matchedAttributes){
@@ -350,6 +348,17 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   }
 
   List<Pair<ASTCDAttribute, ASTCDAttribute>> removedBcInh = new ArrayList<>();
+  /**
+   * Loads all inherited attributes from the source type (srcType) to the target type (tgtType)
+   * by comparing the attributes of tgtType and its super types with srcType attributes. If a match
+   * is found based on attribute name, it adds the pair of source and target attributes to
+   * the removedBcInh list and adds the source attribute to the inheritedAttributes list. If the
+   * INHERITED_ATTRIBUTE is not already in the baseDiff list, it's added.
+   *
+   * @param srcType  The source type containing attributes to be compared.
+   * @param tgtType  The target type to which inheritance is checked.
+   * @param tgtCD    The target CD compilation unit containing tgtType.
+   */
   private void loadAllInheritedAttributes(ASTCDType srcType, ASTCDType tgtType, ASTCDCompilationUnit tgtCD) {
     Set<ASTCDType> superTypesOfTgtType = getAllSuper(tgtType, (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
     superTypesOfTgtType.remove(tgtType);
@@ -373,6 +382,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Loads all added elements (attributes or constants).
+   * This function checks the types of srcType and tgtType and delegates
+   * the loading process to specialized functions based on their types.
+   *
+   * @param srcType  The source type where the added elements are.
+   * @param tgtType  The target type to which elements are compared.
+   */
   public void loadAllAddedElements(ASTCDType srcType, ASTCDType tgtType){
     if(srcType instanceof ASTCDClass && tgtType instanceof ASTCDClass){
       loadAllAddedAttributes((ASTCDClass) srcType, (ASTCDClass) tgtType);
@@ -383,11 +400,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   }
 
   /**
-   * Add all attributes to the list addedAttributes which have not been in the tgtType, but are in
-   * the srcType
+   * Loads all added attributes from the source CD class (srcType) to the
+   * target CD class (tgtType). It compares the attributes of srcType with
+   * the attributes of tgtType to identify added attributes and adds them
+   * to the addedAttributes list. If DiffTypes.ADDED_ATTRIBUTE is not already
+   * in the baseDiff list, it's added.
    *
-   * @param srcType a class in the new CD
-   * @param tgtType a class in the old CD
+   * @param srcType  The source CD class containing attributes to be compared.
+   * @param tgtType  The target CD class to which attributes are compared.
    */
   public void loadAllAddedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
@@ -411,11 +431,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   }
 
   /**
-   * Add all enum constants to the list addedConstants which have not been in the tgtType, but are in
-   * the srcType
+   * Loads all added constants from the source CD enum (srcType) to the
+   * target CD enum (tgtType). It compares the constants of srcType with
+   * the constants of tgtType to identify added constants and adds them
+   * to the addedConstants list. If DiffTypes.ADDED_CONSTANT is not already
+   * in the baseDiff list, it's added.
    *
-   * @param srcType an enum in the new CD
-   * @param tgtType an enum in the old CD
+   * @param srcType  The source CD enum containing constants to be compared.
+   * @param tgtType  The target CD enum to which constants are compared.
    */
   public void loadAllAddedConstants(ASTCDEnum srcType, ASTCDEnum tgtType) {
     for (ASTCDEnumConstant srcConst : srcType.getCDEnumConstantList()) {
@@ -435,6 +458,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Loads all deleted elements (attributes or constants) from the source type (srcType) to the
+   * target type (tgtType). This function checks the types of srcType and tgtType and delegates
+   * the loading process to specialized functions based on their types.
+   *
+   * @param srcType  The source type from which elements are deleted.
+   * @param tgtType  The target type to which elements are compared for deletion.
+   */
   public void loadAllDeletedElements(ASTCDType srcType, ASTCDType tgtType){
     if(srcType instanceof ASTCDClass && tgtType instanceof ASTCDClass){
       loadAllDeletedAttributes((ASTCDClass) srcType, (ASTCDClass) tgtType);
@@ -445,11 +476,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   }
 
   /**
-   * Add all attributes to the list deletedAttributes which have been in the tgtType, but aren't
-   * anymore in the srcType
+   * Loads all deleted attributes from the source CD class (srcType) to the
+   * target CD class (tgtType). It compares the attributes of tgtType with
+   * the attributes of srcType and the inherited attributes to identify
+   * deleted attributes and adds them to the deletedAttributes list. If
+   * DiffTypes.REMOVED_ATTRIBUTE is not already in the baseDiff list, it's added.
    *
-   * @param srcType a type in the new CD
-   * @param tgtType a type in the old CD
+   * @param srcType  The source CD class containing attributes for comparison.
+   * @param tgtType  The target CD class from which attributes are deleted.
    */
   public void loadAllDeletedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
@@ -468,19 +502,22 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
       }
       if (notFound) {
         deletedAttributes.add(tgtAttr);
-        if(!baseDiff.contains(DiffTypes.REMOVED_ATTRIBUTE)) {
-          baseDiff.add(DiffTypes.REMOVED_ATTRIBUTE);
+        if(!baseDiff.contains(DiffTypes.DELETED_ATTRIBUTE)) {
+          baseDiff.add(DiffTypes.DELETED_ATTRIBUTE);
         }
       }
     }
   }
 
   /**
-   * Add all enum constants to the list deletedConstants which have been in the tgtType, but aren't
-   * anymore in the srcType
+   * Loads all deleted constants from the source CD enum (srcType) to the
+   * target CD enum (tgtType). It compares the constants of tgtType with
+   * the constants of srcType to identify deleted constants and adds them
+   * to the deletedConstants list. If DiffTypes.DELETED_CONSTANT is not already
+   * in the baseDiff list, it's added.
    *
-   * @param srcType a type in the new CD
-   * @param tgtType a type in the old CD
+   * @param srcType  The source CD enum containing constants for comparison.
+   * @param tgtType  The target CD enum from which constants are deleted.
    */
   public void loadAllDeletedConstants(ASTCDEnum srcType, ASTCDEnum tgtType) {
     for (ASTCDEnumConstant tgtConst : tgtType.getCDEnumConstantList()) {
@@ -500,6 +537,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Creates a default difference list for comparing two CD types (srcType and tgtType).
+   * This function extracts and compares the modifier, name, and type (class, interface, or enum)
+   * of the CD types and compares relevant properties.
+   *
+   * @param srcType  The source CD type for comparison.
+   * @param tgtType  The target CD type for comparison.
+   */
   private void createDefaultDiffList(ASTCDType srcType, ASTCDType tgtType) {
 
     srcLineOfCode = srcElem.get_SourcePositionStart().getLine();
@@ -566,20 +611,44 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Creates a difference list for two CDClass instances (srcElem and tgtElem).
+   *
+   * @param srcElem The source CDClass for comparison.
+   * @param tgtElem The target CDClass for comparison.
+   */
   public void createClassDiff(ASTCDClass srcElem, ASTCDClass tgtElem) {
     createDiffList(srcElem, tgtElem);
   }
 
+  /**
+   * Creates a difference list for two CDInterface instances (srcElem and tgtElem).
+   *
+   * @param srcElem The source CDInterface for comparison.
+   * @param tgtElem The target CDInterface for comparison.
+   */
   public void createInterfaceDiff(ASTCDInterface srcElem, ASTCDInterface tgtElem) {
     createDiffList(srcElem, tgtElem);
   }
 
+  /**
+   * Creates a difference list for two CDEnum instances (srcElem and tgtElem).
+   *
+   * @param srcElem The source CDEnum for comparison.
+   * @param tgtElem The target CDEnum for comparison.
+   */
   public void createEnumDiff(ASTCDEnum srcElem, ASTCDEnum tgtElem) {
     createDiffList(srcElem, tgtElem);
   }
 
+  /**
+   * Creates a difference list for two CDClass instances (srcElem and tgtElem) to track changes in their "extends" and "implements" clauses.
+   * The method compares the extended class and implemented interfaces of the classes and records differences if any.
+   *
+   * @param srcElem The source CDClass for comparison.
+   * @param tgtElem The target CDClass for comparison.
+   */
   private void createDiffList(ASTCDClass srcElem, ASTCDClass tgtElem) {
-
     // Extended
     Optional<ASTCDExtendUsage> srcElemExtends = (srcElem.isPresentCDExtendUsage()) ? Optional.of(srcElem.getCDExtendUsage()) : Optional.empty();
     Optional<ASTCDExtendUsage> tgtElemExtends = (tgtElem.isPresentCDExtendUsage()) ? Optional.of(tgtElem.getCDExtendUsage()) : Optional.empty();
@@ -619,8 +688,14 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Creates a difference list for two CDInterface instances (srcElem and tgtElem) to track changes in their "extends" clause.
+   * The method compares the extended interfaces of the interfaces and records differences if any.
+   *
+   * @param srcElem The source CDInterface for comparison.
+   * @param tgtElem The target CDInterface for comparison.
+   */
   private void createDiffList(ASTCDInterface srcElem, ASTCDInterface tgtElem) {
-
     // Extended
     Optional<ASTCDExtendUsage> srcElemExtends = (srcElem.isPresentCDExtendUsage()) ? Optional.of(srcElem.getCDExtendUsage()) : Optional.empty();
     Optional<ASTCDExtendUsage> tgtElemExtends = (tgtElem.isPresentCDExtendUsage())? Optional.of(tgtElem.getCDExtendUsage()) : Optional.empty();
@@ -642,6 +717,13 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Creates a difference list for two CDEnum instances (srcElem and tgtElem) to track changes in their "implements" clause.
+   * The method compares the interfaces implemented by the enums and records differences if any.
+   *
+   * @param srcElem The source CDEnum for comparison.
+   * @param tgtElem The target CDEnum for comparison.
+   */
   private void createDiffList(ASTCDEnum srcElem, ASTCDEnum tgtElem) {
     // Implements, optional
     Optional<ASTMCObjectType> srcElemImplements = (srcElem.isPresentCDInterfaceUsage()) ? Optional.of(srcElem.getInterfaceList().get(0)) : Optional.empty();
@@ -665,12 +747,13 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
   }
 
   /**
-   * Add all matched elements to the lists
+   * Adds all matched elements (attributes or constants) from the source type (srcType) to
+   * the target type (tgtType). This function checks the types of srcType and tgtType and
+   * adds matching elements to the corresponding lists (matchedAttributes or matchedConstants).
    *
-   * @param srcType a type in the new CD
-   * @param tgtType a type in the old CD
+   * @param srcType  The source CD type containing elements for comparison.
+   * @param tgtType  The target CD type to which elements are compared for matching.
    */
-
   public void addAllMatchedElements(ASTCDType srcType, ASTCDType tgtType){
     if ((srcType instanceof ASTCDClass) && (tgtType instanceof ASTCDClass)) {
       for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
@@ -691,6 +774,15 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     }
   }
 
+  /**
+   * Loads various lists containing differences between two CD types (srcType and tgtType) within a target CD (tgtCD).
+   * The method populates lists for inherited attributes, added elements,
+   * deleted elements, and changed members.
+   *
+   * @param srcType The source CD type for comparison.
+   * @param tgtType The target CD type for comparison.
+   * @param tgtCD   The target CD compilation unit containing tgtType.
+   */
   public void loadAllLists(ASTCDType srcType, ASTCDType tgtType, ASTCDCompilationUnit tgtCD) {
     loadAllInheritedAttributes(srcType, tgtType, tgtCD);
     loadAllAddedElements(srcType, tgtType);
@@ -698,7 +790,12 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     loadAllChangedMembers();
   }
 
-  private void setStrings() {
+  /**
+   * Sets the type strings for various output representations, including source CD, target CD,
+   * added types, deleted types, changed types, and differences between types. This function
+   * populates different lists with information and formats them for display.
+   */
+  private void setTypeStrings() {
     List<Pair<Integer, String>> onlySrcCDSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyTgtCDSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyAddedSort = new ArrayList<>();
@@ -933,20 +1030,59 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     this.outputDiff = outPutOnlyDiff;
   }
 
-  //We use this method if we want to show only the added attributes
+  /**
+   * Returns the type only with its added attributes
+   *
+   * @return The string of the type only with its added attributes.
+   */
   public String printIfAddedAttr() { return outputAdded.toString(); }
-  //We use this method if we want to show only the removed attributes
+
+  /**
+   * Returns the type only with its deleted attributes
+   *
+   * @return The string of the type only with its deleted attributes.
+   */
   public String printIfRemovedAttr() { return outputDeleted.toString(); }
-  //We use this method if we want to print the src class with its added and changed attributes
+
+  /**
+   * Returns the source type only with its added and changed attributes
+   *
+   * @return The string of the source type only with its added and changed attributes.
+   */
   public String printSrcCD() { return outputSrc.toString(); }
-  //We use this method if we want to print the tgt class with its removed and changed attributes
+
+  /**
+   * Returns the target type only with its deleted and changed attributes
+   *
+   * @return The string of the target type only with its deleted and changed attributes.
+   */
   public String printTgtCD() { return outputTgt.toString(); }
-  //We use this method if we want to print a whole class which is newly added
+
+  /**
+   * Returns the type if it's newly added
+   *
+   * @return The string of the type which is newly added
+   */
   public String printAddedType() { return outputNewlyAdded.toString(); }
-  //We use this method if we want to print a whole class which is newly removed
+
+  /**
+   * Returns the type if it's newly deleted
+   *
+   * @return The string of the type which is newly deleted
+   */
   public String printRemovedType() { return outputNewlyDeleted.toString(); }
-  //We use this method if we want to print a class with its added, removed, and changed attributes --print diff
+
+  /**
+   * Returns the type with its added, deleted, and changed attributes
+   *
+   * @return The string of the type which is newly added
+   */
   public String printDiffType() { return outputDiff.toString(); }
-  //We use this method if we want to print a class only with its added and changed attributes --print changed
+
+  /**
+   * Returns the type only with its added and changed attributes
+   *
+   * @return The string of the type only with its added and changed attributes.
+   */
   public String printChangedType() { return outputChanged.toString(); }
 }

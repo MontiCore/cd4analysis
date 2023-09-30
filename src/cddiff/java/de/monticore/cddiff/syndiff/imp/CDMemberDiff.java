@@ -31,12 +31,12 @@ public class CDMemberDiff extends CDPrintDiff implements ICDMemberDiff {
 
     if ((srcElem instanceof ASTCDAttribute) && (tgtElem instanceof ASTCDAttribute)) {
       createDiffList((ASTCDAttribute) srcElem, (ASTCDAttribute) tgtElem);
-      setStrings();
+      setMemberStrings();
     }
 
     if ((srcElem instanceof ASTCDEnumConstant) && (tgtElem instanceof ASTCDEnumConstant)) {
       createDiffList((ASTCDEnumConstant) srcElem, (ASTCDEnumConstant) tgtElem);
-      setStrings();
+      setMemberStrings();
     }
   }
 
@@ -59,6 +59,12 @@ public class CDMemberDiff extends CDPrintDiff implements ICDMemberDiff {
   }
 
   /*--------------------------------------------------------------------*/
+  /**
+   * Creates a list of differences between two CD attributes (source and target).
+   *
+   * @param srcElem The source CD attribute.
+   * @param tgtElem The target CD attribute.
+   */
   private void createDiffList(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
     // Modifier
     if (!(pp.prettyprint(srcElem.getModifier()).isEmpty() && pp.prettyprint(tgtElem.getModifier()).isEmpty())) {
@@ -99,6 +105,12 @@ public class CDMemberDiff extends CDPrintDiff implements ICDMemberDiff {
     tgtLineOfCode = tgtElem.get_SourcePositionStart().getLine();
   }
 
+  /**
+   * Creates a difference list for two ASTCDEnumConstant elements by setting their names and line numbers.
+   *
+   * @param srcElem The source ASTCDEnumConstant.
+   * @param tgtElem The target ASTCDEnumConstant.
+   */
   private void createDiffList(ASTCDEnumConstant srcElem, ASTCDEnumConstant tgtElem) {
     // Name
     srcMemberName = srcElem.getName() + RESET;
@@ -108,16 +120,48 @@ public class CDMemberDiff extends CDPrintDiff implements ICDMemberDiff {
     tgtLineOfCode = tgtElem.get_SourcePositionStart().getLine();
   }
 
-  private void setStrings() {
+  /**
+   * Sets member strings for source and target CD attributes, and their added and removed representations.
+   */
+  private void setMemberStrings() {
     this.srcMemberString = "\t" + "//new, L: " + srcLineOfCode + System.lineSeparator() + "\t" + insertSpaceBetweenStrings(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName)) + "; ";
     this.tgtMemberString = "\t" + "//old, L: " + tgtLineOfCode + System.lineSeparator() + "\t" + insertSpaceBetweenStrings(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName)) + "; ";
     this.addedMember = "\t" + insertSpaceBetweenStringsAndGreen(Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName)) + COLOR_ADD + ";";
     this.removedMember = "\t" + insertSpaceBetweenStringsAndRed(Arrays.asList(tgtMemberModifier, tgtMemberType, tgtMemberName)) + COLOR_DELETE +  ";";
   }
 
+  /**
+   * Returns the source member string representation.
+   *
+   * @return The source member string.
+   */
   public String printSrcMember() { return srcMemberString; }
+
+  /**
+   * Returns the added member representation.
+   *
+   * @return The added member representation.
+   */
   public String printAddedMember() { return addedMember; }
+
+  /**
+   * Returns the target member string representation.
+   *
+   * @return The target member string.
+   */
   public String printTgtMember() { return tgtMemberString; }
+
+  /**
+   * Returns the changed member representation, combining source and target member strings.
+   *
+   * @return The changed member representation.
+   */
   public String printChangedMember() { return "//changed attribute" + System.lineSeparator() + srcMemberString + System.lineSeparator() + tgtMemberString; }
+
+  /**
+   * Returns the removed member representation.
+   *
+   * @return The removed member representation.
+   */
   public String printRemovedMember() { return removedMember; }
 }

@@ -406,6 +406,14 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
 
   /*--------------------------------------------------------------------*/
 
+  /**
+   * Computes and stores differences between two ASTCDAssociation nodes.
+   * This method analyzes the association type, name, direction, and associated classes.
+   *
+   * @param srcAssoc The source ASTCDAssociation.
+   * @param tgtAssoc The target ASTCDAssociation.
+   * @param typeMatchers List of matching strategies for CD types.
+   */
   private void assocDiff(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc, List<MatchingStrategy<ASTCDType>> typeMatchers) {
 
     // Association Type
@@ -543,6 +551,13 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
     tgtLineOfCode = tgtAssoc.get_SourcePositionStart().getLine();
   }
 
+  /**
+   * Computes and stores differences between two ASTCDAssocSide nodes.
+   * This method analyzes the cardinality, qualified type, and role of an association side.
+   *
+   * @param srcAssocSide The source ASTCDAssocSide.
+   * @param tgtAssocSide The target ASTCDAssocSide.
+   */
   public void getAssocSideDiff(ASTCDAssocSide srcAssocSide, ASTCDAssocSide tgtAssocSide) {
 
     // Cardinality
@@ -599,6 +614,11 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
 
   }
 
+  /**
+   * Constructs various strings representing associations and their differences.
+   * This method builds strings for the source association, target association, added association (green),
+   * removed association (red), and the association differences.
+   */
   private void setStrings() {
 
     // Build Source String
@@ -640,19 +660,44 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
     return super.insertSpaceBetweenStringsAndRed(stringList) + COLOR_DELETE + "; ";
   }
 
+  /**
+   * Returns the source association string representation.
+   *
+   * @return The source association string.
+   */
   public String printSrcAssoc() {
     return srcAssoc;
   }
 
+  /**
+   * Returns the added association string representation.
+   *
+   * @return The added association string.
+   */
   public String printAddedAssoc() {
     return srcAssocAdded;
   }
 
+  /**
+   * Returns the deleted association string representation.
+   *
+   * @return The deleted association string.
+   */
   public String printDeletedAssoc() {
     return tgtAssocDeleted;
   }
 
+  /**
+   * Returns the target association string representation.
+   *
+   * @return The target association string.
+   */
   public String printTgtAssoc() { return tgtAssoc; }
 
+  /**
+   * Returns the changed association string representation.
+   *
+   * @return The changed association string.
+   */
   public String printDiffAssoc() { return assocDiff; }
 }

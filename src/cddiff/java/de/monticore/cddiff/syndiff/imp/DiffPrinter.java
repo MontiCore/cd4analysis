@@ -2,9 +2,6 @@ package de.monticore.cddiff.syndiff.imp;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import edu.mit.csail.sdg.alloy4.Pair;
 
@@ -14,6 +11,12 @@ import java.util.List;
 
 public class DiffPrinter extends CDPrintDiff{
   public StringBuilder outputSrc, outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff;
+
+  /**
+   * Sets various string outputs for different elements and changes found in a syntax difference between two CDs.
+   *
+   * @param syntaxDiff The syntax difference between source and target CD.
+   */
   public void setStrings(CDSyntaxDiff syntaxDiff) {
     List<Pair<Integer, String>> onlySrcCDSort = new ArrayList<>();
     List<Pair<Integer, String>> onlyTgtCDSort = new ArrayList<>();
@@ -52,7 +55,7 @@ public class DiffPrinter extends CDPrintDiff{
         String tmp = x.printIfAddedAttr();
         onlyAddedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
       }
-      if(x.getBaseDiff().contains(DiffTypes.REMOVED_ATTRIBUTE) || x.getBaseDiff().contains(DiffTypes.DELETED_CONSTANT)) {
+      if(x.getBaseDiff().contains(DiffTypes.DELETED_ATTRIBUTE) || x.getBaseDiff().contains(DiffTypes.DELETED_CONSTANT)) {
         String tmp = x.printIfRemovedAttr();
         onlyDeletedSort.add(new Pair<>(x.getSrcElem().get_SourcePositionStart().getLine(), tmp));
       }

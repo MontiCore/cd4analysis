@@ -15,6 +15,12 @@ public class CDPrintDiff implements ICDPrintDiff {
 
   protected static final String RESET = "\033[0m";
 
+  /**
+   * Concatenates a list of strings with spaces in between.
+   *
+   * @param stringList The list of strings to concatenate.
+   * @return A single string with spaces between the input strings.
+   */
   @Override
   public String insertSpaceBetweenStrings(List<String> stringList) {
     StringBuilder output = new StringBuilder();
@@ -30,6 +36,12 @@ public class CDPrintDiff implements ICDPrintDiff {
     return output.toString();
   }
 
+  /**
+   * Concatenates a list of strings with spaces in between and applies a green color to each string.
+   *
+   * @param stringList The list of strings to concatenate and color.
+   * @return A single string with spaces between colored strings.
+   */
   @Override
   public String insertSpaceBetweenStringsAndGreen(List<String> stringList){
     StringBuilder output = new StringBuilder();
@@ -44,6 +56,13 @@ public class CDPrintDiff implements ICDPrintDiff {
     }
     return output.toString();
   }
+
+  /**
+   * Concatenates a list of strings with spaces in between and applies a red color to each string.
+   *
+   * @param stringList The list of strings to concatenate and color.
+   * @return A single string with spaces between colored strings.
+   */
   @Override
   public String insertSpaceBetweenStringsAndRed(List<String> stringList){
     StringBuilder output = new StringBuilder();
@@ -59,6 +78,12 @@ public class CDPrintDiff implements ICDPrintDiff {
     return output.toString();
   }
 
+  /**
+   * Gets the color code based on the action associated with the difference.
+   *
+   * @param diff The CDNodeDiff object representing a difference.
+   * @return The color code as a string.
+   */
   static String getColorCode(CDNodeDiff<?,?> diff) {
     if (diff.getAction().isPresent()) {
       if (diff.getAction().get().equals(Actions.REMOVED)) {

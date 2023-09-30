@@ -8,6 +8,12 @@ public class SyntaxDiffBuilder extends DiffPrinter {
   ASTCDCompilationUnit srcCD;
   ASTCDCompilationUnit tgtCD;
 
+  /**
+   * Constructs a SyntaxDiffBuilder instance for comparing two CDs.
+   *
+   * @param srcCD The source CD.
+   * @param tgtCD The target CD.
+   */
   public SyntaxDiffBuilder(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
