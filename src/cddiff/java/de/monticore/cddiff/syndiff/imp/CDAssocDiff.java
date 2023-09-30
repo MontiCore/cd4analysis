@@ -34,6 +34,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   ASTCDType srcLeftType, srcRightType, tgtLeftType, tgtRightType;
   private boolean isReversed;
   private List<DiffTypes> baseDiff;
+  List<ASTCDType> srcCDTypes;
   private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private Pair<ASTCDAssocSide, ASTCDAssocSide> srcSide;
   private Pair<ASTCDAssocSide, ASTCDAssocSide> tgtSide;
@@ -71,6 +72,9 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     typeMatchers.add(nameTypeMatch);
     typeMatchers.add(structureTypeMatch);
     typeMatchers.add(superTypeMatch);
+    srcCDTypes = new ArrayList<>();
+    srcCDTypes.add(srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getLeftQualifiedName().getQName()).get().getAstNode());
+    srcCDTypes.add(srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getRightQualifiedName().getQName()).get().getAstNode());
     assocDiff(srcElem, tgtElem, typeMatchers);
     setStrings();
   }
@@ -477,71 +481,70 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       tgtLeftSymbol.ifPresent(cdTypeSymbol -> this.tgtLeftType = cdTypeSymbol.getAstNode());
       tgtRightSymbol.ifPresent(cdTypeSymbol -> this.tgtRightType = cdTypeSymbol.getAstNode());
 
+    Map<ASTCDType,ASTCDType> computedMatchingMapTypes = computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD);
 
-    for(MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
-      if(typeMatcher.isMatched(srcLeftType,tgtLeftType) || typeMatcher.isMatched(srcRightType,tgtRightType)) {
-        isReversed = false;
-        getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getLeft());
-        if(baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)){
-          if(srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()){
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)){
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
-            }
-          }
-          if(srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()){
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)){
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
-            }
+    if(computedMatchingMapTypes.get(srcLeftType).equals(tgtLeftType) || computedMatchingMapTypes.get(srcRightType).equals(tgtRightType)) {
+      isReversed = false;
+      getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getLeft());
+      if(baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)){
+        if(srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()){
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)){
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
           }
         }
-        getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getRight());
-        if(baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)){
-          if(srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()){
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)){
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
-            }
-          }
-          if(srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()){
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)){
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
-            }
+        if(srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()){
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)){
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
           }
         }
       }
-      if(typeMatcher.isMatched(srcLeftType,tgtRightType) || typeMatcher.isMatched(srcRightType,tgtLeftType)) {
-        isReversed = true;
-        getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getRight());
-        if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
-          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()) {
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
-            }
-          }
-          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()) {
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
-            }
+      getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getRight());
+      if(baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)){
+        if(srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()){
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)){
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
           }
         }
-        getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getLeft());
-        if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
-          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()) {
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
-            }
+        if(srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()){
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if(!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)){
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
           }
-          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()) {
-            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
-            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
-              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
-            }
+        }
+      }
+    }
+    if(computedMatchingMapTypes.get(srcLeftType).equals(tgtRightType) || computedMatchingMapTypes.get(srcRightType).equals(tgtLeftType)) {
+      isReversed = true;
+      getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getRight());
+      if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+        if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+          }
+        }
+        if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+          }
+        }
+      }
+      getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getLeft());
+      if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+        if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+          }
+        }
+        if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+          if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+            baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
           }
         }
       }
