@@ -636,7 +636,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
         Arrays.asList(srcAssocType, srcAssocName, srcAssocLeftCardinality, srcAssocLeftType, srcAssocLeftRole, srcAssocDirection, srcAssocRightRole, srcAssocRightType, srcAssocRightCardinality)) + System.lineSeparator();
 
     // Build Target String
-    tgtAssocDeleted = "//removed association, L: " + tgtLineOfCode + System.lineSeparator() +
+    tgtAssocDeleted = "//deleted association, L: " + tgtLineOfCode + System.lineSeparator() +
       insertSpaceBetweenStringsAndRed(
         Arrays.asList(tgtAssocType, tgtAssocName, tgtAssocLeftCardinality, tgtAssocLeftType, tgtAssocLeftRole, tgtAssocDirection, tgtAssocRightRole, tgtAssocRightType, tgtAssocRightCardinality)) + System.lineSeparator();
 

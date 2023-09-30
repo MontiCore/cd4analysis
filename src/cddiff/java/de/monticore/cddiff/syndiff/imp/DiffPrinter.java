@@ -32,7 +32,7 @@ public class DiffPrinter extends CDPrintDiff{
       syntaxDiff.getTgtCD().getCDDefinition().getName() +
       ":";
     String initialPrintDelete = System.lineSeparator() +
-      "The following elements were removed while comparing " +
+      "The following elements were deleted while comparing " +
       syntaxDiff.getSrcCD().getCDDefinition().getName() +
       " to " +
       syntaxDiff.getTgtCD().getCDDefinition().getName() +
