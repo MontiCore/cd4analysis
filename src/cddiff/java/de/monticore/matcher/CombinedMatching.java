@@ -4,6 +4,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import org.antlr.v4.runtime.misc.Triple;
 import java.util.*;
 
@@ -110,24 +111,31 @@ public class CombinedMatching<T> {
     matcherList.add(structureTypeMatch);
     matcherList.add(superTypeMatch);
 
-    ASTCDType srcTypeLeft = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getLeftQualifiedName().getQName()).get().getAstNode();
-    ASTCDType tgtTypeLeft = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem.getLeftQualifiedName().getQName()).get().getAstNode();
-    ASTCDType srcTypeRight = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getRightQualifiedName().getQName()).get().getAstNode();
-    ASTCDType tgtTypeRight = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem.getRightQualifiedName().getQName()).get().getAstNode();
+    Optional<CDTypeSymbol> srcTypeSymbolLeft = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getLeftQualifiedName().getQName());
+    Optional<CDTypeSymbol> srcTypeSymbolRight = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getRightQualifiedName().getQName());
+    Optional<CDTypeSymbol> tgtTypeSymbolLeft = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem.getLeftQualifiedName().getQName());
+    Optional<CDTypeSymbol> tgtTypeSymbolRight = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem.getRightQualifiedName().getQName());
 
     boolean isReversed = false;
 
-    for(MatchingStrategy<ASTCDType> x : matcherList) {
-      if(x.isMatched(srcTypeLeft, tgtTypeRight) || x.isMatched(srcTypeRight, tgtTypeLeft)){
-        isReversed = true;
-      }
+    if (srcTypeSymbolLeft.isPresent() && srcTypeSymbolRight.isPresent() && tgtTypeSymbolLeft.isPresent() && tgtTypeSymbolRight.isPresent()) {
+      ASTCDType srcTypeLeft = srcTypeSymbolLeft.get().getAstNode();
+      ASTCDType tgtTypeLeft = tgtTypeSymbolLeft.get().getAstNode();
+      ASTCDType srcTypeRight = srcTypeSymbolRight.get().getAstNode();
+      ASTCDType tgtTypeRight = tgtTypeSymbolRight.get().getAstNode();
 
-      if(!isReversed){
-        weight += computeValueForMatching(srcTypeLeft, tgtTypeLeft);
-        weight += computeValueForMatching(srcTypeRight, tgtTypeRight);
-      } else {
-        weight += computeValueForMatching(srcTypeLeft, tgtTypeRight);
-        weight += computeValueForMatching(srcTypeRight, tgtTypeLeft);
+      for(MatchingStrategy<ASTCDType> x : matcherList) {
+        if(x.isMatched(srcTypeLeft, tgtTypeRight) || x.isMatched(srcTypeRight, tgtTypeLeft)){
+          isReversed = true;
+        }
+
+        if(!isReversed){
+          weight += computeValueForMatching(srcTypeLeft, tgtTypeLeft);
+          weight += computeValueForMatching(srcTypeRight, tgtTypeRight);
+        } else {
+          weight += computeValueForMatching(srcTypeLeft, tgtTypeRight);
+          weight += computeValueForMatching(srcTypeRight, tgtTypeLeft);
+        }
       }
     }
     return weight;
