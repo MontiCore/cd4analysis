@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class DiffPrinter extends CDPrintDiff{
+public class DiffPrinter extends SyntaxDiffHelper{
   public StringBuilder outputSrc, outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff;
 
   /**

@@ -12,6 +12,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.imp.SyntaxDiffBuilder;
 import de.monticore.cddiff.syndiff.imp.TestHelper;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -117,6 +118,15 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
     System.out.println(syntaxDiff.getBaseDiff());
+  }
+
+  @Test
+  public void testAssoc5() {
+    parseModels("Source5.cd", "Target5.cd");
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
+    System.out.println(syntaxDiff.getMatchedClasses());
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printDiff());
   }
 
   public void parseModels(String concrete, String ref) {

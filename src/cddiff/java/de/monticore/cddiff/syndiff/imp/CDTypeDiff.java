@@ -19,7 +19,7 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
-public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
+public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private final ASTCDType srcElem;
   private final ASTCDType tgtElem;
   private List<CDMemberDiff> changedMembers;
@@ -971,9 +971,10 @@ public class CDTypeDiff extends CDPrintDiff implements ICDTypeDiff {
     // 2. We have an already existing class, but we want to show only its deleted attributes
 
     // This is for 1.
+    String deletedComment = "//deleted type, L: " + tgtLineOfCode + System.lineSeparator();
     onlyForNewlyDeletedTypes.sort(Comparator.comparing(p -> +p.a));
     StringBuilder outPutOnlyNewlyDeletedTypes = new StringBuilder();
-    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(signatureTgtCDDeletedClass).append(COLOR_DELETE).append("{");
+    outPutOnlyNewlyDeletedTypes.append(COLOR_DELETE).append(deletedComment).append(COLOR_DELETE).append(signatureTgtCDDeletedClass).append(COLOR_DELETE).append("{");
     if (!onlyForNewlyDeletedTypes.isEmpty()) {
       for (Pair<Integer, String> x : onlyForNewlyDeletedTypes) {
         outPutOnlyNewlyDeletedTypes.append(System.lineSeparator()).append(x.b);

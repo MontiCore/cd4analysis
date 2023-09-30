@@ -26,7 +26,7 @@ import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
 
-public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
+public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   private final ASTCDAssociation srcElem;
   private final ASTCDAssociation tgtElem;
   private final ASTCDCompilationUnit srcCD;
@@ -69,7 +69,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
     superTypeMatch = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
     typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
-    //typeMatchers.add(structureTypeMatch);
+    typeMatchers.add(structureTypeMatch);
     typeMatchers.add(superTypeMatch);
     assocDiff(srcElem, tgtElem, typeMatchers);
     setStrings();

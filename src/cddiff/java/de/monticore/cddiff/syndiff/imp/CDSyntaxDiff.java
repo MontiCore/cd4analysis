@@ -25,7 +25,7 @@ import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociationInRev
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
-public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
+public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
   private ASTCDCompilationUnit tgtCD;
   private List<CDTypeDiff> changedTypes;
@@ -43,9 +43,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
   private List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs;
   private List<DiffTypes> baseDiff;
-  List<MatchingStrategy<ASTCDType>> typeMatchers;
   List<ASTCDType> srcCDTypes;
-  List<ASTCDType> tgtCDTypes;
   ICD4CodeArtifactScope scopeSrcCD, scopeTgtCD;
   public Syn2SemDiffHelper getHelper() {
     return helper;
@@ -81,10 +79,6 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
     srcCDTypes.addAll(srcCD.getCDDefinition().getCDClassesList());
     srcCDTypes.addAll(srcCD.getCDDefinition().getCDEnumsList());
     srcCDTypes.addAll(srcCD.getCDDefinition().getCDInterfacesList());
-    tgtCDTypes = new ArrayList<>();
-    tgtCDTypes.addAll(tgtCD.getCDDefinition().getCDClassesList());
-    tgtCDTypes.addAll(tgtCD.getCDDefinition().getCDInterfacesList());
-    tgtCDTypes.addAll(tgtCD.getCDDefinition().getCDEnumsList());
 
     // Trafo to make in-class declarations of compositions appear in the association list
     new CD4CodeDirectCompositionTrafo().transform(srcCD);
@@ -1275,64 +1269,6 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   /*--------------------------------------------------------------------*/
 
   /**
-   * Computes a matching map of CD types between the source and target CD compilation units.
-   * It uses a combination of type matching strategies to match types based on name, structure, and super types.
-   * The matching strategies are applied to the list of CD types to create the final matching map.
-   *
-   * @param listToMatch The list of CD types to be matched.
-   * @param srcCD       The source CD.
-   * @param tgtCD       The target CD.
-   * @return A map containing matched CD types between source and target CDs.
-   */
-  public Map<ASTCDType,ASTCDType> computeMatchingMapTypes(List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD,
-                                                          ASTCDCompilationUnit tgtCD) {
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
-    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructureType = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
-    List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatchNameType);
-    typeMatchers.add(superTypeMatchStructureType);
-
-    CombinedMatching<ASTCDType> combinedMatching = new CombinedMatching<>(listToMatch, srcCD,
-      tgtCD, typeMatchers);
-
-    return combinedMatching.getFinalMap();
-  }
-
-  /**
-   * Computes a matching map of CD associations between the source and target CD compilation units.
-   * It uses a combination of association matching strategies to match associations based on name, type, and structure.
-   * The matching strategies are applied to the list of CD associations to create the final matching map.
-   *
-   * @param listToMatch The list of CD associations to be matched.
-   * @param srcCD       The source CD.
-   * @param tgtCD       The target CD.
-   * @return A map containing matched CD associations between source and target CDs.
-   */
-  public Map<ASTCDAssociation,ASTCDAssociation> computeMatchingMapAssocs(List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD,
-                                                                         ASTCDCompilationUnit tgtCD) {
-    NameAssocMatcher nameAssocMatch = new NameAssocMatcher(tgtCD);
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
-    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructureType = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
-    SrcTgtAssocMatcher associationSrcTgtMatchNameType = new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
-    SrcTgtAssocMatcher associationSrcTgtMatchStructureType = new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
-    List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatchNameType);
-    assocMatchers.add(associationSrcTgtMatchStructureType);
-
-    CombinedMatching<ASTCDAssociation> combinedMatching = new CombinedMatching<>(listToMatch, srcCD,
-      tgtCD, assocMatchers);
-
-    return combinedMatching.getFinalMap();
-  }
-
-  /**
    * Adds matched CD types from the computed matching map to their respective type lists (classes, enums, or interfaces).
    * It iterates through the keys (source CD types) of the computed matching map and creates pairs with their corresponding target CD types.
    * These pairs are then added to the respective type lists.
@@ -1574,7 +1510,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   }
 
   /**
-   * Loads various lists of differences between source and target CD compilation units and scopes.
+   * Loads various lists of differences between source and target CD and scopes.
    * This method populates lists for matched types, associations, changed types, changed associations,
    * added classes, deleted classes, added enums, deleted enums, added associations, deleted associations,
    * added inheritance relationships, and deleted inheritance relationships.
@@ -1593,12 +1529,12 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
     addAllChangedTypes();
     addAllChangedAssocs();
     addAllAddedClasses(srcCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllDeletedClasses(tgtCD, computeMatchingMapTypes(tgtCDTypes,srcCD,tgtCD));
+    addAllDeletedClasses(tgtCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
     addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllDeletedEnums(srcCD, computeMatchingMapTypes(tgtCDTypes,srcCD,tgtCD));
+    addAllDeletedEnums(tgtCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
     addAllAddedAssocs(srcCD, computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(),srcCD,tgtCD));
     addAllDeletedAssocs(tgtCD, computeMatchingMapAssocs(tgtCD.getCDDefinition().getCDAssociationsList(),srcCD,tgtCD));
     addAllAddedInheritance(srcCDScope, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllDeletedInheritance(tgtCDScope, computeMatchingMapTypes(tgtCDTypes,srcCD,tgtCD));
+    addAllDeletedInheritance(tgtCDScope, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
   }
 }

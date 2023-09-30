@@ -77,6 +77,7 @@ public class CombinedMatching<T> {
   }
 
   public Double computeValueForMatching(ASTCDType srcElem, ASTCDType tgtElem){
+    double weight = 0;
     List<ASTCDAttribute> srcAttr = new ArrayList<>(srcElem.getCDAttributeList());
     List<ASTCDAttribute> tgtAttr = new ArrayList<>(tgtElem.getCDAttributeList());
 
@@ -96,7 +97,13 @@ public class CombinedMatching<T> {
     allAttributes.addAll(tgtAttrDeletedAttr);
 
     //Jaccard Index
-    return (double) similarities.size() / allAttributes.size();
+    if(srcElem.getName().equals(tgtElem.getName())){
+      weight = (double) (similarities.size() + 2) / allAttributes.size();
+    } else {
+      weight = (double) similarities.size() / allAttributes.size();
+    }
+
+    return weight;
   }
 
   public Double computeValueForMatching(ASTCDAssociation srcElem, ASTCDAssociation tgtElem,

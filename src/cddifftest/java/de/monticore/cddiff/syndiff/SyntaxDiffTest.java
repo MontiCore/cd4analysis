@@ -255,7 +255,10 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("Source1.cd", "Target1.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    //System.out.println(syntaxDiff.printSrcCD());
+    //System.out.println(syntaxDiff.printOnlyChanged());
+
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printSrcCD());
     //System.out.println(syntaxDiff.printTgtCD());
     //System.out.println(syntaxDiff.getBaseDiff());
     //System.out.println("----------------------------");
@@ -284,13 +287,59 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
   @Test
   public void testSyntax3() {
+    parseMaxModels("5A.cd", "5B.cd");
+
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src,tgt);
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printDiff());
+    System.out.println(syntaxDiff.getMatchedClasses());
+  }
+
+  @Test
+  public void testSyntax4() {
     parseMaxModels("10A.cd", "10B.cd");
 
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    //System.out.println(syntaxDiff.printDiff());
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printDiff());
+  }
+
+  @Test
+  public void testSyntax5() {
+    parseMaxModels("15A.cd", "15B.cd");
+
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printDiff());
+  }
+
+  @Test
+  public void testSyntax6() {
+    parseMaxModels("20A.cd", "20B.cd");
+
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printDiff());
+  }
+
+  @Test
+  public void testSyntax7() {
+    parseMaxModels("25A.cd", "25B.cd");
+
+    CDDiffUtil.refreshSymbolTable(src);
+    CDDiffUtil.refreshSymbolTable(tgt);
+
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printDiff());
   }
 
   public void parseModels(String concrete, String ref) {
