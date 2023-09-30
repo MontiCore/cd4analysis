@@ -88,7 +88,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
 
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(synDiff.printDiff());
+    //System.out.println(synDiff.printDiff());
   }
 
   @Test
@@ -96,9 +96,9 @@ public class AssocDiffTest extends CDDiffTestBasis {
     parseModels("Source2.cd", "Target2.cd");
 
     CDSyntaxDiff associationDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(associationDiff.printDiff());
-    System.out.println(associationDiff.getBaseDiff());
-    System.out.println(associationDiff.getMatchedAssocs());
+    //System.out.println(associationDiff.printDiff());
+    //System.out.println(associationDiff.getBaseDiff());
+    //System.out.println(associationDiff.getMatchedAssocs());
   }
 
   @Test
@@ -106,9 +106,9 @@ public class AssocDiffTest extends CDDiffTestBasis {
     parseModels("Source3.cd", "Target3.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printSrcCD());
-    System.out.println(syntaxDiff.printTgtCD());
-    System.out.println(syntaxDiff.getBaseDiff());
+    //System.out.println(syntaxDiff.printSrcCD());
+    //System.out.println(syntaxDiff.printTgtCD());
+    //System.out.println(syntaxDiff.getBaseDiff());
   }
 
   @Test

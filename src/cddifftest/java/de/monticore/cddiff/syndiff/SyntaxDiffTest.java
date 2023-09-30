@@ -10,6 +10,7 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.imp.SyntaxDiffBuilder;
 import de.monticore.cddiff.syndiff.imp.TestHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -263,7 +264,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     //System.out.println("----------------------------");
     //System.out.println(syntaxDiff.printOnlyDeleted());
     //System.out.println("----------------------------");
-    System.out.println(syntaxDiff.printDiff());
+    //System.out.println(syntaxDiff.printDiff());
     //System.out.println("----------------------------");
   }
 
@@ -275,7 +276,10 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printOnlyChanged());
+    //System.out.println(syntaxDiff.printOnlyChanged());
+
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src,tgt);
+    System.out.println(sb.printTgtCD());
   }
 
   @Test
@@ -286,32 +290,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    System.out.println(syntaxDiff.printDiff());
-  }
-
-  @Test
-  public void testSyntax4() {
-    double a=1,b=2,c=3,d=4,e=5,f=6;
-    Set<Double> list1 = new HashSet<>();
-    //1,2,3,4
-    list1.add(a);
-    list1.add(b);
-    list1.add(c);
-    list1.add(d);
-    //1,2,5,6
-    Set<Double> list2 = new HashSet<>();
-    list2.add(a);
-    list2.add(b);
-    list2.add(e);
-    list2.add(f);
-    //1,2,3,4,5,6
-    Set<Double> list3 = new HashSet<>();
-    list3.addAll(list1);
-    list3.addAll(list2);
-    //1,2
-    list1.retainAll(list2);
-    double result = (double) list1.size() / list3.size();
-    System.out.println(result);
+    //System.out.println(syntaxDiff.printDiff());
   }
 
   public void parseModels(String concrete, String ref) {
