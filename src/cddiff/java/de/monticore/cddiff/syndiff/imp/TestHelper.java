@@ -27,8 +27,8 @@ public class TestHelper {
   }
 
   public void addedAssocs() {
-    for (ASTCDAssociation association : syntaxDiff.addedAssocList()) {
-      Pair<ASTCDClass, ASTCDClass> classes = Syn2SemDiffHelper.getConnectedClasses(association, syntaxDiff.getSrcCD());
+    for (Pair<ASTCDAssociation, List<ASTCDClass>> association : syntaxDiff.addedAssocList()) {
+      Pair<ASTCDClass, ASTCDClass> classes = Syn2SemDiffHelper.getConnectedClasses(association.a, syntaxDiff.getSrcCD());
       ASTCDClass leftClass = classes.a;
       ASTCDClass rightClass = classes.b;
       if (classes.a.getModifier().isAbstract()) {
@@ -52,9 +52,9 @@ public class TestHelper {
   public void inheritanceDiffs() {
     for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
       ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
-      if (!syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
-        astcdClass = syntaxDiff.helper.minSubClass(inheritanceDiff.getAstcdClasses().a);
-      }
+//      if (!syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
+//        astcdClass = syntaxDiff.helper.minSubClass(inheritanceDiff.getAstcdClasses().a);
+//      }
       if (astcdClass != null) {
         System.out.println("For the class " + astcdClass.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed");
         System.out.println("=======================================================");
@@ -202,21 +202,23 @@ public class TestHelper {
   }
 
   public void staDiff() {
-    for (ASTCDClass astcdClass : syntaxDiff.getSTADiff()) {
+    for (ASTCDClass astcdClass : syntaxDiff.hasDiffSuper()) {
       System.out.println("The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has changed direct superclasses.");
       System.out.println("=======================================================");
     }
   }
 
   public void deletedAssocs() {
-    for (Pair<ASTCDAssociation, ASTCDClass> pair : syntaxDiff.deletedAssocList()) {
-      ASTCDClass astcdClass = pair.b;
-      if (astcdClass.getModifier().isAbstract()) {
-        astcdClass = helper.minSubClass(astcdClass);
+    for (Pair<ASTCDAssociation, List<ASTCDClass>> pair : syntaxDiff.deletedAssocList()) {
+      List<ASTCDClass> list = pair.b;
+      for (ASTCDClass astcdClass : list) {
+        if (astcdClass.getModifier().isAbstract()) {
+          astcdClass = helper.minSubClass(astcdClass);
+        }
+        Pair<ASTCDClass, ASTCDClass> connectedClasses = Syn2SemDiffHelper.getConnectedClasses(pair.a, helper.getTgtCD());
+        System.out.println("The association between the classes " + connectedClasses.a.getSymbol().getInternalQualifiedName() + connectedClasses.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.");
+        System.out.println("=======================================================");
       }
-      Pair<ASTCDClass, ASTCDClass> connectedClasses = Syn2SemDiffHelper.getConnectedClasses(pair.a, helper.getTgtCD());
-      System.out.println("The association between the classes " + connectedClasses.a.getSymbol().getInternalQualifiedName() + connectedClasses.b.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.");
-      System.out.println("=======================================================");
     }
   }
 

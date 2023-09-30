@@ -450,13 +450,13 @@ public class DiffWitnessGenerator {
         if (((pair.b.equals(ClassSide.Left) && assocStruct.getSide().equals(ClassSide.Left))
           || (pair.b.equals(ClassSide.Right) && assocStruct.getSide().equals(ClassSide.Right)))
           && (helper.sameAssocStruct(assocStruct, pair.a)
-          || helper.isSubAssociation(assocStruct, pair.a))) {
+          || helper.isSubAssociationSrcSrc(assocStruct, pair.a))) {
           list.remove(assocStruct);
           break;
         } else if (((pair.b.equals(ClassSide.Left) && assocStruct.getSide().equals(ClassSide.Right))
           || (pair.b.equals(ClassSide.Right) && assocStruct.getSide().equals(ClassSide.Left)))
           && (helper.sameAssocStructInReverse(assocStruct, pair.a)
-          || helper.isSubAssociation(assocStruct, pair.a))) {
+          || helper.isSubAssociationSrcSrc(assocStruct, pair.a))) {
           list.remove(assocStruct);
           break;
         }
@@ -468,13 +468,13 @@ public class DiffWitnessGenerator {
         if (((pair.b.equals(ClassSide.Left) && assocStruct.getSide().equals(ClassSide.Left))
           || (pair.b.equals(ClassSide.Right) && assocStruct.getSide().equals(ClassSide.Right)))
           && (helper.sameAssocStruct(assocStruct, pair.a)
-          || helper.isSubAssociation(assocStruct, pair.a))) {
+          || helper.isSubAssociationSrcSrc(assocStruct, pair.a))) {
           list.remove(assocStruct);
           break;
         } else if (((pair.b.equals(ClassSide.Left) && assocStruct.getSide().equals(ClassSide.Right))
           || (pair.b.equals(ClassSide.Right) && assocStruct.getSide().equals(ClassSide.Left)))
           && (helper.sameAssocStructInReverse(assocStruct, pair.a)
-          || helper.isSubAssociation(assocStruct, pair.a))) {
+          || helper.isSubAssociationSrcSrc(assocStruct, pair.a))) {
           list.remove(assocStruct);
           break;
         }
@@ -803,7 +803,7 @@ public class DiffWitnessGenerator {
       }
       if (!changed){
         for (AssocStruct otherAssoc : helper.getOtherAssocFromSuper(subClass)){
-          if (helper.isSubAssociation(assocStruct, otherAssoc)){
+          if (helper.isSubAssociationSrcSrc(assocStruct, otherAssoc)){
             assocStruct = otherAssoc;
           }
         }
@@ -953,7 +953,7 @@ public class DiffWitnessGenerator {
       listToIterate.addAll(objectsOfTypeTgt);
       for (ASTODObject subObject : listToIterate) {
         for (AssocStruct assocStructFromCLass : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), subObject.getMCObjectType().printType()))) {
-          if (helper.isSubAssociation(assocStruct, assocStructFromCLass)) {
+          if (helper.isSubAssociationSrcSrc(assocStruct, assocStructFromCLass)) {
             assocStruct = assocStructFromCLass;
           }
         }
@@ -1087,7 +1087,7 @@ public class DiffWitnessGenerator {
     List<AssocStruct> copy = new ArrayList<>(assocStructs);
     for (AssocStruct assocStruct : copy) {
       for (AssocStruct assocStruct1 : copy) {
-        if (assocStruct != assocStruct1 && helper.isSubAssociation(assocStruct, assocStruct1)) {
+        if (assocStruct != assocStruct1 && helper.isSubAssociationSrcSrc(assocStruct, assocStruct1)) {
           assocStructs.remove(assocStruct);
         }
       }
@@ -1297,7 +1297,7 @@ public class DiffWitnessGenerator {
     List<AssocStruct> copy = new ArrayList<>(list);
     for (AssocStruct assocStruct : copy) {
       for (Pair<AssocStruct, ClassSide> createdAssoc : createdAssocs) {
-        if (helper.isSubAssociation(assocStruct, createdAssoc.a)) {
+        if (helper.isSubAssociationSrcSrc(assocStruct, createdAssoc.a)) {
           list.remove(assocStruct);
         }
       }

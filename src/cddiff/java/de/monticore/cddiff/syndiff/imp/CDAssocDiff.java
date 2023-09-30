@@ -262,7 +262,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
           for (ASTCDClass subclass : subclassesA) {
             if (!subclass.getModifier().isAbstract()) {
               if (helper.findMatchedClass(subclass) != null
-                && !helper.classHasAssociationTgt(tgtStruct.getAssociation(), helper.findMatchedClass(subclass))) {
+                && !helper.classHasAssociationTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
                 return subclass;
               }
             }
@@ -276,7 +276,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
           subClassesASrc.removeAll(inheritance);
           for (ASTCDClass subclass : subClassesASrc) {
             if (!subclass.getModifier().isAbstract()
-              && !helper.classHasAssociation(srcStruct.getAssociation(), subclass)) {
+              && !helper.classHasAssociationSrcSrc(srcStruct, subclass)) {
               return subclass;
             }
           }
@@ -292,7 +292,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
             if (!subclass.getModifier().isAbstract()) {
               //search with isSubAssociation() - done
               if (helper.findMatchedClass(subclass) != null
-                && !helper.classHasAssociationTgt(tgtStruct.getAssociation(), helper.findMatchedClass(subclass))) {
+                && !helper.classHasAssociationTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
                 return subclass;
               }
             }
@@ -308,7 +308,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
           for (ASTCDClass subclass : subClassesASrc) {
             ASTCDClass matchedClass = helper.findMatchedClass(subclass);
             if (!subclass.getModifier().isAbstract()
-              && !helper.classHasAssociation(srcStruct.getAssociation(), subclass)) {
+              && !helper.classHasAssociationSrcSrc(srcStruct, subclass)) {
               return subclass;
             }
           }
@@ -337,7 +337,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
           for (ASTCDClass subclass : subclassesA) {
             if (!subclass.getModifier().isAbstract()) {
               if (helper.findMatchedClass(subclass) != null
-                && !helper.classIsTargetTgt(tgtStruct, helper.findMatchedClass(subclass))) {
+                && !helper.classIsTgtTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
                 return subclass;
               }
             }
@@ -354,7 +354,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
             if (matchedClass != null
               && srcStruct.getAssociation().getCDAssocDir().isBidirectional() && tgtStruct.getAssociation().getCDAssocDir().isBidirectional()
               && !matchedClass.getModifier().isAbstract()
-              && !helper.classHasAssociationTgt(tgtStruct.getAssociation(), matchedClass)) {
+              && !helper.classHasAssociationTgtTgt(tgtStruct, matchedClass)) {
               return subclass;
             }
             if (!subclass.getModifier().isAbstract()
@@ -373,7 +373,7 @@ public class CDAssocDiff extends CDPrintDiff implements ICDAssocDiff {
           for (ASTCDClass subclass : subclassesA) {
             if (!subclass.getModifier().isAbstract()) {
               if (helper.findMatchedClass(subclass) != null
-                && !helper.classIsTargetTgt(tgtStruct, helper.findMatchedClass(subclass))) {
+                && !helper.classIsTgtTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
                 return subclass;
               }
             }
