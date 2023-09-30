@@ -50,16 +50,19 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
   SrcTgtAssocMatcher associationSrcTgtMatch;
   List<MatchingStrategy<ASTCDType>> typeMatchers;
   List<MatchingStrategy<ASTCDAssociation>> assocMatchers;
+  List<ASTCDType> srcCDTypes;
   ICD4CodeArtifactScope scopeSrcCD, scopeTgtCD;
   //Print
   protected StringBuilder outputSrc,outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff;
   //Print end
-
   public Syn2SemDiffHelper getHelper() {
     return helper;
   }
 
   public Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+
+  //public SyntaxDiffBuilder syntaxDiffBuilder = new SyntaxDiffBuilder();
+
   public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
@@ -89,13 +92,17 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
     associationSrcTgtMatch = new SrcTgtAssocMatcher(superTypeMatch, srcCD, tgtCD);
     typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
-    //typeMatchers.add(structureTypeMatch);
+    typeMatchers.add(structureTypeMatch);
     typeMatchers.add(superTypeMatch);
     assocMatchers = new ArrayList<>();
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatch);
     scopeSrcCD = (ICD4CodeArtifactScope) srcCD.getEnclosingScope();
     scopeTgtCD = (ICD4CodeArtifactScope) tgtCD.getEnclosingScope();
+    srcCDTypes = new ArrayList<>();
+    srcCDTypes.addAll(srcCD.getCDDefinition().getCDClassesList());
+    srcCDTypes.addAll(srcCD.getCDDefinition().getCDEnumsList());
+    srcCDTypes.addAll(srcCD.getCDDefinition().getCDInterfacesList());
 
     // Trafo to make in-class declarations of compositions appear in the association list
     new CD4CodeDirectCompositionTrafo().transform(srcCD);
@@ -1299,23 +1306,59 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
 
   /*--------------------------------------------------------------------*/
 
-  public void addAllMatchedClasses(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
-    List<ASTCDClass> tgtClasses = tgtCD.getCDDefinition().getCDClassesList();
-    for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
-      for (ASTCDClass tgtClass : tgtClasses) {
-        for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
-          if (typeMatcher.isMatched(srcClass, tgtClass)) {
-            matchedClasses.add(new Pair<>(srcClass, tgtClass));
-            tgtClasses.remove(tgtClass);
-            break;
-          }
-        }
-        break;
+  public Map<ASTCDType,ASTCDType> computeMatchingMapTypes(List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD,
+                                                          ASTCDCompilationUnit tgtCD) {
+    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
+    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
+    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchStructureType = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
+    typeMatchers.add(nameTypeMatch);
+    typeMatchers.add(structureTypeMatch);
+    typeMatchers.add(superTypeMatchNameType);
+    typeMatchers.add(superTypeMatchStructureType);
+
+    CombinedMatching<ASTCDType> combinedMatching = new CombinedMatching<>(listToMatch, srcCD,
+      tgtCD, typeMatchers);
+
+    return combinedMatching.getFinalMap();
+  }
+
+  public Map<ASTCDAssociation,ASTCDAssociation> computeMatchingMapAssocs(List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD,
+                                                                         ASTCDCompilationUnit tgtCD) {
+    NameAssocMatcher nameAssocMatch = new NameAssocMatcher(tgtCD);
+    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
+    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
+    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchStructureType = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    SrcTgtAssocMatcher associationSrcTgtMatchNameType = new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
+    SrcTgtAssocMatcher associationSrcTgtMatchStructureType = new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
+    List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
+    assocMatchers.add(nameAssocMatch);
+    assocMatchers.add(associationSrcTgtMatchNameType);
+    assocMatchers.add(associationSrcTgtMatchStructureType);
+
+    CombinedMatching<ASTCDAssociation> combinedMatching = new CombinedMatching<>(listToMatch, srcCD,
+      tgtCD, assocMatchers);
+
+    return combinedMatching.getFinalMap();
+  }
+
+  public void addAllMatchedTypes(Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
+    for(ASTCDType x : computedMatchingMapTypes.keySet()){
+      if(x instanceof ASTCDClass){
+        matchedClasses.add(new Pair<>((ASTCDClass) x, (ASTCDClass)computedMatchingMapTypes.get(x)));
+      }
+      if(x instanceof ASTCDEnum){
+        matchedEnums.add(new Pair<>((ASTCDEnum) x, (ASTCDEnum)computedMatchingMapTypes.get(x)));
+      }
+      if(x instanceof ASTCDInterface){
+        matchedInterfaces.add(new Pair<>((ASTCDInterface) x, (ASTCDInterface)computedMatchingMapTypes.get(x)));
       }
     }
   }
 
-  public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
+  /*public void addAllMatchedInterfaces(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
     List<ASTCDInterface> tgtInterfaces = tgtCD.getCDDefinition().getCDInterfacesList();
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDInterface tgtInterface : tgtInterfaces) {
@@ -1329,22 +1372,15 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
         break;
       }
     }
-  }
+  }*/
 
-  public void addAllMatchedAssocs(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
-    for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-      for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-        for (MatchingStrategy<ASTCDAssociation> assocMatcher : assocMatchers) {
-          if (assocMatcher.isMatched(srcAssoc, tgtAssoc)) {
-            matchedAssocs.add(new Pair<>(srcAssoc, tgtAssoc));
-            break;
-          }
-        }
-      }
+  public void addAllMatchedAssocs(Map<ASTCDAssociation,ASTCDAssociation> computedMatchingMapAssocs) {
+    for(ASTCDAssociation x : computedMatchingMapAssocs.keySet()){
+      matchedAssocs.add(new Pair<>(x, computedMatchingMapAssocs.get(x)));
     }
   }
 
-  public void addAllMatchedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
+  /*public void addAllMatchedEnums(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy<ASTCDType>> typeMatchers) {
     for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
       for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
         for (MatchingStrategy<ASTCDType> typeMatcher : typeMatchers) {
@@ -1354,7 +1390,7 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
         }
       }
     }
-  }
+  }*/
 
   public void addAllchangedTypes(ICD4CodeArtifactScope scopeTgtCD) {
     for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
@@ -1564,10 +1600,10 @@ public class CDSyntaxDiff extends CDPrintDiff implements ICDSyntaxDiff {
                             ICD4CodeArtifactScope tgtCDScope,
                             List<MatchingStrategy<ASTCDType>> typeMatchers,
                             List<MatchingStrategy<ASTCDAssociation>> assocMatchers) {
-    addAllMatchedClasses(srcCD, tgtCD, typeMatchers);
-    addAllMatchedInterfaces(srcCD, tgtCD, typeMatchers);
-    addAllMatchedAssocs(srcCD, tgtCD, assocMatchers);
-    addAllMatchedEnums(srcCD, tgtCD, typeMatchers);
+    addAllMatchedTypes(computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
+    //addAllMatchedInterfaces(srcCD, tgtCD, typeMatchers);
+    addAllMatchedAssocs(computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(),srcCD,tgtCD));
+    //addAllMatchedEnums(srcCD, tgtCD, typeMatchers);
     addAllchangedTypes(scopeTgtCD);
     addAllChangedAssocs();
     addAllAddedClasses(srcCD, tgtCD);

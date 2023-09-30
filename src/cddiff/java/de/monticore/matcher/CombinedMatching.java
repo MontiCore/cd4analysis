@@ -9,17 +9,18 @@ import java.util.*;
 
 
 public class CombinedMatching<T> {
-  List<MatchingStrategy<T>> matcherList = new ArrayList<>();
+  List<MatchingStrategy<T>> matcherList;
   List<Triple<T,T,Double>> listWithAllWeights = new ArrayList<>();
   Map<T,T> finalMap;
   List<T> cd1ToMatch;
   ASTCDCompilationUnit srcCD;
   ASTCDCompilationUnit tgtCD;
-  public CombinedMatching(List<T> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD){
+  public CombinedMatching(List<T> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD,
+                          List<MatchingStrategy<T>> matcherList){
     this.cd1ToMatch = listToMatch;
+    this.matcherList = matcherList;
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
-    fillUpWeightList();
     getMatchMap();
   }
 
@@ -40,6 +41,7 @@ public class CombinedMatching<T> {
   }
 
   private void getMatchMap() {
+      fillUpWeightList();
       Map<T,T> map1 = new HashMap<>();
       List<T> foundSource = new ArrayList<>();
       List<T> foundTarget = new ArrayList<>();
