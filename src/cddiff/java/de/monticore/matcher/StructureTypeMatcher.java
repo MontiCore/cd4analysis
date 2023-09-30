@@ -5,8 +5,13 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
@@ -24,29 +29,42 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
    */
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
-    return tgtCD.getEnclosingScope().resolveCDTypeDownMany(srcElem.getName()).stream()
-        .map(CDTypeSymbolTOP::getAstNode)
-        .collect(Collectors.toList());
+    List<ASTCDType> result = new ArrayList<>();
+
+    result.addAll(tgtCD.getCDDefinition().getCDClassesList().stream()
+      .filter(type -> isMatched(srcElem, type))
+      .collect(Collectors.toList()));
+    result.addAll(tgtCD.getCDDefinition().getCDInterfacesList().stream()
+      .filter(type -> isMatched(srcElem, type))
+      .collect(Collectors.toList()));
+
+    return result;
   }
 
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    List<ASTCDAttribute> matchedAttributes = new ArrayList<>();
-    for (ASTCDAttribute srcAttr : srcElem.getCDAttributeList()) {
-      for (ASTCDAttribute tgtAttr : tgtElem.getCDAttributeList()) {
-        if (srcAttr.getName().equals(tgtAttr.getName())) {
-          matchedAttributes.add(srcAttr);
+    List<ASTCDAttribute> srcAttr = new ArrayList<>(srcElem.getCDAttributeList());
+    List<ASTCDAttribute> tgtAttr = new ArrayList<>(tgtElem.getCDAttributeList());
+
+    List<ASTCDAttribute> tgtAttrDeletedAttr = new ArrayList<>(tgtAttr);
+    List<ASTCDAttribute> similarities = new ArrayList<>();
+
+    for(ASTCDAttribute x : srcAttr){
+      for(ASTCDAttribute y : tgtAttr){
+        if(x.getName().equals(y.getName())){
+          tgtAttrDeletedAttr.remove(y);
+          similarities.add(x);
         }
       }
     }
-    return matchedAttributes.size() >= (0.7) * getAverageForCD(tgtCD);
-  }
 
-  public double getAverageForCD(ASTCDCompilationUnit cd) {
-    List<ASTCDAttribute> attributes = new ArrayList<>();
-    for (ASTCDClass tgtType : tgtCD.getCDDefinition().getCDClassesList()) {
-      attributes.addAll(tgtType.getCDAttributeList());
-    }
-    return (double) attributes.size() / cd.getCDDefinition().getCDClassesList().size();
+    List<ASTCDAttribute> allAttributes = new ArrayList<>(srcAttr);
+    allAttributes.addAll(tgtAttrDeletedAttr);
+
+    //Jaccard Index
+    double weight = (double) similarities.size() / allAttributes.size();
+
+    //Chosen threshold
+    return weight >= 0.5;
   }
 }
