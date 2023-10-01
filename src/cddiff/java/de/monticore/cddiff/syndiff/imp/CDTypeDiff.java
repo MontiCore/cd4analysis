@@ -100,6 +100,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   public void setDeletedAttributes(List<ASTCDAttribute> deletedAttribute) {
     this.deletedAttributes = deletedAttribute;
   }
+  @Override
   public List<ASTCDAttribute> getInheritedAttributes() {
     return inheritedAttributes;
   }
@@ -136,6 +137,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     this.baseDiff = baseDiff;
   }
 
+  //CHECKED
   public ASTCDAttribute getOldAttribute(ASTCDAttribute attribute){
     for (Pair<ASTCDAttribute, ASTCDAttribute> pair : matchedAttributes){
       if (attribute.equals(pair.a)){
@@ -145,6 +147,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     return null;
   }
 
+  //CHECKED
   /**
    * Check for each attribute in the list deletedAttribute if it
    * has been really deleted and add it to a list.
@@ -155,31 +158,27 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   public Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes(){
     List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttributes()){
-      if (isDeleted(attribute, helper.getSrcCD())){
+      if (isDeleted(attribute)){
         pairList.add(attribute);
       }
     }
-    return new Pair<>( (ASTCDClass) getSrcElem(), pairList);
+    return new Pair<>((ASTCDClass) getSrcElem(), pairList);
   }
 
-  /**
-   * Check if an attribute is really deleted.
-   * @param attribute from list deletedAttributes.
-   * @param compilationUnit srcCD
-   * @return false if found in inheritance hierarchy or the class is now abstract and the structure is refactored
-   */
-  public boolean isDeleted(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit) {
-    if (!isAttributInSuper(attribute, getSrcElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())) {
+  //CHECKED
+  @Override
+  public boolean isDeleted(ASTCDAttribute attribute) {
+    if (!isAttributInSuper(attribute, getSrcElem(), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope())) {
       if (!getSrcElem().getModifier().isAbstract()) {
         return true;
       }
-      List<ASTCDClass> classList = Syn2SemDiffHelper.getSpannedInheritance(compilationUnit, (ASTCDClass) getSrcElem());
+      List<ASTCDClass> classList = Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), (ASTCDClass) getSrcElem());
       classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
         if (!helper.getNotInstanClassesSrc().contains(astcdClass)
           && !Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
-          Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+          Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
           astcdClassList.remove(getSrcElem());
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass
@@ -214,6 +213,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     return new Pair<>((ASTCDClass) getSrcElem(), (ASTCDAttribute) memberDiff.getSrcElem());//add to Diff List new Pair(getElem1(), memberDiff.getElem1()
   }
 
+  //CHECKED
   @Override
   public ASTCDType isClassNeeded() {
     ASTCDClass srcCLass = (ASTCDClass) getSrcElem();
@@ -245,6 +245,8 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     return null;
   }
 
+
+  //CHECKED
   /**
    * Check for each attribute in the list addedAttributes if it
    * has been really added and add it to a list.
@@ -254,33 +256,34 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   public Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes(){
     List<ASTCDAttribute> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getAddedAttributes()){
-      if (isAdded(attribute, helper.getTgtCD())){
+      if (isAdded(attribute)){
         pairList.add(attribute);
       }
     }
     return new Pair<>( (ASTCDClass) getSrcElem(), pairList);
   }
 
+  //CHECKED
   /**
    * Check if an attribute is really added.
    * @param attribute from addedList
-   * @param compilationUnit for diagram (trg)
    * @return false if found in all 'old' subclasses or in some 'old' superClass
    */
-  public boolean isAdded(ASTCDAttribute attribute, ASTCDCompilationUnit compilationUnit){
-    if (isAttributInSuper(attribute, getTgtElem(), (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())){
+  @Override
+  public boolean isAdded(ASTCDAttribute attribute){
+    if (isAttributInSuper(attribute, getTgtElem(), (ICD4CodeArtifactScope) helper.getTgtCD().getEnclosingScope())){
       return false;
     }
     if (!getSrcElem().getModifier().isAbstract()){
       return true;
     }
-    List<ASTCDClass> classList = Syn2SemDiffHelper.getSpannedInheritance(compilationUnit, (ASTCDClass) getTgtElem());
+    List<ASTCDClass> classList = Syn2SemDiffHelper.getSpannedInheritance(helper.getTgtCD(), (ASTCDClass) getTgtElem());
     classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
       if (!helper.getNotInstanClassesTgt().contains(astcdClass)
         &&!Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
-        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope());
+        Set<ASTCDType> astcdClassList = getAllSuper(astcdClass, (ICD4CodeArtifactScope) helper.getTgtCD().getEnclosingScope());
         astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
           if (type instanceof ASTCDClass
@@ -302,6 +305,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     return false;
   }
 
+  //CHECKED
   /**
    * Get all added constants to an enum
    *
@@ -316,6 +320,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     return new Pair<>((ASTCDEnum) getSrcElem(), pairList);
   }
 
+  //CHECKED
   /**
    * Compute all changed attributes in all classes.
    * @return list of pairs of classes and changed attributes.

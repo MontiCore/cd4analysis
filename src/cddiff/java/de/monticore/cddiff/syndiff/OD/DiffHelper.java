@@ -63,14 +63,11 @@ public class DiffHelper {
       }
     }
 
-    for (ASTCDClass astcdClass1 : syntaxDiff.addedClassList()) {
-      ASTCDClass astcdClass = astcdClass1;
-      if (astcdClass.getModifier().isAbstract()) {
-        astcdClass = helper.minSubClass(astcdClass);
-      }
-      String comment = "A new class " + astcdClass1.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass1),
-        generateElements(astcdClass1, comment),
+    for (Pair<ASTCDClass, ASTCDClass> astcdClass1 : syntaxDiff.addedClassList()) {
+      String comment = "A new class " + astcdClass1.a.getSymbol().getInternalQualifiedName() + "and now there is a change in the class"
+        + astcdClass1.b.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
+      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass1.b),
+        generateElements(astcdClass1.b, comment),
         null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);

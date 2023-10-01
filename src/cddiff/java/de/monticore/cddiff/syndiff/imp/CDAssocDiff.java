@@ -95,11 +95,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   @Override
-  public void setBaseDiff(List<DiffTypes> baseDiff) {
-    this.baseDiff = baseDiff;
-  }
-
-  void setStructs(){
+  public void setStructs(){
     Pair<AssocStruct, AssocStruct> pair = helper.getStructsForAssocDiff(srcElem, tgtElem);
     srcStruct = pair.a;
     tgtStruct = pair.b;
@@ -119,41 +115,14 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
   }
 
-  public AssocStruct findMatchingAssocStructSrc(ASTCDAssociation association, ASTCDClass associatedClass) {
-    Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getSrcCD());
-    for (AssocStruct assocStruct : helper.getSrcMap().get(associatedClass)) {
-      Pair<ASTCDClass, ASTCDClass> structAssociatedClasses = getConnectedClasses(assocStruct.getUnmodifiedAssoc(), helper.getSrcCD());
-      if (associatedClasses.a.equals(structAssociatedClasses.a)
-        && associatedClasses.b.equals(structAssociatedClasses.b)) {
-        return assocStruct;
-      }
-    }
-    return null;
-  }
-
-  public AssocStruct findMatchingAssocStructTgt(ASTCDAssociation association, ASTCDClass associatedClass) {
-    Pair<ASTCDClass, ASTCDClass> associatedClasses = getConnectedClasses(association, helper.getTgtCD());
-    for (AssocStruct assocStruct : helper.getTrgMap().get(associatedClass)) {
-      Pair<ASTCDClass, ASTCDClass> structAssociatedClasses = getConnectedClasses(assocStruct.getUnmodifiedAssoc(), helper.getTgtCD());
-      if (associatedClasses.a.equals(structAssociatedClasses.a)
-        && associatedClasses.b.equals(structAssociatedClasses.b)) {
-        return assocStruct;
-      }
-    }
-
-    return null;
-  }
-  //Update get.
-  //
-  // Diff with matched strucs
-
-  //TODO: use AssocStructs!
+  //CHECKED
   /**
    * Find the difference in the cardinalities of an association.
    * Each pair has the association side with the lowest number that is in the
    * new cardinality but not in the old one.
    * @return list with one or two pairs.
    */
+  @Override
   public Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> getCardDiff(){
     List<Pair<ClassSide, Integer>> list = new ArrayList<>();
     if (!isReversed){
@@ -175,6 +144,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     return new Pair<>(srcElem, list);
   }
 
+  //CHECKED
+  @Override
   public boolean isDirectionChanged(){
     if (isReversed){
       if ((getDirection(srcStruct.getAssociation()).equals(AssocDirection.LeftToRight) && getDirection(tgtStruct.getAssociation()).equals(AssocDirection.RightToLeft))
@@ -189,6 +160,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
   }
 
+  //CHECKED
+  @Override
   public Pair<ASTCDAssociation, List<Pair<ClassSide, ASTCDRole>>> getRoleDiff(){
     List<Pair<ClassSide, ASTCDRole>> list = new ArrayList<>();
     if (!isReversed){
@@ -210,6 +183,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     return new Pair<>(srcElem, list);
   }
 
+  //CHECKED
   /**
    * Find the lowest integer that is the first interval but not in the second.
    * @param interval1 new cardinality
@@ -245,6 +219,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
   }
 
+  //CHECKED
   public ASTCDClass changedSrc() {
     Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
     Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
@@ -257,22 +232,22 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
      rightOld = pairOld.a;
     }
       if (srcStruct.getAssociation().getCDAssocDir().isDefinitiveNavigableRight()) {
-        if (changedToSuper(leftNew, leftOld)) {
-          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), leftNew);
-          subclassesA.remove(helper.findMatchedSrc(leftOld));
-          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), leftOld);
-          subclassesA.removeAll(helper.getSrcClasses(inheritance));
-          subclassesA.add(leftNew);
-          for (ASTCDClass subclass : subclassesA) {
-            if (!subclass.getModifier().isAbstract()) {
-              if (helper.findMatchedClass(subclass) != null
-                && !helper.classHasAssociationTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
-                return subclass;
-              }
-            }
-          }
-        } else if (changedToSub(leftNew, leftOld)
-          && !(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
+//        if (changedToSuper(leftNew, leftOld)) {
+//          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), leftNew);
+//          subclassesA.remove(helper.findMatchedSrc(leftOld));
+//          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), leftOld);
+//          subclassesA.removeAll(helper.getSrcClasses(inheritance));
+//          subclassesA.add(leftNew);
+//          for (ASTCDClass subclass : subclassesA) {
+//            if (!subclass.getModifier().isAbstract()) {
+//              if (helper.findMatchedClass(subclass) != null
+//                && !helper.classHasAssociationTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
+//                return subclass;
+//              }
+//            }
+//          }
+//        }
+        if (!(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
           List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), leftOld);
           subclassesA.remove(helper.findMatchedClass(leftNew));
           List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
@@ -286,23 +261,23 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
           }
         }
       } else if (srcStruct.getAssociation().getCDAssocDir().isDefinitiveNavigableLeft()) {
-        if (changedToSuper(rightNew, rightOld)) {
-          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), rightNew);
-          subclassesA.remove(helper.findMatchedSrc(rightOld));
-          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), rightOld);
-          subclassesA.removeAll(helper.getSrcClasses(inheritance));
-          subclassesA.add(rightNew);
-          for (ASTCDClass subclass : subclassesA) {
-            if (!subclass.getModifier().isAbstract()) {
-              //search with isSubAssociation() - done
-              if (helper.findMatchedClass(subclass) != null
-                && !helper.classHasAssociationTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
-                return subclass;
-              }
-            }
-          }
-        } else if (changedToSub(rightNew, rightOld)
-          && !(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
+//        if (changedToSuper(rightNew, rightOld)) {
+//          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), rightNew);
+//          subclassesA.remove(helper.findMatchedSrc(rightOld));
+//          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), rightOld);
+//          subclassesA.removeAll(helper.getSrcClasses(inheritance));
+//          subclassesA.add(rightNew);
+//          for (ASTCDClass subclass : subclassesA) {
+//            if (!subclass.getModifier().isAbstract()) {
+//              //search with isSubAssociation() - done
+//              if (helper.findMatchedClass(subclass) != null
+//                && !helper.classHasAssociationTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
+//                return subclass;
+//              }
+//            }
+//          }
+//        }
+          if ( !(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
           //check if th matched class of the old one is abstract - done
           List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), rightOld);
           subclassesA.remove(helper.findMatchedClass(rightNew));
@@ -320,6 +295,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
     return null;
   }
+
+  //CHECKED
   public ASTCDClass changedTgt() {
     Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
     Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
@@ -332,22 +309,22 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       rightOld = pairOld.a;
     }
       if (srcStruct.getAssociation().getCDAssocDir().isDefinitiveNavigableRight()) {
-        if (changedToSuper(rightNew, rightOld)) {
-          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), rightNew);
-          subclassesA.remove(helper.findMatchedSrc(rightOld));
-          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), rightOld);
-          subclassesA.removeAll(helper.getSrcClasses(inheritance));
-          subclassesA.add(rightNew);
-          for (ASTCDClass subclass : subclassesA) {
-            if (!subclass.getModifier().isAbstract()) {
-              if (helper.findMatchedClass(subclass) != null
-                && !helper.classIsTgtTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
-                return subclass;
-              }
-            }
-          }
-        } else if (changedToSub(rightNew, rightOld)
-          && !(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
+//        if (changedToSuper(rightNew, rightOld)) {
+//          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), rightNew);
+//          subclassesA.remove(helper.findMatchedSrc(rightOld));
+//          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), rightOld);
+//          subclassesA.removeAll(helper.getSrcClasses(inheritance));
+//          subclassesA.add(rightNew);
+//          for (ASTCDClass subclass : subclassesA) {
+//            if (!subclass.getModifier().isAbstract()) {
+//              if (helper.findMatchedClass(subclass) != null
+//                && !helper.classIsTgtTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
+//                return subclass;
+//              }
+//            }
+//          }
+//        }
+          if (!(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
           List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), rightOld);
           subclassesA.remove(helper.findMatchedClass(rightNew));
           List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
@@ -368,22 +345,22 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
           }
         }
       } else if (srcStruct.getAssociation().getCDAssocDir().isDefinitiveNavigableLeft()) {
-        if (changedToSuper(leftNew, leftOld)) {
-          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), leftNew);
-          subclassesA.remove(helper.findMatchedSrc(leftOld));
-          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), leftOld);
-          subclassesA.removeAll(helper.getSrcClasses(inheritance));
-          subclassesA.add(leftNew);
-          for (ASTCDClass subclass : subclassesA) {
-            if (!subclass.getModifier().isAbstract()) {
-              if (helper.findMatchedClass(subclass) != null
-                && !helper.classIsTgtTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
-                return subclass;
-              }
-            }
-          }
-        } else if (changedToSub(leftNew, leftOld)
-          && !(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
+//        if (changedToSuper(leftNew, leftOld)) {
+//          List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getSrcCD(), leftNew);
+//          subclassesA.remove(helper.findMatchedSrc(leftOld));
+//          List<ASTCDClass> inheritance = getSpannedInheritance(helper.getTgtCD(), leftOld);
+//          subclassesA.removeAll(helper.getSrcClasses(inheritance));
+//          subclassesA.add(leftNew);
+//          for (ASTCDClass subclass : subclassesA) {
+//            if (!subclass.getModifier().isAbstract()) {
+//              if (helper.findMatchedClass(subclass) != null
+//                && !helper.classIsTgtTgtTgt(tgtStruct, helper.findMatchedClass(subclass))) {
+//                return subclass;
+//              }
+//            }
+//          }
+//        }
+        if (!(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
           List<ASTCDClass> subclassesA = getSpannedInheritance(helper.getTgtCD(), leftOld);
           subclassesA.remove(helper.findMatchedClass(leftNew));
           List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
@@ -401,11 +378,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   public boolean changedToSuper(ASTCDClass classNew, ASTCDClass classOld){
-    return isSuperOf(classNew.getSymbol().getInternalQualifiedName().replace(".", "_"), classOld.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
+    return isSuperOf(classNew.getSymbol().getInternalQualifiedName().replace(".", "_"),
+      classOld.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
   }
 
   public boolean changedToSub(ASTCDClass classNew, ASTCDClass classOld){
-    return isSuperOf(classOld.getSymbol().getInternalQualifiedName().replace(".", "_"), classNew.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
+    return isSuperOf(classOld.getSymbol().getInternalQualifiedName().replace(".", "_"),
+      classNew.getSymbol().getInternalQualifiedName().replace(".", "_"), (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
   }
 
   /*--------------------------------------------------------------------*/

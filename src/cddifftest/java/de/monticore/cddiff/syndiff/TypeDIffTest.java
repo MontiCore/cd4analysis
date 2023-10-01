@@ -62,8 +62,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
 
     // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
-    boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
+    boolean result = typeDiff.isAdded(attributeNew);
+    boolean result2 = typeDiff1.isDeleted(attributeOld);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
     syntaxDiff.getHelper().setMaps();
@@ -104,8 +104,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     // Invoke the method
 
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
-    boolean result2 = typeDiff1.isDeleted(attributeOld, compilationUnitNew);
+    boolean result = typeDiff.isAdded(attributeNew);
+    boolean result2 = typeDiff1.isDeleted(attributeOld);
 
     // Assert the result
     Assert.assertFalse(result);
@@ -137,9 +137,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
 
     // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
+    boolean result = typeDiff.isAdded(attributeNew);
     ASTCDType result2 = typeDiff1.isClassNeeded();
-    boolean result3 = typeDiff1.isDeleted(astcdAttribute, compilationUnitNew);
+    boolean result3 = typeDiff1.isDeleted(astcdAttribute);
 
 
     // Assert the result
@@ -169,8 +169,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
 
     // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
-    boolean result2 = typeDiff2.isDeleted(attributeOld, compilationUnitOld);
+    boolean result = typeDiff.isAdded(attributeNew);
+    boolean result2 = typeDiff2.isDeleted(attributeOld);
 
 
     // Assert the result
@@ -199,8 +199,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDAttribute attributeOld = CDTestHelper.getAttribute(cOld, "name");
 
     // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew, compilationUnitOld);
-    boolean result2 = typeDiff2.isDeleted(attributeOld, compilationUnitOld);
+    boolean result = typeDiff.isAdded(attributeNew);
+    boolean result2 = typeDiff2.isDeleted(attributeOld);
     ASTCDClass result3 = (ASTCDClass) typeDiff2.isClassNeeded();
 
     // Assert the result

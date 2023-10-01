@@ -36,121 +36,75 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-//    ASTCDClass a = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
-//    ASTCDClass a1 = CDTestHelper.getClass("A1", compilationUnitNew.getCDDefinition());
-//    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
-//    ASTCDClass a3 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
-//    ASTCDClass a4 = CDTestHelper.getClass("A4", compilationUnitNew.getCDDefinition());
-//
-//    ASTCDClass a1old = CDTestHelper.getClass("A1", compilationUnitOld.getCDDefinition());
-//    ASTCDClass a2old = CDTestHelper.getClass("A2", compilationUnitOld.getCDDefinition());
-//    ASTCDClass a5 = CDTestHelper.getClass("A5", compilationUnitOld.getCDDefinition());
-//    ASTCDClass a3old = CDTestHelper.getClass("A3", compilationUnitOld.getCDDefinition());
-//    ASTCDClass a4old = CDTestHelper.getClass("A4", compilationUnitOld.getCDDefinition());
-//
-//    assert a2 != null;
-//    ASTCDAttribute i = CDTestHelper.getAttribute(a2, "i");
-//    assert a3 != null;
-//    ASTCDAttribute s = CDTestHelper.getAttribute(a3, "s");
-//    assert a4 != null;
-//    ASTCDAttribute doub = CDTestHelper.getAttribute(a4, "d");
-//    assert a4old != null;
-//
-//
-//
-//    ASTCDAssociation a1a2 = CDTestHelper.getAssociation(a1, "a2", compilationUnitNew.getCDDefinition());
-//    ASTCDAssociation a2a4 = CDTestHelper.getAssociation(a2, "a4", compilationUnitNew.getCDDefinition());
-//    ASTCDAssociation a4a3 = CDTestHelper.getAssociation(a4, "a3", compilationUnitNew.getCDDefinition());
-//    ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-//
-//    ASTCDAssociation a1a2old = CDTestHelper.getAssociation(a1old, "a2", compilationUnitOld.getCDDefinition());
-//    ASTCDAssociation a2a4old = CDTestHelper.getAssociation(a2old, "a4", compilationUnitOld.getCDDefinition());
-//    ASTCDAssociation a2a3old = CDTestHelper.getAssociation(a2old, "a3", compilationUnitOld.getCDDefinition());
-//    ASTCDAssociation a3a5old = CDTestHelper.getAssociation(a3old, "a5", compilationUnitOld.getCDDefinition());
-//
-//
-//
-//    assert a != null;
-//    boolean isClassAdded = diff.isSupClass(a);
-//    CDTypeDiff typeDiff = new CDTypeDiff(a2, a2old, scopeNew, scopeOld);
-//    boolean addedAtt = typeDiff.isAdded(i, compilationUnitNew);
-//
-//    CDTypeDiff typeDiff2 = new CDTypeDiff(a3, a3old, scopeNew, scopeOld);
-//    boolean addedAtt2 = typeDiff2.isAdded(s, compilationUnitNew);
-//    CDTypeDiff typeDiff3 = new CDTypeDiff(a4, a4old, scopeNew, scopeOld);
-//    typeDiff3.setChangedMembers(new ArrayList<>());
-//    Pair<ASTCDClass, List<ASTCDAttribute>> changedAtt = typeDiff3.changedAttribute();
-//
-//    CDAssocDiff assocDiff = new CDAssocDiff(a1a2, a1a2old);
-//    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cradDiff = assocDiff.getCardDiff();
-//    CDAssocDiff assocDiff2 = new CDAssocDiff(a2a4, a2a4old);
-//    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff2 = assocDiff2.getCardDiff();
-//    CDAssocDiff assocDiff3 = new CDAssocDiff(a2a3, a2a3old);
-//    Pair<ASTCDAssociation, List<Pair<ClassSide, Integer>>> cardDiff3 = assocDiff3.getCardDiff();
-//
-//    Assert.assertFalse(isClassAdded);
-//    Assert.assertTrue(addedAtt);
-//    Assert.assertTrue(addedAtt2);
-//    System.out.println(changedAtt);
-//    System.out.println(cradDiff);
-//    System.out.println(cardDiff2);
-//    System.out.println(cardDiff3);
-//
-//    assert a4a3 != null;
-//    boolean isAddedAssoc = diff.isAddedAssoc(a4a3);
-//    ASTCDClass isAssocDeleted = diff.isAssocDeleted(a3a5old, a3old);
-//    Assert.assertTrue(isAddedAssoc);
-//    System.out.println(isAssocDeleted);
+//    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+//    TestHelper testHelper = new TestHelper(diff);
+//    testHelper.staDiff();
+//    testHelper.deletedAssocs();
+//    testHelper.srcExistsTgtNot();
+//    testHelper.changedTypes();
+//    testHelper.inheritanceDiffs();
+//    testHelper.changedAssocs();
+//    testHelper.addedConstants();
+//    testHelper.addedClasses();
+//    testHelper.addedAssocs();
 
-    TestHelper testHelper = new TestHelper(diff);
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  //@Test
-  public void test10() {
-    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
-    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
-
-    ASTCDCompilationUnit original1 = cd1.deepClone();
-    ASTCDCompilationUnit original2 = cd2.deepClone();
-
-
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
 
-//    for (ASTODArtifact od : witnesses) {
-//      Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-//    }
-
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }
     }
+  }
 
-    // reduction-based
-    ReductionTrafo trafo = new ReductionTrafo();
-    trafo.transform(cd1, cd2);
+  @Test
+  public void test10() {
+    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
+    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
+//
+//    CDSyntaxDiff diff = new CDSyntaxDiff(cd1, cd2);
+//    TestHelper testHelper = new TestHelper(diff);
+//    testHelper.staDiff();
+//    testHelper.deletedAssocs();
+//    testHelper.srcExistsTgtNot();
+//    testHelper.changedTypes();
+//    testHelper.inheritanceDiffs();
+//    testHelper.changedAssocs();
+//    testHelper.addedConstants();
+//    testHelper.addedClasses();
+//    testHelper.addedAssocs();
 
+//    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+//    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+//
 //    for (ASTODArtifact od : witnesses) {
-//      if (!new OD2CDMatcher()
-//        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-//        System.out.println("Open World Fail");
+//      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+//        System.out.println("Closed World Fail");
 //        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
 //        Assertions.fail();
 //      }
 //    }
+
+    // reduction-based
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(original1, original2);
+
+    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
+    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(false);
+
+    for (ASTODArtifact od : witnesses2) {
+      if (!new OD2CDMatcher()
+        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        System.out.println("Open World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
 }
 
   @Test
@@ -158,17 +112,28 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/15A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/15B.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff);
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+//    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+//    TestHelper testHelper = new TestHelper(diff);
+//    testHelper.staDiff();
+//    testHelper.deletedAssocs();
+//    testHelper.srcExistsTgtNot();
+//    testHelper.changedTypes();
+//    testHelper.inheritanceDiffs();
+//    testHelper.changedAssocs();
+//    testHelper.addedConstants();
+//    testHelper.addedClasses();
+//    testHelper.addedAssocs();
+
+    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test
@@ -176,17 +141,28 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/20A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/20B.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff);
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+//    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+//    TestHelper testHelper = new TestHelper(diff);
+//    testHelper.staDiff();
+//    testHelper.deletedAssocs();
+//    testHelper.srcExistsTgtNot();
+//    testHelper.changedTypes();
+//    testHelper.inheritanceDiffs();
+//    testHelper.changedAssocs();
+//    testHelper.addedConstants();
+//    testHelper.addedClasses();
+//    testHelper.addedAssocs();
+
+    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test
@@ -194,17 +170,28 @@ public class TestMax extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/25A.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/25B.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff);
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+//    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+//    TestHelper testHelper = new TestHelper(diff);
+//    testHelper.staDiff();
+//    testHelper.deletedAssocs();
+//    testHelper.srcExistsTgtNot();
+//    testHelper.changedTypes();
+//    testHelper.inheritanceDiffs();
+//    testHelper.changedAssocs();
+//    testHelper.addedConstants();
+//    testHelper.addedClasses();
+//    testHelper.addedAssocs();
+
+    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test

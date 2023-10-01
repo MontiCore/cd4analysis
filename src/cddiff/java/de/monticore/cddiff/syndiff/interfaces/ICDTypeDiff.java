@@ -18,9 +18,7 @@ public interface ICDTypeDiff {
   List<ASTCDEnumConstant> getDeletedConstants();
   List<Pair<ASTCDAttribute, ASTCDAttribute>> getMatchedAttributes();
   List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
-
   ASTCDType getSrcElem();
-
   ASTCDType getTgtElem();
 
   void setChangedMembers(List<CDMemberDiff> changedMembers);
@@ -45,11 +43,18 @@ public interface ICDTypeDiff {
 
   /**
    * Check for each attribute in the list deletedAttribute if it
-   * has been really deleted and add it to a list.
+   * has been really deleted.
    *
    * @return list of pairs of the class with a deleted attribute.
    */
   Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes();
+
+  /**
+   * Check if an attribute is really deleted.
+   * @param attribute from list deletedAttributes.
+   * @return false if found in inheritance hierarchy (superclass) or the class is now abstract and the structure is refactored
+   */
+  boolean isDeleted(ASTCDAttribute attribute);
 
   /**
    * Check for each attribute in the list addedAttributes if it
@@ -57,6 +62,13 @@ public interface ICDTypeDiff {
    * @return list of pairs of the class with an added (new) attribute.
    */
   Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes();
+
+  /**
+   * Check if an attribute is really added.
+   * @param attribute from addedList
+   * @return false if found in all 'old' subclasses or in some 'old' superClass
+   */
+  boolean isAdded(ASTCDAttribute attribute);
 
   /**
    * Get all added constants to an enum
@@ -67,18 +79,18 @@ public interface ICDTypeDiff {
   /**
    * Get all attributes with changed types.
    *
-   * @param memberDiff
+   * @param memberDiff pair of attributes with changed types.
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
   Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff);
 
   /**
-   * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:
-   * semantic difference - class can be instantiated. From non-abstract to abstract: possible
-   * semantic difference - another class uses this abstract class.
+   * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract: semantic difference - class
+   * can now be instantiated.
+   * From non-abstract to abstract: possible semantic difference - another
+   * class uses this abstract class and it doesn't have subclasses.
    *
-   * @return true if we have a semantic difference. This function kind of uses multiple others:
-   * inheritance hierarchy, comparison of associations.
+   * @return true if we have a semantic difference.
    */
   ASTCDType isClassNeeded();
 }

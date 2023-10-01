@@ -43,8 +43,8 @@ public class TestHelper {
   }
 
   public void addedClasses() {
-    for (ASTCDClass astcdClass : syntaxDiff.addedClassList()) {
-      System.out.println("A new class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been added to the diagram.");
+    for (Pair<ASTCDClass, ASTCDClass> astcdClass : syntaxDiff.addedClassList()) {
+      System.out.println("A new class " + astcdClass.a.getSymbol().getInternalQualifiedName() + " has been added to the diagram and there is a change in the class " + astcdClass.b.getSymbol().getInternalQualifiedName() + ".");
       System.out.println("=======================================================");
     }
   }

@@ -423,13 +423,6 @@ public class DiffWitnessGenerator {
   public Set<Package> createChainsForExistingObj(ASTODObject object, Set<Package> packages,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
-    System.out.println("packages before " + object.getName());
-    for (Package pack : packages) {
-      if (pack.getAstcdAssociation() != null){
-        System.out.println(pack.getLeftObject().getName() + " " + pack.getAstcdAssociation().getLeft().getCDRole().getName() + " "
-          + pack.getAstcdAssociation().getRight().getCDRole().getName() + " " + pack.getRightObject().getName());
-      }
-    }
     List<AssocStruct> list = new ArrayList<>();
     for (AssocStruct assocStruct : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
       if (assocStruct.getSide().equals(ClassSide.Left)
