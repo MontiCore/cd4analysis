@@ -1,0 +1,101 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.*;
+
+classdiagram 20B {
+
+  enum E1 {e11, e12;}
+
+  class A1 {
+    E1 e;
+  }
+
+  class A2 {
+  }
+
+  class A3 extends A2 {
+  }
+
+  class A4 {
+    Integer i;
+  }
+
+  class A5 extends A1 {
+    Double d;
+  }
+
+  association [1] A5 <-> A4 [1..*];
+  association [*] A1 -> A2 [0..1];
+  association [1] A2 <-> A3 [1];
+  association [1..*] A4 <-> A2 [*];
+  association [1] A5 <- A3 [1..*];
+
+  abstract class B1 {
+    Integer n;
+  }
+
+  abstract class B2 {
+    int n;
+  }
+
+  class B3 extends B2 {
+    int b3;
+  }
+
+  class B4 {
+    double b4;
+  }
+
+  class B5 extends B1{
+    String b5;
+  }
+
+  association [1] A2 <- B2 [*];
+  association [*] B5 <-> B3 [0..1];
+  association [1..*] B2 -> A5 [1..*];
+  association [1] B5 -> A1 [0..1];
+  association [1] B4 -> B2 [0..1];
+
+  enum E2 {e21, e22, e23, e26;}
+
+  abstract class C {
+    E2 e2;
+  }
+
+  class C1 extends C;
+
+  class C2 extends C;
+
+  class C3;
+
+  class C4;
+
+  association [1] C <-> A1 [1];
+  association [0..1] C1 -> B2 [*];
+  association [0..1] C2 -> B1 [1];
+  association [1..*] C3 <-> C4 [1];
+  association [1] C3 <-> C2 [0..1];
+
+  class D1;
+
+  class D2 extends D1{
+    E1 d2e1;
+    E2 d2e2;
+  }
+
+  class D3;
+
+  class D4 extends D3;
+
+  class D5 extends D2 {
+    Double d5;
+  }
+
+  association [0..1] D1 -> C3 [*];
+  association [1] D1 -> D3 [*];
+  association [*] D3 <- A2 [1..*];
+  association [1..*] B4 <-> D1 [0..1];
+  association [0..1] B1 <- D4 [*];
+
+}
+

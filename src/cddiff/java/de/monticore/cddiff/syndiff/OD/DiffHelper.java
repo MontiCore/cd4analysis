@@ -31,6 +31,10 @@ public class DiffHelper {
   public DiffHelper() {
   }
 
+  public Syn2SemDiffHelper getHelper() {
+    return helper;
+  }
+
   public DiffHelper(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     syntaxDiff.findOverlappingAssocs();
@@ -411,7 +415,6 @@ public class DiffHelper {
                                              String comment) {
     Set<ASTODElement> elements;
     DiffWitnessGenerator oDHelper = new DiffWitnessGenerator(Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
-    System.out.println("start " + astcdClass.getName());
     elements = oDHelper.getObjForOD(astcdClass);
     if (elements.isEmpty()) {
       return new ArrayList<>();
@@ -441,7 +444,6 @@ public class DiffHelper {
                                              List<Integer> integers,
                                              String comment) {
     DiffWitnessGenerator oDHelper = new DiffWitnessGenerator(Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
-    System.out.println("start association");
     Pair<Set<ASTODElement>, ASTODElement> pair = oDHelper.getObjForOD(association, integers.get(0), integers.get(1));
     if (pair.a.isEmpty()){
       return new ArrayList<>();

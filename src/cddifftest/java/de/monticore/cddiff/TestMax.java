@@ -1,13 +1,18 @@
-package de.monticore.cddiff.syndiff;
+package de.monticore.cddiff;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
+import de.monticore.cddiff.syndiff.CDTestHelper;
 import de.monticore.cddiff.syndiff.OD.DiffHelper;
 import de.monticore.cddiff.syndiff.OD.DiffWitnessGenerator;
+import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
@@ -22,19 +27,32 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestMax extends CDDiffTestBasis {
+  @BeforeEach
+  public void setup() {
+    Log.init();
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+  }
+
   @Test
   public void test5() {
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/5A.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/5B.cd");
 
 //    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
 //    TestHelper testHelper = new TestHelper(diff);
@@ -62,8 +80,8 @@ public class TestMax extends CDDiffTestBasis {
 
   @Test
   public void test10() {
-    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/Performance/10A.cd");
-    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/Performance/10B.cd");
+    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/CD1.cd");
+    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/CD2.cd");
 //
 //    CDSyntaxDiff diff = new CDSyntaxDiff(cd1, cd2);
 //    TestHelper testHelper = new TestHelper(diff);
@@ -102,27 +120,16 @@ public class TestMax extends CDDiffTestBasis {
         .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
         System.out.println("Open World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        Assertions.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
 }
 
   @Test
   public void test15() {
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/15A.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/15B.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/15A.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/15B.cd");
 
-//    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-//    TestHelper testHelper = new TestHelper(diff);
-//    testHelper.staDiff();
-//    testHelper.deletedAssocs();
-//    testHelper.srcExistsTgtNot();
-//    testHelper.changedTypes();
-//    testHelper.inheritanceDiffs();
-//    testHelper.changedAssocs();
-//    testHelper.addedConstants();
-//    testHelper.addedClasses();
-//    testHelper.addedAssocs();
 
     DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
@@ -138,8 +145,8 @@ public class TestMax extends CDDiffTestBasis {
 
   @Test
   public void test20() {
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/20A.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/20B.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/20A.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/20B.cd");
 
 //    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
 //    TestHelper testHelper = new TestHelper(diff);
@@ -167,8 +174,8 @@ public class TestMax extends CDDiffTestBasis {
 
   @Test
   public void test25() {
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/25A.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/25B.cd");
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/25A.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/25B.cd");
 
 //    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
 //    TestHelper testHelper = new TestHelper(diff);
@@ -410,239 +417,6 @@ public class TestMax extends CDDiffTestBasis {
     testHelper.addedConstants();
     testHelper.addedClasses();
     testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testBuilder() {
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A4", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-//    for (AssocStruct assocStruct : diff.getHelper().getSrcMap().get(a2)) {
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
-//    Set<Package> test = odHelper.createChains(new HashSet<>(), diff.getHelper().getSrcMap().get(a2));
-//    List<Package> test1 = new ArrayList<>(test);
-//    System.out.println(getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(test1.get(0).getAstcdAssociation(), diff.getSrcCD()).b.getName());
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-      }
-    }
-  }
-
-  @Test
-  public void testBuilder2(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder2.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A5", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-      }
-    }
-  }
-
-  @Test
-  public void testBuilder3(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder3.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A5", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-      }
-    }
-  }
-
-  @Test
-  public void testBuilder4(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder4.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A5", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
-      }
-    }
-//    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
-  }
-
-  @Test
-  public void testBuilder5(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder5.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
-      }
-    }
-//    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
-  }
-
-  @Test
-  public void testBuilder6(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder6.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    System.out.println(set.size());
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
-      }
-      if (element instanceof ASTODObject){
-        System.out.println("Object");
-        System.out.println(((ASTODObject) element).getName());
-      }
-    }
-//    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
-  }
-
-  @Test
-  public void testBuilder7(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder7.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A2", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
-      }
-    }
-//    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
-  }
-
-  @Test
-  public void testBuilder8(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/Builder8.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator diffHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = diffHelper.getObjForOD(a2);
-    for (ASTODElement element : set) {
-      if (element instanceof ASTODLink){
-        System.out.println("Link");
-        System.out.println(((ASTODLink) element).getLeftReferenceNames());
-        System.out.println("left RN: " + ((ASTODLink) element).getODLinkLeftSide().getRole());
-        System.out.println(((ASTODLink) element).getRightReferenceNames());
-        System.out.println("right RN: " +((ASTODLink) element).getODLinkRightSide().getRole());
-      }
-    }
-//    for (AssocStruct assocStruct : odHelper.getOtherAssoc(a2)){
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
-  }
-
-  @Test
-  public void testBuilder9(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/validation/Performance/5A.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/validation/Performance/5B.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    DiffWitnessGenerator odHelper = new DiffWitnessGenerator();
-
-    ASTCDClass a2 = CDTestHelper.getClass("A3", compilationUnitNew.getCDDefinition());
-    //ASTCDAssociation a2a3 = CDTestHelper.getAssociation(a2, "a3", compilationUnitNew.getCDDefinition());
-
-    Set<ASTODElement> set = odHelper.getObjForOD(a2);
-    ASTODArtifact artifact = DiffHelper.generateArtifact("test", new ArrayList<>(set), "someStereotype");
-
-
-//    for (AssocStruct assocStruct : diff.helper.getSrcMap().get(a2)){
-//      System.out.println(getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).a.getName() + "====" + getConnectedClasses(assocStruct.getAssociation(), diff.getSrcCD()).b.getName());
-//    }
   }
 
   //@Test

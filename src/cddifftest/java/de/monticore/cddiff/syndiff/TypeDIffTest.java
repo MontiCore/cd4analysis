@@ -14,6 +14,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
+import de.monticore.cddiff.syndiff.imp.TestHelper;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -43,43 +44,18 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    scopeNew = (ICD4CodeArtifactScope) compilationUnitNew.getEnclosingScope();
-    scopeOld = (ICD4CodeArtifactScope) compilationUnitOld.getEnclosingScope();
 
-    ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
-    ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
-    ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
-    ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, compilationUnitOld);
-    CDTypeDiff typeDiff1 = new CDTypeDiff(aNew, aOld, compilationUnitOld);
-    // Prepare test data
-    assert bNew != null;
-    ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
-    assert aOld != null;
-    ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
-
-
-    // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew);
-    boolean result2 = typeDiff1.isDeleted(attributeOld);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    syntaxDiff.getHelper().setMaps();
-    //ASTCDType result3 = typeDiff.isClassNeeded();
-
-    // Assert the result
-    System.out.println(syntaxDiff.getHelper().getTrgMap().keySet());
-    System.out.println(syntaxDiff.getHelper().getSrcMap().keySet());
-    Assert.assertFalse(result);
-    Assert.assertFalse(result2);
-    for (ASTCDClass astcdClass : compilationUnitNew.getCDDefinition().getCDClassesList()){
-      System.out.println(astcdClass.getName());
-    }
-    System.out.println(attributeNew.printType());
-    //Assert.assertTrue(syntaxDiff.getHelper().getSrcMap().containsKey(aNew));
-    //Assert.assertNull(result3);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(diff);
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test
@@ -152,30 +128,18 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD4(){
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
-    ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
-    ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
-    ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, compilationUnitOld);
-    CDTypeDiff typeDiff2 = new CDTypeDiff(cNew, cOld, compilationUnitOld);
 
-    // Prepare test data
-    assert bNew != null;
-    ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
-    assert cOld != null;
-    ASTCDAttribute attributeOld = CDTestHelper.getAttribute(cOld, "name");
-
-
-    // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew);
-    boolean result2 = typeDiff2.isDeleted(attributeOld);
-
-
-    // Assert the result
-    Assert.assertFalse(result);
-    Assert.assertFalse(result2);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(diff);
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test
@@ -183,30 +147,17 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
-    ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
-    ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
-    ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, compilationUnitOld);
-    CDTypeDiff typeDiff2 = new CDTypeDiff(cNew, cOld, compilationUnitOld);
-
-    // Prepare test data
-    assert bNew != null;
-    ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
-    assert cOld != null;
-    ASTCDAttribute attributeOld = CDTestHelper.getAttribute(cOld, "name");
-
-    // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew);
-    boolean result2 = typeDiff2.isDeleted(attributeOld);
-    ASTCDClass result3 = (ASTCDClass) typeDiff2.isClassNeeded();
-
-    // Assert the result
-    Assert.assertFalse(result);
-    Assert.assertFalse(result2);
-    Assert.assertNotNull(result3);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(diff);
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test

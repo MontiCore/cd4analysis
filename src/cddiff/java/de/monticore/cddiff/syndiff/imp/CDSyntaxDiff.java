@@ -806,12 +806,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    while (iterator.hasNext()){
      AssocStruct assocStruct = iterator.next();
       if (assocStruct.getSide().equals(ClassSide.Left)
-        && assocStruct.getAssociation().getRight().getCDRole().getName().equals(role.getName())){
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())){
         helper.deleteAssocOtherSideSrc(assocStruct);
         iterator.remove();
       }
       if (assocStruct.getSide().equals(ClassSide.Right)
-        && assocStruct.getAssociation().getLeft().getCDRole().getName().equals(role.getName())){
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())){
         helper.deleteAssocOtherSideSrc(assocStruct);
         iterator.remove();
       }
@@ -829,12 +829,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     while (iterator.hasNext()){
       AssocStruct assocStruct = iterator.next();
       if (assocStruct.getSide().equals(ClassSide.Left)
-        && assocStruct.getAssociation().getRight().getCDRole().getName().equals(role.getName())){
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())){
         helper.deleteAssocOtherSideTgt(assocStruct);
         iterator.remove();
       }
       if (assocStruct.getSide().equals(ClassSide.Right)
-        && assocStruct.getAssociation().getLeft().getCDRole().getName().equals(role.getName())){
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())){
         helper.deleteAssocOtherSideTgt(assocStruct);
         iterator.remove();
       }

@@ -184,6 +184,9 @@ public class DiffWitnessGenerator {
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
     System.out.println("start " + astcdClass.getName());
     Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt);
+    if (packages == null){
+      return new HashSet<>();
+    }
     if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
       return new HashSet<>();
     }
@@ -192,7 +195,11 @@ public class DiffWitnessGenerator {
         if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
           return new HashSet<>();
         }
-        packages.addAll(createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt));
+        Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
+        if (toAdd == null){
+          return new HashSet<>();
+        }
+        packages.addAll(toAdd);
       }
 
     }
@@ -229,7 +236,11 @@ public class DiffWitnessGenerator {
         if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
           return new Pair<>(new HashSet<>(), null);
         }
-        packages.addAll(createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt));
+        Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
+        if (toAdd == null){
+          return new Pair<>(new HashSet<>(), null);
+        }
+        packages.addAll(toAdd);
       }
     }
     map.clear();
@@ -239,7 +250,6 @@ public class DiffWitnessGenerator {
         set.add(pack.getLeftObject());
         set.add(pack.getAssociation());
         set.add(pack.getRightObject());
-        System.out.println(pack.getLeftObject().getName() + " " + pack.getAstcdAssociation().getLeft().getCDRole().getName() + " " + pack.getAstcdAssociation().getRight().getCDRole().getName() + " " + pack.getRightObject().getName());
       }
 
     }
@@ -259,6 +269,7 @@ public class DiffWitnessGenerator {
     boolean mustHaveAdded = false;
     boolean hasAdded = false;
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
+    System.out.println("list size for " + astcdClass.getName() + list.size());
     for (AssocStruct assocStruct : list) {
       ASTODObject tgtObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)
@@ -296,6 +307,10 @@ public class DiffWitnessGenerator {
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         }
+        if (tgtObject == null) {
+          return null;
+        }
+
         if (tgtObject != null) {
           hasAdded = true;
           mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
@@ -340,6 +355,10 @@ public class DiffWitnessGenerator {
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         }
+        if (tgtObject == null) {
+          return null;
+        }
+
         if (tgtObject != null) {
           hasAdded = true;
           mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
@@ -515,6 +534,11 @@ public class DiffWitnessGenerator {
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         }
+
+        if (tgtObject == null) {
+          return null;
+        }
+
         if (tgtObject != null) {
           hasAdded = true;
           mapSrc.put(object, new Pair<>(assocStruct, ClassSide.Left));
@@ -560,6 +584,10 @@ public class DiffWitnessGenerator {
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         }
+        if (tgtObject == null) {
+          return null;
+        }
+
         if (tgtObject != null) {
           hasAdded = true;
           mapSrc.put(object, new Pair<>(assocStruct, ClassSide.Right));
@@ -1081,7 +1109,7 @@ public class DiffWitnessGenerator {
     for (AssocStruct assocStruct : copy) {
       for (AssocStruct assocStruct1 : copy) {
         if (assocStruct != assocStruct1 && helper.isSubAssociationSrcSrc(assocStruct, assocStruct1)) {
-          assocStructs.remove(assocStruct);
+          assocStructs.remove(assocStruct1);
         }
       }
     }
