@@ -68,8 +68,8 @@ public class DiffHelper {
     }
 
     for (Pair<ASTCDClass, ASTCDClass> astcdClass1 : syntaxDiff.addedClassList()) {
-      String comment = "A new class " + astcdClass1.a.getSymbol().getInternalQualifiedName() + "and now there is a change in the class"
-        + astcdClass1.b.getSymbol().getInternalQualifiedName() + " has been added to the diagram that is not abstract and couldn't be matched with any of the old classes.";
+      String comment = "A new class " + astcdClass1.a.getSymbol().getInternalQualifiedName() + " has been added and now there is a change in the class "
+        + astcdClass1.b.getSymbol().getInternalQualifiedName() + ".";
       ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass1.b),
         generateElements(astcdClass1.b, comment),
         null);
@@ -422,7 +422,7 @@ public class DiffHelper {
     ASTODObject matchedObject = null;
     for (ASTODElement element : elements) {
       if (element instanceof ASTODObject) {
-        if (((ASTODObject) element).getMCObjectType().printType().equals(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))) {
+        if (((ASTODObject) element).getMCObjectType().printType().equals(astcdClass.getSymbol().getInternalQualifiedName())) {
           matchedObject = (ASTODObject) element;
         }
       }
@@ -495,15 +495,15 @@ public class DiffHelper {
     String tgtName;
     Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
     if (association.getCDAssocDir().isBidirectional()) {
-      srcName = pair.a.getSymbol().getInternalQualifiedName();
-      tgtName = pair.b.getSymbol().getInternalQualifiedName();
+      srcName = pair.a.getSymbol().getInternalQualifiedName().replace(".", "_");
+      tgtName = pair.b.getSymbol().getInternalQualifiedName().replace(".", "_");
     } else {
       if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
-        srcName = pair.b.getSymbol().getInternalQualifiedName();
-        tgtName = pair.a.getSymbol().getInternalQualifiedName();
+        srcName = pair.b.getSymbol().getInternalQualifiedName().replace(".", "_");
+        tgtName = pair.a.getSymbol().getInternalQualifiedName().replace(".", "_");
       } else {
-        srcName = pair.a.getSymbol().getInternalQualifiedName();
-        tgtName = pair.b.getSymbol().getInternalQualifiedName();
+        srcName = pair.a.getSymbol().getInternalQualifiedName().replace(".", "_");
+        tgtName = pair.b.getSymbol().getInternalQualifiedName().replace(".", "_");
       }
     }
     String stringBuilder = "AssocDiff_" + indexAssoc + srcName + "_" + tgtName;
@@ -512,7 +512,7 @@ public class DiffHelper {
   }
 
   public String oDTitleForClass(ASTCDClass astcdClass) {
-    String stringBuilder = "ClassDiff_" + indexClass + astcdClass.getSymbol().getInternalQualifiedName();
+    String stringBuilder = "ClassDiff_" + indexClass + astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_");
     indexClass++;
     return stringBuilder;
   }

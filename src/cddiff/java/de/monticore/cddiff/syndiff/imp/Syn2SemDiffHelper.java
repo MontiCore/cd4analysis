@@ -5,7 +5,10 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
@@ -20,7 +23,7 @@ import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.*;
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 
@@ -38,11 +41,30 @@ public class Syn2SemDiffHelper {
   }
 
   private ODBuilder ODBuilder = new ODBuilder();
+  /**
+   * Map with all possible associations (as AssocStructs) for classes
+   * from srcCD where the given class serves as source.
+   * The non-instantiatable classes and associations are removed
+   * after the function findOverlappingAssocs().
+   */
   private ArrayListMultimap<ASTCDClass, AssocStruct> srcMap = ArrayListMultimap.create();
+
+  /**
+   * Map with all possible associations (as AssocStructs) for classes
+   * from trgCd where the given class serves as target.
+   * The non-instantiatable classes and associations are removed
+   * after the function findOverlappingAssocs().
+   */
   private ArrayListMultimap<ASTCDClass, AssocStruct> trgMap = ArrayListMultimap.create();
 
+  /**
+   * Set with all classes that are not instantiatable in srcCD.
+   */
   private Set<ASTCDClass> notInstanClassesSrc = new HashSet<>();
 
+  /**
+   * Set with all classes that are not instantiatable in trgCD.
+   */
   private Set<ASTCDClass> notInstanClassesTgt = new HashSet<>();
 
   private ASTCDCompilationUnit srcCD;
@@ -94,16 +116,8 @@ public class Syn2SemDiffHelper {
     return notInstanClassesSrc;
   }
 
-  public void setNotInstanClassesSrc(Set<ASTCDClass> notInstanClassesSrc) {
-    this.notInstanClassesSrc = notInstanClassesSrc;
-  }
-
   public Set<ASTCDClass> getNotInstanClassesTgt() {
     return notInstanClassesTgt;
-  }
-
-  public void setNotInstanClassesTgt(Set<ASTCDClass> notInstanClassesTgt) {
-    this.notInstanClassesTgt = notInstanClassesTgt;
   }
 
   public void updateSrc(ASTCDClass astcdClass){
@@ -124,7 +138,15 @@ public class Syn2SemDiffHelper {
       subClass.getSymbol().getInternalQualifiedName(), tgtCD);
   }
 
-
+  /**
+   * Check if an association is a superassociation of another one.
+   * For this, the direction and the role names must be matched in the target direction.
+   * The associated classes of the superassociation must be superclasses of the associated classes
+   * of the subAssoc.
+   * @param superAssoc superassociation as AssocStruct
+   * @param subAssoc subassociation as AssocStruct
+   * @return true if condition is fulfilled
+   */
   //CHECKED
   public boolean isSubAssociationSrcSrc(AssocStruct superAssoc, AssocStruct subAssoc) {
     if (subAssoc.getSide().equals(ClassSide.Left)
@@ -163,6 +185,13 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
+  /**
+   * Get all needed associations from the srcMap that use the given class
+   * as target. The associations are strictly unidirectional.
+   * Needed associations - the cardinality must be at least one.
+   * @param astcdClass target class
+   * @return list of associations
+   */
   //CHECKED
   public List<AssocStruct> getOtherAssocFromSuper(ASTCDClass astcdClass){
     List<AssocStruct> list = new ArrayList<>();
@@ -188,6 +217,13 @@ public class Syn2SemDiffHelper {
     return list;
   }
 
+  /**
+   * Get all needed associations from the tgtMap that use the given class
+   * as target. The associations are strictly unidirectional.
+   * Needed associations - the cardinality must be at least one.
+   * @param astcdClass target class
+   * @return list of associations
+   */
   //CHECKED
   public List<AssocStruct> getOtherAssocsTgt(ASTCDClass astcdClass){
     List<AssocStruct> list = new ArrayList<>();
@@ -213,6 +249,14 @@ public class Syn2SemDiffHelper {
     return list;
   }
 
+  /**
+   * Get all needed associations (including superclasses) from the tgtMap that
+   * use the given class as target. The associations are strictly unidirectional.
+   * Needed associations - the cardinality must be at least one.
+   * 'Subassociations' might be included.
+   * @param astcdClass target class
+   * @return list of associations
+   */
   //CHECKED
   public List<AssocStruct> getAllOtherAssocsTgt(ASTCDClass astcdClass){
     List<AssocStruct> list = new ArrayList<>();
@@ -222,6 +266,14 @@ public class Syn2SemDiffHelper {
     return list;
   }
 
+  /**
+   * Get all needed associations (including superclasses) from the tgtMap that
+   * use the given class as target. The associations are strictly unidirectional.
+   * Needed associations - the cardinality must be at least one.
+   * 'Subassociations' might be included.
+   * @param astcdClass target class
+   * @return list of associations
+   */
   //CHECKED
   public List<AssocStruct> getAllOtherAssocsSrc(ASTCDClass astcdClass){
     List<AssocStruct> list = new ArrayList<>();
@@ -272,6 +324,12 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
+  /**
+   * When merging associations, the role names of the bidirectional
+   * association are used instead of the role names of the unidirectional.
+   * @param association association
+   * @param superAssoc superassociation
+   */
   //CHECKED
   static void setBiDirRoleName(AssocStruct association, AssocStruct superAssoc){
     if (!association.getDirection().equals(AssocDirection.BiDirectional)
@@ -288,6 +346,11 @@ public class Syn2SemDiffHelper {
     }
   }
 
+  /**
+   * Merge the cardinalities and the direction of two associations.
+   * @param association association
+   * @param superAssoc superassociation
+   */
   //CHECKED
   static void mergeAssocs(AssocStruct association, AssocStruct superAssoc){
     ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
@@ -335,6 +398,12 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
+  /**
+   * Check if the role names on the source side are the same.
+   * @param assocDown association
+   * @param assocUp association
+   * @return true if the role names are the same
+   */
   //CHECKED
   public static boolean sameRoleNamesSrc(AssocStruct assocDown, AssocStruct assocUp){
     if (assocDown.getSide().equals(ClassSide.Left) && assocUp.getSide().equals(ClassSide.Left)){
@@ -482,6 +551,13 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
+  /**
+   * Check if all matched subclasses in srcCD of a class from trgCD have
+   * the same association or a subassociation.
+   * @param association association from trgCD.
+   * @param astcdClass class from trgCD.
+   * @return null if condition is fulfilled, else the class that violates the condition.
+   */
   //CHECKED
   public ASTCDClass allSubclassesHaveIt(AssocStruct association, ASTCDClass astcdClass){
     List<ASTCDClass> subClassesTgt = getSpannedInheritance(tgtCD, astcdClass);
@@ -501,6 +577,13 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
+  /**
+   * Check if all matched subclasses in trgCD of a class from srcCD have
+   * the same association or a subassociation.
+   * @param association association from srcCD.
+   * @param astcdClass class from srcCD.
+   * @return null if condition is fulfilled, else the class that violates the condition.
+   */
   //CHECKED
   public ASTCDClass allSubClassesHaveItTgt(AssocStruct association, ASTCDClass astcdClass){
     List<ASTCDClass> subClassesSrc = getSpannedInheritance(srcCD, astcdClass);
@@ -520,6 +603,13 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
+  /**
+   * Similar to the function above, but the now the classes must be
+   * target of the association.
+   * @param matchedAssocStruc association from srcCD.
+   * @param astcdClass class from srcCD.
+   * @return null if condition is fulfilled, else the class that violates the condition.
+   */
   //CHECKED
   public ASTCDClass allSubClassesAreTgtSrcTgt(AssocStruct matchedAssocStruc, ASTCDClass astcdClass) {
     List<ASTCDClass> subClasses = getSpannedInheritance(srcCD, astcdClass);
@@ -557,6 +647,13 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
+  /**
+   * Check if the second association from trgCD is a subassociation of the first
+   * association from srcCD.
+   * @param superAssoc association from srcCD.
+   * @param subAssoc association from trgCD.
+   * @return true if the condition is fulfilled.
+   */
   public boolean isSubAssociationTgtSrc(AssocStruct superAssoc, AssocStruct subAssoc){
     if (subAssoc.getSide().equals(ClassSide.Left)
       && superAssoc.getSide().equals(ClassSide.Left)
@@ -594,6 +691,13 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
+  /**
+   * Check if the second association from trgCD is a subassociation of the first
+   * association from trgCD.
+   * @param superAssoc association from srcCD.
+   * @param subAssoc association from trgCD.
+   * @return true if the condition is fulfilled.
+   */
   public boolean isSubAssociationTgtTgt(AssocStruct superAssoc, AssocStruct subAssoc){
     if (subAssoc.getSide().equals(ClassSide.Left)
       && superAssoc.getSide().equals(ClassSide.Left)
@@ -631,6 +735,14 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
+  /**
+   * Check if the classes are in an inheritance relation.
+   * For this, the matched classes in trgCD of the srcClass are compared
+   * with isSuper() to the tgtClass.
+   * @param srcClass class from srcCD.
+   * @param tgtClass class from trgCD.
+   * @return true if the condition is fulfilled.
+   */
   public boolean compareSrcTgt(ASTCDClass srcClass, ASTCDClass tgtClass){
     if (findMatchedSrc(tgtClass) != null){
       return isSuperOf(srcClass.getSymbol().getInternalQualifiedName(),
@@ -649,6 +761,14 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
+  /**
+   * Check if the classes are in an inheritance relation.
+   * For this, the matched classes in srcCD of the tgtClass are compared
+   * with isSuper() to the srcClass.
+   * @param tgtClass class from trgCD.
+   * @param srcClass class from srcCD.
+   * @return true if the condition is fulfilled.
+   */
   public boolean compareTgtSrc(ASTCDClass tgtClass, ASTCDClass srcClass) {
     if (findMatchedClass(srcClass) != null) {
       return isSuperOf(tgtClass.getSymbol().getInternalQualifiedName(),
@@ -797,6 +917,12 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
+  /**
+   * Check if two associations are exactly the same.
+   * @param association association.
+   * @param association2 association.
+   * @return true if the condition is fulfilled.
+   */
   //CHECKED
   public boolean sameAssociation(ASTCDAssociation association, ASTCDAssociation association2){
     Pair<ASTCDCardinality, ASTCDCardinality> cardinalities = getCardinality(association2);
@@ -1162,6 +1288,35 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
+  public List<ASTCDAssociation> getCDAssociationsListForTypeSrc(ASTCDType type) {
+    List<ASTCDAssociation> result = new ArrayList<>();
+    for (ASTCDAssociation association : srcCD.getCDDefinition().getCDAssociationsList()){
+      if (association.getLeftQualifiedName().getQName().equals(type.getSymbol().getInternalQualifiedName())
+        && association.getCDAssocDir().isDefinitiveNavigableRight()){
+        result.add(association);
+      }
+      else if (association.getRightQualifiedName().getQName().equals(type.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft()){
+        result.add(association);
+      }
+    }
+    return result;
+  }
+
+  public List<ASTCDAssociation> getCDAssociationsListForTypeTgt(ASTCDType type) {
+    List<ASTCDAssociation> result = new ArrayList<>();
+    for (ASTCDAssociation association : tgtCD.getCDDefinition().getCDAssociationsList()){
+
+      if (association.getLeftQualifiedName().getQName().equals(type.getSymbol().getInternalQualifiedName())
+        && association.getCDAssocDir().isDefinitiveNavigableRight()){
+        result.add(association);
+      }
+      else if (association.getRightQualifiedName().getQName().equals(type.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft()){
+        result.add(association);
+      }
+    }
+    return result;
+  }
+
   //CHECKED
   /**
    * Compute what associations can be used from a class (associations that were from the class and superAssociations).
@@ -1171,7 +1326,7 @@ public class Syn2SemDiffHelper {
    */
   public void setMaps(){
     for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
-      for (ASTCDAssociation astcdAssociation : getSrcCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
+      for (ASTCDAssociation astcdAssociation : getCDAssociationsListForTypeSrc(astcdClass)){
         Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation, getSrcCD());
         if (pair.a == null){
           continue;
@@ -1210,7 +1365,7 @@ public class Syn2SemDiffHelper {
     }
 
     for (ASTCDClass astcdClass : getTgtCD().getCDDefinition().getCDClassesList()){
-      for (ASTCDAssociation astcdAssociation : getTgtCD().getCDDefinition().getCDAssociationsListForType(astcdClass)){
+      for (ASTCDAssociation astcdAssociation : getCDAssociationsListForTypeTgt(astcdClass)){
         Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation, getTgtCD());
         if (pair.a == null){
           continue;
@@ -1253,7 +1408,7 @@ public class Syn2SemDiffHelper {
       for (ASTCDType superClass : superClasses){//getAllSuperTypes CDDffUtils
         if (superClass instanceof ASTCDClass){
           ASTCDClass superC = (ASTCDClass) superClass;
-          for (ASTCDAssociation association : getSrcCD().getCDDefinition().getCDAssociationsListForType(superClass)){
+          for (ASTCDAssociation association : getCDAssociationsListForTypeSrc(superClass)){
             Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association, getSrcCD());
             if (pair.a == null){
               continue;
@@ -1263,7 +1418,7 @@ public class Syn2SemDiffHelper {
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getLeft())).build());
               copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getRight())).build());
-              copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))).build());
+              copyAssoc.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName())).build());
               copyAssoc.setName(" ");
               if (!copyAssoc.getLeft().isPresentCDCardinality()){
                 copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
@@ -1280,11 +1435,12 @@ public class Syn2SemDiffHelper {
               else {
                 getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left, true));
               }
-            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+            }
+            if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               ASTCDAssociation copyAssoc = association.deepClone();
               copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getLeft())).build());
               copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getRight())).build());
-              copyAssoc.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))).build());
+              copyAssoc.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName())).build());
               copyAssoc.setName(" ");
               if (!copyAssoc.getLeft().isPresentCDCardinality()){
                 copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
@@ -1313,7 +1469,7 @@ public class Syn2SemDiffHelper {
       for (ASTCDType superClass : superClasses){
         if (superClass instanceof ASTCDClass){
           ASTCDClass superC = (ASTCDClass) superClass;
-          for (ASTCDAssociation association : getTgtCD().getCDDefinition().getCDAssociationsListForType(superClass)){
+          for (ASTCDAssociation association : getCDAssociationsListForTypeTgt(superClass)){
             Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association, getTgtCD());
             if (pair.a == null){
               continue;
@@ -1323,7 +1479,7 @@ public class Syn2SemDiffHelper {
               ASTCDAssociation assocForSubClass = association.deepClone();
               assocForSubClass.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getLeft())).build());
               assocForSubClass.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getRight())).build());
-              assocForSubClass.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"))).build());
+              assocForSubClass.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(astcdClass.getSymbol().getInternalQualifiedName())).build());
               assocForSubClass.setName(" ");
               if (!assocForSubClass.getLeft().isPresentCDCardinality()){
                 assocForSubClass.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
@@ -1340,7 +1496,8 @@ public class Syn2SemDiffHelper {
               else {
                 getTrgMap().put(astcdClass, new AssocStruct(assocForSubClass, AssocDirection.LeftToRight, ClassSide.Left, true));
               }
-            } else if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
+            }
+            if ((pair.b.getSymbol().getInternalQualifiedName().equals(superC.getSymbol().getInternalQualifiedName()) && association.getCDAssocDir().isDefinitiveNavigableLeft())) {
               //change right side from superClass to subclass
               ASTCDAssociation assocForSubClass = association.deepClone();
               assocForSubClass.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getLeft())).build());
@@ -1418,16 +1575,17 @@ public class Syn2SemDiffHelper {
 
   //CHECKED
   private boolean sameRoleNameAndClass(String roleName, ASTCDClass astcdClass){
+    String roleName1 = roleName.substring(0, 1).toUpperCase() + roleName.substring(1);
     for (AssocStruct assocStruct : srcMap.get(astcdClass)){
       if (assocStruct.getSide().equals(ClassSide.Left)){
         if (CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(roleName)
-          && getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName().equals(roleName)){
+          && getConnectedClasses(assocStruct.getAssociation(), srcCD).b.getName().equals(roleName1)){
           return true;
         }
       }
       else {
         if (CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(roleName)
-          && getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getName().equals(roleName)){
+          && getConnectedClasses(assocStruct.getAssociation(), srcCD).a.getName().equals(roleName1)){
           return true;
         }
       }
@@ -1435,18 +1593,19 @@ public class Syn2SemDiffHelper {
     return false;
   }
   //CHECKED
-  //TODO: when comparing class with role name, first character must be big
+  //when comparing class with role name, first character must be big - done
   private boolean sameRoleNameAndClassTgt(String roleName, ASTCDClass astcdClass){
+    String roleName1 = roleName.substring(0, 1).toUpperCase() + roleName.substring(1);
     for (AssocStruct assocStruct : trgMap.get(astcdClass)){
       if (assocStruct.getSide().equals(ClassSide.Left)){
         if (CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(roleName)
-          && getConnectedClasses(assocStruct.getAssociation(), tgtCD).b.getName().equals(roleName)){
+          && getConnectedClasses(assocStruct.getAssociation(), tgtCD).b.getName().equals(roleName1)){
           return true;
         }
       }
       else {
         if (CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(roleName)
-          && getConnectedClasses(assocStruct.getAssociation(), tgtCD).a.getName().equals(roleName)){
+          && getConnectedClasses(assocStruct.getAssociation(), tgtCD).a.getName().equals(roleName1)){
           return true;
         }
       }
@@ -1608,7 +1767,7 @@ public class Syn2SemDiffHelper {
   //CHECKED
   public ASTCDClass getCDClass(ASTCDCompilationUnit compilationUnit, String className) {
     for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
-      if (astcdClass.getName().equals(className)) {
+      if (astcdClass.getSymbol().getInternalQualifiedName().equals(className)) {
         return astcdClass;
       }
     }

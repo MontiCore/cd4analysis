@@ -1028,7 +1028,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       ASTCDClass matched = helper.findMatchedSrc(astcdClass);
       if (matched != null
         && !helper.getNotInstanClassesSrc().contains(matched)){
-        list.add(astcdClass);
+        list.add(matched);
       }
     }
     return list;

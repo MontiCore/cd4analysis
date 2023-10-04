@@ -259,7 +259,7 @@ public class DiffWitnessGenerator {
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> packages,
                                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
-    ASTODObject srcObject = odBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"),
+    ASTODObject srcObject = odBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName(),
       helper.getSuperClasses(astcdClass),
       helper.getAttributesOD(astcdClass));
     if (helper.getSrcMap().get(astcdClass).isEmpty()) {
@@ -295,7 +295,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
         } else if (tgtObject == null
@@ -303,7 +303,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         }
@@ -343,7 +343,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
         } else if (tgtObject == null
@@ -351,7 +351,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         }
@@ -384,7 +384,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()
@@ -392,7 +392,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
         }
@@ -415,7 +415,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()
@@ -423,7 +423,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
         }
@@ -522,7 +522,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
         } else if (tgtObject == null
@@ -530,7 +530,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         }
@@ -572,7 +572,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
         } else if (tgtObject == null
@@ -580,7 +580,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         }
@@ -619,7 +619,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
         } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()
@@ -627,7 +627,7 @@ public class DiffWitnessGenerator {
           if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
         }
@@ -648,12 +648,12 @@ public class DiffWitnessGenerator {
         }
 
         if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
             helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
         } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()
           && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null) {
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName().replace(".", "_"),
+          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
             helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
         }

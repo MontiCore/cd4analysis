@@ -25,8 +25,8 @@ public class Package {
   private final ODBuilder ODBuilder = new ODBuilder();
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   public Package(ASTCDClass leftObject, String idSrc, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
-    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
-    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
+    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
+    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
@@ -44,7 +44,7 @@ public class Package {
   }
 
   public Package(ASTCDClass leftObject, String idSrc, ASTODObject rightObject, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
-    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
+    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
     this.rightObject = rightObject;
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
@@ -55,7 +55,7 @@ public class Package {
 
   public Package(ASTODObject leftObject, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight) {
     this.leftObject = leftObject;
-    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
+    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
@@ -73,7 +73,7 @@ public class Package {
   }
 
   public Package(ASTCDClass astcdClass, String id){
-    this.leftObject = ODBuilder.buildObj(id, astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_"), helper.getSuperClasses(astcdClass), getAttributesOD(astcdClass));
+    this.leftObject = ODBuilder.buildObj(id, astcdClass.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(astcdClass), getAttributesOD(astcdClass));
     this.rightObject = null;
     this.association = null;
     this.astcdAssociation = null;

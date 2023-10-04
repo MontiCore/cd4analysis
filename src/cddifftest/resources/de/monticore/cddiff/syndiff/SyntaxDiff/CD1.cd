@@ -1,11 +1,15 @@
 import java.lang.*;
 classdiagram CD1{
 
-  class A{}
+  class A{
+    String name;
+  }
 
   class B{}
 
-  class C extends A{}
+  class C extends A{
+    Double name;
+  }
 
   class D extends B{}
 

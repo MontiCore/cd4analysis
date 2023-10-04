@@ -2,7 +2,7 @@
 
 import java.lang.*;
 
-classdiagram 25A {
+classdiagram CD1 {
 
   enum E1 {e11, e12, e13;}
 
