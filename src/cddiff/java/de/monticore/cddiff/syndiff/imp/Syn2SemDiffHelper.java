@@ -230,6 +230,8 @@ public class Syn2SemDiffHelper {
     for (ASTCDClass classToCheck : trgMap.keySet()) {
       if (classToCheck != astcdClass) {
         for (AssocStruct assocStruct : trgMap.get(classToCheck)) {
+          assert assocStruct.getAssociation().getLeft() != null;
+          assert assocStruct.getAssociation().getRight() != null;
           if (assocStruct.getSide().equals(ClassSide.Left)
             && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
             && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
@@ -1258,6 +1260,7 @@ public class Syn2SemDiffHelper {
     if (cardinalityA == null){
       return cardinalityB;
     }
+    int i = 0;
     if (cardinalityA.equals(AssocCardinality.One)) {
       return AssocCardinality.One;
     } else if (cardinalityA.equals(AssocCardinality.Optional)) {
@@ -1285,6 +1288,7 @@ public class Syn2SemDiffHelper {
         return AssocCardinality.AtLeastOne;
       }
     }
+    assert false;
     return null;
   }
 
@@ -1348,16 +1352,24 @@ public class Syn2SemDiffHelper {
           .equals(astcdClass.getSymbol().getInternalQualifiedName())
           && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
           if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left));
           }
         } if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right));
           }
           else {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.RightToLeft, ClassSide.Right));
           }
         }
@@ -1385,16 +1397,24 @@ public class Syn2SemDiffHelper {
         }
         if ((pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())){
           if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left));
           }
         } if ((pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName()) && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional() || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right) );
           }
           else {
+            assert copyAssoc.getLeft().isPresentCDCardinality();
+            assert copyAssoc.getRight().isPresentCDCardinality();
             getTrgMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.RightToLeft, ClassSide.Right));
           }
         }
@@ -1570,7 +1590,7 @@ public class Syn2SemDiffHelper {
         }
       }
     }
-    //reduceMaps();
+    reduceMaps();
   }
 
   //CHECKED
@@ -2027,10 +2047,10 @@ public class Syn2SemDiffHelper {
       srcStruct = getAssocStrucForClass(srcCLasses.b, srcAssoc);
     }
 
-    if (getAssocStrucForClass(tgtCLasses.a, tgtAssoc) != null){
-      tgtStruct = getAssocStrucForClass(tgtCLasses.a, tgtAssoc);
-    } else if (getAssocStrucForClass(tgtCLasses.b, tgtAssoc) != null){
-      tgtStruct = getAssocStrucForClass(tgtCLasses.b, tgtAssoc);
+    if (getAssocStrucForClassTgt(tgtCLasses.a, tgtAssoc) != null){
+      tgtStruct = getAssocStrucForClassTgt(tgtCLasses.a, tgtAssoc);
+    } else if (getAssocStrucForClassTgt(tgtCLasses.b, tgtAssoc) != null){
+      tgtStruct = getAssocStrucForClassTgt(tgtCLasses.b, tgtAssoc);
     }
     return new Pair<>(srcStruct, tgtStruct);
   }

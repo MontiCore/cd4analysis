@@ -463,57 +463,65 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       if (assocStruct.getSide().equals(ClassSide.Left)) {
         if (!(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
           || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
+          ASTCDClass matched = helper.findMatchedSrc(astcdClass);
+          ASTCDClass sub = helper.allSubclassesHaveIt(assocStruct, astcdClass);
           if (!astcdClass.getModifier().isAbstract()
-            && helper.findMatchedSrc(astcdClass) != null
+            && matched != null
             && !helper.getNotInstanClassesTgt().contains(astcdClass)
-            && !helper.getNotInstanClassesSrc().contains(helper.findMatchedSrc(astcdClass))
-            && !helper.classHasAssociationTgtSrc(assocStruct, helper.findMatchedSrc(astcdClass))) {
-            isDeletedSrc = helper.findMatchedSrc(astcdClass);
+            && !helper.getNotInstanClassesSrc().contains(matched)
+            && !helper.classHasAssociationTgtSrc(assocStruct, matched)) {
+            isDeletedSrc = matched;
           } else if (!helper.getNotInstanClassesTgt().contains(astcdClass)
-            && helper.allSubclassesHaveIt(assocStruct, astcdClass) != null){
-            isDeletedSrc = helper.findMatchedSrc(helper.allSubclassesHaveIt(assocStruct, astcdClass));
+            && sub != null){
+            isDeletedSrc = helper.findMatchedSrc(sub);
           }
         }
         if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isOpt()
           || assocStruct.getAssociation().getLeft().getCDCardinality().isMult())){
           ASTCDClass right = getConnectedClasses(assocStruct.getAssociation(), helper.getTgtCD()).b;
+          ASTCDClass matched = helper.findMatchedSrc(right);
+          ASTCDClass sub = helper.allSubClassesAreTgtTgtSrc(assocStruct, right);
           if (!right.getModifier().isAbstract()
-            && helper.findMatchedSrc(right) != null
+            && matched != null
             && !helper.getNotInstanClassesTgt().contains(right)
-            && !helper.getNotInstanClassesSrc().contains(helper.findMatchedSrc(right))
-            && !helper.classIsTargetTgtSrc(assocStruct, helper.findMatchedSrc(right))) {
-            isDeletedTgt = helper.findMatchedSrc(right);
+            && !helper.getNotInstanClassesSrc().contains(matched)
+            && !helper.classIsTargetTgtSrc(assocStruct, matched)) {
+            isDeletedTgt = matched;
           } else if (!helper.getNotInstanClassesTgt().contains(right)
-            && helper.allSubClassesAreTgtTgtSrc(assocStruct, right) != null){
-            isDeletedTgt = helper.findMatchedSrc(helper.allSubClassesAreTgtTgtSrc(assocStruct, right));
+            && sub != null){
+            isDeletedTgt = helper.findMatchedSrc(sub);
           }
         }
       } else {
         if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
           || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())) {
+          ASTCDClass matched = helper.findMatchedSrc(astcdClass);
+          ASTCDClass sub = helper.allSubclassesHaveIt(assocStruct, astcdClass);
           if (!astcdClass.getModifier().isAbstract()
-            && helper.findMatchedSrc(astcdClass) != null
+            && matched != null
             && !helper.getNotInstanClassesTgt().contains(astcdClass)
-            && !helper.getNotInstanClassesSrc().contains(helper.findMatchedSrc(astcdClass))
-            && !helper.classHasAssociationTgtSrc(assocStruct, helper.findMatchedSrc(astcdClass))) {
+            && !helper.getNotInstanClassesSrc().contains(matched)
+            && !helper.classHasAssociationTgtSrc(assocStruct, matched)) {
             isDeletedSrc = helper.findMatchedSrc(astcdClass);
           } else if (!helper.getNotInstanClassesTgt().contains(astcdClass)
-            && helper.allSubclassesHaveIt(assocStruct, astcdClass) != null){
-            isDeletedSrc = helper.findMatchedSrc(helper.allSubclassesHaveIt(assocStruct, astcdClass));
+            && sub != null){
+            isDeletedSrc = helper.findMatchedSrc(sub);
           }
         }
         if (!(assocStruct.getAssociation().getRight().getCDCardinality().isOpt()
           || assocStruct.getAssociation().getRight().getCDCardinality().isMult())){
           ASTCDClass left = getConnectedClasses(assocStruct.getAssociation(), helper.getTgtCD()).a;
+          ASTCDClass matched = helper.findMatchedSrc(left);
+          ASTCDClass sub = helper.allSubClassesAreTgtTgtSrc(assocStruct, left);
           if (!left.getModifier().isAbstract()
-            && helper.findMatchedSrc(left) != null
+            && matched != null
             && !helper.getNotInstanClassesTgt().contains(left)
-            && !helper.getNotInstanClassesSrc().contains(helper.findMatchedSrc(left))
-            && !helper.classIsTargetTgtSrc(assocStruct, helper.findMatchedSrc(left))) {
-            isDeletedTgt = helper.findMatchedSrc(left);
+            && !helper.getNotInstanClassesSrc().contains(matched)
+            && !helper.classIsTargetTgtSrc(assocStruct, matched)) {
+            isDeletedTgt = matched;
           } else if (!helper.getNotInstanClassesTgt().contains(left)
-            && helper.allSubClassesAreTgtTgtSrc(assocStruct, left) != null){
-            isDeletedTgt = helper.findMatchedSrc(helper.allSubClassesAreTgtTgtSrc(assocStruct, left));
+            && sub != null){
+            isDeletedTgt = helper.findMatchedSrc(sub);
           }
         }
       }
@@ -529,6 +537,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   //CHECKED
+  //TODO: check again, I think a false comparison is made in the second part; check isAssocDeleted too
   @Override
   public List<ASTCDClass> isAssocAdded(ASTCDAssociation association) {
     ASTCDClass isAddedSrc = null;
@@ -545,16 +554,19 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       otherSide = pair.a;
     }
     if (assocStruct != null) {
+      ASTCDClass matched = helper.findMatchedClass(classToUse);
+      ASTCDClass sub = helper.allSubClassesHaveItTgt(assocStruct, classToUse);
       if (!classToUse.getModifier().isAbstract()
-        && helper.findMatchedClass(classToUse) != null
-        && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(classToUse))
+        && matched != null
+        && !helper.getNotInstanClassesTgt().contains(matched)
         && !helper.getNotInstanClassesSrc().contains(classToUse)
-        && !helper.classHasAssociationSrcTgt(assocStruct, helper.findMatchedClass(classToUse))) {
+        && !helper.classHasAssociationSrcTgt(assocStruct, matched)) {
         isAddedSrc = classToUse;
       } else if (!helper.getNotInstanClassesSrc().contains(classToUse)
-        && helper.allSubClassesHaveItTgt(assocStruct, classToUse) != null) {
-        isAddedSrc = helper.allSubClassesHaveItTgt(assocStruct, classToUse);
+        && sub != null) {
+        isAddedSrc = sub;
       }
+      ASTCDClass sub2 = helper.allSubClassesAreTgtSrcTgt(assocStruct, otherSide);
       if (!otherSide.getModifier().isAbstract()
         && helper.findMatchedSrc(otherSide) != null
         && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(otherSide))
@@ -562,8 +574,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         && !helper.classIsTgtSrcTgt(assocStruct, otherSide)) {
         isAddedTgt = otherSide;
       } else if (!helper.getNotInstanClassesSrc().contains(otherSide)
-        && helper.allSubClassesAreTgtSrcTgt(assocStruct, otherSide) != null) {
-        isAddedTgt = helper.allSubClassesAreTgtSrcTgt(assocStruct, otherSide);
+        && sub2 != null) {
+        isAddedTgt = sub2;
       }
     }
     List<ASTCDClass> list = new ArrayList<>();

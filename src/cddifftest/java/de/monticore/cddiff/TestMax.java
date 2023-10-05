@@ -74,7 +74,7 @@ public class TestMax extends CDDiffTestBasis {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        Assertions.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
   }
@@ -315,7 +315,7 @@ public class TestMax extends CDDiffTestBasis {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
         System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        Assertions.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
 
@@ -350,7 +350,7 @@ public class TestMax extends CDDiffTestBasis {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
         System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        Assertions.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
 
@@ -386,7 +386,7 @@ public class TestMax extends CDDiffTestBasis {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
         System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        Assertions.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
 
@@ -421,7 +421,7 @@ public class TestMax extends CDDiffTestBasis {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
         System.out.println("Closed World Fail");
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        Assertions.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
 

@@ -21,15 +21,26 @@ public class DiffWitnessGenerator {
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private final ODBuilder odBuilder = new ODBuilder();
   private Map<ASTCDClass, Integer> map = new HashMap<>();
-  private int maxNumberOfClasses = Integer.MAX_VALUE;
-
-  public DiffWitnessGenerator() {
-  }
+  private int maxNumberOfClasses;
 
   public DiffWitnessGenerator(int maxNumberOfClasses) {
     this.maxNumberOfClasses = 2 * maxNumberOfClasses;
   }
 
+  public int getNumberOfObjects(Set<Package> packages){
+    List<ASTODObject> list = new ArrayList<>();
+    for (Package pack : packages){
+      if (pack.getLeftObject() != null
+        && !list.contains(pack.getLeftObject())){
+        list.add(pack.getLeftObject());
+      }
+      if (pack.getRightObject() != null
+        && !list.contains(pack.getRightObject())){
+        list.add(pack.getRightObject());
+      }
+    }
+    return list.size();
+  }
   public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
     Map<ASTODObject, Set<Boolean>> unprocessedMap = new HashMap<>();
 
@@ -51,41 +62,6 @@ public class DiffWitnessGenerator {
     return unprocessedObjects;
   }
 
-  public static Set<ASTODObject> findProcessedObjects(Set<Package> packages) {
-    Map<ASTODObject, Set<Boolean>> processedMap = new HashMap<>();
-
-    for (Package pack : packages) {
-      if (pack.getLeftObject() != null) {
-        processedMap.computeIfAbsent(pack.getLeftObject(), k -> new HashSet<>()).add(pack.isProcessedLeft());
-      }
-      if (pack.getRightObject() != null) {
-        processedMap.computeIfAbsent(pack.getRightObject(), k -> new HashSet<>()).add(pack.isProcessedRight());
-      }
-    }
-
-    Set<ASTODObject> processedObjects = new HashSet<>();
-    for (Map.Entry<ASTODObject, Set<Boolean>> entry : processedMap.entrySet()) {
-      if (entry.getValue().contains(true)) {
-        processedObjects.add(entry.getKey());
-      }
-    }
-
-    return processedObjects;
-  }
-
-  public Set<Pair<Package, ClassSide>> getContainingPackages(ASTODObject astodObject, Set<Package> objectSet) {
-    Set<Pair<Package, ClassSide>> containingPackages = new HashSet<>();
-    for (Package pack : objectSet) {
-      if (pack.getLeftObject() == astodObject) {
-        containingPackages.add(new Pair<>(pack, ClassSide.Left));
-      } else if (pack.getRightObject() == astodObject) {
-        containingPackages.add(new Pair<>(pack, ClassSide.Right));
-      }
-    }
-    return containingPackages;
-  }
-
-  //TODO: ask Max about "ASub4Diff" for spanned inheritance
   public Set<Package> createChains(ASTCDAssociation association, int cardinalityLeft, int cardinalityRight,
                                    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
@@ -151,15 +127,6 @@ public class DiffWitnessGenerator {
       return toUse;
   }
 
-  public ASTODObject getSubObject(ASTCDClass astcdClass){
-    if (helper.minSubClass(astcdClass) != null){
-      return odBuilder.buildObj(getNameForClass(helper.minSubClass(astcdClass)), helper.minSubClass(astcdClass).getSymbol().getInternalQualifiedName().replace(".", "_"),
-        helper.getSuperClasses(helper.minSubClass(astcdClass)),
-        helper.getAttributesOD(helper.minSubClass(astcdClass)));
-    }
-    return null;
-  }
-
   private void addToMaps(Package pack,
                          ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                          ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt){
@@ -182,17 +149,16 @@ public class DiffWitnessGenerator {
     Set<ASTODElement> set = new HashSet<>();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap.create();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
-    System.out.println("start " + astcdClass.getName());
     Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt);
     if (packages == null){
       return new HashSet<>();
     }
-    if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
+    if (maxNumberOfClasses < getNumberOfObjects(packages)) {
       return new HashSet<>();
     }
     while (!findUnprocessedObjects(packages).isEmpty()) {
       for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
-        if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
+        if (maxNumberOfClasses < getNumberOfObjects(packages)) {
           return new HashSet<>();
         }
         Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
@@ -224,7 +190,7 @@ public class DiffWitnessGenerator {
     if (packages == null){
       return new Pair<>(new HashSet<>(), null);
     }
-    if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
+    if (maxNumberOfClasses < getNumberOfObjects(packages)) {
       return new Pair<>(new HashSet<>(), null);
     }
     ASTODElement link = packages.iterator().next().getAssociation();
@@ -233,7 +199,7 @@ public class DiffWitnessGenerator {
     }
     while (!findUnprocessedObjects(packages).isEmpty()) {
       for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
-        if (maxNumberOfClasses < findUnprocessedObjects(packages).size() + findProcessedObjects(packages).size()) {
+        if (maxNumberOfClasses < getNumberOfObjects(packages)) {
           return new Pair<>(new HashSet<>(), null);
         }
         Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
@@ -269,43 +235,43 @@ public class DiffWitnessGenerator {
     boolean mustHaveAdded = false;
     boolean hasAdded = false;
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
-    System.out.println("list size for " + astcdClass.getName() + list.size());
     for (AssocStruct assocStruct : list) {
       ASTODObject tgtObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)
         && assocStruct.isToBeProcessed()
         && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
         || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+        ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
+        ASTCDClass subclass = helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b);
         mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)){
           tgtObject = srcObject;
         }
-        if (tgtObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          tgtObject = getTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc , mapTgt);
+        if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
+          tgtObject = getTgtObject(astcdClass, assocStruct, rightClass, mapSrc , mapTgt);
         }
-        if (tgtObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          tgtObject = getSubTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc , mapTgt);
+        if (tgtObject == null) {
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, rightClass, mapSrc , mapTgt);
         }
         if (tgtObject == null
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()
-          || (helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null
-          && helper.getClassSize(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))
-          < helper.getClassSize(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)))) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc, mapTgt)){
+          && subclass != null
+          && (rightClass.getModifier().isAbstract()
+          || (helper.getClassSize(subclass)
+          < helper.getClassSize(rightClass)))) {
+          if (singletonObj(subclass, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
+          tgtObject = odBuilder.buildObj(getNameForClass(subclass), subclass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(subclass),
+            helper.getAttributesOD(subclass));
         } else if (tgtObject == null
-          && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
+          && !rightClass.getModifier().isAbstract()) {
+          if (singletonObj(rightClass, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
+          tgtObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(rightClass),
+            helper.getAttributesOD(rightClass));
         }
         if (tgtObject == null) {
           return null;
@@ -323,37 +289,38 @@ public class DiffWitnessGenerator {
         && assocStruct.isToBeProcessed()
         && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
         || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+        ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass subclass = helper.minSubClass(leftClass);
         mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)){
           tgtObject = srcObject;
         }
-        if (tgtObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          tgtObject = getTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt);
+        if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
+          tgtObject = getTgtObject(astcdClass, assocStruct, leftClass, mapSrc, mapTgt);
         }
-        if (tgtObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          tgtObject = getSubTgtObject(astcdClass, assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc ,mapTgt);
+        if (tgtObject == null) {
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, leftClass, mapSrc ,mapTgt);
         }
 
         if (tgtObject == null
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()
-          || (helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null
-          && helper.getClassSize(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))
-          < helper.getClassSize(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)))) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
+          && subclass != null
+          && (leftClass.getModifier().isAbstract()
+          || (helper.getClassSize(subclass)
+          < helper.getClassSize(leftClass)))) {
+          if (singletonObj(subclass, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
+          tgtObject = odBuilder.buildObj(getNameForClass(subclass), subclass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(subclass),
+            helper.getAttributesOD(subclass));
         } else if (tgtObject == null
-          && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
+          && !leftClass.getModifier().isAbstract()) {
+          if (singletonObj(leftClass, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
+          tgtObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(leftClass),
+            helper.getAttributesOD(leftClass));
         }
         if (tgtObject == null) {
           return null;
@@ -373,28 +340,38 @@ public class DiffWitnessGenerator {
       packages.add(pack);
     }
     for (AssocStruct assocStruct : getTgtAssocs(astcdClass)) {
+
       ASTODObject realSrcObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)) {
-        if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          realSrcObject = getRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, assocStruct, astcdClass, mapSrc, mapTgt);
-        } else if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          realSrcObject = getSubRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, assocStruct, astcdClass, mapSrc, mapTgt);
+        ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass sub =helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a);
+        if (!leftClass.getModifier().isAbstract()) {
+          realSrcObject = getRealSrc(leftClass, assocStruct, astcdClass, mapSrc, mapTgt);
         }
-        if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
+        if (realSrcObject == null) {
+          realSrcObject = getSubRealSrc(leftClass, assocStruct, astcdClass, mapSrc, mapTgt);
+        }
+
+        if (realSrcObject == null
+          && sub != null
+          && (leftClass.getModifier().isAbstract()
+          || (helper.getClassSize(sub)
+          < helper.getClassSize(leftClass)))) {
+          if (singletonObj(sub, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
-        } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
+          realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(sub),
+            helper.getAttributesOD(sub));
+
+        } else if (realSrcObject == null
+          && !leftClass.getModifier().isAbstract()) {
+          if (singletonObj(leftClass, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
+          realSrcObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(leftClass),
+            helper.getAttributesOD(leftClass));
         }
 
         if (realSrcObject != null) {
@@ -405,27 +382,34 @@ public class DiffWitnessGenerator {
         }
 
       } else {
-        if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          realSrcObject = getRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, assocStruct, astcdClass, mapSrc, mapTgt);
-        } else if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          realSrcObject = getSubRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, assocStruct, astcdClass, mapSrc, mapTgt);
+        ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
+        ASTCDClass sub = helper.minSubClass(rightClass);
+        if (!rightClass.getModifier().isAbstract()) {
+          realSrcObject = getRealSrc(rightClass, assocStruct, astcdClass, mapSrc, mapTgt);
+        }
+        if (realSrcObject != null) {
+          realSrcObject = getSubRealSrc(rightClass, assocStruct, astcdClass, mapSrc, mapTgt);
         }
 
-        if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
+        if (realSrcObject == null
+          && sub != null
+          && (rightClass.getModifier().isAbstract()
+          || (helper.getClassSize(sub)
+          < helper.getClassSize(rightClass)))) {
+          if (singletonObj(sub, mapSrc, mapTgt)){
+            return null;
+          }
+          realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(sub),
+            helper.getAttributesOD(sub));
+        } else if (realSrcObject == null
+          && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
-        } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc, mapTgt)){
-            return null;
-          }
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
+          realSrcObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(rightClass),
+            helper.getAttributesOD(rightClass));
         }
 
         if (realSrcObject != null) {
@@ -500,39 +484,40 @@ public class DiffWitnessGenerator {
         && assocStruct.isToBeProcessed()
         && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
         || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+        ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
+        ASTCDClass sub = helper.minSubClass(rightClass);
         mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)){
           tgtObject = object;
         }
-        if (tgtObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
+        if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
           tgtObject = getTgtObject(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
-            assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt);
+            assocStruct, rightClass, mapSrc, mapTgt);
         }
-        if (tgtObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
+        if (tgtObject == null) {
           tgtObject = getSubTgtObject(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
             assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt);
         }
 
         if (tgtObject == null
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()
-          || (helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null
-          && helper.getClassSize(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))
-          < helper.getClassSize(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)))) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), mapSrc, mapTgt)){
+          && sub != null
+          && (rightClass.getModifier().isAbstract()
+          || (helper.getClassSize(sub)
+          < helper.getClassSize(rightClass)))) {
+          if (singletonObj(sub, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
+          tgtObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(sub),
+            helper.getAttributesOD(sub));
         } else if (tgtObject == null
-          && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
+          && !rightClass.getModifier().isAbstract()) {
+          if (singletonObj(rightClass, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
+          tgtObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(rightClass),
+            helper.getAttributesOD(rightClass));
         }
 
         if (tgtObject == null) {
@@ -551,38 +536,39 @@ public class DiffWitnessGenerator {
         && assocStruct.isToBeProcessed()
         && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
         || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+        ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass sub = helper.minSubClass(leftClass);
         mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)){
           tgtObject = object;
         }
-        if (tgtObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
+        if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           tgtObject = getTgtObject(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
-            assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc , mapTgt);
+            assocStruct, leftClass, mapSrc , mapTgt);
         }
-        if (tgtObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
+        if (tgtObject == null) {
           tgtObject = getSubTgtObject(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
-            assocStruct, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc , mapTgt);
+            assocStruct, leftClass, mapSrc , mapTgt);
         }
         if (tgtObject == null
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()
-          || (helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null
-          && helper.getClassSize(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))
-          < helper.getClassSize(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)))
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null)) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
+          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null
+          && (leftClass.getModifier().isAbstract()
+          || (helper.getClassSize(sub)
+          < helper.getClassSize(leftClass)))) {
+          if (singletonObj(sub, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
+          tgtObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(sub),
+            helper.getAttributesOD(sub));
         } else if (tgtObject == null
-          && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
+          && !leftClass.getModifier().isAbstract()) {
+          if (singletonObj(leftClass, mapSrc, mapTgt)){
             return null;
           }
-          tgtObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
+          tgtObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(leftClass),
+            helper.getAttributesOD(leftClass));
         }
         if (tgtObject == null) {
           return null;
@@ -607,29 +593,36 @@ public class DiffWitnessGenerator {
     for (AssocStruct assocStruct : getTgtAssocsForObject(object, mapSrc, mapTgt)) {
       ASTODObject realSrcObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)) {
-        if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          realSrcObject = getRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a,
+        ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass sub = helper.minSubClass(leftClass);
+        if (!leftClass.getModifier().isAbstract()) {
+          realSrcObject = getRealSrc(leftClass,
             assocStruct, helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()), mapSrc, mapTgt);
-        } else if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          realSrcObject = getSubRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a,
+        }
+        if (realSrcObject != null) {
+          realSrcObject = getSubRealSrc(leftClass,
             assocStruct, helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()), mapSrc, mapTgt);
         }
 
-        if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, mapSrc, mapTgt)){
+        if (realSrcObject == null
+          && sub != null
+          && (leftClass.getModifier().isAbstract()
+          || (helper.getClassSize(sub)
+          < helper.getClassSize(leftClass)))) {
+          if (singletonObj(sub, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a));
-        } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getModifier().isAbstract()
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null) {
-          if (singletonObj(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a), mapSrc, mapTgt)){
+          realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(sub),
+            helper.getAttributesOD(sub));
+        } else if (realSrcObject == null
+          && !leftClass.getModifier().isAbstract()) {
+          if (singletonObj(leftClass, mapSrc, mapTgt)){
             return null;
           }
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a)));
+          realSrcObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(leftClass),
+            helper.getAttributesOD(leftClass));
         }
 
         if (realSrcObject != null) {
@@ -639,23 +632,30 @@ public class DiffWitnessGenerator {
           packages.add(pack);
         }
       } else {
-        if (!getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          realSrcObject = getRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b,
+        ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
+        ASTCDClass sub = helper.minSubClass(rightClass);
+        if (!rightClass.getModifier().isAbstract()) {
+          realSrcObject = getRealSrc(rightClass,
             assocStruct, helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()), mapSrc, mapTgt);
-        } else if (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          realSrcObject = getSubRealSrc(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b,
+        }
+        if (realSrcObject != null) {
+          realSrcObject = getSubRealSrc(rightClass,
             assocStruct, helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()), mapSrc, mapTgt);
         }
 
-        if (realSrcObject == null && !getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()) {
-          realSrcObject = odBuilder.buildObj(getNameForClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b), getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b),
-            helper.getAttributesOD(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b));
-        } else if (realSrcObject == null && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getModifier().isAbstract()
-          && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b) != null) {
-          realSrcObject = odBuilder.buildObj(getNameForClass(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)), helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b).getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)),
-            helper.getAttributesOD(helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b)));
+        if (realSrcObject == null
+          && sub != null
+          && (rightClass.getModifier().isAbstract()
+          || (helper.getClassSize(sub)
+          < helper.getClassSize(rightClass)))) {
+          realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(sub),
+            helper.getAttributesOD(sub));
+        } else if (realSrcObject == null
+          && !rightClass.getModifier().isAbstract()) {
+          realSrcObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
+            helper.getSuperClasses(rightClass),
+            helper.getAttributesOD(rightClass));
         }
 
         if (realSrcObject != null) {

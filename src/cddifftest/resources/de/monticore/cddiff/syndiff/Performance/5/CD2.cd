@@ -1,6 +1,6 @@
 import java.lang.*;
 
-classdiagram 5B {
+classdiagram CD2 {
 
   enum E1 {e11, e12;}
 
