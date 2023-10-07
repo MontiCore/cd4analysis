@@ -21,26 +21,27 @@ public class DiffWitnessGenerator {
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private final ODBuilder odBuilder = new ODBuilder();
   private Map<ASTCDClass, Integer> map = new HashMap<>();
-  private int maxNumberOfClasses;
+  private final int maxNumberOfClasses;
 
   public DiffWitnessGenerator(int maxNumberOfClasses) {
     this.maxNumberOfClasses = 2 * maxNumberOfClasses;
   }
 
-  public int getNumberOfObjects(Set<Package> packages){
+  public int getNumberOfObjects(Set<Package> packages) {
     List<ASTODObject> list = new ArrayList<>();
-    for (Package pack : packages){
+    for (Package pack : packages) {
       if (pack.getLeftObject() != null
-        && !list.contains(pack.getLeftObject())){
+        && !list.contains(pack.getLeftObject())) {
         list.add(pack.getLeftObject());
       }
       if (pack.getRightObject() != null
-        && !list.contains(pack.getRightObject())){
+        && !list.contains(pack.getRightObject())) {
         list.add(pack.getRightObject());
       }
     }
     return list.size();
   }
+
   public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
     Map<ASTODObject, Set<Boolean>> unprocessedMap = new HashMap<>();
 
@@ -67,7 +68,7 @@ public class DiffWitnessGenerator {
                                    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
     Set<Package> objectSet = new HashSet<>();
     Pair<ASTCDClass, ASTCDClass> pair = getClassesToUse(association);
-    if (pair == null){
+    if (pair == null) {
       return null;
     }
     if (cardinalityLeft == 1 && cardinalityRight == 1) {
@@ -107,12 +108,12 @@ public class DiffWitnessGenerator {
     return objectSet;
   }
 
-  public Pair<ASTCDClass, ASTCDClass> getClassesToUse(ASTCDAssociation association){
+  public Pair<ASTCDClass, ASTCDClass> getClassesToUse(ASTCDAssociation association) {
     Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association, helper.getSrcCD());
     Pair<ASTCDClass, ASTCDClass> toUse;
     boolean leftAbstract = pair.a.getModifier().isAbstract();
     boolean rightAbstract = pair.b.getModifier().isAbstract();
-    if (leftAbstract && rightAbstract){
+    if (leftAbstract && rightAbstract) {
       toUse = new Pair<>(helper.minSubClass(pair.a), helper.minSubClass(pair.b));
     } else if (leftAbstract) {
       toUse = new Pair<>(helper.minSubClass(pair.a), pair.b);
@@ -121,22 +122,22 @@ public class DiffWitnessGenerator {
     } else {
       toUse = pair;
     }
-    if (toUse.a == null || toUse.b == null){
+    if (toUse.a == null || toUse.b == null) {
       return null;
     }
-      return toUse;
+    return toUse;
   }
 
   private void addToMaps(Package pack,
                          ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
-                         ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt){
-    if (pack.getAstcdAssociation().getCDAssocDir().isDefinitiveNavigableLeft()){
+                         ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
+    if (pack.getAstcdAssociation().getCDAssocDir().isDefinitiveNavigableLeft()) {
       mapSrc.put(pack.getRightObject(), new Pair<>(helper.getAssocStrucForClass(
         getConnectedClasses(pack.getAstcdAssociation(), helper.getSrcCD()).b, pack.getAstcdAssociation()), ClassSide.Right));
       mapTgt.put(pack.getLeftObject(), new Pair<>(helper.getAssocStrucForClass(
         getConnectedClasses(pack.getAstcdAssociation(), helper.getSrcCD()).b, pack.getAstcdAssociation()), ClassSide.Left));
     }
-    if (pack.getAstcdAssociation().getCDAssocDir().isDefinitiveNavigableRight()){
+    if (pack.getAstcdAssociation().getCDAssocDir().isDefinitiveNavigableRight()) {
       mapSrc.put(pack.getLeftObject(), new Pair<>(helper.getAssocStrucForClass(
         getConnectedClasses(pack.getAstcdAssociation(), helper.getSrcCD()).a, pack.getAstcdAssociation()), ClassSide.Left));
       mapTgt.put(pack.getRightObject(), new Pair<>(helper.getAssocStrucForClass(
@@ -150,7 +151,7 @@ public class DiffWitnessGenerator {
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap.create();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
     Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt);
-    if (packages == null){
+    if (packages == null) {
       return new HashSet<>();
     }
     if (maxNumberOfClasses < getNumberOfObjects(packages)) {
@@ -162,7 +163,7 @@ public class DiffWitnessGenerator {
           return new HashSet<>();
         }
         Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
-        if (toAdd == null){
+        if (toAdd == null) {
           return new HashSet<>();
         }
         packages.addAll(toAdd);
@@ -187,14 +188,14 @@ public class DiffWitnessGenerator {
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap.create();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
     Set<Package> packages = createChains(association, cardinalityLeft, cardinalityRight, mapSrc, mapTgt);
-    if (packages == null){
+    if (packages == null) {
       return new Pair<>(new HashSet<>(), null);
     }
     if (maxNumberOfClasses < getNumberOfObjects(packages)) {
       return new Pair<>(new HashSet<>(), null);
     }
     ASTODElement link = packages.iterator().next().getAssociation();
-    if (link == null){
+    if (link == null) {
       link = packages.iterator().next().getLeftObject();
     }
     while (!findUnprocessedObjects(packages).isEmpty()) {
@@ -203,7 +204,7 @@ public class DiffWitnessGenerator {
           return new Pair<>(new HashSet<>(), null);
         }
         Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
-        if (toAdd == null){
+        if (toAdd == null) {
           return new Pair<>(new HashSet<>(), null);
         }
         packages.addAll(toAdd);
@@ -225,6 +226,7 @@ public class DiffWitnessGenerator {
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> packages,
                                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
+    System.out.println("createChainsForNewClass " + astcdClass.getSymbol().getInternalQualifiedName());
     ASTODObject srcObject = odBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName(),
       helper.getSuperClasses(astcdClass),
       helper.getAttributesOD(astcdClass));
@@ -244,21 +246,21 @@ public class DiffWitnessGenerator {
         ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
         ASTCDClass subclass = helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b);
         mustHaveAdded = true;
-        if (helper.isLoopStruct(assocStruct)){
+        if (helper.isLoopStruct(assocStruct)) {
           tgtObject = srcObject;
         }
         if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
-          tgtObject = getTgtObject(astcdClass, assocStruct, rightClass, mapSrc , mapTgt);
+          tgtObject = getTgtObject(astcdClass, assocStruct, rightClass, mapSrc, mapTgt);
         }
         if (tgtObject == null) {
-          tgtObject = getSubTgtObject(astcdClass, assocStruct, rightClass, mapSrc , mapTgt);
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, rightClass, mapSrc, mapTgt);
         }
         if (tgtObject == null
           && subclass != null
           && (rightClass.getModifier().isAbstract()
           || (helper.getClassSize(subclass)
           < helper.getClassSize(rightClass)))) {
-          if (singletonObj(subclass, mapSrc, mapTgt)){
+          if (singletonObj(subclass, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(subclass), subclass.getSymbol().getInternalQualifiedName(),
@@ -266,7 +268,7 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(subclass));
         } else if (tgtObject == null
           && !rightClass.getModifier().isAbstract()) {
-          if (singletonObj(rightClass, mapSrc, mapTgt)){
+          if (singletonObj(rightClass, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
@@ -277,13 +279,11 @@ public class DiffWitnessGenerator {
           return null;
         }
 
-        if (tgtObject != null) {
-          hasAdded = true;
-          mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
-          mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Right));
-          Package pack = new Package(srcObject, tgtObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
-          packages.add(pack);
-        }
+        hasAdded = true;
+        mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
+        mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Right));
+        Package pack = new Package(srcObject, tgtObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
+        packages.add(pack);
 
       } else if (assocStruct.getSide().equals(ClassSide.Right)
         && assocStruct.isToBeProcessed()
@@ -292,14 +292,14 @@ public class DiffWitnessGenerator {
         ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
         ASTCDClass subclass = helper.minSubClass(leftClass);
         mustHaveAdded = true;
-        if (helper.isLoopStruct(assocStruct)){
+        if (helper.isLoopStruct(assocStruct)) {
           tgtObject = srcObject;
         }
         if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           tgtObject = getTgtObject(astcdClass, assocStruct, leftClass, mapSrc, mapTgt);
         }
         if (tgtObject == null) {
-          tgtObject = getSubTgtObject(astcdClass, assocStruct, leftClass, mapSrc ,mapTgt);
+          tgtObject = getSubTgtObject(astcdClass, assocStruct, leftClass, mapSrc, mapTgt);
         }
 
         if (tgtObject == null
@@ -307,7 +307,7 @@ public class DiffWitnessGenerator {
           && (leftClass.getModifier().isAbstract()
           || (helper.getClassSize(subclass)
           < helper.getClassSize(leftClass)))) {
-          if (singletonObj(subclass, mapSrc, mapTgt)){
+          if (singletonObj(subclass, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(subclass), subclass.getSymbol().getInternalQualifiedName(),
@@ -315,7 +315,7 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(subclass));
         } else if (tgtObject == null
           && !leftClass.getModifier().isAbstract()) {
-          if (singletonObj(leftClass, mapSrc, mapTgt)){
+          if (singletonObj(leftClass, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
@@ -326,25 +326,18 @@ public class DiffWitnessGenerator {
           return null;
         }
 
-        if (tgtObject != null) {
-          hasAdded = true;
-          mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
-          mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Left));
-          Package pack = new Package(tgtObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
-          packages.add(pack);
-        }
+        hasAdded = true;
+        mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
+        mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Left));
+        Package pack = new Package(tgtObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
+        packages.add(pack);
       }
     }
-    if (mustHaveAdded && !hasAdded) {
-      Package pack = new Package(srcObject);
-      packages.add(pack);
-    }
     for (AssocStruct assocStruct : getTgtAssocs(astcdClass)) {
-
       ASTODObject realSrcObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)) {
         ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
-        ASTCDClass sub =helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a);
+        ASTCDClass sub = helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a);
         if (!leftClass.getModifier().isAbstract()) {
           realSrcObject = getRealSrc(leftClass, assocStruct, astcdClass, mapSrc, mapTgt);
         }
@@ -357,7 +350,7 @@ public class DiffWitnessGenerator {
           && (leftClass.getModifier().isAbstract()
           || (helper.getClassSize(sub)
           < helper.getClassSize(leftClass)))) {
-          if (singletonObj(sub, mapSrc, mapTgt)){
+          if (singletonObj(sub, mapSrc, mapTgt)) {
             return null;
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
@@ -366,20 +359,21 @@ public class DiffWitnessGenerator {
 
         } else if (realSrcObject == null
           && !leftClass.getModifier().isAbstract()) {
-          if (singletonObj(leftClass, mapSrc, mapTgt)){
+          if (singletonObj(leftClass, mapSrc, mapTgt)) {
             return null;
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(leftClass),
             helper.getAttributesOD(leftClass));
         }
-
-        if (realSrcObject != null) {
-          mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
-          mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
-          Package pack = new Package(realSrcObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
-          packages.add(pack);
+        if (realSrcObject == null) {
+          return null;
         }
+        hasAdded = true;
+        mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
+        mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
+        Package pack = new Package(realSrcObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
+        packages.add(pack);
 
       } else {
         ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
@@ -396,7 +390,7 @@ public class DiffWitnessGenerator {
           && (rightClass.getModifier().isAbstract()
           || (helper.getClassSize(sub)
           < helper.getClassSize(rightClass)))) {
-          if (singletonObj(sub, mapSrc, mapTgt)){
+          if (singletonObj(sub, mapSrc, mapTgt)) {
             return null;
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
@@ -404,7 +398,7 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(sub));
         } else if (realSrcObject == null
           && !rightClass.getModifier().isAbstract()) {
-          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)){
+          if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)) {
             return null;
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
@@ -412,12 +406,23 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(rightClass));
         }
 
-        if (realSrcObject != null) {
-          mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
-          mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
-          Package pack = new Package(srcObject, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
-          packages.add(pack);
+        if (realSrcObject == null) {
+          return null;
         }
+        hasAdded = true;
+        mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
+        mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
+        Package pack = new Package(srcObject, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
+        packages.add(pack);
+      }
+    }
+    if (!hasAdded) {
+      Package pack = new Package(srcObject);
+      packages.add(pack);
+    }
+    for (Package pack : packages) {
+      if (pack.getAstcdAssociation() != null){
+        System.out.println(pack.getLeftObject().getName() + " " + pack.getRightObject().getName());
       }
     }
     return packages;
@@ -426,6 +431,7 @@ public class DiffWitnessGenerator {
   public Set<Package> createChainsForExistingObj(ASTODObject object, Set<Package> packages,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
+    System.out.println("createChainsForExistingObj " + object.getName());
     List<AssocStruct> list = new ArrayList<>();
     for (AssocStruct assocStruct : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
       if (assocStruct.getSide().equals(ClassSide.Left)
@@ -440,7 +446,7 @@ public class DiffWitnessGenerator {
     }
     List<AssocStruct> copy = new ArrayList<>(list);
     List<Pair<AssocStruct, ClassSide>> createdAssocs = mapTgt.get(object);
-    List<Pair<AssocStruct, ClassSide>> createdAssocsSrc= mapSrc.get(object);
+    List<Pair<AssocStruct, ClassSide>> createdAssocsSrc = mapSrc.get(object);
     for (Pair<AssocStruct, ClassSide> pair : createdAssocs) {
       for (AssocStruct assocStruct : copy) {
         if (((pair.b.equals(ClassSide.Left) && assocStruct.getSide().equals(ClassSide.Left))
@@ -459,7 +465,7 @@ public class DiffWitnessGenerator {
       }
     }
     List<AssocStruct> copy2 = new ArrayList<>(list);
-    for (Pair<AssocStruct, ClassSide> pair : createdAssocsSrc){
+    for (Pair<AssocStruct, ClassSide> pair : createdAssocsSrc) {
       for (AssocStruct assocStruct : copy2) {
         if (((pair.b.equals(ClassSide.Left) && assocStruct.getSide().equals(ClassSide.Left))
           || (pair.b.equals(ClassSide.Right) && assocStruct.getSide().equals(ClassSide.Right)))
@@ -487,7 +493,7 @@ public class DiffWitnessGenerator {
         ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
         ASTCDClass sub = helper.minSubClass(rightClass);
         mustHaveAdded = true;
-        if (helper.isLoopStruct(assocStruct)){
+        if (helper.isLoopStruct(assocStruct)) {
           tgtObject = object;
         }
         if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
@@ -504,7 +510,7 @@ public class DiffWitnessGenerator {
           && (rightClass.getModifier().isAbstract()
           || (helper.getClassSize(sub)
           < helper.getClassSize(rightClass)))) {
-          if (singletonObj(sub, mapSrc, mapTgt)){
+          if (singletonObj(sub, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
@@ -512,7 +518,7 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(sub));
         } else if (tgtObject == null
           && !rightClass.getModifier().isAbstract()) {
-          if (singletonObj(rightClass, mapSrc, mapTgt)){
+          if (singletonObj(rightClass, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
@@ -539,23 +545,23 @@ public class DiffWitnessGenerator {
         ASTCDClass leftClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
         ASTCDClass sub = helper.minSubClass(leftClass);
         mustHaveAdded = true;
-        if (helper.isLoopStruct(assocStruct)){
+        if (helper.isLoopStruct(assocStruct)) {
           tgtObject = object;
         }
         if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           tgtObject = getTgtObject(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
-            assocStruct, leftClass, mapSrc , mapTgt);
+            assocStruct, leftClass, mapSrc, mapTgt);
         }
         if (tgtObject == null) {
           tgtObject = getSubTgtObject(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
-            assocStruct, leftClass, mapSrc , mapTgt);
+            assocStruct, leftClass, mapSrc, mapTgt);
         }
         if (tgtObject == null
           && helper.minSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a) != null
           && (leftClass.getModifier().isAbstract()
           || (helper.getClassSize(sub)
           < helper.getClassSize(leftClass)))) {
-          if (singletonObj(sub, mapSrc, mapTgt)){
+          if (singletonObj(sub, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
@@ -563,7 +569,7 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(sub));
         } else if (tgtObject == null
           && !leftClass.getModifier().isAbstract()) {
-          if (singletonObj(leftClass, mapSrc, mapTgt)){
+          if (singletonObj(leftClass, mapSrc, mapTgt)) {
             return null;
           }
           tgtObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
@@ -582,13 +588,6 @@ public class DiffWitnessGenerator {
           packages.add(pack);
         }
       }
-    }
-    if (mustHaveAdded && !hasAdded) {
-      Package pack = new Package(object);
-      packages.add(pack);
-    } else if (!mustHaveAdded) {
-      Package pack = new Package(object);
-      packages.add(pack);
     }
     for (AssocStruct assocStruct : getTgtAssocsForObject(object, mapSrc, mapTgt)) {
       ASTODObject realSrcObject = null;
@@ -609,7 +608,7 @@ public class DiffWitnessGenerator {
           && (leftClass.getModifier().isAbstract()
           || (helper.getClassSize(sub)
           < helper.getClassSize(leftClass)))) {
-          if (singletonObj(sub, mapSrc, mapTgt)){
+          if (singletonObj(sub, mapSrc, mapTgt)) {
             return null;
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
@@ -617,7 +616,7 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(sub));
         } else if (realSrcObject == null
           && !leftClass.getModifier().isAbstract()) {
-          if (singletonObj(leftClass, mapSrc, mapTgt)){
+          if (singletonObj(leftClass, mapSrc, mapTgt)) {
             return null;
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
@@ -625,12 +624,14 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(leftClass));
         }
 
-        if (realSrcObject != null) {
-          mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
-          mapTgt.put(object, new Pair<>(assocStruct, ClassSide.Right));
-          Package pack = new Package(realSrcObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true);
-          packages.add(pack);
+        if (realSrcObject == null) {
+          return null;
         }
+        hasAdded = true;
+        mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
+        mapTgt.put(object, new Pair<>(assocStruct, ClassSide.Right));
+        Package pack = new Package(realSrcObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true);
+        packages.add(pack);
       } else {
         ASTCDClass rightClass = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
         ASTCDClass sub = helper.minSubClass(rightClass);
@@ -658,12 +659,23 @@ public class DiffWitnessGenerator {
             helper.getAttributesOD(rightClass));
         }
 
-        if (realSrcObject != null) {
-          mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
-          mapTgt.put(object, new Pair<>(assocStruct, ClassSide.Left));
-          Package pack = new Package(object, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
-          packages.add(pack);
+        if (realSrcObject == null) {
+          return null;
         }
+        hasAdded = true;
+        mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
+        mapTgt.put(object, new Pair<>(assocStruct, ClassSide.Left));
+        Package pack = new Package(object, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
+        packages.add(pack);
+      }
+    }
+    if (!hasAdded) {
+      Package pack = new Package(object);
+      packages.add(pack);
+    }
+    for (Package pack : packages) {
+      if (pack.getAstcdAssociation() != null){
+        System.out.println(pack.getLeftObject().getName() + " " + pack.getRightObject().getName());
       }
     }
     return packages;
@@ -698,21 +710,25 @@ public class DiffWitnessGenerator {
         return typeObjectsSrc.get(0);
       }
     }
-    List<ASTODObject> listToIterate = new ArrayList<>();
+    Set<ASTODObject> listToIterate = new HashSet<>();
     listToIterate.addAll(typeObjects);
     listToIterate.addAll(typeObjectsSrc);
+    ASTCDClass leftClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+    ASTCDClass rightClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
     for (ASTODObject object : listToIterate) {
       boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)) {
+        ASTCDClass leftClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass rightClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b;
         if (assocStruct.getSide().equals(ClassSide.Left) //not-searched class of assocStruc on the left side
           && assocStructToMatch.b.equals(ClassSide.Left) //searched class of assocStructToMatch on the left side!!!
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && ((leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, leftClassAssocStruct)))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right) //src of assocStruc on the right side
@@ -720,10 +736,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && ((rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, rightClassAssocStruct)))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -731,10 +747,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -742,28 +758,30 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         }
       }
-      if (matched){
+      if (matched) {
         //go to next object
         continue;
       }
-      for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)){
+      for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)) {
+        ASTCDClass leftClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass rightClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b;
         if (assocStruct.getSide().equals(ClassSide.Left)//not-searched class on the left side
           && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -771,10 +789,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -782,10 +800,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -793,10 +811,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         }
@@ -816,20 +834,20 @@ public class DiffWitnessGenerator {
       List<ASTODObject> objectsOfType = getObjectsOfType(subClass, tgtMap);
       List<ASTODObject> objectsOfTypeSrc = getObjectsOfType(subClass, srcMap);
       boolean changed = false;
-      for (AssocStruct assocStructFromCLass : helper.getSrcMap().get(subClass)){
-        if (isSubAssociationInReverse(assocStruct, assocStructFromCLass)){
+      for (AssocStruct assocStructFromCLass : helper.getSrcMap().get(subClass)) {
+        if (isSubAssociationInReverse(assocStruct, assocStructFromCLass)) {
           assocStruct = assocStructFromCLass;
           changed = true;
         }
       }
-      if (!changed){
-        for (AssocStruct otherAssoc : helper.getOtherAssocFromSuper(subClass)){
-          if (helper.isSubAssociationSrcSrc(assocStruct, otherAssoc)){
+      if (!changed) {
+        for (AssocStruct otherAssoc : helper.getOtherAssocFromSuper(subClass)) {
+          if (helper.isSubAssociationSrcSrc(assocStruct, otherAssoc)) {
             assocStruct = otherAssoc;
           }
         }
       }
-      if (!objectsOfType.isEmpty() || ! objectsOfTypeSrc.isEmpty()) {
+      if (!objectsOfType.isEmpty() || !objectsOfTypeSrc.isEmpty()) {
         boolean card = false;
         if (!changed
           && assocStruct.getSide().equals(ClassSide.Left)
@@ -868,20 +886,25 @@ public class DiffWitnessGenerator {
           }
         }
       }
-      List<ASTODObject> listToIterate = new ArrayList<>();
+      Set<ASTODObject> listToIterate = new HashSet<>();
       listToIterate.addAll(objectsOfType);
       listToIterate.addAll(objectsOfTypeSrc);
+      ASTCDClass leftClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+      ASTCDClass rightClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
       for (ASTODObject subObject : listToIterate) {
         boolean matched = false;
         for (Pair<AssocStruct, ClassSide> subAssocStruct : tgtMap.get(subObject)) {
+          ASTCDClass leftClassToMatch = getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a;
+          ASTCDClass rightClassToMatch = getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b;
           if (assocStruct.getSide().equals(ClassSide.Left)//not-searched class of assocStruc on the left side
             && subAssocStruct.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getLeft())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b)) {
+            && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(leftClassAssocStruct, rightClassToMatch)
+            || isSubClass(rightClassToMatch, leftClassAssocStruct))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -889,9 +912,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getRight())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a)) {
+            && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(leftClassAssocStruct, leftClassToMatch)
+            || isSubClass(leftClassToMatch, leftClassAssocStruct))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -899,9 +923,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getLeft())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a)) {
+            && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(rightClassAssocStruct, leftClassToMatch)
+            || isSubClass(leftClassToMatch, rightClassAssocStruct))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -909,23 +934,27 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getRight())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b)) {
+            && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(rightClassAssocStruct, rightClassToMatch)
+            || isSubClass(rightClassToMatch, rightClassAssocStruct))) {
             matched = true;
             break;
           }
         }
-        if (matched){
+        if (matched) {
           continue;
         }
-        for (Pair<AssocStruct, ClassSide> subAssocStruct : srcMap.get(subObject)){
+        for (Pair<AssocStruct, ClassSide> subAssocStruct : srcMap.get(subObject)) {
+          ASTCDClass leftClassToMatch = getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a;
+          ASTCDClass rightClassToMatch = getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b;
           if (assocStruct.getSide().equals(ClassSide.Left)//not-searched class of assocStruc on the left side
             && subAssocStruct.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getLeft())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b)) {
+            && isSubClass(leftClassAssocStruct, rightClassToMatch)
+            && isSubClass(leftClassToMatch, rightClassAssocStruct)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -933,7 +962,8 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getRight())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a)) {
+            && isSubClass(leftClassAssocStruct, leftClassToMatch)
+            && isSubClass(leftClassToMatch, leftClassAssocStruct)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -941,7 +971,8 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getLeft())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a)) {
+            && isSubClass(rightClassAssocStruct, leftClassToMatch)
+            && isSubClass(leftClassToMatch, rightClassAssocStruct)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -949,7 +980,8 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), subAssocStruct.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), subAssocStruct.a.getAssociation().getRight())
             && helper.matchDirectionInReverse(assocStruct, subAssocStruct)
-            && isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b)) {
+            && isSubClass(rightClassAssocStruct, rightClassToMatch)
+            && isSubClass(rightClassToMatch, rightClassAssocStruct)) {
             matched = true;
             break;
           }
@@ -969,7 +1001,7 @@ public class DiffWitnessGenerator {
     for (ASTCDClass subClass : subClasses) {
       List<ASTODObject> objectsOfType = getObjectsOfType(subClass, srcMap);
       List<ASTODObject> objectsOfTypeTgt = getObjectsOfType(subClass, tgtMap);
-      List<ASTODObject> listToIterate = new ArrayList<>();
+      Set<ASTODObject> listToIterate = new HashSet<>();
       listToIterate.addAll(objectsOfType);
       listToIterate.addAll(objectsOfTypeTgt);
       for (ASTODObject subObject : listToIterate) {
@@ -1001,16 +1033,21 @@ public class DiffWitnessGenerator {
             }
           }
         }
+        ASTCDClass leftClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass rightClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
         boolean matched = false;
         for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(subObject)) {
+          ASTCDClass leftClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a;
+          ASTCDClass rightClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b;
           if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
             && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)) {//not needed - tgt must be same
+            && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, rightClassToMatch)
+            || isSubClass(rightClassToMatch, srcToFind))) {//not needed - tgt must be same
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -1018,9 +1055,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)) {
+            && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, leftClassToMatch)
+            || isSubClass(leftClassToMatch, srcToFind))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1028,9 +1066,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)) {
+            && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, leftClassToMatch)
+            || isSubClass(leftClassToMatch, srcToFind))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1038,9 +1077,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
             && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)) {
+            && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, rightClassToMatch)
+            || isSubClass(rightClassToMatch, srcToFind))) {
             matched = true;
             break;
           }
@@ -1049,14 +1089,17 @@ public class DiffWitnessGenerator {
           continue;
         }
         for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(subObject)) {
+          ASTCDClass leftClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a;
+          ASTCDClass rightClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b;
           if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
             && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)) {//not needed - tgt must be same
+            && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, rightClassToMatch)
+            || isSubClass(rightClassToMatch, srcToFind))) {//not needed - tgt must be same
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -1064,9 +1107,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)) {
+            && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, leftClassToMatch)
+            || isSubClass(leftClassToMatch, srcToFind))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1074,9 +1118,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)) {
+            && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, leftClassToMatch)
+            || isSubClass(leftClassToMatch, srcToFind))) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1084,9 +1129,10 @@ public class DiffWitnessGenerator {
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
             && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
             && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-            && getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-            .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())) {
-            //&& isSubClass(srcToFind, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)) {
+            && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+            .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+            || isSubClass(srcToFind, rightClassToMatch)
+            || isSubClass(rightClassToMatch, srcToFind))) {
             matched = true;
             break;
           }
@@ -1141,21 +1187,25 @@ public class DiffWitnessGenerator {
         return typeObjects.get(0);
       }
     }
-    List<ASTODObject> listToIterate = new ArrayList<>();
+    Set<ASTODObject> listToIterate = new HashSet<>();
     listToIterate.addAll(typeObjects);
     listToIterate.addAll(typeObjectsTgt);
+    ASTCDClass leftClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
+    ASTCDClass rightClassAssocStruct = getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
     for (ASTODObject object : listToIterate) {
       boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)) {
+        ASTCDClass leftClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass rightClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b;
         if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
           && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -1163,10 +1213,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1174,10 +1224,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1185,10 +1235,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         }
@@ -1197,15 +1247,17 @@ public class DiffWitnessGenerator {
         continue;
       }
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)) {
+        ASTCDClass leftClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a;
+        ASTCDClass rightClassToMatch = getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b;
         if (assocStruct.getSide().equals(ClassSide.Left)//searched class of assocStruc on the left side
           && assocStructToMatch.b.equals(ClassSide.Left)//searched class of assocStructToMatch on the left side!!!
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
@@ -1213,10 +1265,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b))) {
+          && (rightClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(rightClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, rightClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1224,10 +1276,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getRight())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getLeft())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(rightClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, rightClassToMatch)
+          || isSubClass(rightClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -1235,10 +1287,10 @@ public class DiffWitnessGenerator {
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), assocStructToMatch.a.getAssociation().getLeft())
           && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), assocStructToMatch.a.getAssociation().getRight())
           && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-          && (getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          .equals(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName())
-          || isSubClass(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a)
-          || isSubClass(getConnectedClasses(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a, getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a))) {
+          && (leftClassAssocStruct.getSymbol().getInternalQualifiedName()
+          .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
+          || isSubClass(leftClassAssocStruct, leftClassToMatch)
+          || isSubClass(leftClassToMatch, leftClassAssocStruct))) {
           matched = true;
           break;
         }
@@ -1259,9 +1311,10 @@ public class DiffWitnessGenerator {
   public boolean singletonObj(ASTCDClass astcdClass,
                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> srcMap,
                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> tgtMap) {
-      return astcdClass.getModifier().isPresentStereotype() && astcdClass.getModifier().getStereotype().contains("singleton")
-              && (!getObjectsOfType(astcdClass, srcMap).isEmpty() || !getObjectsOfType(astcdClass, tgtMap).isEmpty());
+    return astcdClass.getModifier().isPresentStereotype() && astcdClass.getModifier().getStereotype().contains("singleton")
+      && (!getObjectsOfType(astcdClass, srcMap).isEmpty() || !getObjectsOfType(astcdClass, tgtMap).isEmpty());
   }
+
   public List<ASTODObject> getObjectsOfType(ASTCDClass astcdClass, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> map) {
     List<ASTODObject> objects = new ArrayList<>();
     for (ASTODObject astodObject : map.keySet()) {
@@ -1274,10 +1327,10 @@ public class DiffWitnessGenerator {
 
   public boolean isSubClass(ASTCDClass superClass, ASTCDClass subClass) {
     return CDInheritanceHelper.isSuperOf(superClass.getSymbol().getInternalQualifiedName(),
-      subClass.getSymbol().getInternalQualifiedName(), helper.getSrcCD()) && subClass != superClass;
+      subClass.getSymbol().getInternalQualifiedName(), helper.getSrcCD());
   }
 
-  public boolean isSubAssociationInReverse(AssocStruct superAssoc, AssocStruct subAssoc){
+  public boolean isSubAssociationInReverse(AssocStruct superAssoc, AssocStruct subAssoc) {
     if (subAssoc.getSide().equals(ClassSide.Left)
       && superAssoc.getSide().equals(ClassSide.Left)
       && CDAssociationHelper.matchRoleNames(superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getRight())
@@ -1311,7 +1364,7 @@ public class DiffWitnessGenerator {
   }
 
   public List<AssocStruct> getTgtAssocsForObject(ASTODObject tgtObject,
-                                                 ArrayListMultimap<ASTODObject, Pair<AssocStruct,ClassSide>> mapSrc,
+                                                 ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
     List<AssocStruct> list = new ArrayList<>(getTgtAssocs(helper.getCDClass(helper.getSrcCD(), tgtObject.getMCObjectType().printType())));
     List<Pair<AssocStruct, ClassSide>> createdAssocs = mapTgt.get(tgtObject);

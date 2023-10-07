@@ -19,6 +19,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
+import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 import java.util.*;
@@ -910,6 +911,7 @@ public class Syn2SemDiffHelper {
    * @param association association to match with
    * @return matched association, if found
    */
+  //TODO: check all usages of this function and other getters for AssocStruct
   public AssocStruct getAssocStrucForClass(ASTCDClass astcdClass, ASTCDAssociation association){
     for (AssocStruct assocStruct : srcMap.get(astcdClass)){
       if (sameAssociation(assocStruct.getAssociation(), association)){
@@ -1590,7 +1592,7 @@ public class Syn2SemDiffHelper {
         }
       }
     }
-    reduceMaps();
+    //reduceMaps();
   }
 
   //CHECKED
@@ -1867,21 +1869,9 @@ public class Syn2SemDiffHelper {
       for (AssocStruct assocStruct : srcMap.get(astcdClass)){
         for (AssocStruct assocStruct1 : srcMap.get(astcdClass)){
           if (isLoopStruct(assocStruct1)
-             && assocStruct != assocStruct1){
-            if (assocStruct.getSide().equals(ClassSide.Left)
-              && assocStruct1.getSide().equals(ClassSide.Left)
-              && sameAssocStruct(assocStruct, assocStruct1)){
-              assocStruct.setToBeProcessed(false);
-            } else if (assocStruct.getSide().equals(ClassSide.Right)
-              && assocStruct1.getSide().equals(ClassSide.Right)){
-              assocStruct.setToBeProcessed(false);
-            } else if (assocStruct.getSide().equals(ClassSide.Left)
-              && assocStruct1.getSide().equals(ClassSide.Right)){
-              assocStruct.setToBeProcessed(false);
-            } else if (assocStruct.getSide().equals(ClassSide.Right)
-              && assocStruct1.getSide().equals(ClassSide.Left)){
-              assocStruct.setToBeProcessed(false);
-            }
+             && assocStruct != assocStruct1
+            && isSubAssociationSrcSrc(assocStruct, assocStruct1)){
+            assocStruct.setToBeProcessed(false);
           }
         }
       }
@@ -2041,17 +2031,35 @@ public class Syn2SemDiffHelper {
     Pair<ASTCDClass, ASTCDClass> tgtCLasses = getConnectedClasses(tgtAssoc, tgtCD);
     AssocStruct srcStruct = null;
     AssocStruct tgtStruct = null;
-    if (getAssocStrucForClass(srcCLasses.a, srcAssoc) != null){
-      srcStruct = getAssocStrucForClass(srcCLasses.a, srcAssoc);
-    } else if (getAssocStrucForClass(srcCLasses.b, srcAssoc) != null){
-      srcStruct = getAssocStrucForClass(srcCLasses.b, srcAssoc);
+    if (getAssocStructByUnmod(srcCLasses.a, srcAssoc) != null){
+      srcStruct = getAssocStructByUnmod(srcCLasses.a, srcAssoc);
+    } else if (getAssocStructByUnmod(srcCLasses.b, srcAssoc) != null){
+      srcStruct = getAssocStructByUnmod(srcCLasses.b, srcAssoc);
     }
 
-    if (getAssocStrucForClassTgt(tgtCLasses.a, tgtAssoc) != null){
-      tgtStruct = getAssocStrucForClassTgt(tgtCLasses.a, tgtAssoc);
-    } else if (getAssocStrucForClassTgt(tgtCLasses.b, tgtAssoc) != null){
-      tgtStruct = getAssocStrucForClassTgt(tgtCLasses.b, tgtAssoc);
+    if (getAssocStructByUnmodTgt(tgtCLasses.a, tgtAssoc) != null){
+      tgtStruct = getAssocStructByUnmodTgt(tgtCLasses.a, tgtAssoc);
+    } else if (getAssocStructByUnmodTgt(tgtCLasses.b, tgtAssoc) != null){
+      tgtStruct = getAssocStructByUnmodTgt(tgtCLasses.b, tgtAssoc);
     }
     return new Pair<>(srcStruct, tgtStruct);
+  }
+
+  public AssocStruct getAssocStructByUnmod(ASTCDClass astcdClass, ASTCDAssociation association){
+    for (AssocStruct struct : srcMap.get(astcdClass)){
+      if (struct.getUnmodifiedAssoc().equals(association)){
+        return struct;
+      }
+    }
+    return null;
+  }
+
+  public AssocStruct getAssocStructByUnmodTgt(ASTCDClass astcdClass, ASTCDAssociation association){
+    for (AssocStruct struct : trgMap.get(astcdClass)){
+      if (struct.getUnmodifiedAssoc().equals(association)){
+        return struct;
+      }
+    }
+    return null;
   }
 }

@@ -242,38 +242,33 @@ public class DiffHelper {
           list.add(assocDiffStruc.getChangedCard().get(0).b);
         }
       }
-      if (list.size() == 2) {
-        if (list.get(0) == 0 && list.get(1) == 0) {
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-            generateElements(assocDiffStruc.getAssociation(), list, comment),
-            null);
-          if (astodArtifact != null) {
-            artifactList.add(astodArtifact);
-          }
-        } else {
-          ArrayList<Integer> list1 = new ArrayList<>(list);
-          list.set(1, 1);
-            ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-                generateElements(assocDiffStruc.getAssociation(), list1, comment),
-                null);
-            if (astodArtifact != null) {
-                artifactList.add(astodArtifact);
-            }
-            ArrayList<Integer> list2 = new ArrayList<>(list);
-            list.set(0, 1);
-          ASTODArtifact astodArtifact2 = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-            generateElements(assocDiffStruc.getAssociation(), list2, comment),
-            null);
-          if (astodArtifact != null) {
-            artifactList.add(astodArtifact2);
-          }
-        }
-      } else {
+      if (list.isEmpty()) {
+        list.add(1);
+        list.add(1);
+      }
+      if (list.get(0) == 0 && list.get(1) == 0) {
         ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
           generateElements(assocDiffStruc.getAssociation(), list, comment),
           null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
+        }
+      } else {
+        ArrayList<Integer> list1 = new ArrayList<>(list);
+        list.set(1, 1);
+        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
+          generateElements(assocDiffStruc.getAssociation(), list1, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact);
+        }
+        ArrayList<Integer> list2 = new ArrayList<>(list);
+        list.set(0, 1);
+        ASTODArtifact astodArtifact2 = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
+          generateElements(assocDiffStruc.getAssociation(), list2, comment),
+          null);
+        if (astodArtifact != null) {
+          artifactList.add(astodArtifact2);
         }
       }
     }
@@ -382,9 +377,9 @@ public class DiffHelper {
         }
       }
     }
-    if (!staDiff){
-      helper.makeSimpleSem(artifactList);
-    }
+//    if (!staDiff){
+//      helper.makeSimpleSem(artifactList);
+//    }
     return artifactList;
   }
 
@@ -414,6 +409,7 @@ public class DiffHelper {
   public List<ASTODElement> generateElements(ASTCDClass astcdClass,
                                              String comment) {
     Set<ASTODElement> elements;
+    System.out.println("start " + astcdClass.getSymbol().getInternalQualifiedName());
     DiffWitnessGenerator oDHelper = new DiffWitnessGenerator(Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
     elements = oDHelper.getObjForOD(astcdClass);
     if (elements.isEmpty()) {

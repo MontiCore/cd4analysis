@@ -458,7 +458,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public List<ASTCDClass> isAssocDeleted(ASTCDAssociation association, ASTCDClass astcdClass) {
     ASTCDClass isDeletedSrc = null;
     ASTCDClass isDeletedTgt = null;
-    AssocStruct assocStruct = helper.getAssocStrucForClassTgt(astcdClass, association);
+    AssocStruct assocStruct = helper.getAssocStructByUnmodTgt(astcdClass, association);
     if (assocStruct != null) {//if assocStruc is null, then the association is deleted because of overlapping
       if (assocStruct.getSide().equals(ClassSide.Left)) {
         if (!(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
@@ -537,7 +537,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   //CHECKED
-  //TODO: check again, I think a false comparison is made in the second part; check isAssocDeleted too
   @Override
   public List<ASTCDClass> isAssocAdded(ASTCDAssociation association) {
     ASTCDClass isAddedSrc = null;
@@ -545,11 +544,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     ASTCDClass classToUse;
     ASTCDClass otherSide;
     Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
-    AssocStruct assocStruct = helper.getAssocStrucForClass(pair.a, association);
+    AssocStruct assocStruct = helper.getAssocStructByUnmod(pair.a, association);
     classToUse = pair.a;
     otherSide = pair.b;
     if (assocStruct == null) {
-      assocStruct = helper.getAssocStrucForClass(pair.b, association);
+      assocStruct = helper.getAssocStructByUnmod(pair.b, association);
       classToUse = pair.b;
       otherSide = pair.a;
     }
@@ -566,12 +565,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         && sub != null) {
         isAddedSrc = sub;
       }
+      ASTCDClass matched2 = helper.findMatchedClass(otherSide);
       ASTCDClass sub2 = helper.allSubClassesAreTgtSrcTgt(assocStruct, otherSide);
       if (!otherSide.getModifier().isAbstract()
-        && helper.findMatchedSrc(otherSide) != null
-        && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(otherSide))
+        && matched2 != null
+        && !helper.getNotInstanClassesTgt().contains(matched2)
         && !helper.getNotInstanClassesSrc().contains(otherSide)
-        && !helper.classIsTgtSrcTgt(assocStruct, otherSide)) {
+        && !helper.classIsTgtSrcTgt(assocStruct, matched2)) {
         isAddedTgt = otherSide;
       } else if (!helper.getNotInstanClassesSrc().contains(otherSide)
         && sub2 != null) {
@@ -619,7 +619,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           for (AssocStruct superAssoc : helper.getSrcMap().get(astcdClass)) {
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
               if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
-                if (!sameRoleNamesSrc(association, superAssoc)) {
+                if (!sameRoleNamesSrc(association, superAssoc)
+                  && !(association.getDirection().equals(AssocDirection.BiDirectional) || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
                   Log.error("Bad overlapping found");
                 }
                 //same target role names and target classes are in inheritance relation
@@ -674,7 +675,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           for (AssocStruct superAssoc : helper.getSrcMap().get(astcdClass)) {
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
               if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
-                if (!sameRoleNamesSrc(association, superAssoc)) {
+                if (!sameRoleNamesSrc(association, superAssoc)
+                  && !(association.getDirection().equals(AssocDirection.BiDirectional) || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
                   Log.error("Bad overlapping found");
                 }
                 //same target role names and target classes are in inheritance relation

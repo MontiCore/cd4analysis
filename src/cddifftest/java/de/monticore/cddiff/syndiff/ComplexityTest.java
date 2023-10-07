@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class ComplexityTest extends CDDiffTestBasis {
   @Test
-  //@Ignore
+  @Ignore
   public void testRuntime4Performance() {
 
     String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
@@ -59,9 +59,6 @@ public class ComplexityTest extends CDDiffTestBasis {
       // new method
       long startTime_new = System.currentTimeMillis(); // start time
       List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
-      for (ASTODArtifact od : ods_new) {
-        System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-      }
       long endTime_new = System.currentTimeMillis(); // end time
 
       // new method
@@ -100,6 +97,8 @@ public class ComplexityTest extends CDDiffTestBasis {
       ASTCDCompilationUnit ast2_old = parseModel(filePath2);
       ASTCDCompilationUnit ast1_new = parseModel(filePath1);
       ASTCDCompilationUnit ast2_new = parseModel(filePath2);
+      ASTCDCompilationUnit ast1_new2 = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_new2 = parseModel(filePath2);
       assertNotNull(ast1_old);
       assertNotNull(ast2_old);
       assertNotNull(ast1_new);
@@ -118,10 +117,19 @@ public class ComplexityTest extends CDDiffTestBasis {
       List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
       long endTime_new = System.currentTimeMillis(); // end time
 
+      // new method
+      long startTime_new2 = System.currentTimeMillis(); // start time
+      //List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
+      List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+      long endTime_new2 = System.currentTimeMillis(); // end time
+
       System.out.println("old witness size: " + ods_old.size());
       System.out.println("Runtime of old method: " + (endTime_old - startTime_old) + "ms");
-      System.out.println("new witness size: " + ods_new.size());
-      System.out.println("Runtime of new method: " + (endTime_new - startTime_new) + "ms");
+      System.out.println("new witness v1 size: " + ods_new.size());
+      System.out.println("Runtime of new method v1: " + (endTime_new - startTime_new) + "ms");
+      System.out.println("new witness v2 size: " + witnesses.size());
+      System.out.println("Runtime of new method v2: " + (endTime_new2 - startTime_new2) + "ms");
     }
   }
 
@@ -145,6 +153,8 @@ public class ComplexityTest extends CDDiffTestBasis {
       ASTCDCompilationUnit ast2_old = parseModel(filePath2);
       ASTCDCompilationUnit ast1_new = parseModel(filePath1);
       ASTCDCompilationUnit ast2_new = parseModel(filePath2);
+      ASTCDCompilationUnit ast1_new2 = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_new2 = parseModel(filePath2);
       assertNotNull(ast1_old);
       assertNotNull(ast2_old);
       assertNotNull(ast1_new);
@@ -163,10 +173,19 @@ public class ComplexityTest extends CDDiffTestBasis {
       List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
       long endTime_new = System.currentTimeMillis(); // end time
 
+      // new method
+      long startTime_new2 = System.currentTimeMillis(); // start time
+      //List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
+      List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+      long endTime_new2 = System.currentTimeMillis(); // end time
+
       System.out.println("old witness size: " + ods_old.size());
       System.out.println("Runtime of old method: " + (endTime_old - startTime_old) + "ms");
-      System.out.println("new witness size: " + ods_new.size());
-      System.out.println("Runtime of new method: " + (endTime_new - startTime_new) + "ms");
+      System.out.println("new witness v1 size: " + ods_new.size());
+      System.out.println("Runtime of new method v1: " + (endTime_new - startTime_new) + "ms");
+      System.out.println("new witness v2 size: " + witnesses.size());
+      System.out.println("Runtime of new method v2: " + (endTime_new2 - startTime_new2) + "ms");
     }
   }
 }
