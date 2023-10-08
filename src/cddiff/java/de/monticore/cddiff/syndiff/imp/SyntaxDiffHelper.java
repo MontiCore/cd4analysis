@@ -102,7 +102,6 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     return "";
   }
 
-
   /**
    * Computes a matching map of CD types between the source and target CD.
    * It uses a combination of type matching strategies to match types based on name, structure, and super types.
