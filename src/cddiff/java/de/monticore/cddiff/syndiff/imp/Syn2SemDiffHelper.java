@@ -14,6 +14,8 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syndiff.OD.ODBuilder;
 import de.monticore.cddiff.syndiff.datastructures.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -911,7 +913,6 @@ public class Syn2SemDiffHelper {
    * @param association association to match with
    * @return matched association, if found
    */
-  //TODO: check all usages of this function and other getters for AssocStruct
   public AssocStruct getAssocStrucForClass(ASTCDClass astcdClass, ASTCDAssociation association){
     for (AssocStruct assocStruct : srcMap.get(astcdClass)){
       if (sameAssociation(assocStruct.getAssociation(), association)){
@@ -948,8 +949,8 @@ public class Syn2SemDiffHelper {
   public boolean srcAssocExistsTgtNot(ASTCDAssociation association, ASTCDAssociation association2) {
     boolean exists1 = false;
     Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
-    AssocStruct assocStructLeft = getAssocStrucForClass(pair.a, association);
-    AssocStruct assocStructRight = getAssocStrucForClass(pair.b, association);
+    AssocStruct assocStructLeft = getAssocStructByUnmod(pair.a, association);
+    AssocStruct assocStructRight = getAssocStructByUnmod(pair.b, association);
     if (association.getCDAssocDir().isBidirectional()) {
       if (assocStructLeft != null && assocStructRight != null) {
         exists1 = true;
@@ -966,8 +967,8 @@ public class Syn2SemDiffHelper {
 
     boolean exists2 = false;
     Pair<ASTCDClass, ASTCDClass> pair2 = Syn2SemDiffHelper.getConnectedClasses(association2, tgtCD);
-    AssocStruct assocStructLeftTgt = getAssocStrucForClassTgt(pair2.a, association2);
-    AssocStruct assocStructRightTgt = getAssocStrucForClassTgt(pair2.b, association2);
+    AssocStruct assocStructLeftTgt = getAssocStructByUnmodTgt(pair2.a, association2);
+    AssocStruct assocStructRightTgt = getAssocStructByUnmodTgt(pair2.b, association2);
     if (association.getCDAssocDir().isBidirectional()) {
       if (assocStructLeftTgt != null && assocStructRightTgt != null) {
         exists2 = true;
@@ -988,8 +989,8 @@ public class Syn2SemDiffHelper {
   public boolean srcNotTgtExists(ASTCDAssociation association, ASTCDAssociation association2){
     boolean exists1 = false;
     Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
-    AssocStruct assocStructLeft = getAssocStrucForClass(pair.a, association);
-    AssocStruct assocStructRight = getAssocStrucForClass(pair.b, association);
+    AssocStruct assocStructLeft = getAssocStructByUnmod(pair.a, association);
+    AssocStruct assocStructRight = getAssocStructByUnmod(pair.b, association);
     if (association.getCDAssocDir().isBidirectional()) {
       if (assocStructLeft != null && assocStructRight != null) {
         exists1 = true;
@@ -1006,8 +1007,8 @@ public class Syn2SemDiffHelper {
 
     boolean exists2 = false;
     Pair<ASTCDClass, ASTCDClass> pair2 = Syn2SemDiffHelper.getConnectedClasses(association2, tgtCD);
-    AssocStruct assocStructLeftTgt = getAssocStrucForClass(pair2.a, association2);
-    AssocStruct assocStructRightTgt = getAssocStrucForClass(pair2.b, association2);
+    AssocStruct assocStructLeftTgt = getAssocStructByUnmodTgt(pair2.a, association2);
+    AssocStruct assocStructRightTgt = getAssocStructByUnmod(pair2.b, association2);
     if (association.getCDAssocDir().isBidirectional()) {
       if (assocStructLeftTgt != null && assocStructRightTgt != null) {
         exists2 = true;
@@ -1777,11 +1778,15 @@ public class Syn2SemDiffHelper {
   }
 
   //CHECKED
-  public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
+  public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass, Pair<ASTCDAttribute, String> pair) {
     List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
+      if (!attribute.getMCType().printType().equals(pair.a.getName())){
+        odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), pair.b));
+      } else {
       odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
+      }
     }
     return odAttributes;
   }
@@ -2061,5 +2066,14 @@ public class Syn2SemDiffHelper {
       }
     }
     return null;
+  }
+
+  public boolean attIsEnum(ASTCDAttribute attribute){
+    for (ASTCDEnum enum_ : srcCD.getCDDefinition().getCDEnumsList()){
+      if (enum_.getSymbol().getInternalQualifiedName().equals(attribute.getMCType().printType())){
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -2,6 +2,7 @@ package de.monticore.cddiff.syndiff.OD;
 
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
@@ -146,11 +147,11 @@ public class DiffWitnessGenerator {
   }
 
   //Get objects for class
-  public Set<ASTODElement> getObjForOD(ASTCDClass astcdClass) {
+  public Set<ASTODElement> getObjForOD(ASTCDClass astcdClass, Pair<ASTCDAttribute, String> pair) {
     Set<ASTODElement> set = new HashSet<>();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap.create();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
-    Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt);
+    Set<Package> packages = createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt, pair);
     if (packages == null) {
       return new HashSet<>();
     }
@@ -225,11 +226,12 @@ public class DiffWitnessGenerator {
 
   public Set<Package> createChainsForNewClass(ASTCDClass astcdClass, Set<Package> packages,
                                               ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
-                                              ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
-    System.out.println("createChainsForNewClass " + astcdClass.getSymbol().getInternalQualifiedName());
+                                              ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt,
+                                              Pair<ASTCDAttribute, String> pair) {
+    //System.out.println("createChainsForNewClass " + astcdClass.getSymbol().getInternalQualifiedName());
     ASTODObject srcObject = odBuilder.buildObj(getNameForClass(astcdClass), astcdClass.getSymbol().getInternalQualifiedName(),
       helper.getSuperClasses(astcdClass),
-      helper.getAttributesOD(astcdClass));
+      helper.getAttributesOD(astcdClass, pair));
     if (helper.getSrcMap().get(astcdClass).isEmpty()) {
       Package pack = new Package(srcObject);
       packages.add(pack);
@@ -265,7 +267,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(subclass), subclass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(subclass),
-            helper.getAttributesOD(subclass));
+            helper.getAttributesOD(subclass, null));
         } else if (tgtObject == null
           && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(rightClass, mapSrc, mapTgt)) {
@@ -273,7 +275,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(rightClass),
-            helper.getAttributesOD(rightClass));
+            helper.getAttributesOD(rightClass, null));
         }
         if (tgtObject == null) {
           return null;
@@ -312,7 +314,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(subclass), subclass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(subclass),
-            helper.getAttributesOD(subclass));
+            helper.getAttributesOD(subclass, null));
         } else if (tgtObject == null
           && !leftClass.getModifier().isAbstract()) {
           if (singletonObj(leftClass, mapSrc, mapTgt)) {
@@ -320,7 +322,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(leftClass),
-            helper.getAttributesOD(leftClass));
+            helper.getAttributesOD(leftClass, null));
         }
         if (tgtObject == null) {
           return null;
@@ -355,7 +357,7 @@ public class DiffWitnessGenerator {
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(sub),
-            helper.getAttributesOD(sub));
+            helper.getAttributesOD(sub, null));
 
         } else if (realSrcObject == null
           && !leftClass.getModifier().isAbstract()) {
@@ -364,7 +366,7 @@ public class DiffWitnessGenerator {
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(leftClass),
-            helper.getAttributesOD(leftClass));
+            helper.getAttributesOD(leftClass, null));
         }
         if (realSrcObject == null) {
           return null;
@@ -395,7 +397,7 @@ public class DiffWitnessGenerator {
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(sub),
-            helper.getAttributesOD(sub));
+            helper.getAttributesOD(sub, null));
         } else if (realSrcObject == null
           && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b, mapSrc, mapTgt)) {
@@ -403,7 +405,7 @@ public class DiffWitnessGenerator {
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(rightClass),
-            helper.getAttributesOD(rightClass));
+            helper.getAttributesOD(rightClass, null));
         }
 
         if (realSrcObject == null) {
@@ -420,18 +422,18 @@ public class DiffWitnessGenerator {
       Package pack = new Package(srcObject);
       packages.add(pack);
     }
-    for (Package pack : packages) {
-      if (pack.getAstcdAssociation() != null){
-        System.out.println(pack.getLeftObject().getName() + " " + pack.getRightObject().getName());
-      }
-    }
+//    for (Package pack : packages) {
+//      if (pack.getAstcdAssociation() != null){
+//        System.out.println(pack.getLeftObject().getName() + " " + pack.getRightObject().getName());
+//      }
+//    }
     return packages;
   }
 
   public Set<Package> createChainsForExistingObj(ASTODObject object, Set<Package> packages,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
                                                  ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
-    System.out.println("createChainsForExistingObj " + object.getName());
+  //  System.out.println("createChainsForExistingObj " + object.getName());
     List<AssocStruct> list = new ArrayList<>();
     for (AssocStruct assocStruct : helper.getSrcMap().get(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
       if (assocStruct.getSide().equals(ClassSide.Left)
@@ -515,7 +517,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(sub),
-            helper.getAttributesOD(sub));
+            helper.getAttributesOD(sub, null));
         } else if (tgtObject == null
           && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(rightClass, mapSrc, mapTgt)) {
@@ -523,7 +525,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(rightClass),
-            helper.getAttributesOD(rightClass));
+            helper.getAttributesOD(rightClass, null));
         }
 
         if (tgtObject == null) {
@@ -566,7 +568,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(sub),
-            helper.getAttributesOD(sub));
+            helper.getAttributesOD(sub, null));
         } else if (tgtObject == null
           && !leftClass.getModifier().isAbstract()) {
           if (singletonObj(leftClass, mapSrc, mapTgt)) {
@@ -574,7 +576,7 @@ public class DiffWitnessGenerator {
           }
           tgtObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(leftClass),
-            helper.getAttributesOD(leftClass));
+            helper.getAttributesOD(leftClass, null));
         }
         if (tgtObject == null) {
           return null;
@@ -613,7 +615,7 @@ public class DiffWitnessGenerator {
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(sub),
-            helper.getAttributesOD(sub));
+            helper.getAttributesOD(sub, null));
         } else if (realSrcObject == null
           && !leftClass.getModifier().isAbstract()) {
           if (singletonObj(leftClass, mapSrc, mapTgt)) {
@@ -621,7 +623,7 @@ public class DiffWitnessGenerator {
           }
           realSrcObject = odBuilder.buildObj(getNameForClass(leftClass), leftClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(leftClass),
-            helper.getAttributesOD(leftClass));
+            helper.getAttributesOD(leftClass, null));
         }
 
         if (realSrcObject == null) {
@@ -651,12 +653,12 @@ public class DiffWitnessGenerator {
           < helper.getClassSize(rightClass)))) {
           realSrcObject = odBuilder.buildObj(getNameForClass(sub), sub.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(sub),
-            helper.getAttributesOD(sub));
+            helper.getAttributesOD(sub, null));
         } else if (realSrcObject == null
           && !rightClass.getModifier().isAbstract()) {
           realSrcObject = odBuilder.buildObj(getNameForClass(rightClass), rightClass.getSymbol().getInternalQualifiedName(),
             helper.getSuperClasses(rightClass),
-            helper.getAttributesOD(rightClass));
+            helper.getAttributesOD(rightClass, null));
         }
 
         if (realSrcObject == null) {
@@ -673,11 +675,11 @@ public class DiffWitnessGenerator {
       Package pack = new Package(object);
       packages.add(pack);
     }
-    for (Package pack : packages) {
-      if (pack.getAstcdAssociation() != null){
-        System.out.println(pack.getLeftObject().getName() + " " + pack.getRightObject().getName());
-      }
-    }
+//    for (Package pack : packages) {
+//      if (pack.getAstcdAssociation() != null){
+//        System.out.println(pack.getLeftObject().getName() + " " + pack.getRightObject().getName());
+//      }
+//    }
     return packages;
   }
 

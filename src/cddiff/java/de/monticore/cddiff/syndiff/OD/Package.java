@@ -109,6 +109,9 @@ public class Package {
     List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
+      if (helper.attIsEnum(attribute)) {
+        odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), "''"));
+      }
       odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
     }
     return odAttributes;

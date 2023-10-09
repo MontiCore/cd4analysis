@@ -10,9 +10,12 @@ import de.monticore.cddiff.syndiff.OD.DiffHelper;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,7 +89,7 @@ public class ComplexityTest extends CDDiffTestBasis {
 
     String filePath1;
     String filePath2;
-    for (int i = 1; i <= 6; i++) {
+    for (int i = 2; i <= 6; i++) {
 
       filePath1 = path + 20 * i + "A_NoLink.cd";
       filePath2 = path + 20 * i + "B_NoLink.cd";
@@ -187,5 +190,101 @@ public class ComplexityTest extends CDDiffTestBasis {
       System.out.println("new witness v2 size: " + witnesses.size());
       System.out.println("Runtime of new method v2: " + (endTime_new2 - startTime_new2) + "ms");
     }
+  }
+
+  @Test
+  public void wrongODs(){
+    int n = 0;
+    int k = 0;
+    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+
+
+    String filePath1;
+    String filePath2;
+    for (int i = 1; i <= 6; i++) {
+
+      filePath1 = path + 20 * i + "A.cd";
+      filePath2 = path + 20 * i + "B.cd";
+      System.out.println("*******  Test for " + 20 * i + "  *******");
+
+      CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+      ASTCDCompilationUnit ast1_new = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_new = parseModel(filePath2);
+      assertNotNull(ast1_new);
+      assertNotNull(ast2_new);
+
+
+      // new method
+      long startTime_new = System.currentTimeMillis(); // start time
+      List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      long endTime_new = System.currentTimeMillis(); // end time
+      for (ASTODArtifact od : ods_new) {
+        k++;
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
+          n++;
+        }
+      }
+    }
+
+
+    String path2 = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+
+    String filePath11;
+    String filePath22;
+    for (int i = 2; i <= 6; i++) {
+
+      filePath11 = path2 + 20 * i + "A_NoLink.cd";
+      filePath22 = path2 + 20 * i + "B_NoLink.cd";
+      System.out.println("*******  Test for " + 20 * i + "  *******");
+
+      CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+      ASTCDCompilationUnit ast1_new = parseModel(filePath11);
+      ASTCDCompilationUnit ast2_new = parseModel(filePath22);
+      assertNotNull(ast1_new);
+      assertNotNull(ast2_new);
+
+      // new method
+      long startTime_new = System.currentTimeMillis(); // start time
+      List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      long endTime_new = System.currentTimeMillis(); // end time
+      for (ASTODArtifact od : ods_new) {
+        k++;
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
+          n++;
+        }
+      }
+    }
+
+    String path3 = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+
+    String output = "./target/runtime-test/";
+
+    String filePath111;
+    String filePath222;
+    for (int i = 1; i <= 5; i++) {
+
+      filePath111 = path3 + "100A_" + i + ".cd";
+      filePath222 = path3 + "100B_" + i + ".cd";
+      System.out.println("*******  Test for " + i + "  *******");
+
+      CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+      ASTCDCompilationUnit ast1_new = parseModel(filePath111);
+      ASTCDCompilationUnit ast2_new = parseModel(filePath222);
+      assertNotNull(ast1_new);
+      assertNotNull(ast2_new);
+
+      // new method
+      long startTime_new = System.currentTimeMillis(); // start time
+      List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      long endTime_new = System.currentTimeMillis(); // end time
+
+      for (ASTODArtifact od : ods_new) {
+        k++;
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
+          n++;
+        }
+      }
+    }
+    System.out.println("wrong ods: " + n + " of " + k);
   }
 }
