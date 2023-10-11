@@ -1,17 +1,10 @@
 package de.monticore.matcher;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
@@ -31,12 +24,14 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     List<ASTCDType> result = new ArrayList<>();
 
-    result.addAll(tgtCD.getCDDefinition().getCDClassesList().stream()
-      .filter(type -> isMatched(srcElem, type))
-      .collect(Collectors.toList()));
-    result.addAll(tgtCD.getCDDefinition().getCDInterfacesList().stream()
-      .filter(type -> isMatched(srcElem, type))
-      .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDClassesList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDInterfacesList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
 
     return result;
   }
@@ -49,9 +44,9 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
     List<ASTCDAttribute> tgtAttrDeletedAttr = new ArrayList<>(tgtAttr);
     List<ASTCDAttribute> similarities = new ArrayList<>();
 
-    for(ASTCDAttribute x : srcAttr){
-      for(ASTCDAttribute y : tgtAttr){
-        if(x.getName().equals(y.getName())){
+    for (ASTCDAttribute x : srcAttr) {
+      for (ASTCDAttribute y : tgtAttr) {
+        if (x.getName().equals(y.getName())) {
           tgtAttrDeletedAttr.remove(y);
           similarities.add(x);
         }
@@ -61,10 +56,10 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
     List<ASTCDAttribute> allAttributes = new ArrayList<>(srcAttr);
     allAttributes.addAll(tgtAttrDeletedAttr);
 
-    //Jaccard Index
+    // Jaccard Index
     double weight = (double) similarities.size() / allAttributes.size();
 
-    //Chosen threshold
+    // Chosen threshold
     return weight >= 0.5;
   }
 }

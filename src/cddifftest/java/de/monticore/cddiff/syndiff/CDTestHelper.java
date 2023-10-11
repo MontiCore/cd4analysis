@@ -9,7 +9,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -61,11 +60,11 @@ public class CDTestHelper {
 
   public static boolean isPrimitiveType(ASTMCType type) {
     return Set.of("int", "double", "Double", "Integer", "boolean", "Boolean", "String")
-      .contains(type.printType());
+        .contains(type.printType());
   }
 
   public static ASTCDAssociation getAssociation(
-    ASTCDType objType, String otherRole, ASTCDDefinition cd) {
+      ASTCDType objType, String otherRole, ASTCDDefinition cd) {
     Set<ASTCDType> objTypes = getSuperTypeAllDeep(objType, cd);
     objTypes.add(objType);
     ASTCDType leftType;
@@ -80,7 +79,7 @@ public class CDTestHelper {
       rightRole = association.getRight().getCDRole().getName();
 
       if (objTypes.contains(leftType) && otherRole.equals(rightRole)
-        || objTypes.contains(rightType) && otherRole.equals(leftRole)) {
+          || objTypes.contains(rightType) && otherRole.equals(leftRole)) {
         return association;
       }
     }
@@ -88,7 +87,7 @@ public class CDTestHelper {
   }
 
   private static void getSuperTypeAllDeepHelper(
-    ASTCDType astcdType, ASTCDDefinition cd, Set<ASTCDType> res) {
+      ASTCDType astcdType, ASTCDDefinition cd, Set<ASTCDType> res) {
     if (astcdType.getInterfaceList().isEmpty() && astcdType.getSuperclassList().isEmpty()) {
       return;
     }
@@ -102,14 +101,14 @@ public class CDTestHelper {
 
   public static List<ASTCDType> getSuperTypeList(ASTCDType astcdType, ASTCDDefinition cd) {
     List<ASTCDType> res =
-      astcdType.getSuperclassList().stream()
-        .map(mcType -> getASTCDType(mcType.printType(), cd))
-        .collect(Collectors.toList());
+        astcdType.getSuperclassList().stream()
+            .map(mcType -> getASTCDType(mcType.printType(), cd))
+            .collect(Collectors.toList());
 
     res.addAll(
-      astcdType.getInterfaceList().stream()
-        .map(mcType -> getASTCDType(mcType.printType(), cd))
-        .collect(Collectors.toList()));
+        astcdType.getInterfaceList().stream()
+            .map(mcType -> getASTCDType(mcType.printType(), cd))
+            .collect(Collectors.toList()));
 
     return res;
   }
@@ -123,7 +122,7 @@ public class CDTestHelper {
 
   public static ASTCDAttribute getAttribute(ASTCDType astcdType, String attrName) {
     Optional<ASTCDAttribute> attr =
-      astcdType.getCDAttributeList().stream().filter(a -> a.getName().equals(attrName)).findAny();
+        astcdType.getCDAttributeList().stream().filter(a -> a.getName().equals(attrName)).findAny();
     if (attr.isEmpty()) {
       Log.error("attribute " + attrName + " not found in class " + astcdType.getName());
     }

@@ -1,8 +1,6 @@
 package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
-import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 
 public class AssocStruct {
   ASTCDAssociation association;
@@ -20,7 +18,11 @@ public class AssocStruct {
     this.unmodifiedAssoc = association;
   }
 
-  public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side, boolean isSuperAssoc) {
+  public AssocStruct(
+      ASTCDAssociation association,
+      AssocDirection direction,
+      ClassSide side,
+      boolean isSuperAssoc) {
     this.association = association;
     this.direction = direction;
     this.side = side;
@@ -28,8 +30,9 @@ public class AssocStruct {
     this.isSuperAssoc = isSuperAssoc;
   }
 
-  public AssocStruct deepClone(){
-    return new AssocStruct(this.association.deepClone(), this.direction, this.side, this.isSuperAssoc);
+  public AssocStruct deepClone() {
+    return new AssocStruct(
+        this.association.deepClone(), this.direction, this.side, this.isSuperAssoc);
   }
 
   public ASTCDAssociation getAssociation() {

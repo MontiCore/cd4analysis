@@ -7,7 +7,9 @@ public class CardinalityStruc {
   private Pair<ASTCDCardinality, ASTCDCardinality> leftCardinalities;
   private Pair<ASTCDCardinality, ASTCDCardinality> rightCardinalities;
 
-  public CardinalityStruc(Pair<ASTCDCardinality, ASTCDCardinality> leftCardinalities, Pair<ASTCDCardinality, ASTCDCardinality> rightCardinalities) {
+  public CardinalityStruc(
+      Pair<ASTCDCardinality, ASTCDCardinality> leftCardinalities,
+      Pair<ASTCDCardinality, ASTCDCardinality> rightCardinalities) {
     this.leftCardinalities = leftCardinalities;
     this.rightCardinalities = rightCardinalities;
   }

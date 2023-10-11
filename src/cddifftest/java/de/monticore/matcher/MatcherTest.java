@@ -3,18 +3,12 @@ package de.monticore.matcher;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.monticore.ast.ASTNode;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +53,8 @@ public class MatcherTest {
   @Test
   public void testMatchStructureType() {
     parseModels("Source6.cd", "Refinement6.cd");
-      assertTrue(Matcher.matchingStructureTypeStrategy(
+    assertTrue(
+        Matcher.matchingStructureTypeStrategy(
             src.getCDDefinition().getCDClassesList().get(0),
             tgt.getCDDefinition().getCDClassesList().get(0),
             tgt));

@@ -1,6 +1,8 @@
 package de.monticore.cddiff.syndiff.imp;
 
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getDirectSuperClasses;
+import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getSpannedInheritance;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -9,21 +11,15 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
-import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.matcher.*;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.*;
-
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociation;
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.sameAssociationInReverse;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
 
 public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   private ASTCDCompilationUnit srcCD;
@@ -45,6 +41,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   private List<DiffTypes> baseDiff;
   List<ASTCDType> srcCDTypes;
   ICD4CodeArtifactScope scopeSrcCD, scopeTgtCD;
+
   public Syn2SemDiffHelper getHelper() {
     return helper;
   }
@@ -88,34 +85,42 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     helper.setMatchedClasses(matchedClasses);
     helper.setMaps();
   }
+
   @Override
   public ASTCDCompilationUnit getSrcCD() {
     return srcCD;
   }
+
   @Override
   public void setSrcCD(ASTCDCompilationUnit srcCD) {
     this.srcCD = srcCD;
   }
+
   @Override
   public ASTCDCompilationUnit getTgtCD() {
     return tgtCD;
   }
+
   @Override
   public void setTgtCD(ASTCDCompilationUnit tgtCD) {
     this.tgtCD = tgtCD;
   }
+
   @Override
   public List<DiffTypes> getBaseDiff() {
     return baseDiff;
   }
+
   @Override
   public void setBaseDiff(List<DiffTypes> baseDiff) {
     this.baseDiff = baseDiff;
   }
+
   @Override
   public List<CDTypeDiff> getChangedTypes() {
     return changedTypes;
   }
+
   @Override
   public void setChangedTypes(List<CDTypeDiff> changedTypes) {
     this.changedTypes = changedTypes;
@@ -232,23 +237,25 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   @Override
-  public ASTCDClass isSupClass(ASTCDClass astcdClass){
-    if (astcdClass.getModifier().isAbstract()){
+  public ASTCDClass isSupClass(ASTCDClass astcdClass) {
+    if (astcdClass.getModifier().isAbstract()) {
       List<ASTCDClass> classesToCheck = getSpannedInheritance(helper.getSrcCD(), astcdClass);
       List<ASTCDAttribute> attributes = astcdClass.getCDAttributeList();
-      for (ASTCDClass classToCheck : classesToCheck){
-        for (ASTCDAttribute attribute : attributes){
-          if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, classToCheck)){
-            Set<ASTCDClass> classes = CDDiffUtil.getAllSuperclasses(classToCheck, helper.getSrcCD().getCDDefinition().getCDClassesList());
+      for (ASTCDClass classToCheck : classesToCheck) {
+        for (ASTCDAttribute attribute : attributes) {
+          if (!Syn2SemDiffHelper.isAttContainedInClass(attribute, classToCheck)) {
+            Set<ASTCDClass> classes =
+                CDDiffUtil.getAllSuperclasses(
+                    classToCheck, helper.getSrcCD().getCDDefinition().getCDClassesList());
             classes.remove(astcdClass);
             boolean isContained = false;
-            for (ASTCDClass superOfSub : classes){
-              if (Syn2SemDiffHelper.isAttContainedInClass(attribute, superOfSub)){
+            for (ASTCDClass superOfSub : classes) {
+              if (Syn2SemDiffHelper.isAttContainedInClass(attribute, superOfSub)) {
                 isContained = true;
                 break;
               }
             }
-            if (!isContained){
+            if (!isContained) {
               return classToCheck;
             }
           }
@@ -260,45 +267,47 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return null;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public Set<Pair<ASTCDClass, Set<ASTCDClass>>> deletedInheritance(){
+  public Set<Pair<ASTCDClass, Set<ASTCDClass>>> deletedInheritance() {
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
-    for (Pair<ASTCDClass, List<ASTCDType>> struc : deletedInheritance){
+    for (Pair<ASTCDClass, List<ASTCDType>> struc : deletedInheritance) {
       List<ASTCDType> superClasses = struc.b;
       Set<ASTCDClass> currentDiff = new HashSet<>();
-      for (ASTCDType superClass : superClasses){
+      for (ASTCDType superClass : superClasses) {
         if (!helper.getNotInstanClassesSrc().contains(helper.findMatchedSrc(struc.a))
-          && !helper.getNotInstanClassesTgt().contains(struc.a)
-          && !helper.getNotInstanClassesTgt().contains(superClass)
-          && isInheritanceDeleted((ASTCDClass) superClass, struc.a)){
+            && !helper.getNotInstanClassesTgt().contains(struc.a)
+            && !helper.getNotInstanClassesTgt().contains(superClass)
+            && isInheritanceDeleted((ASTCDClass) superClass, struc.a)) {
           currentDiff.add((ASTCDClass) superClass);
         }
       }
-      if (!currentDiff.isEmpty()){
+      if (!currentDiff.isEmpty()) {
         diff.add(new Pair<>(helper.findMatchedSrc(struc.a), currentDiff));
       }
     }
     return diff;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public boolean isInheritanceDeleted(ASTCDClass astcdClass, ASTCDClass subClassTgt) {
-    //check if a deleted class brings a semantic difference
-    //check if all subclasses have the attributes from this class from tgt tgtCD
-    //check if there were outgoing(or bidirectional) associations that weren't zero assocs and check if all subclasses have them
+    // check if a deleted class brings a semantic difference
+    // check if all subclasses have the attributes from this class from tgt tgtCD
+    // check if there were outgoing(or bidirectional) associations that weren't zero assocs and
+    // check if all subclasses have them
     ASTCDClass subClass = helper.findMatchedSrc(subClassTgt);
     Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
     if (subClass != null) {
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
         if (!helper.getNotInstanClassesSrc().contains(subClass)
-          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, subClass)) {
-          Set<ASTCDType> astcdClassList = getAllSuper(subClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, subClass)) {
+          Set<ASTCDType> astcdClassList =
+              getAllSuper(subClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass
-              && !helper.getNotInstanClassesSrc().contains((ASTCDClass) type)) {
+                && !helper.getNotInstanClassesSrc().contains((ASTCDClass) type)) {
               if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;
@@ -308,8 +317,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         } else {
           conditionSatisfied = true;
         }
-        if (!conditionSatisfied) {//found a subclass that doesn't have this attribute
-          return true;// Break out of the first loop if the condition is satisfied
+        if (!conditionSatisfied) { // found a subclass that doesn't have this attribute
+          return true; // Break out of the first loop if the condition is satisfied
         }
       }
     }
@@ -339,54 +348,57 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         return true;
       }
     }
-    //check if there were outgoing(or bidirectional) associations that weren't zero assocs and check if all subclasses have them - done (only outgoing are saved to the values of a key)
+    // check if there were outgoing(or bidirectional) associations that weren't zero assocs and
+    // check if all subclasses have them - done (only outgoing are saved to the values of a key)
     return false;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public Set<Pair<ASTCDClass, Set<ASTCDClass>>> addedInheritance(){
+  public Set<Pair<ASTCDClass, Set<ASTCDClass>>> addedInheritance() {
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
-    for (Pair<ASTCDClass, List<ASTCDType>> struc : addedInheritance){
+    for (Pair<ASTCDClass, List<ASTCDType>> struc : addedInheritance) {
       List<ASTCDType> superClasses = struc.b;
       Set<ASTCDClass> currentDiff = new HashSet<>();
-      for (ASTCDType superClass : superClasses){
+      for (ASTCDType superClass : superClasses) {
         if (!helper.getNotInstanClassesSrc().contains(struc.a)
-          && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(struc.a))
-          && !helper.getNotInstanClassesSrc().contains(superClass)
-          && isInheritanceAdded((ASTCDClass) superClass, struc.a)){
+            && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(struc.a))
+            && !helper.getNotInstanClassesSrc().contains(superClass)
+            && isInheritanceAdded((ASTCDClass) superClass, struc.a)) {
           currentDiff.add((ASTCDClass) superClass);
         }
       }
-      if (!currentDiff.isEmpty()){
+      if (!currentDiff.isEmpty()) {
         diff.add(new Pair<>(struc.a, currentDiff));
       }
     }
     return diff;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public Set<InheritanceDiff> mergeInheritanceDiffs(){
+  public Set<InheritanceDiff> mergeInheritanceDiffs() {
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> added = addedInheritance();
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> deleted = deletedInheritance();
     Set<InheritanceDiff> set = new HashSet<>();
-    for (Pair<ASTCDClass, Set<ASTCDClass>> pair : added){
-      InheritanceDiff diff = new InheritanceDiff(new Pair<>(pair.a, helper.findMatchedClass(pair.a)));
+    for (Pair<ASTCDClass, Set<ASTCDClass>> pair : added) {
+      InheritanceDiff diff =
+          new InheritanceDiff(new Pair<>(pair.a, helper.findMatchedClass(pair.a)));
       diff.setNewDirectSuper(new ArrayList<>(pair.b));
       set.add(diff);
     }
-    for (Pair<ASTCDClass, Set<ASTCDClass>> pair : deleted){
+    for (Pair<ASTCDClass, Set<ASTCDClass>> pair : deleted) {
       boolean holds = false;
-      for (InheritanceDiff diff : set){
-        if (pair.a.equals(diff.getAstcdClasses().b)){
+      for (InheritanceDiff diff : set) {
+        if (pair.a.equals(diff.getAstcdClasses().b)) {
           diff.setOldDirectSuper(new ArrayList<>(pair.b));
           holds = true;
           break;
         }
       }
-      if (!holds){
-        InheritanceDiff diff = new InheritanceDiff(new Pair<>(helper.findMatchedSrc(pair.a), pair.a));
+      if (!holds) {
+        InheritanceDiff diff =
+            new InheritanceDiff(new Pair<>(helper.findMatchedSrc(pair.a), pair.a));
         diff.setOldDirectSuper(new ArrayList<>(pair.b));
         set.add(diff);
       }
@@ -394,23 +406,28 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return set;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public boolean isInheritanceAdded(ASTCDClass astcdClass, ASTCDClass subClass) {
-    //reversed case
-    //check if new attributes existed in the given subclass - use function from CDTypeDiff
-    //check if the associations also existed(are subtypes of the associations) in the tgtMap - same subfunction from isClassDeleted
+    // reversed case
+    // check if new attributes existed in the given subclass - use function from CDTypeDiff
+    // check if the associations also existed(are subtypes of the associations) in the tgtMap - same
+    // subfunction from isClassDeleted
     Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
     if (subClass != null) {
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
         if (!helper.getNotInstanClassesSrc().contains(astcdClass)
-          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, helper.findMatchedClass(subClass))) {
-          Set<ASTCDType> astcdClassList = getAllSuper(helper.findMatchedClass(subClass), (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
+            && !Syn2SemDiffHelper.isAttContainedInClass(
+                attribute, helper.findMatchedClass(subClass))) {
+          Set<ASTCDType> astcdClassList =
+              getAllSuper(
+                  helper.findMatchedClass(subClass),
+                  (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass
-              && !helper.getNotInstanClassesTgt().contains((ASTCDClass) type)
-              && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
+                && !helper.getNotInstanClassesTgt().contains((ASTCDClass) type)
+                && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
               conditionSatisfied = true; // Set the flag to true if the condition holds
               break;
             }
@@ -418,16 +435,18 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         } else {
           conditionSatisfied = true;
         }
-        if (!conditionSatisfied) {//found a subclass that doesn't have this attribute
-          return true;// Break out of the first loop if the condition is satisfied
+        if (!conditionSatisfied) { // found a subclass that doesn't have this attribute
+          return true; // Break out of the first loop if the condition is satisfied
         }
       }
     }
-    //check if there were outgoing(or bidirectional) associations that weren't zero assocs and check if all subclasses have them - only outgoing are saved in the map
+    // check if there were outgoing(or bidirectional) associations that weren't zero assocs and
+    // check if all subclasses have them - only outgoing are saved in the map
     boolean isContained = false;
     for (AssocStruct assocStruct : getHelper().getSrcMap().get(astcdClass)) {
       if (areZeroAssocs(assocStruct, assocStruct)) {
-        for (AssocStruct baseAssoc : getHelper().getTrgMap().get(helper.findMatchedClass(subClass))) {
+        for (AssocStruct baseAssoc :
+            getHelper().getTrgMap().get(helper.findMatchedClass(subClass))) {
           if (helper.sameAssociationTypeSrcTgt(baseAssoc, assocStruct)) {
             isContained = true;
           }
@@ -439,111 +458,109 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         }
       }
     }
-    for (AssocStruct otherStruct : helper.getAllOtherAssocsSrc(astcdClass)){
+    for (AssocStruct otherStruct : helper.getAllOtherAssocsSrc(astcdClass)) {
       boolean isContained1 = false;
-      for (AssocStruct srcStruct : helper.getAllOtherAssocsTgt(helper.findMatchedClass(subClass))){
-        if (helper.sameAssociationTypeSrcTgt(srcStruct, otherStruct)){
+      for (AssocStruct srcStruct : helper.getAllOtherAssocsTgt(helper.findMatchedClass(subClass))) {
+        if (helper.sameAssociationTypeSrcTgt(srcStruct, otherStruct)) {
           isContained1 = true;
         }
       }
-      if (!isContained1){
+      if (!isContained1) {
         return true;
       }
     }
     return false;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public List<ASTCDClass> isAssocDeleted(ASTCDAssociation association, ASTCDClass astcdClass) {
     ASTCDClass isDeletedSrc = null;
     ASTCDClass isDeletedTgt = null;
     AssocStruct assocStruct = helper.getAssocStructByUnmodTgt(astcdClass, association);
-    if (assocStruct != null) {//if assocStruc is null, then the association is deleted because of overlapping
+    if (assocStruct
+        != null) { // if assocStruc is null, then the association is deleted because of overlapping
       if (assocStruct.getSide().equals(ClassSide.Left)) {
         if (!(assocStruct.getAssociation().getRight().getCDCardinality().isMult()
-          || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
+            || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())) {
           ASTCDClass matched = helper.findMatchedSrc(astcdClass);
           ASTCDClass sub = helper.allSubclassesHaveIt(assocStruct, astcdClass);
           if (!astcdClass.getModifier().isAbstract()
-            && matched != null
-            && !helper.getNotInstanClassesTgt().contains(astcdClass)
-            && !helper.getNotInstanClassesSrc().contains(matched)
-            && !helper.classHasAssociationTgtSrc(assocStruct, matched)) {
+              && matched != null
+              && !helper.getNotInstanClassesTgt().contains(astcdClass)
+              && !helper.getNotInstanClassesSrc().contains(matched)
+              && !helper.classHasAssociationTgtSrc(assocStruct, matched)) {
             isDeletedSrc = matched;
-          } else if (!helper.getNotInstanClassesTgt().contains(astcdClass)
-            && sub != null){
+          } else if (!helper.getNotInstanClassesTgt().contains(astcdClass) && sub != null) {
             isDeletedSrc = helper.findMatchedSrc(sub);
           }
         }
         if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isOpt()
-          || assocStruct.getAssociation().getLeft().getCDCardinality().isMult())){
+            || assocStruct.getAssociation().getLeft().getCDCardinality().isMult())) {
           ASTCDClass right = getConnectedClasses(assocStruct.getAssociation(), helper.getTgtCD()).b;
           ASTCDClass matched = helper.findMatchedSrc(right);
           ASTCDClass sub = helper.allSubClassesAreTgtTgtSrc(assocStruct, right);
           if (!right.getModifier().isAbstract()
-            && matched != null
-            && !helper.getNotInstanClassesTgt().contains(right)
-            && !helper.getNotInstanClassesSrc().contains(matched)
-            && !helper.classIsTargetTgtSrc(assocStruct, matched)) {
+              && matched != null
+              && !helper.getNotInstanClassesTgt().contains(right)
+              && !helper.getNotInstanClassesSrc().contains(matched)
+              && !helper.classIsTargetTgtSrc(assocStruct, matched)) {
             isDeletedTgt = matched;
-          } else if (!helper.getNotInstanClassesTgt().contains(right)
-            && sub != null){
+          } else if (!helper.getNotInstanClassesTgt().contains(right) && sub != null) {
             isDeletedTgt = helper.findMatchedSrc(sub);
           }
         }
       } else {
         if (!(assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
-          || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())) {
+            || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())) {
           ASTCDClass matched = helper.findMatchedSrc(astcdClass);
           ASTCDClass sub = helper.allSubclassesHaveIt(assocStruct, astcdClass);
           if (!astcdClass.getModifier().isAbstract()
-            && matched != null
-            && !helper.getNotInstanClassesTgt().contains(astcdClass)
-            && !helper.getNotInstanClassesSrc().contains(matched)
-            && !helper.classHasAssociationTgtSrc(assocStruct, matched)) {
+              && matched != null
+              && !helper.getNotInstanClassesTgt().contains(astcdClass)
+              && !helper.getNotInstanClassesSrc().contains(matched)
+              && !helper.classHasAssociationTgtSrc(assocStruct, matched)) {
             isDeletedSrc = helper.findMatchedSrc(astcdClass);
-          } else if (!helper.getNotInstanClassesTgt().contains(astcdClass)
-            && sub != null){
+          } else if (!helper.getNotInstanClassesTgt().contains(astcdClass) && sub != null) {
             isDeletedSrc = helper.findMatchedSrc(sub);
           }
         }
         if (!(assocStruct.getAssociation().getRight().getCDCardinality().isOpt()
-          || assocStruct.getAssociation().getRight().getCDCardinality().isMult())){
+            || assocStruct.getAssociation().getRight().getCDCardinality().isMult())) {
           ASTCDClass left = getConnectedClasses(assocStruct.getAssociation(), helper.getTgtCD()).a;
           ASTCDClass matched = helper.findMatchedSrc(left);
           ASTCDClass sub = helper.allSubClassesAreTgtTgtSrc(assocStruct, left);
           if (!left.getModifier().isAbstract()
-            && matched != null
-            && !helper.getNotInstanClassesTgt().contains(left)
-            && !helper.getNotInstanClassesSrc().contains(matched)
-            && !helper.classIsTargetTgtSrc(assocStruct, matched)) {
+              && matched != null
+              && !helper.getNotInstanClassesTgt().contains(left)
+              && !helper.getNotInstanClassesSrc().contains(matched)
+              && !helper.classIsTargetTgtSrc(assocStruct, matched)) {
             isDeletedTgt = matched;
-          } else if (!helper.getNotInstanClassesTgt().contains(left)
-            && sub != null){
+          } else if (!helper.getNotInstanClassesTgt().contains(left) && sub != null) {
             isDeletedTgt = helper.findMatchedSrc(sub);
           }
         }
       }
     }
     List<ASTCDClass> list = new ArrayList<>();
-    if (isDeletedSrc != null){
+    if (isDeletedSrc != null) {
       list.add(isDeletedSrc);
     }
-    if (isDeletedTgt != null){
+    if (isDeletedTgt != null) {
       list.add(isDeletedTgt);
     }
     return list;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public List<ASTCDClass> isAssocAdded(ASTCDAssociation association) {
     ASTCDClass isAddedSrc = null;
     ASTCDClass isAddedTgt = null;
     ASTCDClass classToUse;
     ASTCDClass otherSide;
-    Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
+    Pair<ASTCDClass, ASTCDClass> pair =
+        Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
     AssocStruct assocStruct = helper.getAssocStructByUnmod(pair.a, association);
     classToUse = pair.a;
     otherSide = pair.b;
@@ -556,55 +573,52 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       ASTCDClass matched = helper.findMatchedClass(classToUse);
       ASTCDClass sub = helper.allSubClassesHaveItTgt(assocStruct, classToUse);
       if (!classToUse.getModifier().isAbstract()
-        && matched != null
-        && !helper.getNotInstanClassesTgt().contains(matched)
-        && !helper.getNotInstanClassesSrc().contains(classToUse)
-        && !helper.classHasAssociationSrcTgt(assocStruct, matched)) {
+          && matched != null
+          && !helper.getNotInstanClassesTgt().contains(matched)
+          && !helper.getNotInstanClassesSrc().contains(classToUse)
+          && !helper.classHasAssociationSrcTgt(assocStruct, matched)) {
         isAddedSrc = classToUse;
-      } else if (!helper.getNotInstanClassesSrc().contains(classToUse)
-        && sub != null) {
+      } else if (!helper.getNotInstanClassesSrc().contains(classToUse) && sub != null) {
         isAddedSrc = sub;
       }
       ASTCDClass matched2 = helper.findMatchedClass(otherSide);
       ASTCDClass sub2 = helper.allSubClassesAreTgtSrcTgt(assocStruct, otherSide);
       if (!otherSide.getModifier().isAbstract()
-        && matched2 != null
-        && !helper.getNotInstanClassesTgt().contains(matched2)
-        && !helper.getNotInstanClassesSrc().contains(otherSide)
-        && !helper.classIsTgtSrcTgt(assocStruct, matched2)) {
+          && matched2 != null
+          && !helper.getNotInstanClassesTgt().contains(matched2)
+          && !helper.getNotInstanClassesSrc().contains(otherSide)
+          && !helper.classIsTgtSrcTgt(assocStruct, matched2)) {
         isAddedTgt = otherSide;
-      } else if (!helper.getNotInstanClassesSrc().contains(otherSide)
-        && sub2 != null) {
+      } else if (!helper.getNotInstanClassesSrc().contains(otherSide) && sub2 != null) {
         isAddedTgt = sub2;
       }
     }
     List<ASTCDClass> list = new ArrayList<>();
-    if (isAddedSrc != null){
+    if (isAddedSrc != null) {
       list.add(isAddedSrc);
     }
-    if (isAddedTgt != null){
+    if (isAddedTgt != null) {
       list.add(isAddedTgt);
     }
     return list;
   }
 
   /**
-   * Find all overlapping and all duplicated associations.
-   * When comparing associations, we distinguish two cases:
-   * 1) association and superAssociation
-   * 2) two associations with the same source
-   * For the first case we do the following:
-   * If the two associations are in conflict(they have the same role name in target direction) and
-   * the target classes are in an inheritance relation(B extends C or C extends B), the subAssociation needs to be merged with the superAssociation.
-   * If the associations are in a conflict, but aren't in an inheritance relation, then the subAssociation can't exist(A.r would lead to classes with different types).
-   * For the last, we also consider the cardinalities of the associations. If they are additionally at least 1, then the subclass(and its subclasses) can't exist
-   * (A.r always has to lead to different classes, which is not allowed).
-   * The second case is handled the same way. We distinguish the cases, because in the first one additional delete operation for the used datastructure must be executed.
-   * The implementation can be changed o work without the cases.
+   * Find all overlapping and all duplicated associations. When comparing associations, we
+   * distinguish two cases: 1) association and superAssociation 2) two associations with the same
+   * source For the first case we do the following: If the two associations are in conflict(they
+   * have the same role name in target direction) and the target classes are in an inheritance
+   * relation(B extends C or C extends B), the subAssociation needs to be merged with the
+   * superAssociation. If the associations are in a conflict, but aren't in an inheritance relation,
+   * then the subAssociation can't exist(A.r would lead to classes with different types). For the
+   * last, we also consider the cardinalities of the associations. If they are additionally at least
+   * 1, then the subclass(and its subclasses) can't exist (A.r always has to lead to different
+   * classes, which is not allowed). The second case is handled the same way. We distinguish the
+   * cases, because in the first one additional delete operation for the used datastructure must be
+   * executed. The implementation can be changed o work without the cases.
    */
-
   @Override
-  public void findOverlappingAssocs(){
+  public void findOverlappingAssocs() {
     Set<ASTCDClass> srcToDelete = new HashSet<>();
     Set<Pair<ASTCDClass, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
     Set<Pair<AssocStruct, AssocStruct>> srcAssocsToMerge = new HashSet<>();
@@ -618,46 +632,58 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         if (!association.isSuperAssoc()) {
           for (AssocStruct superAssoc : helper.getSrcMap().get(astcdClass)) {
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
-              if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
+              if (isInConflict(association, superAssoc)
+                  && helper.inInheritanceRelation(association, superAssoc)) {
                 if (!sameRoleNamesSrc(association, superAssoc)
-                  && !(association.getDirection().equals(AssocDirection.BiDirectional) || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
+                    && !(association.getDirection().equals(AssocDirection.BiDirectional)
+                        || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
                   Log.error("Bad overlapping found");
                 }
-                //same target role names and target classes are in inheritance relation
-                //associations need to be merged
-                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
-              } else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)) {
-                //two associations with same target role names, but target classes are not in inheritance relation
-                //if trg cardinality on one of them is 0..1 or 0..* then such association can't exist
-                //if trg cardinality on one of them is 1 or 1..* then such association can't exist and also no objects of this type can exist
+                // same target role names and target classes are in inheritance relation
+                // associations need to be merged
+                srcAssocsToMergeWithDelete.add(
+                    new DeleteStruc(association, superAssoc, astcdClass));
+              } else if (isInConflict(association, superAssoc)
+                  && !helper.inInheritanceRelation(association, superAssoc)) {
+                // two associations with same target role names, but target classes are not in
+                // inheritance relation
+                // if trg cardinality on one of them is 0..1 or 0..* then such association can't
+                // exist
+                // if trg cardinality on one of them is 1 or 1..* then such association can't exist
+                // and also no objects of this type can exist
                 if (areZeroAssocs(association, superAssoc)) {
-                  //such association can't exist
-                  //delete
-                  srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                  //Do I need to give some output about the class
+                  // such association can't exist
+                  // delete
+                  srcAssocsToDelete.add(
+                      new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                  // Do I need to give some output about the class
                 } else {
-                  //such class can't exist
-                  //delete
+                  // such class can't exist
+                  // delete
                   helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
                 }
               }
             } else if (!association.equals(superAssoc)
-              && !superAssoc.isSuperAssoc()
-              && !association.isSuperAssoc()) {
-              //comparison between direct associations
+                && !superAssoc.isSuperAssoc()
+                && !association.isSuperAssoc()) {
+              // comparison between direct associations
               if ((helper.sameAssocStruct(association, superAssoc)
-                || helper.sameAssocStructInReverse(association, superAssoc))
-                && !helper.isAdded(association, superAssoc, astcdClass, srcAssocsToMergeWithDelete)){
-                srcAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
-              }
-              else if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
+                      || helper.sameAssocStructInReverse(association, superAssoc))
+                  && !helper.isAdded(
+                      association, superAssoc, astcdClass, srcAssocsToMergeWithDelete)) {
+                srcAssocsToMergeWithDelete.add(
+                    new DeleteStruc(association, superAssoc, astcdClass));
+              } else if (isInConflict(association, superAssoc)
+                  && helper.inInheritanceRelation(association, superAssoc)) {
                 srcAssocsToMerge.add(new Pair<>(association, superAssoc));
-              }
-              else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)
-                && !getConnectedClasses(association.getAssociation(), srcCD).equals(getConnectedClasses(superAssoc.getAssociation(), srcCD))){
+              } else if (isInConflict(association, superAssoc)
+                  && !helper.inInheritanceRelation(association, superAssoc)
+                  && !getConnectedClasses(association.getAssociation(), srcCD)
+                      .equals(getConnectedClasses(superAssoc.getAssociation(), srcCD))) {
                 if (areZeroAssocs(association, superAssoc)) {
-                  srcAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                  srcAssocsToDelete.add(
+                      new Pair<>(astcdClass, getConflict(association, superAssoc)));
                 } else {
                   helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
@@ -674,45 +700,56 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         if (!association.isSuperAssoc()) {
           for (AssocStruct superAssoc : helper.getSrcMap().get(astcdClass)) {
             if (superAssoc.isSuperAssoc() && !association.equals(superAssoc)) {
-              if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
+              if (isInConflict(association, superAssoc)
+                  && helper.inInheritanceRelation(association, superAssoc)) {
                 if (!sameRoleNamesSrc(association, superAssoc)
-                  && !(association.getDirection().equals(AssocDirection.BiDirectional) || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
+                    && !(association.getDirection().equals(AssocDirection.BiDirectional)
+                        || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
                   Log.error("Bad overlapping found");
                 }
-                //same target role names and target classes are in inheritance relation
-                //associations need to be merged
-                tgtAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
-              } else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)) {
-                //two associations with same target role names, but target classes are not in inheritance relation
-                //if trg cardinality on one of them is 0..1 or 0..* then such association can't exist
-                //if trg cardinality on one of them is 1 or 1..* then such association can't exist and also no objects of this type can exist
+                // same target role names and target classes are in inheritance relation
+                // associations need to be merged
+                tgtAssocsToMergeWithDelete.add(
+                    new DeleteStruc(association, superAssoc, astcdClass));
+              } else if (isInConflict(association, superAssoc)
+                  && !helper.inInheritanceRelation(association, superAssoc)) {
+                // two associations with same target role names, but target classes are not in
+                // inheritance relation
+                // if trg cardinality on one of them is 0..1 or 0..* then such association can't
+                // exist
+                // if trg cardinality on one of them is 1 or 1..* then such association can't exist
+                // and also no objects of this type can exist
                 if (areZeroAssocs(association, superAssoc)) {
-                  //such association can't exist
-                  //delete
-                  tgtAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                  //Do I need to give some output about the class
+                  // such association can't exist
+                  // delete
+                  tgtAssocsToDelete.add(
+                      new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                  // Do I need to give some output about the class
                 } else {
-                  //such class can't exist
-                  //delete
+                  // such class can't exist
+                  // delete
                   helper.updateTgt(astcdClass);
                   tgtToDelete.add(astcdClass);
                 }
               }
             } else if (!association.equals(superAssoc)) {
-              //comparison between direct associations
-              if (isInConflict(association, superAssoc) && helper.inInheritanceRelation(association, superAssoc)) {
+              // comparison between direct associations
+              if (isInConflict(association, superAssoc)
+                  && helper.inInheritanceRelation(association, superAssoc)) {
                 tgtAssocsToMerge.add(new Pair<>(association, superAssoc));
-              } else if (isInConflict(association, superAssoc) && !helper.inInheritanceRelation(association, superAssoc)) {
+              } else if (isInConflict(association, superAssoc)
+                  && !helper.inInheritanceRelation(association, superAssoc)) {
                 if (areZeroAssocs(association, superAssoc)) {
-                  tgtAssocsToDelete.add(new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                  tgtAssocsToDelete.add(
+                      new Pair<>(astcdClass, getConflict(association, superAssoc)));
                 } else {
                   helper.updateTgt(astcdClass);
                   tgtToDelete.add(astcdClass);
                 }
-              }
-              else if (helper.sameAssocStruct(association, superAssoc)
-                || helper.sameAssocStructInReverse(association, superAssoc)){
-                tgtAssocsToMergeWithDelete.add(new DeleteStruc(association, superAssoc, astcdClass));
+              } else if (helper.sameAssocStruct(association, superAssoc)
+                  || helper.sameAssocStructInReverse(association, superAssoc)) {
+                tgtAssocsToMergeWithDelete.add(
+                    new DeleteStruc(association, superAssoc, astcdClass));
               }
             }
           }
@@ -770,13 +807,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     deleteCompositions();
   }
 
-  //CHECKED
+  // CHECKED
   public void deleteCompositions() {
-    for (ASTCDAssociation association : helper.getSrcCD().getCDDefinition().getCDAssociationsList()) {
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, getSrcCD());
+    for (ASTCDAssociation association :
+        helper.getSrcCD().getCDDefinition().getCDAssociationsList()) {
+      Pair<ASTCDClass, ASTCDClass> pair =
+          Syn2SemDiffHelper.getConnectedClasses(association, getSrcCD());
       AssocStruct assocStruct = helper.getAssocStructByUnmod(pair.a, association);
-      if (association.getCDAssocType().isComposition()
-        && assocStruct != null) {
+      if (association.getCDAssocType().isComposition() && assocStruct != null) {
         if (helper.getNotInstanClassesSrc().contains(pair.b)) {
           helper.updateSrc(pair.a);
           for (ASTCDClass subClass : getSpannedInheritance(helper.getSrcCD(), pair.a)) {
@@ -787,12 +825,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
 
-    for (ASTCDAssociation association : helper.getTgtCD().getCDDefinition().getCDAssociationsList()){
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, getTgtCD());
+    for (ASTCDAssociation association :
+        helper.getTgtCD().getCDDefinition().getCDAssociationsList()) {
+      Pair<ASTCDClass, ASTCDClass> pair =
+          Syn2SemDiffHelper.getConnectedClasses(association, getTgtCD());
       AssocStruct assocStruct = helper.getAssocStructByUnmod(pair.a, association);
-      if (association.getCDAssocType().isComposition()
-        && assocStruct != null){
-        if (helper.getNotInstanClassesTgt().contains(pair.b)){
+      if (association.getCDAssocType().isComposition() && assocStruct != null) {
+        if (helper.getNotInstanClassesTgt().contains(pair.b)) {
           helper.updateTgt(pair.a);
           for (ASTCDClass subClass : getSpannedInheritance(helper.getTgtCD(), pair.a)) {
             helper.getSrcMap().removeAll(subClass);
@@ -803,94 +842,90 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     }
   }
 
-  //CHECKED
+  // CHECKED
   /**
    * Delete associations from srcMap with a specific role name
+   *
    * @param astcdClass source class
    * @param role role name
    */
-  public void deleteAssocsFromSrc(ASTCDClass astcdClass, ASTCDRole role){
+  public void deleteAssocsFromSrc(ASTCDClass astcdClass, ASTCDRole role) {
     Iterator<AssocStruct> iterator = helper.getSrcMap().get(astcdClass).iterator();
-   while (iterator.hasNext()){
-     AssocStruct assocStruct = iterator.next();
-      if (assocStruct.getSide().equals(ClassSide.Left)
-        && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())){
-        helper.deleteAssocOtherSideSrc(assocStruct);
-        iterator.remove();
-      }
-      if (assocStruct.getSide().equals(ClassSide.Right)
-        && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())){
-        helper.deleteAssocOtherSideSrc(assocStruct);
-        iterator.remove();
-      }
-    }
-  }
-
-  //CHECKED
-  /**
-   * Delete associations from trgMap with a specific role name
-   * @param astcdClass source class
-   * @param role role name
-   */
-  public void deleteAssocsFromTgt(ASTCDClass astcdClass, ASTCDRole role){
-    Iterator<AssocStruct> iterator = helper.getTrgMap().get(astcdClass).iterator();
-    while (iterator.hasNext()){
+    while (iterator.hasNext()) {
       AssocStruct assocStruct = iterator.next();
       if (assocStruct.getSide().equals(ClassSide.Left)
-        && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())){
+          && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
+        helper.deleteAssocOtherSideSrc(assocStruct);
+        iterator.remove();
+      }
+      if (assocStruct.getSide().equals(ClassSide.Right)
+          && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
+        helper.deleteAssocOtherSideSrc(assocStruct);
+        iterator.remove();
+      }
+    }
+  }
+
+  // CHECKED
+  /**
+   * Delete associations from trgMap with a specific role name
+   *
+   * @param astcdClass source class
+   * @param role role name
+   */
+  public void deleteAssocsFromTgt(ASTCDClass astcdClass, ASTCDRole role) {
+    Iterator<AssocStruct> iterator = helper.getTrgMap().get(astcdClass).iterator();
+    while (iterator.hasNext()) {
+      AssocStruct assocStruct = iterator.next();
+      if (assocStruct.getSide().equals(ClassSide.Left)
+          && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
         helper.deleteAssocOtherSideTgt(assocStruct);
         iterator.remove();
       }
       if (assocStruct.getSide().equals(ClassSide.Right)
-        && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())){
+          && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
         helper.deleteAssocOtherSideTgt(assocStruct);
         iterator.remove();
       }
     }
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public List<Pair<ASTCDAssociation, List<ASTCDClass>>> addedAssocList(){
+  public List<Pair<ASTCDAssociation, List<ASTCDClass>>> addedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDClass>>> associationList = new ArrayList<>();
-    for (ASTCDAssociation association : addedAssocs){
+    for (ASTCDAssociation association : addedAssocs) {
       List<ASTCDClass> list = isAssocAdded(association);
-      if (!list.isEmpty()){
+      if (!list.isEmpty()) {
         associationList.add(new Pair<>(association, list));
       }
     }
     return associationList;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDClass>>> deletedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDClass>>> list = new ArrayList<>();
     for (ASTCDAssociation association : deletedAssocs) {
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, tgtCD);
-      if (association.getCDAssocDir().isBidirectional()){
+      if (association.getCDAssocDir().isBidirectional()) {
         List<ASTCDClass> astcdClass = isAssocDeleted(association, pair.a);
         List<ASTCDClass> astcdClass1 = isAssocDeleted(association, pair.b);
-        if (helper.findMatchedSrc(pair.a) != null
-          && !astcdClass.isEmpty()){
+        if (helper.findMatchedSrc(pair.a) != null && !astcdClass.isEmpty()) {
           list.add(new Pair<>(association, astcdClass));
         }
-        if (helper.findMatchedSrc(pair.a) != null
-          && !astcdClass1.isEmpty()){
+        if (helper.findMatchedSrc(pair.a) != null && !astcdClass1.isEmpty()) {
           list.add(new Pair<>(association, astcdClass1));
         }
-      }
-      else if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      } else if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
         List<ASTCDClass> astcdClass = isAssocDeleted(association, pair.b);
-        if (helper.findMatchedSrc(pair.b) != null
-          && !astcdClass.isEmpty()){
+        if (helper.findMatchedSrc(pair.b) != null && !astcdClass.isEmpty()) {
           list.add(new Pair<>(association, astcdClass));
         }
-      }
-      else {
+      } else {
         List<ASTCDClass> astcdClass = isAssocDeleted(association, pair.a);
-        if (helper.findMatchedSrc(pair.a) != null
-          && !astcdClass.isEmpty()){
+        if (helper.findMatchedSrc(pair.a) != null && !astcdClass.isEmpty()) {
           list.add(new Pair<>(association, astcdClass));
         }
       }
@@ -898,21 +933,20 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public List<Pair<ASTCDClass,ASTCDClass>> addedClassList(){
+  public List<Pair<ASTCDClass, ASTCDClass>> addedClassList() {
     List<Pair<ASTCDClass, ASTCDClass>> classList = new ArrayList<>();
-    for (ASTCDClass astcdClass : addedClasses){
+    for (ASTCDClass astcdClass : addedClasses) {
       ASTCDClass result = isSupClass(astcdClass);
-      if (!helper.getNotInstanClassesSrc().contains(astcdClass)
-        && result != null){
+      if (!helper.getNotInstanClassesSrc().contains(astcdClass) && result != null) {
         classList.add(new Pair<>(astcdClass, result));
       }
     }
     return classList;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public List<TypeDiffStruc> changedTypes() {
     List<TypeDiffStruc> list = new ArrayList<>();
@@ -925,7 +959,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         diff.setAddedConstants(typeDiff.newConstants());
         list.add(diff);
       } else if (!helper.getNotInstanClassesSrc().contains((ASTCDClass) typeDiff.getSrcElem())) {
-        if (typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE_TYPE) || typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
+        if (typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE_TYPE)
+            || typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_ATTRIBUTE_MODIFIER)) {
           diff.setMemberDiff(typeDiff.changedAttribute());
           changed = true;
           List<Pair<ASTCDAttribute, ASTCDAttribute>> pairs = new ArrayList<>();
@@ -954,23 +989,29 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
   public List<AssocDiffStruc> changedAssoc() {
     List<AssocDiffStruc> list = new ArrayList<>();
     for (CDAssocDiff assocDiff : changedAssocs) {
-      Pair<AssocStruct, AssocStruct> matchedPairs = helper.getStructsForAssocDiff(assocDiff.getSrcElem(), assocDiff.getTgtElem());
+      Pair<AssocStruct, AssocStruct> matchedPairs =
+          helper.getStructsForAssocDiff(assocDiff.getSrcElem(), assocDiff.getTgtElem());
       if (matchedPairs.a == null || matchedPairs.b == null) {
         continue;
       }
-      Pair<ASTCDClass, ASTCDClass> pairDef = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
+      Pair<ASTCDClass, ASTCDClass> pairDef =
+          Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), srcCD);
       Pair<ASTCDClass, ASTCDClass> pair;
       if (pairDef.a.getModifier().isAbstract() || pairDef.b.getModifier().isAbstract()) {
         pair = helper.getClassesForAssoc(pairDef);
       } else {
         pair = pairDef;
       }
-      if (pair != null && pair.a != null && pair.b != null && !helper.getNotInstanClassesSrc().contains(pair.a) && !helper.getNotInstanClassesSrc().contains(pair.b)) {
+      if (pair != null
+          && pair.a != null
+          && pair.b != null
+          && !helper.getNotInstanClassesSrc().contains(pair.a)
+          && !helper.getNotInstanClassesSrc().contains(pair.b)) {
         AssocDiffStruc diff = new AssocDiffStruc();
         diff.setAssociation(assocDiff.getSrcElem());
         boolean changed = false;
@@ -1007,7 +1048,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
             changed = true;
           }
         }
-        //Tsveti - done
+        // Tsveti - done
         if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
 
           ASTCDClass change = assocDiff.changedTgt();
@@ -1028,68 +1069,80 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public List<ASTCDClass> srcExistsTgtNot(){
+  public List<ASTCDClass> srcExistsTgtNot() {
     List<ASTCDClass> list = new ArrayList<>();
-    for (ASTCDClass astcdClass : helper.getNotInstanClassesTgt()){
+    for (ASTCDClass astcdClass : helper.getNotInstanClassesTgt()) {
       ASTCDClass matched = helper.findMatchedSrc(astcdClass);
-      if (matched != null
-        && !helper.getNotInstanClassesSrc().contains(matched)){
+      if (matched != null && !helper.getNotInstanClassesSrc().contains(matched)) {
         list.add(matched);
       }
     }
     return list;
   }
 
-  //CHECKED
-  //TODO: check again
+  // CHECKED
+  // TODO: check again
   @Override
-  public List<ASTCDClass> tgtExistsSrcNot(){
-    //for each class, and each AssocStrcut in the tgtMap if the cardinality on the same side is 1 or 1..*
+  public List<ASTCDClass> tgtExistsSrcNot() {
+    // for each class, and each AssocStrcut in the tgtMap if the cardinality on the same side is 1
+    // or 1..*
     List<ASTCDClass> list = new ArrayList<>();
-    for (ASTCDClass astcdClass : helper.getNotInstanClassesSrc()){
+    for (ASTCDClass astcdClass : helper.getNotInstanClassesSrc()) {
       if (helper.findMatchedClass(astcdClass) != null
-        && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(astcdClass))){
+          && !helper.getNotInstanClassesTgt().contains(helper.findMatchedClass(astcdClass))) {
         list.add(helper.findMatchedClass(astcdClass));
       }
     }
     Set<ASTCDClass> set = new HashSet<>();
-    for (ASTCDClass astcdClass : list){
-      for (AssocStruct assocStruct : helper.getTrgMap().get(astcdClass)){
+    for (ASTCDClass astcdClass : list) {
+      for (AssocStruct assocStruct : helper.getTrgMap().get(astcdClass)) {
         if (assocStruct.getSide().equals(ClassSide.Left)
-          && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
-          || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())){
-          ASTCDClass matched = helper.findMatchedSrc(getConnectedClasses(assocStruct.getAssociation(), tgtCD).b);
+            && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+                || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+          ASTCDClass matched =
+              helper.findMatchedSrc(getConnectedClasses(assocStruct.getAssociation(), tgtCD).b);
           if (matched != null
-            && !helper.getNotInstanClassesSrc().contains(matched)
-            && !helper.getNotInstanClassesTgt().contains(getConnectedClasses(assocStruct.getAssociation(), tgtCD).b)){
+              && !helper.getNotInstanClassesSrc().contains(matched)
+              && !helper
+                  .getNotInstanClassesTgt()
+                  .contains(getConnectedClasses(assocStruct.getAssociation(), tgtCD).b)) {
             set.add(matched);
           }
         }
         if (assocStruct.getSide().equals(ClassSide.Right)
-          && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
-          || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())){
-          ASTCDClass matched = helper.findMatchedSrc(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a);
+            && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
+                || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+          ASTCDClass matched =
+              helper.findMatchedSrc(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a);
           if (matched != null
-            && !helper.getNotInstanClassesSrc().contains(matched)
-            && !helper.getNotInstanClassesTgt().contains(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a)){
+              && !helper.getNotInstanClassesSrc().contains(matched)
+              && !helper
+                  .getNotInstanClassesTgt()
+                  .contains(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a)) {
             set.add(matched);
           }
         }
-        for (AssocStruct assocStruct1 : helper.getAllOtherAssocsTgt(astcdClass)){
-          if (assocStruct1.getSide().equals(ClassSide.Left)){
-            ASTCDClass matched = helper.findMatchedSrc(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).a);
+        for (AssocStruct assocStruct1 : helper.getAllOtherAssocsTgt(astcdClass)) {
+          if (assocStruct1.getSide().equals(ClassSide.Left)) {
+            ASTCDClass matched =
+                helper.findMatchedSrc(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).a);
             if (matched != null
-              && !helper.getNotInstanClassesSrc().contains(matched)
-              && !helper.getNotInstanClassesTgt().contains(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).a)){
+                && !helper.getNotInstanClassesSrc().contains(matched)
+                && !helper
+                    .getNotInstanClassesTgt()
+                    .contains(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).a)) {
               set.add(matched);
             }
           } else {
-            ASTCDClass matched = helper.findMatchedSrc(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).b);
+            ASTCDClass matched =
+                helper.findMatchedSrc(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).b);
             if (matched != null
-              && !helper.getNotInstanClassesSrc().contains(matched)
-              && !helper.getNotInstanClassesTgt().contains(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).b)){
+                && !helper.getNotInstanClassesSrc().contains(matched)
+                && !helper
+                    .getNotInstanClassesTgt()
+                    .contains(getConnectedClasses(assocStruct1.getAssociation(), tgtCD).b)) {
               set.add(matched);
             }
           }
@@ -1099,24 +1152,23 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return new ArrayList<>(set);
   }
 
-  //CHECKED
-  //TODO: check again
+  // CHECKED
+  // TODO: check again
   @Override
-  public List<ASTCDClass> srcAssocExistsTgtNot(){
-    //get List of AssocStructs from srcMap
-    //for each class remove added assocs
-    //for the remaining find matches in the tgtMap
-    //if no matches found add to list
+  public List<ASTCDClass> srcAssocExistsTgtNot() {
+    // get List of AssocStructs from srcMap
+    // for each class remove added assocs
+    // for the remaining find matches in the tgtMap
+    // if no matches found add to list
     Set<ASTCDClass> classes = new HashSet<>();
-    for (ASTCDClass astcdClass : helper.getSrcMap().keySet()){
+    for (ASTCDClass astcdClass : helper.getSrcMap().keySet()) {
       ASTCDClass matched = helper.findMatchedClass(astcdClass);
-      if (matched != null
-        && !helper.getNotInstanClassesTgt().contains(matched)){
+      if (matched != null && !helper.getNotInstanClassesTgt().contains(matched)) {
         List<AssocStruct> assocStructs = helper.getSrcMap().get(astcdClass);
         List<AssocStruct> copy = new ArrayList<>(assocStructs);
         List<AssocStruct> added = addedAssocsForClass(astcdClass);
         copy.removeAll(added);
-        if (srcAssocsExist(copy, matched)){
+        if (srcAssocsExist(copy, matched)) {
           classes.add(astcdClass);
         }
       }
@@ -1124,8 +1176,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return new ArrayList<>(classes);
   }
 
-  //CHECKED
-  public List<AssocStruct> addedAssocsForClass(ASTCDClass astcdClass){
+  // CHECKED
+  public List<AssocStruct> addedAssocsForClass(ASTCDClass astcdClass) {
     List<AssocStruct> list = new ArrayList<>();
     for (ASTCDAssociation association : addedAssocs) {
       AssocStruct matched = helper.getAssocStructByUnmod(astcdClass, association);
@@ -1136,8 +1188,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  //CHECKED
-  public List<AssocStruct> deletedAssocsForClass(ASTCDClass astcdClass){
+  // CHECKED
+  public List<AssocStruct> deletedAssocsForClass(ASTCDClass astcdClass) {
     List<AssocStruct> list = new ArrayList<>();
     for (ASTCDAssociation association : deletedAssocs) {
       AssocStruct matched = helper.getAssocStructByUnmodTgt(astcdClass, association);
@@ -1148,31 +1200,29 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  //CHECKED
-  public boolean srcAssocsExist(List<AssocStruct> assocStructs, ASTCDClass astcdClass){
-    for (AssocStruct assocStruct : assocStructs){
+  // CHECKED
+  public boolean srcAssocsExist(List<AssocStruct> assocStructs, ASTCDClass astcdClass) {
+    for (AssocStruct assocStruct : assocStructs) {
       ASTCDAssociation matched = findMatchedAssociation(assocStruct.getAssociation());
-      if (matched != null
-        && helper.getAssocStructByUnmodTgt(astcdClass, matched) == null){
+      if (matched != null && helper.getAssocStructByUnmodTgt(astcdClass, matched) == null) {
         return true;
       }
     }
     return false;
   }
 
-  //CHECKED
-  public boolean tgtAssocsExist(List<AssocStruct> assocStructs, ASTCDClass astcdClass){
-    for (AssocStruct assocStruct : assocStructs){
+  // CHECKED
+  public boolean tgtAssocsExist(List<AssocStruct> assocStructs, ASTCDClass astcdClass) {
+    for (AssocStruct assocStruct : assocStructs) {
       ASTCDAssociation matched = findMatchedAssociationSrc(assocStruct.getAssociation());
-      if (matched != null
-        && helper.getAssocStructByUnmod(astcdClass, matched) == null){
+      if (matched != null && helper.getAssocStructByUnmod(astcdClass, matched) == null) {
         return true;
       }
     }
     return false;
   }
 
-  //CHECKED
+  // CHECKED
   public ASTCDAssociation findMatchedAssociation(ASTCDAssociation association) {
     for (Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs) {
       if (pair.a.equals(association)) {
@@ -1182,28 +1232,27 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return null;
   }
 
-  //CHECKED
-  public ASTCDAssociation findMatchedAssociationSrc(ASTCDAssociation association){
-    for (Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs){
-      if (pair.b.equals(association)){
+  // CHECKED
+  public ASTCDAssociation findMatchedAssociationSrc(ASTCDAssociation association) {
+    for (Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs) {
+      if (pair.b.equals(association)) {
         return pair.a;
       }
     }
     return null;
   }
 
-  //CHECKED
-  public List<ASTCDClass> tgtAssocsExistsSrcNot(){
+  // CHECKED
+  public List<ASTCDClass> tgtAssocsExistsSrcNot() {
     Set<ASTCDClass> classes = new HashSet<>();
-    for (ASTCDClass astcdClass : helper.getTrgMap().keySet()){
+    for (ASTCDClass astcdClass : helper.getTrgMap().keySet()) {
       ASTCDClass matched = helper.findMatchedSrc(astcdClass);
-      if (matched != null
-        && !helper.getNotInstanClassesSrc().contains(matched)){
+      if (matched != null && !helper.getNotInstanClassesSrc().contains(matched)) {
         List<AssocStruct> assocStructs = helper.getTrgMap().get(astcdClass);
         List<AssocStruct> copy = new ArrayList<>(assocStructs);
         List<AssocStruct> added = deletedAssocsForClass(astcdClass);
         copy.removeAll(added);
-        if (tgtAssocsExist(copy, matched)){
+        if (tgtAssocsExist(copy, matched)) {
           classes.add(matched);
         }
       }
@@ -1211,14 +1260,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return new ArrayList<>(classes);
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public AssocDiffs getAssocDiffs(){
+  public AssocDiffs getAssocDiffs() {
     List<ASTCDClass> srcAssocExistsTgtNot = srcAssocExistsTgtNot();
     List<ASTCDClass> tgtAssocExistsSrcNot = tgtAssocsExistsSrcNot();
     List<ASTCDClass> mixed = new ArrayList<>();
-    for (ASTCDClass astcdClass : srcAssocExistsTgtNot){
-      if (tgtAssocExistsSrcNot.contains(astcdClass)){
+    for (ASTCDClass astcdClass : srcAssocExistsTgtNot) {
+      if (tgtAssocExistsSrcNot.contains(astcdClass)) {
         mixed.add(astcdClass);
       }
     }
@@ -1231,15 +1280,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return new AssocDiffs(srcAssocExistsTgtNot, tgtAssocExistsSrcNot, mixed);
   }
 
-  //CHECKED
+  // CHECKED
   @Override
-  public List<ASTCDClass> hasDiffSuper(){
+  public List<ASTCDClass> hasDiffSuper() {
     List<ASTCDClass> list = new ArrayList<>();
-    for (ASTCDClass astcdClass : helper.getSrcMap().keySet()){
+    for (ASTCDClass astcdClass : helper.getSrcMap().keySet()) {
       ASTCDClass matchedClass = helper.findMatchedClass(astcdClass);
-      if (matchedClass != null
-        && !helper.getNotInstanClassesTgt().contains(matchedClass)){
-        if (hasDiffSuper(astcdClass)){
+      if (matchedClass != null && !helper.getNotInstanClassesTgt().contains(matchedClass)) {
+        if (hasDiffSuper(astcdClass)) {
           list.add(astcdClass);
         }
       }
@@ -1247,32 +1295,32 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  //CHECKED
-  public boolean hasDiffSuper(ASTCDClass astcdClass){
+  // CHECKED
+  public boolean hasDiffSuper(ASTCDClass astcdClass) {
     ASTCDClass oldClass = helper.findMatchedClass(astcdClass);
     List<ASTCDClass> oldCLasses = getSuperClasses(tgtCD, oldClass);
     List<ASTCDClass> newClasses = getSuperClasses(srcCD, astcdClass);
-    for (ASTCDClass class1 : oldCLasses){
+    for (ASTCDClass class1 : oldCLasses) {
       boolean foundMatch = false;
-      for (ASTCDClass class2 : newClasses){
+      for (ASTCDClass class2 : newClasses) {
         if (helper.findMatchedSrc(class1) == class2) {
           foundMatch = true;
           break;
         }
       }
-      if (!foundMatch){
+      if (!foundMatch) {
         return true;
       }
     }
-    for (ASTCDClass class1 : newClasses){
+    for (ASTCDClass class1 : newClasses) {
       boolean foundMatch = false;
-      for (ASTCDClass class2 : oldCLasses){
+      for (ASTCDClass class2 : oldCLasses) {
         if (helper.findMatchedClass(class1) == class2) {
           foundMatch = true;
           break;
         }
       }
-      if (!foundMatch){
+      if (!foundMatch) {
         return true;
       }
     }
@@ -1282,55 +1330,63 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   /*--------------------------------------------------------------------*/
 
   /**
-   * Adds matched CD types from the computed matching map to their respective type lists (classes, enums, or interfaces).
-   * It iterates through the keys (source CD types) of the computed matching map and creates pairs with their corresponding target CD types.
-   * These pairs are then added to the respective type lists.
+   * Adds matched CD types from the computed matching map to their respective type lists (classes,
+   * enums, or interfaces). It iterates through the keys (source CD types) of the computed matching
+   * map and creates pairs with their corresponding target CD types. These pairs are then added to
+   * the respective type lists.
    *
-   * @param computedMatchingMapTypes A map containing matched CD types between source and target CDs.
+   * @param computedMatchingMapTypes A map containing matched CD types between source and target
+   *     CDs.
    */
-  public void addAllMatchedTypes(Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
-    for(ASTCDType x : computedMatchingMapTypes.keySet()){
-      if(x instanceof ASTCDClass){
-        matchedClasses.add(new Pair<>((ASTCDClass) x, (ASTCDClass)computedMatchingMapTypes.get(x)));
+  public void addAllMatchedTypes(Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    for (ASTCDType x : computedMatchingMapTypes.keySet()) {
+      if (x instanceof ASTCDClass) {
+        matchedClasses.add(
+            new Pair<>((ASTCDClass) x, (ASTCDClass) computedMatchingMapTypes.get(x)));
       }
-      if(x instanceof ASTCDEnum){
-        matchedEnums.add(new Pair<>((ASTCDEnum) x, (ASTCDEnum)computedMatchingMapTypes.get(x)));
+      if (x instanceof ASTCDEnum) {
+        matchedEnums.add(new Pair<>((ASTCDEnum) x, (ASTCDEnum) computedMatchingMapTypes.get(x)));
       }
-      if(x instanceof ASTCDInterface){
-        matchedInterfaces.add(new Pair<>((ASTCDInterface) x, (ASTCDInterface)computedMatchingMapTypes.get(x)));
+      if (x instanceof ASTCDInterface) {
+        matchedInterfaces.add(
+            new Pair<>((ASTCDInterface) x, (ASTCDInterface) computedMatchingMapTypes.get(x)));
       }
     }
   }
 
   /**
-   * Adds matched associations from the computed matching map to the 'matchedAssocs' list.
-   * It iterates through the keys (source associations) of the computed matching map and creates pairs with their corresponding target associations.
-   * These pairs are then added to the 'matchedAssocs' list.
+   * Adds matched associations from the computed matching map to the 'matchedAssocs' list. It
+   * iterates through the keys (source associations) of the computed matching map and creates pairs
+   * with their corresponding target associations. These pairs are then added to the 'matchedAssocs'
+   * list.
    *
-   * @param computedMatchingMapAssocs A map containing matched associations between source and target CDs.
+   * @param computedMatchingMapAssocs A map containing matched associations between source and
+   *     target CDs.
    */
-  public void addAllMatchedAssocs(Map<ASTCDAssociation,ASTCDAssociation> computedMatchingMapAssocs) {
-    for(ASTCDAssociation x : computedMatchingMapAssocs.keySet()){
+  public void addAllMatchedAssocs(
+      Map<ASTCDAssociation, ASTCDAssociation> computedMatchingMapAssocs) {
+    for (ASTCDAssociation x : computedMatchingMapAssocs.keySet()) {
       matchedAssocs.add(new Pair<>(x, computedMatchingMapAssocs.get(x)));
     }
   }
 
   /**
-   * Adds changed type differences from the matched classes and enums in the source and target CDs to the 'changedTypes' list.
-   * It iterates through the matched classes and enums, calculates the differences between them, and adds the differences to the 'baseDiff' list.
-   * If differences are found, the type differences are added to the 'changedTypes' list.
+   * Adds changed type differences from the matched classes and enums in the source and target CDs
+   * to the 'changedTypes' list. It iterates through the matched classes and enums, calculates the
+   * differences between them, and adds the differences to the 'baseDiff' list. If differences are
+   * found, the type differences are added to the 'changedTypes' list.
    */
   public void addAllChangedTypes() {
-    for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
       CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD);
-      if(!typeDiff.getBaseDiff().isEmpty()){
+      if (!typeDiff.getBaseDiff().isEmpty()) {
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
       }
     }
-    for(Pair<ASTCDEnum, ASTCDEnum> pair : matchedEnums){
+    for (Pair<ASTCDEnum, ASTCDEnum> pair : matchedEnums) {
       CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD);
-      if(!typeDiff.getBaseDiff().isEmpty()){
+      if (!typeDiff.getBaseDiff().isEmpty()) {
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
       }
@@ -1338,14 +1394,15 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   /**
-   * Adds changed association differences from the matched associations in the source and target CDs to the 'changedAssocs' list.
-   * It iterates through the matched associations and calculates the differences between them, adding the differences to the 'baseDiff' list.
-   * If differences are found, the association differences are added to the 'changedAssocs' list.
+   * Adds changed association differences from the matched associations in the source and target CDs
+   * to the 'changedAssocs' list. It iterates through the matched associations and calculates the
+   * differences between them, adding the differences to the 'baseDiff' list. If differences are
+   * found, the association differences are added to the 'changedAssocs' list.
    */
   public void addAllChangedAssocs() {
-    for(Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs){
+    for (Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs) {
       CDAssocDiff assocDiff = new CDAssocDiff(pair.a, pair.b, srcCD, tgtCD);
-      if(!assocDiff.getBaseDiff().isEmpty()){
+      if (!assocDiff.getBaseDiff().isEmpty()) {
         changedAssocs.add(assocDiff);
         baseDiff.addAll(assocDiff.getBaseDiff());
       }
@@ -1353,14 +1410,15 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   /**
-   * Adds added class types from the source CD to the 'addedClasses' list based on matching maps between
-   * source and target CD types. It identifies the class types in the source CD that do not have a match in
-   * the target CD.
+   * Adds added class types from the source CD to the 'addedClasses' list based on matching maps
+   * between source and target CD types. It identifies the class types in the source CD that do not
+   * have a match in the target CD.
    *
-   * @param srcCD                    The source CD.
+   * @param srcCD The source CD.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CDs.
    */
-  public void addAllAddedClasses(ASTCDCompilationUnit srcCD, Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
+  public void addAllAddedClasses(
+      ASTCDCompilationUnit srcCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     List<ASTCDClass> tmp = new ArrayList<>(srcCD.getCDDefinition().getCDClassesList());
     for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
       if (computedMatchingMapTypes.containsKey(srcClass)) {
@@ -1368,20 +1426,21 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
     addedClasses.addAll(tmp);
-    if(!tmp.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_CLASS)){
+    if (!tmp.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_CLASS)) {
       baseDiff.add(DiffTypes.ADDED_CLASS);
     }
   }
 
   /**
-   * Adds deleted class types in the target CD to the 'deletedClasses' list based on matching maps between
-   * source and target CD types. It identifies the class types in the target CD that do not have a match in
-   * the source CD.
+   * Adds deleted class types in the target CD to the 'deletedClasses' list based on matching maps
+   * between source and target CD types. It identifies the class types in the target CD that do not
+   * have a match in the source CD.
    *
-   * @param tgtCD                    The target CD.
+   * @param tgtCD The target CD.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CDs.
    */
-  public void addAllDeletedClasses(ASTCDCompilationUnit tgtCD, Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
+  public void addAllDeletedClasses(
+      ASTCDCompilationUnit tgtCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     List<ASTCDClass> tmp = new ArrayList<>(tgtCD.getCDDefinition().getCDClassesList());
     for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
       if (computedMatchingMapTypes.containsValue(tgtClass)) {
@@ -1389,20 +1448,21 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
     deletedClasses.addAll(tmp);
-    if(!tmp.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_CLASS)){
+    if (!tmp.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_CLASS)) {
       baseDiff.add(DiffTypes.DELETED_CLASS);
     }
   }
 
   /**
-   * Adds added enumeration types in the source CD to the 'addedEnums' list based on matching maps between
-   * source and target CD types. It identifies the enumeration types in the source CD that do not have a match in
-   * the target CD.
+   * Adds added enumeration types in the source CD to the 'addedEnums' list based on matching maps
+   * between source and target CD types. It identifies the enumeration types in the source CD that
+   * do not have a match in the target CD.
    *
-   * @param srcCD                    The source CD.
+   * @param srcCD The source CD.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CDs.
    */
-  public void addAllAddedEnums(ASTCDCompilationUnit srcCD, Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
+  public void addAllAddedEnums(
+      ASTCDCompilationUnit srcCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     List<ASTCDEnum> tmp = new ArrayList<>(srcCD.getCDDefinition().getCDEnumsList());
     for (ASTCDEnum srcEnum : srcCD.getCDDefinition().getCDEnumsList()) {
       if (computedMatchingMapTypes.containsKey(srcEnum)) {
@@ -1410,20 +1470,21 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
     addedEnums.addAll(tmp);
-    if(!tmp.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_ENUM)){
+    if (!tmp.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_ENUM)) {
       baseDiff.add(DiffTypes.ADDED_ENUM);
     }
   }
 
   /**
-   * Adds deleted enumeration types in the target CD to the 'deletedEnums' list based on matching maps between
-   * source and target CD types. It identifies the enumeration types in the target CD that do not have a match in
-   * the source CD.
+   * Adds deleted enumeration types in the target CD to the 'deletedEnums' list based on matching
+   * maps between source and target CD types. It identifies the enumeration types in the target CD
+   * that do not have a match in the source CD.
    *
-   * @param tgtCD                    The target CD.
+   * @param tgtCD The target CD.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CDs.
    */
-  public void addAllDeletedEnums(ASTCDCompilationUnit tgtCD, Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
+  public void addAllDeletedEnums(
+      ASTCDCompilationUnit tgtCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     List<ASTCDEnum> tmp = new ArrayList<>(tgtCD.getCDDefinition().getCDEnumsList());
     for (ASTCDEnum tgtEnum : tgtCD.getCDDefinition().getCDEnumsList()) {
       if (computedMatchingMapTypes.containsValue(tgtEnum)) {
@@ -1431,123 +1492,141 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
     deletedEnums.addAll(tmp);
-    if(!tmp.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_ENUM)){
+    if (!tmp.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_ENUM)) {
       baseDiff.add(DiffTypes.DELETED_ENUM);
     }
   }
 
   /**
-   * Adds added association relationships in the source CD to the 'addedAssocs' list based on matching maps between
-   * source and target CD associations. It identifies the associations in the source CD that do not have a match in
-   * the target CD.
+   * Adds added association relationships in the source CD to the 'addedAssocs' list based on
+   * matching maps between source and target CD associations. It identifies the associations in the
+   * source CD that do not have a match in the target CD.
    *
-   * @param srcCD                    The source CD.
-   * @param computedMatchingMapAssocs A map of matched CD associations between source and target CDs.
+   * @param srcCD The source CD.
+   * @param computedMatchingMapAssocs A map of matched CD associations between source and target
+   *     CDs.
    */
-  public void addAllAddedAssocs(ASTCDCompilationUnit srcCD, Map<ASTCDAssociation,ASTCDAssociation> computedMatchingMapAssocs) {
-    List<ASTCDAssociation> addedSrcAssocs = new ArrayList<>(srcCD.getCDDefinition().getCDAssociationsList());
+  public void addAllAddedAssocs(
+      ASTCDCompilationUnit srcCD,
+      Map<ASTCDAssociation, ASTCDAssociation> computedMatchingMapAssocs) {
+    List<ASTCDAssociation> addedSrcAssocs =
+        new ArrayList<>(srcCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation srcAssoc : srcCD.getCDDefinition().getCDAssociationsList()) {
-      if(computedMatchingMapAssocs.containsKey(srcAssoc)){
+      if (computedMatchingMapAssocs.containsKey(srcAssoc)) {
         addedSrcAssocs.remove(srcAssoc);
       }
     }
     addedAssocs.addAll(addedSrcAssocs);
-    if(!addedSrcAssocs.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_ASSOCIATION)){
+    if (!addedSrcAssocs.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_ASSOCIATION)) {
       baseDiff.add(DiffTypes.ADDED_ASSOCIATION);
     }
   }
 
   /**
-   * Adds deleted association relationships in the target CD to the 'deletedAssocs' list based on matching maps between
-   * source and target CD associations. It identifies the associations in the target CD that do not have a match in
-   * the source CD.
+   * Adds deleted association relationships in the target CD to the 'deletedAssocs' list based on
+   * matching maps between source and target CD associations. It identifies the associations in the
+   * target CD that do not have a match in the source CD.
    *
-   * @param tgtCD                    The target CD.
-   * @param computedMatchingMapAssocs A map of matched CD associations between source and target CDs.
+   * @param tgtCD The target CD.
+   * @param computedMatchingMapAssocs A map of matched CD associations between source and target
+   *     CDs.
    */
-  public void addAllDeletedAssocs(ASTCDCompilationUnit tgtCD, Map<ASTCDAssociation,ASTCDAssociation> computedMatchingMapAssocs) {
-    List<ASTCDAssociation> deletedTgtAssocs = new ArrayList<>(tgtCD.getCDDefinition().getCDAssociationsList());
+  public void addAllDeletedAssocs(
+      ASTCDCompilationUnit tgtCD,
+      Map<ASTCDAssociation, ASTCDAssociation> computedMatchingMapAssocs) {
+    List<ASTCDAssociation> deletedTgtAssocs =
+        new ArrayList<>(tgtCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-      if(computedMatchingMapAssocs.containsValue(tgtAssoc)){
+      if (computedMatchingMapAssocs.containsValue(tgtAssoc)) {
         deletedTgtAssocs.remove(tgtAssoc);
       }
     }
     deletedAssocs.addAll(deletedTgtAssocs);
-    if(!deletedTgtAssocs.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_ASSOCIATION)){
+    if (!deletedTgtAssocs.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_ASSOCIATION)) {
       baseDiff.add(DiffTypes.DELETED_ASSOCIATION);
     }
   }
 
   /**
-   * Adds added inheritance relationships to the 'addedInheritance' list based on matching maps between
-   * source and target CD classes. It identifies the added superclasses for each matched source class.
+   * Adds added inheritance relationships to the 'addedInheritance' list based on matching maps
+   * between source and target CD classes. It identifies the added superclasses for each matched
+   * source class.
    *
-   * @param srcCDScope             The scope of the source CD.
+   * @param srcCDScope The scope of the source CD.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CDs.
    */
-  public void addAllAddedInheritance(ICD4CodeArtifactScope srcCDScope, Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
-    for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
+  public void addAllAddedInheritance(
+      ICD4CodeArtifactScope srcCDScope, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
       List<ASTCDType> addedInh = new ArrayList<>(getDirectSuperClasses(pair.a, srcCDScope));
       for (ASTCDType srcType : getDirectSuperClasses(pair.a, srcCDScope)) {
-        if(computedMatchingMapTypes.containsKey(srcType)){
+        if (computedMatchingMapTypes.containsKey(srcType)) {
           addedInh.remove(srcType);
         }
       }
       addedInheritance.add(new Pair<>(pair.a, addedInh));
-      if(!addedInh.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_INHERITANCE)){
+      if (!addedInh.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_INHERITANCE)) {
         baseDiff.add(DiffTypes.ADDED_INHERITANCE);
       }
     }
   }
 
   /**
-   * Adds deleted inheritance relationships to the 'deletedInheritance' list based on matching maps between
-   * source and target CD classes. It identifies the deleted superclasses for each matched target class.
+   * Adds deleted inheritance relationships to the 'deletedInheritance' list based on matching maps
+   * between source and target CD classes. It identifies the deleted superclasses for each matched
+   * target class.
    *
-   * @param tgtCDScope             The target CD scope.
+   * @param tgtCDScope The target CD scope.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CD.
    */
-  public void addAllDeletedInheritance(ICD4CodeArtifactScope tgtCDScope, Map<ASTCDType,ASTCDType> computedMatchingMapTypes) {
-    for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
+  public void addAllDeletedInheritance(
+      ICD4CodeArtifactScope tgtCDScope, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
       List<ASTCDType> deletedInh = new ArrayList<>(getDirectSuperClasses(pair.b, tgtCDScope));
       for (ASTCDType tgtType : getDirectSuperClasses(pair.b, tgtCDScope)) {
-        if(computedMatchingMapTypes.containsValue(tgtType)){
+        if (computedMatchingMapTypes.containsValue(tgtType)) {
           deletedInh.remove(tgtType);
         }
       }
       deletedInheritance.add(new Pair<>(pair.a, deletedInh));
-      if(!deletedInh.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_INHERITANCE)){
+      if (!deletedInh.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_INHERITANCE)) {
         baseDiff.add(DiffTypes.DELETED_INHERITANCE);
       }
     }
   }
 
   /**
-   * Loads various lists of differences between source and target CD and scopes.
-   * This method populates lists for matched types, associations, changed types, changed associations,
-   * added classes, deleted classes, added enums, deleted enums, added associations, deleted associations,
+   * Loads various lists of differences between source and target CD and scopes. This method
+   * populates lists for matched types, associations, changed types, changed associations, added
+   * classes, deleted classes, added enums, deleted enums, added associations, deleted associations,
    * added inheritance relationships, and deleted inheritance relationships.
    *
-   * @param srcCD      The source CD.
-   * @param tgtCD      The target CD.
+   * @param srcCD The source CD.
+   * @param tgtCD The target CD.
    * @param srcCDScope The source CD scope.
    * @param tgtCDScope The target CD scope.
    */
-  private void loadAllLists(ASTCDCompilationUnit srcCD,
-                            ASTCDCompilationUnit tgtCD,
-                            ICD4CodeArtifactScope srcCDScope,
-                            ICD4CodeArtifactScope tgtCDScope) {
-    addAllMatchedTypes(computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllMatchedAssocs(computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(),srcCD,tgtCD));
+  private void loadAllLists(
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD,
+      ICD4CodeArtifactScope srcCDScope,
+      ICD4CodeArtifactScope tgtCDScope) {
+    addAllMatchedTypes(computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllMatchedAssocs(
+        computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD));
     addAllChangedTypes();
     addAllChangedAssocs();
-    addAllAddedClasses(srcCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllDeletedClasses(tgtCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllDeletedEnums(tgtCD, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllAddedAssocs(srcCD, computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(),srcCD,tgtCD));
-    addAllDeletedAssocs(tgtCD, computeMatchingMapAssocs(tgtCD.getCDDefinition().getCDAssociationsList(),srcCD,tgtCD));
-    addAllAddedInheritance(srcCDScope, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
-    addAllDeletedInheritance(tgtCDScope, computeMatchingMapTypes(srcCDTypes,srcCD,tgtCD));
+    addAllAddedClasses(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllDeletedClasses(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllDeletedEnums(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllAddedAssocs(
+        srcCD,
+        computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD));
+    addAllDeletedAssocs(
+        tgtCD,
+        computeMatchingMapAssocs(tgtCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD));
+    addAllAddedInheritance(srcCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllDeletedInheritance(tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
   }
 }

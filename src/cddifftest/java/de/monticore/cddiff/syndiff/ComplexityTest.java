@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.Assert.assertNotNull;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -8,19 +10,12 @@ import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syndiff.OD.DiffHelper;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
-import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
-import de.monticore.prettyprint.IndentPrinter;
-import de.se_rwth.commons.logging.Log;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertNotNull;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public class ComplexityTest extends CDDiffTestBasis {
   @Test
@@ -55,7 +50,7 @@ public class ComplexityTest extends CDDiffTestBasis {
       long startTime_old = System.currentTimeMillis(); // start time
       ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
       Optional<AlloyDiffSolution> optS =
-        AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
+          AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
       List<ASTODArtifact> ods_old = optS.get().generateODs();
       long endTime_old = System.currentTimeMillis(); // end time
 
@@ -66,7 +61,8 @@ public class ComplexityTest extends CDDiffTestBasis {
 
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
-      //List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      // List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new,
+      // cdSemantics);
       DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
@@ -111,7 +107,7 @@ public class ComplexityTest extends CDDiffTestBasis {
       long startTime_old = System.currentTimeMillis(); // start time
       ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
       Optional<AlloyDiffSolution> optS =
-        AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
+          AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
       List<ASTODArtifact> ods_old = optS.get().generateODs();
       long endTime_old = System.currentTimeMillis(); // end time
 
@@ -122,7 +118,8 @@ public class ComplexityTest extends CDDiffTestBasis {
 
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
-      //List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      // List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new,
+      // cdSemantics);
       DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
@@ -167,7 +164,7 @@ public class ComplexityTest extends CDDiffTestBasis {
       long startTime_old = System.currentTimeMillis(); // start time
       ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
       Optional<AlloyDiffSolution> optS =
-        AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
+          AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
       List<ASTODArtifact> ods_old = optS.get().generateODs();
       long endTime_old = System.currentTimeMillis(); // end time
 
@@ -178,7 +175,8 @@ public class ComplexityTest extends CDDiffTestBasis {
 
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
-      //List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      // List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new,
+      // cdSemantics);
       DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
@@ -193,11 +191,10 @@ public class ComplexityTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void wrongODs(){
+  public void wrongODs() {
     int n = 0;
     int k = 0;
     String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
-
 
     String filePath1;
     String filePath2;
@@ -213,19 +210,18 @@ public class ComplexityTest extends CDDiffTestBasis {
       assertNotNull(ast1_new);
       assertNotNull(ast2_new);
 
-
       // new method
       long startTime_new = System.currentTimeMillis(); // start time
       List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
       long endTime_new = System.currentTimeMillis(); // end time
       for (ASTODArtifact od : ods_new) {
         k++;
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
           n++;
         }
       }
     }
-
 
     String path2 = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
 
@@ -249,7 +245,8 @@ public class ComplexityTest extends CDDiffTestBasis {
       long endTime_new = System.currentTimeMillis(); // end time
       for (ASTODArtifact od : ods_new) {
         k++;
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
           n++;
         }
       }
@@ -280,7 +277,8 @@ public class ComplexityTest extends CDDiffTestBasis {
 
       for (ASTODArtifact od : ods_new) {
         k++;
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
+        if (!new OD2CDMatcher()
+            .checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, ast1_new, ast2_new, od)) {
           n++;
         }
       }

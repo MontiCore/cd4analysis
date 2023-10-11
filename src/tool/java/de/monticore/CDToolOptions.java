@@ -54,7 +54,7 @@ public class CDToolOptions {
     initPrettyPrinter(showPlantUML);
     initPlantUML();
     initSemDiffOptions();
-    //initSyntaxDiffOptions();
+    // initSyntaxDiffOptions();
     initNEWSyntaxDiff();
     initMergeOptions();
   }
@@ -414,35 +414,35 @@ public class CDToolOptions {
   public void initNEWSyntaxDiff() {
 
     options.addOption(
-      Option.builder()
-        .longOpt("syndiff")
-        .hasArg()
-        .type(String.class)
-        .argName("file")
-        .numberOfArgs(1)
-        .desc(
-          "Shows the syntactical differences between the current (new) CD and "
-            + "the second (old) CD and prints the result. The default option is to output the "
-            + "the colored diffs in the CDs - green for added elements, red for deleted elements, "
-            + "yellow for changed elements.")
-        .build());
+        Option.builder()
+            .longOpt("syndiff")
+            .hasArg()
+            .type(String.class)
+            .argName("file")
+            .numberOfArgs(1)
+            .desc(
+                "Shows the syntactical differences between the current (new) CD and "
+                    + "the second (old) CD and prints the result. The default option is to output the "
+                    + "the colored diffs in the CDs - green for added elements, red for deleted elements, "
+                    + "yellow for changed elements.")
+            .build());
 
     options.addOption(
-      Option.builder()
-        .longOpt("print")
-        .hasArg()
-        .type(String.class)
-        .argName("printoption")
-        .optionalArg(true)
-        .numberOfArgs(1)
-        .desc(
-          "Specifies the print option for `--syn`: `diff` (default) prints the matched "
-            + "CD-elements with color-coded diffs (red for deleted, yellow for changed, and "
-            + "green for newly added elements). `old` will print only the old CD with "
-            + "color-coded diffs and `new` only the new CD. `both` combines all the previous "
-            + "options. `added` prints only the added CD-elements; `removed` prints only the removed CD-elements, "
-            + "and `changed` prints only the changed CD-elements")
-        .build());
+        Option.builder()
+            .longOpt("print")
+            .hasArg()
+            .type(String.class)
+            .argName("printoption")
+            .optionalArg(true)
+            .numberOfArgs(1)
+            .desc(
+                "Specifies the print option for `--syn`: `diff` (default) prints the matched "
+                    + "CD-elements with color-coded diffs (red for deleted, yellow for changed, and "
+                    + "green for newly added elements). `old` will print only the old CD with "
+                    + "color-coded diffs and `new` only the new CD. `both` combines all the previous "
+                    + "options. `added` prints only the added CD-elements; `removed` prints only the removed CD-elements, "
+                    + "and `changed` prints only the changed CD-elements")
+            .build());
   }
 
   /** adds options for CDMerge */

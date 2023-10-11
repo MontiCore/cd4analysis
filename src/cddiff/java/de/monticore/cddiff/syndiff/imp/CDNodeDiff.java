@@ -4,7 +4,7 @@ import de.monticore.ast.ASTNode;
 import java.util.Optional;
 
 /** TODO: Write Comments */
-public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
+public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
   protected Actions action;
   protected final Optional<SrcType> srcValue;
   protected final Optional<TgtType> tgtValue;
@@ -32,7 +32,8 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
   }
 
   /**
-   * Constructs a CDNodeDiff object with source and target values and determines the associated action.
+   * Constructs a CDNodeDiff object with source and target values and determines the associated
+   * action.
    *
    * @param srcValue The source value as an Optional.
    * @param tgtValue The target value as an Optional.
@@ -46,7 +47,7 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
   /**
    * Constructs a CDNodeDiff object with a specified action and source and target values.
    *
-   * @param action   The action associated with the diff.
+   * @param action The action associated with the diff.
    * @param srcValue The source value as an Optional.
    * @param tgtValue The target value as an Optional.
    */
@@ -59,10 +60,13 @@ public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode>{
   /**
    * Determines the action to be taken based on the values of srcValue and tgtValue.
    *
-   * @return The action to be taken, which can be CHANGED, ADDED, REMOVED, or null if no action is needed.
+   * @return The action to be taken, which can be CHANGED, ADDED, REMOVED, or null if no action is
+   *     needed.
    */
   protected Actions findAction() {
-    if (srcValue.isPresent() && tgtValue.isPresent() && !srcValue.get().deepEquals(tgtValue.get())) {
+    if (srcValue.isPresent()
+        && tgtValue.isPresent()
+        && !srcValue.get().deepEquals(tgtValue.get())) {
       return Actions.CHANGED;
     } else if (srcValue.isPresent() && tgtValue.isEmpty()) {
       return Actions.ADDED;

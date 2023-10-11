@@ -7,7 +7,6 @@ import de.monticore.cddiff.syndiff.imp.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.List;
 
 public class TypeDiffStruc {
@@ -22,8 +21,7 @@ public class TypeDiffStruc {
 
   private List<DiffTypes> baseDiff;
 
-  public TypeDiffStruc() {
-  }
+  public TypeDiffStruc() {}
 
   public ASTCDType getAstcdType() {
     return astcdType;

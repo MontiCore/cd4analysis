@@ -2,8 +2,6 @@ package de.monticore.matcher;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,15 +23,18 @@ public class NameTypeMatcher implements MatchingStrategy<ASTCDType> {
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     List<ASTCDType> result = new ArrayList<>();
 
-    result.addAll(tgtCD.getCDDefinition().getCDClassesList().stream()
-      .filter(type -> isMatched(srcElem, type))
-      .collect(Collectors.toList()));
-    result.addAll(tgtCD.getCDDefinition().getCDInterfacesList().stream()
-      .filter(type -> isMatched(srcElem, type))
-      .collect(Collectors.toList()));
-    result.addAll(tgtCD.getCDDefinition().getCDEnumsList().stream()
-      .filter(type -> isMatched(srcElem, type))
-      .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDClassesList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDInterfacesList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDEnumsList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
 
     return result;
   }

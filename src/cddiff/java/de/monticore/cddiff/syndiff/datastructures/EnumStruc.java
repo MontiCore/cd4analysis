@@ -9,7 +9,8 @@ public class EnumStruc {
   private ASTCDAttribute attribute;
   private ASTCDEnumConstant enumConstant;
 
-  public EnumStruc(ASTCDClass astcdClass, ASTCDAttribute attribute, ASTCDEnumConstant enumConstant) {
+  public EnumStruc(
+      ASTCDClass astcdClass, ASTCDAttribute attribute, ASTCDEnumConstant enumConstant) {
     this.astcdClass = astcdClass;
     this.attribute = attribute;
     this.enumConstant = enumConstant;

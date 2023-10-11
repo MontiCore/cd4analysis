@@ -19,7 +19,6 @@ import de.monticore.odbasis._ast.ASTObjectDiagram;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.umlstereotype._ast.ASTStereoValueBuilder;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.*;
 
 public class DiffHelper {
@@ -28,8 +27,7 @@ public class DiffHelper {
   private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
   private CDSyntaxDiff syntaxDiff;
 
-  public DiffHelper() {
-  }
+  public DiffHelper() {}
 
   public Syn2SemDiffHelper getHelper() {
     return helper;
@@ -40,14 +38,17 @@ public class DiffHelper {
     syntaxDiff.findOverlappingAssocs();
   }
 
-  //multi-instance and simple - remove superclasses - done
-  //if an association cannot be instatiated with the given classes, then it should be instantiated with the minDiffWitness - done
-  //create such association
+  // multi-instance and simple - remove superclasses - done
+  // if an association cannot be instatiated with the given classes, then it should be instantiated
+  // with the minDiffWitness - done
+  // create such association
   public List<ASTODArtifact> generateODs(boolean staDiff) {
     List<ASTODArtifact> artifactList = new ArrayList<>();
     for (Pair<ASTCDAssociation, List<ASTCDClass>> association : syntaxDiff.addedAssocList()) {
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association.a, helper.getSrcCD());
-      if (!helper.getNotInstanClassesSrc().contains(pair.a) && !helper.getNotInstanClassesSrc().contains(pair.b)) {
+      Pair<ASTCDClass, ASTCDClass> pair =
+          Syn2SemDiffHelper.getConnectedClasses(association.a, helper.getSrcCD());
+      if (!helper.getNotInstanClassesSrc().contains(pair.a)
+          && !helper.getNotInstanClassesSrc().contains(pair.b)) {
         ASTCDClass leftClass = pair.a;
         ASTCDClass rightClass = pair.b;
         if (pair.a.getModifier().isAbstract()) {
@@ -56,11 +57,18 @@ public class DiffHelper {
         if (pair.b.getModifier().isAbstract()) {
           rightClass = helper.minSubClass(pair.b);
         }
-        String comment = "A new associations has been added to the diagram."
-          + "\nThis association allows a new relation between the classes " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " and their subclasses";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(association.a),
-          generateElements(association.a, Arrays.asList(1, 1), comment),
-          null);
+        String comment =
+            "A new associations has been added to the diagram."
+                + "\nThis association allows a new relation between the classes "
+                + pair.a.getSymbol().getInternalQualifiedName()
+                + " and "
+                + pair.b.getSymbol().getInternalQualifiedName()
+                + " and their subclasses";
+        ASTODArtifact astodArtifact =
+            generateArtifact(
+                oDTitleForAssoc(association.a),
+                generateElements(association.a, Arrays.asList(1, 1), comment),
+                null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
@@ -68,11 +76,15 @@ public class DiffHelper {
     }
 
     for (Pair<ASTCDClass, ASTCDClass> astcdClass1 : syntaxDiff.addedClassList()) {
-      String comment = "A new class " + astcdClass1.a.getSymbol().getInternalQualifiedName() + " has been added and now there is a change in the class "
-        + astcdClass1.b.getSymbol().getInternalQualifiedName() + ".";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass1.b),
-        generateElements(astcdClass1.b, comment, null),
-        null);
+      String comment =
+          "A new class "
+              + astcdClass1.a.getSymbol().getInternalQualifiedName()
+              + " has been added and now there is a change in the class "
+              + astcdClass1.b.getSymbol().getInternalQualifiedName()
+              + ".";
+      ASTODArtifact astodArtifact =
+          generateArtifact(
+              oDTitleForClass(astcdClass1.b), generateElements(astcdClass1.b, comment, null), null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);
       }
@@ -84,10 +96,13 @@ public class DiffHelper {
         if (astcdClass.getModifier().isAbstract()) {
           astcdClass = helper.minSubClass(astcdClass);
         }
-        String comment = "An association for the class " + astcdClass.getSymbol().getInternalQualifiedName() + " has been removed from the diagram.";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-          generateElements(astcdClass, comment, null),
-          null);
+        String comment =
+            "An association for the class "
+                + astcdClass.getSymbol().getInternalQualifiedName()
+                + " has been removed from the diagram.";
+        ASTODArtifact astodArtifact =
+            generateArtifact(
+                oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
@@ -95,22 +110,29 @@ public class DiffHelper {
     }
 
     for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()) {
-      String comment = "In tgtCD the class" + astcdClass.getSymbol().getInternalQualifiedName() + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, comment, null),
-        null);
+      String comment =
+          "In tgtCD the class"
+              + astcdClass.getSymbol().getInternalQualifiedName()
+              + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
+      ASTODArtifact astodArtifact =
+          generateArtifact(
+              oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);
       }
     }
 
-    //implement a function that
+    // implement a function that
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()) {
       if ((typeDiffStruc.getAstcdType() instanceof ASTCDClass)
-        && !typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
-        StringBuilder comment = new StringBuilder("In the class " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following is changed: ");
+          && !typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
+        StringBuilder comment =
+            new StringBuilder(
+                "In the class "
+                    + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                    + " the following is changed: ");
         if (typeDiffStruc.getAddedAttributes() != null
-          && !typeDiffStruc.getAddedAttributes().b.isEmpty()) {
+            && !typeDiffStruc.getAddedAttributes().b.isEmpty()) {
           comment.append("\nadded attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
             comment.append(attribute.getName());
@@ -119,77 +141,92 @@ public class DiffHelper {
         if (typeDiffStruc.getMemberDiff() != null) {
           comment.append("\nchanged attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
-            comment.append(attribute.getName())
-              .append(" from ")
-              .append(getOldAtt(attribute, typeDiffStruc)
-                .getMCType().printType()).append(" to ")
-              .append(attribute.getMCType().printType());
+            comment
+                .append(attribute.getName())
+                .append(" from ")
+                .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
+                .append(" to ")
+                .append(attribute.getMCType().printType());
           }
         }
         if (typeDiffStruc.getChangedStereotype() != null) {
           comment.append("\nchanged stereotype - ");
         }
         if (typeDiffStruc.getDeletedAttributes() != null
-          && !typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
+            && !typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
           comment.append("\ndeleted attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
             comment.append(attribute.getName());
           }
         }
         ASTODArtifact astodArtifact;
-        astodArtifact = generateArtifact(oDTitleForClass((ASTCDClass) typeDiffStruc.getAstcdType()),
-          generateElements((ASTCDClass) typeDiffStruc.getAstcdType(), comment.toString(), null),
-          null);
+        astodArtifact =
+            generateArtifact(
+                oDTitleForClass((ASTCDClass) typeDiffStruc.getAstcdType()),
+                generateElements(
+                    (ASTCDClass) typeDiffStruc.getAstcdType(), comment.toString(), null),
+                null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
       }
-//      else {
-//         ASTCDClass subClass = helper.minDiffWitness((ASTCDClass) typeDiffStruc.getAstcdType());
-//         if (subClass != null){
-//           StringBuilder comment = new StringBuilder("For the abstract class "
-//             + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
-//             + " the following is changed: ");
-//           if (!typeDiffStruc.getAddedAttributes().b.isEmpty()) {
-//             comment.append("\nadded attributes - ");
-//             for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
-//               comment.append(attribute.getName());
-//             }
-//           }
-//           if (typeDiffStruc.getMemberDiff() != null) {
-//             comment.append("\nchanged attributes - ");
-//             for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
-//               comment.append(attribute.getName())
-//                 .append(" from ")
-//                 .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
-//                 .append(" to ")
-//                 .append(attribute.getMCType().printType());
-//             }
-//           }
-//           if (!typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
-//             comment.append("\ndeleted attributes - ");
-//             for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
-//               comment.append(attribute.getName());
-//             }
-//           }
-//           ASTODArtifact astodArtifact;
-//             astodArtifact = generateArtifact(oDTitleForClass(subClass),
-//               generateElements(subClass, comment.toString()), null);
-//           artifactList.add(astodArtifact);
-//         }
-//      }
+      //      else {
+      //         ASTCDClass subClass = helper.minDiffWitness((ASTCDClass)
+      // typeDiffStruc.getAstcdType());
+      //         if (subClass != null){
+      //           StringBuilder comment = new StringBuilder("For the abstract class "
+      //             + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+      //             + " the following is changed: ");
+      //           if (!typeDiffStruc.getAddedAttributes().b.isEmpty()) {
+      //             comment.append("\nadded attributes - ");
+      //             for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
+      //               comment.append(attribute.getName());
+      //             }
+      //           }
+      //           if (typeDiffStruc.getMemberDiff() != null) {
+      //             comment.append("\nchanged attributes - ");
+      //             for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
+      //               comment.append(attribute.getName())
+      //                 .append(" from ")
+      //                 .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
+      //                 .append(" to ")
+      //                 .append(attribute.getMCType().printType());
+      //             }
+      //           }
+      //           if (!typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
+      //             comment.append("\ndeleted attributes - ");
+      //             for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
+      //               comment.append(attribute.getName());
+      //             }
+      //           }
+      //           ASTODArtifact astodArtifact;
+      //             astodArtifact = generateArtifact(oDTitleForClass(subClass),
+      //               generateElements(subClass, comment.toString()), null);
+      //           artifactList.add(astodArtifact);
+      //         }
+      //      }
     }
 
-    //implement a function that searches for an instantiatable class with enum attribute - done
+    // implement a function that searches for an instantiatable class with enum attribute - done
     for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()) {
       if (typeDiffStruc.getAddedConstants() != null) {
         for (ASTCDEnumConstant constant : typeDiffStruc.getAddedConstants().b) {
           ASTCDClass astcdClass = getClassForEnum((ASTCDEnum) typeDiffStruc.getAstcdType());
           if (astcdClass != null) {
-            String comment = "In the enum " + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName() + " the following constant is added: " + constant.getName();
-            ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-              generateElements(astcdClass, comment, new Pair<>((ASTCDAttribute) typeDiffStruc.getAstcdType(), constant.getName())),
-              null);
+            String comment =
+                "In the enum "
+                    + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                    + " the following constant is added: "
+                    + constant.getName();
+            ASTODArtifact astodArtifact =
+                generateArtifact(
+                    oDTitleForClass(astcdClass),
+                    generateElements(
+                        astcdClass,
+                        comment,
+                        new Pair<>(
+                            (ASTCDAttribute) typeDiffStruc.getAstcdType(), constant.getName())),
+                    null);
             if (astodArtifact != null) {
               artifactList.add(astodArtifact);
             }
@@ -199,33 +236,46 @@ public class DiffHelper {
     }
 
     for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()) {
-      Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), helper.getSrcCD());
-      String comment = "In the association between " + pair.a.getSymbol().getInternalQualifiedName() + " and " + pair.b.getSymbol().getInternalQualifiedName() + " the following is changed: ";
+      Pair<ASTCDClass, ASTCDClass> pair =
+          Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), helper.getSrcCD());
+      String comment =
+          "In the association between "
+              + pair.a.getSymbol().getInternalQualifiedName()
+              + " and "
+              + pair.b.getSymbol().getInternalQualifiedName()
+              + " the following is changed: ";
       if (assocDiffStruc.isChangedDir()) {
-        comment = comment + "\ndirection - " + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
+        comment =
+            comment
+                + "\ndirection - "
+                + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
       }
-      if (assocDiffStruc.getChangedCard() != null
-        && !assocDiffStruc.getChangedCard().isEmpty()) {
+      if (assocDiffStruc.getChangedCard() != null && !assocDiffStruc.getChangedCard().isEmpty()) {
         comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
       }
       if (assocDiffStruc.getChangedRoleNames() != null
-        && !assocDiffStruc.getChangedRoleNames().isEmpty()) {
+          && !assocDiffStruc.getChangedRoleNames().isEmpty()) {
         comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
       }
       if (assocDiffStruc.getChangedTgt() != null) {
-        comment = comment + "\nchanged target - " + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
+        comment =
+            comment
+                + "\nchanged target - "
+                + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
       if (assocDiffStruc.getChangedSrc() != null) {
-        comment = comment + "\nchanged source - " + assocDiffStruc.getChangedSrc().getSymbol().getInternalQualifiedName();
+        comment =
+            comment
+                + "\nchanged source - "
+                + assocDiffStruc.getChangedSrc().getSymbol().getInternalQualifiedName();
       }
       ArrayList<Integer> list = new ArrayList<>();
-      //if both cardinalities are changed, then two ODs must be generated - done
-      if (assocDiffStruc.getChangedCard() != null
-        && assocDiffStruc.getChangedCard().isEmpty()) {
+      // if both cardinalities are changed, then two ODs must be generated - done
+      if (assocDiffStruc.getChangedCard() != null && assocDiffStruc.getChangedCard().isEmpty()) {
         list.add(1);
         list.add(1);
       } else if (assocDiffStruc.getChangedCard() != null
-        && assocDiffStruc.getChangedCard().size() == 1) {
+          && assocDiffStruc.getChangedCard().size() == 1) {
         if (assocDiffStruc.getChangedCard().get(0).a == ClassSide.Left) {
           list.add(assocDiffStruc.getChangedCard().get(0).b);
           list.add(1);
@@ -247,26 +297,32 @@ public class DiffHelper {
         list.add(1);
       }
       if (list.get(0) == 0 && list.get(1) == 0) {
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-          generateElements(assocDiffStruc.getAssociation(), list, comment),
-          null);
+        ASTODArtifact astodArtifact =
+            generateArtifact(
+                oDTitleForAssoc(assocDiffStruc.getAssociation()),
+                generateElements(assocDiffStruc.getAssociation(), list, comment),
+                null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
       } else {
         ArrayList<Integer> list1 = new ArrayList<>(list);
         list.set(1, 1);
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-          generateElements(assocDiffStruc.getAssociation(), list1, comment),
-          null);
+        ASTODArtifact astodArtifact =
+            generateArtifact(
+                oDTitleForAssoc(assocDiffStruc.getAssociation()),
+                generateElements(assocDiffStruc.getAssociation(), list1, comment),
+                null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
         ArrayList<Integer> list2 = new ArrayList<>(list);
         list.set(0, 1);
-        ASTODArtifact astodArtifact2 = generateArtifact(oDTitleForAssoc(assocDiffStruc.getAssociation()),
-          generateElements(assocDiffStruc.getAssociation(), list2, comment),
-          null);
+        ASTODArtifact astodArtifact2 =
+            generateArtifact(
+                oDTitleForAssoc(assocDiffStruc.getAssociation()),
+                generateElements(assocDiffStruc.getAssociation(), list2, comment),
+                null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact2);
         }
@@ -275,35 +331,59 @@ public class DiffHelper {
 
     for (CDAssocDiff assocDiff : syntaxDiff.getChangedAssocs()) {
       if (syntaxDiff.helper.srcAssocExistsTgtNot(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
-        String comment = "An association between the classes "
-          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          + " has been added from the diagram.";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForAssoc(assocDiff.getSrcElem()),
-          generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), comment),
-          null);
+        String comment =
+            "An association between the classes "
+                + Syn2SemDiffHelper.getConnectedClasses(
+                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+                    .a
+                    .getSymbol()
+                    .getInternalQualifiedName()
+                + " and "
+                + Syn2SemDiffHelper.getConnectedClasses(
+                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+                    .b
+                    .getSymbol()
+                    .getInternalQualifiedName()
+                + " has been added from the diagram.";
+        ASTODArtifact astodArtifact =
+            generateArtifact(
+                oDTitleForAssoc(assocDiff.getSrcElem()),
+                generateElements(assocDiff.getSrcElem(), Arrays.asList(1, 1), comment),
+                null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
       }
       if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
-        String comment = "An association between the classes "
-          + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-          + " and " + Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD()).b.getSymbol().getInternalQualifiedName()
-          + " has been removed from the diagram.";
-        Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD());
+        String comment =
+            "An association between the classes "
+                + Syn2SemDiffHelper.getConnectedClasses(
+                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+                    .a
+                    .getSymbol()
+                    .getInternalQualifiedName()
+                + " and "
+                + Syn2SemDiffHelper.getConnectedClasses(
+                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+                    .b
+                    .getSymbol()
+                    .getInternalQualifiedName()
+                + " has been removed from the diagram.";
+        Pair<ASTCDClass, ASTCDClass> pair =
+            Syn2SemDiffHelper.getConnectedClasses(
+                assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD());
         if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableRight()) {
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.a),
-            generateElements(pair.a, comment, null),
-            null);
+          ASTODArtifact astodArtifact =
+              generateArtifact(
+                  oDTitleForClass(pair.a), generateElements(pair.a, comment, null), null);
           if (astodArtifact != null) {
             artifactList.add(astodArtifact);
           }
         }
         if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()) {
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(pair.b),
-            generateElements(pair.b, comment, null),
-            null);
+          ASTODArtifact astodArtifact =
+              generateArtifact(
+                  oDTitleForClass(pair.b), generateElements(pair.b, comment, null), null);
           if (astodArtifact != null) {
             artifactList.add(astodArtifact);
           }
@@ -313,38 +393,50 @@ public class DiffHelper {
 
     AssocDiffs assocDiffs = syntaxDiff.getAssocDiffs();
     for (ASTCDClass astcdClass : assocDiffs.getAllInSrc()) {
-      String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has associations that aren't in tgt.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, comment, null),
-        null);
+      String comment =
+          "The class "
+              + astcdClass.getSymbol().getInternalQualifiedName()
+              + " has associations that aren't in tgt.";
+      ASTODArtifact astodArtifact =
+          generateArtifact(
+              oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);
       }
     }
     for (ASTCDClass astcdClass : assocDiffs.getAllInTgt()) {
-      String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has associations that aren't in src.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, comment, null),
-        null);
+      String comment =
+          "The class "
+              + astcdClass.getSymbol().getInternalQualifiedName()
+              + " has associations that aren't in src.";
+      ASTODArtifact astodArtifact =
+          generateArtifact(
+              oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);
       }
     }
     for (ASTCDClass astcdClass : assocDiffs.getMixed()) {
-      String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " has associations that aren't in src and associations that aren't in tgt.";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, comment, null),
-        null);
+      String comment =
+          "The class "
+              + astcdClass.getSymbol().getInternalQualifiedName()
+              + " has associations that aren't in src and associations that aren't in tgt.";
+      ASTODArtifact astodArtifact =
+          generateArtifact(
+              oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);
       }
     }
 
-    for (ASTCDClass astcdClass : syntaxDiff.tgtExistsSrcNot()){
-      String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " can be instantiated without at least one association, because the associated class cannot be instantiated (overlapping).";
-      ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-        generateElements(astcdClass, comment, null),
-        null);
+    for (ASTCDClass astcdClass : syntaxDiff.tgtExistsSrcNot()) {
+      String comment =
+          "The class "
+              + astcdClass.getSymbol().getInternalQualifiedName()
+              + " can be instantiated without at least one association, because the associated class cannot be instantiated (overlapping).";
+      ASTODArtifact astodArtifact =
+          generateArtifact(
+              oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
       if (astodArtifact != null) {
         artifactList.add(astodArtifact);
       }
@@ -352,10 +444,13 @@ public class DiffHelper {
 
     if (staDiff) {
       for (ASTCDClass astcdClass : syntaxDiff.hasDiffSuper()) {
-        String comment = "The class " + astcdClass.getSymbol().getInternalQualifiedName() + " is part of a different inheritance tree.";
-        ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(astcdClass),
-          generateElements(astcdClass, comment, null),
-          null);
+        String comment =
+            "The class "
+                + astcdClass.getSymbol().getInternalQualifiedName()
+                + " is part of a different inheritance tree.";
+        ASTODArtifact astodArtifact =
+            generateArtifact(
+                oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null), null);
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
         }
@@ -367,19 +462,24 @@ public class DiffHelper {
           if (inheritanceDiff.getAstcdClasses().a.getModifier().isAbstract()) {
             astcdClass = helper.minSubClass(inheritanceDiff.getAstcdClasses().a);
           }
-          String comment = "For the class " + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName() + " the inheritance relations were changed";
-          ASTODArtifact astodArtifact = generateArtifact(oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
-            generateElements(inheritanceDiff.getAstcdClasses().a, comment, null),
-            null);
+          String comment =
+              "For the class "
+                  + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName()
+                  + " the inheritance relations were changed";
+          ASTODArtifact astodArtifact =
+              generateArtifact(
+                  oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
+                  generateElements(inheritanceDiff.getAstcdClasses().a, comment, null),
+                  null);
           if (astodArtifact != null) {
             artifactList.add(astodArtifact);
           }
         }
       }
     }
-//    if (!staDiff){
-//      helper.makeSimpleSem(artifactList);
-//    }
+    //    if (!staDiff){
+    //      helper.makeSimpleSem(artifactList);
+    //    }
     return artifactList;
   }
 
@@ -406,12 +506,15 @@ public class DiffHelper {
     return null;
   }
 
-  public List<ASTODElement> generateElements(ASTCDClass astcdClass,
-                                             String comment,
-                                             Pair<ASTCDAttribute, String> pair) {
+  public List<ASTODElement> generateElements(
+      ASTCDClass astcdClass, String comment, Pair<ASTCDAttribute, String> pair) {
     Set<ASTODElement> elements;
-    //System.out.println("start " + astcdClass.getSymbol().getInternalQualifiedName());
-    DiffWitnessGenerator oDHelper = new DiffWitnessGenerator(Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
+    // System.out.println("start " + astcdClass.getSymbol().getInternalQualifiedName());
+    DiffWitnessGenerator oDHelper =
+        new DiffWitnessGenerator(
+            Math.max(
+                helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
+                helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
     elements = oDHelper.getObjForOD(astcdClass, pair);
     if (elements.isEmpty()) {
       return new ArrayList<>();
@@ -419,7 +522,10 @@ public class DiffHelper {
     ASTODObject matchedObject = null;
     for (ASTODElement element : elements) {
       if (element instanceof ASTODObject) {
-        if (((ASTODObject) element).getMCObjectType().printType().equals(astcdClass.getSymbol().getInternalQualifiedName())) {
+        if (((ASTODObject) element)
+            .getMCObjectType()
+            .printType()
+            .equals(astcdClass.getSymbol().getInternalQualifiedName())) {
           matchedObject = (ASTODObject) element;
         }
       }
@@ -437,24 +543,27 @@ public class DiffHelper {
     return new ArrayList<>(elements);
   }
 
-  public List<ASTODElement> generateElements(ASTCDAssociation association,
-                                             List<Integer> integers,
-                                             String comment) {
-    DiffWitnessGenerator oDHelper = new DiffWitnessGenerator(Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
-    Pair<Set<ASTODElement>, ASTODElement> pair = oDHelper.getObjForOD(association, integers.get(0), integers.get(1));
-    if (pair.a.isEmpty()){
+  public List<ASTODElement> generateElements(
+      ASTCDAssociation association, List<Integer> integers, String comment) {
+    DiffWitnessGenerator oDHelper =
+        new DiffWitnessGenerator(
+            Math.max(
+                helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
+                helper.getTgtCD().getCDDefinition().getCDClassesList().size()));
+    Pair<Set<ASTODElement>, ASTODElement> pair =
+        oDHelper.getObjForOD(association, integers.get(0), integers.get(1));
+    if (pair.a.isEmpty()) {
       return new ArrayList<>();
     }
     Set<ASTODElement> elements;
     elements = pair.a;
 
-
-
     ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
     valueBuilder.setName("diff");
     valueBuilder.setContent("diffAssoc");
     if (pair.b instanceof ASTODLink) {
-      ((ASTODLink) pair.b).setStereotype(OD4ReportMill.stereotypeBuilder().addValues(valueBuilder.build()).build());
+      ((ASTODLink) pair.b)
+          .setStereotype(OD4ReportMill.stereotypeBuilder().addValues(valueBuilder.build()).build());
     } else {
       ((ASTODObject) pair.b).getModifier().getStereotype().addValues(valueBuilder.build());
     }
@@ -465,32 +574,36 @@ public class DiffHelper {
     return new ArrayList<>(elements);
   }
 
-  public static ASTODArtifact generateArtifact(String name, List<ASTODElement> astodElementList, String stereotype) {
+  public static ASTODArtifact generateArtifact(
+      String name, List<ASTODElement> astodElementList, String stereotype) {
     if (astodElementList.isEmpty()) {
       return null;
     }
     ASTObjectDiagram astObjectDiagram =
-      OD4ReportMill.objectDiagramBuilder()
-        .setName(name)
-        .setODElementsList(astodElementList)
-        .setStereotype(
-          OD4ReportMill.stereotypeBuilder()
-            .addValues(
-              OD4ReportMill.stereoValueBuilder()
-                .setName("syntaxDiffCategory")
-                .setContent("diff" + stereotype)
-                .setText(
-                  OD4ReportMill.stringLiteralBuilder().setSource("diff" + stereotype).build())
-                .build())
-            .build())
-        .build();
+        OD4ReportMill.objectDiagramBuilder()
+            .setName(name)
+            .setODElementsList(astodElementList)
+            .setStereotype(
+                OD4ReportMill.stereotypeBuilder()
+                    .addValues(
+                        OD4ReportMill.stereoValueBuilder()
+                            .setName("syntaxDiffCategory")
+                            .setContent("diff" + stereotype)
+                            .setText(
+                                OD4ReportMill.stringLiteralBuilder()
+                                    .setSource("diff" + stereotype)
+                                    .build())
+                            .build())
+                    .build())
+            .build();
     return OD4ReportMill.oDArtifactBuilder().setObjectDiagram(astObjectDiagram).build();
   }
 
   public String oDTitleForAssoc(ASTCDAssociation association) {
     String srcName;
     String tgtName;
-    Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
+    Pair<ASTCDClass, ASTCDClass> pair =
+        Syn2SemDiffHelper.getConnectedClasses(association, helper.getSrcCD());
     if (association.getCDAssocDir().isBidirectional()) {
       srcName = pair.a.getSymbol().getInternalQualifiedName().replace(".", "_");
       tgtName = pair.b.getSymbol().getInternalQualifiedName().replace(".", "_");
@@ -509,7 +622,10 @@ public class DiffHelper {
   }
 
   public String oDTitleForClass(ASTCDClass astcdClass) {
-    String stringBuilder = "ClassDiff_" + indexClass + astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_");
+    String stringBuilder =
+        "ClassDiff_"
+            + indexClass
+            + astcdClass.getSymbol().getInternalQualifiedName().replace(".", "_");
     indexClass++;
     return stringBuilder;
   }

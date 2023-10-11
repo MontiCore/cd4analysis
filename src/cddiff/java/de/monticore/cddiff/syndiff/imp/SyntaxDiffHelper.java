@@ -5,7 +5,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.interfaces.ICDPrintDiff;
 import de.monticore.matcher.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    * @return A single string with spaces between colored strings.
    */
   @Override
-  public String insertSpaceBetweenStringsAndGreen(List<String> stringList){
+  public String insertSpaceBetweenStringsAndGreen(List<String> stringList) {
     StringBuilder output = new StringBuilder();
 
     for (String field : stringList) {
@@ -69,7 +68,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    * @return A single string with spaces between colored strings.
    */
   @Override
-  public String insertSpaceBetweenStringsAndRed(List<String> stringList){
+  public String insertSpaceBetweenStringsAndRed(List<String> stringList) {
     StringBuilder output = new StringBuilder();
 
     for (String field : stringList) {
@@ -89,7 +88,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    * @param diff The CDNodeDiff object representing a difference.
    * @return The color code as a string.
    */
-  static String getColorCode(CDNodeDiff<?,?> diff) {
+  static String getColorCode(CDNodeDiff<?, ?> diff) {
     if (diff.getAction().isPresent()) {
       if (diff.getAction().get().equals(Actions.REMOVED)) {
         return COLOR_DELETE;
@@ -103,59 +102,64 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   }
 
   /**
-   * Computes a matching map of CD types between the source and target CD.
-   * It uses a combination of type matching strategies to match types based on name, structure, and super types.
-   * The matching strategies are applied to the list of CD types to create the final matching map.
+   * Computes a matching map of CD types between the source and target CD. It uses a combination of
+   * type matching strategies to match types based on name, structure, and super types. The matching
+   * strategies are applied to the list of CD types to create the final matching map.
    *
    * @param listToMatch The list of CD types to be matched.
-   * @param srcCD       The source CD.
-   * @param tgtCD       The target CD.
+   * @param srcCD The source CD.
+   * @param tgtCD The target CD.
    * @return A map containing matched CD types between source and target CDs.
    */
-  public Map<ASTCDType,ASTCDType> computeMatchingMapTypes(List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD,
-                                                          ASTCDCompilationUnit tgtCD) {
+  public Map<ASTCDType, ASTCDType> computeMatchingMapTypes(
+      List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
     StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
     SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructureType = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchStructureType =
+        new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
     List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
     typeMatchers.add(structureTypeMatch);
     typeMatchers.add(superTypeMatchNameType);
     typeMatchers.add(superTypeMatchStructureType);
 
-    CombinedMatching<ASTCDType> combinedMatching = new CombinedMatching<>(listToMatch, srcCD,
-      tgtCD, typeMatchers);
+    CombinedMatching<ASTCDType> combinedMatching =
+        new CombinedMatching<>(listToMatch, srcCD, tgtCD, typeMatchers);
 
     return combinedMatching.getFinalMap();
   }
 
   /**
-   * Computes a matching map of CD associations between the source and target CD.
-   * It uses a combination of association matching strategies to match associations based on name, type, and structure.
-   * The matching strategies are applied to the list of CD associations to create the final matching map.
+   * Computes a matching map of CD associations between the source and target CD. It uses a
+   * combination of association matching strategies to match associations based on name, type, and
+   * structure. The matching strategies are applied to the list of CD associations to create the
+   * final matching map.
    *
    * @param listToMatch The list of CD associations to be matched.
-   * @param srcCD       The source CD.
-   * @param tgtCD       The target CD.
+   * @param srcCD The source CD.
+   * @param tgtCD The target CD.
    * @return A map containing matched CD associations between source and target CDs.
    */
-  public Map<ASTCDAssociation,ASTCDAssociation> computeMatchingMapAssocs(List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD,
-                                                                         ASTCDCompilationUnit tgtCD) {
+  public Map<ASTCDAssociation, ASTCDAssociation> computeMatchingMapAssocs(
+      List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     NameAssocMatcher nameAssocMatch = new NameAssocMatcher(tgtCD);
     NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
     StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
     SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructureType = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
-    SrcTgtAssocMatcher associationSrcTgtMatchNameType = new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
-    SrcTgtAssocMatcher associationSrcTgtMatchStructureType = new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchStructureType =
+        new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    SrcTgtAssocMatcher associationSrcTgtMatchNameType =
+        new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
+    SrcTgtAssocMatcher associationSrcTgtMatchStructureType =
+        new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
     List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatchNameType);
     assocMatchers.add(associationSrcTgtMatchStructureType);
 
-    CombinedMatching<ASTCDAssociation> combinedMatching = new CombinedMatching<>(listToMatch, srcCD,
-      tgtCD, assocMatchers);
+    CombinedMatching<ASTCDAssociation> combinedMatching =
+        new CombinedMatching<>(listToMatch, srcCD, tgtCD, assocMatchers);
 
     return combinedMatching.getFinalMap();
   }

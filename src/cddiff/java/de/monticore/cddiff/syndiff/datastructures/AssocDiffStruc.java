@@ -4,7 +4,6 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.List;
 
 public class AssocDiffStruc {
@@ -15,8 +14,7 @@ public class AssocDiffStruc {
   private ASTCDClass changedSrc = null;
   private boolean changedDir = false;
 
-  public AssocDiffStruc() {
-  }
+  public AssocDiffStruc() {}
 
   public List<Pair<ClassSide, Integer>> getChangedCard() {
     return changedCard;
