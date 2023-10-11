@@ -1332,6 +1332,8 @@ public class Syn2SemDiffHelper {
    * Two maps are created - srcMap (for srcCD) and trgMap (for trgCD).
    */
   public void setMaps(){
+    srcMap = ArrayListMultimap.create();
+    trgMap = ArrayListMultimap.create();
     for (ASTCDClass astcdClass : getSrcCD().getCDDefinition().getCDClassesList()){
       for (ASTCDAssociation astcdAssociation : getCDAssociationsListForTypeSrc(astcdClass)){
         Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(astcdAssociation, getSrcCD());
