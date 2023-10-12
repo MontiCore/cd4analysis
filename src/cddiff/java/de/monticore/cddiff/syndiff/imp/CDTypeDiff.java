@@ -32,7 +32,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private List<DiffTypes> baseDiff;
   ASTCDCompilationUnit tgtCD;
   int srcLineOfCode, tgtLineOfCode;
-  private Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+  private Syn2SemDiffHelper helper;
 
   // Print
   private StringBuilder outputSrc,
@@ -57,9 +57,10 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private String modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete;
   // Print end
 
-  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
+  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD, Syn2SemDiffHelper helper) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
+    this.helper = helper;
     this.tgtCD = tgtCD;
     this.baseDiff = new ArrayList<>();
     this.matchedAttributes = new ArrayList<>();
@@ -208,11 +209,11 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
         return true;
       }
       List<ASTCDClass> classList =
-          Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), (ASTCDClass) getSrcElem());
+          helper.getSrcSubMap().get((ASTCDClass) srcElem);
       classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
-        if (!helper.getNotInstanClassesSrc().contains(astcdClass)
+        if (!helper.getNotInstClassesSrc().contains(astcdClass)
             && !Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
           Set<ASTCDType> astcdClassList =
               getAllSuper(
@@ -220,7 +221,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
           astcdClassList.remove(getSrcElem());
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass
-                && !helper.getNotInstanClassesSrc().contains((ASTCDClass) type)) {
+                && !helper.getNotInstClassesSrc().contains((ASTCDClass) type)) {
               if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;
@@ -248,10 +249,13 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    */
   @Override
   public Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff) {
-    return new Pair<>(
+    if (memberDiff.areTypesChanged()) {
+      return new Pair<>(
         (ASTCDClass) getSrcElem(),
         (ASTCDAttribute)
-            memberDiff.getSrcElem()); // add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+          memberDiff.getSrcElem()); // add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+    }
+    return null;
   }
 
   // CHECKED
@@ -262,7 +266,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       return getSrcElem();
     } else {
       // wrong - check if those associations exist in the old CD - done
-      if (Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), (ASTCDClass) getSrcElem())
+      if (helper.getSrcSubMap().get((ASTCDClass) srcElem)
           .isEmpty()) {
         Set<ASTCDClass> map = helper.getSrcMap().keySet();
         map.remove((ASTCDClass) getSrcElem());
@@ -329,18 +333,18 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       return true;
     }
     List<ASTCDClass> classList =
-        Syn2SemDiffHelper.getSpannedInheritance(helper.getTgtCD(), (ASTCDClass) getTgtElem());
+        helper.getTgtSubMap().get((ASTCDClass) tgtElem);
     classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
-      if (!helper.getNotInstanClassesTgt().contains(astcdClass)
+      if (!helper.getNotInstClassesTgt().contains(astcdClass)
           && !Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
         Set<ASTCDType> astcdClassList =
             getAllSuper(astcdClass, (ICD4CodeArtifactScope) helper.getTgtCD().getEnclosingScope());
         astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
           if (type instanceof ASTCDClass
-              && helper.getNotInstanClassesSrc().contains((ASTCDClass) type)
+              && helper.getNotInstClassesSrc().contains((ASTCDClass) type)
               && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
             break;
@@ -470,11 +474,8 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    */
   public void loadAllAddedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
-      boolean addedNotFound = true;
-      if (inheritedAttributes.contains(srcAttr)) {
-        addedNotFound = false;
-      }
-      for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
+      boolean addedNotFound = !inheritedAttributes.contains(srcAttr);
+        for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
         if (srcAttr.getName().equals(tgtAttr.getName())) {
           addedNotFound = false;
           break;

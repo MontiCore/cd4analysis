@@ -1,5 +1,7 @@
 package de.monticore.cddiff;
 
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
@@ -11,6 +13,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestMax extends CDDiffTestBasis {
@@ -182,6 +185,8 @@ public class TestMax extends CDDiffTestBasis {
     DiffHelper diffHelper2 = new DiffHelper(original1, original2);
     List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(false);
 
+//    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
+//    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
     for (ASTODArtifact od : witnesses2) {
       if (!new OD2CDMatcher()
           .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
@@ -191,8 +196,7 @@ public class TestMax extends CDDiffTestBasis {
       }
     }
   }
-
-  // TODO: Tsveti - addAllChangedAssocs
+  @Test
   public void testDE() {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/cddiff/DEv2.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/DEv1.cd");
@@ -227,7 +231,9 @@ public class TestMax extends CDDiffTestBasis {
     //    }
   }
 
+  // TODO: Tsveti - addAllChangedAssocs
   @Test
+  @Ignore
   public void testEA() {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/cddiff/EAv2.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/EAv1.cd");

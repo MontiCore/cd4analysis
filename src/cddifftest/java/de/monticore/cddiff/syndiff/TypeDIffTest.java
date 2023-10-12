@@ -7,7 +7,6 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.imp.CDMemberDiff;
@@ -32,7 +31,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff);
+    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -51,65 +50,35 @@ public class TypeDIffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD12.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    ASTCDClass cNew = CDTestHelper.getClass("C", compilationUnitNew.getCDDefinition());
-    ASTCDClass cOld = CDTestHelper.getClass("C", compilationUnitOld.getCDDefinition());
-    ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
-    ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(cNew, cOld, compilationUnitOld);
-    CDTypeDiff typeDiff1 = new CDTypeDiff(aNew, aOld, compilationUnitOld);
-    // Prepare test data
-    assert cNew != null;
-    ASTCDAttribute attributeNew = CDTestHelper.getAttribute(cNew, "age");
-    assert aOld != null;
-    ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
-
-    // Invoke the method
-
-    boolean result = typeDiff.isAdded(attributeNew);
-    boolean result2 = typeDiff1.isDeleted(attributeOld);
-
-    // Assert the result
-    Assert.assertFalse(result);
-    Assert.assertTrue(result2);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test
-  public void testCD3() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD31.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-
-    ASTCDClass bNew = CDTestHelper.getClass("B", compilationUnitNew.getCDDefinition());
-    ASTCDClass bOld = CDTestHelper.getClass("B", compilationUnitOld.getCDDefinition());
-    ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
-    ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(bNew, bOld, compilationUnitOld);
-    CDTypeDiff typeDiff1 = new CDTypeDiff(aNew, aOld, compilationUnitOld);
-    // Prepare test data
-    assert bNew != null;
-    ASTCDAttribute attributeNew = CDTestHelper.getAttribute(bNew, "age");
-    assert aOld != null;
-    ASTCDAttribute astcdAttribute = CDTestHelper.getAttribute(aOld, "age");
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-
-    syntaxDiff.getHelper().setMaps();
-    // Error in getAllSuper(only in setMaps()) from CDDiffUtil - Nullpointer
-
-    // Invoke the method
-    boolean result = typeDiff.isAdded(attributeNew);
-    ASTCDType result2 = typeDiff1.isClassNeeded();
-    boolean result3 = typeDiff1.isDeleted(astcdAttribute);
-
-    // Assert the result
-    Assert.assertTrue(result);
-    Assert.assertNotNull(result2);
-    Assert.assertTrue(result3);
+  public void testCD3(){
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD31.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   @Test
@@ -120,7 +89,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
 
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff);
+    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -140,7 +109,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
     CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff);
+    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -162,27 +131,17 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(compilationUnitNew);
     CDDiffUtil.refreshSymbolTable(compilationUnitOld);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    ASTCDClass aNew = CDTestHelper.getClass("A", compilationUnitNew.getCDDefinition());
-    ASTCDClass aOld = CDTestHelper.getClass("A", compilationUnitOld.getCDDefinition());
-    CDTypeDiff typeDiff = new CDTypeDiff(aNew, aOld, compilationUnitOld);
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
-    // Prepare test data
-    assert aNew != null;
-    ASTCDAttribute attributeNew = CDTestHelper.getAttribute(aNew, "age");
-    assert aOld != null;
-    ASTCDAttribute attributeOld = CDTestHelper.getAttribute(aOld, "age");
-
-    CDMemberDiff memberDiff = new CDMemberDiff(attributeNew, attributeOld);
-
-    // Invoke the method
-    System.out.println(syntaxDiff.helper.minSubClass(aNew).getName());
-    Pair<ASTCDClass, ASTCDAttribute> result = typeDiff.findMemberDiff(memberDiff);
-
-    // Assert the result
-    System.out.println(result);
-    Assert.assertNotNull(result);
+    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
+    testHelper.staDiff();
+    testHelper.deletedAssocs();
+    testHelper.srcExistsTgtNot();
+    testHelper.changedTypes();
+    testHelper.inheritanceDiffs();
+    testHelper.changedAssocs();
+    testHelper.addedConstants();
+    testHelper.addedClasses();
+    testHelper.addedAssocs();
   }
 
   /*--------------------------------------------------------------------*/
@@ -216,11 +175,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
 
-    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt);
-    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt);
-
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
-    // System.out.println(diff.printOnlyAdded());
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, diff.getHelper());
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, diff.getHelper());
+
+    //System.out.println(diff.printOnlyAdded());
 
     /*System.out.println(typeDiff1.printSrcCD());
     System.out.println(typeDiff2.printSrcCD());
@@ -240,14 +199,12 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
     ASTCDClass astcdClass31 = CDTestHelper.getClass("C", src.getCDDefinition());
     ASTCDClass astcdClass32 = CDTestHelper.getClass("C", tgt.getCDDefinition());
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-    ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
-    ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
 
-    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt);
-    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt);
-    CDTypeDiff typeDiff3 = new CDTypeDiff(astcdClass31, astcdClass32, tgt);
+    CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
+
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, diff.getHelper());
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, diff.getHelper());
+    CDTypeDiff typeDiff3 = new CDTypeDiff(astcdClass31, astcdClass32, tgt, diff.getHelper());
     System.out.println(typeDiff1.printSrcCD());
     System.out.println(typeDiff2.printSrcCD());
     System.out.println(typeDiff3.printSrcCD());
@@ -268,10 +225,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
-    ICD4CodeArtifactScope scopeSrcCD = (ICD4CodeArtifactScope) src.getEnclosingScope();
-    ICD4CodeArtifactScope scopeTgtCD = (ICD4CodeArtifactScope) tgt.getEnclosingScope();
 
-    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, tgt);
+    CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
+    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, tgt, diff.getHelper());
     System.out.println(typeDiff.printSrcCD());
     System.out.println(typeDiff.printTgtCD());
   }

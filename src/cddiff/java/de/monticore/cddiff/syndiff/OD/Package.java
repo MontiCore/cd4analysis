@@ -22,121 +22,50 @@ public class Package {
   private final ASTCDAssociation astcdAssociation;
   private final ClassSide side;
   private final ODBuilder ODBuilder = new ODBuilder();
-  private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
-
-  public Package(
-      ASTCDClass leftObject,
-      String idSrc,
-      ASTCDClass rightObject,
-      String idTgt,
-      ASTCDAssociation association,
-      ClassSide side,
-      boolean isProcessedLeft,
-      boolean isProcessedRight) {
-    this.leftObject =
-        ODBuilder.buildObj(
-            idSrc,
-            leftObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(leftObject),
-            getAttributesOD(leftObject));
-    this.rightObject =
-        ODBuilder.buildObj(
-            idTgt,
-            rightObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(rightObject),
-            getAttributesOD(rightObject));
-    this.association =
-        ODBuilder.buildLink(
-            this.leftObject,
-            CDDiffUtil.inferRole(association.getLeft()),
-            CDDiffUtil.inferRole(association.getRight()),
-            this.rightObject,
-            Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+  private final Syn2SemDiffHelper helper;
+  public Package(ASTCDClass leftObject, String idSrc, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
+    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
+    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
+    this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
+    this.helper = helper;
   }
-
-  public Package(
-      ASTODObject leftObject,
-      ASTODObject rightObject,
-      ASTCDAssociation association,
-      ClassSide side,
-      boolean isProcessedLeft,
-      boolean isProcessedRight) {
+  public Package(ASTODObject leftObject, ASTODObject rightObject, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
     this.leftObject = leftObject;
     this.rightObject = rightObject;
-    this.association =
-        ODBuilder.buildLink(
-            this.leftObject,
-            CDDiffUtil.inferRole(association.getLeft()),
-            CDDiffUtil.inferRole(association.getRight()),
-            this.rightObject,
-            Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+    this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
+    this.helper = helper;
   }
 
-  public Package(
-      ASTCDClass leftObject,
-      String idSrc,
-      ASTODObject rightObject,
-      ASTCDAssociation association,
-      ClassSide side,
-      boolean isProcessedLeft,
-      boolean isProcessedRight) {
-    this.leftObject =
-        ODBuilder.buildObj(
-            idSrc,
-            leftObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(leftObject),
-            getAttributesOD(leftObject));
+  public Package(ASTCDClass leftObject, String idSrc, ASTODObject rightObject, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
+    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
     this.rightObject = rightObject;
-    this.association =
-        ODBuilder.buildLink(
-            this.leftObject,
-            CDDiffUtil.inferRole(association.getLeft()),
-            CDDiffUtil.inferRole(association.getRight()),
-            this.rightObject,
-            Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+    this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
+    this.helper = helper;
   }
 
-  public Package(
-      ASTODObject leftObject,
-      ASTCDClass rightObject,
-      String idTgt,
-      ASTCDAssociation association,
-      ClassSide side,
-      boolean isProcessedLeft,
-      boolean isProcessedRight) {
+  public Package(ASTODObject leftObject, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
     this.leftObject = leftObject;
-    this.rightObject =
-        ODBuilder.buildObj(
-            idTgt,
-            rightObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(rightObject),
-            getAttributesOD(rightObject));
-    this.association =
-        ODBuilder.buildLink(
-            this.leftObject,
-            CDDiffUtil.inferRole(association.getLeft()),
-            CDDiffUtil.inferRole(association.getRight()),
-            this.rightObject,
-            Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
+    this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
+    this.helper = helper;
   }
-
-  public Package(ASTODObject leftObject) {
+  public Package(ASTODObject leftObject, Syn2SemDiffHelper helper){
     this.leftObject = leftObject;
     this.rightObject = null;
     this.association = null;
@@ -144,21 +73,18 @@ public class Package {
     this.side = ClassSide.Left;
     this.isProcessedLeft = true;
     this.isProcessedRight = false;
+    this.helper = helper;
   }
 
-  public Package(ASTCDClass astcdClass, String id) {
-    this.leftObject =
-        ODBuilder.buildObj(
-            id,
-            astcdClass.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(astcdClass),
-            getAttributesOD(astcdClass));
+  public Package(ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper){
+    this.leftObject = ODBuilder.buildObj(id, astcdClass.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(astcdClass), getAttributesOD(astcdClass));
     this.rightObject = null;
     this.association = null;
     this.astcdAssociation = null;
     this.side = ClassSide.Left;
     this.isProcessedLeft = false;
     this.isProcessedRight = false;
+    this.helper = helper;
   }
 
   public ASTODObject getLeftObject() {
@@ -198,7 +124,7 @@ public class Package {
     for (ASTCDAttribute attribute : attributes) {
       if (helper.attIsEnum(attribute)) {
         odAttributes.add(
-            ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), "''"));
+            ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), " "));
       }
       odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
     }

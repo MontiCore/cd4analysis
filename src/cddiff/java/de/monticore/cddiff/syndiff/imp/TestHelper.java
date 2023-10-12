@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruc;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
-import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruc;
+import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruct;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -19,10 +19,11 @@ public class TestHelper {
 
   private final CDSyntaxDiff syntaxDiff;
 
-  private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+  private Syn2SemDiffHelper helper;
 
-  public TestHelper(CDSyntaxDiff syntaxDiff) {
+  public TestHelper(CDSyntaxDiff syntaxDiff, Syn2SemDiffHelper helper) {
     this.syntaxDiff = syntaxDiff;
+    this.helper = helper;
   }
 
   public void addedAssocs() {
@@ -87,42 +88,42 @@ public class TestHelper {
   }
 
   public void changedTypes() {
-    for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()) {
-      if (!(typeDiffStruc.getAstcdType() instanceof ASTCDEnum)) {
-        if (!typeDiffStruc.getAstcdType().getModifier().isAbstract()) {
+    for (TypeDiffStruct typeDiffStruct : syntaxDiff.changedTypes()) {
+      if (!(typeDiffStruct.getAstcdType() instanceof ASTCDEnum)) {
+        if (!typeDiffStruct.getAstcdType().getModifier().isAbstract()) {
           StringBuilder comment =
               new StringBuilder(
                   "In the class "
-                      + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                      + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                       + " the following is changed: ");
-          if (typeDiffStruc.getAddedAttributes() != null
-              && !typeDiffStruc.getAddedAttributes().b.isEmpty()) {
+          if (typeDiffStruct.getAddedAttributes() != null
+              && !typeDiffStruct.getAddedAttributes().b.isEmpty()) {
             comment.append("\nadded attributes - ");
-            for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
+            for (ASTCDAttribute attribute : typeDiffStruct.getAddedAttributes().b) {
               comment.append(attribute.getName());
             }
           }
-          if (typeDiffStruc.getMemberDiff() != null) {
+          if (typeDiffStruct.getMemberDiff() != null) {
             comment.append("\nchanged attributes - ");
-            for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
+            for (ASTCDAttribute attribute : typeDiffStruct.getMemberDiff().b) {
               comment
                   .append(attribute.getName())
                   .append(" from ")
                   .append(
-                      Objects.requireNonNull(getOldAtt(attribute, typeDiffStruc))
+                      Objects.requireNonNull(getOldAtt(attribute, typeDiffStruct))
                           .getMCType()
                           .printType())
                   .append(" to ")
                   .append(attribute.getMCType().printType());
             }
           }
-          if (typeDiffStruc.getChangedStereotype() != null) {
+          if (typeDiffStruct.getChangedStereotype() != null) {
             comment.append("\nchanged stereotype - ");
           }
-          if (typeDiffStruc.getDeletedAttributes() != null
-              && !typeDiffStruc.getDeletedAttributes().b.isEmpty()) {
+          if (typeDiffStruct.getDeletedAttributes() != null
+              && !typeDiffStruct.getDeletedAttributes().b.isEmpty()) {
             comment.append("\ndeleted attributes - ");
-            for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
+            for (ASTCDAttribute attribute : typeDiffStruct.getDeletedAttributes().b) {
               comment.append(attribute.getName());
             }
           }
@@ -130,33 +131,33 @@ public class TestHelper {
           System.out.println("=======================================================");
         } else {
           ASTCDClass subClass =
-              syntaxDiff.helper.minSubClass((ASTCDClass) typeDiffStruc.getAstcdType());
+              syntaxDiff.helper.minSubClass((ASTCDClass) typeDiffStruct.getAstcdType());
           if (subClass != null) {
             StringBuilder comment =
                 new StringBuilder(
                     "For the abstract class "
-                        + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                        + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                         + " the following is changed: ");
-            if (typeDiffStruc.getAddedAttributes() != null) {
+            if (typeDiffStruct.getAddedAttributes() != null) {
               comment.append("\nadded attributes - ");
-              for (ASTCDAttribute attribute : typeDiffStruc.getAddedAttributes().b) {
+              for (ASTCDAttribute attribute : typeDiffStruct.getAddedAttributes().b) {
                 comment.append(attribute.getName());
               }
             }
-            if (typeDiffStruc.getMemberDiff() != null) {
+            if (typeDiffStruct.getMemberDiff() != null) {
               comment.append("\nchanged attributes - ");
-              for (ASTCDAttribute attribute : typeDiffStruc.getMemberDiff().b) {
+              for (ASTCDAttribute attribute : typeDiffStruct.getMemberDiff().b) {
                 comment
                     .append(attribute.getName())
                     .append(" from ")
-                    .append(getOldAtt(attribute, typeDiffStruc).getMCType().printType())
+                    .append(getOldAtt(attribute, typeDiffStruct).getMCType().printType())
                     .append(" to ")
                     .append(attribute.getMCType().printType());
               }
             }
-            if (typeDiffStruc.getDeletedAttributes() != null) {
+            if (typeDiffStruct.getDeletedAttributes() != null) {
               comment.append("\ndeleted attributes - ");
-              for (ASTCDAttribute attribute : typeDiffStruc.getDeletedAttributes().b) {
+              for (ASTCDAttribute attribute : typeDiffStruct.getDeletedAttributes().b) {
                 comment.append(attribute.getName());
               }
             }
@@ -169,14 +170,14 @@ public class TestHelper {
   }
 
   public void addedConstants() {
-    for (TypeDiffStruc typeDiffStruc : syntaxDiff.changedTypes()) {
-      if (typeDiffStruc.getAddedConstants() != null) {
-        for (ASTCDEnumConstant constant : typeDiffStruc.getAddedConstants().b) {
-          ASTCDClass astcdClass = getClassForEnum((ASTCDEnum) typeDiffStruc.getAstcdType());
+    for (TypeDiffStruct typeDiffStruct : syntaxDiff.changedTypes()) {
+      if (typeDiffStruct.getAddedConstants() != null) {
+        for (ASTCDEnumConstant constant : typeDiffStruct.getAddedConstants().b) {
+          ASTCDClass astcdClass = getClassForEnum((ASTCDEnum) typeDiffStruct.getAstcdType());
           if (astcdClass != null) {
             System.out.println(
                 "In the enum "
-                    + typeDiffStruc.getAstcdType().getSymbol().getInternalQualifiedName()
+                    + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                     + " the following constant is added: "
                     + constant.getName());
             System.out.println("=======================================================");
@@ -298,7 +299,7 @@ public class TestHelper {
     }
   }
 
-  private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruc diffStruc) {
+  private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruct diffStruc) {
     for (Pair<ASTCDAttribute, ASTCDAttribute> pair : diffStruc.getMatchedAttributes()) {
       if (pair.a.equals(attribute)) {
         return pair.b;

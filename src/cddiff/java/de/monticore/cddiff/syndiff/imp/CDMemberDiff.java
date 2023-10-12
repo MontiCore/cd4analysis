@@ -59,6 +59,24 @@ public class CDMemberDiff extends SyntaxDiffHelper implements ICDMemberDiff {
     return tgtElem;
   }
 
+  public boolean areTypesChanged() {
+    int indexSrc = ((ASTCDAttribute) srcElem).getMCType().printType().lastIndexOf(".");
+    int indexTgt = ((ASTCDAttribute) tgtElem).getMCType().printType().lastIndexOf(".");
+    if (indexSrc == -1 && indexTgt == -1) {
+      return !((ASTCDAttribute) srcElem).getMCType().printType()
+          .equals(((ASTCDAttribute) tgtElem).getMCType().printType());
+    } else if (indexSrc == -1) {
+      return !((ASTCDAttribute) srcElem).getMCType().printType()
+          .equals(((ASTCDAttribute) tgtElem).getMCType().printType().substring(indexTgt + 1));
+    } else if (indexTgt == -1) {
+      return !((ASTCDAttribute) srcElem).getMCType().printType().substring(indexSrc + 1)
+          .equals(((ASTCDAttribute) tgtElem).getMCType().printType());
+    } else {
+      return !((ASTCDAttribute) srcElem).getMCType().printType().substring(indexSrc + 1)
+          .equals(((ASTCDAttribute) tgtElem).getMCType().printType().substring(indexTgt + 1));
+    }
+  }
+
   /*--------------------------------------------------------------------*/
   /**
    * Creates a list of differences between two CD attributes (source and target).

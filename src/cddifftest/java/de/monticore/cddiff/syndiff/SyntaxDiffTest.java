@@ -22,7 +22,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -43,7 +43,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -63,7 +63,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD2.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -83,7 +83,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD3.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -103,7 +103,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD4.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -123,7 +123,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD5.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -143,7 +143,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD6.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -163,7 +163,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -183,7 +183,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD8.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -203,7 +203,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD12.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -223,7 +223,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD22.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -243,7 +243,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD32.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();

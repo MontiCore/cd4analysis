@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruc;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffs;
 import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
-import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruc;
+import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruct;
 import de.monticore.cddiff.syndiff.imp.CDAssocDiff;
 import de.monticore.cddiff.syndiff.imp.CDTypeDiff;
 import de.monticore.cddiff.syndiff.imp.DiffTypes;
@@ -191,7 +191,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of TypeDiffStruc (all changes for each type).
    */
-  List<TypeDiffStruc> changedTypes();
+  List<TypeDiffStruct> changedTypes();
 
   /**
    * Get a list of all changed associations.

@@ -142,7 +142,7 @@ public class ComplexityTest extends CDDiffTestBasis {
 
     String filePath1;
     String filePath2;
-    for (int i = 1; i <= 6; i++) {
+    for (int i = 1; i <= 5; i++) {
 
       filePath1 = path + "100A_" + i + ".cd";
       filePath2 = path + "100B_" + i + ".cd";

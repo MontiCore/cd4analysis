@@ -18,13 +18,14 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
 public class DiffWitnessGenerator {
-  private final Syn2SemDiffHelper helper = Syn2SemDiffHelper.getInstance();
+  private final Syn2SemDiffHelper helper;
   private final ODBuilder odBuilder = new ODBuilder();
   private Map<ASTCDClass, Integer> map = new HashMap<>();
   private final int maxNumberOfClasses;
 
-  public DiffWitnessGenerator(int maxNumberOfClasses) {
+  public DiffWitnessGenerator(int maxNumberOfClasses, Syn2SemDiffHelper helper) {
     this.maxNumberOfClasses = 2 * maxNumberOfClasses;
+    this.helper = helper;
   }
 
   public int getNumberOfObjects(Set<Package> packages) {
@@ -78,69 +79,36 @@ public class DiffWitnessGenerator {
       return null;
     }
     if (cardinalityLeft == 1 && cardinalityRight == 1) {
-      Package pack =
-          new Package(
-              pair.a,
-              getNameForClass(pair.a),
-              pair.b,
-              getNameForClass(pair.b),
-              association,
-              null,
-              false,
-              false);
+      Package pack = new Package(pair.a, getNameForClass(pair.a),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
       addToMaps(pack, mapSrc, mapTgt);
       objectSet.add(pack);
     } else if (cardinalityLeft == 2 && cardinalityRight == 1) {
-      Package pack1 =
-          new Package(
-              pair.a,
-              getNameForClass(pair.a),
-              pair.b,
-              getNameForClass(pair.b),
-              association,
-              null,
-              false,
-              false);
-      Package pack2 =
-          new Package(
-              pair.a,
-              getNameForClass(pair.a),
-              pack1.getRightObject(),
-              association,
-              null,
-              false,
-              false);
+      Package pack1 = new Package(pair.a, getNameForClass(pair.a),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
+      Package pack2 = new Package(pair.a, getNameForClass(pair.a),
+        pack1.getRightObject(),
+        association, null, false, false, helper);
       addToMaps(pack1, mapSrc, mapTgt);
       addToMaps(pack2, mapSrc, mapTgt);
       objectSet.add(pack1);
       objectSet.add(pack2);
     } else if (cardinalityLeft == 1 && cardinalityRight == 2) {
-      Package pack1 =
-          new Package(
-              pair.a,
-              getNameForClass(pair.a),
-              pair.b,
-              getNameForClass(pair.b),
-              association,
-              null,
-              false,
-              false);
-      Package pack2 =
-          new Package(
-              pack1.getLeftObject(),
-              pair.b,
-              getNameForClass(pair.b),
-              association,
-              null,
-              false,
-              false);
+      Package pack1 = new Package(pair.a, getNameForClass(pair.a),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
+      Package pack2 = new Package(pack1.getLeftObject(),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
       addToMaps(pack1, mapSrc, mapTgt);
       addToMaps(pack2, mapSrc, mapTgt);
       objectSet.add(pack1);
       objectSet.add(pack2);
     } else if (cardinalityLeft == 0 || cardinalityRight == 0) {
-      Package pack = new Package(pair.a, getNameForClass(pair.a));
-      Package pack2 = new Package(pair.b, getNameForClass(pair.b));
+      Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
+      Package pack2 = new Package(pair.b, getNameForClass(pair.b), helper);
       objectSet.add(pack);
       objectSet.add(pack2);
     }
@@ -303,10 +271,9 @@ public class DiffWitnessGenerator {
             helper.getSuperClasses(astcdClass),
             helper.getAttributesOD(astcdClass, pair));
     if (helper.getSrcMap().get(astcdClass).isEmpty()) {
-      Package pack = new Package(srcObject);
+      Package pack = new Package(srcObject, helper);
       packages.add(pack);
     }
-    boolean mustHaveAdded = false;
     boolean hasAdded = false;
     List<AssocStruct> list = helper.getSrcMap().get(astcdClass);
     for (AssocStruct assocStruct : list) {
@@ -320,7 +287,6 @@ public class DiffWitnessGenerator {
         ASTCDClass subclass =
             helper.minSubClass(
                 getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b);
-        mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = srcObject;
         }
@@ -361,9 +327,7 @@ public class DiffWitnessGenerator {
         hasAdded = true;
         mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
         mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Right));
-        Package pack =
-            new Package(
-                srcObject, tgtObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
+        Package pack = new Package(srcObject, tgtObject, assocStruct.getAssociation(), ClassSide.Left, true, false, helper);
         packages.add(pack);
 
       } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -373,7 +337,6 @@ public class DiffWitnessGenerator {
         ASTCDClass leftClass =
             getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
         ASTCDClass subclass = helper.minSubClass(leftClass);
-        mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = srcObject;
         }
@@ -415,9 +378,7 @@ public class DiffWitnessGenerator {
         hasAdded = true;
         mapSrc.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
         mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Left));
-        Package pack =
-            new Package(
-                tgtObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true);
+        Package pack = new Package(tgtObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true, helper);
         packages.add(pack);
       }
     }
@@ -467,14 +428,7 @@ public class DiffWitnessGenerator {
         hasAdded = true;
         mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
         mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Right));
-        Package pack =
-            new Package(
-                realSrcObject,
-                srcObject,
-                assocStruct.getAssociation(),
-                ClassSide.Right,
-                false,
-                true);
+        Package pack = new Package(realSrcObject, srcObject, assocStruct.getAssociation(), ClassSide.Right, false, true, helper);
         packages.add(pack);
 
       } else {
@@ -522,19 +476,12 @@ public class DiffWitnessGenerator {
         hasAdded = true;
         mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
         mapTgt.put(srcObject, new Pair<>(assocStruct, ClassSide.Left));
-        Package pack =
-            new Package(
-                srcObject,
-                realSrcObject,
-                assocStruct.getAssociation(),
-                ClassSide.Left,
-                true,
-                false);
+        Package pack = new Package(srcObject, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false, helper);
         packages.add(pack);
       }
     }
     if (!hasAdded) {
-      Package pack = new Package(srcObject);
+      Package pack = new Package(srcObject, helper);
       packages.add(pack);
     }
     //    for (Package pack : packages) {
@@ -607,7 +554,6 @@ public class DiffWitnessGenerator {
         }
       }
     }
-    boolean mustHaveAdded = false;
     boolean hasAdded = false;
     for (AssocStruct assocStruct : list) {
       ASTODObject tgtObject = null;
@@ -618,7 +564,6 @@ public class DiffWitnessGenerator {
         ASTCDClass rightClass =
             getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b;
         ASTCDClass sub = helper.minSubClass(rightClass);
-        mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = object;
         }
@@ -670,15 +615,11 @@ public class DiffWitnessGenerator {
           return null;
         }
 
-        if (tgtObject != null) {
           hasAdded = true;
           mapSrc.put(object, new Pair<>(assocStruct, ClassSide.Left));
           mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Right));
-          Package pack =
-              new Package(
-                  object, tgtObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
+          Package pack = new Package(object, tgtObject, assocStruct.getAssociation(), ClassSide.Left, true, false, helper);
           packages.add(pack);
-        }
 
       } else if (assocStruct.getSide().equals(ClassSide.Right)
           && assocStruct.isToBeProcessed()
@@ -687,7 +628,6 @@ public class DiffWitnessGenerator {
         ASTCDClass leftClass =
             getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a;
         ASTCDClass sub = helper.minSubClass(leftClass);
-        mustHaveAdded = true;
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = object;
         }
@@ -739,15 +679,11 @@ public class DiffWitnessGenerator {
           return null;
         }
 
-        if (tgtObject != null) {
           hasAdded = true;
           mapSrc.put(object, new Pair<>(assocStruct, ClassSide.Right));
           mapTgt.put(tgtObject, new Pair<>(assocStruct, ClassSide.Left));
-          Package pack =
-              new Package(
-                  tgtObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true);
+          Package pack = new Package(tgtObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true, helper);
           packages.add(pack);
-        }
       }
     }
     for (AssocStruct assocStruct : getTgtAssocsForObject(object, mapSrc, mapTgt)) {
@@ -765,7 +701,7 @@ public class DiffWitnessGenerator {
                   mapSrc,
                   mapTgt);
         }
-        if (realSrcObject != null) {
+        if (realSrcObject == null) {
           realSrcObject =
               getSubRealSrc(
                   leftClass,
@@ -806,9 +742,7 @@ public class DiffWitnessGenerator {
         hasAdded = true;
         mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Left));
         mapTgt.put(object, new Pair<>(assocStruct, ClassSide.Right));
-        Package pack =
-            new Package(
-                realSrcObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true);
+        Package pack = new Package(realSrcObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true, helper);
         packages.add(pack);
       } else {
         ASTCDClass rightClass =
@@ -823,7 +757,7 @@ public class DiffWitnessGenerator {
                   mapSrc,
                   mapTgt);
         }
-        if (realSrcObject != null) {
+        if (realSrcObject == null) {
           realSrcObject =
               getSubRealSrc(
                   rightClass,
@@ -858,14 +792,12 @@ public class DiffWitnessGenerator {
         hasAdded = true;
         mapSrc.put(realSrcObject, new Pair<>(assocStruct, ClassSide.Right));
         mapTgt.put(object, new Pair<>(assocStruct, ClassSide.Left));
-        Package pack =
-            new Package(
-                object, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false);
+        Package pack = new Package(object, realSrcObject, assocStruct.getAssociation(), ClassSide.Left, true, false, helper);
         packages.add(pack);
       }
     }
     if (!hasAdded) {
-      Package pack = new Package(object);
+      Package pack = new Package(object, helper);
       packages.add(pack);
     }
     //    for (Package pack : packages) {
@@ -1093,7 +1025,7 @@ public class DiffWitnessGenerator {
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> srcMap,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> tgtMap) {
     List<ASTCDClass> subClasses =
-        Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), tgtToFind);
+        helper.getSrcSubMap().get(tgtToFind);
     for (ASTCDClass subClass : subClasses) {
       List<ASTODObject> objectsOfType = getObjectsOfType(subClass, tgtMap);
       List<ASTODObject> objectsOfTypeSrc = getObjectsOfType(subClass, srcMap);
@@ -1317,7 +1249,7 @@ public class DiffWitnessGenerator {
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> srcMap,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> tgtMap) {
     List<ASTCDClass> subClasses =
-        Syn2SemDiffHelper.getSpannedInheritance(helper.getSrcCD(), srcToFind);
+        helper.getSrcSubMap().get(srcToFind);
     for (ASTCDClass subClass : subClasses) {
       List<ASTODObject> objectsOfType = getObjectsOfType(subClass, srcMap);
       List<ASTODObject> objectsOfTypeTgt = getObjectsOfType(subClass, tgtMap);
@@ -1753,7 +1685,7 @@ public class DiffWitnessGenerator {
     return null;
   }
 
-  // ************** Idead for adding "Singletons" to the model **************
+  // ************** Idea for adding "Singletons" to the model **************
   // Singletons allow only one object of that class
   // No change to getTgtObject/getSrcObject needed - if the relation allows many, we have no prob;
   // if it gets matched - we can't take this object
@@ -1832,21 +1764,18 @@ public class DiffWitnessGenerator {
             getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).b,
             getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).b)) {
       return true;
-    } else if (subAssoc.getSide().equals(ClassSide.Right)
-        && superAssoc.getSide().equals(ClassSide.Right)
-        && CDAssociationHelper.matchRoleNames(
+    } else return subAssoc.getSide().equals(ClassSide.Right)
+            && superAssoc.getSide().equals(ClassSide.Right)
+            && CDAssociationHelper.matchRoleNames(
             superAssoc.getAssociation().getLeft(), subAssoc.getAssociation().getRight())
-        && CDAssociationHelper.matchRoleNames(
+            && CDAssociationHelper.matchRoleNames(
             superAssoc.getAssociation().getRight(), subAssoc.getAssociation().getLeft())
-        && isSubClass(
+            && isSubClass(
             getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).a,
             getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).b)
-        && isSubClass(
+            && isSubClass(
             getConnectedClasses(superAssoc.getAssociation(), helper.getSrcCD()).b,
-            getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a)) {
-      return true;
-    }
-    return false;
+            getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a);
   }
 
   public List<AssocStruct> getTgtAssocsForObject(

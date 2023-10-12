@@ -22,7 +22,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD102.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.changedAssocs();
   }
 
@@ -33,7 +33,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD52.cd");
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.changedAssocs();
   }
 
@@ -45,7 +45,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD72.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.changedAssocs();
   }
 
@@ -57,7 +57,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD82.cd");
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
     testHelper.changedAssocs();
   }
 
