@@ -426,6 +426,7 @@ public class Syn2SemDiffHelper {
             Syn2SemDiffHelper.cardToEnum(cardinalities.getRightCardinalities().a),
             Syn2SemDiffHelper.cardToEnum(cardinalities.getRightCardinalities().b));
     association.getAssociation().setCDAssocDir(direction);
+    association.setDirection(getDirection(association.getAssociation()));
     if (association.getSide().equals(ClassSide.Left)) {
       association
           .getAssociation()
