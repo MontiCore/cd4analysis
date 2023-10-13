@@ -1,7 +1,5 @@
 package de.monticore.cddiff;
 
-import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
@@ -13,7 +11,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestMax extends CDDiffTestBasis {
@@ -231,9 +228,7 @@ public class TestMax extends CDDiffTestBasis {
     //    }
   }
 
-  // TODO: Tsveti - addAllChangedAssocs
   @Test
-  @Ignore
   public void testEA() {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/cddiff/EAv2.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/EAv1.cd");

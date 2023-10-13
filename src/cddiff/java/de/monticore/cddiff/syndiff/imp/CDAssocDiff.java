@@ -42,7 +42,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
 
   NameTypeMatcher nameTypeMatch;
   StructureTypeMatcher structureTypeMatch;
-  SuperTypeMatcher superTypeMatch;
+  SuperTypeMatcher superTypeMatchStructure;
+  SuperTypeMatcher superTypeMatchName;
   List<MatchingStrategy<ASTCDType>> typeMatchers;
   // Print
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -81,11 +82,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     this.baseDiff = new ArrayList<>();
     nameTypeMatch = new NameTypeMatcher(tgtCD);
     structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    superTypeMatch = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    superTypeMatchName = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    superTypeMatchStructure = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
     typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
     typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatch);
+    typeMatchers.add(superTypeMatchStructure);
+    typeMatchers.add(superTypeMatchName);
     srcCDTypes = new ArrayList<>();
     srcCDTypes.add(
         srcCD
@@ -529,7 +532,48 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
         computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
 
-    if (computedMatchingMapTypes.get(srcLeftType).equals(tgtLeftType)
+    for(Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
+      if( (entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType)) ||
+        (entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtRightType)) ) {
+        isReversed = false;
+        getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getLeft());
+        if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+            }
+          }
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+            }
+          }
+        }
+        getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getRight());
+        if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+            }
+          }
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+            }
+          }
+        }
+      }
+    }
+
+    /*if (computedMatchingMapTypes.get(srcLeftType).equals(tgtLeftType)
         || computedMatchingMapTypes.get(srcRightType).equals(tgtRightType)) {
       isReversed = false;
       getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getLeft());
@@ -566,8 +610,50 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
           }
         }
       }
+    }*/
+
+    for(Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
+      if( (entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtRightType)) ||
+        (entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtLeftType)) ) {
+        isReversed = true;
+        getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getRight());
+        if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+            }
+          }
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+            }
+          }
+        }
+        getAssocSideDiff(srcAssoc.getRight(), tgtAssoc.getLeft());
+        if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+            }
+          }
+          if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            && !srcAssoc.getCDAssocDir().isBidirectional()) {
+            baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+            if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+              baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+            }
+          }
+        }
+      }
     }
-    if (computedMatchingMapTypes.get(srcLeftType).equals(tgtRightType)
+
+    /*if (computedMatchingMapTypes.get(srcLeftType).equals(tgtRightType)
         || computedMatchingMapTypes.get(srcRightType).equals(tgtLeftType)) {
       isReversed = true;
       getAssocSideDiff(srcAssoc.getLeft(), tgtAssoc.getRight());
@@ -604,7 +690,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
           }
         }
       }
-    }
+    }*/
 
     srcLineOfCode = srcAssoc.get_SourcePositionStart().getLine();
     tgtLineOfCode = tgtAssoc.get_SourcePositionStart().getLine();

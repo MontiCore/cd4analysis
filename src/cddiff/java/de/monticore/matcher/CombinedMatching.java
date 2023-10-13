@@ -120,10 +120,12 @@ public class CombinedMatching<T> {
     List<MatchingStrategy<ASTCDType>> matcherList = new ArrayList<>();
     NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
     StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    SuperTypeMatcher superTypeMatch = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchName = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchStructure = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
     matcherList.add(nameTypeMatch);
     matcherList.add(structureTypeMatch);
-    matcherList.add(superTypeMatch);
+    matcherList.add(superTypeMatchName);
+    matcherList.add(superTypeMatchStructure);
 
     Optional<CDTypeSymbol> srcTypeSymbolLeft =
         srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getLeftQualifiedName().getQName());

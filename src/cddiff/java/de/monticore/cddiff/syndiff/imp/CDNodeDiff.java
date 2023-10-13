@@ -3,7 +3,6 @@ package de.monticore.cddiff.syndiff.imp;
 import de.monticore.ast.ASTNode;
 import java.util.Optional;
 
-/** TODO: Write Comments */
 public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
   protected Actions action;
   protected final Optional<SrcType> srcValue;
