@@ -402,7 +402,6 @@ tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
   options.deprecation false
   options.warnings = false
-  options.fork = true
   options.headerOutputDirectory.convention(null)
 }
 
