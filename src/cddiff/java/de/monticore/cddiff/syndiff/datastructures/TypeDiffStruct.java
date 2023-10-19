@@ -9,15 +9,19 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
 
+/**
+ * Data structure for preparing the differences related to changed types - ASTCDClass or ASTCDEnum.
+ * The corresponding attributes are set if they lead to a semantic difference.
+ * Otherwise, they are null.
+ */
 public class TypeDiffStruct {
   private ASTCDType astcdType;
-  private Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes;
-  private Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes;
-  private Pair<ASTCDClass, List<ASTCDAttribute>> memberDiff;
-  private ASTCDType changedStereotype;
-
-  private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes;
-  private Pair<ASTCDEnum, List<ASTCDEnumConstant>> addedConstants;
+  private Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes = null;
+  private Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes = null;
+  private Pair<ASTCDClass, List<ASTCDAttribute>> memberDiff = null;
+  private ASTCDType changedStereotype = null;
+  private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes = null;
+  private Pair<ASTCDEnum, List<ASTCDEnumConstant>> addedConstants = null;
 
   private List<DiffTypes> baseDiff;
 

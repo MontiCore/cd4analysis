@@ -2,12 +2,18 @@ package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 
-public class DeleteStruc {
+/**
+ * This is used to merge overlapping associations.
+ * Attribute association: base association to merge superAssoc into.
+ * Attribute superAssoc: superAssociation.
+ * Attribute astcdClass: class from which superAssoc must be removed.
+ */
+public class DeleteStruct {
   private AssocStruct association;
   private AssocStruct superAssoc;
   private ASTCDClass astcdClass;
 
-  public DeleteStruc(AssocStruct association, AssocStruct superAssoc, ASTCDClass astcdClass) {
+  public DeleteStruct(AssocStruct association, AssocStruct superAssoc, ASTCDClass astcdClass) {
     this.association = association;
     this.superAssoc = superAssoc;
     this.astcdClass = astcdClass;

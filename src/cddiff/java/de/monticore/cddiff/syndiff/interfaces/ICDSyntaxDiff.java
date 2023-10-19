@@ -3,7 +3,7 @@ package de.monticore.cddiff.syndiff.interfaces;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruc;
+import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruct;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffs;
 import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
 import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruct;
@@ -198,7 +198,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of AssocDiffStruc (all changes for each association).
    */
-  List<AssocDiffStruc> changedAssoc();
+  List<AssocDiffStruct> changedAssoc();
 
   /**
    * Get a list of all classes that can be instantiated in srcCD, but not in trgCD because of

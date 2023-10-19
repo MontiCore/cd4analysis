@@ -259,6 +259,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   }
 
   // CHECKED
+  //TODO: not needed
   @Override
   public ASTCDType isClassNeeded() {
     ASTCDClass srcCLass = (ASTCDClass) getSrcElem();

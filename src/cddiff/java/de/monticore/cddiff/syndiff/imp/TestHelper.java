@@ -4,7 +4,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruc;
+import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruct;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
 import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruct;
@@ -188,46 +188,46 @@ public class TestHelper {
   }
 
   public void changedAssocs() {
-    for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()) {
+    for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
       Pair<ASTCDClass, ASTCDClass> pair =
           Syn2SemDiffHelper.getConnectedClasses(
-              assocDiffStruc.getAssociation(), syntaxDiff.getSrcCD());
+              assocDiffStruct.getAssociation(), syntaxDiff.getSrcCD());
       String comment =
           "In the association between "
               + pair.a.getSymbol().getInternalQualifiedName()
               + " and "
               + pair.b.getSymbol().getInternalQualifiedName()
               + " the following is changed: ";
-      if (assocDiffStruc.isChangedDir()) {
+      if (assocDiffStruct.isChangedDir()) {
         comment =
             comment
                 + "\ndirection - "
-                + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
+                + Syn2SemDiffHelper.getDirection(assocDiffStruct.getAssociation()).toString();
       }
-      if (assocDiffStruc.getChangedCard() != null && !assocDiffStruc.getChangedCard().isEmpty()) {
-        comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
+      if (assocDiffStruct.getChangedCard() != null && !assocDiffStruct.getChangedCard().isEmpty()) {
+        comment = comment + "\ncardinalities - " + assocDiffStruct.getChangedCard().toString();
       }
-      if (assocDiffStruc.getChangedRoleNames() != null
-          && !assocDiffStruc.getChangedRoleNames().isEmpty()) {
+      if (assocDiffStruct.getChangedRoleNames() != null
+          && !assocDiffStruct.getChangedRoleNames().isEmpty()) {
         comment = comment + "\nrole name -";
         Iterator<Pair<ClassSide, ASTCDRole>> roleName =
-            assocDiffStruc.getChangedRoleNames().iterator();
+            assocDiffStruct.getChangedRoleNames().iterator();
         while (roleName.hasNext()) {
           Pair<ClassSide, ASTCDRole> pair1 = roleName.next();
           comment = comment + " (" + pair1.a + " to " + pair1.b.getName() + ")";
         }
       }
-      if (assocDiffStruc.getChangedTgt() != null) {
+      if (assocDiffStruct.getChangedTgt() != null) {
         comment =
             comment
                 + "\nchanged target - "
-                + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
+                + assocDiffStruct.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
-      if (assocDiffStruc.getChangedSrc() != null) {
+      if (assocDiffStruct.getChangedSrc() != null) {
         comment =
             comment
                 + "\nchanged source - "
-                + assocDiffStruc.getChangedSrc().getSymbol().getInternalQualifiedName();
+                + assocDiffStruct.getChangedSrc().getSymbol().getInternalQualifiedName();
       }
       System.out.println(comment);
       System.out.println("=======================================================");

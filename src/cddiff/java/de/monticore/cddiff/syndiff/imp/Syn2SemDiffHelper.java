@@ -27,6 +27,11 @@ import de.monticore.odbasis._ast.ASTODObject;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
+//TODO: explain why this is needed
+
+/**
+ *
+ */
 public class Syn2SemDiffHelper {
 
   public Syn2SemDiffHelper() {
@@ -680,13 +685,13 @@ public class Syn2SemDiffHelper {
       AssocStruct assocStruct,
       AssocStruct assocStruct2,
       ASTCDClass astcdClass,
-      Set<DeleteStruc> set) {
-    for (DeleteStruc deleteStruc : set) {
-      if (((deleteStruc.getAssociation().equals(assocStruct)
-                  && deleteStruc.getSuperAssoc().equals(assocStruct2))
-              || ((deleteStruc.getAssociation().equals(assocStruct2)
-                  && deleteStruc.getSuperAssoc().equals(assocStruct))))
-          && deleteStruc.getAstcdClass().equals(astcdClass)) {
+      Set<DeleteStruct> set) {
+    for (DeleteStruct deleteStruct : set) {
+      if (((deleteStruct.getAssociation().equals(assocStruct)
+                  && deleteStruct.getSuperAssoc().equals(assocStruct2))
+              || ((deleteStruct.getAssociation().equals(assocStruct2)
+                  && deleteStruct.getSuperAssoc().equals(assocStruct))))
+          && deleteStruct.getAstcdClass().equals(astcdClass)) {
         return true;
       }
     }
@@ -2749,5 +2754,119 @@ public class Syn2SemDiffHelper {
       }
     }
     return false;
+  }
+
+  // CHECKED
+  public boolean hasDiffSuper(ASTCDClass astcdClass) {
+    ASTCDClass oldClass = findMatchedClass(astcdClass);
+    List<ASTCDClass> oldCLasses = getSuperClasses(tgtCD, oldClass);
+    List<ASTCDClass> newClasses = getSuperClasses(srcCD, astcdClass);
+    for (ASTCDClass class1 : oldCLasses) {
+      boolean foundMatch = false;
+      for (ASTCDClass class2 : newClasses) {
+        if (findMatchedSrc(class1) == class2) {
+          foundMatch = true;
+          break;
+        }
+      }
+      if (!foundMatch) {
+        return true;
+      }
+    }
+    for (ASTCDClass class1 : newClasses) {
+      boolean foundMatch = false;
+      for (ASTCDClass class2 : oldCLasses) {
+        if (findMatchedClass(class1) == class2) {
+          foundMatch = true;
+          break;
+        }
+      }
+      if (!foundMatch) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  /**
+   * Delete associations from srcMap with a specific role name
+   *
+   * @param astcdClass source class
+   * @param role role name
+   */
+  public void deleteAssocsFromSrc(ASTCDClass astcdClass, ASTCDRole role) {
+    Iterator<AssocStruct> iterator = getSrcMap().get(astcdClass).iterator();
+    while (iterator.hasNext()) {
+      AssocStruct assocStruct = iterator.next();
+      if (assocStruct.getSide().equals(ClassSide.Left)
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
+        deleteAssocOtherSideSrc(assocStruct);
+        iterator.remove();
+      }
+      if (assocStruct.getSide().equals(ClassSide.Right)
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
+        deleteAssocOtherSideSrc(assocStruct);
+        iterator.remove();
+      }
+    }
+  }
+
+  // CHECKED
+  public void deleteCompositions() {
+    for (ASTCDAssociation association :
+      srcCD.getCDDefinition().getCDAssociationsList()) {
+      Pair<ASTCDClass, ASTCDClass> pair =
+        Syn2SemDiffHelper.getConnectedClasses(association, srcCD);
+      AssocStruct assocStruct = getAssocStructByUnmod(pair.a, association);
+      if (association.getCDAssocType().isComposition() && assocStruct != null) {
+        if (getNotInstClassesSrc().contains(pair.b)) {
+          updateSrc(pair.a);
+          for (ASTCDClass subClass : getSrcSubMap().get(pair.a)) {
+            getSrcMap().removeAll(subClass);
+            updateSrc(subClass);
+          }
+        }
+      }
+    }
+
+    for (ASTCDAssociation association :
+      tgtCD.getCDDefinition().getCDAssociationsList()) {
+      Pair<ASTCDClass, ASTCDClass> pair =
+        Syn2SemDiffHelper.getConnectedClasses(association, tgtCD);
+      AssocStruct assocStruct = getAssocStructByUnmod(pair.a, association);
+      if (association.getCDAssocType().isComposition() && assocStruct != null) {
+        if (getNotInstClassesTgt().contains(pair.b)) {
+          updateTgt(pair.a);
+          for (ASTCDClass subClass : getTgtSubMap().get(pair.a)) {
+            getTgtMap().removeAll(subClass);
+            updateTgt(subClass);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Delete associations from trgMap with a specific role name
+   *
+   * @param astcdClass source class
+   * @param role role name
+   */
+  public void deleteAssocsFromTgt(ASTCDClass astcdClass, ASTCDRole role){
+    Iterator<AssocStruct> iterator = getTgtMap().get(astcdClass).iterator();
+    while (iterator.hasNext()){
+      AssocStruct assocStruct = iterator.next();
+      if (assocStruct.getSide().equals(ClassSide.Left)
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
+        deleteAssocOtherSideTgt(assocStruct);
+        iterator.remove();
+      }
+      if (assocStruct.getSide().equals(ClassSide.Right)
+        && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
+        deleteAssocOtherSideTgt(assocStruct);
+        iterator.remove();
+      }
+    }
   }
 }

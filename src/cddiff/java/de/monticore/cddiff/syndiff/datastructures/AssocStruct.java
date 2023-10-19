@@ -2,6 +2,17 @@ package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 
+/**
+ * Data structure for associations. This is used as overlapping associations must be handled - merging and deleting of associations.
+ * Attribute association: modified association - might not be changed.
+ * Attribute direction: direction of the association. If the association is bidirectional, two AssocStructs for this association exist in the map, as it has two source classes.
+ * Attribute side: side on which the source class is.
+ * Attribute isSuperAssoc: true if the association is a super association.
+ * Attribute unmodifiedAssoc: the base version of the association.
+ * Attribute toBeProcessed: false if a loop association that is a subassociation of this one exists - smaller object diagrams can be generated through this.
+ * There is a 1:1 relationship between associations and AssocStructs if the AssocStruct mustn't be deleted because of overlapping.
+ * Because of that the unmodified association is used to get the corresponding AssocStruct for an association. If such isn't found, the association is deleted because of overlapping.
+ */
 public class AssocStruct {
   ASTCDAssociation association;
   AssocDirection direction;

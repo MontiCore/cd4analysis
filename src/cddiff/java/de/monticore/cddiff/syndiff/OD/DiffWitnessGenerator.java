@@ -23,11 +23,22 @@ public class DiffWitnessGenerator {
   private Map<ASTCDClass, Integer> map = new HashMap<>();
   private final int maxNumberOfClasses;
 
+  /**
+   * Constructor for DiffWitnessGenerator.
+   * Set the maximum number of classes to be used in the witness.
+   * @param maxNumberOfClasses maximum number of classes to be used in the witness.
+   * @param helper helper for accessing the maps with AssocStructs.
+   */
   public DiffWitnessGenerator(int maxNumberOfClasses, Syn2SemDiffHelper helper) {
     this.maxNumberOfClasses = 2 * maxNumberOfClasses;
     this.helper = helper;
   }
 
+  /**
+   * Get number of generated objects in the diagram.
+   * @param packages set of packages.
+   * @return number of generated objects in the diagram.
+   */
   public int getNumberOfObjects(Set<Package> packages) {
     List<ASTODObject> list = new ArrayList<>();
     for (Package pack : packages) {
@@ -41,6 +52,13 @@ public class DiffWitnessGenerator {
     return list.size();
   }
 
+  /**
+   * Get objects that have yet not been processed.
+   * Those are objects that had their attribute
+   * isProcessed set to false in all containing packages.
+   * @param packages set of packages.
+   * @return set of unprocessed objects.
+   */
   public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
     Map<ASTODObject, Set<Boolean>> unprocessedMap = new HashMap<>();
 
@@ -67,6 +85,19 @@ public class DiffWitnessGenerator {
     return unprocessedObjects;
   }
 
+  /**
+   * Create the elements for an object diagram
+   * starting from a given association.
+   * If the difference of the association is in the cardinalities,
+   * then the cardinalities are used. Otherwise, the cardinalities
+   * are set to 1.
+   * @param association association to start from.
+   * @param cardinalityLeft cardinality of the left side of the association.
+   * @param cardinalityRight cardinality of the right side of the association.
+   * @param mapSrc map of objects that are used as source.
+   * @param mapTgt map of objects that are used as target.
+   * @return set of packages that contain the elements of the object diagram.
+   */
   public Set<Package> createChains(
       ASTCDAssociation association,
       int cardinalityLeft,
@@ -115,6 +146,11 @@ public class DiffWitnessGenerator {
     return objectSet;
   }
 
+  /**
+   * Get the two non0-abstract class to use for an association.
+   * @param association association.
+   * @return pair of classes to use (or null if such don't exist).
+   */
   public Pair<ASTCDClass, ASTCDClass> getClassesToUse(ASTCDAssociation association) {
     Pair<ASTCDClass, ASTCDClass> pair = getConnectedClasses(association, helper.getSrcCD());
     Pair<ASTCDClass, ASTCDClass> toUse;
@@ -135,6 +171,14 @@ public class DiffWitnessGenerator {
     return toUse;
   }
 
+  /**
+   * Update the two maps based on a created package.
+   * This means that the associated objects are updated in
+   * the corresponding maps.
+   * @param pack package that was created.
+   * @param mapSrc map of objects that are used as source.
+   * @param mapTgt map of objects that are used as target.
+   */
   private void addToMaps(
       Package pack,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
@@ -173,7 +217,17 @@ public class DiffWitnessGenerator {
     }
   }
 
-  // Get objects for class
+  /**
+   * Create the elements for an object diagram
+   * starting from a given class.
+   * If the difference is based on an added constant,
+   * the pair is used.
+   * @param astcdClass class to start from.
+   * @param pair pair of attribute and enum constant.
+   * @return set of successfully created elements.
+   * If the set is empty, an object diagram for this
+   * class isn't possible.
+   */
   public Set<ASTODElement> getObjForOD(ASTCDClass astcdClass, Pair<ASTCDAttribute, String> pair) {
     Set<ASTODElement> set = new HashSet<>();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc =
@@ -212,7 +266,17 @@ public class DiffWitnessGenerator {
     return set;
   }
 
-  // Get objects for association
+  /**
+   * Create the elements for an object diagram
+   * starting from a given class.
+   * @param association association to start from.
+   * @param cardinalityLeft cardinality of the left side of the association.
+   * @param cardinalityRight cardinality of the right side of the association.
+   * @return pair of successfully created elements with
+   * the link that causes the semantic difference.
+   * If the set is empty, an object diagram for this
+   * association isn't possible.
+   */
   public Pair<Set<ASTODElement>, ASTODElement> getObjForOD(
       ASTCDAssociation association, int cardinalityLeft, int cardinalityRight) {
     Set<ASTODElement> set = new HashSet<>();
@@ -256,6 +320,21 @@ public class DiffWitnessGenerator {
     return new Pair<>(set, link);
   }
 
+  /**
+   * Create a new object for a class.
+   * This is only used at the start of the algorithm for creating object diagrams.
+   * The function considers only associations that are needed based on the cardinality and their attribute toBeProcessed is set to true.
+   * The function works based on the side of the AssocStruct in the map. Because of that the sides of objects in the Packages correspond to the sides of the AssocStructs in the maps.
+   * The function first computes the cases where the class is source and in the second part it computes the cases where the class is target.
+   * When packages are created, for the other associated objects the attribute isProcessed is set to false, as here we process only the given class.
+   * @param astcdClass class to create object for.
+   * @param packages current set of packages.
+   * @param mapSrc map of objects that are used as source.
+   * @param mapTgt map of objects that are used as target.
+   * @param pair pair of attribute and enum constant.
+   * @return set of packages that contain the current elements of the object diagram.
+   * If the set is null, for a needed association a source or target object couldn't be created.
+   */
   public Set<Package> createChainsForNewClass(
       ASTCDClass astcdClass,
       Set<Package> packages,
@@ -493,6 +572,16 @@ public class DiffWitnessGenerator {
     return packages;
   }
 
+  /**
+   * The function works in the same way as createChainsForNewClass, but here the class was already created for another association.
+   * Because of that the created associations are removed from the list of associations that are needed to be processed and only the rest must be considered.
+   * @param object object to create associations for.
+   * @param packages current set of packages.
+   * @param mapSrc map of objects that are used as source.
+   * @param mapTgt map of objects that are used as target.
+   * @return set of packages that contain the current elements of the object diagram.
+   * If the set is null, for a needed association a source or target object couldn't be created.
+   */
   public Set<Package> createChainsForExistingObj(
       ASTODObject object,
       Set<Package> packages,
@@ -809,7 +898,17 @@ public class DiffWitnessGenerator {
     return packages;
   }
 
-  // add change to srcObject - done
+  /**
+   * Search for a possible target object (strictly of the needed type) for a given class.
+   * The function firstly checks, if the target class can be connected to multiple objects of the source type. If yes, the function returns a random object of the source type.
+   * If not, the function uses the two maps and compares the created associations with the needed one. If the association is matched with the given one, the function proceeds to the next object (this already has the association).
+   * @param srcClass source class in the association.
+   * @param assocStruct association that must be created.
+   * @param tgtToFind target class in the association to search for.
+   * @param srcMap map of objects that are used as source.
+   * @param tgtMap map of objects that are used as target.
+   * @return target object of the needed type or null.
+   */
   public ASTODObject getTgtObject(
       ASTCDClass srcClass,
       AssocStruct assocStruct,
@@ -1018,6 +1117,16 @@ public class DiffWitnessGenerator {
     return null;
   }
 
+  /**
+   * Search for a possible target object (subclasses of the needed type) for a given class.
+   * This function works in a similar way as getTgtObject, but here objects from the underlying hierarchy are used.
+   * @param srcClass source class in the association.
+   * @param assocStruct association that must be created.
+   * @param tgtToFind target class in the association to search for.
+   * @param srcMap map of objects that are used as source.
+   * @param tgtMap map of objects that are used as target.
+   * @return target object of the needed type or null.
+   */
   public ASTODObject getSubTgtObject(
       ASTCDClass srcClass,
       AssocStruct assocStruct,
@@ -1242,6 +1351,16 @@ public class DiffWitnessGenerator {
     return null;
   }
 
+  /**
+   * Search for a possible source object (subclasses of the needed type) for a given class.
+   * This function works in a similar way as getRealSrc, but here objects from the underlying hierarchy are used.
+   * @param srcToFind source class in the association to search for.
+   * @param assocStruct association that must be created.
+   * @param tgtClass target class in the association.
+   * @param srcMap map of objects that are used as source.
+   * @param tgtMap map of objects that are used as target.
+   * @return source object of the needed type or null.
+   */
   public ASTODObject getSubRealSrc(
       ASTCDClass srcToFind,
       AssocStruct assocStruct,
@@ -1483,6 +1602,17 @@ public class DiffWitnessGenerator {
     return assocStructs;
   }
 
+  /**
+   * Search for a possible source object (strictly of the needed type) for a given class.
+   * The function firstly checks, if the source class can be connected to multiple objects of the target type. If yes, the function returns a random object of the target type.
+   * If not, the function uses the two maps and compares the created associations with the needed one. If the association is matched with the given one, the function proceeds to the next object (this already has the association).
+   * @param srcToFind source class in the association to search for.
+   * @param assocStruct association that must be created.
+   * @param tgtClass target class in the association.
+   * @param srcMap map of objects that are used as source.
+   * @param tgtMap map of objects that are used as target.
+   * @return source object of the needed type or null.
+   */
   public ASTODObject getRealSrc(
       ASTCDClass srcToFind,
       AssocStruct assocStruct,
@@ -1685,14 +1815,13 @@ public class DiffWitnessGenerator {
     return null;
   }
 
-  // ************** Idea for adding "Singletons" to the model **************
-  // Singletons allow only one object of that class
-  // No change to getTgtObject/getSrcObject needed - if the relation allows many, we have no prob;
-  // if it gets matched - we can't take this object
-  // Change only to creating new objects - if the class is a singleton, we have to check if there is
-  // already an object of that class
-  // If there is one, we return null, as we can't instantiate a new object
-
+  /**
+   * Check if the given class is a singleton and if already an object exists.
+   * @param astcdClass class to check.
+   * @param srcMap map of objects that are used as source.
+   * @param tgtMap map of objects that are used as target.
+   * @return true, if the class is a singleton and an object already exists.
+   */
   public boolean singletonObj(
       ASTCDClass astcdClass,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> srcMap,
@@ -1703,6 +1832,12 @@ public class DiffWitnessGenerator {
             || !getObjectsOfType(astcdClass, tgtMap).isEmpty());
   }
 
+  /**
+   * Get all objects of a given type.
+   * @param astcdClass type.
+   * @param map map to search in for.
+   * @return list of objects of the given type.
+   */
   public List<ASTODObject> getObjectsOfType(
       ASTCDClass astcdClass, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> map) {
     List<ASTODObject> objects = new ArrayList<>();
@@ -1778,6 +1913,14 @@ public class DiffWitnessGenerator {
             getConnectedClasses(subAssoc.getAssociation(), helper.getSrcCD()).a);
   }
 
+  /**
+   * Get all associations that are not created yet for a given class.
+   * This is based on comparison of associations.
+   * @param tgtObject target class in the associations.
+   * @param mapSrc map of objects that are used as source.
+   * @param mapTgt map of objects that are used as target.
+   * @return list of associations that are not created yet.
+   */
   public List<AssocStruct> getTgtAssocsForObject(
       ASTODObject tgtObject,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
@@ -1798,6 +1941,12 @@ public class DiffWitnessGenerator {
     return list;
   }
 
+  /**
+   * Name the object of a given class.
+   * Name: class name + _ + index.
+   * @param astcdClass class to name.
+   * @return name of the object.
+   */
   public String getNameForClass(ASTCDClass astcdClass) {
     map.putIfAbsent(astcdClass, 0);
     map.put(astcdClass, map.get(astcdClass) + 1);

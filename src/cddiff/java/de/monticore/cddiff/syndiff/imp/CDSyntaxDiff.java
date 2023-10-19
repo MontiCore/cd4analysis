@@ -297,10 +297,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public boolean isInheritanceDeleted(ASTCDClass astcdClass, ASTCDClass subClassTgt) {
-    // check if a deleted class brings a semantic difference
-    // check if all subclasses have the attributes from this class from tgt tgtCD
-    // check if there were outgoing(or bidirectional) associations that weren't zero assocs and
-    // check if all subclasses have them
     ASTCDClass subClass = helper.findMatchedSrc(subClassTgt);
     Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
     if (subClass != null) {
@@ -353,8 +349,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         return true;
       }
     }
-    // check if there were outgoing(or bidirectional) associations that weren't zero assocs and
-    // check if all subclasses have them - done (only outgoing are saved to the values of a key)
     return false;
   }
 
@@ -389,14 +383,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     for (Pair<ASTCDClass, Set<ASTCDClass>> pair : added) {
       InheritanceDiff diff =
           new InheritanceDiff(new Pair<>(pair.a, helper.findMatchedClass(pair.a)));
-      diff.setNewDirectSuper(new ArrayList<>(pair.b));
+      diff.setNewSuperClasses(new ArrayList<>(pair.b));
       set.add(diff);
     }
     for (Pair<ASTCDClass, Set<ASTCDClass>> pair : deleted) {
       boolean holds = false;
       for (InheritanceDiff diff : set) {
         if (pair.a.equals(diff.getAstcdClasses().b)) {
-          diff.setOldDirectSuper(new ArrayList<>(pair.b));
+          diff.setDeletedSuperClasses(new ArrayList<>(pair.b));
           holds = true;
           break;
         }
@@ -404,7 +398,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       if (!holds) {
         InheritanceDiff diff =
             new InheritanceDiff(new Pair<>(helper.findMatchedSrc(pair.a), pair.a));
-        diff.setOldDirectSuper(new ArrayList<>(pair.b));
+        diff.setDeletedSuperClasses(new ArrayList<>(pair.b));
         set.add(diff);
       }
     }
@@ -414,10 +408,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public boolean isInheritanceAdded(ASTCDClass astcdClass, ASTCDClass subClass) {
-    // reversed case
-    // check if new attributes existed in the given subclass - use function from CDTypeDiff
-    // check if the associations also existed(are subtypes of the associations) in the tgtMap - same
-    // subfunction from isClassDeleted
     Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
     if (subClass != null) {
       for (ASTCDAttribute attribute : allAtts.b) {
@@ -445,8 +435,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         }
       }
     }
-    // check if there were outgoing(or bidirectional) associations that weren't zero assocs and
-    // check if all subclasses have them - only outgoing are saved in the map
     boolean isContained = false;
     for (AssocStruct assocStruct : getHelper().getSrcMap().get(astcdClass)) {
       if (areZeroAssocs(assocStruct, assocStruct)) {
@@ -626,11 +614,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     Set<ASTCDClass> srcToDelete = new HashSet<>();
     Set<Pair<ASTCDClass, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
     Set<Pair<AssocStruct, AssocStruct>> srcAssocsToMerge = new HashSet<>();
-    Set<DeleteStruc> srcAssocsToMergeWithDelete = new HashSet<>();
+    Set<DeleteStruct> srcAssocsToMergeWithDelete = new HashSet<>();
     Set<ASTCDClass> tgtToDelete = new HashSet<>();
     Set<Pair<AssocStruct, AssocStruct>> tgtAssocsToMerge = new HashSet<>();
     Set<Pair<ASTCDClass, ASTCDRole>> tgtAssocsToDelete = new HashSet<>();
-    Set<DeleteStruc> tgtAssocsToMergeWithDelete = new HashSet<>();
+    Set<DeleteStruct> tgtAssocsToMergeWithDelete = new HashSet<>();
     for (ASTCDClass astcdClass : helper.getSrcMap().keySet()) {
       for (AssocStruct association : helper.getSrcMap().get(astcdClass)) {
         if (!association.isSuperAssoc()) {
@@ -643,29 +631,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                         || superAssoc.getDirection().equals(AssocDirection.BiDirectional))) {
                   Log.error("Bad overlapping found");
                 }
-                // same target role names and target classes are in inheritance relation
-                // associations need to be merged
                 srcAssocsToMergeWithDelete.add(
-                    new DeleteStruc(association, superAssoc, astcdClass));
+                    new DeleteStruct(association, superAssoc, astcdClass));
               } else if (isInConflict(association, superAssoc)
                   && !helper.inInheritanceRelation(association, superAssoc)) {
-                // two associations with same target role names, but target classes are not in
-                // inheritance relation
-                // if trg cardinality on one of them is 0..1 or 0..* then such association can't
-                // exist
-                // if trg cardinality on one of them is 1 or 1..* then such association can't exist
-                // and also no objects of this type can exist
                 if (areZeroAssocs(association, superAssoc)) {
-                  // such association can't exist
-                  // delete
                   srcAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
                 } else {
-                  // such class can't exist
-                  // delete
-                  System.out.println("class " + astcdClass.getName() + " cannot be instantiated because of");
-                  System.out.println("association " + association.getAssociation().getLeftQualifiedName() + " " + association.getAssociation().getRightQualifiedName());
-                  System.out.println("superassociation " + superAssoc.getAssociation().getLeftQualifiedName() + " " + superAssoc.getAssociation().getRightQualifiedName());
                   helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
                 }
@@ -673,13 +646,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
             } else if (!association.equals(superAssoc)
                 && !superAssoc.isSuperAssoc()
                 && !association.isSuperAssoc()) {
-              // comparison between direct associations
               if ((helper.sameAssocStruct(association, superAssoc)
                       || helper.sameAssocStructInReverse(association, superAssoc))
                   && !helper.isAdded(
                       association, superAssoc, astcdClass, srcAssocsToMergeWithDelete)) {
                 srcAssocsToMergeWithDelete.add(
-                    new DeleteStruc(association, superAssoc, astcdClass));
+                    new DeleteStruct(association, superAssoc, astcdClass));
               } else if (isInConflict(association, superAssoc)
                   && helper.inInheritanceRelation(association, superAssoc)) {
                 srcAssocsToMerge.add(new Pair<>(association, superAssoc));
@@ -691,8 +663,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                   srcAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
                 } else {
-                  System.out.println("class " + astcdClass.getName() + " cannot be instantiated because of");
-                  System.out.println("association " + association.getAssociation().getLeftQualifiedName() + " " + association.getAssociation().getRightQualifiedName());
                   helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
                 }
@@ -716,7 +686,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                   Log.error("Bad overlapping found");
                 }
                 tgtAssocsToMergeWithDelete.add(
-                    new DeleteStruc(association, superAssoc, astcdClass));
+                    new DeleteStruct(association, superAssoc, astcdClass));
               } else if (isInConflict(association, superAssoc)
                   && !helper.inInheritanceRelation(association, superAssoc)) {
                 if (areZeroAssocs(association, superAssoc)) {
@@ -749,7 +719,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               } else if (helper.sameAssocStruct(association, superAssoc)
                   || helper.sameAssocStructInReverse(association, superAssoc)) {
                 tgtAssocsToMergeWithDelete.add(
-                    new DeleteStruc(association, superAssoc, astcdClass));
+                    new DeleteStruct(association, superAssoc, astcdClass));
               }
             }
           }
@@ -764,13 +734,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         helper.deleteOtherSideSrc(subClass);
       }
     }
-    for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
+    for (DeleteStruct pair : srcAssocsToMergeWithDelete) {
       if (!helper.getNotInstClassesSrc().contains(pair.getAstcdClass())) {
         setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
         mergeAssocs(pair.getAssociation(), pair.getSuperAssoc());
       }
     }
-    for (DeleteStruc pair : srcAssocsToMergeWithDelete) {
+    for (DeleteStruct pair : srcAssocsToMergeWithDelete) {
       helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
     }
     for (Pair<AssocStruct, AssocStruct> pair : srcAssocsToMerge) {
@@ -778,7 +748,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       mergeAssocs(pair.a, pair.b);
     }
     for (Pair<ASTCDClass, ASTCDRole> pair : srcAssocsToDelete) {
-      deleteAssocsFromSrc(pair.a, pair.b);
+      helper.deleteAssocsFromSrc(pair.a, pair.b);
     }
     for (ASTCDClass astcdClass : tgtToDelete) {
       helper.getTgtMap().removeAll(astcdClass);
@@ -788,13 +758,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         helper.getTgtMap().removeAll(subClass);
       }
     }
-    for (DeleteStruc pair : tgtAssocsToMergeWithDelete) {
+    for (DeleteStruct pair : tgtAssocsToMergeWithDelete) {
       if (!helper.getNotInstClassesTgt().contains(pair.getAstcdClass())) {
         setBiDirRoleName(pair.getAssociation(), pair.getSuperAssoc());
         mergeAssocs(pair.getAssociation(), pair.getSuperAssoc());
       }
     }
-    for (DeleteStruc pair : tgtAssocsToMergeWithDelete) {
+    for (DeleteStruct pair : tgtAssocsToMergeWithDelete) {
       helper.getTgtMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
     }
     for (Pair<AssocStruct, AssocStruct> pair : tgtAssocsToMerge) {
@@ -802,93 +772,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       mergeAssocs(pair.a, pair.b);
     }
     for (Pair<ASTCDClass, ASTCDRole> pair : tgtAssocsToDelete) {
-      deleteAssocsFromTgt(pair.a, pair.b);
+      helper.deleteAssocsFromTgt(pair.a, pair.b);
     }
-    deleteCompositions();
+    helper.deleteCompositions();
   }
 
   // CHECKED
-  public void deleteCompositions() {
-    for (ASTCDAssociation association :
-        helper.getSrcCD().getCDDefinition().getCDAssociationsList()) {
-      Pair<ASTCDClass, ASTCDClass> pair =
-          Syn2SemDiffHelper.getConnectedClasses(association, getSrcCD());
-      AssocStruct assocStruct = helper.getAssocStructByUnmod(pair.a, association);
-      if (association.getCDAssocType().isComposition() && assocStruct != null) {
-        if (helper.getNotInstClassesSrc().contains(pair.b)) {
-          helper.updateSrc(pair.a);
-          for (ASTCDClass subClass : helper.getSrcSubMap().get(pair.a)) {
-            helper.getSrcMap().removeAll(subClass);
-            helper.updateSrc(subClass);
-          }
-        }
-      }
-    }
-
-    for (ASTCDAssociation association :
-        helper.getTgtCD().getCDDefinition().getCDAssociationsList()) {
-      Pair<ASTCDClass, ASTCDClass> pair =
-          Syn2SemDiffHelper.getConnectedClasses(association, getTgtCD());
-      AssocStruct assocStruct = helper.getAssocStructByUnmod(pair.a, association);
-      if (association.getCDAssocType().isComposition() && assocStruct != null) {
-        if (helper.getNotInstClassesTgt().contains(pair.b)) {
-          helper.updateTgt(pair.a);
-          for (ASTCDClass subClass : helper.getTgtSubMap().get(pair.a)) {
-            helper.getTgtMap().removeAll(subClass);
-            helper.updateTgt(subClass);
-          }
-        }
-      }
-    }
-  }
 
   // CHECKED
-  /**
-   * Delete associations from srcMap with a specific role name
-   *
-   * @param astcdClass source class
-   * @param role role name
-   */
-  public void deleteAssocsFromSrc(ASTCDClass astcdClass, ASTCDRole role) {
-    Iterator<AssocStruct> iterator = helper.getSrcMap().get(astcdClass).iterator();
-    while (iterator.hasNext()) {
-      AssocStruct assocStruct = iterator.next();
-      if (assocStruct.getSide().equals(ClassSide.Left)
-          && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
-        helper.deleteAssocOtherSideSrc(assocStruct);
-        iterator.remove();
-      }
-      if (assocStruct.getSide().equals(ClassSide.Right)
-          && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
-        helper.deleteAssocOtherSideSrc(assocStruct);
-        iterator.remove();
-      }
-    }
-  }
-
-  // CHECKED
-  /**
-   * Delete associations from trgMap with a specific role name
-   *
-   * @param astcdClass source class
-   * @param role role name
-   */
-  public void deleteAssocsFromTgt(ASTCDClass astcdClass, ASTCDRole role){
-    Iterator<AssocStruct> iterator = helper.getTgtMap().get(astcdClass).iterator();
-    while (iterator.hasNext()){
-      AssocStruct assocStruct = iterator.next();
-      if (assocStruct.getSide().equals(ClassSide.Left)
-          && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
-        helper.deleteAssocOtherSideTgt(assocStruct);
-        iterator.remove();
-      }
-      if (assocStruct.getSide().equals(ClassSide.Right)
-          && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
-        helper.deleteAssocOtherSideTgt(assocStruct);
-        iterator.remove();
-      }
-    }
-  }
 
   // CHECKED
   @Override
@@ -992,8 +883,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
 
   // CHECKED
   @Override
-  public List<AssocDiffStruc> changedAssoc() {
-    List<AssocDiffStruc> list = new ArrayList<>();
+  public List<AssocDiffStruct> changedAssoc() {
+    List<AssocDiffStruct> list = new ArrayList<>();
     for (CDAssocDiff assocDiff : changedAssocs) {
       Pair<AssocStruct, AssocStruct> matchedPairs =
           helper.getStructsForAssocDiff(assocDiff.getSrcElem(), assocDiff.getTgtElem());
@@ -1013,7 +904,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           && pair.b != null
           && !helper.getNotInstClassesSrc().contains(pair.a)
           && !helper.getNotInstClassesSrc().contains(pair.b)) {
-        AssocDiffStruc diff = new AssocDiffStruc();
+        AssocDiffStruct diff = new AssocDiffStruct();
         diff.setAssociation(assocDiff.getSrcElem());
         boolean changed = false;
         assocDiff.setStructs();
@@ -1049,7 +940,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
             changed = true;
           }
         }
-        // Tsveti - done
         if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
 
           ASTCDClass change = assocDiff.changedTgt();
@@ -1084,7 +974,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   // CHECKED
-  // TODO: check again
+  // TODO: not needed
   @Override
   public List<ASTCDClass> tgtExistsSrcNot() {
     // for each class, and each AssocStrcut in the tgtMap if the cardinality on the same side is 1
@@ -1177,6 +1067,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return new ArrayList<>(classes);
   }
 
+  //TODO: move next 6 methods to helper; add matchedAssocs to helper
   // CHECKED
   public List<AssocStruct> addedAssocsForClass(ASTCDClass astcdClass) {
     List<AssocStruct> list = new ArrayList<>();
@@ -1289,44 +1180,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     for (ASTCDClass astcdClass : helper.getSrcMap().keySet()) {
       ASTCDClass matchedClass = helper.findMatchedClass(astcdClass);
       if (matchedClass != null && !helper.getNotInstClassesTgt().contains(matchedClass)) {
-        if (hasDiffSuper(astcdClass)) {
+        if (helper.hasDiffSuper(astcdClass)) {
           list.add(astcdClass);
         }
       }
     }
     return list;
-  }
-
-  // CHECKED
-  public boolean hasDiffSuper(ASTCDClass astcdClass) {
-    ASTCDClass oldClass = helper.findMatchedClass(astcdClass);
-    List<ASTCDClass> oldCLasses = getSuperClasses(tgtCD, oldClass);
-    List<ASTCDClass> newClasses = getSuperClasses(srcCD, astcdClass);
-    for (ASTCDClass class1 : oldCLasses) {
-      boolean foundMatch = false;
-      for (ASTCDClass class2 : newClasses) {
-        if (helper.findMatchedSrc(class1) == class2) {
-          foundMatch = true;
-          break;
-        }
-      }
-      if (!foundMatch) {
-        return true;
-      }
-    }
-    for (ASTCDClass class1 : newClasses) {
-      boolean foundMatch = false;
-      for (ASTCDClass class2 : oldCLasses) {
-        if (helper.findMatchedClass(class1) == class2) {
-          foundMatch = true;
-          break;
-        }
-      }
-      if (!foundMatch) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /*--------------------------------------------------------------------*/

@@ -6,7 +6,12 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
 
-public class AssocDiffStruc {
+/**
+ * Data structure for preparing the differences related to changed associations.
+ * The corresponding attributes are set if they lead to a semantic difference.
+ * Otherwise, they are null or false.
+ */
+public class AssocDiffStruct {
   private ASTCDAssociation association;
   private List<Pair<ClassSide, Integer>> changedCard = null;
   private List<Pair<ClassSide, ASTCDRole>> changedRoleNames = null;
@@ -14,7 +19,7 @@ public class AssocDiffStruc {
   private ASTCDClass changedSrc = null;
   private boolean changedDir = false;
 
-  public AssocDiffStruc() {}
+  public AssocDiffStruct() {}
 
   public List<Pair<ClassSide, Integer>> getChangedCard() {
     return changedCard;

@@ -33,12 +33,27 @@ public class DiffHelper {
     return helper;
   }
 
-  //TODO: add diff limit, diff size, optional for overlapping
+  /**
+   * Create a DiffHelper to compare the two diagrams without
+   * limitations on the generated objects.
+   * @param srcCD source diagram
+   * @param tgtCD target diagram
+   */
   public DiffHelper(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.helper = syntaxDiff.getHelper();
   }
 
+  /**
+   * Create a DiffHelper to compare the two diagrams with
+   * a limit on the number of generated objects.
+   * @param srcCD source diagram
+   * @param tgtCD target diagram
+   * @param diffLimit maximum number of generated diagrams
+   * @param diffSize maximum number of objects in the generated diagrams
+   * @param analyseOverlapping if true, overlapping associations are analysed (for Open-World diff)
+   * If diffLimit or diffSize is 0, then there is no limit.
+   */
   public DiffHelper(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, int diffLimit, int diffSize, boolean analyseOverlapping) {
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.helper = syntaxDiff.getHelper();
@@ -51,9 +66,16 @@ public class DiffHelper {
     }
   }
 
-  //multi-instance and simple - remove superclasses - done
-  //if an association cannot be instatiated with the given classes, then it should be instantiated with the minDiffWitness - done
-  //create such association
+  //TODO: multi-instance
+
+  /**
+   * Generates a list of ODs for the given diagrams.
+   * For each change in the diagrams, the element (class or association) is
+   * annotated with <<diff>> and a comment is added.
+   * The diffLimit and diffSize are respected.
+   * @param staDiff if true, the ODs are generated under Multi-Instance semantics
+   * @return list of ODs.
+   */
   public List<ASTODArtifact> generateODs(boolean staDiff) {
     List<ASTODArtifact> artifactList = new ArrayList<>();
     for (Pair<ASTCDAssociation, List<ASTCDClass>> association : syntaxDiff.addedAssocList()) {
@@ -185,61 +207,61 @@ public class DiffHelper {
       }
     }
 
-    for (AssocDiffStruc assocDiffStruc : syntaxDiff.changedAssoc()) {
+    for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
       Pair<ASTCDClass, ASTCDClass> pair =
-          Syn2SemDiffHelper.getConnectedClasses(assocDiffStruc.getAssociation(), helper.getSrcCD());
+          Syn2SemDiffHelper.getConnectedClasses(assocDiffStruct.getAssociation(), helper.getSrcCD());
       String comment =
           "In the association between "
               + pair.a.getSymbol().getInternalQualifiedName()
               + " and "
               + pair.b.getSymbol().getInternalQualifiedName()
               + " the following is changed: ";
-      if (assocDiffStruc.isChangedDir()) {
+      if (assocDiffStruct.isChangedDir()) {
         comment =
             comment
                 + "\ndirection - "
-                + Syn2SemDiffHelper.getDirection(assocDiffStruc.getAssociation()).toString();
+                + Syn2SemDiffHelper.getDirection(assocDiffStruct.getAssociation()).toString();
       }
-      if (assocDiffStruc.getChangedCard() != null && !assocDiffStruc.getChangedCard().isEmpty()) {
-        comment = comment + "\ncardinalities - " + assocDiffStruc.getChangedCard().toString();
+      if (assocDiffStruct.getChangedCard() != null && !assocDiffStruct.getChangedCard().isEmpty()) {
+        comment = comment + "\ncardinalities - " + assocDiffStruct.getChangedCard().toString();
       }
-      if (assocDiffStruc.getChangedRoleNames() != null
-          && !assocDiffStruc.getChangedRoleNames().isEmpty()) {
-        comment = comment + "\nrole name - " + assocDiffStruc.getChangedRoleNames().toString();
+      if (assocDiffStruct.getChangedRoleNames() != null
+          && !assocDiffStruct.getChangedRoleNames().isEmpty()) {
+        comment = comment + "\nrole name - " + assocDiffStruct.getChangedRoleNames().toString();
       }
-      if (assocDiffStruc.getChangedTgt() != null) {
+      if (assocDiffStruct.getChangedTgt() != null) {
         comment =
             comment
                 + "\nchanged target - "
-                + assocDiffStruc.getChangedTgt().getSymbol().getInternalQualifiedName();
+                + assocDiffStruct.getChangedTgt().getSymbol().getInternalQualifiedName();
       }
-      if (assocDiffStruc.getChangedSrc() != null) {
+      if (assocDiffStruct.getChangedSrc() != null) {
         comment =
             comment
                 + "\nchanged source - "
-                + assocDiffStruc.getChangedSrc().getSymbol().getInternalQualifiedName();
+                + assocDiffStruct.getChangedSrc().getSymbol().getInternalQualifiedName();
       }
       ArrayList<Integer> list = new ArrayList<>();
       // if both cardinalities are changed, then two ODs must be generated - done
-      if (assocDiffStruc.getChangedCard() != null && assocDiffStruc.getChangedCard().isEmpty()) {
+      if (assocDiffStruct.getChangedCard() != null && assocDiffStruct.getChangedCard().isEmpty()) {
         list.add(1);
         list.add(1);
-      } else if (assocDiffStruc.getChangedCard() != null
-          && assocDiffStruc.getChangedCard().size() == 1) {
-        if (assocDiffStruc.getChangedCard().get(0).a == ClassSide.Left) {
-          list.add(assocDiffStruc.getChangedCard().get(0).b);
+      } else if (assocDiffStruct.getChangedCard() != null
+          && assocDiffStruct.getChangedCard().size() == 1) {
+        if (assocDiffStruct.getChangedCard().get(0).a == ClassSide.Left) {
+          list.add(assocDiffStruct.getChangedCard().get(0).b);
           list.add(1);
         } else {
           list.add(1);
-          list.add(assocDiffStruc.getChangedCard().get(0).b);
+          list.add(assocDiffStruct.getChangedCard().get(0).b);
         }
-      } else if (assocDiffStruc.getChangedCard() != null) {
-        if (assocDiffStruc.getChangedCard().get(0).a == ClassSide.Left) {
-          list.add(assocDiffStruc.getChangedCard().get(0).b);
-          list.add(assocDiffStruc.getChangedCard().get(1).b);
+      } else if (assocDiffStruct.getChangedCard() != null) {
+        if (assocDiffStruct.getChangedCard().get(0).a == ClassSide.Left) {
+          list.add(assocDiffStruct.getChangedCard().get(0).b);
+          list.add(assocDiffStruct.getChangedCard().get(1).b);
         } else {
-          list.add(assocDiffStruc.getChangedCard().get(1).b);
-          list.add(assocDiffStruc.getChangedCard().get(0).b);
+          list.add(assocDiffStruct.getChangedCard().get(1).b);
+          list.add(assocDiffStruct.getChangedCard().get(0).b);
         }
       }
       if (list.isEmpty()) {
@@ -249,8 +271,8 @@ public class DiffHelper {
       if (list.get(0) == 0 && list.get(1) == 0) {
         ASTODArtifact astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruc.getAssociation()),
-                generateElements(assocDiffStruc.getAssociation(), list, comment)
+                oDTitleForAssoc(assocDiffStruct.getAssociation()),
+                generateElements(assocDiffStruct.getAssociation(), list, comment)
             );
         if (astodArtifact != null && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact);
@@ -263,8 +285,8 @@ public class DiffHelper {
         list.set(1, 1);
         ASTODArtifact astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruc.getAssociation()),
-                generateElements(assocDiffStruc.getAssociation(), list1, comment)
+                oDTitleForAssoc(assocDiffStruct.getAssociation()),
+                generateElements(assocDiffStruct.getAssociation(), list1, comment)
             );
         if (astodArtifact != null) {
           artifactList.add(astodArtifact);
@@ -273,8 +295,8 @@ public class DiffHelper {
         list.set(0, 1);
         ASTODArtifact astodArtifact2 =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruc.getAssociation()),
-                generateElements(assocDiffStruc.getAssociation(), list2, comment)
+                oDTitleForAssoc(assocDiffStruct.getAssociation()),
+                generateElements(assocDiffStruct.getAssociation(), list2, comment)
             );
         if (astodArtifact != null && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact2);
@@ -499,6 +521,18 @@ public class DiffHelper {
     return null;
   }
 
+  /**
+   * Generate an object diagram for the given class.
+   * The class is annotated with <<diff>> and a comment is added.
+   * The pair contains the attribute and the name of the enum constant.
+   * It is used if the diff-witness is related to an added constant.
+   * If the pair is null, then the diff-witness is not
+   * related to an added constant.
+   * @param astcdClass class that causes the diff.
+   * @param comment comment for the diff.
+   * @param pair attribute and name of the enum constant.
+   * @return list of OD elements.
+   */
   public List<ASTODElement> generateElements(
       ASTCDClass astcdClass, String comment, Pair<ASTCDAttribute, String> pair) {
     Set<ASTODElement> elements;
@@ -536,6 +570,15 @@ public class DiffHelper {
     return new ArrayList<>(elements);
   }
 
+  /**
+   * Generate an object diagram for the given association.
+   * The association is annotated with <<diff>> and a comment is added.
+   * @param association association that causes the diff.
+   * @param association association that causes the diff.
+   * @param integers cardinalities for the diff.
+   * @param comment comment for the diff.
+   * @return list of OD elements.
+   */
   public List<ASTODElement> generateElements(ASTCDAssociation association,
                                              List<Integer> integers,
                                              String comment) {
@@ -568,6 +611,12 @@ public class DiffHelper {
     return new ArrayList<>(elements);
   }
 
+  /**
+   * Generate an object diagram for a given diff-witness.
+   * @param name name of the OD.
+   * @param astodElementList list of OD elements.
+   * @return object diagram.
+   */
   public static ASTODArtifact generateArtifact(
       String name, List<ASTODElement> astodElementList) {
     if (astodElementList.isEmpty()) {
@@ -593,6 +642,11 @@ public class DiffHelper {
     return OD4ReportMill.oDArtifactBuilder().setObjectDiagram(astObjectDiagram).build();
   }
 
+  /**
+   * Generate a title for OD for the given association.
+   * @param association association that causes the diff.
+   * @return title for OD.
+   */
   public String oDTitleForAssoc(ASTCDAssociation association) {
     String srcName;
     String tgtName;
@@ -615,6 +669,11 @@ public class DiffHelper {
     return stringBuilder;
   }
 
+  /**
+   * Generate a title for OD for the given class.
+   * @param astcdClass class that causes the diff.
+   * @return title for OD.
+   */
   public String oDTitleForClass(ASTCDClass astcdClass) {
     String stringBuilder =
         "ClassDiff_"
