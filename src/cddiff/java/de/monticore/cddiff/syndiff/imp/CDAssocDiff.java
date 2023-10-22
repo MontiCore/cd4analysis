@@ -24,6 +24,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
+/**
+ * This class computes the differences between two ASTCDAssociation nodes. It analyzes the
+ * role names, cardinalities, direction, and associated classes.
+ */
 public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   private final ASTCDAssociation srcElem;
   private final ASTCDAssociation tgtElem;

@@ -66,7 +66,6 @@ public class DiffHelper {
     }
   }
 
-  //TODO: multi-instance
 
   /**
    * Generates a list of ODs for the given diagrams.
@@ -91,6 +90,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact);
         }
       }
     }
@@ -106,6 +107,8 @@ public class DiffHelper {
         if (artifactList.size() == diffLimit) {
           return artifactList;
         }
+      } else if (astodArtifact != null && diffLimit == 0) {
+        artifactList.add(astodArtifact);
       }
     }
 
@@ -124,6 +127,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact);
         }
       }
     }
@@ -136,6 +141,7 @@ public class DiffHelper {
           && !typeDiffStruct.getAddedAttributes().b.isEmpty()) {
           comment.append("\nadded attributes - ");
           for (ASTCDAttribute attribute : typeDiffStruct.getAddedAttributes().b) {
+            System.out.println("added attribute");
             comment.append(attribute.getName());
           }
         }
@@ -172,6 +178,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact);
         }
       }
     }
@@ -201,6 +209,8 @@ public class DiffHelper {
               if (artifactList.size() == diffLimit) {
                 return artifactList;
               }
+            } else if (astodArtifact != null && diffLimit == 0) {
+              artifactList.add(astodArtifact);
             }
           }
         }
@@ -303,6 +313,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact2);
         }
       }
     }
@@ -333,6 +345,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact);
         }
       }
 
@@ -363,6 +377,8 @@ public class DiffHelper {
             if (artifactList.size() == diffLimit) {
               return artifactList;
             }
+          } else if (astodArtifact != null && diffLimit == 0) {
+            artifactList.add(astodArtifact);
           }
         }
         if (assocDiff.getSrcElem().getCDAssocDir().isDefinitiveNavigableLeft()) {
@@ -374,6 +390,8 @@ public class DiffHelper {
             if (artifactList.size() == diffLimit) {
               return artifactList;
             }
+          } else if (astodArtifact != null && diffLimit == 0) {
+            artifactList.add(astodArtifact);
           }
         }
       }
@@ -394,6 +412,8 @@ public class DiffHelper {
         if (artifactList.size() == diffLimit) {
           return artifactList;
         }
+      } else if (astodArtifact != null && diffLimit == 0) {
+        artifactList.add(astodArtifact);
       }
     }
     for (ASTCDClass astcdClass : assocDiffs.getAllInTgt()) {
@@ -409,6 +429,8 @@ public class DiffHelper {
         if (artifactList.size() == diffLimit) {
           return artifactList;
         }
+      } else if (astodArtifact != null && diffLimit == 0) {
+        artifactList.add(astodArtifact);
       }
     }
     for (ASTCDClass astcdClass : assocDiffs.getMixed()) {
@@ -424,6 +446,8 @@ public class DiffHelper {
         if (artifactList.size() == diffLimit) {
           return artifactList;
         }
+      } else if (astodArtifact != null && diffLimit == 0) {
+        artifactList.add(astodArtifact);
       }
     }
       for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()) {
@@ -436,21 +460,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
-        }
-      }
-      for (ASTCDClass astcdClass : syntaxDiff.tgtExistsSrcNot()) {
-        String comment =
-          "The class "
-            + astcdClass.getSymbol().getInternalQualifiedName()
-            + " can be instantiated without at least one association, because the associated class cannot be instantiated (overlapping).";
-        ASTODArtifact astodArtifact =
-          generateArtifact(
-            oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null));
-        if (astodArtifact != null && diffLimit != 0 && artifactList.size() < diffLimit) {
+        } else if (astodArtifact != null && diffLimit == 0) {
           artifactList.add(astodArtifact);
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
-          }
         }
       }
     }
@@ -469,6 +480,8 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact);
         }
       }
 
@@ -488,6 +501,8 @@ public class DiffHelper {
             if (artifactList.size() == diffLimit) {
               return artifactList;
             }
+          } else if (astodArtifact != null && diffLimit == 0) {
+            artifactList.add(astodArtifact);
           }
         }
       }

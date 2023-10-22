@@ -5,11 +5,17 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.syndiff.OD.DiffHelper;
 import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.imp.SyntaxDiffBuilder;
 import de.monticore.cddiff.syndiff.imp.TestHelper;
 import java.io.IOException;
 import java.util.*;
+
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -255,6 +261,19 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     testHelper.addedAssocs();
   }
 
+  @Test
+  public void testSimpleSem() {
+    ASTCDCompilationUnit compilationUnitNew =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/SS1.cd");
+    ASTCDCompilationUnit compilationUnitOld =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/SS2.cd");
+
+        DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
+        List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+        for (ASTODArtifact witness : witnesses) {
+          System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(witness));
+        }
+  }
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
 

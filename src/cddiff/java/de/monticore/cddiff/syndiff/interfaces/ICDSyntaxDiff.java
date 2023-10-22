@@ -73,8 +73,6 @@ public interface ICDSyntaxDiff {
 
   void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs);
 
-  // Is ASTCDCompilationUnit needed in all functions?
-
   void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums);
 
   void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces);
@@ -209,15 +207,7 @@ public interface ICDSyntaxDiff {
   List<ASTCDClass> srcExistsTgtNot();
 
   /**
-   * Get a list of all classes that can be instantiated in trgCD, but not in srcCD because of
-   * overlapping. Additionally, the classes must be needed for an association in trgCD and srcCd.
-   *
-   * @return list of classes.
-   */
-  List<ASTCDClass> tgtExistsSrcNot();
-
-  /**
-   * Get a list of classes that need an association in srcCD and trgtCd, but the association is not
+   * Get a list of classes that need an association in srcCD and tgtCD, but the association is not
    * instantiatable in srcCD because of overlapping.
    *
    * @return list of classes.
@@ -225,7 +215,7 @@ public interface ICDSyntaxDiff {
   List<ASTCDClass> srcAssocExistsTgtNot();
 
   /**
-   * Get a list of classes that need an association in srcCD and trgtCd, but the association is not
+   * Get a list of classes that need an association in srcCD and tgtCD, but the association is not
    * instantiatable in trgCD because of overlapping.
    *
    * @return list of classes.

@@ -16,7 +16,18 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
+/**
+ * This class is used to generate elements for object diagrams.
+ */
 public class ODBuilder implements IODBuilder {
+  /**
+   * Creates a new attribute with a given value. This is used only when a constant is added
+   * to an enumeration.
+   * @param type The type of the attribute.
+   * @param name The name of the attribute.
+   * @param value The value of the attribute.
+   * @return The created attribute.
+   */
   @Override
   public ASTODAttribute buildAttr(String type, String name, String value) {
     Optional<ASTODAttribute> attribute = Optional.empty();
@@ -30,6 +41,12 @@ public class ODBuilder implements IODBuilder {
     return attribute.get();
   }
 
+  /**
+   * Creates a new attribute without a value.
+   * @param type The type of the attribute.
+   * @param name The name of the attribute.
+   * @return The created attribute.
+   */
   @Override
   public ASTODAttribute buildAttr(String type, String name) {
     Optional<ASTODAttribute> attribute = Optional.empty();
@@ -42,130 +59,14 @@ public class ODBuilder implements IODBuilder {
     return attribute.get();
   }
 
-  private ASTODAttribute createListAttribute(ASTModifier modifier, String name, String value) {
-    ASTODList astodList =
-        OD4ReportMill.oDListBuilder()
-            .addODValue(
-                OD4ReportMill.oDSimpleAttributeValueBuilder()
-                    .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
-                    .build())
-            .addODValue(OD4ReportMill.oDAbsentBuilder().build())
-            .build();
-
-    ASTODAttributeBuilder listAttribute =
-        ODBasisMill.oDAttributeBuilder().setModifier(modifier).setName(name);
-
-    listAttribute
-        .setMCType(
-            OD4ReportMill.mCQualifiedTypeBuilder()
-                .setMCQualifiedName(OD4ReportMill.mCQualifiedNameBuilder().addParts("List").build())
-                .build())
-        .setComplete("=")
-        .setODValue(astodList)
-        .build();
-
-    return listAttribute.build();
-  }
-
-  private ASTODAttribute createSetAttribute(ASTModifier modifier, String name, String value) {
-    ASTODSimpleAttributeValue attributeValue =
-        ODBasisMill.oDSimpleAttributeValueBuilder()
-            .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
-            .build();
-    ASTODAttributeBuilder setAttribute =
-        ODBasisMill.oDAttributeBuilder().setModifier(modifier).setName(name);
-
-    setAttribute
-        .setMCType(
-            OD4ReportMill.mCQualifiedTypeBuilder()
-                .setMCQualifiedName(OD4ReportMill.mCQualifiedNameBuilder().addParts("List").build())
-                .build())
-        .setComplete("=")
-        .setODValue(attributeValue)
-        .build();
-
-    return setAttribute.build();
-  }
-
-  private ASTODAttribute createOptionalAttribute(ASTModifier modifier, String name, String value) {
-    ASTODSimpleAttributeValue attributeValue =
-        ODBasisMill.oDSimpleAttributeValueBuilder()
-            .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
-            .build();
-
-    ASTODAttributeBuilder optAttribute =
-        ODBasisMill.oDAttributeBuilder().setModifier(modifier).setName(name);
-
-    optAttribute
-        .setMCType(
-            OD4ReportMill.mCQualifiedTypeBuilder()
-                .setMCQualifiedName(OD4ReportMill.mCQualifiedNameBuilder().addParts("List").build())
-                .build())
-        .setComplete("=")
-        .setODValue(attributeValue)
-        .build();
-
-    return optAttribute.build();
-  }
-
-  private ASTODAttribute createMapAttribute(ASTModifier modifier, String name, String value) {
-    String[] parts = value.split(",", 2);
-    ASTODMap astodMap =
-        OD4ReportMill.oDMapBuilder()
-            .addODMapElement(
-                OD4ReportMill.oDMapElementBuilder()
-                    .setKey(
-                        OD4ReportMill.oDSimpleAttributeValueBuilder()
-                            .setExpression(
-                                OD4ReportMill.nameExpressionBuilder().setName(parts[0]).build())
-                            .build())
-                    .setVal(
-                        OD4ReportMill.oDSimpleAttributeValueBuilder()
-                            .setExpression(
-                                OD4ReportMill.nameExpressionBuilder().setName(parts[1]).build())
-                            .build())
-                    .build())
-            .addODMapElement(
-                OD4ReportMill.oDMapElementBuilder()
-                    .setKey(OD4ReportMill.oDAbsentBuilder().build())
-                    .setVal(OD4ReportMill.oDAbsentBuilder().build())
-                    .build())
-            .build();
-    ASTODAttributeBuilder mapAttribute =
-        ODBasisMill.oDAttributeBuilder().setModifier(modifier).setName(name);
-    mapAttribute
-        .setMCType(
-            OD4ReportMill.mCQualifiedTypeBuilder()
-                .setMCQualifiedName(OD4ReportMill.mCQualifiedNameBuilder().addParts("Map").build())
-                .build())
-        .setComplete("=")
-        .setODValue(astodMap)
-        .build();
-    return mapAttribute.build();
-  }
-
-  private ASTODAttribute createEnumAttribute(ASTModifier modifier, String name, String value) {
-    ASTODAttributeBuilder attributeBuilder =
-        ODBasisMill.oDAttributeBuilder().setModifier(modifier).setName(name).setComplete("=");
-    attributeBuilder.setName(name);
-    attributeBuilder.setMCType(
-        ODBasisMill.mCQualifiedTypeBuilder()
-            .setMCQualifiedName(
-                ODBasisMill.mCQualifiedNameBuilder()
-                    .setPartsList(Collections.singletonList(name))
-                    .build())
-            .build());
-
-    ASTLiteralExpression expression =
-        ODBasisMill.literalExpressionBuilder()
-            .setLiteral(ODBasisMill.stringLiteralBuilder().setSource(value).build())
-            .build();
-    attributeBuilder.setODValue(
-        ODBasisMill.oDSimpleAttributeValueBuilder().setExpression(expression).build());
-
-    return attributeBuilder.build();
-  }
-
+  /**
+   * Create a new ASTODObject.
+   * @param id The name of the object.
+   * @param type The base type of the object.
+   * @param types The superclasses of the object.
+   * @param attrs All attributes that the class has to contain (from superclasses too).
+   * @return The created object.
+   */
   @Override
   public ASTODObject buildObj(
       String id, String type, Collection<String> types, Collection<ASTODAttribute> attrs) {
@@ -204,6 +105,15 @@ public class ODBuilder implements IODBuilder {
     return objectBuilder.build();
   }
 
+  /**
+   * Create a new link between two objects.
+   * @param srcObj Left object.
+   * @param roleNameSrc Role on the left object.
+   * @param roleNameTgt Role on the right object.
+   * @param trgObj Right object.
+   * @param direction The direction of the link.
+   * @return The created link.
+   */
   @Override
   public ASTODLink buildLink(
       ASTODObject srcObj,
@@ -237,10 +147,10 @@ public class ODBuilder implements IODBuilder {
       linkBuilder.setODLinkDirection(ODLinkMill.oDBiDirBuilder().build()); // bidirektional
     else if (direction == AssocDirection.LeftToRight) {
       linkBuilder.setODLinkDirection(
-          ODLinkMill.oDLeftToRightDirBuilder().build()); // links nach rechts
+          ODLinkMill.oDLeftToRightDirBuilder().build());
     } else if (direction == AssocDirection.RightToLeft) {
       linkBuilder.setODLinkDirection(
-          ODLinkMill.oDRightToLeftDirBuilder().build()); // rechts nach links
+          ODLinkMill.oDRightToLeftDirBuilder().build());
     }
 
     linkBuilder.setLink(true); // nur links

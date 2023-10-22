@@ -18,6 +18,11 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
+/**
+ * This class is responsible for comparing two CD types (classes or enumerations) and
+ * identifying the differences between them. It provides functions to identify
+ * added, deleted, and changed attributes and constants.
+ */
 public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private final ASTCDType srcElem;
   private final ASTCDType tgtElem;
@@ -259,42 +264,11 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   }
 
   // CHECKED
-  //TODO: not needed
   @Override
   public ASTCDType isClassNeeded() {
     ASTCDClass srcCLass = (ASTCDClass) getSrcElem();
     if (!srcCLass.getModifier().isAbstract()) {
       return getSrcElem();
-    } else {
-      // wrong - check if those associations exist in the old CD - done
-      if (helper.getSrcSubMap().get((ASTCDClass) srcElem)
-          .isEmpty()) {
-        Set<ASTCDClass> map = helper.getSrcMap().keySet();
-        map.remove((ASTCDClass) getSrcElem());
-        for (ASTCDClass astcdClass : map) {
-          for (AssocStruct assocStruct : helper.getSrcMap().get(astcdClass)) {
-            if (assocStruct.getSide().equals(ClassSide.Left)
-                && Syn2SemDiffHelper.getConnectedClasses(
-                        assocStruct.getAssociation(), helper.getSrcCD())
-                    .b
-                    .equals(srcElem)
-                && helper.findMatchedClass((ASTCDClass) srcElem) != null
-                && helper.classHasAssociationSrcTgt(
-                    assocStruct, helper.findMatchedClass((ASTCDClass) srcElem))) {
-              return astcdClass;
-            } else if (assocStruct.getSide().equals(ClassSide.Right)
-                && Syn2SemDiffHelper.getConnectedClasses(
-                        assocStruct.getAssociation(), helper.getSrcCD())
-                    .a
-                    .equals(srcElem)
-                && helper.findMatchedClass((ASTCDClass) srcElem) != null
-                && helper.classHasAssociationSrcTgt(
-                    assocStruct, helper.findMatchedClass((ASTCDClass) srcElem))) {
-              return astcdClass;
-            }
-          }
-        }
-      }
     }
     return null;
   }

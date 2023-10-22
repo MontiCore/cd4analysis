@@ -27,6 +27,32 @@ public class AssocDiffTest extends CDDiffTestBasis {
   }
 
   @Test
+  public void testCD9() {
+    ASTCDCompilationUnit compilationUnitNew =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD91.cd");
+    ASTCDCompilationUnit compilationUnitOld =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD92.cd");
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
+    System.out.println("Result");
+    testHelper.changedAssocs();
+  }
+
+  @Test
+  public void testCD11() {
+    ASTCDCompilationUnit compilationUnitNew =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD111.cd");
+    ASTCDCompilationUnit compilationUnitOld =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD112.cd");
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
+    System.out.println("Result");
+    testHelper.changedAssocs();
+  }
+
+  @Test
   public void testCD5() {
     ASTCDCompilationUnit compilationUnitNew =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/CD51.cd");
