@@ -248,8 +248,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD32.cd");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
+    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    //TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
+    /*System.out.println("Start");
     testHelper.staDiff();
     testHelper.deletedAssocs();
     testHelper.srcExistsTgtNot();
@@ -258,7 +259,12 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     testHelper.changedAssocs();
     testHelper.addedConstants();
     testHelper.addedClasses();
-    testHelper.addedAssocs();
+    testHelper.addedAssocs();*/
+
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(compilationUnitNew, compilationUnitOld);
+    System.out.println(sb.printOnlyDeleted());
+
+
   }
 
   @Test

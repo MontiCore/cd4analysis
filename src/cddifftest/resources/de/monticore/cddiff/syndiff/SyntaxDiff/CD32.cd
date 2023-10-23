@@ -1,7 +1,7 @@
 import java.lang.*;
 classdiagram CD32{
 
-  abstract class A{}
+  class A{}
 
   class B{
     int age;
@@ -10,5 +10,5 @@ classdiagram CD32{
 
   class D{}
 
-  association D -> (r) B;
+  association [1] D -> (d) B [1];
 }

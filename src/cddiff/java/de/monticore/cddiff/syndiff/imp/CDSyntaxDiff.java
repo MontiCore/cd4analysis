@@ -761,10 +761,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   // CHECKED
-
-  // CHECKED
-
-  // CHECKED
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDClass>>> addedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDClass>>> associationList = new ArrayList<>();

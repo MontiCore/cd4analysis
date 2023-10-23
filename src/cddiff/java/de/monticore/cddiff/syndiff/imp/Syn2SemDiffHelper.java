@@ -1326,7 +1326,6 @@ public class Syn2SemDiffHelper {
    * @param astcdClass class
    * @return Pair of the class and a list of attributes
    */
-  //TODO: Check if this is somehwre used for tgtCD
   public Pair<ASTCDClass, List<ASTCDAttribute>> getAllAttr(ASTCDClass astcdClass) {
     List<ASTCDAttribute> attributes = new ArrayList<>();
     Set<ASTCDType> classes =
@@ -2240,7 +2239,7 @@ public class Syn2SemDiffHelper {
       }
     }
     for (ASTCDClass astcdClass : tgtCD.getCDDefinition().getCDClassesList()) {
-      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
+      List<ASTCDAttribute> attributes = getAllAttrTgt(astcdClass).b;
       for (ASTCDAttribute attribute : attributes) {
         if (sameRoleNameAndClassTgt(attribute.getName(), astcdClass)) {
           notInstClassesTgt.add(astcdClass);
@@ -2430,7 +2429,7 @@ public class Syn2SemDiffHelper {
       if (!subclass.getModifier().isAbstract() && !notInstClassesSrc.contains(subclass)) {
         int attributeCount = getAllAttr(baseClass).b.size();
         int associationCount = getAssociationCount(subclass);
-        int otherAssocsCount = getOtherAssocFromSuper(subclass).size();
+        int otherAssocsCount = getAllOtherAssocsSrc(subclass).size();
         int totalCount = attributeCount + associationCount + otherAssocsCount;
 
         if (totalCount < lowestCount) {
@@ -2443,7 +2442,6 @@ public class Syn2SemDiffHelper {
     return subclassWithLowestCount;
   }
 
-  //TODO: add counter functions for tgt
   public ASTCDClass minSubClassTgt(ASTCDClass baseClass){
     List<ASTCDClass> subClasses = tgtSubMap.get(baseClass);
 
@@ -2453,8 +2451,8 @@ public class Syn2SemDiffHelper {
     for (ASTCDClass subclass : subClasses) {
       if (!subclass.getModifier().isAbstract() && !notInstClassesTgt.contains(subclass)) {
         int attributeCount = getAllAttrTgt(baseClass).b.size();
-        int associationCount = getAssociationCount(subclass);
-        int otherAssocsCount = getOtherAssocFromSuper(subclass).size();
+        int associationCount = getAssociationCountTgt(subclass);
+        int otherAssocsCount = getAllOtherAssocsTgt(subclass).size();
         int totalCount = attributeCount + associationCount + otherAssocsCount;
 
         if (totalCount < lowestCount) {
@@ -2497,6 +2495,42 @@ public class Syn2SemDiffHelper {
                         .a
                         .getSymbol()
                         .getInternalQualifiedName())) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+
+  private int getAssociationCountTgt(ASTCDClass astcdClass){
+    int count = 0;
+    for (AssocStruct assocStruct : tgtMap.get(astcdClass)){
+      if (assocStruct.getSide().equals(ClassSide.Left)){
+        if ((assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne()
+            || assocStruct.getAssociation().getRight().getCDCardinality().isOne())
+            && !getConnectedClasses(assocStruct.getAssociation(), tgtCD)
+            .b
+            .getSymbol()
+            .getInternalQualifiedName()
+            .equals(
+                getConnectedClasses(assocStruct.getAssociation(), tgtCD)
+                    .a
+                    .getSymbol()
+                    .getInternalQualifiedName())) {
+          count++;
+        }
+      } else {
+        if ((assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne()
+            || assocStruct.getAssociation().getLeft().getCDCardinality().isOne())
+            && !getConnectedClasses(assocStruct.getAssociation(), tgtCD)
+            .b
+            .getSymbol()
+            .getInternalQualifiedName()
+            .equals(
+                getConnectedClasses(assocStruct.getAssociation(), tgtCD)
+                    .a
+                    .getSymbol()
+                    .getInternalQualifiedName())) {
           count++;
         }
       }
@@ -2954,7 +2988,7 @@ public class Syn2SemDiffHelper {
       AssocStruct assocStruct = getAssocStructByUnmod(pair.a, association);
       if (association.getCDAssocType().isComposition() && assocStruct != null) {
         if (getNotInstClassesTgt().contains(pair.b)
-          || (pair.b.getModifier().isAbstract() && minSubClass(pair.b) == null)) {
+          || (pair.b.getModifier().isAbstract() && minSubClassTgt(pair.b) == null)) {
           updateTgt(pair.a);
           for (ASTCDClass subClass : getTgtSubMap().get(pair.a)) {
             getTgtMap().removeAll(subClass);

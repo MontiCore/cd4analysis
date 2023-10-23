@@ -24,8 +24,8 @@ public class Package {
   private final ODBuilder ODBuilder = new ODBuilder();
   private final Syn2SemDiffHelper helper;
   public Package(ASTCDClass leftObject, String idSrc, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
-    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
-    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
+    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject, helper));
+    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject, helper));
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
@@ -45,7 +45,7 @@ public class Package {
   }
 
   public Package(ASTCDClass leftObject, String idSrc, ASTODObject rightObject, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
-    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject));
+    this.leftObject = ODBuilder.buildObj(idSrc, leftObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(leftObject), getAttributesOD(leftObject, helper));
     this.rightObject = rightObject;
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
@@ -57,7 +57,7 @@ public class Package {
 
   public Package(ASTODObject leftObject, ASTCDClass rightObject, String idTgt, ASTCDAssociation association, ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, Syn2SemDiffHelper helper) {
     this.leftObject = leftObject;
-    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject));
+    this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(rightObject), getAttributesOD(rightObject, helper));
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association.getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects.requireNonNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
@@ -77,7 +77,7 @@ public class Package {
   }
 
   public Package(ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper){
-    this.leftObject = ODBuilder.buildObj(id, astcdClass.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(astcdClass), getAttributesOD(astcdClass));
+    this.leftObject = ODBuilder.buildObj(id, astcdClass.getSymbol().getInternalQualifiedName(), helper.getSuperClasses(astcdClass), getAttributesOD(astcdClass, helper));
     this.rightObject = null;
     this.association = null;
     this.astcdAssociation = null;
@@ -115,10 +115,7 @@ public class Package {
     return isProcessedRight;
   }
 
-  // add regex for special cases in ODBuilder and add values to primitive type here - done
-  // Check how Integer, Long, Float, Double, Boolean are written(make a diagram and print type) -
-  // done
-  public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass) {
+  public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass, Syn2SemDiffHelper helper) {
     List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
