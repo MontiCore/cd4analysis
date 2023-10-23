@@ -2443,6 +2443,30 @@ public class Syn2SemDiffHelper {
     return subclassWithLowestCount;
   }
 
+  //TODO: add counter functions for tgt
+  public ASTCDClass minSubClassTgt(ASTCDClass baseClass){
+    List<ASTCDClass> subClasses = tgtSubMap.get(baseClass);
+
+    int lowestCount = Integer.MAX_VALUE;
+    ASTCDClass subclassWithLowestCount = null;
+
+    for (ASTCDClass subclass : subClasses) {
+      if (!subclass.getModifier().isAbstract() && !notInstClassesTgt.contains(subclass)) {
+        int attributeCount = getAllAttrTgt(baseClass).b.size();
+        int associationCount = getAssociationCount(subclass);
+        int otherAssocsCount = getOtherAssocFromSuper(subclass).size();
+        int totalCount = attributeCount + associationCount + otherAssocsCount;
+
+        if (totalCount < lowestCount) {
+          lowestCount = totalCount;
+          subclassWithLowestCount = subclass;
+        }
+      }
+    }
+
+    return subclassWithLowestCount;
+  }
+
   // CHECKED
   private int getAssociationCount(ASTCDClass astcdClass) {
     int count = 0;

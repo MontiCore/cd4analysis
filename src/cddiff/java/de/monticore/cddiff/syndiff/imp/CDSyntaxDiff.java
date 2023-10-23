@@ -283,11 +283,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public Set<Pair<ASTCDClass, Set<ASTCDClass>>> deletedInheritance() {
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
     for (Pair<ASTCDClass, List<ASTCDType>> struc : deletedInheritance) {
-      List<ASTCDType> superClasses = struc.b;
+      List<ASTCDType> superClasses = struc.b;//deleted superclasses from tgtCD
       Set<ASTCDClass> currentDiff = new HashSet<>();
       for (ASTCDType superClass : superClasses) {
-        if (!helper.getNotInstClassesSrc().contains(helper.findMatchedSrc(struc.a))
-            && !helper.getNotInstClassesTgt().contains(struc.a)
+        if (!helper.getNotInstClassesSrc().contains(struc.a)
+            && !helper.getNotInstClassesTgt().contains(helper.findMatchedSrc(struc.a))
             && !helper.getNotInstClassesTgt().contains(superClass)
             && isInheritanceDeleted((ASTCDClass) superClass, struc.a)) {
           currentDiff.add((ASTCDClass) superClass);
@@ -303,15 +303,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public boolean isInheritanceDeleted(ASTCDClass astcdClass, ASTCDClass subClassTgt) {
-    ASTCDClass subClass = helper.findMatchedSrc(subClassTgt);
-    Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
-    if (subClass != null) {
+    Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = helper.getAllAttrTgt(astcdClass);
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
-        if (!helper.getNotInstClassesSrc().contains(subClass)
-            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, subClass)) {
+        if (!helper.getNotInstClassesSrc().contains(subClassTgt)
+            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, subClassTgt)) {
           Set<ASTCDType> astcdClassList =
-              getAllSuper(subClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+              getAllSuper(subClassTgt, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass
                 && !helper.getNotInstClassesSrc().contains((ASTCDClass) type)) {
@@ -328,11 +326,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           return true; // Break out of the first loop if the condition is satisfied
         }
       }
-    }
     boolean isContained = false;
     for (AssocStruct assocStruct : getHelper().getTgtMap().get(astcdClass)) {
       if (!areZeroAssocs(assocStruct, assocStruct)) {
-        for (AssocStruct baseAssoc : getHelper().getSrcMap().get(subClass)) {
+        for (AssocStruct baseAssoc : getHelper().getSrcMap().get(subClassTgt)) {
           if (helper.sameAssociationTypeTgtSrc(baseAssoc, assocStruct)) {
             isContained = true;
           }
@@ -346,7 +343,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     }
     for (AssocStruct otherStruct : helper.getAllOtherAssocsTgt(astcdClass)) {
       boolean isContained1 = false;
-      for (AssocStruct srcStruct : helper.getAllOtherAssocsSrc(subClass)) {
+      for (AssocStruct srcStruct : helper.getAllOtherAssocsSrc(subClassTgt)) {
         if (helper.sameAssociationTypeTgtSrc(srcStruct, otherStruct)) {
           isContained1 = true;
         }
@@ -359,7 +356,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   // CHECKED
-  //TODO: check again added and deleted inheritance for wrong methoed use (src/tgt)
   @Override
   public Set<Pair<ASTCDClass, Set<ASTCDClass>>> addedInheritance() {
     Set<Pair<ASTCDClass, Set<ASTCDClass>>> diff = new HashSet<>();
