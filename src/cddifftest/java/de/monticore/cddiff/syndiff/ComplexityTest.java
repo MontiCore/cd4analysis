@@ -8,7 +8,7 @@ import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syndiff.OD.DiffHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;

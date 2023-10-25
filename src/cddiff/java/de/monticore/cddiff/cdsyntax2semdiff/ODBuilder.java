@@ -1,10 +1,7 @@
-package de.monticore.cddiff.syndiff.OD;
+package de.monticore.cddiff.cdsyntax2semdiff;
 
 import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
-import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.od4report.OD4ReportMill;
-import de.monticore.odattribute._ast.ASTODList;
-import de.monticore.odattribute._ast.ASTODMap;
 import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink.ODLinkMill;
@@ -12,7 +9,6 @@ import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODLinkBuilder;
 import de.monticore.odlink._ast.ASTODLinkLeftSideBuilder;
 import de.monticore.odlink._ast.ASTODLinkRightSideBuilder;
-import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -37,6 +33,7 @@ public class ODBuilder implements IODBuilder {
     } catch (Exception exception) {
       Log.error("Attributes couldn't be created");
     }
+    System.out.println(type + " " + name + "=" + value + ";");
     assert Objects.requireNonNull(attribute).isPresent();
     return attribute.get();
   }
@@ -56,6 +53,7 @@ public class ODBuilder implements IODBuilder {
       Log.error("Attributes couldn't be created");
     }
     assert Objects.requireNonNull(attribute).isPresent();
+    System.out.println(type + " " + name + ";");
     return attribute.get();
   }
 

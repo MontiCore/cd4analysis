@@ -1,8 +1,8 @@
 package de.monticore.cddiff.syndiff.interfaces;
 
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cddiff.syndiff.imp.*;
-import de.monticore.cddiff.syndiff.imp.DiffTypes;
+import de.monticore.cddiff.syndiff.semdiff.*;
+import de.monticore.cddiff.syndiff.semdiff.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;

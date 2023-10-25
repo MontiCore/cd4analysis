@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.syndiff.semdiff;
 
 import de.monticore.ast.ASTNode;
 import java.util.Optional;

@@ -1,7 +1,7 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.syndiff.semdiff;
 
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
+import static de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper.*;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocCardinality;
 import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
@@ -146,7 +147,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
   }
 
-  // CHECKED
+  //TODO: add added/deleted associations - how?
+  //CHECKED
   /**
    * Find the difference in the cardinalities of an association. Each pair has the association side
    * with the lowest number that is in the new cardinality but not in the old one.

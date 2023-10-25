@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.syndiff.semdiff;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;

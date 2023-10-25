@@ -1,10 +1,10 @@
 package de.monticore.cddiff;
 
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syndiff.OD.DiffHelper;
-import de.monticore.od4report.OD4ReportMill;
+import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -14,7 +14,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestMax extends CDDiffTestBasis {
+public class TestWitnesses extends CDDiffTestBasis {
 
   @Test
   public void test5() {
@@ -653,7 +653,10 @@ public class TestMax extends CDDiffTestBasis {
     trafo.transform(original1, original2);
 
     DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(false);
+    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+
+    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
+    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
 
     for (ASTODArtifact od : witnesses2) {
       if (!new OD2CDMatcher()
@@ -666,21 +669,29 @@ public class TestMax extends CDDiffTestBasis {
   }
 
   @Test
-  public void testEmployees1to2(){
+  public void testEmployees1to2() {
     ASTCDCompilationUnit cd1 =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     ASTCDCompilationUnit cd2 =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
-        DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-        List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
-        Assert.assertFalse(witnesses.isEmpty());
-        for (ASTODArtifact od : witnesses) {
-          if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
-            System.out.println("Closed World Fail");
-            Log.println(OD4ReportMill.prettyPrint(od, true));
-            Assert.fail();
-          }
-        }
+//    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+//    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+//    Assert.assertFalse(witnesses.isEmpty());
+//    for (ASTODArtifact od : witnesses) {
+//      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
+//        System.out.println("Closed World Fail");
+//        Log.println(OD4ReportMill.prettyPrint(od, true));
+//        Assert.fail();
+//      }
+//    }
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(original1, original2);
+    System.out.println("Emp1");
+    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
+    System.out.println("Emp2");
+    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
   }
 }

@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.cdsyntax2semdiff;
 
 import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
@@ -16,7 +16,6 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
-import de.monticore.cddiff.syndiff.OD.ODBuilder;
 import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.od4report.OD4ReportMill;
@@ -25,6 +24,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
@@ -421,7 +421,7 @@ public class Syn2SemDiffHelper {
    * @param superAssoc superassociation
    */
   // CHECKED
-  static void setBiDirRoleName(AssocStruct association, AssocStruct superAssoc) {
+  public static void setBiDirRoleName(AssocStruct association, AssocStruct superAssoc) {
     if (!association.getDirection().equals(AssocDirection.BiDirectional)
         && superAssoc.getDirection().equals(AssocDirection.BiDirectional)) {
       if (association.getSide().equals(ClassSide.Left)
@@ -458,7 +458,7 @@ public class Syn2SemDiffHelper {
    * @param superAssoc superassociation
    */
   // CHECKED
-  static void mergeAssocs(AssocStruct association, AssocStruct superAssoc) {
+  public static void mergeAssocs(AssocStruct association, AssocStruct superAssoc) {
     ASTCDAssocDir direction = mergeAssocDir(association, superAssoc);
     CardinalityStruc cardinalities = getCardinalities(association, superAssoc);
     AssocCardinality cardinalityLeft =
@@ -717,6 +717,16 @@ public class Syn2SemDiffHelper {
               || association.getAssociation().getLeft().getCDCardinality().isOpt())
           && (superAssociation.getAssociation().getLeft().getCDCardinality().isMult()
               || superAssociation.getAssociation().getLeft().getCDCardinality().isOpt());
+    }
+  }
+
+  public boolean isZeroAssoc(AssocStruct assocStruct){
+    if (assocStruct.getSide().equals(ClassSide.Left)){
+      return assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+              || assocStruct.getAssociation().getRight().getCDCardinality().isOpt();
+    } else {
+      return assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+              || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt();
     }
   }
 
@@ -1824,7 +1834,8 @@ public class Syn2SemDiffHelper {
     return result;
   }
 
-  // CHECKED
+  //TODO: associations without direction are not sorted - new implementation for getCDAssociationsListForTypeSrc and getCDAssociationsListForTypeTgt
+  //CHECKED
   /**
    * Compute what associations can be used from a class (associations that were from the class and
    * superAssociations). For each class and each possible association we save the direction and also
@@ -1869,15 +1880,11 @@ public class Syn2SemDiffHelper {
             && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional()
               || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap()
                 .put(
                     astcdClass,
                     new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
           } else {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap()
                 .put(
                     astcdClass,
@@ -1898,8 +1905,6 @@ public class Syn2SemDiffHelper {
                     astcdClass,
                     new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right));
           } else {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getSrcMap()
                 .put(
                     astcdClass,
@@ -1945,13 +1950,9 @@ public class Syn2SemDiffHelper {
             && astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional()
               || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getTgtMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Left));
           }
           else {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getTgtMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.LeftToRight, ClassSide.Left));
           }
         }
@@ -1962,13 +1963,9 @@ public class Syn2SemDiffHelper {
             && astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft())) {
           if (astcdAssociation.getCDAssocDir().isBidirectional()
               || getDirection(astcdAssociation).equals(AssocDirection.Unspecified)) {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getTgtMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, ClassSide.Right) );
           }
           else {
-            assert copyAssoc.getLeft().isPresentCDCardinality();
-            assert copyAssoc.getRight().isPresentCDCardinality();
             getTgtMap().put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.RightToLeft, ClassSide.Right));
           }
         }
@@ -2247,7 +2244,6 @@ public class Syn2SemDiffHelper {
         }
       }
     }
-    reduceMaps();
   }
 
   /**
@@ -2369,7 +2365,7 @@ public class Syn2SemDiffHelper {
   }
 
   // CHECKED
-  public static List<ASTCDClass> getSuperClasses(
+  public static List<ASTCDClass> getSuperTypes(
       ASTCDCompilationUnit compilationUnit, ASTCDClass astcdClass) {
     List<ASTCDClass> superClasses = new ArrayList<>();
     for (ASTCDType type :
@@ -2405,7 +2401,7 @@ public class Syn2SemDiffHelper {
   }
 
   // CHECKED
-  static AssocCardinality cardToEnum(ASTCDCardinality cardinality) {
+  public static AssocCardinality cardToEnum(ASTCDCardinality cardinality) {
     if (cardinality.isOne()) {
       return AssocCardinality.One;
     } else if (cardinality.isOpt()) {
@@ -2539,12 +2535,18 @@ public class Syn2SemDiffHelper {
   }
 
   // CHECKED
-  public List<String> getSuperClasses(ASTCDClass astcdClass) {
-    List<ASTCDClass> superClasses = getSuperClasses(srcCD, astcdClass);
+  public List<String> getSuperTypes(ASTCDClass astcdClass) {
+    List<ASTCDClass> superClasses = getSuperTypes(srcCD, astcdClass);
     List<String> classes = new ArrayList<>();
     for (int i = superClasses.size() - 1; i >= 0; i--) {
       String className =
           superClasses.get(i).getSymbol().getInternalQualifiedName().replace(".", "_");
+      classes.add(className);
+    }
+    List<ASTMCObjectType> interfaces = astcdClass.getInterfaceList();
+    for (ASTMCObjectType interf : interfaces) {
+      String className = interf.printType();
+      className = className.replace(".", "_");
       classes.add(className);
     }
     return classes;
@@ -2885,13 +2887,13 @@ public class Syn2SemDiffHelper {
     return null;
   }
 
-  public boolean attIsEnum(ASTCDAttribute attribute) {
+  public Pair<Boolean, String> attIsEnum(ASTCDAttribute attribute) {
     for (ASTCDEnum enum_ : srcCD.getCDDefinition().getCDEnumsList()) {
       if (enum_.getSymbol().getInternalQualifiedName().equals(attribute.getMCType().printType())) {
-        return true;
+        return new Pair<>(true, enum_.getCDEnumConstant(0).getName());
       }
     }
-    return false;
+    return new Pair<>(false, "");
   }
 
   // CHECKED
@@ -2903,8 +2905,8 @@ public class Syn2SemDiffHelper {
    */
   public boolean hasDiffSuper(ASTCDClass astcdClass) {
     ASTCDClass oldClass = findMatchedClass(astcdClass);
-    List<ASTCDClass> oldCLasses = getSuperClasses(tgtCD, oldClass);
-    List<ASTCDClass> newClasses = getSuperClasses(srcCD, astcdClass);
+    List<ASTCDClass> oldCLasses = getSuperTypes(tgtCD, oldClass);
+    List<ASTCDClass> newClasses = getSuperTypes(srcCD, astcdClass);
     for (ASTCDClass class1 : oldCLasses) {
       boolean foundMatch = false;
       for (ASTCDClass class2 : newClasses) {

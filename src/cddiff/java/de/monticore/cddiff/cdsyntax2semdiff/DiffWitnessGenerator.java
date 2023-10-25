@@ -1,6 +1,6 @@
-package de.monticore.cddiff.syndiff.OD;
+package de.monticore.cddiff.cdsyntax2semdiff;
 
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.getConnectedClasses;
+import static de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper.getConnectedClasses;
 
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -11,7 +11,6 @@ import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
-import de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -137,11 +136,40 @@ public class DiffWitnessGenerator {
       addToMaps(pack2, mapSrc, mapTgt);
       objectSet.add(pack1);
       objectSet.add(pack2);
-    } else if (cardinalityLeft == 0 || cardinalityRight == 0) {
+    } else if (cardinalityLeft == 0 && cardinalityRight == 0) {
       Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
       Package pack2 = new Package(pair.b, getNameForClass(pair.b), helper);
       objectSet.add(pack);
       objectSet.add(pack2);
+    } else if (cardinalityLeft == 0 && cardinalityRight == 1) {
+      Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
+      Package pack2 = new Package(pair.a, getNameForClass(pair.a),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
+      addToMaps(pack2, mapSrc, mapTgt);
+      objectSet.add(pack);
+      objectSet.add(pack2);
+    } else if (cardinalityLeft == 1 && cardinalityRight == 0) {
+      Package pack = new Package(pair.a, getNameForClass(pair.a),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
+      Package pack2 = new Package(pair.b, getNameForClass(pair.b), helper);
+      addToMaps(pack, mapSrc, mapTgt);
+      objectSet.add(pack);
+      objectSet.add(pack2);
+    } else if (cardinalityLeft == 0 && cardinalityRight == 2) {
+      Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
+      Package pack2 = new Package(pair.a, getNameForClass(pair.a),
+        pack.getRightObject(),
+        association, null, false, false, helper);
+      Package pack3 = new Package(pack.getRightObject(),
+        pair.b, getNameForClass(pair.b),
+        association, null, false, false, helper);
+      addToMaps(pack2, mapSrc, mapTgt);
+      addToMaps(pack3, mapSrc, mapTgt);
+      objectSet.add(pack);
+      objectSet.add(pack2);
+      objectSet.add(pack3);
     }
     return objectSet;
   }
@@ -347,7 +375,7 @@ public class DiffWitnessGenerator {
         odBuilder.buildObj(
             getNameForClass(astcdClass),
             astcdClass.getSymbol().getInternalQualifiedName(),
-            helper.getSuperClasses(astcdClass),
+            helper.getSuperTypes(astcdClass),
             helper.getAttributesOD(astcdClass, pair));
     if (helper.getSrcMap().get(astcdClass).isEmpty()) {
       Package pack = new Package(srcObject, helper);
@@ -386,7 +414,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(subclass),
                   subclass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(subclass),
+                  helper.getSuperTypes(subclass),
                   helper.getAttributesOD(subclass, null));
         } else if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(rightClass, mapSrc, mapTgt)) {
@@ -396,7 +424,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(rightClass),
                   rightClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(rightClass),
+                  helper.getSuperTypes(rightClass),
                   helper.getAttributesOD(rightClass, null));
         }
         if (tgtObject == null) {
@@ -437,7 +465,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(subclass),
                   subclass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(subclass),
+                  helper.getSuperTypes(subclass),
                   helper.getAttributesOD(subclass, null));
         } else if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           if (singletonObj(leftClass, mapSrc, mapTgt)) {
@@ -447,7 +475,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(leftClass),
                   leftClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(leftClass),
+                  helper.getSuperTypes(leftClass),
                   helper.getAttributesOD(leftClass, null));
         }
         if (tgtObject == null) {
@@ -487,7 +515,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(sub),
                   sub.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(sub),
+                  helper.getSuperTypes(sub),
                   helper.getAttributesOD(sub, null));
 
         } else if (realSrcObject == null && !leftClass.getModifier().isAbstract()) {
@@ -498,7 +526,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(leftClass),
                   leftClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(leftClass),
+                  helper.getSuperTypes(leftClass),
                   helper.getAttributesOD(leftClass, null));
         }
         if (realSrcObject == null) {
@@ -532,7 +560,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(sub),
                   sub.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(sub),
+                  helper.getSuperTypes(sub),
                   helper.getAttributesOD(sub, null));
         } else if (realSrcObject == null && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(
@@ -545,7 +573,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(rightClass),
                   rightClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(rightClass),
+                  helper.getSuperTypes(rightClass),
                   helper.getAttributesOD(rightClass, null));
         }
 
@@ -686,7 +714,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(sub),
                   sub.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(sub),
+                  helper.getSuperTypes(sub),
                   helper.getAttributesOD(sub, null));
         } else if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
           if (singletonObj(rightClass, mapSrc, mapTgt)) {
@@ -696,7 +724,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(rightClass),
                   rightClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(rightClass),
+                  helper.getSuperTypes(rightClass),
                   helper.getAttributesOD(rightClass, null));
         }
 
@@ -751,7 +779,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(sub),
                   sub.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(sub),
+                  helper.getSuperTypes(sub),
                   helper.getAttributesOD(sub, null));
         } else if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           if (singletonObj(leftClass, mapSrc, mapTgt)) {
@@ -761,7 +789,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(leftClass),
                   leftClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(leftClass),
+                  helper.getSuperTypes(leftClass),
                   helper.getAttributesOD(leftClass, null));
         }
         if (tgtObject == null) {
@@ -811,7 +839,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(sub),
                   sub.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(sub),
+                  helper.getSuperTypes(sub),
                   helper.getAttributesOD(sub, null));
         } else if (realSrcObject == null && !leftClass.getModifier().isAbstract()) {
           if (singletonObj(leftClass, mapSrc, mapTgt)) {
@@ -821,7 +849,7 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(leftClass),
                   leftClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(leftClass),
+                  helper.getSuperTypes(leftClass),
                   helper.getAttributesOD(leftClass, null));
         }
 
@@ -864,14 +892,14 @@ public class DiffWitnessGenerator {
               odBuilder.buildObj(
                   getNameForClass(sub),
                   sub.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(sub),
+                  helper.getSuperTypes(sub),
                   helper.getAttributesOD(sub, null));
         } else if (realSrcObject == null && !rightClass.getModifier().isAbstract()) {
           realSrcObject =
               odBuilder.buildObj(
                   getNameForClass(rightClass),
                   rightClass.getSymbol().getInternalQualifiedName(),
-                  helper.getSuperClasses(rightClass),
+                  helper.getSuperTypes(rightClass),
                   helper.getAttributesOD(rightClass, null));
         }
 

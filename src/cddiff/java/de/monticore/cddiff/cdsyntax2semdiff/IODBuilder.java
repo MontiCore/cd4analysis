@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.OD;
+package de.monticore.cddiff.cdsyntax2semdiff;
 
 import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
 import de.monticore.odbasis._ast.ASTODAttribute;

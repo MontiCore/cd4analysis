@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.imp;
+package de.monticore.cddiff.syndiff.semdiff;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.syndiff.datastructures.*;
 import de.monticore.cddiff.syndiff.interfaces.ICDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -17,7 +18,7 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getDirectSuperClasses;
-import static de.monticore.cddiff.syndiff.imp.Syn2SemDiffHelper.*;
+import static de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper.*;
 
 /**
  * This is the core class for semantic differencing. It contains the results of the syntactic analysis as attributes.
@@ -627,8 +628,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   srcAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                } else if (helper.isZeroAssoc(association)) {
+                  helper.getSrcMap().remove(astcdClass, association);
+                } else if (helper.isZeroAssoc(superAssoc)){
+                  helper.getSrcMap().remove(astcdClass, superAssoc);
                 } else {
-                  helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
                 }
               }
@@ -651,8 +655,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   srcAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                } else if (helper.isZeroAssoc(association)) {
+                  helper.getSrcMap().remove(astcdClass, association);
+                } else if (helper.isZeroAssoc(superAssoc)){
+                  helper.getSrcMap().remove(astcdClass, superAssoc);
                 } else {
-                  helper.updateSrc(astcdClass);
                   srcToDelete.add(astcdClass);
                 }
               }
@@ -681,8 +688,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   tgtAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                } else if (helper.isZeroAssoc(association)) {
+                  helper.getTgtMap().remove(astcdClass, association);
+                } else if (helper.isZeroAssoc(superAssoc)){
+                  helper.getTgtMap().remove(astcdClass, superAssoc);
                 } else {
-                  helper.updateTgt(astcdClass);
                   tgtToDelete.add(astcdClass);
                 }
               }
@@ -695,8 +705,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   tgtAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
+                } else if (helper.isZeroAssoc(association)) {
+                  helper.getTgtMap().remove(astcdClass, association);
+                } else if (helper.isZeroAssoc(superAssoc)){
+                  helper.getTgtMap().remove(astcdClass, superAssoc);
                 } else {
-                  helper.updateTgt(astcdClass);
                   tgtToDelete.add(astcdClass);
                 }
               } else if (helper.sameAssocStruct(association, superAssoc)
@@ -710,6 +723,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
     for (ASTCDClass astcdClass : srcToDelete) {
+      helper.updateSrc(astcdClass);
       helper.getSrcMap().removeAll(astcdClass);
       helper.deleteOtherSideSrc(astcdClass);
       for (ASTCDClass subClass : helper.getSrcSubMap().get(astcdClass)) {
@@ -734,6 +748,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       helper.deleteAssocsFromSrc(pair.a, pair.b);
     }
     for (ASTCDClass astcdClass : tgtToDelete) {
+      helper.updateTgt(astcdClass);
       helper.getTgtMap().removeAll(astcdClass);
       helper.deleteOtherSideTgt(astcdClass);
       for (ASTCDClass subClass : helper.getTgtSubMap().get(astcdClass)) {
@@ -758,6 +773,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       helper.deleteAssocsFromTgt(pair.a, pair.b);
     }
     helper.deleteCompositions();
+    helper.reduceMaps();
   }
 
   // CHECKED

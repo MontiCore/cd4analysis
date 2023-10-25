@@ -3,7 +3,7 @@ package de.monticore.cddiff.syndiff.datastructures;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syndiff.imp.DiffTypes;
+import de.monticore.cddiff.syndiff.semdiff.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;

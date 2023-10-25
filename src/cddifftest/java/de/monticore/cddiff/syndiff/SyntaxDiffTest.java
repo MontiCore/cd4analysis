@@ -5,11 +5,10 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.syndiff.OD.DiffHelper;
-import de.monticore.cddiff.syndiff.imp.CDSyntaxDiff;
-import de.monticore.cddiff.syndiff.imp.SyntaxDiffBuilder;
-import de.monticore.cddiff.syndiff.imp.TestHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
+import de.monticore.cddiff.syndiff.semdiff.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.semdiff.SyntaxDiffBuilder;
+import de.monticore.cddiff.syndiff.semdiff.TestHelper;
 import java.io.IOException;
 import java.util.*;
 
