@@ -289,8 +289,10 @@ public class DiffHelper {
           if (artifactList.size() == diffLimit) {
             return artifactList;
           }
+        } else if (astodArtifact != null && diffLimit == 0) {
+          artifactList.add(astodArtifact);
         }
-      } else {
+      } else {//TODO: add other cases
         ArrayList<Integer> list1 = new ArrayList<>(list);
         list.set(1, 1);
         ASTODArtifact astodArtifact =
@@ -298,7 +300,9 @@ public class DiffHelper {
                 oDTitleForAssoc(assocDiffStruct.getAssociation()),
                 generateElements(assocDiffStruct.getAssociation(), list1, comment)
             );
-        if (astodArtifact != null) {
+        if (astodArtifact != null && diffLimit != 0 && artifactList.size() < diffLimit) {
+          artifactList.add(astodArtifact);
+        } else if (astodArtifact != null && diffLimit == 0) {
           artifactList.add(astodArtifact);
         }
         ArrayList<Integer> list2 = new ArrayList<>(list);

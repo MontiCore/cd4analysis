@@ -4,6 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syndiff.OD.DiffHelper;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -662,5 +663,24 @@ public class TestMax extends CDDiffTestBasis {
         Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
       }
     }
+  }
+
+  @Test
+  public void testEmployees1to2(){
+    ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+    ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+
+        DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+        List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+        Assert.assertFalse(witnesses.isEmpty());
+        for (ASTODArtifact od : witnesses) {
+          if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
+            System.out.println("Closed World Fail");
+            Log.println(OD4ReportMill.prettyPrint(od, true));
+            Assert.fail();
+          }
+        }
   }
 }
