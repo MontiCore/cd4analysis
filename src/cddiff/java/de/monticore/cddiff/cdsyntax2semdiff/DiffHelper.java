@@ -2,6 +2,7 @@ package de.monticore.cddiff.cdsyntax2semdiff;
 
 import de.monticore.ast.CommentBuilder;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -235,7 +236,11 @@ public class DiffHelper {
       }
       if (assocDiffStruct.getChangedRoleNames() != null
           && !assocDiffStruct.getChangedRoleNames().isEmpty()) {
-        comment = comment + "\n//role name - " + assocDiffStruct.getChangedRoleNames().toString();
+        comment = comment + "\n//role name - ";
+        for (Pair<ClassSide, ASTCDRole> pair1 :
+            assocDiffStruct.getChangedRoleNames()) {
+          comment = comment + "[" + pair1.a.toString() + ", " + pair1.b.getName() + "] ";
+        }
       }
       if (assocDiffStruct.getChangedTgt() != null) {
         comment =

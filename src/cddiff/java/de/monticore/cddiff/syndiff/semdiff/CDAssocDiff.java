@@ -147,7 +147,6 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
   }
 
-  //TODO: add added/deleted associations - how?
   //CHECKED
   /**
    * Find the difference in the cardinalities of an association. Each pair has the association side

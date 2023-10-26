@@ -620,7 +620,7 @@ public class DiffWitnessGenerator {
     for (AssocStruct assocStruct :
         helper
             .getSrcMap()
-            .get(helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
+            .get(Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
       if (assocStruct.getSide().equals(ClassSide.Left)
           && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
               || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
@@ -687,7 +687,7 @@ public class DiffWitnessGenerator {
         if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
           tgtObject =
               getTgtObject(
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   rightClass,
                   mapSrc,
@@ -696,7 +696,7 @@ public class DiffWitnessGenerator {
         if (tgtObject == null) {
           tgtObject =
               getSubTgtObject(
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b,
                   mapSrc,
@@ -751,7 +751,7 @@ public class DiffWitnessGenerator {
         if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           tgtObject =
               getTgtObject(
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   leftClass,
                   mapSrc,
@@ -760,7 +760,7 @@ public class DiffWitnessGenerator {
         if (tgtObject == null) {
           tgtObject =
               getSubTgtObject(
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   leftClass,
                   mapSrc,
@@ -814,7 +814,7 @@ public class DiffWitnessGenerator {
               getRealSrc(
                   leftClass,
                   assocStruct,
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -823,7 +823,7 @@ public class DiffWitnessGenerator {
               getSubRealSrc(
                   leftClass,
                   assocStruct,
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -870,7 +870,7 @@ public class DiffWitnessGenerator {
               getRealSrc(
                   rightClass,
                   assocStruct,
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -879,7 +879,7 @@ public class DiffWitnessGenerator {
               getSubRealSrc(
                   rightClass,
                   assocStruct,
-                  helper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
+                  Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -1408,7 +1408,7 @@ public class DiffWitnessGenerator {
             helper
                 .getSrcMap()
                 .get(
-                    helper.getCDClass(
+                    Syn2SemDiffHelper.getCDClass(
                         helper.getSrcCD(), subObject.getMCObjectType().printType()))) {
           if (helper.isSubAssociationSrcSrc(assocStruct, assocStructFromCLass)) {
             assocStruct = assocStructFromCLass;
@@ -1956,7 +1956,7 @@ public class DiffWitnessGenerator {
     List<AssocStruct> list =
         new ArrayList<>(
             getTgtAssocs(
-                helper.getCDClass(helper.getSrcCD(), tgtObject.getMCObjectType().printType())));
+                Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), tgtObject.getMCObjectType().printType())));
     List<Pair<AssocStruct, ClassSide>> createdAssocs = mapTgt.get(tgtObject);
     List<AssocStruct> copy = new ArrayList<>(list);
     for (AssocStruct assocStruct : copy) {

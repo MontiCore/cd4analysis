@@ -915,11 +915,31 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           }
         }
 
+        //TODO: this must be extracted as otherwise the change will be red as a change to a subclass
         if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
-          ASTCDClass change = assocDiff.changedTgt();
-          if (change != null) {
-            diff.setChangedTgt(change);
-            changed = true;
+          if (!helper.inheritanceTgt(matchedPairs.a, matchedPairs.b)){
+            List<ASTCDClass> added = isAssocAdded(matchedPairs.a.getAssociation());
+            if (!added.isEmpty()){
+              diff.setChangedTgt(added.get(0));
+              changed = true;
+            } else {
+              Pair<ASTCDClass, ASTCDClass> connected = getConnectedClasses(matchedPairs.b.getAssociation(), helper.getTgtCD());
+              List<ASTCDClass> deleted = isAssocDeleted(matchedPairs.b.getAssociation(), connected.a);
+              List<ASTCDClass> deleted1 = isAssocDeleted(matchedPairs.b.getAssociation(), connected.b);
+              if (!deleted.isEmpty()){
+                diff.setChangedTgt(deleted.get(0));
+                changed = true;
+              } else if (!deleted1.isEmpty()){
+                diff.setChangedTgt(deleted1.get(0));
+                changed = true;
+              }
+            }
+          } else {
+            ASTCDClass change = assocDiff.changedTgt();
+            if (change != null) {
+              diff.setChangedTgt(change);
+              changed = true;
+            }
           }
         }
         if (assocDiff.getBaseDiff().contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
