@@ -12,7 +12,7 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -58,7 +58,7 @@ public class BaseTest {
 
   protected ASTCDCompilationUnit loadModel(String filename) throws IOException {
     // We need an empty symbol table as we load models that contain the same symbols
-    Optional<ASTCDCompilationUnit> ast = CDUtils.parseCDFile(filename, false);
+    Optional<ASTCDCompilationUnit> ast = CDMergeUtils.parseCDFile(filename, false);
     if (ast.isPresent()) {
       return ast.get();
     } else {
@@ -72,7 +72,7 @@ public class BaseTest {
 
   protected ASTCDCompilationUnit parseCD(String cd) {
 
-    Optional<ASTCDCompilationUnit> ast = CDUtils.parseCDCompilationUnit(cd, false);
+    Optional<ASTCDCompilationUnit> ast = CDMergeUtils.parseCDCompilationUnit(cd, false);
     if (ast.isPresent()) {
       return ast.get();
     } else {

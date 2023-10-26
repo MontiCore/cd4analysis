@@ -73,15 +73,18 @@ public enum JPrimitiveType {
   }
 
   public static Optional<ASTMCType> getCommonSuperType(ASTMCType type1, ASTMCType type2) {
-    if (isPrimitiveType(CDUtils.getTypeName(type1))
-        && isPrimitiveType(CDUtils.getTypeName(type1))) {
+    if (isPrimitiveType(CDMergeUtils.getTypeName(type1))
+        && isPrimitiveType(CDMergeUtils.getTypeName(type1))) {
       Optional<JPrimitiveType> commonSuperType =
           getCommonSuperType(
-              getType(CDUtils.getTypeName(type1)), getType(CDUtils.getTypeName(type2)));
+              getType(CDMergeUtils.getTypeName(type1)), getType(CDMergeUtils.getTypeName(type2)));
       if (commonSuperType.isPresent()) {
-        if (commonSuperType.get().getName().equalsIgnoreCase(CDUtils.getTypeName(type1))) {
+        if (commonSuperType.get().getName().equalsIgnoreCase(CDMergeUtils.getTypeName(type1))) {
           return Optional.of(type1);
-        } else if (commonSuperType.get().getName().equalsIgnoreCase(CDUtils.getTypeName(type2))) {
+        } else if (commonSuperType
+            .get()
+            .getName()
+            .equalsIgnoreCase(CDMergeUtils.getTypeName(type2))) {
           return Optional.of(type2);
         }
       }

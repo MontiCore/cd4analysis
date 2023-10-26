@@ -10,7 +10,7 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.cdmerge.util.JPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.ArrayList;
@@ -31,8 +31,9 @@ public class DefaultAtributeMerger extends AttributeMerger {
     List<String> additionalAttrNames =
         precedences.getPrecedenceAttributesForClass(sourceClass, sourceCD);
     for (String attrName : additionalAttrNames) {
-      Optional<ASTCDAttribute> attr = CDUtils.getAttributeFromClass(attrName, sourceClass);
-      if (attr.isPresent() && !CDUtils.getAttributeFromClass(attrName, mergedClass).isPresent()) {
+      Optional<ASTCDAttribute> attr = CDMergeUtils.getAttributeFromClass(attrName, sourceClass);
+      if (attr.isPresent()
+          && !CDMergeUtils.getAttributeFromClass(attrName, mergedClass).isPresent()) {
         mergedClass.addCDMember(attr.get());
       }
     }
@@ -125,7 +126,7 @@ public class DefaultAtributeMerger extends AttributeMerger {
                   + "."
                   + attr1.getElement().getName()
                   + "["
-                  + CDUtils.getTypeName(attr1.getElement().getMCType())
+                  + CDMergeUtils.getTypeName(attr1.getElement().getMCType())
                   + "]"
                   + " not present in other Class");
           break;
@@ -144,7 +145,7 @@ public class DefaultAtributeMerger extends AttributeMerger {
                     + "."
                     + attr1.getElement().getName()
                     + "["
-                    + CDUtils.getTypeName(attr1.getElement().getMCType())
+                    + CDMergeUtils.getTypeName(attr1.getElement().getMCType())
                     + "]"
                     + " with "
                     + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
@@ -153,7 +154,7 @@ public class DefaultAtributeMerger extends AttributeMerger {
                     + "."
                     + matches.get(0).getElement().getName()
                     + "["
-                    + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+                    + CDMergeUtils.getTypeName(matches.get(0).getElement().getMCType())
                     + "]");
 
           } else {
@@ -174,7 +175,7 @@ public class DefaultAtributeMerger extends AttributeMerger {
                         + "."
                         + attr1.getElement().getName()
                         + "["
-                        + CDUtils.getTypeName(attr1.getElement().getMCType())
+                        + CDMergeUtils.getTypeName(attr1.getElement().getMCType())
                         + "]"
                         + " with "
                         + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
@@ -183,9 +184,9 @@ public class DefaultAtributeMerger extends AttributeMerger {
                         + "."
                         + matches.get(0).getElement().getName()
                         + "["
-                        + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+                        + CDMergeUtils.getTypeName(matches.get(0).getElement().getMCType())
                         + "] with result type "
-                        + CDUtils.getTypeName(commonSuperType.get()));
+                        + CDMergeUtils.getTypeName(commonSuperType.get()));
               } else {
                 logError(
                     "Could not detect common super type for attributes! Merged Class will only "
@@ -201,14 +202,14 @@ public class DefaultAtributeMerger extends AttributeMerger {
                       + "."
                       + attr1.getElement().getName()
                       + "["
-                      + CDUtils.getTypeName(attr1.getElement().getMCType())
+                      + CDMergeUtils.getTypeName(attr1.getElement().getMCType())
                       + "]"
                       + " with "
                       + input2.getName()
                       + "."
                       + matches.get(0).getElement().getName()
                       + "["
-                      + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+                      + CDMergeUtils.getTypeName(matches.get(0).getElement().getMCType())
                       + "] as result types differ and type conversion is not enabled");
             }
           }
@@ -242,7 +243,7 @@ public class DefaultAtributeMerger extends AttributeMerger {
               + "."
               + attr2.getName()
               + "["
-              + CDUtils.getTypeName(attr2.getMCType())
+              + CDMergeUtils.getTypeName(attr2.getMCType())
               + "]"
               + " not present in other Class");
     }

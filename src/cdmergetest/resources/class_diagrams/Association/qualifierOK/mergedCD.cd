@@ -15,16 +15,16 @@ classdiagram mergedCD {
   class CB{
     int key;
   }
-		
-	
-  association ab CA [[key]] -> CB [1];
-	
-  association ac CA [[identifier]] -> CC;
-			
-  association ad [*] CA [[idx]] -> CD;
-			
-  association ab2 CA [Integer]  <->  CB [1];
-	
 
-	
+
+  association ab CA [[key]] -> CB [1];
+
+  association ac CA [[identifier]] -> CC;
+
+  association ad [*] CA [[idx]] -> CD;
+
+  association ab2 CA [Integer]  <->  CB [1];
+
+
+
 }

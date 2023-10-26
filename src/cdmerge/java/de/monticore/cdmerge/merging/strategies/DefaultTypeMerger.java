@@ -14,7 +14,7 @@ import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.CDMatch;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.Iterator;
 import java.util.List;
@@ -368,14 +368,14 @@ public class DefaultTypeMerger extends TypeMerger {
         getBlackBoard().getIntermediateMergedCD().getCDDefinition().getCDClassesList()) {
       for (int i = clazz.getInterfaceList().size() - 1; i >= 0; i--) {
         iface = clazz.getInterfaceList().get(i);
-        if (getBlackBoard().getASTCDHelperMergedCD().cdContainsClass(CDUtils.getName(iface))) {
+        if (getBlackBoard().getASTCDHelperMergedCD().cdContainsClass(CDMergeUtils.getName(iface))) {
           // Interface became a class
           if (clazz.getSuperclassList().size() > 0) {
             getBlackBoard()
                 .addLog(
                     ErrorLevel.ERROR,
                     "Interface "
-                        + CDUtils.getName(iface)
+                        + CDMergeUtils.getName(iface)
                         + " was merged to a class. Class "
                         + clazz.getName()
                         + "  implemented that interface, but cannot be converted to subclass because it already has at least another superclass!",
@@ -384,7 +384,7 @@ public class DefaultTypeMerger extends TypeMerger {
                     clazz);
           } else {
             // Switch Interface to superclass
-            CDUtils.setSuperClass(clazz, iface);
+            CDMergeUtils.setSuperClass(clazz, iface);
             clazz.getInterfaceList().remove(i);
           }
         }

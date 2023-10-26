@@ -201,7 +201,7 @@ public class ASTCDHelper {
    * resolves an attribute in a class
    *
    * @param attrName the name of the attribute to be resolved
-   * @param clazz class to be searched in
+   * @param className class to be searched in
    * @return the found attribute's ASTNode or empty if the class does not contain this attribute or
    *     the class doesn't exist
    */
@@ -364,16 +364,16 @@ public class ASTCDHelper {
     Optional<ASTCDClass> clazz = getClass(className);
     if (clazz.isPresent()) {
       for (ASTMCObjectType iface : clazz.get().getInterfaceList()) {
-        if (getInterface(CDUtils.getName(iface)).isPresent()) {
-          interfaces.add(getInterface(CDUtils.getName(iface)).get());
+        if (getInterface(CDMergeUtils.getName(iface)).isPresent()) {
+          interfaces.add(getInterface(CDMergeUtils.getName(iface)).get());
         }
-        interfaces.addAll(getLocalSuperInterfaces(CDUtils.getName(iface)));
+        interfaces.addAll(getLocalSuperInterfaces(CDMergeUtils.getName(iface)));
 
         if (clazz.get().getSuperclassList().size() == 1) {
           // Consider the implemented interfaces of the superclasses
           interfaces.addAll(
               getLocalImplementedInterfaces(
-                  CDUtils.getName(clazz.get().getSuperclassList().get(0))));
+                  CDMergeUtils.getName(clazz.get().getSuperclassList().get(0))));
         }
       }
     }
@@ -518,7 +518,7 @@ public class ASTCDHelper {
     List<ASTCDAttribute> unique = new ArrayList<>(clazz.getCDAttributeList());
     List<ASTCDAttribute> common = new ArrayList<>();
     for (ASTCDClass superClass : superclasses) {
-      common.addAll(CDUtils.commonAttributeNames(clazz, superClass));
+      common.addAll(CDMergeUtils.commonAttributeNames(clazz, superClass));
     }
     unique.removeIf(
         attr ->

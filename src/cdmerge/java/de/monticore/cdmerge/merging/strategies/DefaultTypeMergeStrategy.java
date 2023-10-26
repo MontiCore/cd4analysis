@@ -14,7 +14,7 @@ import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.ASTCDHelper;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -148,9 +148,9 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
 
           logError(
               "Merged classes have incompatible superclasses '"
-                  + CDUtils.getName(classFromCd2.getCDExtendUsage().getSuperclass(0))
+                  + CDMergeUtils.getName(classFromCd2.getCDExtendUsage().getSuperclass(0))
                   + "' and '"
-                  + CDUtils.getName(classFromCd1.getCDExtendUsage().getSuperclass(0))
+                  + CDMergeUtils.getName(classFromCd1.getCDExtendUsage().getSuperclass(0))
                   + "'. Merge would cause multi-inheritance, which is not supporterd",
               classFromCd1,
               classFromCd2);
@@ -169,7 +169,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     attrMerger.mergeAttributes(classFromCd1, classFromCd2, matchResult, mergedClass);
     log(
         ErrorLevel.FINE,
-        "Merged class " + CDUtils.prettyPrintInline(mergedClass),
+        "Merged class " + CDMergeUtils.prettyPrintInline(mergedClass),
         classFromCd1,
         classFromCd2);
     return mergedClass;
@@ -313,7 +313,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
 
     log(
         ErrorLevel.FINE,
-        "Merged interface " + CDUtils.prettyPrintInline(mergedInterface),
+        "Merged interface " + CDMergeUtils.prettyPrintInline(mergedInterface),
         interface1,
         interface2);
     return mergedInterface;
@@ -385,7 +385,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     mergedClass.getInterfaceList().addAll(en.getInterfaceList());
     log(
         ErrorLevel.FINE,
-        "Merged class with enum " + CDUtils.prettyPrintInline(mergedClass),
+        "Merged class with enum " + CDMergeUtils.prettyPrintInline(mergedClass),
         clazz,
         en);
     return mergedClass;
@@ -415,9 +415,11 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
                 .build());
       } else {
         List<String> existingInterfaces =
-            en.getInterfaceList().stream().map(CDUtils::getTypeName).collect(Collectors.toList());
+            en.getInterfaceList().stream()
+                .map(CDMergeUtils::getTypeName)
+                .collect(Collectors.toList());
         for (ASTMCObjectType iface : inface.getInterfaceList()) {
-          if (!existingInterfaces.contains(CDUtils.getTypeName(iface))) {
+          if (!existingInterfaces.contains(CDMergeUtils.getTypeName(iface))) {
             mergedEnum.getInterfaceList().add(iface);
           }
         }
@@ -433,8 +435,8 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     Optional<ASTCDEnumConstant> constant;
     List<String> additionalConstNames = precedences.getPrecedenceConstantsForEnum(astEnum, cd);
     for (String constName : additionalConstNames) {
-      constant = CDUtils.getConstFromEnum(constName, astEnum);
-      if (constant.isPresent() && CDUtils.getConstFromEnum(constName, res).isEmpty()) {
+      constant = CDMergeUtils.getConstFromEnum(constName, astEnum);
+      if (constant.isPresent() && CDMergeUtils.getConstFromEnum(constName, res).isEmpty()) {
         res.getCDEnumConstantList().add(constant.get());
       }
     }
@@ -489,7 +491,11 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // CD2.Enum.Constant to the resulting class diagram
     addPrecedenceConstants(enum1, leftCD, mergedEnum);
     addPrecedenceConstants(enum2, rightCD, mergedEnum);
-    log(ErrorLevel.FINE, "Merged enums " + CDUtils.prettyPrintInline(mergedEnum), enum1, enum2);
+    log(
+        ErrorLevel.FINE,
+        "Merged enums " + CDMergeUtils.prettyPrintInline(mergedEnum),
+        enum1,
+        enum2);
     return mergedEnum;
   }
 
@@ -557,7 +563,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
         // We take a look if we will encounter this enum constant later
         // and add all entries of enum2 before that
         Optional<ASTCDEnumConstant> matchedEnumIn2 =
-            CDUtils.getConstFromEnum(constant1.getName(), enum2);
+            CDMergeUtils.getConstFromEnum(constant1.getName(), enum2);
         if (matchedEnumIn2.isPresent()) {
           if (enum2.getCDEnumConstantList().indexOf(constant2)
               < enum2.getCDEnumConstantList().indexOf(matchedEnumIn2.get())) {
@@ -631,14 +637,14 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
 
     List<ASTMCObjectType> mergedInterfaces = new ArrayList<>(interfaces1);
     Set<String> names = new HashSet<>();
-    mergedInterfaces.stream().map(CDUtils::getName).forEach(names::add);
+    mergedInterfaces.stream().map(CDMergeUtils::getName).forEach(names::add);
     // Add remaining from 2
     for (ASTMCObjectType iface : interfaces2) {
-      if (!names.contains(CDUtils.getName(iface))) {
+      if (!names.contains(CDMergeUtils.getName(iface))) {
         mergedInterfaces.add(iface);
         // Though should not happen to have
         // twice the same interface name
-        names.add(CDUtils.getName(iface));
+        names.add(CDMergeUtils.getName(iface));
       }
     }
     return mergedInterfaces;

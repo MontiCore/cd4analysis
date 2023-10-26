@@ -9,7 +9,7 @@ import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -121,7 +121,7 @@ public class CliMergeTool {
         mergeStepResult = reportIterator.next();
         if (merger.getConfig().isVerbose()) {
           outStream.println("==== MERGE LOG STEP " + step + " ====");
-          outStream.println(CDUtils.prettyPrint(mergeStepResult.getMergedCD()));
+          outStream.println(CDMergeUtils.prettyPrint(mergeStepResult.getMergedCD()));
           outStream.println("==== END MERGE STEP " + step + " ====");
         }
       }
@@ -129,11 +129,11 @@ public class CliMergeTool {
       if (result.getMaxErrorLevel() != ErrorLevel.ERROR) {
         if (!merger.getConfig().isSilent()) {
           outStream.println("== MERGED CLASS DIAGRAM ==");
-          outStream.println(CDUtils.prettyPrint(result.getMergedCD().get()));
+          outStream.println(CDMergeUtils.prettyPrint(result.getMergedCD().get()));
         }
         if (!merger.getConfig().checkOnly() && merger.getConfig().printToFile()) {
           de.se_rwth.commons.Files.writeToTextFile(
-              new StringReader(CDUtils.prettyPrint(result.getMergedCD().get())),
+              new StringReader(CDMergeUtils.prettyPrint(result.getMergedCD().get())),
               new File(
                   merger.getConfig().getOutputPath() + merger.getConfig().getOutputName() + ".cd"));
           outStream.println(

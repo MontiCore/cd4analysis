@@ -4,7 +4,7 @@ package de.monticore.cdmerge.matching.matchresult;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import de.monticore.ast.ASTNode;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -43,7 +43,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    * this method is idempotent.
    *
    * @param parent The parent (e.g. a ClassDiagramm or Class for this model element
-   * @param elemens the model element
+   * @param element the model element
    * @return the node containing this element
    */
   public MatchNode<E, P> addElement(E element, P parent) {
@@ -56,7 +56,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    * this method is idempotent.
    *
    * @param parent The parent (e.g. a ClassDiagramm or Class for this model element
-   * @param elemens the model element
+   * @param element the model element
    * @return the node containing this element
    */
   public MatchNode<E, P> addElement(E element, P parent, Optional<String> cdPackage) {
@@ -114,7 +114,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    * Returns the matching nodes for the specified parent node (thus a vertical slice through this
    * match-result graph) or Optional.empty() if the match could not be resolved.
    *
-   * @param p as stored in this MatchResult
+   * @param parent as stored in this MatchResult
    * @return the matching nodes for the specified parent node and the matchIdentifier or
    *     Optional.empty() if the match could not be resolved
    */
@@ -217,20 +217,21 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     Set<MatchNode<E, P>> visitedNodes = new HashSet<MatchNode<E, P>>();
     StringBuilder sb = new StringBuilder();
     sb.append("MatchGraph for");
-    this.parents.forEach(parent -> sb.append(" [" + CDUtils.getName(parent) + "]"));
+    this.parents.forEach(parent -> sb.append(" [" + CDMergeUtils.getName(parent) + "]"));
     sb.append("\n");
     for (P parent : this.parents) {
       for (MatchNode<E, P> node : this.matches.get(parent)) {
         if (!visitedNodes.contains(node)) {
           visitedNodes.add(node);
-          sb.append("[" + CDUtils.getName(parent) + "] " + CDUtils.getName(node.getElement()));
+          sb.append(
+              "[" + CDMergeUtils.getName(parent) + "] " + CDMergeUtils.getName(node.getElement()));
           for (MatchNode<E, P> matchNode : node.getMatchedNodes()) {
             visitedNodes.add(matchNode);
             sb.append(
                 " -> ["
-                    + CDUtils.getName(matchNode.getParent())
+                    + CDMergeUtils.getName(matchNode.getParent())
                     + "] "
-                    + CDUtils.getName(matchNode.getElement()));
+                    + CDMergeUtils.getName(matchNode.getElement()));
           }
           sb.append("\n");
         }

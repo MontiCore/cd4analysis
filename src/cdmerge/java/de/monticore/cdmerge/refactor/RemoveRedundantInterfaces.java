@@ -8,7 +8,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.ASTCDHelper;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,7 +43,7 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
     // Clean Interfaces
     for (ASTCDInterface interf : cd.getCDDefinition().getCDInterfacesList()) {
       for (ASTMCObjectType superInterface : new ArrayList<>(interf.getInterfaceList())) {
-        if (helper.cdContainsInterface(CDUtils.getName(superInterface))) {
+        if (helper.cdContainsInterface(CDMergeUtils.getName(superInterface))) {
           cleanInterfaces(interf, superInterface, helper, new ArrayList<ASTMCObjectType>());
         }
       }
@@ -51,14 +51,14 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
     // Clean classes
     for (ASTCDClass clazz : cd.getCDDefinition().getCDClassesList()) {
       for (ASTMCObjectType superInterface : new ArrayList<>(clazz.getInterfaceList())) {
-        if (helper.cdContainsInterface(CDUtils.getName(superInterface))) {
+        if (helper.cdContainsInterface(CDMergeUtils.getName(superInterface))) {
           cleanInterfaces(clazz, superInterface, helper, new ArrayList<ASTMCObjectType>());
         }
       }
       if (clazz.getSuperclassList().size() == 1) {
         cleanInterfacesSuperClass(
             clazz,
-            helper.getClass(CDUtils.getName(clazz.getCDExtendUsage().getSuperclass(0))).get(),
+            helper.getClass(CDMergeUtils.getName(clazz.getCDExtendUsage().getSuperclass(0))).get(),
             helper,
             new ArrayList<ASTCDClass>());
       }
@@ -76,8 +76,9 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
     }
     visited.add(superInterfaceRef);
     if (!baseType.getInterfaceList().isEmpty()
-        && helper.cdContainsInterface(CDUtils.getName(superInterfaceRef))) {
-      ASTCDInterface superInterface = helper.getInterface(CDUtils.getName(superInterfaceRef)).get();
+        && helper.cdContainsInterface(CDMergeUtils.getName(superInterfaceRef))) {
+      ASTCDInterface superInterface =
+          helper.getInterface(CDMergeUtils.getName(superInterfaceRef)).get();
       cleanInterfaces(baseType, superInterface.getInterfaceList());
       for (ASTMCObjectType supIntRef : superInterface.getInterfaceList()) {
         cleanInterfaces(baseType, supIntRef, helper, visited);
@@ -89,13 +90,13 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
     Set<ASTMCObjectType> remove = new HashSet<>();
     for (ASTMCObjectType interface1 : baseType.getInterfaceList()) {
       for (ASTMCObjectType interface2 : superIntefaces) {
-        if (CDUtils.getName(interface1).equals(CDUtils.getName(interface2))) {
+        if (CDMergeUtils.getName(interface1).equals(CDMergeUtils.getName(interface2))) {
           remove.add(interface1);
           getMergeBlackBoard()
               .addLog(
                   ErrorLevel.FINE,
                   "Removing redundant interface '"
-                      + CDUtils.getName(interface1)
+                      + CDMergeUtils.getName(interface1)
                       + "' from '"
                       + baseType.getName()
                       + "' as it is already covered in superType.",
@@ -105,7 +106,7 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
       }
     }
     for (ASTMCObjectType interfToRemove : remove) {
-      CDUtils.removeSuperInterface(baseType, interfToRemove);
+      CDMergeUtils.removeSuperInterface(baseType, interfToRemove);
     }
   }
 
@@ -120,9 +121,9 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
       cleanInterfaces(baseType, iface, helper, new ArrayList<ASTMCObjectType>());
     }
     if (superClass.getSuperclassList().size() == 1
-        && helper.cdContainsClass(CDUtils.getName(superClass.getSuperclassList().get(0)))) {
+        && helper.cdContainsClass(CDMergeUtils.getName(superClass.getSuperclassList().get(0)))) {
       ASTCDClass nextSuperClass =
-          helper.getClass(CDUtils.getName(superClass.getSuperclassList().get(0))).get();
+          helper.getClass(CDMergeUtils.getName(superClass.getSuperclassList().get(0))).get();
       cleanInterfacesSuperClass(baseType, nextSuperClass, helper, visited);
     }
   }

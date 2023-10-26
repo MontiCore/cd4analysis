@@ -10,7 +10,7 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import java.util.*;
 
@@ -170,7 +170,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
       explicitRoleMatch = false;
     }
     Optional<ASTCDAssociation> alignedAssocation2 =
-        CDUtils.tryAlignAssociation(association1, association2);
+        CDMergeUtils.tryAlignAssociation(association1, association2);
     if (!alignedAssocation2.isPresent()) {
       log(ErrorLevel.DEBUG, "Association don't match: different types", association1, association2);
       return false;
@@ -528,8 +528,8 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
       if (qualifier1.isPresentByAttributeName() && qualifier2.isPresentByAttributeName()) {
         return qualifier1.getName().equals(qualifier2.getName());
       } else if (qualifier1.isPresentByType() && qualifier2.isPresentByType()) {
-        return CDUtils.getTypeName(qualifier1.getByType())
-            .equals(CDUtils.getTypeName(qualifier2.getByType()));
+        return CDMergeUtils.getTypeName(qualifier1.getByType())
+            .equals(CDMergeUtils.getTypeName(qualifier2.getByType()));
       } else {
         if (qualifier1.isPresentByAttributeName()
             && qualifier2.isPresentByType()
@@ -556,9 +556,11 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
               typeName = attributeSymbol.get().getType().getTypeInfo().getName();
             }
             if (attributeSymbol.isPresent() && attributeSymbol.get().isPresentAstNode()) {
-              typeName = CDUtils.getTypeName((ASTCDAttribute) attributeSymbol.get().getAstNode());
+              typeName =
+                  CDMergeUtils.getTypeName((ASTCDAttribute) attributeSymbol.get().getAstNode());
             }
-            if (typeName != "" && typeName.equals(CDUtils.getTypeName(qualifier2.getByType()))) {
+            if (typeName != ""
+                && typeName.equals(CDMergeUtils.getTypeName(qualifier2.getByType()))) {
               matchTypeName = true;
             } else {
               log(
@@ -604,9 +606,11 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
               typeName = attributeSymbol.get().getType().getTypeInfo().getName();
             }
             if (attributeSymbol.isPresent() && attributeSymbol.get().isPresentAstNode()) {
-              typeName = CDUtils.getTypeName((ASTCDAttribute) attributeSymbol.get().getAstNode());
+              typeName =
+                  CDMergeUtils.getTypeName((ASTCDAttribute) attributeSymbol.get().getAstNode());
             }
-            if (typeName != "" && typeName.equals(CDUtils.getTypeName(qualifier1.getByType()))) {
+            if (typeName != ""
+                && typeName.equals(CDMergeUtils.getTypeName(qualifier1.getByType()))) {
               matchTypeName = true;
             } else {
               log(
@@ -640,8 +644,8 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
       if (qualifier1.isPresentByAttributeName() && qualifier2.isPresentByAttributeName()) {
         return qualifier1.getName().equals(qualifier2.getName());
       } else if (qualifier1.isPresentByType() && qualifier2.isPresentByType()) {
-        return CDUtils.getTypeName(qualifier1.getByType())
-            .equals(CDUtils.getTypeName(qualifier2.getByType()));
+        return CDMergeUtils.getTypeName(qualifier1.getByType())
+            .equals(CDMergeUtils.getTypeName(qualifier2.getByType()));
       } else {
 
         if (qualifier1.isPresentByAttributeName()
@@ -671,7 +675,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
                     .getType()
                     .getTypeInfo()
                     .getName()
-                    .equals(CDUtils.getTypeName(qualifier2.getByType()))) {
+                    .equals(CDMergeUtils.getTypeName(qualifier2.getByType()))) {
               matchTypeName = true;
             }
           }
@@ -710,7 +714,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
                     .getType()
                     .getTypeInfo()
                     .getName()
-                    .equals(CDUtils.getTypeName(qualifier1.getByType()))) {
+                    .equals(CDMergeUtils.getTypeName(qualifier1.getByType()))) {
               matchTypeName = true;
             }
           }

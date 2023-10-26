@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
@@ -13,7 +12,7 @@ import de.monticore.cdmerge.refactor.CleanAttributesInheritedFromSuperclass;
 import de.monticore.cdmerge.refactor.ModelRefactoringBase.ModelRefactoringBuilder;
 import de.monticore.cdmerge.refactor.RemoveRedundantInterfaces;
 import de.monticore.cdmerge.util.CDMergeAfterParseTrafo;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.cdmerge.validation.AssociationChecker;
 import de.monticore.cdmerge.validation.AttributeChecker;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
@@ -37,8 +36,6 @@ public class CDMergeConfig {
   private final PrecedenceConfig precedences;
 
   private final boolean CLI_MODE;
-
-  private CD4CodeParser parser;
 
   private List<ModelValidatorBuilder> modelValidators;
 
@@ -358,7 +355,7 @@ public class CDMergeConfig {
       final CDMergeAfterParseTrafo afterParseTrafo = new CDMergeAfterParseTrafo();
       afterParseTrafo.transform(inputCD);
 
-      CDUtils.RefreshSymbolTable(inputCD);
+      CDMergeUtils.refreshSymbolTable(inputCD);
 
       CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
       checker.checkAll(inputCD);
@@ -395,7 +392,7 @@ public class CDMergeConfig {
 
   private Optional<ASTCDCompilationUnit> parseCDFile(String modelfile) {
     try {
-      return CDUtils.parseCDFile(modelfile, true);
+      return CDMergeUtils.parseCDFile(modelfile, true);
     } catch (IOException e) {
       Log.error("Unable to parse modelfile " + modelfile + ". " + e.getMessage());
     }

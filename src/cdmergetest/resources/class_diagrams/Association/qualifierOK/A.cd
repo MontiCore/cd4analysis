@@ -2,22 +2,22 @@
 package qualifierOK;
 classdiagram A {
 	class CA;
-	
+
 	class CB{
 		int key;
 	}
 	class CC{
 		String identifier;
 	}
-	
+
 	class CD;
-		
-	
+
+
 	association ab CA [[key]] -> CB [1];
-	
+
 	association ac CA [String] -> CC;
-	
+
 	association ad [*] CA [Long] -> CD;
-	
-	
+
+
 }

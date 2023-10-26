@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import java.util.Optional;
@@ -30,7 +30,7 @@ public class DefaultAssociationMergeStrategy extends MergerBase
     // We take the orientation of the first association, this ensures that Left and
     // Right point to same references
     Optional<ASTCDAssociation> alignedAssoc2 =
-        CDUtils.tryAlignAssociation(association1, association2);
+        CDMergeUtils.tryAlignAssociation(association1, association2);
 
     if (!alignedAssoc2.isPresent()) {
       log(
@@ -219,7 +219,7 @@ public class DefaultAssociationMergeStrategy extends MergerBase
     log(
         ErrorLevel.FINE,
         "Merged association: "
-            + CDUtils.prettyPrintInline((ASTCDAssociationNode) mergedAssociation),
+            + CDMergeUtils.prettyPrintInline((ASTCDAssociationNode) mergedAssociation),
         association1,
         association2);
 
@@ -310,7 +310,7 @@ public class DefaultAssociationMergeStrategy extends MergerBase
                           ? association1.getRightQualifiedName().getBaseName()
                           : association1.getLeftQualifiedName().getBaseName()));
           if (qualifiedAttribute.isPresent()) {
-            if (CDUtils.getTypeName(qualifiedAttribute.get().getMCType())
+            if (CDMergeUtils.getTypeName(qualifiedAttribute.get().getMCType())
                 .equalsIgnoreCase(assocSide2.getCDQualifier().getName())) {
               logWarning(
                   "Type-Qualifier '"
@@ -358,7 +358,7 @@ public class DefaultAssociationMergeStrategy extends MergerBase
                           ? association2.getRightQualifiedName().getBaseName()
                           : association2.getLeftQualifiedName().getBaseName()));
           if (qualifiedAttribute.isPresent()) {
-            if (CDUtils.getTypeName(qualifiedAttribute.get().getMCType())
+            if (CDMergeUtils.getTypeName(qualifiedAttribute.get().getMCType())
                 .equalsIgnoreCase(assocSide1.getCDQualifier().getName())) {
               logWarning(
                   "Type-Qualifier '"
@@ -383,7 +383,7 @@ public class DefaultAssociationMergeStrategy extends MergerBase
                       + "' doesn't match Attribute Qualifier 2 '"
                       + assocSide2.getCDQualifier().getName()
                       + " of Type "
-                      + CDUtils.getTypeName(qualifiedAttribute.get()),
+                      + CDMergeUtils.getTypeName(qualifiedAttribute.get()),
                   association1,
                   association2);
               // We cannot merge the associations

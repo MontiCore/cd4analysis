@@ -12,7 +12,7 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -49,7 +49,8 @@ public class GeneralFourClassDiagrams extends BaseTest {
       MergeResult results = cdMerger.mergeCDs();
       processResult(results);
       org.junit.Assert.assertTrue(
-          parseCD(CDUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD, false));
+          parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
+              .deepEquals(expectedCD, false));
 
     } catch (MergingException e) {
       if (e.getLog().isPresent()) {

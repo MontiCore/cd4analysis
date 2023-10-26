@@ -25,7 +25,7 @@ import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
 import de.monticore.cdmerge.refactor.PostMergeRefactoring;
 import de.monticore.cdmerge.util.CDMergeAfterParseTrafo;
 import de.monticore.cdmerge.util.CDMergeInheritanceHelper;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
 import de.monticore.cdmerge.validation.PostMergeValidation;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
@@ -110,7 +110,7 @@ public class MergeTool {
             mergeBlackBoard.addLog(
                 ErrorLevel.FINE,
                 "Both class diagram have same package declaration '"
-                    + CDUtils.prettyPrintInline(cd1.getMCPackageDeclaration())
+                    + CDMergeUtils.prettyPrintInline(cd1.getMCPackageDeclaration())
                     + "', will use this package for  merged CD.",
                 MergePhase.CD_MERGING);
             mergeBlackBoard.setPackageList(cd1.getCDPackageList());
@@ -187,7 +187,7 @@ public class MergeTool {
         try {
           FileUtils.writeStringToFile(
               new File(Paths.get(getConfig().getOutputPath(), intermediateName + ".cd").toString()),
-              CDUtils.prettyPrint(mergeStepResult.getMergedCD()));
+              CDMergeUtils.prettyPrint(mergeStepResult.getMergedCD()));
         } catch (IOException e) {
           mergeBlackBoard.addLog(
               ErrorLevel.ERROR,
@@ -304,8 +304,8 @@ public class MergeTool {
 
       try {
         CD4CodeParser parser = new CD4CodeParser();
-        cd1Opt = parser.parse_String(CDUtils.prettyPrint(results.get(j)));
-        cd2Opt = parser.parse_String(CDUtils.prettyPrint(results.get(j + 1)));
+        cd1Opt = parser.parse_String(CDMergeUtils.prettyPrint(results.get(j)));
+        cd2Opt = parser.parse_String(CDMergeUtils.prettyPrint(results.get(j + 1)));
         if (cd1Opt.isPresent() && cd2Opt.isPresent()) {
           if (!cd1Opt.get().deepEquals(cd2Opt.get(), false)) {
             // Different Result for different order
@@ -397,7 +397,7 @@ public class MergeTool {
       mergeBlackBoard.addLog(
           ErrorLevel.FINE,
           "Merged Class Diagramm:\n\n= = = = = = =\n"
-              + CDUtils.prettyPrint(mergeResult.get())
+              + CDMergeUtils.prettyPrint(mergeResult.get())
               + "\n= = = = = = =\n",
           MergePhase.CD_MERGING);
     } else {
@@ -443,7 +443,7 @@ public class MergeTool {
 
     if (!(getConfig().disabledCheckCoCo() || getConfig().disabledPostMergeValidation())) {
       // Initialize Symboltable
-      CDUtils.RefreshSymbolTable(mergedCD);
+      CDMergeUtils.refreshSymbolTable(mergedCD);
       checkCoCos(mergedCD);
     }
 

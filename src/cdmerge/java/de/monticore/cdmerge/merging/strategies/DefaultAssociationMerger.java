@@ -7,7 +7,7 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.matching.matchresult.CDMatch;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -84,7 +84,7 @@ public class DefaultAssociationMerger extends AssociationMerger {
                 matches.add(association2);
               } else {
                 Optional<ASTCDAssociation> alignedAssocation2 =
-                    CDUtils.tryAlignAssociation(
+                    CDMergeUtils.tryAlignAssociation(
                         association1.getElement(), association2.getElement());
                 if (alignedAssocation2.isPresent()) {
                   if (association1.getElement().getLeft().isPresentCDRole()

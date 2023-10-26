@@ -15,7 +15,7 @@ public class CDMergeInheritanceHelper {
 
   public static ASTCDCompilationUnit mergeRedundantAttributes(
       ASTCDCompilationUnit cd, boolean allowTypeConversion) throws MergingException {
-    CDUtils.RefreshSymbolTable(cd);
+    CDMergeUtils.refreshSymbolTable(cd);
     for (ASTCDClass cdClass : cd.getCDDefinition().getCDClassesList()) {
       for (ASTCDAttribute attribute : cdClass.getCDAttributeList()) {
         Optional<ASTCDAttribute> optAttribute =

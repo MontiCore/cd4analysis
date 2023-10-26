@@ -6,10 +6,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.*;
@@ -38,17 +38,13 @@ import org.apache.commons.io.FileUtils;
  * Utility class offering static methods to access or modify CD elements or produce loggable output
  * etc.
  */
-public class CDUtils {
-
-  private static final CD4CodeFullPrettyPrinter commentsEnabledPrettyPrinter;
+public class CDMergeUtils {
 
   private static final CD4CodeFullPrettyPrinter inlinePrettyPrinter;
 
   private static CD4CodeParser parser;
 
   static {
-    commentsEnabledPrettyPrinter = new CD4CodeFullPrettyPrinter();
-    commentsEnabledPrettyPrinter.setPrintComments(true);
     StringBuilder sb = new StringBuilder();
     inlinePrettyPrinter = new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
   }
@@ -173,12 +169,8 @@ public class CDUtils {
     return Optional.empty();
   }
 
-  public static String getName(ASTMCObjectType referernceType) {
-    StringBuilder sb = new StringBuilder();
-    CD4CodeFullPrettyPrinter prettyPrinter =
-        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    referernceType.accept(prettyPrinter.getTraverser());
-    return prettyPrinter.getPrinter().getContent();
+  public static String getName(ASTMCObjectType referenceType) {
+    return referenceType.printType();
   }
 
   public static String getName(ASTNode astCDNode) {
@@ -242,20 +234,16 @@ public class CDUtils {
     if (type == null) {
       return "";
     }
-    StringBuilder sb = new StringBuilder();
-    CD4CodeFullPrettyPrinter prettyPrinter =
-        new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    type.accept(prettyPrinter.getTraverser());
-    return prettyPrinter.getPrinter().getContent();
+    return type.printType();
   }
 
   /** Used for log outputs */
   public static String prettyPrint(ASTCD4CodeNode node) {
-    return commentsEnabledPrettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, true);
   }
 
   public static String prettyPrint(ASTCDBasisNode node) {
-    return commentsEnabledPrettyPrinter.prettyprint(node);
+    return CD4CodeMill.prettyPrint(node, true);
   }
 
   /** Used for log outputs, produces inline model code */
@@ -423,7 +411,7 @@ public class CDUtils {
     if (ast.isPresent()) {
       final ASTCDCompilationUnit cd = ast.get();
       // Always ensure clean Symboltable for each model
-      RefreshSymbolTable(cd);
+      refreshSymbolTable(cd);
       // Ensure every CDElement is in a package and perform default AST Trafos
       final CDMergeAfterParseTrafo afterParseTrafo = new CDMergeAfterParseTrafo();
       afterParseTrafo.transform(cd);
@@ -445,7 +433,7 @@ public class CDUtils {
     return ast;
   }
 
-  public static void RefreshSymbolTable(ASTCDCompilationUnit cd) {
+  public static void refreshSymbolTable(ASTCDCompilationUnit cd) {
     if (cd.getEnclosingScope() != null) {
       CD4CodeMill.globalScope().removeSubScope(cd.getEnclosingScope());
     }

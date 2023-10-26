@@ -7,7 +7,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -54,10 +54,10 @@ public class LogEntry implements Comparable<LogEntry> {
   public String getMessage() {
     String logMessage = message;
     if (this.node1.isPresent()) {
-      logMessage += " ast element 1 " + CDUtils.prettyPrintInline(node1.get());
+      logMessage += " ast element 1 " + CDMergeUtils.prettyPrintInline(node1.get());
     }
     if (this.node2.isPresent()) {
-      logMessage += " ast element 1 " + CDUtils.prettyPrintInline(node2.get());
+      logMessage += " ast element 1 " + CDMergeUtils.prettyPrintInline(node2.get());
     }
     return logMessage;
   }
@@ -116,11 +116,11 @@ public class LogEntry implements Comparable<LogEntry> {
     } else if (node instanceof ASTCDDefinition) {
       return ((ASTCDDefinition) node).getName();
     } else if (node instanceof ASTCDAssociationNode) {
-      return CDUtils.prettyPrintInline((ASTCDAssociationNode) node);
+      return CDMergeUtils.prettyPrintInline((ASTCDAssociationNode) node);
     } else if (node instanceof ASTCD4CodeNode) {
-      return CDUtils.prettyPrintInline((ASTCD4CodeNode) node);
+      return CDMergeUtils.prettyPrintInline((ASTCD4CodeNode) node);
     } else if (node instanceof ASTCDBasisNode) {
-      return CDUtils.prettyPrintInline((ASTCDBasisNode) node);
+      return CDMergeUtils.prettyPrintInline((ASTCDBasisNode) node);
     }
     return "";
   }

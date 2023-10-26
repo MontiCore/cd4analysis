@@ -14,7 +14,7 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.ExecutionLog;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.util.ASTCDHelper;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCPackageDeclaration;
 import de.monticore.types.mcbasictypes._ast.ASTMCPackageDeclarationBuilder;
@@ -187,7 +187,7 @@ public class MergeBlackBoard {
     try {
       // We parse from pretty print again to ensure a clean ast with all default refactorings
 
-      mergedAst = CDUtils.parseCDCompilationUnit(CDUtils.prettyPrint(mergedCD), false);
+      mergedAst = CDMergeUtils.parseCDCompilationUnit(CDMergeUtils.prettyPrint(mergedCD), false);
 
       if (mergedAst.isPresent()) {
         return mergedAst;

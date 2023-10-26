@@ -9,7 +9,7 @@ import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,7 +38,8 @@ public class InheritanceDuplicateSuperinterfaces extends BaseTest {
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
     org.junit.Assert.assertTrue(
-        parseCD(CDUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD, false));
+        parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
+            .deepEquals(expectedCD, false));
   }
 
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {

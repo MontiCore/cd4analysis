@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdmerge.util.AssociationDirection;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.util.*;
 
 /** Handles user-precedence overrides for the merging process */
@@ -173,7 +173,7 @@ public class PrecedenceConfig {
   public boolean hasConflictWithPrecedenceType(
       ASTCDAssociation precedenceAssoc, ASTCDAssociation otherAssoc, ASTCDDefinition cd) {
     Optional<ASTCDAssociation> association2 =
-        CDUtils.tryAlignAssociation(precedenceAssoc, otherAssoc);
+        CDMergeUtils.tryAlignAssociation(precedenceAssoc, otherAssoc);
 
     String leftType = precedenceAssoc.getLeftReferenceName().toString();
     String rightType = precedenceAssoc.getRightReferenceName().toString();

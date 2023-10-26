@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.ASTCDHelper;
-import de.monticore.cdmerge.util.CDUtils;
+import de.monticore.cdmerge.util.CDMergeUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -85,19 +85,19 @@ public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase
       ASTCDClass merged, List<ASTCDClass> superClasses, Set<String> attributesToCheck) {
     Set<ASTCDAttribute> remove = new HashSet<>();
     for (String attrName : attributesToCheck) {
-      Optional<ASTCDAttribute> attr = CDUtils.getAttributeFromClass(attrName, merged);
+      Optional<ASTCDAttribute> attr = CDMergeUtils.getAttributeFromClass(attrName, merged);
       if (attr.isPresent()) {
         for (ASTCDClass superClass : superClasses) {
           Optional<ASTCDAttribute> attributeInSuperclass =
-              CDUtils.getAttributeFromClass(attrName, superClass);
+              CDMergeUtils.getAttributeFromClass(attrName, superClass);
           if (attributeInSuperclass.isPresent()
-              && CDUtils.getTypeName(attr.get())
-                  .equals(CDUtils.getTypeName(attributeInSuperclass.get().getMCType()))) {
+              && CDMergeUtils.getTypeName(attr.get())
+                  .equals(CDMergeUtils.getTypeName(attributeInSuperclass.get().getMCType()))) {
             getMergeBlackBoard()
                 .addLog(
                     ErrorLevel.INFO,
                     "Removing attribute '"
-                        + CDUtils.getTypeName(attr.get().getMCType())
+                        + CDMergeUtils.getTypeName(attr.get().getMCType())
                         + " "
                         + attr.get().getName()
                         + "' from class '"
