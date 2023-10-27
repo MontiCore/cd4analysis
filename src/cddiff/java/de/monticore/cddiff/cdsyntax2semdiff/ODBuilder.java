@@ -33,7 +33,6 @@ public class ODBuilder implements IODBuilder {
     } catch (Exception exception) {
       Log.error("Attributes couldn't be created");
     }
-    System.out.println(type + " " + name + "=" + value + ";");
     assert Objects.requireNonNull(attribute).isPresent();
     return attribute.get();
   }
@@ -44,6 +43,7 @@ public class ODBuilder implements IODBuilder {
    * @param name The name of the attribute.
    * @return The created attribute.
    */
+  //TODO: there is a case when an enum uses this function, but it should use the one above
   @Override
   public ASTODAttribute buildAttr(String type, String name) {
     Optional<ASTODAttribute> attribute = Optional.empty();
@@ -53,7 +53,6 @@ public class ODBuilder implements IODBuilder {
       Log.error("Attributes couldn't be created");
     }
     assert Objects.requireNonNull(attribute).isPresent();
-    System.out.println(type + " " + name + ";");
     return attribute.get();
   }
 

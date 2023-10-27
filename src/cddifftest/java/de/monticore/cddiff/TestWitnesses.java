@@ -1,10 +1,13 @@
 package de.monticore.cddiff;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
+import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -12,11 +15,13 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestWitnesses extends CDDiffTestBasis {
 
   @Test
+  //@Ignore
   public void test5() {
     ASTCDCompilationUnit compilationUnitNew =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/5/CD1.cd");
@@ -36,7 +41,13 @@ public class TestWitnesses extends CDDiffTestBasis {
     //    testHelper.addedAssocs();
 
     DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+//    for (ASTCDClass astcdClass : diffHelper.getHelper().getSrcMap().keySet()){
+//      for (AssocStruct assocStruct : diffHelper.getHelper().getSrcMap().get(astcdClass)){
+//        System.out.println(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), compilationUnitNew).a.getSymbol().getInternalQualifiedName() + " " + assocStruct.getAssociation().getLeft().getCDRole().getName()
+//          + Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), compilationUnitNew).b.getSymbol().getInternalQualifiedName() + " " + assocStruct.getAssociation().getRight().getCDRole().getName() + " " + assocStruct.isToBeProcessed() + " " + assocStruct.getSide());
+//      }
+//    }
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher()
@@ -181,18 +192,21 @@ public class TestWitnesses extends CDDiffTestBasis {
     trafo.transform(original1, original2);
 
     DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(false);
-
-//    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
-//    System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
-    for (ASTODArtifact od : witnesses2) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-        System.out.println("Open World Fail");
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+    for (ASTCDClass astcdClass : diffHelper2.getHelper().getTgtMap().keySet()){
+      for (AssocStruct assocStruct : diffHelper2.getHelper().getTgtMap().get(astcdClass)){
+        System.out.println(assocStruct.getAssociation().getLeftQualifiedName() + " " + assocStruct.getAssociation().getRightQualifiedName());
       }
     }
+//    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+//
+//    for (ASTODArtifact od : witnesses2) {
+//      if (!new OD2CDMatcher()
+//          .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+//        System.out.println("Open World Fail");
+//        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//        Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//      }
+//    }
   }
   @Test
   public void testDE() {
@@ -200,7 +214,7 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/DEv1.cd");
 
     DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -658,14 +672,14 @@ public class TestWitnesses extends CDDiffTestBasis {
     System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
     System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
 
-//    for (ASTODArtifact od : witnesses2) {
-//      if (!new OD2CDMatcher()
-//          .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-//        System.out.println("Open World Fail");
-//        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-//        Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-//      }
-//    }
+    for (ASTODArtifact od : witnesses2) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        System.out.println("Open World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      }
+    }
   }
 
   @Test
@@ -693,5 +707,111 @@ public class TestWitnesses extends CDDiffTestBasis {
     System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
     System.out.println("Emp2");
     System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
+  }
+
+  public void testEmp01(){
+    ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees0.cd");
+    ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+
+    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    Assert.assertFalse(witnesses.isEmpty());
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail();
+      }
+    }
+  }
+
+  public void testEmp21(){
+    ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+    ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+
+    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    Assert.assertFalse(witnesses.isEmpty());
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail();
+      }
+    }
+  }
+
+  public void testEmp43(){
+    ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees4.cd");
+    ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees3.cd");
+
+    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    Assert.assertFalse(witnesses.isEmpty());
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+        System.out.println("Closed World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail();
+      }
+    }
+  }
+
+  public void testEmp87(){
+    ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+
+
+    // reduction-based
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(original1, original2);
+
+    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
+    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+
+    for (ASTODArtifact od : witnesses2) {
+      if (!new OD2CDMatcher()
+        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        System.out.println("Open World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      }
+    }
+  }
+
+  public void testEmp78(){
+    ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+    ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+
+
+    // reduction-based
+    ASTCDCompilationUnit original1 = cd1.deepClone();
+    ASTCDCompilationUnit original2 = cd2.deepClone();
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(original1, original2);
+
+    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
+    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+
+    for (ASTODArtifact od : witnesses2) {
+      if (!new OD2CDMatcher()
+        .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        System.out.println("Open World Fail");
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      }
+    }
   }
 }

@@ -20,6 +20,7 @@ public class TypeDiffStruct {
   private Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes = null;
   private Pair<ASTCDClass, List<ASTCDAttribute>> memberDiff = null;
   private ASTCDType changedStereotype = null;
+  private boolean changedSingleton = false;
   private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes = null;
   private Pair<ASTCDEnum, List<ASTCDEnumConstant>> addedConstants = null;
 
@@ -89,5 +90,13 @@ public class TypeDiffStruct {
 
   public void setBaseDiff(List<DiffTypes> baseDiff) {
     this.baseDiff = baseDiff;
+  }
+
+  public boolean isChangedSingleton() {
+    return changedSingleton;
+  }
+
+  public void setChangedSingleton(boolean changedSingleton) {
+    this.changedSingleton = changedSingleton;
   }
 }

@@ -865,8 +865,15 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           changed = true;
         }
         if (typeDiff.getBaseDiff().contains(DiffTypes.STEREOTYPE_DIFFERENCE)) {
-          diff.setChangedStereotype(typeDiff.isClassNeeded());
-          changed = true;
+          Pair<Boolean, Boolean> changedStereotype = helper.stereotypeChange((ASTCDClass) typeDiff.getSrcElem(), (ASTCDClass) typeDiff.getTgtElem());
+          if (changedStereotype.a) {
+            diff.setChangedStereotype(typeDiff.isClassNeeded());
+            changed = true;
+          }
+          if (changedStereotype.b) {
+            diff.setChangedSingleton(true);
+            changed = true;
+          }
         }
       }
       if (changed) {

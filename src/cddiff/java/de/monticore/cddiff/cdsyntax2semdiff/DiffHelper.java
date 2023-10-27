@@ -42,6 +42,7 @@ public class DiffHelper {
   public DiffHelper(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.helper = syntaxDiff.getHelper();
+    syntaxDiff.findOverlappingAssocs();
   }
 
   /**
@@ -156,7 +157,7 @@ public class DiffHelper {
           }
         }
         if (typeDiffStruct.getChangedStereotype() != null) {
-          comment.append("\n//changed stereotype");
+          comment.append("\n//changed stereotype from abstract");
         }
         if (typeDiffStruct.getDeletedAttributes() != null
           && !typeDiffStruct.getDeletedAttributes().b.isEmpty()) {
@@ -179,6 +180,23 @@ public class DiffHelper {
           }
         } else if (astodArtifact != null && diffLimit == 0) {
           artifactList.add(astodArtifact);
+        }
+        if (typeDiffStruct.isChangedSingleton()){
+          ASTODArtifact astodArtifact2;
+          astodArtifact2 =
+            generateArtifact(
+              oDTitleForClass((ASTCDClass) typeDiffStruct.getAstcdType()),
+              generateElements(
+                (ASTCDClass) typeDiffStruct.getAstcdType(), "//changed singleton", null)
+            );
+          if (astodArtifact2 != null && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact2);
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact2 != null && diffLimit == 0) {
+            artifactList.add(astodArtifact2);
+          }
         }
       }
     }
@@ -313,7 +331,7 @@ public class DiffHelper {
         } else if (astodArtifact != null && diffLimit == 0) {
           artifactList.add(astodArtifact2);
         }
-      } else {//TODO: add other cases
+      } else {
         ASTODArtifact astodArtifact =
             generateArtifact(
                 oDTitleForAssoc(assocDiffStruct.getAssociation()),
@@ -597,7 +615,6 @@ public class DiffHelper {
    * Generate an object diagram for the given association.
    * The association is annotated with <<diff>> and a comment is added.
    * @param association association that causes the diff.
-   * @param association association that causes the diff.
    * @param integers cardinalities for the diff.
    * @param comment comment for the diff.
    * @return list of OD elements.
@@ -633,6 +650,44 @@ public class DiffHelper {
     pair.b.set_PreCommentList(List.of(commentBuilder.build()));
     return new ArrayList<>(elements);
   }
+
+  public List<ASTODElement> generateElements(
+    ASTCDClass astcdClass, String comment) {
+    Set<ASTODElement> elements;
+    DiffWitnessGenerator oDHelper;
+    if (diffSize == 0) {
+      oDHelper = new DiffWitnessGenerator(Math.max(helper.getSrcCD().getCDDefinition().getCDClassesList().size(), helper.getTgtCD().getCDDefinition().getCDClassesList().size()), helper);
+    } else {
+      oDHelper = new DiffWitnessGenerator(diffSize, helper);
+    }
+    elements = oDHelper.getObjForODSpec(astcdClass);
+    if (elements.isEmpty()) {
+      return new ArrayList<>();
+    }
+    ASTODObject matchedObject = null;
+    for (ASTODElement element : elements) {
+      if (element instanceof ASTODObject) {
+        if (((ASTODObject) element)
+          .getMCObjectType()
+          .printType()
+          .equals(astcdClass.getSymbol().getInternalQualifiedName())) {
+          matchedObject = (ASTODObject) element;
+        }
+      }
+    }
+
+    ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
+    valueBuilder.setName("diff");
+    valueBuilder.setContent("diffClass");
+    matchedObject.getModifier().getStereotype().addValues(valueBuilder.build());
+
+    CommentBuilder commentBuilder = new CommentBuilder();
+    commentBuilder.setText(comment);
+    matchedObject.set_PreCommentList(List.of(commentBuilder.build()));
+
+    return new ArrayList<>(elements);
+  }
+
 
   /**
    * Generate an object diagram for a given diff-witness.

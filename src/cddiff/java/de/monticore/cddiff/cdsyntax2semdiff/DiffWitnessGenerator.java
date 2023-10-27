@@ -136,40 +136,12 @@ public class DiffWitnessGenerator {
       addToMaps(pack2, mapSrc, mapTgt);
       objectSet.add(pack1);
       objectSet.add(pack2);
-    } else if (cardinalityLeft == 0 && cardinalityRight == 0) {
-      Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
-      Package pack2 = new Package(pair.b, getNameForClass(pair.b), helper);
-      objectSet.add(pack);
-      objectSet.add(pack2);
     } else if (cardinalityLeft == 0 && cardinalityRight == 1) {
-      Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
-      Package pack2 = new Package(pair.a, getNameForClass(pair.a),
-        pair.b, getNameForClass(pair.b),
-        association, null, false, false, helper);
-      addToMaps(pack2, mapSrc, mapTgt);
+      Package pack = new Package(pair.b, getNameForClass(pair.b), helper);
       objectSet.add(pack);
-      objectSet.add(pack2);
     } else if (cardinalityLeft == 1 && cardinalityRight == 0) {
-      Package pack = new Package(pair.a, getNameForClass(pair.a),
-        pair.b, getNameForClass(pair.b),
-        association, null, false, false, helper);
-      Package pack2 = new Package(pair.b, getNameForClass(pair.b), helper);
-      addToMaps(pack, mapSrc, mapTgt);
-      objectSet.add(pack);
-      objectSet.add(pack2);
-    } else if (cardinalityLeft == 0 && cardinalityRight == 2) {
       Package pack = new Package(pair.a, getNameForClass(pair.a), helper);
-      Package pack2 = new Package(pair.a, getNameForClass(pair.a),
-        pack.getRightObject(),
-        association, null, false, false, helper);
-      Package pack3 = new Package(pack.getRightObject(),
-        pair.b, getNameForClass(pair.b),
-        association, null, false, false, helper);
-      addToMaps(pack2, mapSrc, mapTgt);
-      addToMaps(pack3, mapSrc, mapTgt);
       objectSet.add(pack);
-      objectSet.add(pack2);
-      objectSet.add(pack3);
     }
     return objectSet;
   }
@@ -267,6 +239,45 @@ public class DiffWitnessGenerator {
     if (packages == null) {
       return new HashSet<>();
     }
+    if (maxNumberOfClasses < getNumberOfObjects(packages)) {
+      return new HashSet<>();
+    }
+    while (!findUnprocessedObjects(packages).isEmpty()) {
+      for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
+        if (maxNumberOfClasses < getNumberOfObjects(packages)) {
+          return new HashSet<>();
+        }
+        Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
+        if (toAdd == null) {
+          return new HashSet<>();
+        }
+        packages.addAll(toAdd);
+      }
+    }
+    map.clear();
+    for (Package pack : packages) {
+      // unfold packages into set
+      if (pack.getAssociation() != null) {
+        set.add(pack.getAssociation());
+        set.add(pack.getRightObject());
+      }
+      set.add(pack.getLeftObject());
+    }
+    return set;
+  }
+
+  public Set<ASTODElement> getObjForODSpec(ASTCDClass astcdClass) {
+    Set<ASTODElement> set = new HashSet<>();
+    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc =
+      ArrayListMultimap.create();
+    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt =
+      ArrayListMultimap.create();
+    Set<Package> packages =
+      createChainsForNewClass(astcdClass, new HashSet<>(), mapSrc, mapTgt, null);
+    if (packages == null) {
+      return new HashSet<>();
+    }
+    packages.addAll(createChainsForNewClass(astcdClass, packages, mapSrc, mapTgt, null));
     if (maxNumberOfClasses < getNumberOfObjects(packages)) {
       return new HashSet<>();
     }
@@ -622,10 +633,12 @@ public class DiffWitnessGenerator {
             .getSrcMap()
             .get(Syn2SemDiffHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
       if (assocStruct.getSide().equals(ClassSide.Left)
+          && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
               || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
         list.add(assocStruct);
       } else if (assocStruct.getSide().equals(ClassSide.Right)
+        && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
               || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
         list.add(assocStruct);
