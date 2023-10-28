@@ -785,7 +785,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     String printOption = cmd.getOptionValue("print", "diff");
     if (printOption.equals("added")) {
       System.out.println(syntaxDiff.printOnlyAdded());
-      ;
     }
     if (printOption.equals("diff")) {
       System.out.println(syntaxDiff.printDiff());

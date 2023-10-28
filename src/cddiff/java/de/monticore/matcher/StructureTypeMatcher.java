@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
 
   private final ASTCDCompilationUnit tgtCD;
+  public double threshold = 0.5;
 
   public StructureTypeMatcher(ASTCDCompilationUnit tgtCD) {
     this.tgtCD = tgtCD;
@@ -60,6 +61,6 @@ public class StructureTypeMatcher implements MatchingStrategy<ASTCDType> {
     double weight = (double) similarities.size() / allAttributes.size();
 
     // Chosen threshold
-    return weight >= 0.5;
+    return weight >= threshold;
   }
 }
