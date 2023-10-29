@@ -16,7 +16,7 @@ public class CDMemberDiff extends SyntaxDiffHelper implements ICDMemberDiff {
   private List<DiffTypes> baseDiff;
   // Print
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-  private String srcMemberModifier, srcMemberType, srcMemberName, addedMember;
+  private String srcMemberModifier, srcMemberType, srcMemberName, addedMember, inheritedMember;
   int srcLineOfCode;
   private String tgtMemberModifier, tgtMemberType, tgtMemberName;
   int tgtLineOfCode;
@@ -173,6 +173,12 @@ public class CDMemberDiff extends SyntaxDiffHelper implements ICDMemberDiff {
                 Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName))
             + COLOR_ADD
             + ";";
+    this.inheritedMember =
+      "\t"
+        + insertSpaceBetweenStringsAndPurple(
+        Arrays.asList(srcMemberModifier, srcMemberType, srcMemberName))
+        + COLOR_INHERITED
+        + ";";
     this.removedMember =
         "\t"
             + insertSpaceBetweenStringsAndRed(
@@ -197,6 +203,15 @@ public class CDMemberDiff extends SyntaxDiffHelper implements ICDMemberDiff {
    */
   public String printAddedMember() {
     return addedMember;
+  }
+
+  /**
+   * Returns the inherited member representation.
+   *
+   * @return The inherited member representation.
+   */
+  public String printInheritedMember() {
+    return inheritedMember;
   }
 
   /**

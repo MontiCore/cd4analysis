@@ -284,7 +284,6 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
   public static final String dir =
       "src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/";
-  public static final String pathDir = "src/cddifftest/resources/validation/Performance/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
 
@@ -292,90 +291,21 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   public void testSyntax1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    // System.out.println(syntaxDiff.printOnlyChanged());
-
     SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
     System.out.println(sb.printSrcCD());
-    // System.out.println(syntaxDiff.printTgtCD());
-    // System.out.println(syntaxDiff.getBaseDiff());
-    // System.out.println("----------------------------");
-    // System.out.println(syntaxDiff.printOnlyAdded());
-    // System.out.println(syntaxDiff.getChangedTypes());
-    // System.out.println("----------------------------");
-    // System.out.println(syntaxDiff.printOnlyDeleted());
-    // System.out.println("----------------------------");
-    // System.out.println(syntaxDiff.printDiff());
-    // System.out.println("----------------------------");
   }
 
   @Test
   public void testSyntax2() {
     parseModels("Source2.cd", "Target2.cd");
 
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    // System.out.println(syntaxDiff.printOnlyChanged());
-
     SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
-    System.out.println(sb.printTgtCD());
+    System.out.println(sb.printDiff());
   }
 
   @Test
   public void testSyntax3() {
-    parseMaxModels("5A.cd", "5B.cd");
-
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
-    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
-    System.out.println(sb.printDiff());
-    System.out.println(syntaxDiff.getMatchedClasses());
-  }
-
-  @Test
-  public void testSyntax4() {
-    parseMaxModels("10A.cd", "10B.cd");
-
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
-    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
-    System.out.println(sb.printDiff());
-  }
-
-  @Test
-  public void testSyntax5() {
-    parseMaxModels("15A.cd", "15B.cd");
-
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
-    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
-    System.out.println(sb.printDiff());
-  }
-
-  @Test
-  public void testSyntax6() {
-    parseMaxModels("20A.cd", "20B.cd");
-
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
-    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
-    System.out.println(sb.printDiff());
-  }
-
-  @Test
-  public void testSyntax7() {
-    parseMaxModels("25A.cd", "25B.cd");
-
-    CDDiffUtil.refreshSymbolTable(src);
-    CDDiffUtil.refreshSymbolTable(tgt);
-
+    parseModels("TechStoreV2.cd", "TechStoreV1.cd");
     SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
     System.out.println(sb.printDiff());
   }
@@ -385,28 +315,6 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
       Optional<ASTCDCompilationUnit> src =
           CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
-      if (src.isPresent() && tgt.isPresent()) {
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
-        src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
-        tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
-        this.tgt = tgt.get();
-        this.src = src.get();
-      } else {
-        Assert.fail("Could not parse CDs.");
-      }
-
-    } catch (IOException e) {
-      Assert.fail(e.getMessage());
-    }
-  }
-
-  public void parseMaxModels(String concrete, String ref) {
-    try {
-      Optional<ASTCDCompilationUnit> src =
-          CD4CodeMill.parser().parseCDCompilationUnit(pathDir + concrete);
-      Optional<ASTCDCompilationUnit> tgt =
-          CD4CodeMill.parser().parseCDCompilationUnit(pathDir + ref);
       if (src.isPresent() && tgt.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
         CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());

@@ -15,6 +15,8 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
 
   protected static final String COLOR_ADD = "\033[1;32m";
 
+  protected static final String COLOR_INHERITED = "\033[1;35m";
+
   protected static final String COLOR_CHANGE = "\033[1;33m";
 
   protected static final String RESET = "\033[0m";
@@ -74,6 +76,27 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_DELETE).append(field).append(" ");
+      }
+    }
+    if (!stringList.isEmpty()) {
+      return output.substring(0, output.length() - 1);
+    }
+    return output.toString();
+  }
+
+  /**
+   * Concatenates a list of strings with spaces in between and applies a red color to each string.
+   *
+   * @param stringList The list of strings to concatenate and color.
+   * @return A single string with spaces between colored strings.
+   */
+  @Override
+  public String insertSpaceBetweenStringsAndPurple(List<String> stringList) {
+    StringBuilder output = new StringBuilder();
+
+    for (String field : stringList) {
+      if (!(field == null)) {
+        output.append(COLOR_INHERITED).append(field).append(" ");
       }
     }
     if (!stringList.isEmpty()) {

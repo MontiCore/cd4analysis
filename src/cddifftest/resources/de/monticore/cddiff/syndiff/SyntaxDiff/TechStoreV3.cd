@@ -1,0 +1,7 @@
+import java.lang.*;
+import java.util.Date;
+
+//STARO
+classdiagram TechStoreV3 {
+  class Customer{}
+}

@@ -8,4 +8,6 @@ public interface ICDPrintDiff {
   String insertSpaceBetweenStringsAndGreen(List<String> stringList);
 
   String insertSpaceBetweenStringsAndRed(List<String> stringList);
+
+  String insertSpaceBetweenStringsAndPurple(List<String> stringList);
 }

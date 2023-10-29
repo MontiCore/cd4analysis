@@ -384,7 +384,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     }
   }
 
-  List<Pair<ASTCDAttribute, ASTCDAttribute>> removedBcInh = new ArrayList<>();
+  List<ASTCDAttribute> removedBcInh = new ArrayList<>();
   /**
    * Loads all inherited attributes from the source type (srcType) to the target type (tgtType) by
    * comparing the attributes of tgtType and its super types with srcType attributes. If a match is
@@ -407,7 +407,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
         for (ASTCDAttribute tgtAttr : x.getCDAttributeList()) {
           if (tgtAttr.getName().equals(srcAttr.getName())) {
             inheritedFound = true;
-            removedBcInh.add(new Pair<>(srcAttr, tgtAttr));
+            removedBcInh.add(tgtAttr);
             break;
           }
         }
@@ -450,11 +450,11 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
       boolean addedNotFound = !inheritedAttributes.contains(srcAttr);
         for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
-        if (srcAttr.getName().equals(tgtAttr.getName())) {
-          addedNotFound = false;
-          break;
+          if (srcAttr.getName().equals(tgtAttr.getName())) {
+            addedNotFound = false;
+            break;
+          }
         }
-      }
       if (addedNotFound) {
         addedAttributes.add(srcAttr);
         if (!baseDiff.contains(DiffTypes.ADDED_ATTRIBUTE)) {
@@ -520,7 +520,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   public void loadAllDeletedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
       boolean notFound = true;
-      for (ASTCDAttribute a : inheritedAttributes) {
+      for (ASTCDAttribute a : removedBcInh) {
         if (a.getName().equals(tgtAttr.getName())) {
           notFound = false;
           break;
@@ -983,8 +983,8 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       for (ASTCDAttribute x : inheritedAttributes) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
         String commentOne =
-            "//inherited attribute, L: " + diff.srcLineOfCode + System.lineSeparator();
-        String tmpOne = commentOne + diff.printAddedMember() + RESET;
+            "//moved attribute from super-type, L: " + diff.srcLineOfCode + System.lineSeparator();
+        String tmpOne = commentOne + diff.printInheritedMember() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));
         onlyDiffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));

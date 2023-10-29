@@ -54,7 +54,7 @@ public class CDToolOptions {
     initPrettyPrinter(showPlantUML);
     initPlantUML();
     initSemDiffOptions();
-    // initSyntaxDiffOptions();
+    initSyntaxDiffOptions();
     initNEWSyntaxDiff();
     initMergeOptions();
   }
@@ -376,7 +376,7 @@ public class CDToolOptions {
             .build());
   }
 
-  /*public void initSyntaxDiffOptions() {
+  public void initSyntaxDiffOptions() {
 
     options.addOption(
         Option.builder()
@@ -408,7 +408,7 @@ public class CDToolOptions {
                     + "options. `nocolor` prints the matched CD-elements with lines marked as - "
                     + "(deleted), ~ (changed), + (added).")
             .build());
-  }*/
+  }
 
   /** Options for NEW SyntaxDiff */
   public void initNEWSyntaxDiff() {

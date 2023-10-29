@@ -34,6 +34,7 @@ import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.syndiff.semdiff.SyntaxDiffBuilder;
+import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
@@ -156,13 +157,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        /*if (cmd.hasOption("syntaxdiff")) {
+        if (cmd.hasOption("syntaxdiff")) {
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
           computeSyntaxDiff();
           CD4CodeMill.globalScope().clear();
-        }*/
+        }
 
         if (cmd.hasOption("syndiff")) {
           if (useBuiltInTypes) {
@@ -706,7 +707,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
-  /*protected void computeSyntaxDiff() {
+  protected void computeSyntaxDiff() {
 
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
@@ -756,7 +757,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     if (printOption.equals("nocolor")) {
       syntaxDiff.printNoColour();
     }
-  }*/
+  }
 
   /** perform syndiff of 2 CDs */
   protected void computeNewSyntaxDiff() {
