@@ -115,6 +115,20 @@ public class Syn2SemDiffHelper {
    */
   private List<ASTCDAssociation> deletedAssocs;
 
+  private final String subClassInterface = "ObjectSub4Diff"; //This is also used in getConnectedClasses(), but the function is static!
+
+  private final String classForInter = "Object4Diff";
+
+  private final ASTCDClass classForInterface = CD4CodeMill.cDClassBuilder()
+    .setName(classForInter)
+    .setModifier(CD4CodeMill.modifierBuilder().build())
+    .build();
+
+  private final ASTCDClass classForInterfaceTgt = CD4CodeMill.cDClassBuilder()
+    .setName(classForInter)
+    .setModifier(CD4CodeMill.modifierBuilder().build())
+    .build();
+
   public ArrayListMultimap<ASTCDClass, AssocStruct> getSrcMap() {
     return srcMap;
   }
@@ -2325,6 +2339,12 @@ public class Syn2SemDiffHelper {
         tgtSubMap.put(astcdClass, subClass);
       }
     }
+    ASTCDClass subSrc = getCDClass(srcCD, subClassInterface);
+    ASTCDClass subTgt = getCDClass(tgtCD, subClassInterface);
+    if (subSrc != null) {
+      srcSubMap.put(classForInterface, subSrc);
+      tgtSubMap.put(classForInterfaceTgt, subTgt);
+    }
   }
 
   // CHECKED
@@ -2629,13 +2649,17 @@ public class Syn2SemDiffHelper {
       ASTCDClass astcdClass, Pair<ASTCDAttribute, String> pair) {
     List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
+    if (pair != null){
+      odAttributes.add(ODBuilder.buildAttr(pair.a.getMCType().printType(), pair.a.getName(), pair.b));
+      attributes.remove(pair.a);
+    }
     for (ASTCDAttribute attribute : attributes) {
-      if (pair != null && attribute.getMCType().printType().equals(pair.a.getName())) {
+      Pair<Boolean, String> attIsEnum = attIsEnum(attribute);
+      if (attIsEnum.a) {
         odAttributes.add(
-            ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), pair.b));
+          ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), attIsEnum.b));
       } else {
-        odAttributes.add(
-            ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
+        odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
       }
     }
     return odAttributes;
@@ -3037,15 +3061,37 @@ public class Syn2SemDiffHelper {
       AssocStruct assocStruct = iterator.next();
       if (assocStruct.getSide().equals(ClassSide.Left)
         && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
-        deleteAssocOtherSideSrc(assocStruct);
+        if (isOtherSideNeeded(assocStruct)) {
+          notInstClassesSrc.add(getConnectedClasses(assocStruct.getAssociation(), srcCD).b);
+          srcMap.removeAll(getConnectedClasses(assocStruct.getAssociation(), srcCD).b);
+        } else {
+          deleteAssocOtherSideSrc(assocStruct);
+        }
         iterator.remove();
       }
       if (assocStruct.getSide().equals(ClassSide.Right)
         && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
-        deleteAssocOtherSideSrc(assocStruct);
+        if (isOtherSideNeeded(assocStruct)) {
+          notInstClassesSrc.add(getConnectedClasses(assocStruct.getAssociation(), srcCD).a);
+          srcMap.removeAll(getConnectedClasses(assocStruct.getAssociation(), srcCD).a);
+        } else {
+          deleteAssocOtherSideSrc(assocStruct);
+        }
         iterator.remove();
       }
     }
+  }
+
+  public boolean isOtherSideNeeded(AssocStruct assocStruct){
+    if (assocStruct.getSide().equals(ClassSide.Left)
+      && (assocStruct.getAssociation().getRight().getCDCardinality().isOne() || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())){
+      return true;
+    }
+    if (assocStruct.getSide().equals(ClassSide.Right)
+      && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne() || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())){
+      return true;
+    }
+    return false;
   }
 
   // CHECKED
@@ -3104,12 +3150,22 @@ public class Syn2SemDiffHelper {
       AssocStruct assocStruct = iterator.next();
       if (assocStruct.getSide().equals(ClassSide.Left)
         && CDDiffUtil.inferRole(assocStruct.getAssociation().getRight()).equals(role.getName())) {
-        deleteAssocOtherSideTgt(assocStruct);
+        if (isOtherSideNeeded(assocStruct)) {
+          notInstClassesTgt.add(getConnectedClasses(assocStruct.getAssociation(), tgtCD).b);
+          tgtMap.removeAll(getConnectedClasses(assocStruct.getAssociation(), tgtCD).b);
+        } else {
+          deleteAssocOtherSideTgt(assocStruct);
+        }
         iterator.remove();
       }
       if (assocStruct.getSide().equals(ClassSide.Right)
         && CDDiffUtil.inferRole(assocStruct.getAssociation().getLeft()).equals(role.getName())) {
-        deleteAssocOtherSideTgt(assocStruct);
+        if (isOtherSideNeeded(assocStruct)) {
+          notInstClassesTgt.add(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a);
+          tgtMap.removeAll(getConnectedClasses(assocStruct.getAssociation(), tgtCD).a);
+        } else {
+          deleteAssocOtherSideTgt(assocStruct);
+        }
         iterator.remove();
       }
     }
@@ -3218,7 +3274,7 @@ public class Syn2SemDiffHelper {
   public Pair<Boolean, Boolean> stereotypeChange(ASTCDClass newClass, ASTCDClass oldClass){
     boolean abstractChange = false;
     boolean singletonChange = false;
-    if (newClass.getModifier().isAbstract() != oldClass.getModifier().isAbstract()){
+    if (!newClass.getModifier().isAbstract() && oldClass.getModifier().isAbstract()){
       abstractChange = true;
     }
     if (!newClass.getModifier().getStereotype().contains("singleton") && oldClass.getModifier().getStereotype().contains("singleton")){

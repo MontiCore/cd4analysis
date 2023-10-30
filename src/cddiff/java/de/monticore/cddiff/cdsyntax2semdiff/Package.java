@@ -124,8 +124,9 @@ public class Package {
       if (attIsEnum.a) {
         odAttributes.add(
             ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName(), attIsEnum.b));
+      } else {
+        odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
       }
-      odAttributes.add(ODBuilder.buildAttr(attribute.getMCType().printType(), attribute.getName()));
     }
     return odAttributes;
   }

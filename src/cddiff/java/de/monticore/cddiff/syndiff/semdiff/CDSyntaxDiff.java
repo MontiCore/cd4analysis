@@ -793,9 +793,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDClass>>> deletedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDClass>>> list = new ArrayList<>();
+    System.out.println("DELETED ASSOCS");
+    System.out.println("size: " + deletedAssocs.size());
     for (ASTCDAssociation association : deletedAssocs) {
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, tgtCD);
-      if (association.getCDAssocDir().isBidirectional()) {
+      System.out.println(pair.a.getSymbol().getInternalQualifiedName() + " " + pair.b.getSymbol().getInternalQualifiedName());
+      if (association.getCDAssocDir().isBidirectional() || getDirection(association).equals(AssocDirection.Unspecified)) {
         List<ASTCDClass> astcdClass = isAssocDeleted(association, pair.a);
         List<ASTCDClass> astcdClass1 = isAssocDeleted(association, pair.b);
         if (helper.findMatchedSrc(pair.a) != null && !astcdClass.isEmpty()) {
