@@ -22,7 +22,7 @@ build:
   except:
     - develop
   script:
-  - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
+  - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
   - "cd library"
   - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
   artifacts:
@@ -35,11 +35,11 @@ buildAndDeploy:
   only:
     - develop
   script:
-    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
+    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
     - "cd library"
     - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
     - "cd .."
-    - "gradle publish $GRADLE_OPT -PgenTR=true $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+    - "gradle publish $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
     - "cd library"
     - "gradle :trafo-library:publish $GRADLE_OPT -PgenTR=true $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
 
