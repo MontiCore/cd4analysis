@@ -91,6 +91,7 @@ public class Syn2SemDiffValidationTest {
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
+      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/Employees");
 
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
@@ -110,6 +111,7 @@ public class Syn2SemDiffValidationTest {
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
+      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/DT2vsDT1");
 
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
@@ -135,6 +137,7 @@ public class Syn2SemDiffValidationTest {
 
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/DT3vsDT2");
 
       Assertions.assertFalse(witnesses.isEmpty());
 
@@ -171,8 +174,15 @@ public class Syn2SemDiffValidationTest {
       // reduction-based
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
+
+      // print modified CDs
+      String dir1 = file1.replaceAll("\\.cd","");
+      String dir2 = file2.replaceAll("\\.cd","");
+      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
+
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -208,6 +218,12 @@ public class Syn2SemDiffValidationTest {
       // reduction-based
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
+
+      // print modified CDs
+      String dir1 = file1.replaceAll("\\.cd","");
+      String dir2 = file2.replaceAll("\\.cd","");
+      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
+
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
       if (diff) {
@@ -250,6 +266,12 @@ public class Syn2SemDiffValidationTest {
       // reduction-based
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
+
+      // print modified CDs
+      String dir1 = file1.replaceAll("\\.cd","");
+      String dir2 = file2.replaceAll("\\.cd","");
+      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
+
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
       if (diff) {
