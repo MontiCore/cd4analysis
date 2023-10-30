@@ -1,0 +1,10 @@
+classdiagram EmpB {
+
+  class Employee {
+  }
+
+  class Task {
+  }
+
+  association [1..*] Employee -> (toDo) Manager [*];
+}
