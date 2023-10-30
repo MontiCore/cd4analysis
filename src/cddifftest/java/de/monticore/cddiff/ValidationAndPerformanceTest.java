@@ -486,7 +486,7 @@ public class ValidationAndPerformanceTest {
     return i / ods.size();
   }
 
-  public static Stream<Arguments> performanceSet() {
+  protected static Stream<Arguments> performanceSet() {
     return Stream.of(
         Arguments.of("5A.cd", "5B.cd"),
         Arguments.of("10A.cd", "10B.cd"),
@@ -495,7 +495,7 @@ public class ValidationAndPerformanceTest {
         Arguments.of("25A.cd", "25B.cd"));
   }
 
-  public static Stream<Arguments> cddiffSet() {
+  protected static Stream<Arguments> cddiffSet() {
     return Stream.of(
         Arguments.of("DEv2.cd", "DEv1.cd", true),
         Arguments.of("EAv2.cd", "EAv1.cd", true),
@@ -506,7 +506,7 @@ public class ValidationAndPerformanceTest {
         Arguments.of("LibraryV5.cd", "LibraryV4.cd", false));
   }
 
-  public static Stream<Arguments> cd4analysisSet() {
+  protected static Stream<Arguments> cd4analysisSet() {
     return Stream.of(
         Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
         Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
@@ -515,7 +515,7 @@ public class ValidationAndPerformanceTest {
         Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
   }
 
-  public static Stream<Arguments> completeSet() {
+  protected static Stream<Arguments> completeSet() {
     return Stream.of(
         Arguments.of("Performance/5A.cd"),
         Arguments.of("Performance/5B.cd"),
