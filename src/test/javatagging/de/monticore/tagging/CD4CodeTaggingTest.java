@@ -59,7 +59,8 @@ public class CD4CodeTaggingTest {
     tags = CDBasisTagger.getInstance().getTags(classA, tagDefOpt.get());
     Assertions.assertEquals(1, tags.size());
 
-    // Right now no tagging infrastructure for CDTypeSymbols is generated
-    // extend this test once that happens
+    // Also check for CDTypeSymbols
+    tags = CDBasisTagger.getInstance().getTags(classA.getSymbol(), tagDefOpt.get());
+    Assertions.assertEquals(1, tags.size());
   }
 }
