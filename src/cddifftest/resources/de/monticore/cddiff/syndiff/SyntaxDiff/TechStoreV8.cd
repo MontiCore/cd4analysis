@@ -1,7 +1,6 @@
 import java.lang.*;
 import java.util.Date;
 
-//Novo
 classdiagram TechStoreV8 {
   enum State{succRepaired, partRepaired, unsuccRepaired;}
 

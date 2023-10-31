@@ -1,7 +1,8 @@
 import java.lang.*;
 import java.util.Date;
 
-classdiagram TechStoreV5 {
+//Staro
+classdiagram TechStoreV12 {
   class Item{}
 
   class Goods extends Item{

@@ -1,7 +1,6 @@
 import java.lang.*;
 import java.util.Date;
 
-//Staro
 classdiagram TechStoreV7 {
   class Items{
     int itemId;

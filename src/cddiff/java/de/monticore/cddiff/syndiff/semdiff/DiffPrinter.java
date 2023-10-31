@@ -92,7 +92,7 @@ public class DiffPrinter extends SyntaxDiffHelper {
 
     if (!syntaxDiff.getAddedClasses().isEmpty()) {
       for (ASTCDClass x : syntaxDiff.getAddedClasses()) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getHelper());
+        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
         String tmp = diff.printAddedType() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -102,7 +102,7 @@ public class DiffPrinter extends SyntaxDiffHelper {
 
     if (!syntaxDiff.getDeletedClasses().isEmpty()) {
       for (ASTCDClass x : syntaxDiff.getDeletedClasses()) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getHelper());
+        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
         String tmp = diff.printRemovedType() + RESET;
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -112,7 +112,7 @@ public class DiffPrinter extends SyntaxDiffHelper {
 
     if (!syntaxDiff.getAddedEnums().isEmpty()) {
       for (ASTCDEnum x : syntaxDiff.getAddedEnums()) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getHelper());
+        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
         String tmp = diff.printAddedType() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -122,7 +122,7 @@ public class DiffPrinter extends SyntaxDiffHelper {
 
     if (!syntaxDiff.getDeletedEnums().isEmpty()) {
       for (ASTCDEnum x : syntaxDiff.getDeletedEnums()) {
-        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getHelper());
+        CDTypeDiff diff = new CDTypeDiff(x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
         String tmp = diff.printRemovedType() + RESET;
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));

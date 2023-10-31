@@ -4,9 +4,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.syndiff.semdiff.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.semdiff.CDTypeDiff;
 import de.monticore.cddiff.syndiff.semdiff.SyntaxDiffBuilder;
 import de.monticore.cddiff.syndiff.semdiff.TestHelper;
 import java.io.IOException;
@@ -292,7 +293,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("Source1.cd", "Target1.cd");
 
     SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
-    System.out.println(sb.printSrcCD());
+    System.out.println(sb.printDiff());
   }
 
   @Test
@@ -308,6 +309,24 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("TechStoreV2.cd", "TechStoreV1.cd");
     SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
     System.out.println(sb.printDiff());
+  }
+
+  @Test
+  public void testSyntax4() {
+    parseModels("TechStoreV9.cd", "TechStoreV10.cd");
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
+    System.out.println(sb.printDiff());
+  }
+
+  @Test
+  public void testSyntax5() {
+    parseModels("TechStoreV11.cd", "TechStoreV12.cd");
+    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
+    System.out.println(sb.printDiff());
+    Syn2SemDiffHelper helper = new Syn2SemDiffHelper();
+
+    CDTypeDiff td = new CDTypeDiff(src.getCDDefinition().getCDClassesList().get(1),tgt.getCDDefinition().getCDClassesList().get(1), tgt, src, helper);
+    System.out.println(td.getRemovedBcInh());
   }
 
   public void parseModels(String concrete, String ref) {

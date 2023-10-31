@@ -1110,14 +1110,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    */
   public void addAllChangedTypes() {
     for(Pair<ASTCDClass, ASTCDClass> pair : matchedClasses){
-      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD, helper);
+      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD, srcCD, helper);
       if(!typeDiff.getBaseDiff().isEmpty()){
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
       }
     }
     for(Pair<ASTCDEnum, ASTCDEnum> pair : matchedEnums){
-      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD, helper);
+      CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD, srcCD, helper);
       if(!typeDiff.getBaseDiff().isEmpty()){
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
@@ -1260,21 +1260,18 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    * target CD that do not have a match in the source CD.
    *
    * @param tgtCD The target CD.
-   * @param computedMatchingMapAssocs A map of matched CD associations between source and target
-   *     CDs.
    */
-  public void addAllDeletedAssocs(
-      ASTCDCompilationUnit tgtCD,
-      Map<ASTCDAssociation, ASTCDAssociation> computedMatchingMapAssocs) {
-    List<ASTCDAssociation> deletedTgtAssocs =
-        new ArrayList<>(tgtCD.getCDDefinition().getCDAssociationsList());
-    for (ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()) {
-      if (computedMatchingMapAssocs.containsValue(tgtAssoc)) {
-        deletedTgtAssocs.remove(tgtAssoc);
+  public void addAllDeletedAssocs(ASTCDCompilationUnit tgtCD) {
+    deletedAssocs.addAll(tgtCD.getCDDefinition().getCDAssociationsList());
+    for(ASTCDAssociation tgtAssoc : tgtCD.getCDDefinition().getCDAssociationsList()){
+      for(Pair<ASTCDAssociation,ASTCDAssociation> matchedAssoc : matchedAssocs){
+        if(matchedAssoc.b.equals(tgtAssoc)){
+          deletedAssocs.remove(tgtAssoc);
+        }
       }
     }
-    deletedAssocs.addAll(deletedTgtAssocs);
-    if (!deletedTgtAssocs.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_ASSOCIATION)) {
+
+    if (!deletedAssocs.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_ASSOCIATION)) {
       baseDiff.add(DiffTypes.DELETED_ASSOCIATION);
     }
   }
@@ -1355,9 +1352,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     addAllAddedAssocs(
         srcCD,
         computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD));
-    addAllDeletedAssocs(
-        tgtCD,
-        computeMatchingMapAssocs(tgtCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD));
+    addAllDeletedAssocs(tgtCD);
     addAllAddedInheritance(srcCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
     addAllDeletedInheritance(tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
   }

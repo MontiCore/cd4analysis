@@ -173,8 +173,8 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(tgt);
 
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
-    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, diff.getHelper());
-    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, diff.getHelper());
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, src, diff.getHelper());
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, src, diff.getHelper());
 
     //System.out.println(diff.printOnlyAdded());
 
@@ -199,9 +199,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
 
-    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, diff.getHelper());
-    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, diff.getHelper());
-    CDTypeDiff typeDiff3 = new CDTypeDiff(astcdClass31, astcdClass32, tgt, diff.getHelper());
+    CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, src, diff.getHelper());
+    CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, src, diff.getHelper());
+    CDTypeDiff typeDiff3 = new CDTypeDiff(astcdClass31, astcdClass32, tgt, src, diff.getHelper());
     System.out.println(typeDiff1.printSrcCD());
     System.out.println(typeDiff2.printSrcCD());
     System.out.println(typeDiff3.printSrcCD());
@@ -224,7 +224,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
 
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt);
-    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, tgt, diff.getHelper());
+    CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, tgt, src, diff.getHelper());
     System.out.println(typeDiff.printSrcCD());
     System.out.println(typeDiff.printTgtCD());
   }
