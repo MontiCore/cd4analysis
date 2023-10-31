@@ -391,25 +391,63 @@ public class Syn2SemDiffHelper {
     return list;
   }
 
+  public Optional<ASTCDType> findMatchedTypeSrc(ASTCDType astcdType) {
+    if (astcdType instanceof ASTCDClass) {
+      return findMatchedSrc((ASTCDClass) astcdType);
+    } else if (astcdType instanceof ASTCDInterface) {
+      return findMatchedInterfaceSrc((ASTCDInterface) astcdType);
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  public Optional<ASTCDType> findMatchedTypeTgt(ASTCDType astcdType) {
+    if (astcdType instanceof ASTCDClass) {
+      return findMatchedClass((ASTCDClass) astcdType);
+    } else if (astcdType instanceof ASTCDInterface) {
+      return findMatchedInterfaceTgt((ASTCDInterface) astcdType);
+    } else {
+      return Optional.empty();
+    }
+  }
+
   // CHECKED
-  public ASTCDClass findMatchedClass(ASTCDClass astcdClass) {
+  public Optional<ASTCDType> findMatchedClass(ASTCDClass astcdClass) {
     ASTCDClass matchedClass = null;
     for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
       if (pair.a.equals(astcdClass)) {
         matchedClass = pair.b;
       }
     }
-    return matchedClass;
+    return Optional.ofNullable(matchedClass);
   }
 
   // CHECKED
-  public ASTCDClass findMatchedSrc(ASTCDClass astcdClass) {
+  public Optional<ASTCDType> findMatchedSrc(ASTCDClass astcdClass) {
     for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
       if (pair.b.equals(astcdClass)) {
-        return pair.a;
+        return Optional.ofNullable(pair.a);
       }
     }
-    return null;
+    return Optional.empty();
+  }
+
+  public Optional<ASTCDType> findMatchedInterfaceSrc(ASTCDInterface astcdInterface){
+    for (Pair<ASTCDInterface, ASTCDInterface> pair : matchedInterfaces) {
+      if (pair.b.equals(astcdInterface)) {
+        return Optional.ofNullable(pair.a);
+      }
+    }
+    return Optional.empty();
+  }
+
+  public Optional<ASTCDType> findMatchedInterfaceTgt(ASTCDInterface astcdInterface){
+    for (Pair<ASTCDInterface, ASTCDInterface> pair : matchedInterfaces) {
+      if (pair.a.equals(astcdInterface)) {
+        return Optional.ofNullable(pair.b);
+      }
+    }
+    return Optional.empty();
   }
 
   public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) {
@@ -1012,10 +1050,11 @@ public class Syn2SemDiffHelper {
    * @return true if the condition is fulfilled.
    */
   public boolean compareSrcTgt(ASTCDType srcClass, ASTCDType tgtClass) {
-    if (findMatchedSrc(tgtClass) != null) {
+    Optional<ASTCDType> typeToMatch = findMatchedTypeTgt(tgtClass);
+    if (typeToMatch.isPresent()) {
       return isSuperOf(
           srcClass.getSymbol().getInternalQualifiedName(),
-          findMatchedSrc(tgtClass).getSymbol().getInternalQualifiedName(),
+          typeToMatch.get().getSymbol().getInternalQualifiedName(),
           (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
     }
     List<ASTCDType> subClasses = srcSubMap.get(srcClass);
@@ -1040,10 +1079,11 @@ public class Syn2SemDiffHelper {
    * @return true if the condition is fulfilled.
    */
   public boolean compareTgtSrc(ASTCDType tgtClass, ASTCDType srcClass) {
-    if (findMatchedClass(srcClass) != null) {
+    Optional<ASTCDType> typeToMatch = findMatchedTypeSrc(srcClass);
+    if (typeToMatch.isPresent()) {
       return isSuperOf(
           tgtClass.getSymbol().getInternalQualifiedName(),
-          findMatchedClass(srcClass).getSymbol().getInternalQualifiedName(),
+          typeToMatch.get().getSymbol().getInternalQualifiedName(),
           (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
     }
     List<ASTCDType> subClasses = tgtSubMap.get(tgtClass);
@@ -1141,30 +1181,22 @@ public class Syn2SemDiffHelper {
 
   // CHECKED
   public List<ASTCDType> getSrcClasses(List<ASTCDType> classes) {
-    List<ASTCDType> srcClasses = new ArrayList<>();
-    for (ASTCDType astcdClass : classes) {
-      if (astcdClass instanceof ASTCDClass) {
-        ASTCDClass matched = findMatchedSrc((ASTCDClass) astcdClass);
-        if (matched != null) {
-          srcClasses.add(matched);
-        }
-      }//TODO
+    List<ASTCDType> srcTypes = new ArrayList<>();
+    for (ASTCDType astcdType : classes) {
+      Optional<ASTCDType> matched = findMatchedTypeSrc(astcdType);
+      matched.ifPresent(srcTypes::add);
     }
-    return srcClasses;
+    return srcTypes;
   }
 
   // CHECKED
   public List<ASTCDType> getTgtClasses(List<ASTCDType> classes) {
-    List<ASTCDType> tgtClasses = new ArrayList<>();
-    for (ASTCDType astcdClass : classes) {
-      if (astcdClass instanceof ASTCDClass) {
-      ASTCDClass matched = findMatchedClass((ASTCDClass) astcdClass);
-        if (matched != null) {
-          tgtClasses.add(matched);
-        }
-      }//TODO
+    List<ASTCDType> tgtTypes = new ArrayList<>();
+    for (ASTCDType astcdType : classes) {
+      Optional<ASTCDType> matched = findMatchedTypeTgt(astcdType);
+      matched.ifPresent(tgtTypes::add);
     }
-    return tgtClasses;
+    return tgtTypes;
   }
 
   //CHECKED
@@ -2490,7 +2522,7 @@ public class Syn2SemDiffHelper {
   }
 
   // CHECKED
-  public ASTCDClass minSubClass(ASTCDClass baseClass) {
+  public ASTCDClass minSubClass(ASTCDType baseClass) {
 
     List<ASTCDType> subClasses = srcSubMap.get(baseClass);
 
@@ -2500,7 +2532,7 @@ public class Syn2SemDiffHelper {
     for (ASTCDType subclass : subClasses) {
       if (subclass instanceof ASTCDClass
         && !subclass.getModifier().isAbstract() && !notInstClassesSrc.contains(subclass)) {
-        int attributeCount = getAllAttr(baseClass).b.size();
+        int attributeCount = getAllAttr((ASTCDClass) subclass).b.size();
         int associationCount = getAssociationCount(subclass);
         int otherAssocsCount = getAllOtherAssocsSrc(subclass).size();
         int totalCount = attributeCount + associationCount + otherAssocsCount;
@@ -2515,16 +2547,16 @@ public class Syn2SemDiffHelper {
     return subclassWithLowestCount;
   }
 
-  public ASTCDClass minSubClassTgt(ASTCDClass baseClass){
+  public ASTCDClass minSubClassTgt(ASTCDType baseClass){
     List<ASTCDType> subClasses = tgtSubMap.get(baseClass);
 
     int lowestCount = Integer.MAX_VALUE;
     ASTCDClass subclassWithLowestCount = null;
 
     for (ASTCDType subclass : subClasses) {
-      if (subclass instanceof ASTCDClass
+      if ((subclass instanceof ASTCDClass)
         && !subclass.getModifier().isAbstract() && !notInstClassesTgt.contains(subclass)) {
-        int attributeCount = getAllAttrTgt(baseClass).b.size();
+        int attributeCount = getAllAttrTgt((ASTCDClass) subclass).b.size();
         int associationCount = getAssociationCountTgt(subclass);
         int otherAssocsCount = getAllOtherAssocsTgt(subclass).size();
         int totalCount = attributeCount + associationCount + otherAssocsCount;
@@ -3000,17 +3032,18 @@ public class Syn2SemDiffHelper {
 
   /**
    * Check if the superclasses of the given one are the same in the source and target diagram.
-   * @param astcdClass class to check.
+   * @param astcdType class to check.
    * @return true if the superclasses are the different.
    */
-  public boolean hasDiffSuper(ASTCDClass astcdClass) {
-    ASTCDClass oldClass = findMatchedClass(astcdClass);
-    List<ASTCDClass> oldCLasses = getSuperTypes(tgtCD, oldClass);
-    List<ASTCDClass> newClasses = getSuperTypes(srcCD, astcdClass);
-    for (ASTCDClass class1 : oldCLasses) {
+  public boolean hasDiffSuper(ASTCDType astcdType) {
+    Optional<ASTCDType> oldType = findMatchedTypeTgt(astcdType);
+    Set<ASTCDType> oldTypes = CDDiffUtil.getAllSuperTypes(oldType.get(), tgtCD.getCDDefinition());
+    Set<ASTCDType> newTypes = CDDiffUtil.getAllSuperTypes(astcdType, srcCD.getCDDefinition());
+    for (ASTCDType class1 : oldTypes) {
       boolean foundMatch = false;
-      for (ASTCDClass class2 : newClasses) {
-        if (findMatchedSrc(class1) == class2) {
+      for (ASTCDType type2 : newTypes) {
+        Optional<ASTCDType> matched = findMatchedTypeSrc(class1);
+        if (matched.isPresent() && matched.get() == type2) {
           foundMatch = true;
           break;
         }
@@ -3019,10 +3052,11 @@ public class Syn2SemDiffHelper {
         return true;
       }
     }
-    for (ASTCDClass class1 : newClasses) {
+    for (ASTCDType type1 : newTypes) {
       boolean foundMatch = false;
-      for (ASTCDClass class2 : oldCLasses) {
-        if (findMatchedClass(class1) == class2) {
+      for (ASTCDType class2 : oldTypes) {
+        Optional<ASTCDType> matched = findMatchedTypeTgt(type1);
+        if (matched.isPresent() && matched.get() == class2) {
           foundMatch = true;
           break;
         }
