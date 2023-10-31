@@ -92,6 +92,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     helper.setMatchedAssocs(matchedAssocs);
     helper.setDeletedAssocs(deletedAssocs);
     helper.setAddedAssocs(addedAssocs);
+    helper.setMatchedInterfaces(matchedInterfaces);
   }
 
   @Override
@@ -628,10 +629,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   srcAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                } else if (helper.isZeroAssoc(association)) {
-                  helper.getSrcMap().remove(astcdClass, association);
-                } else if (helper.isZeroAssoc(superAssoc)){
-                  helper.getSrcMap().remove(astcdClass, superAssoc);
                 } else {
                   srcToDelete.add(astcdClass);
                 }
@@ -655,11 +652,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   srcAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                } else if (helper.isZeroAssoc(association)) {
-                  helper.getSrcMap().remove(astcdClass, association);
-                } else if (helper.isZeroAssoc(superAssoc)){
-                  helper.getSrcMap().remove(astcdClass, superAssoc);
                 } else {
+                  System.out.println("To delete: " + astcdClass.getSymbol().getFullName() + "bacause of");
+                  System.out.println(getConnectedClasses(association.getAssociation(), srcCD).a.getSymbol().getFullName() + " " + getConnectedClasses(association.getAssociation(), srcCD).b.getSymbol().getFullName());
+                  System.out.println(getConnectedClasses(superAssoc.getAssociation(), srcCD).a.getSymbol().getFullName() + " " + getConnectedClasses(superAssoc.getAssociation(), srcCD).b.getSymbol().getFullName());
                   srcToDelete.add(astcdClass);
                 }
               }
@@ -688,10 +684,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   tgtAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                } else if (helper.isZeroAssoc(association)) {
-                  helper.getTgtMap().remove(astcdClass, association);
-                } else if (helper.isZeroAssoc(superAssoc)){
-                  helper.getTgtMap().remove(astcdClass, superAssoc);
                 } else {
                   tgtToDelete.add(astcdClass);
                 }
@@ -705,10 +697,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 if (areZeroAssocs(association, superAssoc)) {
                   tgtAssocsToDelete.add(
                       new Pair<>(astcdClass, getConflict(association, superAssoc)));
-                } else if (helper.isZeroAssoc(association)) {
-                  helper.getTgtMap().remove(astcdClass, association);
-                } else if (helper.isZeroAssoc(superAssoc)){
-                  helper.getTgtMap().remove(astcdClass, superAssoc);
                 } else {
                   tgtToDelete.add(astcdClass);
                 }
@@ -724,10 +712,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     }
     for (ASTCDClass astcdClass : srcToDelete) {
       helper.updateSrc(astcdClass);
+      //System.out.println("To delete: " + astcdClass.getSymbol().getFullName());
       helper.getSrcMap().removeAll(astcdClass);
       helper.deleteOtherSideSrc(astcdClass);
       for (ASTCDClass subClass : helper.getSrcSubMap().get(astcdClass)) {
         helper.getSrcMap().removeAll(subClass);
+        //System.out.println("To delete sub: " + subClass.getSymbol().getFullName());
         helper.deleteOtherSideSrc(subClass);
       }
     }
@@ -741,6 +731,9 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
     }
     for (Pair<AssocStruct, AssocStruct> pair : srcAssocsToMerge) {
+      System.out.println("To merge: ");
+      System.out.println(getConnectedClasses(pair.a.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName() + " " + getConnectedClasses(pair.a.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName());
+      System.out.println(getConnectedClasses(pair.b.getAssociation(), srcCD).a.getSymbol().getInternalQualifiedName() + " " + getConnectedClasses(pair.b.getAssociation(), srcCD).b.getSymbol().getInternalQualifiedName());
       setBiDirRoleName(pair.a, pair.b);
       mergeAssocs(pair.a, pair.b);
     }
@@ -793,8 +786,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDClass>>> deletedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDClass>>> list = new ArrayList<>();
-    System.out.println("DELETED ASSOCS");
-    System.out.println("size: " + deletedAssocs.size());
     for (ASTCDAssociation association : deletedAssocs) {
       Pair<ASTCDClass, ASTCDClass> pair = Syn2SemDiffHelper.getConnectedClasses(association, tgtCD);
       System.out.println(pair.a.getSymbol().getInternalQualifiedName() + " " + pair.b.getSymbol().getInternalQualifiedName());
