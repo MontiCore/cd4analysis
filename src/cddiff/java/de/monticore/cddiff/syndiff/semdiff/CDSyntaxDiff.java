@@ -19,6 +19,7 @@ import java.util.*;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
 import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getDirectSuperClasses;
 import static de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper.*;
+import static java.util.Collections.addAll;
 
 /**
  * This is the core class for semantic differencing. It contains the results of the syntactic analysis as attributes.
@@ -1371,30 +1372,32 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    * @param srcCDScope The scope of the source CD.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CDs.
    */
-  public void addAllAddedInheritance(
-      ICD4CodeArtifactScope srcCDScope, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
-    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
-      List<ASTCDType> addedInh = new ArrayList<>(getDirectSuperClasses(pair.a, srcCDScope));
-      for (ASTCDType srcType : getDirectSuperClasses(pair.a, srcCDScope)) {
-        if (computedMatchingMapTypes.containsKey(srcType)) {
-          addedInh.remove(srcType);
+  public void addAllAddedInheritance(ICD4CodeArtifactScope srcCDScope, ICD4CodeArtifactScope tgtCDScope, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    for (ASTCDClass srcClass : getSrcCD().getCDDefinition().getCDClassesList()) {
+      List<ASTCDType> allSuperClassOfSrcClass = new ArrayList<>(getAllSuper(srcClass, srcCDScope));
+      ASTCDType matchOfSrcClass;
+      List<ASTCDType> allSuperClassOfTgtClass = new ArrayList<>();
+      for (Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
+        if(entry.getKey().equals(srcClass)){
+          matchOfSrcClass = entry.getValue();
+          allSuperClassOfTgtClass.addAll(getAllSuper(matchOfSrcClass,tgtCDScope));
         }
       }
-      addedInheritance.add(new Pair<>(pair.a, addedInh));
-      if (!addedInh.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_INHERITANCE)) {
-        baseDiff.add(DiffTypes.ADDED_INHERITANCE);
-      }
-    }
 
-    for (Pair<ASTCDInterface, ASTCDInterface> pair : matchedInterfaces){
-      List<ASTCDType> addedInh = new ArrayList<>(getDirectSuperClasses(pair.a, srcCDScope));
-      for (ASTCDType srcType : getDirectSuperClasses(pair.a, srcCDScope)) {
-        if (computedMatchingMapTypes.containsKey(srcType)) {
-          addedInh.remove(srcType);
+      for(ASTCDType srcSuper : getAllSuper(srcClass, srcCDScope)){
+        for(ASTCDType tgtSuper : allSuperClassOfTgtClass){
+          for(Pair<ASTCDClass,ASTCDClass> pair : matchedClasses){
+            if(pair.a.equals(srcSuper) && pair.b.equals(tgtSuper)){
+              allSuperClassOfSrcClass.remove(srcSuper);
+            }
+          }
         }
       }
-      addedInheritance.add(new Pair<>(pair.a, addedInh));
-      if (!addedInh.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_INHERITANCE)) {
+
+      if(!allSuperClassOfSrcClass.isEmpty()){
+        addedInheritance.add(new Pair<>(srcClass, allSuperClassOfSrcClass));
+      }
+      if (!addedInheritance.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_INHERITANCE)) {
         baseDiff.add(DiffTypes.ADDED_INHERITANCE);
       }
     }
@@ -1408,30 +1411,30 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    * @param tgtCDScope The target CD scope.
    * @param computedMatchingMapTypes A map of matched CD types between source and target CD.
    */
-  public void addAllDeletedInheritance(
-      ICD4CodeArtifactScope tgtCDScope, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
-    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
-      List<ASTCDType> deletedInh = new ArrayList<>(getDirectSuperClasses(pair.b, tgtCDScope));
-      for (ASTCDType tgtType : getDirectSuperClasses(pair.b, tgtCDScope)) {
-        if (computedMatchingMapTypes.containsValue(tgtType)) {
-          deletedInh.remove(tgtType);
+  public void addAllDeletedInheritance(ICD4CodeArtifactScope srcCDScope, ICD4CodeArtifactScope tgtCDScope, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    for (ASTCDClass tgtClass : getTgtCD().getCDDefinition().getCDClassesList()) {
+      List<ASTCDType> allSuperClassOfTgtClass = new ArrayList<>(getAllSuper(tgtClass, tgtCDScope));
+      List<ASTCDType> allSuperClassOfSrcClass = new ArrayList<>();
+      for (Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
+        if(entry.getValue().equals(tgtClass)){
+          allSuperClassOfSrcClass.addAll(getAllSuper(entry.getKey(),srcCDScope));
         }
       }
-      deletedInheritance.add(new Pair<>(pair.a, deletedInh));
-      if (!deletedInh.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_INHERITANCE)) {
-        baseDiff.add(DiffTypes.DELETED_INHERITANCE);
-      }
-    }
 
-    for (Pair<ASTCDInterface, ASTCDInterface> pair : matchedInterfaces){
-      List<ASTCDType> deletedInh = new ArrayList<>(getDirectSuperClasses(pair.b, tgtCDScope));
-      for (ASTCDType tgtType : getDirectSuperClasses(pair.b, tgtCDScope)) {
-        if (computedMatchingMapTypes.containsValue(tgtType)) {
-          deletedInh.remove(tgtType);
+      for(ASTCDType tgtSuper : getAllSuper(tgtClass, srcCDScope)){
+        for(ASTCDType srcSuper : allSuperClassOfSrcClass){
+          for(Pair<ASTCDClass,ASTCDClass> pair : matchedClasses){
+            if(pair.a.equals(srcSuper) && pair.b.equals(tgtSuper)){
+              allSuperClassOfTgtClass.remove(tgtSuper);
+            }
+          }
         }
       }
-      deletedInheritance.add(new Pair<>(pair.a, deletedInh));
-      if (!deletedInh.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_INHERITANCE)) {
+
+      if(!allSuperClassOfTgtClass.isEmpty()){
+        deletedInheritance.add(new Pair<>(tgtClass, allSuperClassOfTgtClass));
+      }
+      if (!deletedInheritance.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_INHERITANCE)) {
         baseDiff.add(DiffTypes.DELETED_INHERITANCE);
       }
     }
@@ -1468,7 +1471,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         srcCD,
         computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD));
     addAllDeletedAssocs(tgtCD);
-    addAllAddedInheritance(srcCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
-    addAllDeletedInheritance(tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllAddedInheritance(srcCDScope, tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllDeletedInheritance(srcCDScope, tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
   }
 }
