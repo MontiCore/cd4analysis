@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff.interfaces;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruct;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffs;
 import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
@@ -90,7 +91,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of the added classes together with a class that can show the difference.
    */
-  List<Pair<ASTCDClass, ASTCDClass>> addedClassList();
+  List<Pair<ASTCDType, ASTCDType>> addedClassList();
 
   /**
    * Check if a deleted inheritance relation brings a semantic difference.
@@ -98,7 +99,7 @@ public interface ICDSyntaxDiff {
    * @return pairs of classes and a set of their deleted old superclasses that cause a semantic
    *     difference.
    */
-  Set<Pair<ASTCDClass, Set<ASTCDClass>>> deletedInheritance();
+  Set<Pair<ASTCDType, Set<ASTCDType>>> deletedInheritance();
 
   /**
    * Check if the elements related to the deleted superclass are present in the subclass in srcCD.
@@ -109,14 +110,14 @@ public interface ICDSyntaxDiff {
    * @param subClassTgt subclass
    * @return true if at least one element is missing
    */
-  boolean isInheritanceDeleted(ASTCDClass astcdClass, ASTCDClass subClassTgt);
+  boolean isInheritanceDeleted(ASTCDType astcdClass, ASTCDType subClassTgt);
 
   /**
    * Check if an added inheritance relation brings a semantic difference.
    *
    * @return pairs of classes and a set of their new superclasses that cause a semantic difference.
    */
-  Set<Pair<ASTCDClass, Set<ASTCDClass>>> addedInheritance();
+  Set<Pair<ASTCDType, Set<ASTCDType>>> addedInheritance();
 
   /**
    * Check if the elements related to the added superclass are present in the subclass in tgtCD.
@@ -127,7 +128,7 @@ public interface ICDSyntaxDiff {
    * @param subClass subclass
    * @return true if at least one element is missing
    */
-  boolean isInheritanceAdded(ASTCDClass astcdClass, ASTCDClass subClass);
+  boolean isInheritanceAdded(ASTCDType astcdClass, ASTCDType subClass);
 
   /**
    * Check if a changed inheritance relation brings a semantic difference.
@@ -145,28 +146,28 @@ public interface ICDSyntaxDiff {
    * @return a list of maximal two classes (one for source and one for target) that don't have this
    *     association.
    */
-  List<ASTCDClass> isAssocDeleted(ASTCDAssociation association, ASTCDClass astcdClass);
+  List<ASTCDType> isAssocDeleted(ASTCDAssociation association, ASTCDType astcdClass);
 
   /**
    * Get a list of all deleted association that bring a semantic difference.
    *
    * @return pairs of associations and a set of maximal two classes.
    */
-  List<Pair<ASTCDAssociation, List<ASTCDClass>>> deletedAssocList();
+  List<Pair<ASTCDAssociation, List<ASTCDType>>> deletedAssocList();
 
   /**
    * Similar case - the association @param astcdAssociation is needed in cd1, but not in cd2.
    *
    * @return a list of maximal two classes (source and target) that one can have this association.
    */
-  List<ASTCDClass> isAssocAdded(ASTCDAssociation astcdAssociation);
+  List<ASTCDType> isAssocAdded(ASTCDAssociation astcdAssociation);
 
   /**
    * Get a list of all added association that bring a semantic difference.
    *
    * @return pairs of associations and a set of maximal two classes.
    */
-  List<Pair<ASTCDAssociation, List<ASTCDClass>>> addedAssocList();
+  List<Pair<ASTCDAssociation, List<ASTCDType>>> addedAssocList();
 
   /**
    * Find all overlapping and all duplicated associations. When comparing associations, we
@@ -204,7 +205,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  List<ASTCDClass> srcExistsTgtNot();
+  List<ASTCDType> srcExistsTgtNot();
 
   /**
    * Get a list of classes that need an association in srcCD and tgtCD, but the association is not
@@ -212,7 +213,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  List<ASTCDClass> srcAssocExistsTgtNot();
+  List<ASTCDType> srcAssocExistsTgtNot();
 
   /**
    * Get a list of classes that need an association in srcCD and tgtCD, but the association is not
@@ -220,7 +221,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  List<ASTCDClass> tgtAssocsExistsSrcNot();
+  List<ASTCDType> tgtAssocsExistsSrcNot();
 
   /**
    * Return lists of classes that are computed by srcAssocExistsTgtNot() and
@@ -235,5 +236,5 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  List<ASTCDClass> hasDiffSuper();
+  List<ASTCDType> hasDiffSuper();
 }

@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDType;
 
 /**
  * Data structure for associations. This is used as overlapping associations must be handled - merging and deleting of associations.
@@ -19,31 +20,38 @@ public class AssocStruct {
   ClassSide side;
   boolean isSuperAssoc = false;
   ASTCDAssociation unmodifiedAssoc;
-
   private boolean toBeProcessed = true;
+  private ASTCDType originalType;
+  private ASTCDType originalTgtType;
 
-  public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side) {
+  public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side, ASTCDType astcdType, ASTCDType astcdTgtType) {
     this.association = association;
     this.direction = direction;
     this.side = side;
     this.unmodifiedAssoc = association;
+    this.originalType = astcdType;
+    this.originalTgtType = astcdTgtType;
   }
 
   public AssocStruct(
       ASTCDAssociation association,
       AssocDirection direction,
       ClassSide side,
-      boolean isSuperAssoc) {
+      boolean isSuperAssoc,
+      ASTCDType astcdType,
+      ASTCDType astcdTgtType) {
     this.association = association;
     this.direction = direction;
     this.side = side;
     this.unmodifiedAssoc = association;
     this.isSuperAssoc = isSuperAssoc;
+    this.originalType = astcdType;
+    this.originalTgtType = astcdTgtType;
   }
 
   public AssocStruct deepClone() {
     return new AssocStruct(
-        this.association.deepClone(), this.direction, this.side, this.isSuperAssoc);
+        this.association.deepClone(), this.direction, this.side, this.isSuperAssoc, this.originalType, this.originalTgtType);
   }
 
   public ASTCDAssociation getAssociation() {
@@ -92,5 +100,21 @@ public class AssocStruct {
 
   public void setToBeProcessed(boolean toBeProcessed) {
     this.toBeProcessed = toBeProcessed;
+  }
+
+  public ASTCDType getOriginalType() {
+    return originalType;
+  }
+
+  public void setOriginalType(ASTCDType originalType) {
+    this.originalType = originalType;
+  }
+
+  public ASTCDType getOriginalTgtType() {
+    return originalTgtType;
+  }
+
+  public void setOriginalTgtType(ASTCDType originalTgtType) {
+    this.originalTgtType = originalTgtType;
   }
 }

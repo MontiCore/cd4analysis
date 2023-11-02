@@ -1,40 +1,42 @@
 package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
+
 import java.util.List;
 
 public class AssocDiffs {
-  private List<ASTCDClass> allInSrc;
-  private List<ASTCDClass> allInTgt;
-  private List<ASTCDClass> mixed;
+  private List<ASTCDType> allInSrc;
+  private List<ASTCDType> allInTgt;
+  private List<ASTCDType> mixed;
 
-  public AssocDiffs(List<ASTCDClass> allInSrc, List<ASTCDClass> allInTgt, List<ASTCDClass> mixed) {
+  public AssocDiffs(List<ASTCDType> allInSrc, List<ASTCDType> allInTgt, List<ASTCDType> mixed) {
     this.allInSrc = allInSrc;
     this.allInTgt = allInTgt;
     this.mixed = mixed;
   }
 
-  public List<ASTCDClass> getAllInSrc() {
+  public List<ASTCDType> getAllInSrc() {
     return allInSrc;
   }
 
-  public void setAllInSrc(List<ASTCDClass> allInSrc) {
+  public void setAllInSrc(List<ASTCDType> allInSrc) {
     this.allInSrc = allInSrc;
   }
 
-  public List<ASTCDClass> getAllInTgt() {
+  public List<ASTCDType> getAllInTgt() {
     return allInTgt;
   }
 
-  public void setAllInTgt(List<ASTCDClass> allInTgt) {
+  public void setAllInTgt(List<ASTCDType> allInTgt) {
     this.allInTgt = allInTgt;
   }
 
-  public List<ASTCDClass> getMixed() {
+  public List<ASTCDType> getMixed() {
     return mixed;
   }
 
-  public void setMixed(List<ASTCDClass> mixed) {
+  public void setMixed(List<ASTCDType> mixed) {
     this.mixed = mixed;
   }
 }

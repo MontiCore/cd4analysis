@@ -220,9 +220,9 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
           helper.getSrcSubMap().get((ASTCDClass) srcElem);
       classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
-      for (ASTCDClass astcdClass : classList) {
+      for (ASTCDType astcdClass : classList) {
         if (!helper.getNotInstClassesSrc().contains(astcdClass)
-            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
+            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) astcdClass)) {
           Set<ASTCDType> astcdClassList =
               getAllSuper(
                   astcdClass, (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
@@ -314,9 +314,9 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
         helper.getTgtSubMap().get((ASTCDClass) tgtElem);
     classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
-    for (ASTCDClass astcdClass : classList) {
+    for (ASTCDType astcdClass : classList) {
       if (!helper.getNotInstClassesTgt().contains(astcdClass)
-          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, astcdClass)) {
+          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) astcdClass)) {
         Set<ASTCDType> astcdClassList =
             getAllSuper(astcdClass, (ICD4CodeArtifactScope) helper.getTgtCD().getEnclosingScope());
         astcdClassList.remove(getTgtElem());

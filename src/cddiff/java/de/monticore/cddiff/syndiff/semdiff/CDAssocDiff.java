@@ -278,13 +278,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   // CHECKED
-  public ASTCDClass changedSrc() {
-    Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
-    Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
-    ASTCDClass leftNew = pairNew.a;
-    ASTCDClass leftOld = pairOld.a;
-    ASTCDClass rightNew = pairNew.b;
-    ASTCDClass rightOld = pairOld.b;
+  public ASTCDType changedSrc() {
+    Pair<ASTCDType, ASTCDType> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
+    Pair<ASTCDType, ASTCDType> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
+    ASTCDType leftNew = pairNew.a;
+    ASTCDType leftOld = pairOld.a;
+    ASTCDType rightNew = pairNew.b;
+    ASTCDType rightOld = pairOld.b;
     if (isReversed) {
       leftOld = pairOld.b;
       rightOld = pairOld.a;
@@ -308,11 +308,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       //        }
       if (!(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(leftOld);
-        subclassesA.remove(helper.findMatchedClass(leftNew));
-        List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
+        Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(leftNew);
+        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        //subclassesA.remove(helper.findMatchedTypeTgt(leftNew).get());
+        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(leftNew);
         subClassesASrc.removeAll(inheritance);
-        for (ASTCDClass subclass : subClassesASrc) {
+        for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract()
               && !helper.classHasAssociationSrcSrc(srcStruct, subclass)) {
             return subclass;
@@ -340,11 +342,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       if (!(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
         // check if th matched class of the old one is abstract - done
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(rightOld);
-        subclassesA.remove(helper.findMatchedClass(rightNew));
-        List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
+        Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(rightNew);
+        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        //subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
+        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(rightNew);
         subClassesASrc.removeAll(inheritance);
-        for (ASTCDClass subclass : subClassesASrc) {
+        for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract()
               && !helper.classHasAssociationSrcSrc(srcStruct, subclass)) {
             return subclass;
@@ -356,13 +360,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   // CHECKED
-  public ASTCDClass changedTgt() {
-    Pair<ASTCDClass, ASTCDClass> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
-    Pair<ASTCDClass, ASTCDClass> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
-    ASTCDClass leftNew = pairNew.a;
-    ASTCDClass leftOld = pairOld.a;
-    ASTCDClass rightNew = pairNew.b;
-    ASTCDClass rightOld = pairOld.b;
+  public ASTCDType changedTgt() {
+    Pair<ASTCDType, ASTCDType> pairNew = getConnectedClasses(getSrcElem(), helper.getSrcCD());
+    Pair<ASTCDType, ASTCDType> pairOld = getConnectedClasses(getTgtElem(), helper.getTgtCD());
+    ASTCDType leftNew = pairNew.a;
+    ASTCDType leftOld = pairOld.a;
+    ASTCDType rightNew = pairNew.b;
+    ASTCDType rightOld = pairOld.b;
     if (isReversed) {
       leftOld = pairOld.b;
       rightOld = pairOld.a;
@@ -385,17 +389,19 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       //        }
       if (!(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(rightOld);
-        subclassesA.remove(helper.findMatchedClass(rightNew));
-        List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
+        Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(rightNew);
+        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        //subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
+        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(rightNew);
         subClassesASrc.removeAll(inheritance);
-        for (ASTCDClass subclass : subClassesASrc) {
-          ASTCDClass matchedClass = helper.findMatchedClass(subclass);
-          if (matchedClass != null
+        for (ASTCDType subclass : subClassesASrc) {
+          Optional<ASTCDType> matchedClass = helper.findMatchedTypeTgt(subclass);
+          if (matchedClass.isPresent()
               && srcStruct.getAssociation().getCDAssocDir().isBidirectional()
               && tgtStruct.getAssociation().getCDAssocDir().isBidirectional()
-              && !matchedClass.getModifier().isAbstract()
-              && !helper.classHasAssociationTgtTgt(tgtStruct, matchedClass)) {
+              && !matchedClass.get().getModifier().isAbstract()
+              && !helper.classHasAssociationTgtTgt(tgtStruct, matchedClass.get())) {
             return subclass;
           }
           if (!subclass.getModifier().isAbstract() && !helper.classIsTarget(srcStruct, subclass)) {
@@ -421,11 +427,12 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       //        }
       if (!(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(leftOld);
-        subclassesA.remove(helper.findMatchedClass(leftNew));
-        List<ASTCDClass> subClassesASrc = helper.getSrcClasses(subclassesA);
+        Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(leftNew);
+        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(leftNew);
         subClassesASrc.removeAll(inheritance);
-        for (ASTCDClass subclass : subClassesASrc) {
+        for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract() && !helper.classIsTarget(srcStruct, subclass)) {
             return subclass;
           }

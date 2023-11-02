@@ -4,6 +4,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruct;
 import de.monticore.cddiff.syndiff.datastructures.ClassSide;
@@ -28,17 +29,9 @@ public class TestHelper {
   }
 
   public void addedAssocs() {
-    for (Pair<ASTCDAssociation, List<ASTCDClass>> association : syntaxDiff.addedAssocList()) {
-      Pair<ASTCDClass, ASTCDClass> classes =
+    for (Pair<ASTCDAssociation, List<ASTCDType>> association : syntaxDiff.addedAssocList()) {
+      Pair<ASTCDType, ASTCDType> classes =
           Syn2SemDiffHelper.getConnectedClasses(association.a, syntaxDiff.getSrcCD());
-      ASTCDClass leftClass = classes.a;
-      ASTCDClass rightClass = classes.b;
-      if (classes.a.getModifier().isAbstract()) {
-        leftClass = helper.minSubClass(classes.a);
-      }
-      if (classes.b.getModifier().isAbstract()) {
-        rightClass = helper.minSubClass(classes.b);
-      }
       System.out.println(
           "The association between the classes "
               + classes.a.getSymbol().getInternalQualifiedName()
@@ -50,7 +43,7 @@ public class TestHelper {
   }
 
   public void addedClasses() {
-    for (Pair<ASTCDClass, ASTCDClass> astcdClass : syntaxDiff.addedClassList()) {
+    for (Pair<ASTCDType, ASTCDType> astcdClass : syntaxDiff.addedClassList()) {
       System.out.println(
           "A new class "
               + astcdClass.a.getSymbol().getInternalQualifiedName()
@@ -63,7 +56,7 @@ public class TestHelper {
 
   public void inheritanceDiffs() {
     for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
-      ASTCDClass astcdClass = inheritanceDiff.getAstcdClasses().a;
+      ASTCDType astcdClass = inheritanceDiff.getAstcdClasses().a;
       //      if
       // (!syntaxDiff.getHelper().getNotInstanClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
       //        astcdClass = syntaxDiff.helper.minSubClass(inheritanceDiff.getAstcdClasses().a);
@@ -79,7 +72,7 @@ public class TestHelper {
   }
 
   public void srcExistsTgtNot() {
-    for (ASTCDClass astcdClass : syntaxDiff.srcExistsTgtNot()) {
+    for (ASTCDType astcdClass : syntaxDiff.srcExistsTgtNot()) {
       System.out.println(
           "In tgtCD the class"
               + astcdClass.getSymbol().getInternalQualifiedName()
@@ -190,7 +183,7 @@ public class TestHelper {
 
   public void changedAssocs() {
     for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
-      Pair<ASTCDClass, ASTCDClass> pair =
+      Pair<ASTCDType, ASTCDType> pair =
           Syn2SemDiffHelper.getConnectedClasses(
               assocDiffStruct.getAssociation(), syntaxDiff.getSrcCD());
       String comment =
@@ -272,7 +265,7 @@ public class TestHelper {
   }
 
   public void staDiff() {
-    for (ASTCDClass astcdClass : syntaxDiff.hasDiffSuper()) {
+    for (ASTCDType astcdClass : syntaxDiff.hasDiffSuper()) {
       System.out.println(
           "The class "
               + astcdClass.getSymbol().getInternalQualifiedName()
@@ -282,13 +275,9 @@ public class TestHelper {
   }
 
   public void deletedAssocs() {
-    for (Pair<ASTCDAssociation, List<ASTCDClass>> pair : syntaxDiff.deletedAssocList()) {
-      List<ASTCDClass> list = pair.b;
-      for (ASTCDClass astcdClass : list) {
-        if (astcdClass.getModifier().isAbstract()) {
-          astcdClass = helper.minSubClass(astcdClass);
-        }
-        Pair<ASTCDClass, ASTCDClass> connectedClasses =
+    for (Pair<ASTCDAssociation, List<ASTCDType>> pair : syntaxDiff.deletedAssocList()) {
+      List<ASTCDType> list = pair.b;
+        Pair<ASTCDType, ASTCDType> connectedClasses =
             Syn2SemDiffHelper.getConnectedClasses(pair.a, helper.getTgtCD());
         System.out.println(
             "The association between the classes "
@@ -297,7 +286,6 @@ public class TestHelper {
                 + " has been removed from the diagram.");
         System.out.println("=======================================================");
       }
-    }
   }
 
   private ASTCDAttribute getOldAtt(ASTCDAttribute attribute, TypeDiffStruct diffStruc) {

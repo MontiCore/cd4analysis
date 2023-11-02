@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
 
@@ -9,35 +10,35 @@ import java.util.List;
  * For example, if a relation to a superclass is deleted, the attributes and associations (ingoing and outgoing) from this superClass are still contained in the astcdClass in the srcCD (astcdClass.a).
  */
 public class InheritanceDiff {
-  private Pair<ASTCDClass, ASTCDClass> astcdClasses;
-  private List<ASTCDClass> deletedSuperClasses;
-  private List<ASTCDClass> newSuperClasses;
+  private Pair<ASTCDType, ASTCDType> astcdClasses;
+  private List<ASTCDType> deletedSuperClasses;
+  private List<ASTCDType> newSuperClasses;
 
-  public InheritanceDiff(Pair<ASTCDClass, ASTCDClass> astcdClasses) {
+  public InheritanceDiff(Pair<ASTCDType, ASTCDType> astcdClasses) {
     this.astcdClasses = astcdClasses;
   }
 
-  public Pair<ASTCDClass, ASTCDClass> getAstcdClasses() {
+  public Pair<ASTCDType, ASTCDType> getAstcdClasses() {
     return astcdClasses;
   }
 
-  public void setAstcdClasses(Pair<ASTCDClass, ASTCDClass> astcdClasses) {
+  public void setAstcdClasses(Pair<ASTCDType, ASTCDType> astcdClasses) {
     this.astcdClasses = astcdClasses;
   }
 
-  public List<ASTCDClass> getDeletedSuperClasses() {
+  public List<ASTCDType> getDeletedSuperClasses() {
     return deletedSuperClasses;
   }
 
-  public void setDeletedSuperClasses(List<ASTCDClass> deletedSuperClasses) {
+  public void setDeletedSuperClasses(List<ASTCDType> deletedSuperClasses) {
     this.deletedSuperClasses = deletedSuperClasses;
   }
 
-  public List<ASTCDClass> getNewSuperClasses() {
+  public List<ASTCDType> getNewSuperClasses() {
     return newSuperClasses;
   }
 
-  public void setNewSuperClasses(List<ASTCDClass> newSuperClasses) {
+  public void setNewSuperClasses(List<ASTCDType> newSuperClasses) {
     this.newSuperClasses = newSuperClasses;
   }
 }

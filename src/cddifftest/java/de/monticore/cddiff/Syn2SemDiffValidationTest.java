@@ -2,10 +2,15 @@ package de.monticore.cddiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
+import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -178,11 +183,33 @@ public class Syn2SemDiffValidationTest {
       // print modified CDs
       String dir1 = file1.replaceAll("\\.cd","");
       String dir2 = file2.replaceAll("\\.cd","");
-      CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
+      //CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
 
       DiffHelper diffHelper = new DiffHelper(cd1, cd2);
       List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+//      System.out.println("CD1");
+//      System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(cd1));
+//      System.out.println("CD2");
+//      System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(cd2));
 
+//      for (ASTODArtifact od : witnesses) {
+//        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+//          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//          Assertions.fail();
+//        }
+//      }
+//      for (ASTCDType astcdType : diffHelper.getHelper().getSrcMap().keySet()){
+//        for (AssocStruct assocStruct : diffHelper.getHelper().getSrcMap().get(astcdType)){
+//          System.out.println(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diffHelper.getHelper().getSrcCD()).a.getSymbol().getFullName()
+//          + " " + Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diffHelper.getHelper().getSrcCD()).b.getSymbol().getFullName()
+//          + " " + assocStruct.isToBeProcessed());
+//        }
+//      }
+//
+//      System.out.println("Not-inst");
+//      for (ASTCDType astcdClass : diffHelper.getHelper().getNotInstClassesSrc()){
+//        System.out.println(astcdClass.getSymbol().getInternalQualifiedName());
+//      }
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -193,6 +220,71 @@ public class Syn2SemDiffValidationTest {
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher()
             .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
+      }
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @ParameterizedTest
+  @MethodSource("performanceSet2")
+  public void testReductionBasedOWDiff2(String file1, String file2) {
+    String path = "src/cddifftest/resources/validation/Performance/";
+    try {
+      ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
+      ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
+
+      ASTCDCompilationUnit original1 = cd1.deepClone();
+      ASTCDCompilationUnit original2 = cd2.deepClone();
+
+      // reduction-based
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(cd1, cd2);
+
+      // print modified CDs
+      String dir1 = file1.replaceAll("\\.cd","");
+      String dir2 = file2.replaceAll("\\.cd","");
+      //CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
+
+      DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+      List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+      System.out.println("CD1");
+      System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(cd1));
+//      System.out.println("CD2");
+//      System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(cd2));
+
+//      for (ASTODArtifact od : witnesses) {
+//        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+//          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+//          Assertions.fail();
+//        }
+//      }
+//      for (ASTCDType astcdType : diffHelper.getHelper().getSrcMap().keySet()){
+//        for (AssocStruct assocStruct : diffHelper.getHelper().getSrcMap().get(astcdType)){
+//          System.out.println(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diffHelper.getHelper().getSrcCD()).a.getSymbol().getFullName()
+//          + " " + Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), diffHelper.getHelper().getSrcCD()).b.getSymbol().getFullName()
+//          + " " + assocStruct.isToBeProcessed());
+//        }
+//      }
+//
+//      System.out.println("Not-inst");
+//      for (ASTCDType astcdClass : diffHelper.getHelper().getNotInstClassesSrc()){
+//        System.out.println(astcdClass.getSymbol().getInternalQualifiedName());
+//      }
+
+      for (ASTODArtifact od : witnesses) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
+      }
+      for (ASTODArtifact od : witnesses) {
+        if (!new OD2CDMatcher()
+          .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -302,7 +394,11 @@ public class Syn2SemDiffValidationTest {
     return Stream.of(
       Arguments.of("5A.cd", "5B.cd"),
       Arguments.of("10A.cd", "10B.cd"),
-      Arguments.of("15A.cd", "15B.cd"),
+      Arguments.of("15A.cd", "15B.cd"));
+  }
+
+  protected static Stream<Arguments> performanceSet2() {
+    return Stream.of(
       Arguments.of("20A.cd", "20B.cd"),
       Arguments.of("25A.cd", "25B.cd"));
   }

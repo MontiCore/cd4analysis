@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff.datastructures;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
 
@@ -15,8 +16,8 @@ public class AssocDiffStruct {
   private ASTCDAssociation association;
   private List<Pair<ClassSide, Integer>> changedCard = null;
   private List<Pair<ClassSide, ASTCDRole>> changedRoleNames = null;
-  private ASTCDClass changedTgt = null;
-  private ASTCDClass changedSrc = null;
+  private ASTCDType changedTgt = null;
+  private ASTCDType changedSrc = null;
   private boolean changedDir = false;
 
   public AssocDiffStruct() {}
@@ -37,11 +38,11 @@ public class AssocDiffStruct {
     this.changedRoleNames = changedRoleNames;
   }
 
-  public ASTCDClass getChangedTgt() {
+  public ASTCDType getChangedTgt() {
     return changedTgt;
   }
 
-  public void setChangedTgt(ASTCDClass changedTgt) {
+  public void setChangedTgt(ASTCDType changedTgt) {
     this.changedTgt = changedTgt;
   }
 
@@ -61,11 +62,11 @@ public class AssocDiffStruct {
     this.association = association;
   }
 
-  public ASTCDClass getChangedSrc() {
+  public ASTCDType getChangedSrc() {
     return changedSrc;
   }
 
-  public void setChangedSrc(ASTCDClass changedSrc) {
+  public void setChangedSrc(ASTCDType changedSrc) {
     this.changedSrc = changedSrc;
   }
 }

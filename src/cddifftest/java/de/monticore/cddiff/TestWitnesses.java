@@ -3,6 +3,7 @@ package de.monticore.cddiff;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
@@ -192,7 +193,7 @@ public class TestWitnesses extends CDDiffTestBasis {
     trafo.transform(original1, original2);
 
     DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    for (ASTCDClass astcdClass : diffHelper2.getHelper().getTgtMap().keySet()){
+    for (ASTCDType astcdClass : diffHelper2.getHelper().getTgtMap().keySet()){
       for (AssocStruct assocStruct : diffHelper2.getHelper().getTgtMap().get(astcdClass)){
         System.out.println(assocStruct.getAssociation().getLeftQualifiedName() + " " + assocStruct.getAssociation().getRightQualifiedName());
       }
