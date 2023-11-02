@@ -35,6 +35,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   private List<ASTCDClass> deletedClasses;
   private List<ASTCDEnum> addedEnums;
   private List<ASTCDEnum> deletedEnums;
+  private List<ASTCDClass> addedClassesSem;
+  private List<ASTCDClass> deletedClassesSem;
   private List<ASTCDAssociation> addedAssocs;
   private List<ASTCDAssociation> deletedAssocs;
   private List<Pair<ASTCDType, List<ASTCDType>>> addedInheritance;
@@ -72,6 +74,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     this.deletedClasses = new ArrayList<>();
     this.addedEnums = new ArrayList<>();
     this.deletedEnums = new ArrayList<>();
+    this.addedClassesSem = new ArrayList<>();
+    this.deletedClassesSem = new ArrayList<>();
     this.deletedAssocs = new ArrayList<>();
     this.addedAssocs = new ArrayList<>();
     this.addedInheritance = new ArrayList<>();
@@ -1106,6 +1110,42 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
+  public void addAllAddedClassesSem(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    boolean found = false;
+    for (ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()) {
+      for(ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()){
+        if(srcClass.getName().equals(tgtClass.getName())){
+          found = true;
+          break;
+        }
+      }
+      if(!found){
+        addedClassesSem.add(srcClass);
+      }
+    }
+    if (!addedClassesSem.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_CLASS)) {
+      baseDiff.add(DiffTypes.ADDED_CLASS);
+    }
+  }
+
+  public void addAllDeletedClassesSem(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    boolean found = false;
+    for (ASTCDClass tgtClass : tgtCD.getCDDefinition().getCDClassesList()) {
+      for(ASTCDClass srcClass : srcCD.getCDDefinition().getCDClassesList()){
+        if(srcClass.getName().equals(tgtClass.getName())){
+          found = true;
+          break;
+        }
+      }
+      if(!found){
+        deletedClassesSem.add(tgtClass);
+      }
+    }
+    if (!deletedClassesSem.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_CLASS)) {
+      baseDiff.add(DiffTypes.DELETED_CLASS);
+    }
+  }
+
   /*--------------------------------------------------------------------*/
 
   /**
@@ -1420,6 +1460,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     addAllChangedAssocs();
     addAllAddedClasses(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
     addAllDeletedClasses(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllAddedClassesSem(srcCD, tgtCD);
+    addAllDeletedClassesSem(tgtCD, tgtCD);
     addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
     addAllDeletedEnums(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
     addAllAddedAssocs(
