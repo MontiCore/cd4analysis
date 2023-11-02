@@ -323,10 +323,6 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("TechStoreV11.cd", "TechStoreV12.cd");
     SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
     System.out.println(sb.printDiff());
-    Syn2SemDiffHelper helper = new Syn2SemDiffHelper();
-
-    CDTypeDiff td = new CDTypeDiff(src.getCDDefinition().getCDClassesList().get(1),tgt.getCDDefinition().getCDClassesList().get(1), tgt, src, helper);
-    System.out.println(td.getRemovedBcInh());
   }
 
   public void parseModels(String concrete, String ref) {

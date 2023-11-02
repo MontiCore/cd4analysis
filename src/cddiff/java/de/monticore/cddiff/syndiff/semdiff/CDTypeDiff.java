@@ -438,6 +438,12 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
         }
       }
     }
+
+    if(!removedBcInh.isEmpty()){
+      if (!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+        baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
+      }
+    }
   }
 
   /**
