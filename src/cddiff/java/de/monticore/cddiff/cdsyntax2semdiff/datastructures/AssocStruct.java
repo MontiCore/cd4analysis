@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.datastructures;
+package de.monticore.cddiff.cdsyntax2semdiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;

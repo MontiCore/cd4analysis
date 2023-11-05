@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.datastructures;
+package de.monticore.cddiff.cdsyntax2semdiff.datastructures;
 
 public enum AssocDirection {
   BiDirectional,

@@ -5,17 +5,18 @@ import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
-import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruct;
-import de.monticore.cddiff.syndiff.datastructures.ClassSide;
-import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
-import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruct;
+import de.monticore.cddiff.cdsyntax2semdiff.odgen.Syn2SemDiffHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocDiffStruct;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.ClassSide;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.InheritanceDiff;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.TypeDiffStruct;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class TestHelper {
 
@@ -31,7 +32,7 @@ public class TestHelper {
   public void addedAssocs() {
     for (Pair<ASTCDAssociation, List<ASTCDType>> association : syntaxDiff.addedAssocList()) {
       Pair<ASTCDType, ASTCDType> classes =
-          Syn2SemDiffHelper.getConnectedClasses(association.a, syntaxDiff.getSrcCD());
+          Syn2SemDiffHelper.getConnectedTypes(association.a, syntaxDiff.getSrcCD());
       System.out.println(
           "The association between the classes "
               + classes.a.getSymbol().getInternalQualifiedName()
@@ -124,9 +125,9 @@ public class TestHelper {
           System.out.println(comment);
           System.out.println("=======================================================");
         } else {
-          ASTCDClass subClass =
-              syntaxDiff.helper.minSubClass((ASTCDClass) typeDiffStruct.getAstcdType());
-          if (subClass != null) {
+          Optional<ASTCDClass> subClass =
+              syntaxDiff.helper.minSubClass(typeDiffStruct.getAstcdType());
+          if (subClass.isPresent()) {
             StringBuilder comment =
                 new StringBuilder(
                     "For the abstract class "
@@ -184,7 +185,7 @@ public class TestHelper {
   public void changedAssocs() {
     for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
       Pair<ASTCDType, ASTCDType> pair =
-          Syn2SemDiffHelper.getConnectedClasses(
+          Syn2SemDiffHelper.getConnectedTypes(
               assocDiffStruct.getAssociation(), syntaxDiff.getSrcCD());
       String comment =
           "In the association between "
@@ -226,42 +227,42 @@ public class TestHelper {
       System.out.println(comment);
       System.out.println("=======================================================");
     }
-    for (CDAssocDiff assocDiff : syntaxDiff.getChangedAssocs()) {
-      if (syntaxDiff.helper.srcAssocExistsTgtNot(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
-        System.out.println(
-            "An association between the classes "
-                + Syn2SemDiffHelper.getConnectedClasses(
-                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
-                    .a
-                    .getSymbol()
-                    .getInternalQualifiedName()
-                + " and "
-                + Syn2SemDiffHelper.getConnectedClasses(
-                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
-                    .b
-                    .getSymbol()
-                    .getInternalQualifiedName()
-                + " has been added from the diagram.");
-        System.out.println("=======================================================");
-      }
-      if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
-        System.out.println(
-            "An association between the classes "
-                + Syn2SemDiffHelper.getConnectedClasses(
-                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
-                    .a
-                    .getSymbol()
-                    .getInternalQualifiedName()
-                + " and "
-                + Syn2SemDiffHelper.getConnectedClasses(
-                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
-                    .b
-                    .getSymbol()
-                    .getInternalQualifiedName()
-                + " has been removed from the diagram.");
-        System.out.println("=======================================================");
-      }
-    }
+//    for (CDAssocDiff assocDiff : syntaxDiff.getChangedAssocs()) {
+//      if (syntaxDiff.helper.srcAssocExistsTgtNot(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
+//        System.out.println(
+//            "An association between the classes "
+//                + Syn2SemDiffHelper.getConnectedTypes(
+//                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+//                    .a
+//                    .getSymbol()
+//                    .getInternalQualifiedName()
+//                + " and "
+//                + Syn2SemDiffHelper.getConnectedTypes(
+//                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+//                    .b
+//                    .getSymbol()
+//                    .getInternalQualifiedName()
+//                + " has been added from the diagram.");
+//        System.out.println("=======================================================");
+//      }
+//      if (syntaxDiff.helper.srcNotTgtExists(assocDiff.getSrcElem(), assocDiff.getTgtElem())) {
+//        System.out.println(
+//            "An association between the classes "
+//                + Syn2SemDiffHelper.getConnectedTypes(
+//                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+//                    .a
+//                    .getSymbol()
+//                    .getInternalQualifiedName()
+//                + " and "
+//                + Syn2SemDiffHelper.getConnectedTypes(
+//                        assocDiff.getSrcElem(), syntaxDiff.helper.getSrcCD())
+//                    .b
+//                    .getSymbol()
+//                    .getInternalQualifiedName()
+//                + " has been removed from the diagram.");
+//        System.out.println("=======================================================");
+//      }
+//    }
   }
 
   public void staDiff() {
@@ -278,7 +279,7 @@ public class TestHelper {
     for (Pair<ASTCDAssociation, List<ASTCDType>> pair : syntaxDiff.deletedAssocList()) {
       List<ASTCDType> list = pair.b;
         Pair<ASTCDType, ASTCDType> connectedClasses =
-            Syn2SemDiffHelper.getConnectedClasses(pair.a, helper.getTgtCD());
+            Syn2SemDiffHelper.getConnectedTypes(pair.a, helper.getTgtCD());
         System.out.println(
             "The association between the classes "
                 + connectedClasses.a.getSymbol().getInternalQualifiedName()

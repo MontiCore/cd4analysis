@@ -8,7 +8,7 @@ import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -63,8 +63,8 @@ public class ComplexityTest extends CDDiffTestBasis {
       long startTime_new2 = System.currentTimeMillis(); // start time
       // List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new,
       // cdSemantics);
-      DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
-      List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new2, ast2_new2);
+      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
       System.out.println("old witness size: " + ods_old.size());
@@ -120,8 +120,8 @@ public class ComplexityTest extends CDDiffTestBasis {
       long startTime_new2 = System.currentTimeMillis(); // start time
       // List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new,
       // cdSemantics);
-      DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
-      List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new2, ast2_new2);
+      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
       System.out.println("old witness size: " + ods_old.size());
@@ -177,8 +177,8 @@ public class ComplexityTest extends CDDiffTestBasis {
       long startTime_new2 = System.currentTimeMillis(); // start time
       // List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new,
       // cdSemantics);
-      DiffHelper diffHelper = new DiffHelper(ast1_new2, ast2_new2);
-      List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new2, ast2_new2);
+      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
       System.out.println("old witness size: " + ods_old.size());

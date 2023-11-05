@@ -1,6 +1,6 @@
-package de.monticore.cddiff.cdsyntax2semdiff;
+package de.monticore.cddiff.cdsyntax2semdiff.odgen;
 
-import de.monticore.cddiff.syndiff.datastructures.AssocDirection;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocDirection;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;

@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syndiff.datastructures;
+package de.monticore.cddiff.cdsyntax2semdiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -23,7 +23,6 @@ public class TypeDiffStruct {
   private boolean changedSingleton = false;
   private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes = null;
   private Pair<ASTCDEnum, List<ASTCDEnumConstant>> addedConstants = null;
-
   private List<DiffTypes> baseDiff;
 
   public TypeDiffStruct() {}
@@ -98,5 +97,9 @@ public class TypeDiffStruct {
 
   public void setChangedSingleton(boolean changedSingleton) {
     this.changedSingleton = changedSingleton;
+  }
+
+  public boolean isOnlySingletonChanged() {
+    return changedSingleton && baseDiff.size() == 1;
   }
 }

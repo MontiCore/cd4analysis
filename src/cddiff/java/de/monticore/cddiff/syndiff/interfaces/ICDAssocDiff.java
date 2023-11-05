@@ -2,9 +2,8 @@ package de.monticore.cddiff.syndiff.interfaces;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syndiff.datastructures.ClassSide;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.ClassSide;
 import de.monticore.cddiff.syndiff.semdiff.DiffTypes;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;

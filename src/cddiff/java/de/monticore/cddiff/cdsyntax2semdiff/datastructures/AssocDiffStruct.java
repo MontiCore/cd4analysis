@@ -1,8 +1,7 @@
-package de.monticore.cddiff.syndiff.datastructures;
+package de.monticore.cddiff.cdsyntax2semdiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;

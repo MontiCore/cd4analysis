@@ -6,7 +6,7 @@ import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
+import de.monticore.cddiff.cdsyntax2semdiff.odgen.Syn2SemDiffHelper;
 import de.monticore.cddiff.syndiff.interfaces.ICDTypeDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;

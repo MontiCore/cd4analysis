@@ -1,14 +1,12 @@
 package de.monticore.cddiff;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.cdsyntax2semdiff.Syn2SemDiffHelper;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.cdsyntax2semdiff.DiffHelper;
-import de.monticore.cddiff.syndiff.datastructures.AssocStruct;
+import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocStruct;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -16,7 +14,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestWitnesses extends CDDiffTestBasis {
@@ -41,14 +38,14 @@ public class TestWitnesses extends CDDiffTestBasis {
     //    testHelper.addedClasses();
     //    testHelper.addedAssocs();
 
-    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
 //    for (ASTCDClass astcdClass : diffHelper.getHelper().getSrcMap().keySet()){
 //      for (AssocStruct assocStruct : diffHelper.getHelper().getSrcMap().get(astcdClass)){
 //        System.out.println(Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), compilationUnitNew).a.getSymbol().getInternalQualifiedName() + " " + assocStruct.getAssociation().getLeft().getCDRole().getName()
 //          + Syn2SemDiffHelper.getConnectedClasses(assocStruct.getAssociation(), compilationUnitNew).b.getSymbol().getInternalQualifiedName() + " " + assocStruct.getAssociation().getRight().getCDRole().getName() + " " + assocStruct.isToBeProcessed() + " " + assocStruct.getSide());
 //      }
 //    }
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher()
@@ -80,8 +77,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     //    testHelper.addedClasses();
     //    testHelper.addedAssocs();
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -119,8 +116,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/Performance/15/CD2.cd");
 
-    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher()
@@ -152,8 +149,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     //    testHelper.addedClasses();
     //    testHelper.addedAssocs();
 
-    DiffHelper diffHelper = new DiffHelper(compilationUnitNew, compilationUnitOld);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
     System.out.println(witnesses.size());
     for (ASTODArtifact od : witnesses) {
       Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
@@ -192,9 +189,9 @@ public class TestWitnesses extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(original1, original2);
 
-    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    for (ASTCDType astcdClass : diffHelper2.getHelper().getTgtMap().keySet()){
-      for (AssocStruct assocStruct : diffHelper2.getHelper().getTgtMap().get(astcdClass)){
+    syn2semdiff syn2semdiff2 = new syn2semdiff(original1, original2);
+    for (ASTCDType astcdClass : syn2semdiff2.getHelper().getTgtMap().keySet()){
+      for (AssocStruct assocStruct : syn2semdiff2.getHelper().getTgtMap().get(astcdClass)){
         System.out.println(assocStruct.getAssociation().getLeftQualifiedName() + " " + assocStruct.getAssociation().getRightQualifiedName());
       }
     }
@@ -214,8 +211,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/cddiff/DEv2.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/DEv1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -249,8 +246,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/cddiff/EAv2.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/EAv1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -284,8 +281,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/validation/cddiff/EMTv1.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/validation/cddiff/EMTv2.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -321,8 +318,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cddiff/LibraryV1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -358,8 +355,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cddiff/LibraryV2.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -395,8 +392,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cddiff/LibraryV3.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -432,8 +429,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cddiff/LibraryV4.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -469,8 +466,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cd4analysis/ManagementV1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -506,8 +503,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cd4analysis/MyCompanyV1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -561,8 +558,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(original1, original2);
 
-    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+    syn2semdiff syn2semdiff2 = new syn2semdiff(original1, original2);
+    List<ASTODArtifact> witnesses2 = syn2semdiff2.generateODs(true);
 
     for (ASTODArtifact od : witnesses2) {
       if (!new OD2CDMatcher()
@@ -581,7 +578,7 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
         parseModel("src/cddifftest/resources/validation/cd4analysis/MyLifeV1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
     //    for (ASTCDAssociation association : cd1.getCDDefinition().getCDAssociationsList()){
     //      if (getConnectedClasses(association, cd1).a != null){
     //        System.out.println(getConnectedClasses(association, cd1).a.getName() + " " +
@@ -615,7 +612,7 @@ public class TestWitnesses extends CDDiffTestBasis {
     //      }
     //    }
     //
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(false);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
         System.out.println("Closed World Fail");
@@ -667,8 +664,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(original1, original2);
 
-    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+    syn2semdiff syn2semdiff2 = new syn2semdiff(original1, original2);
+    List<ASTODArtifact> witnesses2 = syn2semdiff2.generateODs(true);
 
     System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original1));
     System.out.println(new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(original2));
@@ -718,8 +715,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
         System.out.println("Closed World Fail");
@@ -739,8 +736,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
     Assert.assertFalse(witnesses.isEmpty());
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -761,8 +758,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees3.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
     Assert.assertFalse(witnesses.isEmpty());
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -789,8 +786,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(original1, original2);
 
-    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+    syn2semdiff syn2semdiff2 = new syn2semdiff(original1, original2);
+    List<ASTODArtifact> witnesses2 = syn2semdiff2.generateODs(true);
 
     for (ASTODArtifact od : witnesses2) {
       if (!new OD2CDMatcher()
@@ -815,8 +812,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(original1, original2);
 
-    DiffHelper diffHelper2 = new DiffHelper(original1, original2);
-    List<ASTODArtifact> witnesses2 = diffHelper2.generateODs(true);
+    syn2semdiff syn2semdiff2 = new syn2semdiff(original1, original2);
+    List<ASTODArtifact> witnesses2 = syn2semdiff2.generateODs(true);
 
     for (ASTODArtifact od : witnesses2) {
       if (!new OD2CDMatcher()
@@ -835,8 +832,8 @@ public class TestWitnesses extends CDDiffTestBasis {
     ASTCDCompilationUnit cd2 =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/EmpB.cd");
 
-    DiffHelper diffHelper = new DiffHelper(cd1, cd2);
-    List<ASTODArtifact> witnesses = diffHelper.generateODs(true);
+    syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
 
     System.out.println("Diff size: " + witnesses.size());
     System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(witnesses.get(0)));

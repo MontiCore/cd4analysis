@@ -1,10 +1,10 @@
-package de.monticore.cddiff.cdsyntax2semdiff;
+package de.monticore.cddiff.cdsyntax2semdiff.odgen;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.syndiff.datastructures.ClassSide;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.ClassSide;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;

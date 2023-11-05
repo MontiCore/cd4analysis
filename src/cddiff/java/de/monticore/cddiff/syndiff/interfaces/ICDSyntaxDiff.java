@@ -4,10 +4,10 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.syndiff.datastructures.AssocDiffStruct;
-import de.monticore.cddiff.syndiff.datastructures.AssocDiffs;
-import de.monticore.cddiff.syndiff.datastructures.InheritanceDiff;
-import de.monticore.cddiff.syndiff.datastructures.TypeDiffStruct;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocDiffStruct;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocDiffs;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.InheritanceDiff;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.TypeDiffStruct;
 import de.monticore.cddiff.syndiff.semdiff.CDAssocDiff;
 import de.monticore.cddiff.syndiff.semdiff.CDTypeDiff;
 import de.monticore.cddiff.syndiff.semdiff.DiffTypes;
@@ -106,11 +106,11 @@ public interface ICDSyntaxDiff {
    * Those include attributes, associations and otherAssociation (unidirectional associations where
    * the class is target).
    *
-   * @param astcdClass superclass
+   * @param astcdType superclass
    * @param subClassTgt subclass
    * @return true if at least one element is missing
    */
-  boolean isInheritanceDeleted(ASTCDType astcdClass, ASTCDType subClassTgt);
+  boolean isInheritanceDeleted(ASTCDType astcdType, ASTCDType subClassTgt);
 
   /**
    * Check if an added inheritance relation brings a semantic difference.
@@ -124,11 +124,11 @@ public interface ICDSyntaxDiff {
    * Those include attributes, associations and otherAssociation (unidirectional associations where
    * the class is target).
    *
-   * @param astcdClass superclass
+   * @param astcdType superclass
    * @param subClass subclass
    * @return true if at least one element is missing
    */
-  boolean isInheritanceAdded(ASTCDType astcdClass, ASTCDType subClass);
+  boolean isInheritanceAdded(ASTCDType astcdType, ASTCDType subClass);
 
   /**
    * Check if a changed inheritance relation brings a semantic difference.
@@ -146,7 +146,7 @@ public interface ICDSyntaxDiff {
    * @return a list of maximal two classes (one for source and one for target) that don't have this
    *     association.
    */
-  List<ASTCDType> isAssocDeleted(ASTCDAssociation association, ASTCDType astcdClass);
+  List<ASTCDType> isAssocDeleted(ASTCDAssociation association, ASTCDType astcdType);
 
   /**
    * Get a list of all deleted association that bring a semantic difference.
@@ -232,7 +232,7 @@ public interface ICDSyntaxDiff {
   AssocDiffs getAssocDiffs();
 
   /**
-   * Get a list of all classes that have a different superclass in srcCD and trgCD (STADiff).
+   * Get a list of all types that have a different superclass in srcCD and trgCD (STADiff).
    *
    * @return list of classes.
    */
