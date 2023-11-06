@@ -1,0 +1,9 @@
+classdiagram Simple {
+  class Class1 extends Class{
+    String text;
+  }
+
+  class Class {
+    String name;
+  }
+}

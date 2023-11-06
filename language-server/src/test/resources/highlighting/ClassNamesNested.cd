@@ -1,0 +1,8 @@
+classdiagram Test {
+
+  package testpackage {
+    class Test {
+    }
+  }
+
+}

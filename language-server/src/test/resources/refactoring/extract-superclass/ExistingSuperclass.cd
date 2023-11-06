@@ -1,0 +1,11 @@
+classdiagram ExistingSuperclass {
+  class Class1 extends Superclass {
+    int field;
+  }
+
+  class Class2 extends Superclass {
+    int field;
+  }
+
+  class Superclass;
+}

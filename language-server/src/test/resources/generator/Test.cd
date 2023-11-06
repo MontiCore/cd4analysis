@@ -1,0 +1,11 @@
+classdiagram MyCompany {
+  abstract class Entity;
+  class Company extends Entity {
+  }
+  class Employee extends Entity {
+  }
+  class Share {
+  }
+  association [1..*] Company (employer) <-> Employee [*];
+  association shareholding [1] Entity (shareholder) -- (owns) Share [*];
+}

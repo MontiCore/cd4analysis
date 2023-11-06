@@ -1,0 +1,9 @@
+# Draft (WIP pages)
+draft/
+
+# WSL
+*:Zone.Identifier
+
+# Python 
+venv/
+documentation-env/

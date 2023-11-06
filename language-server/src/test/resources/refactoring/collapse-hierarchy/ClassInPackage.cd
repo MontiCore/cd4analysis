@@ -1,0 +1,9 @@
+classdiagram MyCompany {
+
+  abstract class Entity;
+  package people {
+    class Person extends Entity {
+      String birthday;
+    }
+  }
+}

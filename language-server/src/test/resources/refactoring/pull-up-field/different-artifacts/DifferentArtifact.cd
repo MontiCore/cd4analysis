@@ -1,0 +1,5 @@
+classdiagram DifferentArtifact {
+  class ChildClass extends TargetClass {
+    String field;
+  }
+}

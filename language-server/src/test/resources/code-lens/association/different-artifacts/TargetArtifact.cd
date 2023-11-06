@@ -1,0 +1,6 @@
+classdiagram TargetArtifact {
+   class TargetClass;
+   class B;
+
+   association [1] TargetClass -> B [1];
+}

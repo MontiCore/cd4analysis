@@ -1,0 +1,4 @@
+classdiagram Simple {
+  class A;
+  class B;
+}

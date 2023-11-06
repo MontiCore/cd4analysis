@@ -1,0 +1,4 @@
+classdiagram MyCompany {
+
+  enum CorpKind { TEST, TEST2; }
+}

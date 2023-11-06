@@ -1,0 +1,9 @@
+classdiagram Test {
+
+  abstract class Entity;
+
+  class Company extends Entity {
+    String text;
+  }
+
+}
