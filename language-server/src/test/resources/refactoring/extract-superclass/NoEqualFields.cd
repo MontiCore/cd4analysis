@@ -1,0 +1,9 @@
+classdiagram NoEqualFields {
+  class Class1 {
+    int field;
+  }
+
+  class Class2 {
+    String field;
+  }
+}

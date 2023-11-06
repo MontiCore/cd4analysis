@@ -1,0 +1,13 @@
+/.gradle/
+*.iml
+**/.idea/
+target/
+build/
+gradlew
+gradlew.bat
+gradle/
+.gradle/
+**/*.log
+bin/
+*.umlp
+src/main/resources/tool.jar

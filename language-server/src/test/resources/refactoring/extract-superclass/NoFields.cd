@@ -1,0 +1,5 @@
+classdiagram NoFields {
+  class Class1;
+
+  class Class2;
+}

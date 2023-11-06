@@ -25,6 +25,8 @@ build:
   - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
   - "cd library"
   - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
+  - "cd ../language-server"
+  - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
   artifacts:
     paths:
     - "."
@@ -38,10 +40,14 @@ buildAndDeploy:
     - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
     - "cd library"
     - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
+    - "cd ../language-server"
+    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1"
     - "cd .."
     - "gradle publish $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
     - "cd library"
     - "gradle :trafo-library:publish $GRADLE_OPT -PgenTR=true $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+    - "cd ../language-server"
+    - "gradle publish --refresh-dependencies $GRADLE_OPT -PgenTR=true $ARGS1 -PmavenPassword=$password -PmavenUser=$username"
 
 # Checks if the links in this repository's Markdown files are valid.
 #

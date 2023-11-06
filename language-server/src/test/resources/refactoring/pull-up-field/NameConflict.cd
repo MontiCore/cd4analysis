@@ -1,0 +1,9 @@
+classdiagram NameConflict {
+  class SuperClass {
+    String field;
+  }
+
+  class ChildClass extends SuperClass {
+    String field;
+  }
+}

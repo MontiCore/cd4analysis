@@ -1,0 +1,5 @@
+import TargetArtifact.TargetClass;
+
+classdiagram DifferentArtifact {
+  class A extends TargetClass;
+}
