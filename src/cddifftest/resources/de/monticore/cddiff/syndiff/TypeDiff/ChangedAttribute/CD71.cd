@@ -9,4 +9,5 @@ classdiagram CD71{
 
   class C extends B{
   }
+  //Changed attribute - diff-witness for C
 }

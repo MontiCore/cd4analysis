@@ -10,4 +10,6 @@ classdiagram CD31{
 
   class D{}
 
+//Deleted association from D - diff-witnesses
+//Deleted association between A and D - diff-witness only for D
 }

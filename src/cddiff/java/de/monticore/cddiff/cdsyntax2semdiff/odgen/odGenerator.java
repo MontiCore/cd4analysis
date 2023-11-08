@@ -15,6 +15,7 @@ import de.monticore.cddiff.cdsyntax2semdiff.datastructures.ClassSide;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
+import de.monticore.odlink._ast.ASTODLink;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
@@ -156,37 +157,29 @@ public class odGenerator {
   public Pair<ASTCDClass, ASTCDClass> getClassesToUse(ASTCDAssociation association) {
     Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(association, helper.getSrcCD());
     Pair<ASTCDClass, ASTCDClass> toUse;
-    Optional<ASTCDClass> left = null;
-    Optional<ASTCDClass> right = null;
+    Optional<ASTCDClass> left;
+    Optional<ASTCDClass> right;
     boolean leftAbstract = pair.a.getModifier().isAbstract();
     boolean rightAbstract = pair.b.getModifier().isAbstract();
-    if ((leftAbstract && rightAbstract) || (pair.a instanceof ASTCDInterface && pair.b instanceof ASTCDInterface)) {
-      left = helper.minSubClass(pair.a);
-      right = helper.minSubClass(pair.b);
+    if (pair.a instanceof ASTCDClass && pair.b instanceof ASTCDClass && !(leftAbstract && rightAbstract)) {
+      toUse = new Pair<>((ASTCDClass) pair.a, (ASTCDClass) pair.b);
+    }
+    else {
+      if (leftAbstract || pair.a instanceof ASTCDInterface) {
+        left = helper.minSubClass(pair.a);
+      } else {
+        left = Optional.of((ASTCDClass) pair.a);
+      }
+      if (rightAbstract || pair.b instanceof ASTCDInterface) {
+        right = helper.minSubClass(pair.b);
+      } else {
+        right = Optional.of((ASTCDClass) pair.b);
+      }
       if (left.isPresent() && right.isPresent()) {
         toUse = new Pair<>(left.get(), right.get());
       } else {
         return null;
       }
-    } else if (leftAbstract || pair.a instanceof ASTCDInterface) {
-      left = helper.minSubClass(pair.a);
-      if (left.isPresent()) {
-        toUse = new Pair<>(left.get(), (ASTCDClass) pair.b);
-      } else {
-        return null;
-      }
-    } else if (rightAbstract || pair.b instanceof ASTCDInterface) {
-      right = helper.minSubClass(pair.b);
-      if (right.isPresent()) {
-        toUse = new Pair<>((ASTCDClass) pair.a, right.get());
-      } else {
-        return null;
-      }
-    } else {
-      toUse = new Pair<>((ASTCDClass) pair.a, (ASTCDClass) pair.b);
-    }
-    if (toUse.a == null || toUse.b == null) {
-      return null;
     }
     return toUse;
   }
@@ -381,15 +374,15 @@ public class odGenerator {
     if (maxNumberOfClasses < getNumberOfObjects(packages)) {
       return new Pair<>(new HashSet<>(), null);
     }
-    ASTODElement link = packages.iterator().next().getAssociation();
+    ASTODElement link = null;
+    for (Package pack : packages) {
+      if (pack.getAssociation() != null && pack.getAstcdAssociation().equals(association)) {
+        link = pack.getAssociation();
+        break;
+      }
+    }
     if (link == null) {
       link = packages.iterator().next().getLeftObject();
-    }
-    for (Package pack : packages) {
-      if (pack.getAstcdAssociation() != null){
-        System.out.println(pack.getLeftObject().getName() + " " +
-          pack.getRightObject().getName());
-      }
     }
     while (!findUnprocessedObjects(packages).isEmpty()) {
       for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
@@ -436,8 +429,6 @@ public class odGenerator {
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt,
       Pair<ASTCDAttribute, String> pair) {
-    // System.out.println("createChainsForNewClass " +
-    // astcdClass.getSymbol().getInternalQualifiedName());
     ASTODObject srcObject =
         odBuilder.buildObj(
             getNameForClass(astcdClass),
@@ -456,11 +447,12 @@ public class odGenerator {
           && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
               || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
-//        System.out.println("chain for class " + astcdClass.getName() + " assoc "
-//          + getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-//          + " " + getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName());
-        ASTCDClass rightClass =
+        Optional<ASTCDClass> right =
             helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+        if (right.isEmpty()){
+          return null;
+        }
+        ASTCDClass rightClass = right.get();
         Optional<ASTCDClass> subclass =
             helper.minSubClass(
                 getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
@@ -511,8 +503,12 @@ public class odGenerator {
           && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
               || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
-        ASTCDClass leftClass =
+        Optional<ASTCDClass> left =
             helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
+        if (left.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClass = left.get();
         Optional<ASTCDClass> subclass = helper.minSubClass(leftClass);
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = srcObject;
@@ -562,8 +558,12 @@ public class odGenerator {
     for (AssocStruct assocStruct : getTgtAssocs(astcdClass)) {
       ASTODObject realSrcObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)) {
-        ASTCDClass leftClass =
+        Optional<ASTCDClass> left =
             helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
+        if (left.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClass = left.get();
         Optional<ASTCDClass> sub =
             helper.minSubClass(
                 getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
@@ -609,8 +609,12 @@ public class odGenerator {
         packages.add(pack);
 
       } else {
-        ASTCDClass rightClass =
+        Optional<ASTCDClass> right =
             helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+        if (right.isEmpty()){
+          return null;
+        }
+        ASTCDClass rightClass = right.get();
         Optional<ASTCDClass> sub = helper.minSubClass(rightClass);
         if (!rightClass.getModifier().isAbstract()) {
           realSrcObject = getRealSrc(rightClass, assocStruct, astcdClass, mapSrc, mapTgt);
@@ -661,12 +665,6 @@ public class odGenerator {
       Package pack = new Package(srcObject, helper);
       packages.add(pack);
     }
-    //    for (Package pack : packages) {
-    //      if (pack.getAstcdAssociation() != null){
-    //        System.out.println(pack.getLeftObject().getName() + " " +
-    // pack.getRightObject().getName());
-    //      }
-    //    }
     return packages;
   }
 
@@ -685,7 +683,6 @@ public class odGenerator {
       Set<Package> packages,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
-    //  System.out.println("createChainsForExistingObj " + object.getName());
     List<AssocStruct> list = new ArrayList<>();
     for (AssocStruct assocStruct :
         helper
@@ -744,23 +741,18 @@ public class odGenerator {
       }
     }
     boolean hasAdded = false;
-//    System.out.println("createChainsForExistingObj after " + object.getName());
-//    for (AssocStruct assocStruct : list){
-//      System.out.println("chain for object " + object.getName() + " assoc "
-//        + getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-//        + " " + getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName());
-//    }
     for (AssocStruct assocStruct : list) {
-//      System.out.println("chain for object " + object.getName() + " assoc "
-//        + getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).a.getSymbol().getInternalQualifiedName()
-//        + " " + getConnectedClasses(assocStruct.getAssociation(), helper.getSrcCD()).b.getSymbol().getInternalQualifiedName());
       ASTODObject tgtObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)
           && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
               || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
-        ASTCDClass rightClass =
+        Optional<ASTCDClass> right =
           helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+        if (right.isEmpty()){
+          return null;
+        }
+        ASTCDClass rightClass = right.get();
         Optional<ASTCDClass> sub = helper.minSubClass(rightClass);
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = object;
@@ -823,8 +815,12 @@ public class odGenerator {
           && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
               || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
-        ASTCDClass leftClass =
+        Optional<ASTCDClass> left =
           helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
+        if (left.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClass = left.get();
         Optional<ASTCDClass> sub = helper.minSubClass(leftClass);
         if (helper.isLoopStruct(assocStruct)) {
           tgtObject = object;
@@ -886,8 +882,12 @@ public class odGenerator {
     for (AssocStruct assocStruct : getTgtAssocsForObject(object, mapSrc, mapTgt)) {
       ASTODObject realSrcObject = null;
       if (assocStruct.getSide().equals(ClassSide.Left)) {
-        ASTCDClass leftClass =
+        Optional<ASTCDClass> left =
           helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
+        if (left.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClass = left.get();
         Optional<ASTCDClass> sub = helper.minSubClass(leftClass);
         if (!leftClass.getModifier().isAbstract()) {
           realSrcObject =
@@ -942,8 +942,12 @@ public class odGenerator {
         Package pack = new Package(realSrcObject, object, assocStruct.getAssociation(), ClassSide.Right, false, true, helper);
         packages.add(pack);
       } else {
-        ASTCDClass rightClass =
+        Optional<ASTCDClass> right =
           helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+        if (right.isEmpty()){
+          return null;
+        }
+        ASTCDClass rightClass = right.get();
         Optional<ASTCDClass> sub = helper.minSubClass(rightClass);
         if (!rightClass.getModifier().isAbstract()) {
           realSrcObject =
@@ -997,12 +1001,6 @@ public class odGenerator {
       Package pack = new Package(object, helper);
       packages.add(pack);
     }
-    //    for (Package pack : packages) {
-    //      if (pack.getAstcdAssociation() != null){
-    //        System.out.println(pack.getLeftObject().getName() + " " +
-    // pack.getRightObject().getName());
-    //      }
-    //    }
     return packages;
   }
 
@@ -1051,38 +1049,27 @@ public class odGenerator {
     Set<ASTODObject> listToIterate = new HashSet<>();
     listToIterate.addAll(typeObjects);
     listToIterate.addAll(typeObjectsSrc);
-    ASTCDClass leftClassAssocStruct =
+    Optional<ASTCDClass> leftClassAssoc =
       helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
-    ASTCDClass rightClassAssocStruct =
+    Optional<ASTCDClass> rightClassAssoc =
       helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+    if (leftClassAssoc.isEmpty() || rightClassAssoc.isEmpty()){
+      return null;
+    }
+    ASTCDClass leftClassAssocStruct = leftClassAssoc.get();
+    ASTCDClass rightClassAssocStruct = rightClassAssoc.get();
     for (ASTODObject object : listToIterate) {
       boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)) {
-        ASTCDClass leftClassToMatch =
+        Optional<ASTCDClass> leftClass =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a);
-        ASTCDClass rightClassToMatch =
+        Optional<ASTCDClass> rightClass =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b);
-//        if (object.getName().equals("A41")){
-//          System.out.println("===================");
-//          System.out.println("A41");
-//          System.out.println(CDAssociationHelper.matchRoleNames(
-//            assocStruct.getAssociation().getLeft(),
-//            assocStructToMatch.a.getAssociation().getLeft()));
-//            System.out.println(CDAssociationHelper.matchRoleNames(
-//            assocStruct.getAssociation().getRight(),
-//            assocStructToMatch.a.getAssociation().getRight()));
-//            System.out.println(helper.matchDirectionInReverse(assocStruct, assocStructToMatch));
-//          System.out.println((leftClassAssocStruct
-//            .getSymbol()
-//            .getInternalQualifiedName()
-//            .equals(leftClassToMatch.getSymbol().getInternalQualifiedName())
-//            || isSubClass(leftClassAssocStruct, leftClassToMatch)
-//            || helper.getSrcSubMap().get(assocStruct.getOriginalClass()).contains(leftClassToMatch)));
-//          System.out.println(leftClassAssocStruct
-//            .getSymbol()
-//            .getInternalQualifiedName() + " " + leftClassToMatch.getSymbol().getInternalQualifiedName());
-//          System.out.println("===================");
-//        }
+        if (leftClass.isEmpty() || rightClass.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClassToMatch = leftClass.get();
+        ASTCDClass rightClassToMatch = rightClass.get();
         if (assocStruct
                 .getSide()
                 .equals(ClassSide.Left) // not-searched class of assocStruc on the left side
@@ -1166,10 +1153,15 @@ public class odGenerator {
         continue;
       }
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)) {
-        ASTCDClass leftClassToMatch =
+        Optional<ASTCDClass> leftClass =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a);
-        ASTCDClass rightClassToMatch =
+        Optional<ASTCDClass> rightClass =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b);
+        if (leftClass.isEmpty() || rightClass.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClassToMatch = leftClass.get();
+        ASTCDClass rightClassToMatch = rightClass.get();
         if (assocStruct.getSide().equals(ClassSide.Left) // not-searched class on the left side
             && assocStructToMatch.b.equals(
                 ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
@@ -1329,17 +1321,27 @@ public class odGenerator {
       Set<ASTODObject> listToIterate = new HashSet<>();
       listToIterate.addAll(objectsOfType);
       listToIterate.addAll(objectsOfTypeSrc);
-      ASTCDClass leftClassAssocStruct =
+      Optional<ASTCDClass> leftClassAssoc =
         helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
-      ASTCDClass rightClassAssocStruct =
+      Optional<ASTCDClass> rightClassAssoc =
         helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+      if (leftClassAssoc.isEmpty() || rightClassAssoc.isEmpty()){
+        return null;
+      }
+      ASTCDClass leftClassAssocStruct = leftClassAssoc.get();
+      ASTCDClass rightClassAssocStruct = rightClassAssoc.get();
       for (ASTODObject subObject : listToIterate) {
         boolean matched = false;
         for (Pair<AssocStruct, ClassSide> subAssocStruct : tgtMap.get(subObject)) {
-          ASTCDClass leftClassToMatch =
+          Optional<ASTCDClass> leftClass =
             helper.getClassForTypeSrc(getConnectedTypes(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a);
-          ASTCDClass rightClassToMatch =
+          Optional<ASTCDClass> rightClass =
             helper.getClassForTypeSrc(getConnectedTypes(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b);
+          if (leftClass.isEmpty() || rightClass.isEmpty()){
+            return null;
+          }
+          ASTCDClass leftClassToMatch = leftClass.get();
+          ASTCDClass rightClassToMatch = rightClass.get();
           if (assocStruct
                   .getSide()
                   .equals(ClassSide.Left) // not-searched class of assocStruc on the left side
@@ -1421,10 +1423,15 @@ public class odGenerator {
           continue;
         }
         for (Pair<AssocStruct, ClassSide> subAssocStruct : srcMap.get(subObject)) {
-          ASTCDClass leftClassToMatch =
+          Optional<ASTCDClass> leftClass =
             helper.getClassForTypeSrc(getConnectedTypes(subAssocStruct.a.getAssociation(), helper.getSrcCD()).a);
-          ASTCDClass rightClassToMatch =
+          Optional<ASTCDClass> rightClass =
             helper.getClassForTypeSrc(getConnectedTypes(subAssocStruct.a.getAssociation(), helper.getSrcCD()).b);
+          if (leftClass.isEmpty() || rightClass.isEmpty()){
+            return null;
+          }
+          ASTCDClass leftClassToMatch = leftClass.get();
+          ASTCDClass rightClassToMatch = rightClass.get();
           if (assocStruct
                   .getSide()
                   .equals(ClassSide.Left) // not-searched class of assocStruc on the left side
@@ -1552,16 +1559,26 @@ public class odGenerator {
             }
           }
         }
-        ASTCDClass leftClassAssocStruct =
+        Optional<ASTCDClass> leftClassAssoc =
           helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
-        ASTCDClass rightClassAssocStruct =
+        Optional<ASTCDClass> rightClassAssoc =
           helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+        if (leftClassAssoc.isEmpty() || rightClassAssoc.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClassAssocStruct = leftClassAssoc.get();
+        ASTCDClass rightClassAssocStruct = rightClassAssoc.get();
         boolean matched = false;
         for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(subObject)) {
-          ASTCDClass leftClassToMatch =
+          Optional<ASTCDClass> leftClass =
             helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a);
-          ASTCDClass rightClassToMatch =
+          Optional<ASTCDClass> rightClass =
             helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b);
+          if (leftClass.isEmpty() || rightClass.isEmpty()){
+            return null;
+          }
+          ASTCDClass leftClassToMatch = leftClass.get();
+          ASTCDClass rightClassToMatch = rightClass.get();
           if (assocStruct
                   .getSide()
                   .equals(ClassSide.Left) // searched class of assocStruc on the left side
@@ -1643,10 +1660,15 @@ public class odGenerator {
           continue;
         }
         for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(subObject)) {
-          ASTCDClass leftClassToMatch =
+          Optional<ASTCDClass> leftClass =
             helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a);
-          ASTCDClass rightClassToMatch =
+          Optional<ASTCDClass> rightClass =
             helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b);
+          if (leftClass.isEmpty() || rightClass.isEmpty()){
+            return null;
+          }
+          ASTCDClass leftClassToMatch = leftClass.get();
+          ASTCDClass rightClassToMatch = rightClass.get();
           if (assocStruct
                   .getSide()
                   .equals(ClassSide.Left) // searched class of assocStruc on the left side
@@ -1794,17 +1816,27 @@ public class odGenerator {
     Set<ASTODObject> listToIterate = new HashSet<>();
     listToIterate.addAll(typeObjects);
     listToIterate.addAll(typeObjectsTgt);
-    ASTCDClass leftClassAssocStruct =
+    Optional<ASTCDClass> leftClassAssoc =
       helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a);
-    ASTCDClass rightClassAssocStruct =
+    Optional<ASTCDClass> rightClassAssoc =
       helper.getClassForTypeSrc(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).b);
+    if (leftClassAssoc.isEmpty() || rightClassAssoc.isEmpty()){
+      return null;
+    }
+    ASTCDClass leftClassAssocStruct = leftClassAssoc.get();
+    ASTCDClass rightClassAssocStruct = rightClassAssoc.get();
     for (ASTODObject object : listToIterate) {
       boolean matched = false;
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : srcMap.get(object)) {
-        ASTCDClass leftClassToMatch =
+        Optional<ASTCDClass> leftClassTo =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a);
-        ASTCDClass rightClassToMatch =
+        Optional<ASTCDClass> rightClassTo =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b);
+        if (leftClassTo.isEmpty() || rightClassTo.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClassToMatch = leftClassTo.get();
+        ASTCDClass rightClassToMatch = rightClassTo.get();
         if (assocStruct
                 .getSide()
                 .equals(ClassSide.Left) // searched class of assocStruc on the left side
@@ -1886,10 +1918,15 @@ public class odGenerator {
         continue;
       }
       for (Pair<AssocStruct, ClassSide> assocStructToMatch : tgtMap.get(object)) {
-        ASTCDClass leftClassToMatch =
+        Optional<ASTCDClass> leftClassTo =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).a);
-        ASTCDClass rightClassToMatch =
+        Optional<ASTCDClass> rightClassTo =
           helper.getClassForTypeSrc(getConnectedTypes(assocStructToMatch.a.getAssociation(), helper.getSrcCD()).b);
+        if (leftClassTo.isEmpty() || rightClassTo.isEmpty()){
+          return null;
+        }
+        ASTCDClass leftClassToMatch = leftClassTo.get();
+        ASTCDClass rightClassToMatch = rightClassTo.get();
         if (assocStruct
                 .getSide()
                 .equals(ClassSide.Left) // searched class of assocStruc on the left side

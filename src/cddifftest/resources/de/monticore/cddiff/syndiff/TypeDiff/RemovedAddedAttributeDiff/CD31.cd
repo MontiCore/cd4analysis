@@ -1,13 +1,13 @@
 import java.lang.*;
 classdiagram CD31{
 
-  class A{
-    int age;
-  }
+  class A{}
 
   class B extends A{
     double age;
   }
 
   class C extends B{}
+  //Deleted old attribute and added new
+  //Two diff-witnesses with B
 }

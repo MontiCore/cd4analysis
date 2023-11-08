@@ -4,265 +4,83 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
-import de.monticore.cddiff.syndiff.semdiff.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.semdiff.SyntaxDiffBuilder;
-import de.monticore.cddiff.syndiff.semdiff.TestHelper;
-import java.io.IOException;
-import java.util.*;
-
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
-  @Test
-  public void ini() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  // Test for Bad overlapping
-  // @Test
-  public void testCD1() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD1.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  // @Test
-  public void testCD2() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD2.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD2.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD3() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD3.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD3.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD4() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD4.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD4.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD5() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD5.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD5.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD6() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD6.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD6.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD7() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD7.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD8() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD8.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD8.cd");
-
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
 
   @Test
   public void test11() {
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD11.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/MoveAttributes/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD12.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/MoveAttributes/CD12.cd");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+
+    Assertions.assertTrue(witnesses.isEmpty());
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitOld, compilationUnitNew, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
+
   }
 
   @Test
   public void test21() {
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD21.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/MoveAttributes/CD12.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD22.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/MoveAttributes/CD11.cd");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+
+    Assertions.assertTrue(witnesses.isEmpty());
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitOld, compilationUnitNew, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test
   public void test31() {
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD31.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/AddedDeletedAssocs/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/CD32.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/AddedDeletedAssocsCD32.cd");
 
-    //CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    //TestHelper testHelper = new TestHelper(syntaxDiff, syntaxDiff.getHelper());
-    /*System.out.println("Start");
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();*/
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
-    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(compilationUnitNew, compilationUnitOld);
-    System.out.println(sb.printOnlyDeleted());
+    Assertions.assertFalse(witnesses.isEmpty());
 
-
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test

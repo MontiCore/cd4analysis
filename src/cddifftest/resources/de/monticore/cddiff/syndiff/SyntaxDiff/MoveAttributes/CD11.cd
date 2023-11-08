@@ -17,4 +17,6 @@ classdiagram CD11{
   abstract class E extends D{
     String name;
   }
+  //Refactoring of attributes with new abstract classes
+  //No diff-witness
 }

@@ -1,7 +1,7 @@
 import java.lang.*;
-classdiagram CD51{
+classdiagram CD21{
 
-  class A{}
+  abstract class A{}
 
   class B extends A{
     int age;
@@ -9,7 +9,5 @@ classdiagram CD51{
 
   class C extends B{}
 
-  class D{}
-
-  association [1] D -> C [1];
+  //Removed attribute for A - no diff-witness
 }

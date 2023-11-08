@@ -14,5 +14,9 @@ classdiagram CD51{
 
   class S extends Q{}
 
-  association new [1] S -> (r) A [1];
+  association new [1] S (k) -> (r) A [1];
+
+  association new2 [1] S <-> (r) C [1];
+
+  //No diff-witness should be created because of merging
 }

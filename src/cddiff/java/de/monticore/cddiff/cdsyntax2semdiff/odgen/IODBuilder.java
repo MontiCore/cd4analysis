@@ -13,8 +13,6 @@ public interface IODBuilder {
 
   ASTODObject buildObj(
       String id, String type, Collection<String> types, Collection<ASTODAttribute> attrs);
-  // ASTODLink buildLink(ASTODObject srcObj, String roleNameSrc, String roleNameTgt, ASTODObject
-  // trgObj, String direction);
 
   ASTODLink buildLink(
       ASTODObject srcObj,

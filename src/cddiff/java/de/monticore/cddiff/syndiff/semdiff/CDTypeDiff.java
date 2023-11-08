@@ -198,14 +198,20 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    * @return list of pairs of the class with a deleted attribute.
    */
   @Override
-  public Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes() {
-    List<ASTCDAttribute> pairList = new ArrayList<>();
+  public List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes() {
+    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (ASTCDAttribute attribute : getDeletedAttributes()) {
       if (isDeleted(attribute)) {
-        pairList.add(attribute);
+        if (srcElem.getModifier().isAbstract()) {
+          Optional<ASTCDClass> subClass = helper.getClassForDeleted((ASTCDClass) srcElem, attribute);
+            subClass.ifPresent(astcdClass -> pairList.add(new Pair<>(astcdClass, attribute)));
+        }
+        else {
+          pairList.add(new Pair<>((ASTCDClass) srcElem, attribute));
+        }
       }
     }
-    return new Pair<>((ASTCDClass) getSrcElem(), pairList);
+    return pairList;
   }
 
   // CHECKED
@@ -222,7 +228,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDType astcdClass : classList) {
         if (!helper.getNotInstClassesSrc().contains(astcdClass)
-            && !Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) astcdClass)) {
+            && !helper.isAttContainedInClass(attribute, (ASTCDClass) astcdClass)) {
           Set<ASTCDType> astcdClassList =
               getAllSuper(
                   astcdClass, (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
@@ -230,7 +236,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
           for (ASTCDType type : astcdClassList) {
             if (type instanceof ASTCDClass
                 && !helper.getNotInstClassesSrc().contains((ASTCDClass) type)) {
-              if (Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
+              if (helper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;
               }
@@ -258,22 +264,24 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   @Override
   public Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff) {
     if (memberDiff.areTypesChanged()) {
-      return new Pair<>(
-        (ASTCDClass) getSrcElem(),
+      if (!srcElem.getModifier().isAbstract()){
+        return new Pair<>((ASTCDClass) srcElem, (ASTCDAttribute) memberDiff.getSrcElem());
+      }
+      Optional<ASTCDClass> subclass = helper.getClassForDiff((ASTCDClass) srcElem, (ASTCDAttribute) memberDiff.getSrcElem());
+      // add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+      return subclass.map(astcdClass -> new Pair<>(
+        astcdClass,
         (ASTCDAttribute)
-          memberDiff.getSrcElem()); // add to Diff List new Pair(getElem1(), memberDiff.getElem1()
+          memberDiff.getSrcElem())).orElse(null);
     }
     return null;
   }
 
   // CHECKED
   @Override
-  public ASTCDType isClassNeeded() {
+  public boolean isClassNeeded() {
     ASTCDClass srcCLass = (ASTCDClass) getSrcElem();
-    if (!srcCLass.getModifier().isAbstract()) {
-      return getSrcElem();
-    }
-    return null;
+      return !srcCLass.getModifier().isAbstract();
   }
 
   // CHECKED
@@ -284,14 +292,20 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    * @return list of pairs of the class with an added (new) attribute.
    */
   @Override
-  public Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes() {
-    List<ASTCDAttribute> pairList = new ArrayList<>();
+  public List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes() {
+    List<Pair<ASTCDClass, ASTCDAttribute>> list = new ArrayList<>();
     for (ASTCDAttribute attribute : getAddedAttributes()) {
       if (isAdded(attribute)) {
-        pairList.add(attribute);
+        if (srcElem.getModifier().isAbstract()) {
+          Optional<ASTCDClass> subClass = helper.getClassForNew((ASTCDClass) srcElem, attribute);
+            subClass.ifPresent(astcdClass -> list.add(new Pair<>(astcdClass, attribute)));
+        }
+        else {
+          list.add(new Pair<>((ASTCDClass) srcElem, attribute));
+        }
       }
     }
-    return new Pair<>((ASTCDClass) getSrcElem(), pairList);
+    return list;
   }
 
   // CHECKED
@@ -316,14 +330,14 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDType astcdClass : classList) {
       if (!helper.getNotInstClassesTgt().contains(astcdClass)
-          && !Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) astcdClass)) {
+          && !new Syn2SemDiffHelper().isAttContainedInClassTgt(attribute, (ASTCDClass) astcdClass)) {
         Set<ASTCDType> astcdClassList =
             getAllSuper(astcdClass, (ICD4CodeArtifactScope) helper.getTgtCD().getEnclosingScope());
         astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
           if (type instanceof ASTCDClass
               && helper.getNotInstClassesSrc().contains((ASTCDClass) type)
-              && Syn2SemDiffHelper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
+              && new Syn2SemDiffHelper().isAttContainedInClassTgt(attribute, (ASTCDClass) type)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
             break;
           }
@@ -362,14 +376,15 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    * @return list of pairs of classes and changed attributes.
    */
   @Override
-  public Pair<ASTCDClass, List<ASTCDAttribute>> changedAttribute() {
-    List<ASTCDAttribute> pairList = new ArrayList<>();
+  public List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute() {
+    List<Pair<ASTCDClass, ASTCDAttribute>> pairList = new ArrayList<>();
     for (CDMemberDiff memberDiff : getChangedMembers()) {
-      if (findMemberDiff(memberDiff) != null) {
-        pairList.add(findMemberDiff(memberDiff).b);
+      Pair<ASTCDClass, ASTCDAttribute> subClass = findMemberDiff(memberDiff);
+      if (subClass != null) {
+        pairList.add(new Pair<>(subClass.a, subClass.b));
       }
     }
-    return new Pair<>((ASTCDClass) getSrcElem(), pairList);
+    return pairList;
   }
 
   /*--------------------------------------------------------------------*/

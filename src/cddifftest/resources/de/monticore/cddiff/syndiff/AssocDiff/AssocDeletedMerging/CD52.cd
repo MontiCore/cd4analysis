@@ -1,5 +1,5 @@
 import java.lang.*;
-classdiagram CD82{
+classdiagram CD52{
 
   class A{}
 
@@ -14,5 +14,7 @@ classdiagram CD82{
 
   class S extends Q{}
 
-  association old [0..1] Q <-> (r) A [1];
+  association old [1] S (s) <-> (r) A [1];
+
+  association old2 [1] S (s) <-> (r) C [1];
 }

@@ -4,10 +4,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocDiffStruct;
-import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocDiffs;
-import de.monticore.cddiff.cdsyntax2semdiff.datastructures.InheritanceDiff;
-import de.monticore.cddiff.cdsyntax2semdiff.datastructures.TypeDiffStruct;
+import de.monticore.cddiff.cdsyntax2semdiff.datastructures.*;
 import de.monticore.cddiff.syndiff.semdiff.CDAssocDiff;
 import de.monticore.cddiff.syndiff.semdiff.CDTypeDiff;
 import de.monticore.cddiff.syndiff.semdiff.DiffTypes;
@@ -213,7 +210,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  List<ASTCDType> srcAssocExistsTgtNot();
+  List<Pair<ASTCDClass, List<AssocStruct>>> srcAssocExistsTgtNot();
 
   /**
    * Get a list of classes that need an association in srcCD and tgtCD, but the association is not
@@ -221,7 +218,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  List<ASTCDType> tgtAssocsExistsSrcNot();
+  List<Pair<ASTCDClass, List<AssocStruct>>> tgtAssocsExistsSrcNot();
 
   /**
    * Return lists of classes that are computed by srcAssocExistsTgtNot() and
@@ -229,7 +226,7 @@ public interface ICDSyntaxDiff {
    *
    * @return list of classes.
    */
-  AssocDiffs getAssocDiffs();
+  List<AssocMatching> getAssocDiffs();
 
   /**
    * Get a list of all types that have a different superclass in srcCD and trgCD (STADiff).

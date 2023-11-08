@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class TypeDiffStruct {
   private ASTCDType astcdType;
-  private Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes = null;
-  private Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes = null;
-  private Pair<ASTCDClass, List<ASTCDAttribute>> memberDiff = null;
-  private ASTCDType changedStereotype = null;
+  private List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes = null;
+  private List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes = null;
+  private List<Pair<ASTCDClass, ASTCDAttribute>> memberDiff = null;
+  private boolean changedStereotype = false;
   private boolean changedSingleton = false;
   private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes = null;
   private Pair<ASTCDEnum, List<ASTCDEnumConstant>> addedConstants = null;
@@ -35,27 +35,27 @@ public class TypeDiffStruct {
     this.astcdType = astcdType;
   }
 
-  public Pair<ASTCDClass, List<ASTCDAttribute>> getDeletedAttributes() {
+  public List<Pair<ASTCDClass, ASTCDAttribute>> getDeletedAttributes() {
     return deletedAttributes;
   }
 
-  public void setDeletedAttributes(Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes) {
+  public void setDeletedAttributes(List<Pair<ASTCDClass, ASTCDAttribute>>deletedAttributes) {
     this.deletedAttributes = deletedAttributes;
   }
 
-  public Pair<ASTCDClass, List<ASTCDAttribute>> getAddedAttributes() {
+  public List<Pair<ASTCDClass, ASTCDAttribute>> getAddedAttributes() {
     return addedAttributes;
   }
 
-  public void setAddedAttributes(Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes) {
+  public void setAddedAttributes(List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes) {
     this.addedAttributes = addedAttributes;
   }
 
-  public Pair<ASTCDClass, List<ASTCDAttribute>> getMemberDiff() {
+  public List<Pair<ASTCDClass, ASTCDAttribute>> getMemberDiff() {
     return memberDiff;
   }
 
-  public void setMemberDiff(Pair<ASTCDClass, List<ASTCDAttribute>> memberDiff) {
+  public void setMemberDiff(List<Pair<ASTCDClass, ASTCDAttribute>> memberDiff) {
     this.memberDiff = memberDiff;
   }
 
@@ -67,11 +67,11 @@ public class TypeDiffStruct {
     this.addedConstants = addedConstants;
   }
 
-  public ASTCDType getChangedStereotype() {
+  public boolean getChangedStereotype() {
     return changedStereotype;
   }
 
-  public void setChangedStereotype(ASTCDType changedStereotype) {
+  public void setChangedStereotype(boolean changedStereotype) {
     this.changedStereotype = changedStereotype;
   }
 
@@ -100,6 +100,6 @@ public class TypeDiffStruct {
   }
 
   public boolean isOnlySingletonChanged() {
-    return changedSingleton && baseDiff.size() == 1;
+    return changedSingleton && baseDiff.size() == 1 && !astcdType.getModifier().isAbstract();
   }
 }

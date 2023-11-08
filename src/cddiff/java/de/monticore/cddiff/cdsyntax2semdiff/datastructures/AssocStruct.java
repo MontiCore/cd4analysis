@@ -24,6 +24,9 @@ public class AssocStruct {
   private ASTCDType originalType;
   private ASTCDType originalTgtType;
 
+  private ASTCDAssociation sourceAssoc = null;
+  private AssocType usedAs = null;
+
   public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side, ASTCDType astcdType, ASTCDType astcdTgtType) {
     this.association = association;
     this.direction = direction;
@@ -39,7 +42,8 @@ public class AssocStruct {
       ClassSide side,
       boolean isSuperAssoc,
       ASTCDType astcdType,
-      ASTCDType astcdTgtType) {
+      ASTCDType astcdTgtType,
+      ASTCDAssociation sourceAssoc) {
     this.association = association;
     this.direction = direction;
     this.side = side;
@@ -47,11 +51,12 @@ public class AssocStruct {
     this.isSuperAssoc = isSuperAssoc;
     this.originalType = astcdType;
     this.originalTgtType = astcdTgtType;
+    this.sourceAssoc = sourceAssoc;
   }
 
   public AssocStruct deepClone() {
     return new AssocStruct(
-        this.association.deepClone(), this.direction, this.side, this.isSuperAssoc, this.originalType, this.originalTgtType);
+        this.association.deepClone(), this.direction, this.side, this.isSuperAssoc, this.originalType, this.originalTgtType, this.sourceAssoc);
   }
 
   public ASTCDAssociation getAssociation() {
@@ -116,5 +121,19 @@ public class AssocStruct {
 
   public void setOriginalTgtType(ASTCDType originalTgtType) {
     this.originalTgtType = originalTgtType;
+  }
+
+  public AssocType getUsedAs() {
+    return usedAs;
+  }
+
+  public void setUsedAs(AssocType usedAs) {
+    this.usedAs = usedAs;
+  }
+  public ASTCDAssociation getSourceAssoc() {
+    return sourceAssoc;
+  }
+  public void setSourceAssoc(ASTCDAssociation sourceAssoc) {
+    this.sourceAssoc = sourceAssoc;
   }
 }

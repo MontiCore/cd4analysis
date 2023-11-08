@@ -43,7 +43,6 @@ public class ODBuilder implements IODBuilder {
    * @param name The name of the attribute.
    * @return The created attribute.
    */
-  //TODO: there is a case when an enum uses this function, but it should use the one above
   @Override
   public ASTODAttribute buildAttr(String type, String name) {
     Optional<ASTODAttribute> attribute = Optional.empty();

@@ -8,4 +8,6 @@ classdiagram CD11{
   class C extends B{
     int age;
   }
+
+  //Removed attribute for A - diff-witness
 }

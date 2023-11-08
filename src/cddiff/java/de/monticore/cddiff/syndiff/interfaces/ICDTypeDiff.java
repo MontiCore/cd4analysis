@@ -50,14 +50,14 @@ public interface ICDTypeDiff {
    *
    * @return list of pairs of classes and changed attributes.
    */
-  Pair<ASTCDClass, List<ASTCDAttribute>> changedAttribute();
+  List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute();
 
   /**
    * Check for each attribute in the list deletedAttribute if it has been really deleted.
    *
    * @return list of pairs of the class with a deleted attribute.
    */
-  Pair<ASTCDClass, List<ASTCDAttribute>> deletedAttributes();
+  List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes();
 
   /**
    * Check if an attribute is really deleted.
@@ -74,7 +74,7 @@ public interface ICDTypeDiff {
    *
    * @return list of pairs of the class with an added (new) attribute.
    */
-  Pair<ASTCDClass, List<ASTCDAttribute>> addedAttributes();
+  List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes();
 
   /**
    * Check if an attribute is really added.
@@ -106,5 +106,5 @@ public interface ICDTypeDiff {
    *
    * @return true if we have a semantic difference.
    */
-  ASTCDType isClassNeeded();
+  boolean isClassNeeded();
 }

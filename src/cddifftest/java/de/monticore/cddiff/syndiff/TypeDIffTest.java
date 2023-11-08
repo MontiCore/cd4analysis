@@ -7,15 +7,22 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
 import de.monticore.cddiff.syndiff.semdiff.CDSyntaxDiff;
 import de.monticore.cddiff.syndiff.semdiff.CDTypeDiff;
-import de.monticore.cddiff.syndiff.semdiff.TestHelper;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
-
-import java.io.IOException;
-import java.util.Optional;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
@@ -23,122 +30,75 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD2() {
 
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD21.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD22.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+
+    Assertions.assertTrue(witnesses.isEmpty());
   }
 
   @Test
   public void testCD1() {
 
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD11.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD12.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+
+    Assertions.assertFalse(witnesses.isEmpty());
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   @Test
   public void testCD3(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD31.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD32.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
+
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+
+    Assertions.assertFalse(witnesses.isEmpty());
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
-  @Test
-  public void testCD4() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
-
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
-
-  @Test
-  public void testCD5() {
-
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD41.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD42.cd");
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
-  }
 
   @Test
   public void testCD7() {
 
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD71.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/CD72.cd");
-    CDDiffUtil.refreshSymbolTable(compilationUnitNew);
-    CDDiffUtil.refreshSymbolTable(compilationUnitOld);
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
 
-    CDSyntaxDiff diff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
-    TestHelper testHelper = new TestHelper(diff, diff.getHelper());
-    testHelper.staDiff();
-    testHelper.deletedAssocs();
-    testHelper.srcExistsTgtNot();
-    testHelper.changedTypes();
-    testHelper.inheritanceDiffs();
-    testHelper.changedAssocs();
-    testHelper.addedConstants();
-    testHelper.addedClasses();
-    testHelper.addedAssocs();
+    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+
+    Assertions.assertFalse(witnesses.isEmpty());
+
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
+    }
   }
 
   /*--------------------------------------------------------------------*/
