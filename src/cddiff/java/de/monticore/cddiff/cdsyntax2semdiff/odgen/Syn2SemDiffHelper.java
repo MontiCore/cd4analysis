@@ -3053,6 +3053,13 @@ public class Syn2SemDiffHelper {
     return new OverlappingAssocsDirect(directOverlappingAssocs, directOverlappingNoRelation);
   }
 
+  /**
+   * Get the pairs of duplicated associations for a given type
+   * @param astcdType type to search for.
+   * @param map map to search in.
+   * @param compilationUnit compilation unit.
+   * @return list of pairs of duplicated associations.
+   */
   public List<Pair<AssocStruct, AssocStruct>> getPairsForType(ASTCDType astcdType, ArrayListMultimap<ASTCDType, AssocStruct> map, ASTCDCompilationUnit compilationUnit) {
     List<Pair<AssocStruct, AssocStruct>> list = new ArrayList<>();
     for (AssocStruct assocStruct : map.get(astcdType)) {
@@ -3141,6 +3148,13 @@ public class Syn2SemDiffHelper {
     return Optional.empty(); // No pair with the given ASTCDClass found
   }
 
+  /**
+   * This function is used to treat duplicated associations BEFORE the overlapping associations.
+   * This was needed as otherwise the overlapping associations would be treated twice and eventually deleted,
+   * if there were multiple duplicated and overlapping associations fot the same subAssociation.
+   * For both, only isInConflict && inInheritanceRelation is needed, as the other cases should be treated in the
+   * other function, but they are left just in case.
+   */
   public void findOverlappingAssocs() {
     Set<ASTCDType> srcToDelete = new HashSet<>();
     Set<Pair<ASTCDType, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
@@ -3244,6 +3258,12 @@ public class Syn2SemDiffHelper {
     }
   }
 
+  /**
+   * Get a non-abstract class for changed type.
+   * @param astcdClass class with changed type.
+   * @param astcdAttribute attribute with changed type.
+   * @return non-abstract class with this attribute.
+   */
   public Optional<ASTCDClass> getClassForDiff(ASTCDClass astcdClass, ASTCDAttribute astcdAttribute) {
     for (ASTCDClass subClass : srcSubMap.get(astcdClass)) {
       if (!subClass.getModifier().isAbstract() && isAttContainedInClass(astcdAttribute, subClass)) {
@@ -3253,6 +3273,12 @@ public class Syn2SemDiffHelper {
     return Optional.empty();
   }
 
+  /**
+   * Get a non-abstract class for added attribute.
+   * @param astcdClass class with added attribute.
+   * @param attribute added attribute.
+   * @return non-abstract class with this attribute.
+   */
   public Optional<ASTCDClass> getClassForNew(ASTCDClass astcdClass, ASTCDAttribute attribute) {
     for (ASTCDClass subclass : srcSubMap.get(astcdClass)) {
       Optional<ASTCDClass> tgtClass = findMatchedClass(subclass);
