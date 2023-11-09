@@ -3288,7 +3288,8 @@ public class Syn2SemDiffHelper {
       while (iterator.hasNext()) {
         AssocStruct subAssoc = iterator.next();
         if (subAssoc.getSourceAssoc() != null
-          && sameAssociation(subAssoc.getSourceAssoc(), assocStruct.getUnmodifiedAssoc(), tgtCD)) {
+          && sameAssociation(subAssoc.getSourceAssoc(), assocStruct.getUnmodifiedAssoc(), tgtCD)
+          && !getConnectedTypes(subAssoc.getAssociation(), tgtCD).a.equals(getConnectedTypes(assocStruct.getAssociation(), tgtCD).a)) {
           iterator.remove();
           deleteAssocOtherSideTgt(subAssoc);
         }
