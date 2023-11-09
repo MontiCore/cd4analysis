@@ -8,9 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
-import de.monticore.cddiff.syndiff.semdiff.CDSyntaxDiff;
-import de.monticore.cddiff.syndiff.semdiff.CDTypeDiff;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -34,7 +32,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertTrue(witnesses.isEmpty());
@@ -48,7 +46,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertFalse(witnesses.isEmpty());
@@ -66,7 +64,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertFalse(witnesses.isEmpty());
@@ -88,7 +86,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertFalse(witnesses.isEmpty());

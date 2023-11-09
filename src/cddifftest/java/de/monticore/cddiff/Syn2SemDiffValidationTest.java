@@ -2,21 +2,15 @@ package de.monticore.cddiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.cdsyntax2semdiff.datastructures.AssocStruct;
-import de.monticore.cddiff.cdsyntax2semdiff.odgen.Syn2SemDiffHelper;
-import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syndiff.semdiff.CDAssocDiff;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +43,7 @@ public class Syn2SemDiffValidationTest {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
       Assertions.assertFalse(witnesses.isEmpty());
@@ -72,7 +66,7 @@ public class Syn2SemDiffValidationTest {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
       Assertions.assertFalse(witnesses.isEmpty());
@@ -99,7 +93,7 @@ public class Syn2SemDiffValidationTest {
       trafo.transform(cd1, cd2);
       CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/Employees");
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
 
       Assertions.assertTrue(witnesses.isEmpty());
@@ -109,7 +103,7 @@ public class Syn2SemDiffValidationTest {
     }
   }
 
-  //@Test //merging of associations with different role names
+  @Test
   public void testOWDigitalTwin1(){
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
@@ -119,7 +113,7 @@ public class Syn2SemDiffValidationTest {
       trafo.transform(cd1, cd2);
       CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/DT2vsDT1");
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
 
       Assertions.assertTrue(witnesses.isEmpty());
@@ -141,7 +135,7 @@ public class Syn2SemDiffValidationTest {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
       CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/DT3vsDT2");
 
@@ -186,8 +180,10 @@ public class Syn2SemDiffValidationTest {
       String dir2 = file2.replaceAll("\\.cd","");
       CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
+
+      Assertions.assertFalse(witnesses.isEmpty());
 
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
@@ -229,7 +225,7 @@ public class Syn2SemDiffValidationTest {
       String dir2 = file2.replaceAll("\\.cd","");
       CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
@@ -278,7 +274,7 @@ public class Syn2SemDiffValidationTest {
       String dir2 = file2.replaceAll("\\.cd","");
       CDDiffUtil.saveDiffCDs2File(cd1,cd2,"target/generated/syn2semdiff-test/"+dir1 + "vs" + dir2);
 
-      syn2semdiff syn2semdiff = new syn2semdiff(cd1, cd2);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());

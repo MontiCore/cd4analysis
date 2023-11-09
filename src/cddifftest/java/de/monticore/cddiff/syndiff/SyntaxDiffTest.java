@@ -5,8 +5,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
-import de.monticore.cddiff.syndiff.semdiff.SyntaxDiffBuilder;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -29,7 +28,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/MoveAttributes/CD12.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertTrue(witnesses.isEmpty());
@@ -46,11 +45,11 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   @Test
   public void test21() {
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/MoveAttributes/CD12.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/MoveAttributes/CD12.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/MoveAttributes/CD11.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/MoveAttributes/CD11.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertTrue(witnesses.isEmpty());
@@ -68,9 +67,9 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitNew =
         parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/AddedDeletedAssocs/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/AddedDeletedAssocsCD32.cd");
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/AddedDeletedAssocs/CD32.cd");
 
-    syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assertions.assertFalse(witnesses.isEmpty());
@@ -90,7 +89,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
       parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/SyntaxDiff/SS2.cd");
 
-        syn2semdiff syn2semdiff = new syn2semdiff(compilationUnitNew, compilationUnitOld);
+        Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
         List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
         for (ASTODArtifact witness : witnesses) {
           System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(witness));

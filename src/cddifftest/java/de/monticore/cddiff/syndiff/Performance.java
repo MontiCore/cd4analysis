@@ -5,7 +5,7 @@ import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.cdsyntax2semdiff.syn2semdiff;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.junit.Ignore;
@@ -45,7 +45,7 @@ public class Performance extends CDDiffTestBasis {
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
-      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new, ast2_new, 1, 5, false);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(ast1_new, ast2_new, 1, 5, false);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
@@ -84,7 +84,7 @@ public class Performance extends CDDiffTestBasis {
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
-      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new, ast2_new, 5, 10, false);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(ast1_new, ast2_new, 5, 10, false);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
@@ -123,7 +123,7 @@ public class Performance extends CDDiffTestBasis {
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
-      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new, ast2_new, 5, 15, false);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(ast1_new, ast2_new, 5, 15, false);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
@@ -166,7 +166,7 @@ public class Performance extends CDDiffTestBasis {
       long startTime_new2 = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(ast1_new, ast2_new);
-      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new, ast2_new, 5, 15, true);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(ast1_new, ast2_new, 5, 15, true);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
       long endTime_new2 = System.currentTimeMillis(); // end time
 
@@ -211,7 +211,7 @@ public class Performance extends CDDiffTestBasis {
       long startTime_new2 = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(ast1_new, ast2_new);
-      syn2semdiff syn2semdiff = new syn2semdiff(ast1_new, ast2_new, 5, 15, true);
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(ast1_new, ast2_new, 5, 15, true);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
       long endTime_new2 = System.currentTimeMillis(); // end time
 

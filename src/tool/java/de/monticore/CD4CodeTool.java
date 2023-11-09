@@ -33,7 +33,7 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.CDFullNameTrafo;
-import de.monticore.cddiff.syndiff.semdiff.SyntaxDiffBuilder;
+import de.monticore.cddiff.syndiff.SyntaxDiffBuilder;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;

@@ -18,5 +18,4 @@ classdiagram CD51{
 
   association new2 [1] S <-> (r) C [1];
 
-  //No diff-witness should be created because of merging
 }
