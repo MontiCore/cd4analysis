@@ -34,7 +34,14 @@ public class CDClassExtendsNotCyclic implements CDBasisASTCDClassCoCo {
         return;
       }
       visitedTypes.add(nextSymbol.getFullName());
-      nextSymbol.getSuperClassesOnly().forEach(s -> typesToVisit.push(s.getTypeInfo()));
+      nextSymbol.getSuperClassesOnly().forEach(s -> {
+        if(s.hasTypeInfo()) {
+          typesToVisit.push(s.getTypeInfo());
+        }else{
+          Log.error("0xE822B: Can not find symbol for superclass " + s.print(),
+            node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        }
+      });
     }
   }
 }
