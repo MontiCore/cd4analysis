@@ -5,33 +5,30 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
-import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class AssocDiffTest extends CDDiffTestBasis {
 
   @Test
   public void testCD5() {
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD51.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD51.cd");
     ASTCDCompilationUnit compilationUnitOld =
-
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD52.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD52.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
-    //todo: fix me
-    //Assertions.assertTrue(witnesses.isEmpty());
+    // todo: fix me
+    // Assertions.assertTrue(witnesses.isEmpty());
   }
-
 
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests

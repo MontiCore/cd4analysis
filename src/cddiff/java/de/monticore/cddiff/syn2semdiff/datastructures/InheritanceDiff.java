@@ -5,8 +5,10 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
 
 /**
- * Data structure for inheritance. This class is used to check what comparisons must be done based on the changes in the inheritance.
- * For example, if a relation to a superclass is deleted, the attributes and associations (ingoing and outgoing) from this superClass are still contained in the astcdClass in the srcCD (astcdClass.a).
+ * Data structure for inheritance. This class is used to check what comparisons must be done based
+ * on the changes in the inheritance. For example, if a relation to a superclass is deleted, the
+ * attributes and associations (ingoing and outgoing) from this superClass are still contained in
+ * the astcdClass in the srcCD (astcdClass.a).
  */
 public class InheritanceDiff {
   private Pair<ASTCDType, ASTCDType> astcdClasses;

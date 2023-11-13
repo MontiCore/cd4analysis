@@ -172,7 +172,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     SuperTypeMatcher superTypeMatchStructureType =
         new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
     SrcTgtAssocMatcher associationSrcTgtMatchStructureType =
-      new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
+        new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
     SrcTgtAssocMatcher associationSrcTgtMatchNameType =
         new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
     List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();

@@ -14,13 +14,12 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
@@ -28,9 +27,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD2() {
 
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -42,9 +43,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD1() {
 
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -52,7 +55,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
     Assertions.assertFalse(witnesses.isEmpty());
 
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(
+              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }
@@ -60,9 +65,13 @@ public class TypeDIffTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void testCD3(){
-    ASTCDCompilationUnit compilationUnitNew = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
-    ASTCDCompilationUnit compilationUnitOld = parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
+  public void testCD3() {
+    ASTCDCompilationUnit compilationUnitNew =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
+    ASTCDCompilationUnit compilationUnitOld =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -70,21 +79,24 @@ public class TypeDIffTest extends CDDiffTestBasis {
     Assertions.assertFalse(witnesses.isEmpty());
 
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(
+              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }
     }
   }
-
 
   @Test
   public void testCD7() {
 
     ASTCDCompilationUnit compilationUnitNew =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
     ASTCDCompilationUnit compilationUnitOld =
-        parseModel("src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -92,7 +104,9 @@ public class TypeDIffTest extends CDDiffTestBasis {
     Assertions.assertFalse(witnesses.isEmpty());
 
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(
+              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }
@@ -134,7 +148,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
     CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, src, diff.getHelper());
     CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, src, diff.getHelper());
 
-    //System.out.println(diff.printOnlyAdded());
+    // System.out.println(diff.printOnlyAdded());
 
     /*System.out.println(typeDiff1.printSrcCD());
     System.out.println(typeDiff2.printSrcCD());

@@ -80,7 +80,7 @@ public class CDDiffUtil {
   }
 
   public static void saveDiffCDs2File(
-    ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, String outputPath) throws IOException {
+      ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, String outputPath) throws IOException {
     String cd1 = CD4CodeMill.prettyPrint(ast1, true);
     String cd2 = CD4CodeMill.prettyPrint(ast2, true);
 

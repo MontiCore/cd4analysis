@@ -4,7 +4,8 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import edu.mit.csail.sdg.alloy4.Pair;
 
 /**
- * Data structure for cardinalities. This is used to get which cardinalities must be compared based on the matched sides.
+ * Data structure for cardinalities. This is used to get which cardinalities must be compared based
+ * on the matched sides.
  */
 public class CardinalityStruc {
   private Pair<ASTCDCardinality, ASTCDCardinality> leftCardinalities;

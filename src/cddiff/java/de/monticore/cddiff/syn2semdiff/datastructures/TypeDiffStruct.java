@@ -11,8 +11,8 @@ import java.util.List;
 
 /**
  * Data structure for preparing the differences related to changed types - ASTCDClass or ASTCDEnum.
- * The corresponding attributes are set if they lead to a semantic difference.
- * Otherwise, they are null.
+ * The corresponding attributes are set if they lead to a semantic difference. Otherwise, they are
+ * null.
  */
 public class TypeDiffStruct {
   private ASTCDType astcdType;
@@ -39,7 +39,7 @@ public class TypeDiffStruct {
     return deletedAttributes;
   }
 
-  public void setDeletedAttributes(List<Pair<ASTCDClass, ASTCDAttribute>>deletedAttributes) {
+  public void setDeletedAttributes(List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes) {
     this.deletedAttributes = deletedAttributes;
   }
 

@@ -121,7 +121,8 @@ public class CombinedMatching<T> {
     NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
     StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
     SuperTypeMatcher superTypeMatchName = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructure = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    SuperTypeMatcher superTypeMatchStructure =
+        new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
     matcherList.add(nameTypeMatch);
     matcherList.add(structureTypeMatch);
     matcherList.add(superTypeMatchName);

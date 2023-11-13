@@ -7,9 +7,8 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
 
 /**
- * Data structure for preparing the differences related to changed associations.
- * The corresponding attributes are set if they lead to a semantic difference.
- * Otherwise, they are null or false.
+ * Data structure for preparing the differences related to changed associations. The corresponding
+ * attributes are set if they lead to a semantic difference. Otherwise, they are null or false.
  */
 public class AssocDiffStruct {
   private ASTCDAssociation association;

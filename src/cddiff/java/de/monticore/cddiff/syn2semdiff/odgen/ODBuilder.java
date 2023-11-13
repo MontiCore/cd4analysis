@@ -12,13 +12,12 @@ import de.monticore.odlink._ast.ASTODLinkRightSideBuilder;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
-/**
- * This class is used to generate elements for object diagrams.
- */
+/** This class is used to generate elements for object diagrams. */
 public class ODBuilder implements IODBuilder {
   /**
-   * Creates a new attribute with a given value. This is used only when a constant is added
-   * to an enumeration.
+   * Creates a new attribute with a given value. This is used only when a constant is added to an
+   * enumeration.
+   *
    * @param type The type of the attribute.
    * @param name The name of the attribute.
    * @param value The value of the attribute.
@@ -39,6 +38,7 @@ public class ODBuilder implements IODBuilder {
 
   /**
    * Creates a new attribute without a value.
+   *
    * @param type The type of the attribute.
    * @param name The name of the attribute.
    * @return The created attribute.
@@ -57,6 +57,7 @@ public class ODBuilder implements IODBuilder {
 
   /**
    * Create a new ASTODObject.
+   *
    * @param id The name of the object.
    * @param type The base type of the object.
    * @param types The superclasses of the object.
@@ -103,6 +104,7 @@ public class ODBuilder implements IODBuilder {
 
   /**
    * Create a new link between two objects.
+   *
    * @param srcObj Left object.
    * @param roleNameSrc Role on the left object.
    * @param roleNameTgt Role on the right object.
@@ -142,11 +144,9 @@ public class ODBuilder implements IODBuilder {
     if (direction == AssocDirection.BiDirectional)
       linkBuilder.setODLinkDirection(ODLinkMill.oDBiDirBuilder().build()); // bidirektional
     else if (direction == AssocDirection.LeftToRight) {
-      linkBuilder.setODLinkDirection(
-          ODLinkMill.oDLeftToRightDirBuilder().build());
+      linkBuilder.setODLinkDirection(ODLinkMill.oDLeftToRightDirBuilder().build());
     } else if (direction == AssocDirection.RightToLeft) {
-      linkBuilder.setODLinkDirection(
-          ODLinkMill.oDRightToLeftDirBuilder().build());
+      linkBuilder.setODLinkDirection(ODLinkMill.oDRightToLeftDirBuilder().build());
     }
 
     linkBuilder.setLink(true); // nur links

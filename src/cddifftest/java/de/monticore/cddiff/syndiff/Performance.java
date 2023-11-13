@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.Assert.assertNotNull;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -8,23 +10,20 @@ import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.assertNotNull;
 
 public class Performance extends CDDiffTestBasis {
 
   @Test
   @Ignore
-  public void test(){
+  public void test() {
     String path = "src/cddifftest/resources/validation/Performance/";
 
     String filePath1;
     String filePath2;
-    for (int i = 1; i <= 5; i++){
+    for (int i = 1; i <= 5; i++) {
       filePath1 = path + 5 * i + "A.cd";
       filePath2 = path + 5 * i + "B.cd";
       System.out.println("*******  Test for " + 5 * i + "  *******");
@@ -41,7 +40,8 @@ public class Performance extends CDDiffTestBasis {
 
       // old method
       long startTime_old = System.currentTimeMillis(); // start time
-      List<ASTODArtifact> ods_old = CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 5, 1, cdSemantics);
+      List<ASTODArtifact> ods_old =
+          CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 5, 1, cdSemantics);
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
@@ -58,12 +58,12 @@ public class Performance extends CDDiffTestBasis {
 
   @Test
   @Ignore
-  public void test10(){
+  public void test10() {
     String path = "src/cddifftest/resources/validation/Performance/";
 
     String filePath1;
     String filePath2;
-    for (int i = 1; i <= 5; i++){
+    for (int i = 1; i <= 5; i++) {
       filePath1 = path + 5 * i + "A.cd";
       filePath2 = path + 5 * i + "B.cd";
       System.out.println("*******  Test for " + 5 * i + "  *******");
@@ -80,7 +80,8 @@ public class Performance extends CDDiffTestBasis {
 
       // old method
       long startTime_old = System.currentTimeMillis(); // start time
-      List<ASTODArtifact> ods_old = CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 10, 5, cdSemantics);
+      List<ASTODArtifact> ods_old =
+          CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 10, 5, cdSemantics);
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
@@ -97,12 +98,12 @@ public class Performance extends CDDiffTestBasis {
 
   @Test
   @Ignore
-  public void test15(){
+  public void test15() {
     String path = "src/cddifftest/resources/validation/Performance/";
 
     String filePath1;
     String filePath2;
-    for (int i = 1; i <= 5; i++){
+    for (int i = 1; i <= 5; i++) {
       filePath1 = path + 5 * i + "A.cd";
       filePath2 = path + 5 * i + "B.cd";
       System.out.println("*******  Test for " + 5 * i + "  *******");
@@ -119,7 +120,8 @@ public class Performance extends CDDiffTestBasis {
 
       // old method
       long startTime_old = System.currentTimeMillis(); // start time
-      List<ASTODArtifact> ods_old = CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 15, 5, cdSemantics);
+      List<ASTODArtifact> ods_old =
+          CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 15, 5, cdSemantics);
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
@@ -136,14 +138,14 @@ public class Performance extends CDDiffTestBasis {
 
   @Test
   @Ignore
-  public void testOpenW(){
+  public void testOpenW() {
     String path = "src/cddifftest/resources/validation/Performance/";
 
     String output = "./target/runtime-test/";
 
     String filePath1;
     String filePath2;
-    for (int i = 1; i <= 5; i++){
+    for (int i = 1; i <= 5; i++) {
       filePath1 = path + 5 * i + "A.cd";
       filePath2 = path + 5 * i + "B.cd";
       System.out.println("*******  Test for " + 5 * i + "  *******");
@@ -160,7 +162,8 @@ public class Performance extends CDDiffTestBasis {
 
       // old method
       long startTime_old = System.currentTimeMillis(); // start time
-      List<ASTODArtifact> ods_old = CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 15, 5, CDSemantics.STA_OPEN_WORLD);
+      List<ASTODArtifact> ods_old =
+          CDDiff.computeAlloySemDiff(ast1_old, ast2_old, 15, 5, CDSemantics.STA_OPEN_WORLD);
       long endTime_old = System.currentTimeMillis(); // end time
       // new method
       long startTime_new2 = System.currentTimeMillis(); // start time
@@ -179,14 +182,14 @@ public class Performance extends CDDiffTestBasis {
 
   @Test
   @Ignore
-  public void testOpenHaikun(){
+  public void testOpenHaikun() {
     String path = "src/cddifftest/resources/validation/Performance/";
 
     String output = "./target/runtime-test/";
 
     String filePath1;
     String filePath2;
-    for (int i = 2; i <= 5; i++){
+    for (int i = 2; i <= 5; i++) {
       filePath1 = path + 5 * i + "A.cd";
       filePath2 = path + 5 * i + "B.cd";
       System.out.println("*******  Test for " + 5 * i + "  *******");

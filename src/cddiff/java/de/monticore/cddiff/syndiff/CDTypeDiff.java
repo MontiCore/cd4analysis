@@ -17,9 +17,9 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
 /**
- * This class is responsible for comparing two CD types (classes or enumerations) and
- * identifying the differences between them. It provides functions to identify
- * added, deleted, and changed attributes and constants.
+ * This class is responsible for comparing two CD types (classes or enumerations) and identifying
+ * the differences between them. It provides functions to identify added, deleted, and changed
+ * attributes and constants.
  */
 public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private final ASTCDType srcElem;
@@ -61,7 +61,12 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private String modifierDelete, typeDelete, nameDelete, extendsDelete, implementsDelete;
   // Print end
 
-  public CDTypeDiff(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD, Syn2SemDiffHelper helper) {
+  public CDTypeDiff(
+      ASTCDType srcElem,
+      ASTCDType tgtElem,
+      ASTCDCompilationUnit tgtCD,
+      ASTCDCompilationUnit srcCD,
+      Syn2SemDiffHelper helper) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
     this.helper = helper;
@@ -132,7 +137,9 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     return inheritedAttributes;
   }
 
-  public List<ASTCDAttribute> getRemovedBcInh() { return removedBcInh; }
+  public List<ASTCDAttribute> getRemovedBcInh() {
+    return removedBcInh;
+  }
 
   @Override
   public void setInheritedAttributes(List<ASTCDAttribute> inheritedAttributes) {
@@ -202,10 +209,10 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     for (ASTCDAttribute attribute : getDeletedAttributes()) {
       if (isDeleted(attribute)) {
         if (srcElem instanceof ASTCDClass && srcElem.getModifier().isAbstract()) {
-          Optional<ASTCDClass> subClass = helper.getClassForDeleted((ASTCDClass) srcElem, attribute);
-            subClass.ifPresent(astcdClass -> pairList.add(new Pair<>(astcdClass, attribute)));
-        }
-        else {
+          Optional<ASTCDClass> subClass =
+              helper.getClassForDeleted((ASTCDClass) srcElem, attribute);
+          subClass.ifPresent(astcdClass -> pairList.add(new Pair<>(astcdClass, attribute)));
+        } else {
           if (srcElem instanceof ASTCDClass) {
             pairList.add(new Pair<>((ASTCDClass) srcElem, attribute));
           }
@@ -223,8 +230,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       if (!getSrcElem().getModifier().isAbstract()) {
         return true;
       }
-      List<ASTCDClass> classList =
-          helper.getSrcSubMap().get(srcElem);
+      List<ASTCDClass> classList = helper.getSrcSubMap().get(srcElem);
       classList.remove(getSrcElem());
       boolean conditionSatisfied = false; // Track if the condition is satisfied
       for (ASTCDClass astcdClass : classList) {
@@ -264,15 +270,15 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   @Override
   public Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff) {
     if (memberDiff.areTypesChanged() && srcElem instanceof ASTCDClass) {
-      if (!srcElem.getModifier().isAbstract()){
+      if (!srcElem.getModifier().isAbstract()) {
         return new Pair<>((ASTCDClass) srcElem, (ASTCDAttribute) memberDiff.getSrcElem());
       }
-      Optional<ASTCDClass> subclass = helper.getClassForDiff((ASTCDClass) srcElem, (ASTCDAttribute) memberDiff.getSrcElem());
+      Optional<ASTCDClass> subclass =
+          helper.getClassForDiff((ASTCDClass) srcElem, (ASTCDAttribute) memberDiff.getSrcElem());
       // add to Diff List new Pair(getElem1(), memberDiff.getElem1()
-      return subclass.map(astcdClass -> new Pair<>(
-        astcdClass,
-        (ASTCDAttribute)
-          memberDiff.getSrcElem())).orElse(null);
+      return subclass
+          .map(astcdClass -> new Pair<>(astcdClass, (ASTCDAttribute) memberDiff.getSrcElem()))
+          .orElse(null);
     }
     return null;
   }
@@ -280,7 +286,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   // CHECKED
   @Override
   public boolean isClassNeeded() {
-      return getSrcElem() instanceof ASTCDClass && !getSrcElem().getModifier().isAbstract();
+    return getSrcElem() instanceof ASTCDClass && !getSrcElem().getModifier().isAbstract();
   }
 
   // CHECKED
@@ -297,9 +303,8 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       if (isAdded(attribute) && srcElem instanceof ASTCDClass) {
         if (srcElem.getModifier().isAbstract()) {
           Optional<ASTCDClass> subClass = helper.getClassForNew((ASTCDClass) srcElem, attribute);
-            subClass.ifPresent(astcdClass -> list.add(new Pair<>(astcdClass, attribute)));
-        }
-        else {
+          subClass.ifPresent(astcdClass -> list.add(new Pair<>(astcdClass, attribute)));
+        } else {
           list.add(new Pair<>((ASTCDClass) srcElem, attribute));
         }
       }
@@ -323,8 +328,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     if (!getSrcElem().getModifier().isAbstract()) {
       return true;
     }
-    List<ASTCDClass> classList =
-        helper.getTgtSubMap().get(tgtElem);
+    List<ASTCDClass> classList = helper.getTgtSubMap().get(tgtElem);
     classList.remove(tgtElem);
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass astcdClass : classList) {
@@ -413,7 +417,10 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    * @param tgtCD The target CD compilation unit containing tgtType.
    */
   private void loadAllInheritedAttributes(
-      ASTCDType srcType, ASTCDType tgtType, ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD) {
+      ASTCDType srcType,
+      ASTCDType tgtType,
+      ASTCDCompilationUnit tgtCD,
+      ASTCDCompilationUnit srcCD) {
     Set<ASTCDType> superTypesOfTgtType =
         getAllSuper(tgtType, (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
     superTypesOfTgtType.remove(tgtType);
@@ -436,23 +443,24 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       }
     }
 
-    Set<ASTCDType> superTypesOfSrcType = getAllSuper(srcType, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
+    Set<ASTCDType> superTypesOfSrcType =
+        getAllSuper(srcType, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
     superTypesOfSrcType.remove(srcType);
 
     List<ASTCDAttribute> attrFromSuperTypes = new ArrayList<>();
-    for(ASTCDType x : superTypesOfSrcType){
+    for (ASTCDType x : superTypesOfSrcType) {
       attrFromSuperTypes.addAll(x.getCDAttributeList());
     }
 
-    for(ASTCDAttribute x : tgtType.getCDAttributeList()){
-      for(ASTCDAttribute a : attrFromSuperTypes) {
+    for (ASTCDAttribute x : tgtType.getCDAttributeList()) {
+      for (ASTCDAttribute a : attrFromSuperTypes) {
         if (x.getName().equals(a.getName())) {
           removedBcInh.add(x);
         }
       }
     }
 
-    if(!removedBcInh.isEmpty()){
+    if (!removedBcInh.isEmpty()) {
       if (!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
         baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
       }
@@ -487,12 +495,12 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   public void loadAllAddedAttributes(ASTCDClass srcType, ASTCDClass tgtType) {
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
       boolean addedNotFound = !inheritedAttributes.contains(srcAttr);
-        for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
-          if (srcAttr.getName().equals(tgtAttr.getName())) {
-            addedNotFound = false;
-            break;
-          }
+      for (ASTCDAttribute tgtAttr : tgtType.getCDAttributeList()) {
+        if (srcAttr.getName().equals(tgtAttr.getName())) {
+          addedNotFound = false;
+          break;
         }
+      }
       if (addedNotFound) {
         addedAttributes.add(srcAttr);
         if (!baseDiff.contains(DiffTypes.ADDED_ATTRIBUTE)) {
@@ -564,10 +572,10 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
           break;
         }
       }
-      for(ASTCDAttribute x : removedBcInh){
+      for (ASTCDAttribute x : removedBcInh) {
         if (x.getName().equals(tgtAttr.getName())) {
-            notFound = false;
-            break;
+          notFound = false;
+          break;
         }
       }
       if (notFound) {
@@ -934,7 +942,11 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
    * @param tgtType The target CD type for comparison.
    * @param tgtCD The target CD compilation unit containing tgtType.
    */
-  public void loadAllLists(ASTCDType srcType, ASTCDType tgtType, ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD) {
+  public void loadAllLists(
+      ASTCDType srcType,
+      ASTCDType tgtType,
+      ASTCDCompilationUnit tgtCD,
+      ASTCDCompilationUnit srcCD) {
     loadAllInheritedAttributes(srcType, tgtType, tgtCD, srcCD);
     loadAllAddedElements(srcType, tgtType);
     loadAllDeletedElements(srcType, tgtType);
@@ -1033,7 +1045,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       for (ASTCDAttribute x : removedBcInh) {
         CDMemberDiff diff = new CDMemberDiff(x, x);
         String commentOne =
-          "//moved attribute to super-type, L: " + diff.srcLineOfCode + System.lineSeparator();
+            "//moved attribute to super-type, L: " + diff.srcLineOfCode + System.lineSeparator();
         String tmpOne = commentOne + diff.printInheritedMember() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmpOne));

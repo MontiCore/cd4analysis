@@ -1,14 +1,15 @@
 package de.monticore.cddiff.syn2semdiff.datastructures;
 
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.Set;
 
 public class OverlappingAssocsDirect {
   private Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs;
   private Set<Pair<AssocStruct, AssocStruct>> directAssocsNoRelation;
 
-  public OverlappingAssocsDirect(Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs, Set<Pair<AssocStruct, AssocStruct>> directAssocsNoRelation) {
+  public OverlappingAssocsDirect(
+      Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs,
+      Set<Pair<AssocStruct, AssocStruct>> directAssocsNoRelation) {
     this.directOverlappingAssocs = directOverlappingAssocs;
     this.directAssocsNoRelation = directAssocsNoRelation;
   }
@@ -17,7 +18,8 @@ public class OverlappingAssocsDirect {
     return directOverlappingAssocs;
   }
 
-  public void setDirectOverlappingAssocs(Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs) {
+  public void setDirectOverlappingAssocs(
+      Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs) {
     this.directOverlappingAssocs = directOverlappingAssocs;
   }
 
@@ -25,7 +27,8 @@ public class OverlappingAssocsDirect {
     return directAssocsNoRelation;
   }
 
-  public void setDirectAssocsNoRelation(Set<Pair<AssocStruct, AssocStruct>> directAssocsNoRelation) {
+  public void setDirectAssocsNoRelation(
+      Set<Pair<AssocStruct, AssocStruct>> directAssocsNoRelation) {
     this.directAssocsNoRelation = directAssocsNoRelation;
   }
 }

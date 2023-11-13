@@ -11,11 +11,11 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocCardinality;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syn2semdiff.datastructures.ClassSide;
+import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
 import de.monticore.matcher.MatchingStrategy;
 import de.monticore.matcher.NameTypeMatcher;
 import de.monticore.matcher.StructureTypeMatcher;
@@ -26,8 +26,8 @@ import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 
 /**
- * This class computes the differences between two ASTCDAssociation nodes. It analyzes the
- * role names, cardinalities, direction, and associated classes.
+ * This class computes the differences between two ASTCDAssociation nodes. It analyzes the role
+ * names, cardinalities, direction, and associated classes.
  */
 public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   private final ASTCDAssociation srcElem;
@@ -78,7 +78,12 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   int srcLineOfCode, tgtLineOfCode;
   // Print end
 
-  public CDAssocDiff(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, Syn2SemDiffHelper helper) {
+  public CDAssocDiff(
+      ASTCDAssociation srcElem,
+      ASTCDAssociation tgtElem,
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD,
+      Syn2SemDiffHelper helper) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
     this.helper = helper;
@@ -132,7 +137,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
 
   @Override
   public void setStructs() {
-    Pair<AssocStruct, AssocStruct> pair = helper.getStructsForAssocDiff(srcElem, tgtElem, isReversed);
+    Pair<AssocStruct, AssocStruct> pair =
+        helper.getStructsForAssocDiff(srcElem, tgtElem, isReversed);
     srcStruct = pair.a;
     tgtStruct = pair.b;
     srcSide = new Pair<>(pair.a.getAssociation().getLeft(), pair.a.getAssociation().getRight());
@@ -151,7 +157,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     }
   }
 
-  //CHECKED
+  // CHECKED
   /**
    * Find the difference in the cardinalities of an association. Each pair has the association side
    * with the lowest number that is in the new cardinality but not in the old one.
@@ -208,13 +214,13 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   @Override
   public boolean isDirectionChanged() {
     if (isReversed) {
-        return (!getDirection(srcStruct.getAssociation()).equals(AssocDirection.LeftToRight)
-                || !getDirection(tgtStruct.getAssociation()).equals(AssocDirection.RightToLeft))
-                && ((!getDirection(srcStruct.getAssociation()).equals(AssocDirection.RightToLeft)
-                || !getDirection(tgtStruct.getAssociation()).equals(AssocDirection.LeftToRight))
-                && ((!getDirection(srcStruct.getAssociation()).equals(AssocDirection.BiDirectional))
-                || !getDirection(tgtStruct.getAssociation())
-                .equals(AssocDirection.BiDirectional)));
+      return (!getDirection(srcStruct.getAssociation()).equals(AssocDirection.LeftToRight)
+              || !getDirection(tgtStruct.getAssociation()).equals(AssocDirection.RightToLeft))
+          && ((!getDirection(srcStruct.getAssociation()).equals(AssocDirection.RightToLeft)
+                  || !getDirection(tgtStruct.getAssociation()).equals(AssocDirection.LeftToRight))
+              && ((!getDirection(srcStruct.getAssociation()).equals(AssocDirection.BiDirectional))
+                  || !getDirection(tgtStruct.getAssociation())
+                      .equals(AssocDirection.BiDirectional)));
     } else {
       return !getDirection(srcStruct.getAssociation())
           .equals(getDirection(tgtStruct.getAssociation()));
@@ -298,15 +304,16 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       if (!(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(leftOld);
         Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(leftNew);
-        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
-        //subclassesA.remove(helper.findMatchedTypeTgt(leftNew).get());
+        matchedTypeTgt.ifPresent(
+            astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        // subclassesA.remove(helper.findMatchedTypeTgt(leftNew).get());
         List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(leftNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract()
               && !(helper.classHasAssociationSrcSrc(srcStruct, subclass)
-              || helper.classHasAssociationTgtSrc(tgtStruct, subclass))) {
+                  || helper.classHasAssociationTgtSrc(tgtStruct, subclass))) {
             return subclass;
           }
         }
@@ -316,15 +323,16 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
         // check if th matched class of the old one is abstract - done
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(rightOld);
         Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(rightNew);
-        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
-        //subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
+        matchedTypeTgt.ifPresent(
+            astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        // subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
         List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(rightNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract()
               && !(helper.classHasAssociationSrcSrc(srcStruct, subclass)
-              || helper.classHasAssociationTgtSrc(tgtStruct, subclass))) {
+                  || helper.classHasAssociationTgtSrc(tgtStruct, subclass))) {
             return subclass;
           }
         }
@@ -349,15 +357,16 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       if (!(tgtSide.a.getCDCardinality().isOpt() || tgtSide.a.getCDCardinality().isMult())) {
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(rightOld);
         Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(rightNew);
-        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
-        //subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
+        matchedTypeTgt.ifPresent(
+            astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        // subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
         List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(rightNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract()
-            && !(helper.classIsTarget(srcStruct, subclass)
-            || helper.classIsTargetTgtSrc(tgtStruct, subclass))) {
+              && !(helper.classIsTarget(srcStruct, subclass)
+                  || helper.classIsTargetTgtSrc(tgtStruct, subclass))) {
             return subclass;
           }
         }
@@ -366,14 +375,15 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       if (!(tgtSide.b.getCDCardinality().isOpt() || tgtSide.b.getCDCardinality().isMult())) {
         List<ASTCDClass> subclassesA = helper.getTgtSubMap().get(leftOld);
         Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(leftNew);
-        matchedTypeTgt.ifPresent(astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
+        matchedTypeTgt.ifPresent(
+            astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
         List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(leftNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
           if (!subclass.getModifier().isAbstract()
-            && !(helper.classIsTarget(srcStruct, subclass)
-            || helper.classIsTargetTgtSrc(tgtStruct, subclass))) {
+              && !(helper.classIsTarget(srcStruct, subclass)
+                  || helper.classIsTargetTgtSrc(tgtStruct, subclass))) {
             return subclass;
           }
         }
@@ -487,9 +497,9 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     ASTCDAssocSide targetVirtualLeft = tgtAssoc.getLeft();
     ASTCDAssocSide targetVirtualRight = tgtAssoc.getRight();
 
-    setIsReversed(srcAssoc,tgtAssoc);
+    setIsReversed(srcAssoc, tgtAssoc);
 
-    if (isReversed){
+    if (isReversed) {
       targetVirtualLeft = tgtAssoc.getRight();
       targetVirtualRight = tgtAssoc.getLeft();
     }
@@ -497,14 +507,14 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     getAssocSideDiff(srcAssoc.getLeft(), targetVirtualLeft);
     if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
       if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
-        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          && !srcAssoc.getCDAssocDir().isBidirectional()) {
         baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
         if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
           baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
         }
       }
       if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
-        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          && !srcAssoc.getCDAssocDir().isBidirectional()) {
         baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
         if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
           baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
@@ -514,21 +524,21 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     getAssocSideDiff(srcAssoc.getRight(), targetVirtualRight);
     if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
       if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
-        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          && !srcAssoc.getCDAssocDir().isBidirectional()) {
         baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
         if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
           baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
         }
       }
       if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
-        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+          && !srcAssoc.getCDAssocDir().isBidirectional()) {
         baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
         if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
           baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
         }
       }
     }
-/*
+    /*
     for(Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
       if( (entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType)) ||
         (entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtRightType)) ) {
@@ -696,19 +706,34 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
 
   private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-      computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
 
     isReversed = false;
 
-    if(computedMatchingMapTypes.entrySet().stream().anyMatch(entry -> entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtRightType) || entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtLeftType))){
-      isReversed = CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()))
-        && !CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
-        || CDDiffUtil.inferRole(srcAssoc.getLeft()).equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
-        && !CDDiffUtil.inferRole(srcAssoc.getLeft()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()));
+    if (computedMatchingMapTypes.entrySet().stream()
+        .anyMatch(
+            entry ->
+                entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtRightType)
+                    || entry.getKey().equals(srcRightType)
+                        && entry.getValue().equals(tgtLeftType))) {
+      isReversed =
+          CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()))
+                  && !CDDiffUtil.inferRole(srcAssoc.getRight())
+                      .equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
+              || CDDiffUtil.inferRole(srcAssoc.getLeft())
+                      .equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
+                  && !CDDiffUtil.inferRole(srcAssoc.getLeft())
+                      .equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()));
     }
 
-    isReversed = isReversed || computedMatchingMapTypes.entrySet().stream().noneMatch(entry -> entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType) || entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtRightType));
-
+    isReversed =
+        isReversed
+            || computedMatchingMapTypes.entrySet().stream()
+                .noneMatch(
+                    entry ->
+                        entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType)
+                            || entry.getKey().equals(srcRightType)
+                                && entry.getValue().equals(tgtRightType));
   }
 
   /**

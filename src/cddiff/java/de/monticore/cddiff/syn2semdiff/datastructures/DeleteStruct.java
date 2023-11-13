@@ -4,10 +4,9 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
 
 /**
- * This is used to merge overlapping associations.
- * Attribute association: base association to merge superAssoc into.
- * Attribute superAssoc: superAssociation.
- * Attribute astcdClass: class from which superAssoc must be removed.
+ * This is used to merge overlapping associations. Attribute association: base association to merge
+ * superAssoc into. Attribute superAssoc: superAssociation. Attribute astcdClass: class from which
+ * superAssoc must be removed.
  */
 public class DeleteStruct {
   private AssocStruct association;
