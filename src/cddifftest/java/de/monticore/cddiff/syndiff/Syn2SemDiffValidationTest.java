@@ -1,8 +1,9 @@
-package de.monticore.cddiff;
+package de.monticore.cddiff.syndiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;

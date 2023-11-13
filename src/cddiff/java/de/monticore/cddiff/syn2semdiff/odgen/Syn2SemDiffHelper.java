@@ -124,7 +124,7 @@ public class Syn2SemDiffHelper {
   private List<CDAssocDiff> diffs;
 
   // CHECKED
-  public boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDClass astcdClass) {
+  public boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDType astcdClass) {
     int indexAttribute = attribute.getMCType().printType().lastIndexOf(".");
     for (ASTCDAttribute att : getAllAttr(astcdClass).b) {
       int indexCurrent = att.getMCType().printType().lastIndexOf(".");
@@ -1083,13 +1083,12 @@ public class Syn2SemDiffHelper {
   // CHECKED
   public List<ASTCDType> getSrcTypes(List<? extends ASTCDType> types) {
     List<ASTCDType> srcTypes = new ArrayList<>();
-    if (!types.isEmpty() && types.get(0) instanceof ASTCDClass) {
-      for (ASTCDType astcdType : types) {
+
+    for (ASTCDType astcdType : types) {
+      if(astcdType instanceof ASTCDClass){
         Optional<ASTCDClass> matched = findMatchedSrc((ASTCDClass) astcdType);
         matched.ifPresent(srcTypes::add);
-      }
-    } else {
-      for (ASTCDType astcdType : types) {
+      } else {
         Optional<ASTCDInterface> matched = findMatchedInterfaceSrc((ASTCDInterface) astcdType);
         matched.ifPresent(srcTypes::add);
       }
@@ -1100,13 +1099,11 @@ public class Syn2SemDiffHelper {
   // CHECKED
   public List<ASTCDType> getTgtTypes(List<? extends ASTCDType> types) {
     List<ASTCDType> tgtTypes = new ArrayList<>();
-    if (!types.isEmpty() && types.get(0) instanceof ASTCDClass) {
-      for (ASTCDType astcdType : types) {
+    for (ASTCDType astcdType : types) {
+      if(astcdType instanceof ASTCDClass){
         Optional<ASTCDClass> matched = findMatchedClass((ASTCDClass) astcdType);
         matched.ifPresent(tgtTypes::add);
-      }
-    } else {
-      for (ASTCDType astcdType : types) {
+      } else {
         Optional<ASTCDInterface> matched = findMatchedInterfaceTgt((ASTCDInterface) astcdType);
         matched.ifPresent(tgtTypes::add);
       }
@@ -1216,7 +1213,7 @@ public class Syn2SemDiffHelper {
    * @param astcdClass class
    * @return Pair of the class and a list of attributes
    */
-  public Pair<ASTCDClass, List<ASTCDAttribute>> getAllAttr(ASTCDClass astcdClass) {
+  public Pair<ASTCDType, List<ASTCDAttribute>> getAllAttr(ASTCDType astcdClass) {
     List<ASTCDAttribute> attributes = new ArrayList<>();
     Set<ASTCDType> classes =
         getAllSuper(astcdClass, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
@@ -2906,7 +2903,7 @@ public class Syn2SemDiffHelper {
         else {
           for (ASTCDClass subClass : tgtSubMap.get(findMatchedTypeTgt(srcType).get())) {
             Optional<ASTCDType> subSrc = findMatchedTypeSrc(subClass);
-            if (subSrc.isPresent() && !classHasAssociationTgtSrc(assocStruct, subSrc.get())) {
+            if (subSrc.isPresent() && subSrc.get() instanceof ASTCDClass && !classHasAssociationTgtSrc(assocStruct, subSrc.get())) {
               classToUse = (ASTCDClass) subSrc.get();
               break;
             }

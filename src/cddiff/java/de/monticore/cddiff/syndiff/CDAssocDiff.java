@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocCardinality;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
@@ -483,6 +484,51 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
         computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
 
+    ASTCDAssocSide targetVirtualLeft = tgtAssoc.getLeft();
+    ASTCDAssocSide targetVirtualRight = tgtAssoc.getRight();
+
+    setIsReversed(srcAssoc,tgtAssoc);
+
+    if (isReversed){
+      targetVirtualLeft = tgtAssoc.getRight();
+      targetVirtualRight = tgtAssoc.getLeft();
+    }
+
+    getAssocSideDiff(srcAssoc.getLeft(), targetVirtualLeft);
+    if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+      if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+        baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+        if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+          baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+        }
+      }
+      if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+        baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+        if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+          baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+        }
+      }
+    }
+    getAssocSideDiff(srcAssoc.getRight(), targetVirtualRight);
+    if (baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_CLASS)) {
+      if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight()
+        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+        baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+        if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS)) {
+          baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_TARGET_CLASS);
+        }
+      }
+      if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+        && !srcAssoc.getCDAssocDir().isBidirectional()) {
+        baseDiff.remove(DiffTypes.CHANGED_ASSOCIATION_CLASS);
+        if (!baseDiff.contains(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS)) {
+          baseDiff.add(DiffTypes.CHANGED_ASSOCIATION_SOURCE_CLASS);
+        }
+      }
+    }
+/*
     for(Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
       if( (entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType)) ||
         (entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtRightType)) ) {
@@ -522,7 +568,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
           }
         }
       }
-    }
+    }*/
 
     /*if (computedMatchingMapTypes.get(srcLeftType).equals(tgtLeftType)
         || computedMatchingMapTypes.get(srcRightType).equals(tgtRightType)) {
@@ -563,6 +609,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       }
     }*/
 
+    /*
     for(Map.Entry<ASTCDType, ASTCDType> entry : computedMatchingMapTypes.entrySet()) {
       if( (entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtRightType)) ||
         (entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtLeftType)) ) {
@@ -602,7 +649,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
           }
         }
       }
-    }
+    }*/
 
     /*if (computedMatchingMapTypes.get(srcLeftType).equals(tgtRightType)
         || computedMatchingMapTypes.get(srcRightType).equals(tgtLeftType)) {
@@ -645,6 +692,23 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
 
     srcLineOfCode = srcAssoc.get_SourcePositionStart().getLine();
     tgtLineOfCode = tgtAssoc.get_SourcePositionStart().getLine();
+  }
+
+  private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
+    Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
+      computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
+
+    isReversed = false;
+
+    if(computedMatchingMapTypes.entrySet().stream().anyMatch(entry -> entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtRightType) || entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtLeftType))){
+      isReversed = CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()))
+        && !CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
+        || CDDiffUtil.inferRole(srcAssoc.getLeft()).equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
+        && !CDDiffUtil.inferRole(srcAssoc.getLeft()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()));
+    }
+
+    isReversed = isReversed || computedMatchingMapTypes.entrySet().stream().noneMatch(entry -> entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType) || entry.getKey().equals(srcRightType) && entry.getValue().equals(tgtRightType));
+
   }
 
   /**

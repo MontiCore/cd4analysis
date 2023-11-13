@@ -879,8 +879,6 @@ classdiagram MaCoCo {
   //----------------------------------------------
 
   class F1Konto extends Haushaltskonto {
-    Optional<ZonedDateTime> startDatum;
-    Optional<ZonedDateTime> endDatum;
     long originalBudgetCent;
     long sonstigeZuweisungenCent;
     long resteCent;

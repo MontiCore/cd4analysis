@@ -6,8 +6,8 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiff;
-import de.monticore.cddiff.alloycddiff.CDSemantics;
+
+import de.monticore.cddiff.syndiff.CDSyntaxDiff;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.se_rwth.commons.logging.Log;
@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -62,8 +64,9 @@ public class CombinedFunctionalityTest {
     ASTCDCompilationUnit expected =
         parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
 
-    assertEquals(
-        new ArrayList<>(),
-        CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.STA_CLOSED_WORLD));
+
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(merged,expected);
+    Assertions.assertEquals(new ArrayList<>(), syntaxDiff.getBaseDiff());
   }
+
 }

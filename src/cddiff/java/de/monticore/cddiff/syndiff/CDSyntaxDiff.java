@@ -260,10 +260,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public ASTCDClass isSupClass(ASTCDClass astcdClass) {
     if (astcdClass.getModifier().isAbstract()) {
       List<ASTCDClass> classesToCheck = new ArrayList<>();
-      for (ASTCDType value : helper.getSrcSubMap().get(astcdClass)) {
-        if (value instanceof ASTCDClass) {
-          classesToCheck.add((ASTCDClass) value);
-        }
+      for (ASTCDClass value : helper.getSrcSubMap().get(astcdClass)) {
+        classesToCheck.add(value);
       }
       List<ASTCDAttribute> attributes = astcdClass.getCDAttributeList();
       for (ASTCDClass classToCheck : classesToCheck) {
@@ -324,13 +322,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = helper.getAllAttrTgt((ASTCDClass) superClassTgt);
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
-        if (!helper.isAttContainedInClass(attribute, (ASTCDClass) subClassSrc)) {
+        if (!helper.isAttContainedInClass(attribute, subClassSrc)) {
           Set<ASTCDType> astcdClassList =
             getAllSuper(subClassSrc, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
           for (ASTCDType type : astcdClassList) {
-            if (type instanceof ASTCDClass
-              && !helper.getNotInstClassesSrc().contains(type)) {
-              if (helper.isAttContainedInClass(attribute, (ASTCDClass) type)) {
+            if (!helper.getNotInstClassesSrc().contains(type)) {
+              if (helper.isAttContainedInClass(attribute, type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;
               }
@@ -431,8 +428,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public boolean isInheritanceAdded(ASTCDType astcdClass, ASTCDType subClass) {
     if (astcdClass instanceof ASTCDClass) {
-      Pair<ASTCDClass, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr((ASTCDClass) astcdClass);
-      if (subClass != null) {
+      Pair<ASTCDType, List<ASTCDAttribute>> allAtts = getHelper().getAllAttr(astcdClass);
+      if (subClass instanceof ASTCDClass) {
         for (ASTCDAttribute attribute : allAtts.b) {
           boolean conditionSatisfied = false; // Track if the condition is satisfied
           if (!helper.getNotInstClassesSrc().contains(astcdClass)
@@ -444,7 +441,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
                 (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
             for (ASTCDType type : astcdClassList) {
               if (type instanceof ASTCDClass
-                && !helper.getNotInstClassesTgt().contains((ASTCDClass) type)
+                && !helper.getNotInstClassesTgt().contains(type)
                 && helper.isAttContainedInClassTgt(attribute, (ASTCDClass) type)) {
                 conditionSatisfied = true; // Set the flag to true if the condition holds
                 break;

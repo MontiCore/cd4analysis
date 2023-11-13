@@ -85,8 +85,7 @@ public class CDMemberDiff extends SyntaxDiffHelper implements ICDMemberDiff {
    */
   private void createDiffList(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
     // Modifier
-    if (!(pp.prettyprint(srcElem.getModifier()).isEmpty()
-        && pp.prettyprint(tgtElem.getModifier()).isEmpty())) {
+    if (!srcElem.getModifier().deepEquals(tgtElem.getModifier())) {
       CDNodeDiff<ASTModifier, ASTModifier> modifierDiff =
           new CDNodeDiff<>(Optional.of(srcElem.getModifier()), Optional.of(tgtElem.getModifier()));
 

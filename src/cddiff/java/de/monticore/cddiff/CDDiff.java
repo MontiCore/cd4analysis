@@ -9,6 +9,7 @@ import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
@@ -179,7 +180,7 @@ public class CDDiff {
   /**
    * Computes the semantic difference between cd1 and cd2 via syntax analysis.
    *
-   * @param cdSemantics can be: SIMPLE_CLOSED_WORLD, MULTI_INSTANCE_CLOSED_WORLD
+   * @param cdSemantics can be: SIMPLE_CLOSED_WORLD, STA_CLOSED_WORLD
    * @return list of diff-witnesses
    */
   public static List<ASTODArtifact> computeSyntax2SemDiff(
