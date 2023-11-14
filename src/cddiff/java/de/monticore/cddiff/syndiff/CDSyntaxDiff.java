@@ -318,8 +318,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public boolean isInheritanceDeleted(ASTCDType superClassTgt, ASTCDType subClassSrc) {
     if (superClassTgt instanceof ASTCDClass) {
-      Pair<ASTCDType, List<ASTCDAttribute>> allAtts =
-          helper.getAllAttrTgt(superClassTgt);
+      Pair<ASTCDType, List<ASTCDAttribute>> allAtts = helper.getAllAttrTgt(superClassTgt);
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
         if (!helper.isAttContainedInClass(attribute, subClassSrc)) {
@@ -497,7 +496,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     Optional<AssocStruct> assocStruct = helper.getAssocStructByUnmodTgt(astcdClass, association);
     if (assocStruct
         .isPresent()) { // if assocStruc is null, then the association is deleted because of
-                        // overlapping
+      // overlapping
       if (assocStruct.get().getSide().equals(ClassSide.Left)) {
         if (!(assocStruct.get().getAssociation().getRight().getCDCardinality().isMult()
             || assocStruct.get().getAssociation().getRight().getCDCardinality().isOpt())) {
@@ -1147,15 +1146,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public void addAllMatchedTypes(Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     for (ASTCDType x : computedMatchingMapTypes.keySet()) {
       if (x instanceof ASTCDClass) {
-        matchedClasses.add(
-            new Pair<>((ASTCDClass) x, computedMatchingMapTypes.get(x)));
+        matchedClasses.add(new Pair<>((ASTCDClass) x, computedMatchingMapTypes.get(x)));
       }
       if (x instanceof ASTCDEnum) {
         matchedEnums.add(new Pair<>((ASTCDEnum) x, computedMatchingMapTypes.get(x)));
       }
       if (x instanceof ASTCDInterface) {
-        matchedInterfaces.add(
-            new Pair<>((ASTCDInterface) x, computedMatchingMapTypes.get(x)));
+        matchedInterfaces.add(new Pair<>((ASTCDInterface) x, computedMatchingMapTypes.get(x)));
       }
     }
   }

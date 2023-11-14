@@ -109,9 +109,9 @@ public class Syn2SemDiffValidationTest {
   public void testEmployeesWithPackagesDiffEmpty() {
     try {
       ASTCDCompilationUnit cd1 =
-        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
       ASTCDCompilationUnit cd2 =
-        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
@@ -131,9 +131,9 @@ public class Syn2SemDiffValidationTest {
   public void testEmployeesWithPackagesOWDiffPresent() {
     try {
       ASTCDCompilationUnit cd1 =
-        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
       ASTCDCompilationUnit cd2 =
-        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
@@ -383,13 +383,13 @@ public class Syn2SemDiffValidationTest {
 
   protected static Stream<Arguments> cd4analysisSet() {
     return Stream.of(
-      Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
-      Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
-      Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false),//Tsveti does a false
-      // matching
-      // todo: virtual associations should use qualified names
-      //      Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
-      // is null?
-      Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
+        Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
+        Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
+        Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false), // Tsveti does a false
+        // matching
+        // todo: virtual associations should use qualified names
+        //      Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
+        // is null?
+        Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
   }
 }

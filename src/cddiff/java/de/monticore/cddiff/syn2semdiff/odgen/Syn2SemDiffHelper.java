@@ -473,7 +473,7 @@ public class Syn2SemDiffHelper {
       Optional<ASTCDClass> result = findMatchedSrc((ASTCDClass) astcdType);
       return result.map(Function.identity());
     } else if (astcdType instanceof ASTCDInterface) {
-        return findMatchedTypeSrc((ASTCDInterface) astcdType);
+      return findMatchedTypeSrc((ASTCDInterface) astcdType);
     } else {
       return Optional.empty();
     }
@@ -487,9 +487,9 @@ public class Syn2SemDiffHelper {
    */
   public Optional<ASTCDType> findMatchedTypeTgt(ASTCDType astcdType) {
     if (astcdType instanceof ASTCDClass) {
-        return findMatchedClass((ASTCDClass) astcdType);
+      return findMatchedClass((ASTCDClass) astcdType);
     } else if (astcdType instanceof ASTCDInterface) {
-        return findMatchedTypeTgt((ASTCDInterface) astcdType);
+      return findMatchedTypeTgt((ASTCDInterface) astcdType);
     } else {
       return Optional.empty();
     }
@@ -2165,7 +2165,7 @@ public class Syn2SemDiffHelper {
     if (typeLeft.isPresent() && typeRight.isPresent()) {
       return new Pair<>(typeLeft.get().getAstNode(), typeRight.get().getAstNode());
     }
-    Log.error("Could not resolve types of :" + CD4CodeMill.prettyPrint(association,false) );
+    Log.error("Could not resolve types of :" + CD4CodeMill.prettyPrint(association, false));
     return new Pair<>(null, null);
   }
 
