@@ -28,11 +28,11 @@ public interface ICDSyntaxDiff {
 
   List<ASTCDAssociation> getDeletedAssocs();
 
-  List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses();
+  List<Pair<ASTCDClass, ASTCDType>> getMatchedClasses();
 
-  List<Pair<ASTCDEnum, ASTCDEnum>> getMatchedEnums();
+  List<Pair<ASTCDEnum, ASTCDType>> getMatchedEnums();
 
-  List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces();
+  List<Pair<ASTCDInterface, ASTCDType>> getMatchedInterfaces();
 
   List<Pair<ASTCDAssociation, ASTCDAssociation>> getMatchedAssocs();
 
@@ -64,13 +64,13 @@ public interface ICDSyntaxDiff {
 
   void setDeletedAssocs(List<ASTCDAssociation> deletedAssocs);
 
-  void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses);
+  void setMatchedClasses(List<Pair<ASTCDClass, ASTCDType>> matchedClasses);
 
   void setMatchedAssocs(List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs);
 
-  void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums);
+  void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDType>> matchedEnums);
 
-  void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces);
+  void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDType>> matchedInterfaces);
 
   /**
    * Checks if an added @param astcdClass refactors the old structure. The class must be abstract,

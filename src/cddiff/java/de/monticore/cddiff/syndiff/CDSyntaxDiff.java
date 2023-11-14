@@ -40,9 +40,9 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   private List<ASTCDAssociation> deletedAssocs;
   private List<Pair<ASTCDType, List<ASTCDType>>> addedInheritance;
   private List<Pair<ASTCDType, List<ASTCDType>>> deletedInheritance;
-  private List<Pair<ASTCDClass, ASTCDClass>> matchedClasses;
-  private List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums;
-  private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
+  private List<Pair<ASTCDClass, ASTCDType>> matchedClasses;
+  private List<Pair<ASTCDEnum, ASTCDType>> matchedEnums;
+  private List<Pair<ASTCDInterface, ASTCDType>> matchedInterfaces;
   private List<Pair<ASTCDAssociation, ASTCDAssociation>> matchedAssocs;
   private List<DiffTypes> baseDiff;
   List<ASTCDType> srcCDTypes;
@@ -216,22 +216,22 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   @Override
-  public List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses() {
+  public List<Pair<ASTCDClass, ASTCDType>> getMatchedClasses() {
     return matchedClasses;
   }
 
   @Override
-  public List<Pair<ASTCDEnum, ASTCDEnum>> getMatchedEnums() {
+  public List<Pair<ASTCDEnum, ASTCDType>> getMatchedEnums() {
     return matchedEnums;
   }
 
   @Override
-  public List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces() {
+  public List<Pair<ASTCDInterface, ASTCDType>> getMatchedInterfaces() {
     return matchedInterfaces;
   }
 
   @Override
-  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) {
+  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDType>> matchedClasses) {
     this.matchedClasses = matchedClasses;
   }
 
@@ -246,12 +246,12 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   @Override
-  public void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDEnum>> matchedEnums) {
+  public void setMatchedEnums(List<Pair<ASTCDEnum, ASTCDType>> matchedEnums) {
     this.matchedEnums = matchedEnums;
   }
 
   @Override
-  public void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces) {
+  public void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDType>> matchedInterfaces) {
     this.matchedInterfaces = matchedInterfaces;
   }
 
@@ -318,8 +318,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public boolean isInheritanceDeleted(ASTCDType superClassTgt, ASTCDType subClassSrc) {
     if (superClassTgt instanceof ASTCDClass) {
-      Pair<ASTCDClass, List<ASTCDAttribute>> allAtts =
-          helper.getAllAttrTgt((ASTCDClass) superClassTgt);
+      Pair<ASTCDType, List<ASTCDAttribute>> allAtts =
+          helper.getAllAttrTgt(superClassTgt);
       for (ASTCDAttribute attribute : allAtts.b) {
         boolean conditionSatisfied = false; // Track if the condition is satisfied
         if (!helper.isAttContainedInClass(attribute, subClassSrc)) {
@@ -1080,14 +1080,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<ASTCDType> hasDiffSuper() {
     List<ASTCDType> list = new ArrayList<>();
-    for (Pair<ASTCDClass, ASTCDClass> pair : helper.getMatchedClasses()) {
+    for (Pair<ASTCDClass, ASTCDType> pair : helper.getMatchedClasses()) {
       if (!helper.getNotInstClassesTgt().contains(pair.b)) {
         if (helper.hasDiffSuper(pair.a)) {
           list.add(pair.a);
         }
       }
     }
-    for (Pair<ASTCDInterface, ASTCDInterface> pair : helper.getMatchedInterfaces()) {
+    for (Pair<ASTCDInterface, ASTCDType> pair : helper.getMatchedInterfaces()) {
       if (!helper.getNotInstClassesTgt().contains(pair.b)) {
         if (helper.hasDiffSuper(pair.a)) {
           list.add(pair.a);
@@ -1148,14 +1148,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     for (ASTCDType x : computedMatchingMapTypes.keySet()) {
       if (x instanceof ASTCDClass) {
         matchedClasses.add(
-            new Pair<>((ASTCDClass) x, (ASTCDClass) computedMatchingMapTypes.get(x)));
+            new Pair<>((ASTCDClass) x, computedMatchingMapTypes.get(x)));
       }
       if (x instanceof ASTCDEnum) {
-        matchedEnums.add(new Pair<>((ASTCDEnum) x, (ASTCDEnum) computedMatchingMapTypes.get(x)));
+        matchedEnums.add(new Pair<>((ASTCDEnum) x, computedMatchingMapTypes.get(x)));
       }
       if (x instanceof ASTCDInterface) {
         matchedInterfaces.add(
-            new Pair<>((ASTCDInterface) x, (ASTCDInterface) computedMatchingMapTypes.get(x)));
+            new Pair<>((ASTCDInterface) x, computedMatchingMapTypes.get(x)));
       }
     }
   }
@@ -1183,14 +1183,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    * found, the type differences are added to the 'changedTypes' list.
    */
   public void addAllChangedTypes() {
-    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
+    for (Pair<ASTCDClass, ASTCDType> pair : matchedClasses) {
       CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD, srcCD, helper);
       if (!typeDiff.getBaseDiff().isEmpty()) {
         changedTypes.add(typeDiff);
         baseDiff.addAll(typeDiff.getBaseDiff());
       }
     }
-    for (Pair<ASTCDEnum, ASTCDEnum> pair : matchedEnums) {
+    for (Pair<ASTCDEnum, ASTCDType> pair : matchedEnums) {
       CDTypeDiff typeDiff = new CDTypeDiff(pair.a, pair.b, tgtCD, srcCD, helper);
       if (!typeDiff.getBaseDiff().isEmpty()) {
         changedTypes.add(typeDiff);
@@ -1375,7 +1375,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
 
       for (ASTCDType srcSuper : getAllSuper(srcClass, srcCDScope)) {
         for (ASTCDType tgtSuper : allSuperClassOfTgtClass) {
-          for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
+          for (Pair<ASTCDClass, ASTCDType> pair : matchedClasses) {
             if (pair.a.equals(srcSuper) && pair.b.equals(tgtSuper)) {
               allSuperClassOfSrcClass.remove(srcSuper);
             }
@@ -1415,7 +1415,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
 
       for (ASTCDType tgtSuper : getAllSuper(tgtClass, srcCDScope)) {
         for (ASTCDType srcSuper : allSuperClassOfSrcClass) {
-          for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
+          for (Pair<ASTCDClass, ASTCDType> pair : matchedClasses) {
             if (pair.a.equals(srcSuper) && pair.b.equals(tgtSuper)) {
               allSuperClassOfTgtClass.remove(tgtSuper);
             }

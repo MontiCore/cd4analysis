@@ -106,6 +106,57 @@ public class Syn2SemDiffValidationTest {
   }
 
   @Test
+  public void testEmployeesWithPackagesDiffEmpty() {
+    try {
+      ASTCDCompilationUnit cd1 =
+        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+      ASTCDCompilationUnit cd2 =
+        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(cd1, cd2);
+      CDDiffUtil.saveDiffCDs2File(cd1, cd2, "target/generated/syn2semdiff-test/EmployeesEmpty");
+
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
+      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
+
+      Assertions.assertTrue(witnesses.isEmpty());
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testEmployeesWithPackagesOWDiffPresent() {
+    try {
+      ASTCDCompilationUnit cd1 =
+        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+      ASTCDCompilationUnit cd2 =
+        CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(cd1, cd2);
+      CDDiffUtil.saveDiffCDs2File(cd1, cd2, "target/generated/syn2semdiff-test/EmployeesPresent");
+
+      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
+      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
+
+      Assertions.assertFalse(witnesses.isEmpty());
+
+      for (ASTODArtifact od : witnesses) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
+          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+          Assertions.fail();
+        }
+      }
+
+    } catch (IOException e) {
+      Assertions.fail(e.getMessage());
+    }
+  }
+
+  @Test
   public void testOWDigitalTwin1() {
     try {
       ASTCDCompilationUnit cd1 =
@@ -332,12 +383,13 @@ public class Syn2SemDiffValidationTest {
 
   protected static Stream<Arguments> cd4analysisSet() {
     return Stream.of(
-        Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
-        Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
-        //      Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false));//Tsveti does a false
-        // matching
-        //      Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),//type resolves to present but it
-        // is null?
-        Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
+      Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
+      Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
+      Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false),//Tsveti does a false
+      // matching
+      // todo: virtual associations should use qualified names
+      //      Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
+      // is null?
+      Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
   }
 }

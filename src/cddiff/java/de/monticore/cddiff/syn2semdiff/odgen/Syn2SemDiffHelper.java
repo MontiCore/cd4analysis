@@ -28,6 +28,7 @@ import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
 import java.util.function.Function;
@@ -101,13 +102,13 @@ public class Syn2SemDiffHelper {
    * Those are the matched classes from the analysis of the syntax. This way some functionalities
    * were moved to this helper class.
    */
-  private List<Pair<ASTCDClass, ASTCDClass>> matchedClasses;
+  private List<Pair<ASTCDClass, ASTCDType>> matchedClasses;
 
   /**
    * Those are the matched interfaces from the analysis of the syntax. This way some functionalities
    * were moved to this helper class.
    */
-  private List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces;
+  private List<Pair<ASTCDInterface, ASTCDType>> matchedInterfaces;
 
   /**
    * Those are the added associations from the analysis of the syntax. This way some functionalities
@@ -162,7 +163,7 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
-  public boolean isAttContainedInClassTgt(ASTCDAttribute attribute, ASTCDClass astcdClass) {
+  public boolean isAttContainedInClassTgt(ASTCDAttribute attribute, ASTCDType astcdClass) {
     int indexAttribute = attribute.getMCType().printType().lastIndexOf(".");
     for (ASTCDAttribute att : getAllAttrTgt(astcdClass).b) {
       int indexCurrent = att.getMCType().printType().lastIndexOf(".");
@@ -273,11 +274,11 @@ public class Syn2SemDiffHelper {
     this.addedAssocs = addedAssocs;
   }
 
-  public List<Pair<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces() {
+  public List<Pair<ASTCDInterface, ASTCDType>> getMatchedInterfaces() {
     return matchedInterfaces;
   }
 
-  public void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDInterface>> matchedInterfaces) {
+  public void setMatchedInterfaces(List<Pair<ASTCDInterface, ASTCDType>> matchedInterfaces) {
     this.matchedInterfaces = matchedInterfaces;
   }
 
@@ -472,8 +473,7 @@ public class Syn2SemDiffHelper {
       Optional<ASTCDClass> result = findMatchedSrc((ASTCDClass) astcdType);
       return result.map(Function.identity());
     } else if (astcdType instanceof ASTCDInterface) {
-      Optional<ASTCDInterface> result = findMatchedInterfaceSrc((ASTCDInterface) astcdType);
-      return result.map(Function.identity());
+        return findMatchedTypeSrc((ASTCDInterface) astcdType);
     } else {
       return Optional.empty();
     }
@@ -487,30 +487,27 @@ public class Syn2SemDiffHelper {
    */
   public Optional<ASTCDType> findMatchedTypeTgt(ASTCDType astcdType) {
     if (astcdType instanceof ASTCDClass) {
-      Optional<ASTCDClass> result = findMatchedClass((ASTCDClass) astcdType);
-      return result.map(Function.identity());
+        return findMatchedClass((ASTCDClass) astcdType);
     } else if (astcdType instanceof ASTCDInterface) {
-      Optional<ASTCDInterface> result = findMatchedInterfaceTgt((ASTCDInterface) astcdType);
-      return result.map(Function.identity());
+        return findMatchedTypeTgt((ASTCDInterface) astcdType);
     } else {
       return Optional.empty();
     }
   }
 
   // CHECKED
-  public Optional<ASTCDClass> findMatchedClass(ASTCDClass astcdClass) {
-    ASTCDClass matchedClass = null;
-    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
+  public Optional<ASTCDType> findMatchedClass(ASTCDClass astcdClass) {
+    for (Pair<ASTCDClass, ASTCDType> pair : matchedClasses) {
       if (pair.a.equals(astcdClass)) {
-        matchedClass = pair.b;
+        return Optional.ofNullable(pair.b);
       }
     }
-    return Optional.ofNullable(matchedClass);
+    return Optional.empty();
   }
 
   // CHECKED
   public Optional<ASTCDClass> findMatchedSrc(ASTCDClass astcdClass) {
-    for (Pair<ASTCDClass, ASTCDClass> pair : matchedClasses) {
+    for (Pair<ASTCDClass, ASTCDType> pair : matchedClasses) {
       if (pair.b.equals(astcdClass)) {
         return Optional.ofNullable(pair.a);
       }
@@ -518,8 +515,8 @@ public class Syn2SemDiffHelper {
     return Optional.empty();
   }
 
-  public Optional<ASTCDInterface> findMatchedInterfaceSrc(ASTCDInterface astcdInterface) {
-    for (Pair<ASTCDInterface, ASTCDInterface> pair : matchedInterfaces) {
+  public Optional<ASTCDType> findMatchedTypeSrc(ASTCDInterface astcdInterface) {
+    for (Pair<ASTCDInterface, ASTCDType> pair : matchedInterfaces) {
       if (pair.b.equals(astcdInterface)) {
         return Optional.ofNullable(pair.a);
       }
@@ -527,8 +524,8 @@ public class Syn2SemDiffHelper {
     return Optional.empty();
   }
 
-  public Optional<ASTCDInterface> findMatchedInterfaceTgt(ASTCDInterface astcdInterface) {
-    for (Pair<ASTCDInterface, ASTCDInterface> pair : matchedInterfaces) {
+  public Optional<ASTCDType> findMatchedTypeTgt(ASTCDInterface astcdInterface) {
+    for (Pair<ASTCDInterface, ASTCDType> pair : matchedInterfaces) {
       if (pair.a.equals(astcdInterface)) {
         return Optional.ofNullable(pair.b);
       }
@@ -536,11 +533,11 @@ public class Syn2SemDiffHelper {
     return Optional.empty();
   }
 
-  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDClass>> matchedClasses) {
+  public void setMatchedClasses(List<Pair<ASTCDClass, ASTCDType>> matchedClasses) {
     this.matchedClasses = matchedClasses;
   }
 
-  public List<Pair<ASTCDClass, ASTCDClass>> getMatchedClasses() {
+  public List<Pair<ASTCDClass, ASTCDType>> getMatchedClasses() {
     return matchedClasses;
   }
 
@@ -1108,7 +1105,7 @@ public class Syn2SemDiffHelper {
         Optional<ASTCDClass> matched = findMatchedSrc((ASTCDClass) astcdType);
         matched.ifPresent(srcTypes::add);
       } else {
-        Optional<ASTCDInterface> matched = findMatchedInterfaceSrc((ASTCDInterface) astcdType);
+        Optional<ASTCDType> matched = findMatchedTypeSrc((ASTCDInterface) astcdType);
         matched.ifPresent(srcTypes::add);
       }
     }
@@ -1120,10 +1117,10 @@ public class Syn2SemDiffHelper {
     List<ASTCDType> tgtTypes = new ArrayList<>();
     for (ASTCDType astcdType : types) {
       if (astcdType instanceof ASTCDClass) {
-        Optional<ASTCDClass> matched = findMatchedClass((ASTCDClass) astcdType);
+        Optional<ASTCDType> matched = findMatchedClass((ASTCDClass) astcdType);
         matched.ifPresent(tgtTypes::add);
       } else {
-        Optional<ASTCDInterface> matched = findMatchedInterfaceTgt((ASTCDInterface) astcdType);
+        Optional<ASTCDType> matched = findMatchedTypeTgt((ASTCDInterface) astcdType);
         matched.ifPresent(tgtTypes::add);
       }
     }
@@ -1254,7 +1251,7 @@ public class Syn2SemDiffHelper {
     return new Pair<>(astcdClass, attributes);
   }
 
-  public Pair<ASTCDClass, List<ASTCDAttribute>> getAllAttrTgt(ASTCDClass astcdClass) {
+  public Pair<ASTCDType, List<ASTCDAttribute>> getAllAttrTgt(ASTCDType astcdClass) {
     List<ASTCDAttribute> attributes = new ArrayList<>();
     Set<ASTCDType> classes =
         getAllSuper(astcdClass, (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
@@ -2168,6 +2165,7 @@ public class Syn2SemDiffHelper {
     if (typeLeft.isPresent() && typeRight.isPresent()) {
       return new Pair<>(typeLeft.get().getAstNode(), typeRight.get().getAstNode());
     }
+    Log.error("Could not resolve types of :" + CD4CodeMill.prettyPrint(association,false) );
     return new Pair<>(null, null);
   }
 
@@ -3478,7 +3476,7 @@ public class Syn2SemDiffHelper {
    */
   public Optional<ASTCDClass> getClassForNew(ASTCDClass astcdClass, ASTCDAttribute attribute) {
     for (ASTCDClass subclass : srcSubMap.get(astcdClass)) {
-      Optional<ASTCDClass> tgtClass = findMatchedClass(subclass);
+      Optional<ASTCDType> tgtClass = findMatchedClass(subclass);
       if (!subclass.getModifier().isAbstract()
           && tgtClass.isPresent()
           && isAttContainedInClass(attribute, subclass)
@@ -3491,7 +3489,7 @@ public class Syn2SemDiffHelper {
 
   public Optional<ASTCDClass> getClassForDeleted(ASTCDClass astcdClass, ASTCDAttribute attribute) {
     for (ASTCDClass subclass : srcSubMap.get(astcdClass)) {
-      Optional<ASTCDClass> tgtClass = findMatchedClass(subclass);
+      Optional<ASTCDType> tgtClass = findMatchedClass(subclass);
       if (!subclass.getModifier().isAbstract()
           && tgtClass.isPresent()
           && !isAttContainedInClass(attribute, subclass)
