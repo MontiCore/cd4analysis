@@ -5,10 +5,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.cddiff.syndiff.CDSyntaxDiff;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.od4report.OD4ReportMill;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -59,10 +64,26 @@ public class CombinedFunctionalityTest {
     ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", paramSet);
     assertNotNull(merged);
 
+    CDDiffUtil.refreshSymbolTable(merged);
+
     ASTCDCompilationUnit expected =
         parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
+    new CD4CodeDirectCompositionTrafo().transform(expected);
+    CDDiffUtil.refreshSymbolTable(expected);
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(merged, expected);
     Assertions.assertEquals(new ArrayList<>(), syntaxDiff.getBaseDiff());
+
+    // witnesses should be empty
+    List<ASTODArtifact> witnesses = new Syn2SemDiff(merged,expected).generateODs(true);
+    OD4ReportMill.init();
+
+    if (!witnesses.isEmpty()) {
+      for (ASTODArtifact witness : witnesses) {
+        System.out.println(OD4ReportMill.prettyPrint(witness, true));
+      }
+      // fail if witnesses is not empty
+      fail();
+    }
   }
 }

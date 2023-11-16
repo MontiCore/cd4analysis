@@ -386,9 +386,9 @@ public class Syn2SemDiffValidationTest {
         Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
         Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
         Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false), // Tsveti does a false
-        // matching
+        // resolving of inherited association fails due to qualified name?
         // todo: virtual associations should use qualified names
-        //      Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
+        Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
         // is null?
         Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
   }
