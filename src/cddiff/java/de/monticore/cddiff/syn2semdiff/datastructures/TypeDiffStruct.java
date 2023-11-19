@@ -16,8 +16,9 @@ import java.util.List;
  */
 public class TypeDiffStruct {
   private ASTCDType astcdType;
-  private List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes = null;
-  private List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes = null;
+  private List<Pair<ASTCDClass, List<ASTCDAttribute>>> deletedAttributes = null;
+  private List<Pair<ASTCDClass, List<ASTCDAttribute>>> addedAttributes = null;
+  private List<Pair<ASTCDClass, AddedDeletedAtt>> addedDeletedAttributes = null;
   private List<Pair<ASTCDClass, ASTCDAttribute>> memberDiff = null;
   private boolean changedStereotype = false;
   private boolean changedSingleton = false;
@@ -35,19 +36,19 @@ public class TypeDiffStruct {
     this.astcdType = astcdType;
   }
 
-  public List<Pair<ASTCDClass, ASTCDAttribute>> getDeletedAttributes() {
+  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> getDeletedAttributes() {
     return deletedAttributes;
   }
 
-  public void setDeletedAttributes(List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes) {
+  public void setDeletedAttributes(List<Pair<ASTCDClass, List<ASTCDAttribute>>> deletedAttributes) {
     this.deletedAttributes = deletedAttributes;
   }
 
-  public List<Pair<ASTCDClass, ASTCDAttribute>> getAddedAttributes() {
+  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> getAddedAttributes() {
     return addedAttributes;
   }
 
-  public void setAddedAttributes(List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes) {
+  public void setAddedAttributes(List<Pair<ASTCDClass, List<ASTCDAttribute>>> addedAttributes) {
     this.addedAttributes = addedAttributes;
   }
 
@@ -101,5 +102,13 @@ public class TypeDiffStruct {
 
   public boolean isOnlySingletonChanged() {
     return changedSingleton && baseDiff.size() == 1 && !astcdType.getModifier().isAbstract();
+  }
+
+  public List<Pair<ASTCDClass, AddedDeletedAtt>> getAddedDeletedAttributes() {
+    return addedDeletedAttributes;
+  }
+
+  public void setAddedDeletedAttributes(List<Pair<ASTCDClass, AddedDeletedAtt>> addedDeletedAttributes) {
+    this.addedDeletedAttributes = addedDeletedAttributes;
   }
 }

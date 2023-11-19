@@ -637,10 +637,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public void findOverlappingAssocs() {
     Set<ASTCDType> srcToDelete = new HashSet<>();
     Set<Pair<ASTCDType, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
-    Set<Pair<AssocStruct, AssocStruct>> srcAssocsToMerge = new HashSet<>();
     Set<DeleteStruct> srcAssocsToMergeWithDelete = new HashSet<>();
     Set<ASTCDType> tgtToDelete = new HashSet<>();
-    Set<Pair<AssocStruct, AssocStruct>> tgtAssocsToMerge = new HashSet<>();
     Set<Pair<ASTCDType, ASTCDRole>> tgtAssocsToDelete = new HashSet<>();
     Set<DeleteStruct> tgtAssocsToMergeWithDelete = new HashSet<>();
     for (ASTCDType astcdClass : helper.getSrcMap().keySet()) {
@@ -726,10 +724,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
       helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
     }
-    for (Pair<AssocStruct, AssocStruct> pair : srcAssocsToMerge) {
-      setBiDirRoleName(pair.a, pair.b);
-      mergeAssocs(pair.a, pair.b);
-    }
     for (Pair<ASTCDType, ASTCDRole> pair : srcAssocsToDelete) {
       helper.deleteAssocsFromSrc(pair.a, pair.b);
     }
@@ -760,10 +754,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
             getConnectedTypes(pair.getSuperAssoc().getAssociation(), tgtCD).a);
       }
       helper.getTgtMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
-    }
-    for (Pair<AssocStruct, AssocStruct> pair : tgtAssocsToMerge) {
-      setBiDirRoleName(pair.a, pair.b);
-      mergeAssocs(pair.a, pair.b);
     }
     for (Pair<ASTCDType, ASTCDRole> pair : tgtAssocsToDelete) {
       helper.deleteAssocsFromTgt(pair.a, pair.b);
@@ -853,11 +843,11 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
           diff.setMatchedAttributes(pairs);
         }
         if (typeDiff.getBaseDiff().contains(DiffTypes.ADDED_ATTRIBUTE)) {
-          diff.setAddedAttributes(typeDiff.addedAttributes());
+          diff.setAddedAttributes(helper.transform(typeDiff.addedAttributes()));
           changed = true;
         }
         if (typeDiff.getBaseDiff().contains(DiffTypes.DELETED_ATTRIBUTE)) {
-          diff.setDeletedAttributes(typeDiff.deletedAttributes());
+          diff.setDeletedAttributes(helper.transform(typeDiff.deletedAttributes()));
           changed = true;
         }
         if (typeDiff.getBaseDiff().contains(DiffTypes.CHANGED_CLASS_MODIFIER)) {
@@ -875,6 +865,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         }
       }
       if (changed) {
+        helper.sortTypeDiff(diff);
         list.add(diff);
       }
     }

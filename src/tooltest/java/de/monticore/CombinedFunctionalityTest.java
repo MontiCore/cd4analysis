@@ -3,17 +3,21 @@ package de.monticore;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4analysis._prettyprint.CD4AnalysisPrettyPrinter;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
+import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syndiff.CDSyntaxDiff;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -49,7 +53,7 @@ public class CombinedFunctionalityTest {
   }
 
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
-  @Test
+  @Test//Fixed test
   public void testMaCoCo() {
     String base_path = "src/tooltest/resources/de/monticore/macoco/";
 
@@ -75,7 +79,8 @@ public class CombinedFunctionalityTest {
     Assertions.assertEquals(new ArrayList<>(), syntaxDiff.getBaseDiff());
 
     // witnesses should be empty
-    List<ASTODArtifact> witnesses = new Syn2SemDiff(merged,expected).generateODs(true);
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(merged, expected);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
     OD4ReportMill.init();
 
     if (!witnesses.isEmpty()) {

@@ -1,9 +1,5 @@
 package de.monticore.cddiff.syn2semdiff.odgen;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
-
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -20,19 +16,25 @@ import de.monticore.cddiff.syn2semdiff.datastructures.*;
 import de.monticore.cddiff.syndiff.CDAssocDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.matcher.*;
+import de.monticore.matcher.NameTypeMatcher;
+import de.monticore.matcher.SrcTgtAssocMatcher;
+import de.monticore.matcher.SuperTypeMatcher;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 
 /**
  * This is a helper class that is accessible from all classes for semantic difference and generation
@@ -1966,7 +1968,8 @@ public class Syn2SemDiffHelper {
                 .setMCQualifiedType(
                     CD4CodeMill.mCQualifiedTypeBuilder()
                         .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(astcdClass.getName()))
+                            MCQualifiedNameFacade.createQualifiedName(
+                              astcdClass.getSymbol().getInternalQualifiedName()))
                         .build());
             assocForSubClass.setName(" ");
             if (!assocForSubClass.getLeft().isPresentCDCardinality()) {
@@ -2194,19 +2197,6 @@ public class Syn2SemDiffHelper {
   }
 
   // CHECKED
-  public static List<ASTCDClass> getSuperTypes(
-      ASTCDCompilationUnit compilationUnit, ASTCDClass astcdClass) {
-    List<ASTCDClass> superClasses = new ArrayList<>();
-    for (ASTCDType type :
-        getAllSuper(astcdClass, (ICD4CodeArtifactScope) compilationUnit.getEnclosingScope())) {
-      if (type instanceof ASTCDClass) {
-        superClasses.add((ASTCDClass) type);
-      }
-    }
-    return superClasses;
-  }
-
-  // CHECKED
   /**
    * Check if the first cardinality is contained in the second cardinality
    *
@@ -2365,20 +2355,14 @@ public class Syn2SemDiffHelper {
 
   // CHECKED
   public List<String> getSuperTypes(ASTCDClass astcdClass) {
-    List<ASTCDClass> superClasses = getSuperTypes(srcCD, astcdClass);
-    List<String> classes = new ArrayList<>();
-    for (int i = superClasses.size() - 1; i >= 0; i--) {
-      String className =
-          superClasses.get(i).getSymbol().getInternalQualifiedName().replace(".", "_");
-      classes.add(className);
+    List<ASTCDType> typeList = new ArrayList<>(CDDiffUtil.getAllSuperTypes(astcdClass, srcCD.getCDDefinition()));
+    List<String> typesString = new ArrayList<>();
+    for (int i = typeList.size() - 1; i >= 0; i--) {
+      String type =
+          typeList.get(i).getSymbol().getInternalQualifiedName();
+      typesString.add(type);
     }
-    List<ASTMCObjectType> interfaces = astcdClass.getInterfaceList();
-    for (ASTMCObjectType interf : interfaces) {
-      String className = interf.printType();
-      className = className.replace(".", "_");
-      classes.add(className);
-    }
-    return classes;
+    return typesString;
   }
 
   // CHECKED
@@ -3048,6 +3032,8 @@ public class Syn2SemDiffHelper {
       for (AssocStruct assocStructSrc : srcMap.get(srcType)) {
         if (sameAssociationTypeSrcTgt(assocStructSrc, assocStruct)) {
           foundMatch = true;
+
+          break;
         } else if (matcher.isMatched(
             assocStructSrc.getAssociation(), assocStruct.getAssociation())) {
           foundMatch = true;
@@ -3060,6 +3046,7 @@ public class Syn2SemDiffHelper {
                     tgtCD,
                     this));
           }
+          break;
         }
       }
       if (!foundMatch) {
@@ -3515,7 +3502,7 @@ public class Syn2SemDiffHelper {
             && sameAssociation(subAssoc.getSourceAssoc(), assocStruct.getUnmodifiedAssoc(), tgtCD)
             && !getConnectedTypes(subAssoc.getAssociation(), tgtCD)
                 .a
-                .equals(getConnectedTypes(assocStruct.getAssociation(), tgtCD).a)) {
+                .equals(getConnectedTypes(subAssoc.getAssociation(), tgtCD).b)) {
           iterator.remove();
           deleteAssocOtherSideTgt(subAssoc);
         }
@@ -3542,5 +3529,58 @@ public class Syn2SemDiffHelper {
         }
       }
     }
+  }
+
+  public List<Pair<ASTCDClass, List<ASTCDAttribute>>> transform(List<Pair<ASTCDClass, ASTCDAttribute>> list) {
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> result = new ArrayList<>();
+    for (Pair<ASTCDClass, ASTCDAttribute> pair : list) {
+      result.add(new Pair<>(pair.a, Collections.singletonList(pair.b)));
+    }
+    return result;
+  }
+
+  public void sortTypeDiff(TypeDiffStruct typeDiffStruct) {
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> added = typeDiffStruct.getAddedAttributes();
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> deleted = typeDiffStruct.getDeletedAttributes();
+
+    Map<ASTCDClass, AddedDeletedAtt> classAttributeMap = new HashMap<>();
+
+    for (Pair<ASTCDClass, List<ASTCDAttribute>> pair : added) {
+      ASTCDClass clazz = pair.a;
+      List<ASTCDAttribute> attribute = pair.b;
+
+      if (!classAttributeMap.containsKey(clazz)) {
+        classAttributeMap.put(clazz, new AddedDeletedAtt());
+      }
+      classAttributeMap.get(clazz).getAddedAttributes().addAll(attribute);
+    }
+
+    for (Pair<ASTCDClass, List<ASTCDAttribute>> pair : deleted) {
+      ASTCDClass clazz = pair.a;
+      List<ASTCDAttribute> attribute = pair.b;
+
+      if (!classAttributeMap.containsKey(clazz)) {
+        classAttributeMap.put(clazz, new AddedDeletedAtt());
+      }
+      classAttributeMap.get(clazz).getDeletedAttributes().addAll(attribute);
+    }
+
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> addedNew = new ArrayList<>();
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> deletedNew = new ArrayList<>();
+    List<Pair<ASTCDClass, AddedDeletedAtt>> addedDeleted = new ArrayList<>();
+
+    // Remove AddedDeletedAtt if no deleted attributes are present
+    for (Map.Entry<ASTCDClass, AddedDeletedAtt> astcdClass : classAttributeMap.entrySet()) {
+      if (astcdClass.getValue().getDeletedAttributes().isEmpty()) {
+        addedNew.add(new Pair<>(astcdClass.getKey(), astcdClass.getValue().getAddedAttributes()));
+      } else if (astcdClass.getValue().getAddedAttributes().isEmpty()) {
+        deletedNew.add(new Pair<>(astcdClass.getKey(), astcdClass.getValue().getDeletedAttributes()));
+      } else {
+        addedDeleted.add(new Pair<>(astcdClass.getKey(), astcdClass.getValue()));
+      }
+    }
+    typeDiffStruct.setAddedDeletedAttributes(addedDeleted);
+    typeDiffStruct.setAddedAttributes(addedNew);
+    typeDiffStruct.setDeletedAttributes(deletedNew);
   }
 }

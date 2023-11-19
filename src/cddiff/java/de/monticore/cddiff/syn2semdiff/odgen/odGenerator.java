@@ -419,7 +419,7 @@ public class odGenerator {
         break;
       }
     }
-    if (link == null) {
+    if (link == null && !packages.isEmpty()) {
       link = packages.iterator().next().getLeftObject();
     }
     while (!findUnprocessedObjects(packages).isEmpty()) {

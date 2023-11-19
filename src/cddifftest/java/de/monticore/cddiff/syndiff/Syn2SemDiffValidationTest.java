@@ -3,10 +3,13 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
+import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -314,7 +317,7 @@ public class Syn2SemDiffValidationTest {
     }
   }
 
-  @ParameterizedTest
+  @ParameterizedTest//Fixed test
   @MethodSource("cd4analysisSet")
   public void testReductionBasedOWDiff3(String file1, String file2, boolean diff) {
     String path = "src/cddifftest/resources/validation/cd4analysis/";
@@ -385,11 +388,9 @@ public class Syn2SemDiffValidationTest {
     return Stream.of(
         Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
         Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
-        Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false), // Tsveti does a false
-        // resolving of inherited association fails due to qualified name?
-        // todo: virtual associations should use qualified names
+        Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false),
+        //virtual associations should use qualified names - fixed
         Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
-        // is null?
         Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
   }
 }
