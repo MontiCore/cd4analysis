@@ -3540,8 +3540,17 @@ public class Syn2SemDiffHelper {
   }
 
   public void sortTypeDiff(TypeDiffStruct typeDiffStruct) {
-    List<Pair<ASTCDClass, List<ASTCDAttribute>>> added = typeDiffStruct.getAddedAttributes();
-    List<Pair<ASTCDClass, List<ASTCDAttribute>>> deleted = typeDiffStruct.getDeletedAttributes();
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> added = new ArrayList<>();
+    List<Pair<ASTCDClass, List<ASTCDAttribute>>> deleted = new ArrayList<>();
+
+    if (typeDiffStruct.getAddedAttributes() != null
+      && !typeDiffStruct.getAddedAttributes().isEmpty()) {
+      added.addAll(typeDiffStruct.getAddedAttributes());
+    }
+    if (typeDiffStruct.getDeletedAttributes() != null
+      && !typeDiffStruct.getDeletedAttributes().isEmpty()) {
+      deleted.addAll(typeDiffStruct.getDeletedAttributes());
+    }
 
     Map<ASTCDClass, AddedDeletedAtt> classAttributeMap = new HashMap<>();
 
