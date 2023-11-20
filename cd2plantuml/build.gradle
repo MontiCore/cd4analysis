@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+description = "CD4Analysis: CD2PlantUml"
+
+dependencies {
+  implementation(project(':cdlang'))
+
+  implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
+  implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+  implementation "de.monticore:class2mc:${project.properties['mc_version']}"
+  implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
+  implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
+  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+  implementation "org.antlr:antlr4-runtime:$antlr_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
+    requireCapability("de.monticore:monticore-runtime-tests") }
+  testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
+
+  // dependencies for cd2plantuml
+  implementation("net.sourceforge.plantuml:plantuml:$plantuml_version")
+}
+
+

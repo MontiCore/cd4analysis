@@ -1,0 +1,429 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
+/* (c) https://github.com/MontiCore/monticore */
+
+plugins {
+  id "monticore" version "$mc_version" // MontiCore Plugin
+}
+
+archivesBaseName = "cd4analysis"
+
+def var_path = "de.monticore"
+if (hasProperty('bootstrap')) {
+  group = "de.monticore.lang.bs"
+  var_path = "de.monticore.bs"
+} else {
+  group = "de.monticore.lang"
+}
+
+def withDSTLGen = ("true").equals(getProperty('genTR'))
+def withTagGen = ("true").equals(getProperty('genTagging'))
+
+ext {
+  grammar_classifier = "grammars"
+  grammarDir = "src/main/grammars"
+  grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
+  trGrammarOutDir = "$buildDir/generated-sources/monticore-tr/sourcecode"
+  tagGrammarOutDir = "$buildDir/generated-sources/monticore-tag/sourcecode"
+  testGrammarDir = "src/test/grammars"
+  testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
+}
+
+// configure non-standard source sets
+def genDir = "$buildDir/generated-sources/monticore/sourcecode"
+def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
+
+sourceSets {
+  main {
+    java.srcDirs += ["$genDir"]
+  }
+  test {
+    java.srcDirs += ["$testGenDir"]
+    if (withDSTLGen) {
+      java.srcDirs += ["src/test/javatrafo/"]
+    }
+    if (withTagGen) {
+      java.srcDirs += ["src/test/javatagging/"]
+    }
+  }
+  grammars {
+    resources {
+      srcDirs([grammarDir, grammarOutDir])
+      include "**/*.mc4"
+    }
+  }
+  trafo {
+    java.srcDirs = [trGrammarOutDir]
+  }
+  tagging {
+    java.srcDirs = [tagGrammarOutDir]
+  }
+}
+
+configurations {
+  grammars
+  grammar
+  trafo
+  trafoImplementation.extendsFrom implementation
+  trafoCompileOnly.extendsFrom compileOnly
+  tagging
+  taggingImplementation.extendsFrom implementation
+  taggingCompileOnly.extendsFrom compileOnly
+}
+
+dependencies {
+  grammar("$var_path:monticore-grammar:$mc_version") {
+    capabilities {
+      requireCapability("$var_path:monticore-grammar-grammars")
+    }
+  }
+  implementation "$var_path:monticore-grammar:${project.properties['mc_version']}"
+  implementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+  implementation "$var_path:class2mc:${project.properties['mc_version']}"
+  implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
+  implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
+  implementation "com.google.guava:guava:$guava_version"
+  implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+  implementation "commons-cli:commons-cli:$commons_cli_version"
+  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+  implementation "org.antlr:antlr4-runtime:$antlr_version"
+  testImplementation "org.freemarker:freemarker:$freemarker_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
+    requireCapability("de.monticore:monticore-runtime-tests") }
+  testImplementation "org.mockito:mockito-core:$mockito_version"
+  testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
+
+  //dependencies for trafo
+  if (withDSTLGen) {
+    trafoImplementation project(path)
+    trafoImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
+
+    testImplementation(sourceSets.trafo.output.classesDirs)
+    testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
+  }
+  //dependencies for tagging
+  if (withTagGen) {
+    taggingImplementation project(path)
+    taggingImplementation "de.monticore:monticore-grammar-tagging:$mc_version"
+
+    testImplementation(sourceSets.tagging.output.classesDirs)
+    testImplementation "de.monticore:monticore-grammar-tagging:$mc_version"
+  }
+
+}
+
+// list of all grammars, needed to have a fix order
+def grammarDependencies = [
+  CDBasis           : [],
+  CDInterfaceAndEnum: ["CDBasis"],
+  CDAssociation     : ["CDBasis"],
+  CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
+  CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
+  CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
+]
+
+// list of all grammars, needed to have a fix order
+def testGrammarDependencies = [
+  TestCDBasis           : ["CDBasis"],
+  TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+  TestCDAssociation     : ["CDAssociation"],
+  TestCD4CodeBasis      : ["CD4CodeBasis"],
+  TestTypeImporter      : ["CD4Code"],
+]
+
+String createGrammarName(String name) {
+  "${grammarDir}/de/monticore/${name}.mc4"
+}
+
+String createTestGrammarName(String name) {
+  "${testGrammarDir}/de/monticore/${name}.mc4"
+}
+
+// one task per grammar file
+grammarDependencies.each {
+  def g = createGrammarName(it.key)
+  def grammarName = it.key
+  def dependencies = it.value
+
+  task "generateGrammar${grammarName}"(type: MCTask) {
+    def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
+    dependsOn dependsOnGrammars
+    templatePath("$projectDir/src/main/grammars")
+    def grammarFile = file g
+    grammar = grammarFile
+    outputDir = file grammarOutDir
+    handcodedPath "$projectDir/src/main/java"
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
+
+    def uptoDate = incCheck(grammarIncludingPackage)
+
+    def superGrammarsList = dependencies.collect {
+      def grammar = file createGrammarName(it)
+      return grammar.toURI()
+    }
+    superGrammars.from(superGrammarsList)
+
+    outputs.upToDateWhen { uptoDate }
+  }
+}
+
+task generate {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+}
+
+task generateTR { }
+if (withDSTLGen) {
+  grammarDependencies.each {
+    def g = createGrammarName(it.key)
+    def grammarName = it.key
+    def dependencies = it.value
+    task "generateTRGrammar${grammarName}"(type: MCTask) {
+      def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
+      dependsOn dependsOnTRGrammars
+      dependsOn(project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } })
+      templatePath("$projectDir/src/main/grammars")
+      grammar = getTRFile(file(g), file(grammarOutDir))
+      outputDir = file trGrammarOutDir
+      handcodedPath "$projectDir/src/main/java"
+      isDSTL = true // Generate DST infrastructure
+      def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(file(grammar).toURI()).toString()
+
+      def uptoDate = incCheck(grammarIncludingPackage)
+
+      modelPath(grammarOutDir)
+      modelPath("$projectDir/$grammarDir")
+
+      outputs.upToDateWhen { uptoDate }
+    }
+    generateTR.dependsOn("generateTRGrammar${grammarName}")
+  }
+}
+
+// tagging (if enabled)
+task generateTagDef {}
+task generateTagSchema {}
+if (withTagGen) {
+  grammarDependencies.each {
+    def g = createGrammarName(it.key)
+    def grammarName = it.key
+    def dependencies = it.value
+    task "generateTagDefGrammar${grammarName}"(type: MCTask) {
+      def dependsOnTagDefGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTagDefGrammar${name}"] }
+      dependsOn dependsOnTagDefGrammars
+      dependsOn(project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } })
+      templatePath("$projectDir/src/main/grammars")
+      grammar = getTagDefinitionFile(file(g), file(grammarOutDir))
+      outputDir = file tagGrammarOutDir
+      genTag = true // Generate Tagging-Infrastructure
+      def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(file(grammar).toURI()).toString()
+      def uptoDate = incCheck(grammarIncludingPackage)
+
+      modelPath(grammarOutDir)
+      modelPath("$projectDir/$grammarDir")
+
+      outputs.upToDateWhen { uptoDate }
+      tasks.compileTaggingJava.dependsOn it
+    }
+    generateTagDef.dependsOn("generateTagSchemaGrammar${grammarName}")
+    task "generateTagSchemaGrammar${grammarName}"(type: MCTask) {
+      def dependsOnTagSchemaGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTagSchemaGrammar${name}"] }
+      dependsOn dependsOnTagSchemaGrammars
+      dependsOn(project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } })
+      templatePath("$projectDir/src/main/grammars")
+      grammar = getTagSchemaFile(file(g), file(grammarOutDir))
+      outputDir = file tagGrammarOutDir
+      def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(file(grammar).toURI()).toString()
+      def uptoDate = incCheck(grammarIncludingPackage)
+
+      modelPath(grammarOutDir)
+      modelPath("$projectDir/$grammarDir")
+
+      outputs.upToDateWhen { uptoDate }
+      tasks.compileTaggingJava.dependsOn it
+    }
+    generateTagSchema.dependsOn("generateTagSchemaGrammar${grammarName}")
+  }
+}
+
+
+
+// one task per test grammar file
+testGrammarDependencies.each {
+  def g = createTestGrammarName(it.key)
+  def grammarName = it.key
+  def dependencies = it.value
+
+  task "generateTestGrammar${grammarName}"(type: MCTask) {
+    dependsOn generate
+    dependsOn generateTR
+    templatePath("$projectDir/src/main/grammars")
+    def grammarFile = file g
+    grammar = file g
+    outputDir = file testGrammarOutDir
+    handcodedPath "$projectDir/src/test/java"
+    def grammarIncludingPackage = file(testGrammarDir).toURI().relativize(grammarFile.toURI()).toString()
+    def uptoDate = incCheck(grammarIncludingPackage)
+
+    def superGrammarsList = dependencies.collect {
+      def grammar = file createGrammarName(it)
+      return grammar.toURI()
+    }
+    superGrammars.from(superGrammarsList)
+
+    outputs.upToDateWhen { uptoDate }
+  }
+}
+
+task generateTest {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
+}
+
+
+task generateTestTrafos {}
+if (withDSTLGen) {
+  fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
+    def g = it
+    def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
+    task "$taskname"(type: MontiTransExec) {
+      dependsOn(generateTest)
+      getClassPath().setFrom(sourceSets.trafo.runtimeClasspath)
+      TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
+      input = file(g)
+      outputDir = file(testGrammarOutDir)
+    }
+    generateTestTrafos.dependsOn("$taskname")
+  }
+}
+
+
+compileJava {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
+}
+
+compileTestJava {
+  dependsOn project.collect { it.tasks.withType(MCTask) }
+  dependsOn generateTestTrafos
+}
+
+tasks.withType(JavaCompile) {
+  options.encoding = "UTF-8"
+  options.deprecation false
+  options.warnings = false
+  options.headerOutputDirectory.convention(null)
+}
+
+tasks.withType(Test) {
+  // this won't work with setting the mills, as they can interleave and break thigs
+  // maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+  testLogging {
+    // controls whether test output is shown
+    showExceptions true
+    showCauses true
+    showStackTraces true
+    exceptionFormat TestExceptionFormat.FULL
+    info {
+      events TestLogEvent.FAILED,
+        TestLogEvent.PASSED,
+        TestLogEvent.SKIPPED,
+        TestLogEvent.STANDARD_OUT
+    }
+  }
+  afterTest { desc, result ->
+    logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
+  }
+  afterSuite { desc, result ->
+    if (!desc.parent) { // will match the outermost suite
+      def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+      def startItem = '|  ', endItem = '  |'
+      logger.lifecycle startItem + output + endItem
+    }
+  }
+  reports {
+    junitXml.enabled = false
+    html.enabled = false
+  }
+}
+
+// build javadoc jar in addition
+task javadocJar(type: Jar) {
+  from javadoc
+  archiveClassifier = "javadoc"
+}
+// generated java doc contains errors, disable for now
+javadoc.failOnError(false)
+
+// build test sources jar in addition
+task testSourcesJar(type: Jar) {
+  from sourceSets.test.output + sourceSets.test.allSource
+  archiveClassifier = "testSources"
+}
+
+// build trafo in addition
+task trafoJar(type: Jar) {
+  from sourceSets.trafo.output
+  archiveClassifier = "trafo"
+}
+
+// build trafo sources in addition
+task trafoSourcesJar(type: Jar) {
+  from sourceSets.trafo.allSource
+  archiveClassifier = "trafo-sources"
+}
+
+// build tagging in addition
+task taggingJar(type: Jar) {
+  from sourceSets.tagging.output
+  archiveClassifier = "tagging"
+}
+
+// build tagging sources in addition
+task taggingSourcesJar(type: Jar) {
+  from sourceSets.tagging.allSource
+  archiveClassifier = "tagging-sources"
+}
+
+processGrammarsResources.dependsOn(project.tasks.withType(MCTask))
+processGrammarsResources.dependsOn(generateTR)
+tasks.withType(Jar) {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  dependsOn(processGrammarsResources)
+}
+
+task testReport(type: TestReport) {
+  destinationDir = file("$buildDir/reports/allTests")
+  // Include the results from the 'test' task
+  reportOn tasks.withType(Test)
+}
+java {
+//  withJavadocJar()
+  withSourcesJar()
+  registerFeature('grammars') {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+jar {
+  archiveBaseName = 'cd4analysis'
+  archiveClassifier = ""
+}
+
+sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
+
+jar.dependsOn grammarsJar
+
+artifacts {
+  archives trafoJar
+  trafo trafoJar
+  archives taggingJar
+  tagging taggingJar
+}

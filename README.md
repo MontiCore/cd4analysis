@@ -10,7 +10,7 @@ This introduction is
 intended for *modelers* who use the class diagram (CD)
 languages. We also provide a 
 [detailed documentation of CD 
-languages](src/main/grammars/de/monticore/cd4analysis.md) 
+languages](cdlang/src/main/grammars/de/monticore/cd4analysis.md) 
 for *language engineers* using or
 extending one of the CD languages.
 
