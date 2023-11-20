@@ -33,7 +33,8 @@ buildAndDeploy:
   only:
     - develop
   script:
-    - "gradle build publish --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
+    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
+    - "gradle publish -PmavenPassword=$password -PmavenUser=$username --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
 
 # Checks if the links in this repository's Markdown files are valid.
 #
