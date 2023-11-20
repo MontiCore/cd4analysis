@@ -156,6 +156,10 @@ publishing {
       }
     }
 
+    publ.artifact(project(":cdlang").tasks.grammarsJar){
+      group "de.monticore.lang"
+    }
+
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {
         group "de.monticore.lang"
