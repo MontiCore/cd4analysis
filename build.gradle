@@ -140,6 +140,7 @@ publishing {
     def publ = maven(MavenPublication)
 
     // trafolib is different
+    // TODO: cdtool as shadow jar
     def subprojectsToBePublished = [
       ":cd2plantuml",
       ":cd2smt",
@@ -159,6 +160,9 @@ publishing {
     publ.artifact(project(":cdlang").tasks.grammarsJar){
       group "de.monticore.lang"
     }
+
+    // TODO: cdtool as shadow jar
+    // publ.artifact(project(":cdtool").tasks.shadowJar)
 
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {
