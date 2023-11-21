@@ -62,8 +62,4 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
 }
 compileJava.dependsOn autoconfigure
 
-jar {
-  exclude("**/*.java")
-}
-
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)

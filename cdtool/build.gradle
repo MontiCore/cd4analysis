@@ -5,23 +5,36 @@ plugins {
 
 description = "CD4Analysis: Tool"
 
-dependencies {
-  implementation(project(':cdlang'))
-  implementation(project(":cddiff"))
-  implementation(project(":cd2smt"))
-  implementation(project(":cdmerge"))
-  implementation(project(":cd2plantuml"))
+configurations {
+  // An extra configuration that is used by the shadow plugin, since we don't want cd2smt or plantuml in the tools jar.
+  // All its dependencies will be automatically added to implementation
+  implementationWithoutExtras
+}
+configurations.implementation.extendsFrom(configurations.implementationWithoutExtras)
 
-  implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-  implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-  implementation "de.monticore:class2mc:${project.properties['mc_version']}"
-  implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
-  implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
-  implementation "com.google.guava:guava:$guava_version"
-  implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
-  implementation "commons-cli:commons-cli:$commons_cli_version"
-  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
-  implementation "org.antlr:antlr4-runtime:$antlr_version"
+dependencies {
+  implementationWithoutExtras(project(':cdlang'))
+  implementationWithoutExtras(project(":cddiff"))
+  implementationWithoutExtras(project(":cdmerge"))
+  // Our classes can be used to pretty print to plantuml, but we dont want all dependencies for plantuml
+  // in the tool
+  implementationWithoutExtras(project(":cd2plantuml")){
+    transitive = false
+  }
+
+  implementation(project(":cd2plantuml"))
+  implementation(project(":cd2smt"))
+
+  implementationWithoutExtras "de.monticore:monticore-grammar:${project.properties['mc_version']}"
+  implementationWithoutExtras "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+  implementationWithoutExtras "de.monticore:class2mc:${project.properties['mc_version']}"
+  implementationWithoutExtras "de.se_rwth.commons:se-commons-logging:$commons_version"
+  implementationWithoutExtras "de.se_rwth.commons:se-commons-utilities:$commons_version"
+  implementationWithoutExtras "com.google.guava:guava:$guava_version"
+  implementationWithoutExtras "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+  implementationWithoutExtras "commons-cli:commons-cli:$commons_cli_version"
+  implementationWithoutExtras "org.apache.commons:commons-lang3:$commons_lang_version"
+  implementationWithoutExtras "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "org.freemarker:freemarker:$freemarker_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
@@ -34,7 +47,7 @@ dependencies {
   testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
   testImplementation(project(':cdlang').sourceSets.test.output)
   testImplementation project(path: ':cdlang')
-  implementation("de.monticore.lang:od:$mc_version") {
+  implementationWithoutExtras("de.monticore.lang:od:$mc_version") {
     exclude group: 'de.monticore.lang', module:'cd4analysis'
   }
 }
@@ -47,6 +60,7 @@ task toolJar(type: Jar) {
 
 apply plugin: "com.github.johnrengelman.shadow"
   shadowJar {
+    configurations = [project.configurations.implementationWithoutExtras]
     manifest {
       attributes "Main-Class": "de.monticore.CD4CodeTool"
     }

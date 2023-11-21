@@ -68,7 +68,6 @@ subprojects {
   jar {
     archiveBaseName = 'cd4analysis'
     archiveClassifier = project.name
-    from sourceSets.main.allSource
   }
 
   tasks.withType(Test) {
@@ -140,14 +139,13 @@ publishing {
     def publ = maven(MavenPublication)
 
     // trafolib is different
-    // TODO: cdtool as shadow jar
+    // cdtool as -tool
     def subprojectsToBePublished = [
       ":cd2plantuml",
       ":cd2smt",
       ":cddiff",
       ":cdlang",
       ":cdmerge",
-      ":cdtool",
       ":language-server"
     ]
 
@@ -157,12 +155,16 @@ publishing {
       }
     }
 
+    publ.artifact(project(":cdtool").tasks.jar){
+      group "de.monticore.lang"
+      classifier "tool"
+    }
+
     publ.artifact(project(":cdlang").tasks.grammarsJar){
       group "de.monticore.lang"
     }
 
-    // TODO: cdtool as shadow jar
-    // publ.artifact(project(":cdtool").tasks.shadowJar)
+    publ.artifact(project(":cdtool").tasks.shadowJar)
 
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {

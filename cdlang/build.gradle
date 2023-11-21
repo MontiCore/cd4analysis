@@ -415,8 +415,6 @@ java {
 jar {
   archiveBaseName = 'cd4analysis'
   archiveClassifier = ""
-  excludes += "**/*.java"
-  excludes += "**/*.mc4"
 }
 
 sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
