@@ -5,6 +5,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.List;
+import java.util.Optional;
 
 public interface ICDTypeDiff {
   List<CDMemberDiff> getChangedMembers();
@@ -62,9 +63,9 @@ public interface ICDTypeDiff {
    *
    * @param attribute from list deletedAttributes.
    * @return false if found in inheritance hierarchy (superclass) or the class is now abstract and
-   *     the structure is refactored
+   * the structure is refactored
    */
-  boolean isDeleted(ASTCDAttribute attribute);
+  Optional<ASTCDClass> isDeleted(ASTCDAttribute attribute);
 
   /**
    * Check for each attribute in the list addedAttributes if it has been really added and add it to
@@ -80,7 +81,7 @@ public interface ICDTypeDiff {
    * @param attribute from addedList
    * @return false if found in all 'old' subclasses or in some 'old' superClass
    */
-  boolean isAdded(ASTCDAttribute attribute);
+  Optional<ASTCDClass> isAdded(ASTCDAttribute attribute);
 
   /**
    * Get all added constants to an enum

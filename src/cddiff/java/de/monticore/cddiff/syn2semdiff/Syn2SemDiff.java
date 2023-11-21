@@ -47,7 +47,7 @@ public class Syn2SemDiff {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.helper = syntaxDiff.getHelper();
-    helper.findOverlappingAssocs();
+    helper.findDuplicatedAssocs();
     syntaxDiff.findOverlappingAssocs();
   }
 
@@ -74,7 +74,7 @@ public class Syn2SemDiff {
     this.diffLimit = diffLimit;
     this.diffSize = diffSize;
     if (analyseOverlapping) {
-      helper.findOverlappingAssocs();
+      helper.findDuplicatedAssocs();
       syntaxDiff.findOverlappingAssocs();
     } else {
       this.analyseOverlapping = false;
@@ -86,7 +86,7 @@ public class Syn2SemDiff {
    * (class or association) is annotated with <<diff>> and a comment is added. The diffLimit and
    * diffSize are respected.
    *
-   * @param staDiff if true, the ODs are generated under Multi-Instance semantics
+   * @param staDiff if true, the ODs are generated under Multi-Instance semantics.
    * @return list of ODs.
    */
   public List<ASTODArtifact> generateODs(boolean staDiff) {
