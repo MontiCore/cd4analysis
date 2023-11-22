@@ -47,13 +47,7 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
    */
   @Override
   public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
-
-    if (check(srcElem, tgtElem, srcCD, tgtCD) || checkReverse(srcElem, tgtElem, srcCD, tgtCD)) {
-      return true;
-    } else {
-      System.out.println("There is a problem with isMatched() in SrcTgtAssocMatcher!");
-    }
-    return false;
+    return check(srcElem, tgtElem, srcCD, tgtCD) || checkReverse(srcElem, tgtElem, srcCD, tgtCD);
   }
 
   // Check the directions of the associations and proving the source classes and the roles

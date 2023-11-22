@@ -4,7 +4,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
 import de.monticore.cddiff.CDDiffUtil;
-import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,12 +40,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    if (checkSuperClass(srcElem, tgtElem, tgtCD)) {
-      return true;
-    } else {
-      Log.error("There is a problem with isMatched() in MatchAssocSubSuperTyp!");
-    }
-    return false;
+    return checkSuperClass(srcElem, tgtElem, tgtCD);
   }
 
   /**
@@ -56,16 +50,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @return true if srcClass from tgtCD is a Super Class of srcClass from srcCd
    */
   public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
-
-    boolean superType =
-        CDDiffUtil.getAllSuperTypes(tgtElem, tgtCD.getCDDefinition()).stream()
-            .anyMatch(tgtSuper -> typeMatcher.isMatched(srcElem, tgtSuper));
-
-    if (superType) {
-      return true;
-    } else {
-      Log.error("There is a problem with checkSuperClass()!");
-    }
-    return false;
+    return CDDiffUtil.getAllSuperTypes(tgtElem, tgtCD.getCDDefinition()).stream()
+        .anyMatch(tgtSuper -> typeMatcher.isMatched(srcElem, tgtSuper));
   }
 }
