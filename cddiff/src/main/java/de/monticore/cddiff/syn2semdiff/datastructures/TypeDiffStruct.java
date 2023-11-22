@@ -108,7 +108,8 @@ public class TypeDiffStruct {
     return addedDeletedAttributes;
   }
 
-  public void setAddedDeletedAttributes(List<Pair<ASTCDClass, AddedDeletedAtt>> addedDeletedAttributes) {
+  public void setAddedDeletedAttributes(
+      List<Pair<ASTCDClass, AddedDeletedAtt>> addedDeletedAttributes) {
     this.addedDeletedAttributes = addedDeletedAttributes;
   }
 }

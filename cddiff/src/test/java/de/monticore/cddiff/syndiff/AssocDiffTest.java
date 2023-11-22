@@ -18,10 +18,10 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testCD5() {
     ASTCDCompilationUnit compilationUnitNew =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD51.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD51.cd");
     ASTCDCompilationUnit compilationUnitOld =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD52.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD52.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -33,8 +33,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
 
-  public static final String dir =
-      "src/cddifftest/resources/de/monticore/cddiff/syndiff/AssocDiff/";
+  public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
 

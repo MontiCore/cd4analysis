@@ -3,13 +3,10 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
-import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -40,9 +37,9 @@ public class Syn2SemDiffValidationTest {
   public void testEmployees1() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
       Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -65,9 +62,9 @@ public class Syn2SemDiffValidationTest {
   public void testEmployees2() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
       Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -90,9 +87,9 @@ public class Syn2SemDiffValidationTest {
   public void testOWEmployees() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
@@ -112,9 +109,9 @@ public class Syn2SemDiffValidationTest {
   public void testEmployeesWithPackagesDiffEmpty() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees8.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees7.cd");
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
@@ -134,9 +131,9 @@ public class Syn2SemDiffValidationTest {
   public void testEmployeesWithPackagesOWDiffPresent() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees7.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/Employees/Employees8.cd");
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
@@ -163,11 +160,9 @@ public class Syn2SemDiffValidationTest {
   public void testOWDigitalTwin1() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD(
-              "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD(
-              "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
 
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
@@ -187,11 +182,9 @@ public class Syn2SemDiffValidationTest {
   public void testOWDigitalTwin2() {
     try {
       ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD(
-              "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
       ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD(
-              "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
 
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
@@ -227,7 +220,7 @@ public class Syn2SemDiffValidationTest {
   @ParameterizedTest
   @MethodSource("performanceSet")
   public void testReductionBasedOWDiff(String file1, String file2) {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/test/resources/validation/Performance/";
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
@@ -272,7 +265,7 @@ public class Syn2SemDiffValidationTest {
   @ParameterizedTest
   @MethodSource("cddiffSet")
   public void testReductionBasedOWDiff2(String file1, String file2, boolean diff) {
-    String path = "src/cddifftest/resources/validation/cddiff/";
+    String path = "src/test/resources/validation/cddiff/";
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
@@ -317,10 +310,10 @@ public class Syn2SemDiffValidationTest {
     }
   }
 
-  @ParameterizedTest//Fixed test
+  @ParameterizedTest // Fixed test
   @MethodSource("cd4analysisSet")
   public void testReductionBasedOWDiff3(String file1, String file2, boolean diff) {
-    String path = "src/cddifftest/resources/validation/cd4analysis/";
+    String path = "src/test/resources/validation/cd4analysis/";
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
@@ -389,7 +382,7 @@ public class Syn2SemDiffValidationTest {
         Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
         Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
         Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false),
-        //virtual associations should use qualified names - fixed
+        // virtual associations should use qualified names - fixed
         Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
         Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
   }

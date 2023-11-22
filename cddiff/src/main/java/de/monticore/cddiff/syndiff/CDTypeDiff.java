@@ -228,8 +228,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
         if (!helper.getNotInstClassesSrc().contains(subClass)
             && !helper.isAttContainedInClass(attribute, subClass)) {
           Set<ASTCDType> astcdClassList =
-              getAllSuper(
-                  subClass, (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
+              getAllSuper(subClass, (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
           astcdClassList.remove(getSrcElem());
           for (ASTCDType type : astcdClassList) {
             if (!helper.getNotInstClassesSrc().contains(type)) {

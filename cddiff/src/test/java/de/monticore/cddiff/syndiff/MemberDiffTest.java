@@ -16,8 +16,7 @@ public class MemberDiffTest extends CDDiffTestBasis {
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
 
-  public static final String dir =
-      "src/cddifftest/resources/de/monticore/cddiff/syndiff/MemberDiff/";
+  public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/MemberDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
 

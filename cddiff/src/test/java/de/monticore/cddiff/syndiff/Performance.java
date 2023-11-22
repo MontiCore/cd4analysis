@@ -19,7 +19,7 @@ public class Performance extends CDDiffTestBasis {
   @Test
   @Ignore
   public void test() {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/test/resources/validation/Performance/";
 
     String filePath1;
     String filePath2;
@@ -59,7 +59,7 @@ public class Performance extends CDDiffTestBasis {
   @Test
   @Ignore
   public void test10() {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/test/resources/validation/Performance/";
 
     String filePath1;
     String filePath2;
@@ -99,7 +99,7 @@ public class Performance extends CDDiffTestBasis {
   @Test
   @Ignore
   public void test15() {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/test/resources/validation/Performance/";
 
     String filePath1;
     String filePath2;
@@ -139,7 +139,7 @@ public class Performance extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testOpenW() {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/test/resources/validation/Performance/";
 
     String output = "./target/runtime-test/";
 
@@ -183,7 +183,7 @@ public class Performance extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testOpenHaikun() {
-    String path = "src/cddifftest/resources/validation/Performance/";
+    String path = "src/test/resources/validation/Performance/";
 
     String output = "./target/runtime-test/";
 

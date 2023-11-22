@@ -28,10 +28,10 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
     ASTCDCompilationUnit compilationUnitOld =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -44,10 +44,10 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
     ASTCDCompilationUnit compilationUnitOld =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -68,10 +68,10 @@ public class TypeDIffTest extends CDDiffTestBasis {
   public void testCD3() {
     ASTCDCompilationUnit compilationUnitNew =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
     ASTCDCompilationUnit compilationUnitOld =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -93,10 +93,10 @@ public class TypeDIffTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit compilationUnitNew =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
     ASTCDCompilationUnit compilationUnitOld =
         parseModel(
-            "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
+            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
@@ -116,7 +116,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
 
-  public static final String dir = "src/cddifftest/resources/de/monticore/cddiff/syndiff/TypeDiff/";
+  public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
 

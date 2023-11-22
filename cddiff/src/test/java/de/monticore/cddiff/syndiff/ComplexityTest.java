@@ -22,7 +22,7 @@ public class ComplexityTest extends CDDiffTestBasis {
   @Ignore
   public void testRuntime4Performance() {
 
-    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path = "src/test/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 
@@ -79,7 +79,7 @@ public class ComplexityTest extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testRunTime4PerformanceNoLink() {
-    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path = "src/test/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 
@@ -136,7 +136,7 @@ public class ComplexityTest extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testRunTime4Performance100() {
-    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path = "src/test/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 
@@ -194,7 +194,7 @@ public class ComplexityTest extends CDDiffTestBasis {
   public void wrongODs() {
     int n = 0;
     int k = 0;
-    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path = "src/test/resources/de/monticore/cddiff/Performance/";
 
     String filePath1;
     String filePath2;
@@ -223,7 +223,7 @@ public class ComplexityTest extends CDDiffTestBasis {
       }
     }
 
-    String path2 = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path2 = "src/test/resources/de/monticore/cddiff/Performance/";
 
     String filePath11;
     String filePath22;
@@ -252,7 +252,7 @@ public class ComplexityTest extends CDDiffTestBasis {
       }
     }
 
-    String path3 = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path3 = "src/test/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 

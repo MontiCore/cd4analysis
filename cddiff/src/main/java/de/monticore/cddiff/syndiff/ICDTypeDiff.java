@@ -63,7 +63,7 @@ public interface ICDTypeDiff {
    *
    * @param attribute from list deletedAttributes.
    * @return false if found in inheritance hierarchy (superclass) or the class is now abstract and
-   * the structure is refactored
+   *     the structure is refactored
    */
   Optional<ASTCDClass> isDeleted(ASTCDAttribute attribute);
 

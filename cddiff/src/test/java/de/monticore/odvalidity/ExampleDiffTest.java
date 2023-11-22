@@ -15,8 +15,8 @@ public class ExampleDiffTest extends CDDiffTestBasis {
   @Test
   public void testMyDiff() {
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/CD12.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/MyDiffs/CD11.cd";
+    final String cd1 = "src/test/resources/de/monticore/cddiff/MyDiffs/CD12.cd";
+    final String cd2 = "src/test/resources/de/monticore/cddiff/MyDiffs/CD11.cd";
 
     CD4CodeMill.init();
     CD4CodeMill.globalScope().init();
@@ -30,7 +30,7 @@ public class ExampleDiffTest extends CDDiffTestBasis {
                     CDSemantics.SIMPLE_CLOSED_WORLD,
                     Path.of(cd1).toFile(),
                     Path.of(cd2).toFile(),
-                    Path.of("src/cddifftest/resources/de/monticore/cddiff/MyDiffs/D" + i + ".od")
+                    Path.of("src/test/resources/de/monticore/cddiff/MyDiffs/D" + i + ".od")
                         .toFile()));
       }
     } catch (NullPointerException | IOException e) {
