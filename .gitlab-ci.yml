@@ -22,9 +22,7 @@ build:
   except:
     - develop
   script:
-  - "gradle build --refresh-dependencies $GRADLE_OPT $ARGS1"
-  - "cd library"
-  - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT $ARGS1"
+  - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
   artifacts:
     paths:
     - "."
@@ -35,13 +33,8 @@ buildAndDeploy:
   only:
     - develop
   script:
-    - "gradle build --refresh-dependencies $GRADLE_OPT $ARGS1"
-    - "cd library"
-    - "gradle :trafo-library:build --refresh-dependencies $GRADLE_OPT $ARGS1"
-    - "cd .."
-    - "gradle publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
-    - "cd library"
-    - "gradle :trafo-library:publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+    - "gradle build --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
+    - "gradle publish -PmavenPassword=$password -PmavenUser=$username --refresh-dependencies $GRADLE_OPT -PgenTR=true -PgenTagging=true $ARGS1"
 
 # Checks if the links in this repository's Markdown files are valid.
 #
@@ -65,7 +58,7 @@ check_format:
   allow_failure: true
   script:
     - echo "You can format the java files using <gradle fmt>"
-    - gradle checkfmt $GRADLE_OPT $ARGS2
+    - gradle checkfmt $GRADLE_OPT -PgenTR=true $ARGS2
 
 trigger-langexp:
   stage: trigger

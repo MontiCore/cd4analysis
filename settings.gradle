@@ -16,4 +16,15 @@ pluginManagement {
 
 rootProject.name = 'cd4analysis'
 
-include(':gradle-plugin')
+include(':cdlang')
+if(!hasProperty('bootstrap')) {
+  include(':cd2plantuml')
+  include(':cddiff')
+  include(':cd2smt')
+  include(':cdmerge')
+  include(':cdtool')
+  include(':language-server')
+  if("true".equals(getProperty('genTR'))){
+    include(":trafo-library")
+  }
+}

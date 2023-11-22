@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+// Hand written workarounds to not fail with CS tagging/matching of some interfaces
+// This should not be necessary in the future!
+grammar CD4AnalysisTagDefinitionHC {
+    // [ERROR] 0xA0278 The interface nonterminal Method must not be used without nonterminals implementing it in a grammar not marked as a grammar component.
+    FixMethod implements Method = "XXDONOTUSEXXMethod" Name;
+    FixTypeVar implements TypeVar = "XXDONOTUSEXXTypeVar" Name;
+}

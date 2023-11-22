@@ -1,0 +1,6 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+tagschema TestCompleteTagSchema {
+  tagtype TaggedBy:String for CDDefinition;
+  tagtype Exception for CDClass;
+}

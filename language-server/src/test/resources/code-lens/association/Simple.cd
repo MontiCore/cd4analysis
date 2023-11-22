@@ -1,0 +1,6 @@
+classdiagram Simple {
+  class A;
+  class B;
+
+  association [1] A -> B [1];
+}

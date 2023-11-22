@@ -1,0 +1,6 @@
+classdiagram MyCompany {
+
+    class Test implements Test2 {
+      String text;
+    }
+}

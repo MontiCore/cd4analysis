@@ -1,0 +1,65 @@
+plugins {
+  id 'java'
+  id 'de.monticore.language-server' version "$mc_version"
+  id 'maven-publish'
+}
+
+group 'de.monticore.lang'
+version mc_version
+
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+  mavenCentral()
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url repo
+  }
+}
+
+dependencies {
+  // Language and parent language
+  grammar(project(path: ':cdlang')) {
+    capabilities {
+      requireCapability("de.monticore.lang:cdlang-grammars")
+    }
+  }
+  grammar "de.monticore:monticore-grammar:$mc_version:grammars"
+  implementation project(":cdlang")
+
+  // Dependencies of cd4analysis, all marked as runtime in pom => we need to specify them here
+  implementation "com.google.code.findbugs:jsr305:3.0.2"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "de.se_rwth.commons:se-commons-logging:1.7.9"
+  implementation "de.se_rwth.commons:se-commons-utilities:1.7.9"
+  implementation "com.google.guava:guava:25.1-jre"
+  implementation "net.sourceforge.plantuml:plantuml:1.2020.15"
+  implementation "ch.qos.logback:logback-classic:1.2.3"
+  implementation "commons-cli:commons-cli:1.4"
+  implementation "org.apache.commons:commons-lang3:3.11"
+
+  // MCLSG
+  implementation("de.monticore.language-server:monticore-language-server-runtime:$mc_version")
+
+  // Testing
+  // JUnit Jupiter (JUnit 5) dependencies
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
+  testImplementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+}
+
+test {
+  useJUnitPlatform()
+}
+
+task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
+  mclsg {
+    languageName = "de.monticore.CD4Analysis"
+    fileExtension = "cd"
+  }
+}
+compileJava.dependsOn autoconfigure
+
+tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)

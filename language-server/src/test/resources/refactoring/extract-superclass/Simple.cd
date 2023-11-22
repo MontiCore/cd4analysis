@@ -1,0 +1,9 @@
+classdiagram Simple {
+  class Class1 {
+    String field;
+  }
+
+  class Class2 {
+    String field;
+  }
+}

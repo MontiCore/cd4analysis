@@ -1,0 +1,7 @@
+classdiagram Simple {
+  class SuperClass;
+
+  class ChildClass extends SuperClass {
+    String field;
+  }
+}

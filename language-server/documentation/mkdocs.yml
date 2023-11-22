@@ -1,0 +1,88 @@
+site_name: CD4Analysis Language Server Documentation
+theme:
+  name: material
+  custom_dir: customization
+  font: false
+  language: en
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.indexes
+    - navigation.top
+    - header.autohide
+    - content.code.annotate
+extra_css:
+  - assets/stylesheets/extra.css
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - https://unpkg.com/tablesort@5.3.0/dist/sorts/tablesort.number.min.js
+  - assets/js/tablesort.js
+plugins:
+  - search
+  - tags
+  - git-revision-date-localized:
+      type: date
+      fallback_to_build_date: true
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - md_in_html
+  - tables
+
+  # Python Markdown Extension
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+nav:
+  - 'Syntax Highlighting':
+      - syntax_highlighting/index.md
+      - 'Rules':
+          - 'Overview': 'syntax_highlighting/rule_overview.md'
+          - 'Developing own Rules': 'syntax_highlighting/rule_developing.md'
+  - 'Refactorings':
+    - 'Overview': 'refactorings/index.md'
+    - 'Actions':
+        - 'Collapse Hierarchy': 'refactorings/actions/collapse_hierarchy.md'
+        - 'Extract Superclass': 'refactorings/actions/extract_superclass.md'
+        - 'Pull Up Field': 'refactorings/actions/pull_up_field.md'
+        - 'Unfold Attributes': 'refactorings/actions/unfold_attributes.md'
+    - 'Design and Extension':
+      - 'Overview': 'refactorings/actions/code_action_extension.md'
+      - 'Visitor Pattern':
+          - 'Find Classes': 'refactorings/actions/visitors/find_class.md'
+          - 'Delete Classes': 'refactorings/actions/visitors/delete_class.md'
+  - 'Code Lens':
+    - code_lens/index.md
+    - 'Implementing Code Lenses':
+      - 'code_lens/code_lens_implement.md'
+  - 'UML/P Generator':
+    - 'generator/index.md'
+    - 'Implementation':
+        - 'Generator': 'generator/implementation.md'
+        - 'Navigational Code Lenses': 'generator/code_lenses.md'
