@@ -9,6 +9,7 @@ import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilationUnit> {
   protected ASTCDCompilationUnit refCD;
@@ -33,14 +34,17 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
   @Override
   public boolean checkConformance(ASTCDCompilationUnit concrete) {
     return checkTypeIncarnation(concrete)
-        && checkAssocIncarnation(concrete)
-        && checkTypeConformance(concrete)
-        && checkAssocConformance(concrete);
+        & checkAssocIncarnation(concrete)
+        & checkTypeConformance(concrete)
+        & checkAssocConformance(concrete);
   }
 
   protected boolean checkAssocConformance(ASTCDCompilationUnit concrete) {
-    return concrete.getCDDefinition().getCDAssociationsList().stream()
-        .allMatch(conAssoc -> assocChecker.checkConformance(conAssoc));
+    Set<ASTCDAssociation> nonConforming =
+        concrete.getCDDefinition().getCDAssociationsList().stream()
+            .filter(conAssoc -> !assocChecker.checkConformance(conAssoc))
+            .collect(Collectors.toSet());
+    return nonConforming.isEmpty();
   }
 
   protected boolean checkTypeConformance(ASTCDCompilationUnit concrete) {
@@ -65,24 +69,28 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     conTypes.addAll(concrete.getCDDefinition().getCDInterfacesList());
     conTypes.addAll(concrete.getCDDefinition().getCDEnumsList());
 
+    boolean conform = true;
+
     for (ASTCDType refType : refTypes) {
       if (conTypes.stream().noneMatch(conType -> typeInc.isMatched(conType, refType))) {
-        Log.println(refType.getName() + " has no incarnation!");
-        return false;
+        Log.println(refType.getSymbol().getInternalQualifiedName() + " has no incarnation!");
+        conform = false;
       }
     }
-    return true;
+    return conform;
   }
 
   protected boolean checkAssocIncarnation(ASTCDCompilationUnit concrete) {
 
+    boolean conform = true;
+
     for (ASTCDAssociation refAssoc : refCD.getCDDefinition().getCDAssociationsList()) {
       if (concrete.getCDDefinition().getCDAssociationsList().stream()
           .noneMatch(conAssoc -> assocInc.isMatched(conAssoc, refAssoc))) {
-        Log.println(CD4CodeMill.prettyPrint(refAssoc, false) + " has no incarnation!");
-        return false;
+        System.out.println(CD4CodeMill.prettyPrint(refAssoc, false) + " has no incarnation!");
+        conform = false;
       }
     }
-    return true;
+    return conform;
   }
 }

@@ -3,6 +3,7 @@
 package de.monticore.cd._symboltable;
 
 import com.google.common.collect.Lists;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -19,6 +20,14 @@ public class CDSymbolTables {
     List<ASTCDAttribute> attributes = Lists.newArrayList(ast.getCDAttributeList());
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
       attributes.addAll(sc.getCDAttributeList());
+    }
+    return attributes;
+  }
+
+  public static List<ASTCDMethod> getMethodsInHierarchy(ASTCDType ast) {
+    List<ASTCDMethod> attributes = Lists.newArrayList(ast.getCDMethodList());
+    for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
+      attributes.addAll(sc.getCDMethodList());
     }
     return attributes;
   }

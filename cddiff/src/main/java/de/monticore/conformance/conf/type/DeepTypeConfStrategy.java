@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.conformance.conf.AttributeChecker;
+import de.monticore.conformance.conf.MethodChecker;
 import de.monticore.matcher.MatchingStrategy;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,21 +17,35 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
       ASTCDCompilationUnit conCD,
       ASTCDCompilationUnit refCD,
       AttributeChecker attributeChecker,
+      MethodChecker methodChecker,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc) {
-    super(conCD, refCD, attributeChecker, typeInc, assocInc);
+    super(conCD, refCD, attributeChecker, methodChecker, typeInc, assocInc);
   }
 
   @Override
   protected boolean checkAttributeIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return checkIncarnationAt(
+    return checkAttributeIncarnation(
         new HashSet<>(CDSymbolTables.getAttributesInHierarchy(concrete)),
         new HashSet<>(ref.getCDAttributeList()));
   }
 
   @Override
+  protected boolean checkMethodIncarnation(ASTCDType concrete, ASTCDType ref) {
+    return checkMethodIncarnation(
+        new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)),
+        new HashSet<>(ref.getCDMethodList()));
+  }
+
+  @Override
   protected boolean checkAttributeConformance(ASTCDType concrete) {
-    return checkConformanceAt(new HashSet<>(CDSymbolTables.getAttributesInHierarchy(concrete)));
+    return checkAttributeConformance(
+        new HashSet<>(CDSymbolTables.getAttributesInHierarchy(concrete)));
+  }
+
+  @Override
+  protected boolean checkMethodConformance(ASTCDType concrete) {
+    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)));
   }
 
   @Override
@@ -57,6 +72,6 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
 
     conAssocSet.addAll(CDDiffUtil.getReferencingAssociations(concrete, conCD));
 
-    return checkIncarnationAs(conAssocSet, CDDiffUtil.getReferencingAssociations(ref, refCD));
+    return checkAssocIncarnation(conAssocSet, CDDiffUtil.getReferencingAssociations(ref, refCD));
   }
 }

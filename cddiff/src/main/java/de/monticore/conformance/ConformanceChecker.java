@@ -13,6 +13,9 @@ import de.monticore.conformance.conf.attribute.CompAttributeChecker;
 import de.monticore.conformance.conf.attribute.EqNameAttributeChecker;
 import de.monticore.conformance.conf.attribute.STNamedAttributeChecker;
 import de.monticore.conformance.conf.cd.BasicCDConfStrategy;
+import de.monticore.conformance.conf.method.CompMethodChecker;
+import de.monticore.conformance.conf.method.EqNameMethodChecker;
+import de.monticore.conformance.conf.method.STNamedMethodChecker;
 import de.monticore.conformance.conf.type.BasicTypeConfStrategy;
 import de.monticore.conformance.conf.type.DeepTypeConfStrategy;
 import de.monticore.conformance.inc.association.CompAssocIncStrategy;
@@ -34,6 +37,8 @@ public class ConformanceChecker {
   protected CompAssocIncStrategy assocInc;
   protected CompAttributeChecker attrInc;
 
+  protected CompMethodChecker methInc;
+
   protected Map<ASTCDType, List<ASTCDType>> typeMap = new HashMap<>();
   protected Map<ASTCDAttribute, List<ASTCDAttribute>> attributeMap = new HashMap<>();
 
@@ -46,14 +51,19 @@ public class ConformanceChecker {
   public boolean checkConformance(
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, Set<String> mappings) {
     for (String mapping : mappings) {
+      System.out.println(
+          "===== Check if "
+              + concreteCD.getCDDefinition().getName()
+              + " is conform to "
+              + referenceCD.getCDDefinition().getName()
+              + " with respect to "
+              + mapping
+              + " =====");
       if (!checkConformance(concreteCD, referenceCD, mapping)) {
-        Log.println(
-            concreteCD.getCDDefinition().getName()
-                + " is not conform to "
-                + referenceCD.getCDDefinition().getName()
-                + " with respect to "
-                + mapping);
+        System.out.println("===== NOT CONFORM =====");
         return false;
+      } else {
+        System.out.println("===== CONFORM =====");
       }
     }
     return true;
@@ -65,17 +75,20 @@ public class ConformanceChecker {
     typeInc = new CompTypeIncStrategy(referenceCD, mapping);
     assocInc = new CompAssocIncStrategy(referenceCD, mapping);
     attrInc = new CompAttributeChecker(mapping);
+    methInc = new CompMethodChecker(mapping);
 
     if (params.contains(STEREOTYPE_MAPPING)) {
       typeInc.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new STNamedAttributeChecker(mapping));
+      methInc.addIncStrategy(new STNamedMethodChecker(mapping));
     }
 
     if (params.contains(NAME_MAPPING)) {
       typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new EqNameAttributeChecker(mapping));
+      methInc.addIncStrategy(new EqNameMethodChecker(mapping));
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
@@ -91,16 +104,19 @@ public class ConformanceChecker {
       assocChecker =
           new StrictDeepAssocConfStrategy(
               concreteCD, referenceCD, typeInc, assocInc, cardRestriction);
-      typeChecker = new DeepTypeConfStrategy(concreteCD, referenceCD, attrInc, typeInc, assocInc);
+      typeChecker =
+          new DeepTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
 
     } else if (params.contains(INHERITANCE)) {
       assocChecker =
           new DeepAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction);
-      typeChecker = new DeepTypeConfStrategy(concreteCD, referenceCD, attrInc, typeInc, assocInc);
+      typeChecker =
+          new DeepTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
     } else {
       assocChecker =
           (new BasicAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction));
-      typeChecker = new BasicTypeConfStrategy(concreteCD, referenceCD, attrInc, typeInc, assocInc);
+      typeChecker =
+          new BasicTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
     }
 
     BasicCDConfStrategy cdChecker =

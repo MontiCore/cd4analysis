@@ -9,7 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class ConformanceCheckerTest extends ConfAbstractTest {
-
   @Test
   public void testConformanceCheck() {
     parseModels("Concrete.cd", "Reference.cd");
@@ -21,6 +20,45 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
                 SRC_TARGET_ASSOC_MAPPING,
                 ALLOW_CARD_RESTRICTION));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
+  public void testConformanceCheckAdapter() {
+    parseModels("adapter/GraphAdapter.cd", "adapter/Adapter.cd");
+    checker =
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                ALLOW_CARD_RESTRICTION));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("m1", "m2")));
+  }
+
+  @Test
+  public void testConformanceCheckAdapterS() {
+    parseModels("adapter/GraphAdapterS.cd", "adapter/Adapter.cd");
+    checker =
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                ALLOW_CARD_RESTRICTION));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("m")));
+  }
+
+  @Test
+  public void testConformanceCheckAdapterF() {
+    parseModels("adapter/GraphAdapterF.cd", "adapter/Adapter.cd");
+    checker =
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                ALLOW_CARD_RESTRICTION));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("m1", "m2")));
   }
 
   @Test

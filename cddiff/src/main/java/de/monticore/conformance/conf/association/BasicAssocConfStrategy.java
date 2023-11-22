@@ -10,6 +10,8 @@ import de.monticore.conformance.conf.ConformanceStrategy;
 import de.monticore.matcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociation> {
 
@@ -34,20 +36,21 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
 
   @Override
   public boolean checkConformance(ASTCDAssociation concrete) {
-    return assocInc.getMatchedElements(concrete).stream()
-        .allMatch(ref -> checkConformance(concrete, ref));
+    Set<ASTCDAssociation> nonConformingTo =
+        assocInc.getMatchedElements(concrete).stream()
+            .filter(ref -> !checkConformance(concrete, ref))
+            .collect(Collectors.toSet());
+    for (ASTCDAssociation ref : nonConformingTo) {
+      System.out.println(
+          CD4CodeMill.prettyPrint(concrete, false)
+              + " is not a valid incarnation of "
+              + CD4CodeMill.prettyPrint(ref, false));
+    }
+    return nonConformingTo.isEmpty();
   }
 
   public boolean checkConformance(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    if (check(concrete, ref) || checkReverse(concrete, ref)) {
-      return true;
-    } else {
-      System.out.println(
-          CD4CodeMill.prettyPrint(concrete, false)
-              + " does not conform to "
-              + CD4CodeMill.prettyPrint(ref, false));
-      return false;
-    }
+    return check(concrete, ref) || checkReverse(concrete, ref);
   }
 
   protected boolean check(ASTCDAssociation concrete, ASTCDAssociation ref) {
