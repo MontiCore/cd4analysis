@@ -53,10 +53,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    if (checkSuperClass(srcElem, tgtElem, srcCD)) {
-      return true;
-    }
-    return false;
+    return checkSuperClass(srcElem, tgtElem, srcCD);
   }
 
   /**
@@ -66,14 +63,7 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @return true if srcClass from tgtCD is a Super Class of srcClass from srcCd
    */
   public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit srcCD) {
-
-    boolean superType =
-        CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
+    return CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
             .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
-
-    if (superType) {
-      return true;
-    }
-    return false;
   }
 }
