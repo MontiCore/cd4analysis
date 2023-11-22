@@ -64,6 +64,6 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    */
   public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit srcCD) {
     return CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
-            .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
+        .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
   }
 }

@@ -1741,7 +1741,7 @@ public class Syn2SemDiffHelper {
                                 astcdClass
                                     .getSymbol()
                                     .getInternalQualifiedName())) // change the left associated type
-                                                                  // to the given one
+                        // to the given one
                         .build());
             copyAssoc.setName(" ");
             if (!copyAssoc.getLeft().isPresentCDCardinality()) {
@@ -1808,7 +1808,7 @@ public class Syn2SemDiffHelper {
                                 astcdClass
                                     .getSymbol()
                                     .getInternalQualifiedName())) // change the right associated
-                                                                  // type to the given one
+                        // type to the given one
                         .build());
             copyAssoc.setName(" ");
             if (!copyAssoc.getLeft().isPresentCDCardinality()) {
@@ -1994,7 +1994,7 @@ public class Syn2SemDiffHelper {
         srcCD
             .getCDDefinition()
             .getCDClassesList()) { // if a class contains an attribute twice - directly and from a
-                                   // superclass
+      // superclass
       List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b; // it is not instantiable
       for (ASTCDAttribute attribute : attributes) {
         for (ASTCDAttribute attribute1 : attributes) {
@@ -2026,7 +2026,7 @@ public class Syn2SemDiffHelper {
         srcCD
             .getCDDefinition()
             .getCDClassesList()) { // if a class contains an attribute with the same name as a role
-                                   // name
+      // name
       List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b; // it is not instantiable
       for (ASTCDAttribute attribute : attributes) {
         if (sameRoleNameAndClass(attribute.getName(), astcdClass)) {
@@ -3037,7 +3037,7 @@ public class Syn2SemDiffHelper {
         }
       }
       if (!foundMatch) { // if a match for the assocStruct from src is not found in tgt - create a
-                         // diff-witness
+        // diff-witness
         ASTCDClass classToUse = null;
         ASTCDType type = findMatchedTypeSrc(tgtType).get();
         if (type instanceof ASTCDClass && !type.getModifier().isAbstract()) {
