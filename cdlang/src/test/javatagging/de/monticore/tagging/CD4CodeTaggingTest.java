@@ -11,7 +11,6 @@ import de.monticore.tagging.tags._ast.ASTTag;
 import de.monticore.tagging.tags._ast.ASTTagUnit;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +50,7 @@ public class CD4CodeTaggingTest {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(astOpt.get());
     Assertions.assertEquals(0, Log.getErrorCount());
 
-    List<ASTTag> tags =
-        CD4CodeTagger.getInstance().getTags(astOpt.get().getCDDefinition());
+    List<ASTTag> tags = CD4CodeTagger.getInstance().getTags(astOpt.get().getCDDefinition());
     Assertions.assertEquals(1, tags.size());
 
     ASTCDClass classA =
