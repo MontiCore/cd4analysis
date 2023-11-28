@@ -38,6 +38,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.conformance.ConformanceChecker;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -61,12 +62,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.AmbiguousOptionException;
 import org.apache.commons.cli.CommandLine;
@@ -76,6 +72,9 @@ import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.commons.io.FileUtils;
+
+import static de.monticore.conformance.ConfParameter.*;
+import static de.monticore.conformance.ConfParameter.ALLOW_CARD_RESTRICTION;
 
 public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
@@ -161,6 +160,14 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
           computeSyntaxDiff();
+          CD4CodeMill.globalScope().clear();
+        }
+
+        if (cmd.hasOption("reference")) {
+          if (useBuiltInTypes) {
+            BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+          }
+          checkConformance();
           CD4CodeMill.globalScope().clear();
         }
 
@@ -744,6 +751,26 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     if (printOption.equals("both")) {
       System.out.println(syntaxDiff.printSrcCD());
       System.out.println(syntaxDiff.printTgtCD());
+    }
+  }
+
+  /** perform a conformance check */
+  protected void checkConformance(){
+    ASTCDCompilationUnit con = ast.deepClone();
+    CDDiffUtil.refreshSymbolTable(con);
+    ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
+    List<String> mappings = List.of("mapTo");
+    if (cmd.hasOption("mapping")){
+       mappings = List.of(cmd.getOptionValues("mapping"));
+    }
+    if (ref != null){
+      CDDiffUtil.refreshSymbolTable(ref);
+        new ConformanceChecker(
+          Set.of(
+            STEREOTYPE_MAPPING,
+            NAME_MAPPING,
+            SRC_TARGET_ASSOC_MAPPING,
+            ALLOW_CARD_RESTRICTION)).checkConformance(con,ref,new LinkedHashSet<>(mappings));
     }
   }
 

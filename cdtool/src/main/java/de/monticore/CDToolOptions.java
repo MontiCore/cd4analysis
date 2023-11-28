@@ -56,6 +56,7 @@ public class CDToolOptions {
     initSemDiffOptions();
     initSyntaxDiffOptions();
     initMergeOptions();
+    initConformanceCheckOptions();
   }
 
   protected void initCheck() {
@@ -423,4 +424,30 @@ public class CDToolOptions {
                     + "sound). The result is stored in memory.")
             .build());
   }
+
+  /** adds options for Conformance Check */
+  public void initConformanceCheckOptions(){
+    options.addOption(
+      Option.builder()
+        .longOpt("reference")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .numberOfArgs(1)
+        .desc(
+          "Parses the file as a reference CD and check if the the input CD is a valid concretization.")
+        .build());
+
+    options.addOption(
+      Option.builder()
+        .longOpt("mapping")
+        .hasArg()
+        .type(String.class)
+        .argName("names")
+        .hasArgs()
+        .desc(
+          "Specify the names of stereotypes that are used as incarnation mappings in the concrete model. Default : 'mapTo'")
+        .build());
+  }
+
 }

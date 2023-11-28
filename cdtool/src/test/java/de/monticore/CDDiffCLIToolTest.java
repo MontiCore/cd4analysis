@@ -56,6 +56,16 @@ public class CDDiffCLIToolTest {
   }
 
   @Test
+  public void testConformance() {
+    final String con = TOOL_PATH + "/conformance/adapter/GraphAdapter.cd";
+    final String ref = TOOL_PATH + "/conformance/adapter/Adapter.cd";
+    CD4CodeTool.main(new String[] {"-i", con, "--reference", ref, "--mapping", "m1", "m2"});
+
+    // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertEquals(Log.getErrorCount(), 0);
+  }
+
+  @Test
   public void testSemDiff() {
     // given 2 CDs that are not semantically equivalent
     final String cd1 = TOOL_PATH + "/cddiff/Employees/Employees2.cd";
