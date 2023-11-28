@@ -9,7 +9,7 @@ import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -21,9 +21,8 @@ import java.util.Optional;
 public class CDDiff {
 
   /**
-   * Computes the semantic difference between ast1 and ast2 by applying Syntax2SemDiff and prints
-   * the resulting diff-witness(es) to stdout or the specified directory. todo: fix handling of
-   * overlapping associations to enable open-world diff
+   * Computes the semantic difference between ast1 and ast2 by applying Syn2SemDiff and prints the
+   * resulting diff-witness(es) to stdout or the specified directory.
    */
   public static void computeRuleBasedSemDiff(
       ASTCDCompilationUnit ast1,
@@ -185,7 +184,8 @@ public class CDDiff {
   public static List<ASTODArtifact> computeSyntax2SemDiff(
       ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
 
-    List<ASTODArtifact> diffWitnesses = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
+    List<ASTODArtifact> diffWitnesses =
+        new Syn2SemDiff(ast1, ast2).generateODs(cdSemantics == CDSemantics.STA_CLOSED_WORLD);
 
     // join unidirectional links for bidirectional associations
     JoinLinksTrafo joinLinksTrafo = new JoinLinksTrafo(ast1);
@@ -216,8 +216,11 @@ public class CDDiff {
         Alloy2ODGenerator.saveOD(odDesc, od.getObjectDiagram().getName(), out);
       }
     } catch (Exception e) {
-      e.printStackTrace();
-      Log.error("0xCDD10: Could not print ODs to directory " + outputDirectory);
+      Log.error(
+          "0xCDD10: Could not print ODs to directory "
+              + outputDirectory
+              + " due to "
+              + e.getMessage());
     }
   }
 }

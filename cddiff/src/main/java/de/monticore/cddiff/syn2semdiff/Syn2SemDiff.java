@@ -97,8 +97,9 @@ public class Syn2SemDiff {
       if (!helper.getNotInstClassesSrc().contains(pair.a)
           && !helper.getNotInstClassesSrc().contains(pair.b)) {
         String comment =
-            "//A new associations has been added to the diagram."
-                + "\n//This association allows a new relation between the classes "
+            "// A new associations has been added to the diagram."
+                + System.lineSeparator()
+                + "// This association allows a new relation between the classes "
                 + pair.a.getSymbol().getInternalQualifiedName()
                 + " and "
                 + pair.b.getSymbol().getInternalQualifiedName()
@@ -120,7 +121,7 @@ public class Syn2SemDiff {
 
     for (Pair<ASTCDType, ASTCDType> astcdClass1 : syntaxDiff.addedClassList()) {
       String comment =
-          "//A new class "
+          "// A new class "
               + astcdClass1.a.getSymbol().getInternalQualifiedName()
               + " has been added and now there is a change in the class "
               + astcdClass1.b.getSymbol().getInternalQualifiedName()
@@ -142,7 +143,7 @@ public class Syn2SemDiff {
       List<ASTCDType> list = pair.b;
       for (ASTCDType astcdClass : list) {
         String comment =
-            "//The association between "
+            "// The association between "
                 + Syn2SemDiffHelper.getConnectedTypes(pair.a, helper.getTgtCD())
                     .a
                     .getSymbol()
@@ -176,18 +177,19 @@ public class Syn2SemDiff {
             typeDiffStruct.getAddedDeletedAttributes()) {
           StringBuilder comment =
               new StringBuilder(
-                  "//Because of the class "
+                  "// Because of the class "
                       + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                       + " the attribute/s ");
           for (ASTCDAttribute attribute1 : attribute.b.getAddedAttributes()) {
-            comment.append("\n//• ").append(attribute1.getName());
+            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
           }
-          comment.append("\n// is/are added and the attributes");
+          comment.append(System.lineSeparator()).append("// is/are added and the attributes");
           for (ASTCDAttribute attribute1 : attribute.b.getDeletedAttributes()) {
-            comment.append("\n//• ").append(attribute1.getName());
+            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
           }
           comment
-              .append("\n// is/are deleted in ")
+              .append(System.lineSeparator())
+              .append("// is/are deleted in ")
               .append(attribute.a.getSymbol().getInternalQualifiedName());
           Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
           if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
@@ -206,14 +208,15 @@ public class Syn2SemDiff {
             typeDiffStruct.getAddedAttributes()) {
           StringBuilder comment =
               new StringBuilder(
-                  "//Because of the class "
+                  "// Because of the class "
                       + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                       + " the attribute/s ");
           for (ASTCDAttribute attribute1 : attribute.b) {
-            comment.append("\n//• ").append(attribute1.getName());
+            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
           }
           comment
-              .append("\n// is/are added in ")
+              .append(System.lineSeparator())
+              .append("// is/are added in ")
               .append(attribute.a.getSymbol().getInternalQualifiedName());
           Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
           if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
@@ -230,14 +233,15 @@ public class Syn2SemDiff {
         for (Pair<ASTCDClass, ASTCDAttribute> attribute : typeDiffStruct.getMemberDiff()) {
           StringBuilder comment =
               new StringBuilder(
-                  "//Because of the class "
+                  "// Because of the class "
                       + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                       + " the attribute "
                       + attribute.b.getName()
                       + " is changed in "
                       + attribute.a.getSymbol().getInternalQualifiedName());
           comment
-              .append("\n from ")
+              .append(System.lineSeparator())
+              .append(" from ")
               .append(getOldAtt(attribute.b, typeDiffStruct).getMCType().printType())
               .append(" to ")
               .append(attribute.b.getMCType().printType());
@@ -254,7 +258,7 @@ public class Syn2SemDiff {
       }
       if (typeDiffStruct.getChangedStereotype()) {
         String comment =
-            "//In the class "
+            "// In the class "
                 + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                 + " the stereotype is changed from abstract";
         Optional<ASTODArtifact> astodArtifact =
@@ -276,14 +280,15 @@ public class Syn2SemDiff {
             typeDiffStruct.getDeletedAttributes()) {
           StringBuilder comment =
               new StringBuilder(
-                  "//Because of the class "
+                  "// Because of the class "
                       + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                       + " the attribute/s ");
           for (ASTCDAttribute attribute1 : attribute.b) {
-            comment.append("\n//• ").append(attribute1.getName());
+            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
           }
           comment
-              .append("\n// is/are deleted in ")
+              .append(System.lineSeparator())
+              .append("// is/are deleted in ")
               .append(attribute.a.getSymbol().getInternalQualifiedName());
           Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
           if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
@@ -299,7 +304,7 @@ public class Syn2SemDiff {
       if (typeDiffStruct.isOnlySingletonChanged()) {
         StringBuilder comment =
             new StringBuilder(
-                "//In the class "
+                "// In the class "
                     + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                     + " the class is changed from singleton to non-singleton");
         if (typeDiffStruct.isChangedSingleton()) {
@@ -327,7 +332,7 @@ public class Syn2SemDiff {
               getClassForEnum((ASTCDEnum) typeDiffStruct.getAstcdType());
           if (astcdClass != null) {
             String comment =
-                "//In the enum "
+                "// In the enum "
                     + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
                     + " the following constant is added: "
                     + constant.getName()
@@ -355,42 +360,47 @@ public class Syn2SemDiff {
       if (!assocMatching.getNotMatchedAssocsInSrc().isEmpty()
           && !assocMatching.getNotMatchedAssocsInTgt().isEmpty()) {
         for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInSrc()) {
-          String comment =
-              "//The class "
-                  + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
-                  + " has an association that isn't in srcCD: "
-                  + Syn2SemDiffHelper.getConnectedTypes(
-                          assocStruct.getAssociation(), helper.getSrcCD())
-                      .a
-                      .getSymbol()
-                      .getInternalQualifiedName()
-                  + " - "
-                  + Syn2SemDiffHelper.getConnectedTypes(
-                          assocStruct.getAssociation(), helper.getSrcCD())
-                      .b
-                      .getSymbol()
-                      .getInternalQualifiedName()
-                  + "//\nand association/s that isn't/aren't in tgtCD:";
+          StringBuilder comment =
+              new StringBuilder(
+                  "// The class "
+                      + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
+                      + " has an association that isn't in srcCD: "
+                      + Syn2SemDiffHelper.getConnectedTypes(
+                              assocStruct.getAssociation(), helper.getSrcCD())
+                          .a
+                          .getSymbol()
+                          .getInternalQualifiedName()
+                      + " - "
+                      + Syn2SemDiffHelper.getConnectedTypes(
+                              assocStruct.getAssociation(), helper.getSrcCD())
+                          .b
+                          .getSymbol()
+                          .getInternalQualifiedName()
+                      + System.lineSeparator()
+                      + "// and association/s that isn't/aren't in tgtCD:");
           for (AssocStruct tgtAssocs : assocMatching.getNotMatchedAssocsInTgt()) {
-            comment =
-                comment
-                    + "//\n• "
-                    + Syn2SemDiffHelper.getConnectedTypes(
+            comment
+                .append(System.lineSeparator())
+                .append("// ")
+                .append(
+                    Syn2SemDiffHelper.getConnectedTypes(
                             tgtAssocs.getAssociation(), helper.getTgtCD())
                         .a
                         .getSymbol()
-                        .getInternalQualifiedName()
-                    + " "
-                    + Syn2SemDiffHelper.getConnectedTypes(
+                        .getInternalQualifiedName())
+                .append(" ")
+                .append(
+                    Syn2SemDiffHelper.getConnectedTypes(
                             tgtAssocs.getAssociation(), helper.getTgtCD())
                         .b
                         .getSymbol()
-                        .getInternalQualifiedName();
+                        .getInternalQualifiedName());
           }
           Optional<ASTODArtifact> astodArtifact =
               generateArtifact(
                   oDTitleForAssoc(assocStruct.getAssociation()),
-                  generateElements(assocStruct.getAssociation(), Arrays.asList(1, 1), comment));
+                  generateElements(
+                      assocStruct.getAssociation(), Arrays.asList(1, 1), comment.toString()));
           if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
             artifactList.add(astodArtifact.get());
             if (artifactList.size() == diffLimit) {
@@ -403,7 +413,7 @@ public class Syn2SemDiff {
       } else if (!assocMatching.getNotMatchedAssocsInSrc().isEmpty()) {
         for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInSrc()) {
           String comment =
-              "//The class "
+              "// The class "
                   + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
                   + " has an association that isn't in tgtCD: "
                   + Syn2SemDiffHelper.getConnectedTypes(
@@ -432,32 +442,35 @@ public class Syn2SemDiff {
           }
         }
       } else {
-        String comment =
-            "//The class "
-                + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
-                + " has association/s that isn't/aren't in src:";
+        StringBuilder comment =
+            new StringBuilder(
+                "// The class "
+                    + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
+                    + " has association/s that isn't/aren't in src:");
         for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInTgt()) {
-          comment =
-              comment
-                  + "//\n• "
-                  + Syn2SemDiffHelper.getConnectedTypes(
+          comment
+              .append(System.lineSeparator())
+              .append("// ")
+              .append(
+                  Syn2SemDiffHelper.getConnectedTypes(
                           assocStruct.getAssociation(), helper.getTgtCD())
                       .a
                       .getSymbol()
-                      .getInternalQualifiedName()
-                  + " - "
-                  + Syn2SemDiffHelper.getConnectedTypes(
+                      .getInternalQualifiedName())
+              .append(" - ")
+              .append(
+                  Syn2SemDiffHelper.getConnectedTypes(
                           assocStruct.getAssociation(), helper.getTgtCD())
                       .b
                       .getSymbol()
-                      .getInternalQualifiedName();
+                      .getInternalQualifiedName());
         }
-        comment = comment + ".";
+        comment.append(".");
         Optional<ASTODArtifact> astodArtifact;
         astodArtifact =
             generateArtifact(
                 oDTitleForClass(assocMatching.getClassToInstantiate()),
-                generateElements(assocMatching.getClassToInstantiate(), comment, null));
+                generateElements(assocMatching.getClassToInstantiate(), comment.toString(), null));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
           if (artifactList.size() == diffLimit) {
@@ -472,39 +485,48 @@ public class Syn2SemDiff {
     for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
       Pair<ASTCDType, ASTCDType> pair =
           Syn2SemDiffHelper.getConnectedTypes(assocDiffStruct.getAssociation(), helper.getSrcCD());
-      String comment =
-          "//In the association between "
-              + pair.a.getSymbol().getInternalQualifiedName()
-              + " and "
-              + pair.b.getSymbol().getInternalQualifiedName()
-              + " the following is changed: ";
+      StringBuilder comment =
+          new StringBuilder(
+              "// In the association between "
+                  + pair.a.getSymbol().getInternalQualifiedName()
+                  + " and "
+                  + pair.b.getSymbol().getInternalQualifiedName()
+                  + " the following is changed: ");
       if (assocDiffStruct.isChangedDir()) {
-        comment =
-            comment
-                + "\n//• direction - "
-                + Syn2SemDiffHelper.getDirection(assocDiffStruct.getAssociation()).toString();
+        comment
+            .append(System.lineSeparator())
+            .append("// direction - ")
+            .append(Syn2SemDiffHelper.getDirection(assocDiffStruct.getAssociation()).toString());
       }
       if (assocDiffStruct.getChangedCard() != null && !assocDiffStruct.getChangedCard().isEmpty()) {
-        comment = comment + "\n//• cardinalities - " + assocDiffStruct.getChangedCard().toString();
+        comment
+            .append(System.lineSeparator())
+            .append("// cardinalities - ")
+            .append(assocDiffStruct.getChangedCard().toString());
       }
       if (assocDiffStruct.getChangedRoleNames() != null
           && !assocDiffStruct.getChangedRoleNames().isEmpty()) {
-        comment = comment + "\n//• role name - ";
+        comment.append(System.lineSeparator()).append("// role name - ");
         for (Pair<ClassSide, ASTCDRole> pair1 : assocDiffStruct.getChangedRoleNames()) {
-          comment = comment + "[" + pair1.a.toString() + ", " + pair1.b.getName() + "] ";
+          comment
+              .append("[")
+              .append(pair1.a.toString())
+              .append(", ")
+              .append(pair1.b.getName())
+              .append("] ");
         }
       }
       if (assocDiffStruct.getChangedTgt() != null) {
-        comment =
-            comment
-                + "\n//• changed target - "
-                + assocDiffStruct.getChangedTgt().getSymbol().getInternalQualifiedName();
+        comment
+            .append(System.lineSeparator())
+            .append("// changed target - ")
+            .append(assocDiffStruct.getChangedTgt().getSymbol().getInternalQualifiedName());
       }
       if (assocDiffStruct.getChangedSrc() != null) {
-        comment =
-            comment
-                + "\n//• changed source - "
-                + assocDiffStruct.getChangedSrc().getSymbol().getInternalQualifiedName();
+        comment
+            .append(System.lineSeparator())
+            .append("// changed source - ")
+            .append(assocDiffStruct.getChangedSrc().getSymbol().getInternalQualifiedName());
       }
       ArrayList<Integer> list = new ArrayList<>();
       if (assocDiffStruct.getChangedCard() != null && assocDiffStruct.getChangedCard().isEmpty()) {
@@ -540,7 +562,7 @@ public class Syn2SemDiff {
         Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
                 oDTitleForAssoc(assocDiffStruct.getAssociation()),
-                generateElements(assocDiffStruct.getAssociation(), list1, comment));
+                generateElements(assocDiffStruct.getAssociation(), list1, comment.toString()));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
           if (artifactList.size() == diffLimit) {
@@ -554,7 +576,7 @@ public class Syn2SemDiff {
         Optional<ASTODArtifact> astodArtifact2 =
             generateArtifact(
                 oDTitleForAssoc(assocDiffStruct.getAssociation()),
-                generateElements(assocDiffStruct.getAssociation(), list2, comment));
+                generateElements(assocDiffStruct.getAssociation(), list2, comment.toString()));
         if (astodArtifact2.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact2.get());
           if (artifactList.size() == diffLimit) {
@@ -567,7 +589,7 @@ public class Syn2SemDiff {
         Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
                 oDTitleForAssoc(assocDiffStruct.getAssociation()),
-                generateElements(assocDiffStruct.getAssociation(), list, comment));
+                generateElements(assocDiffStruct.getAssociation(), list, comment.toString()));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
         } else if (astodArtifact.isPresent() && diffLimit == 0) {
@@ -579,7 +601,7 @@ public class Syn2SemDiff {
     for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
       if (!helper.getNotInstClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
         String comment =
-            "//For the class "
+            "// For the class "
                 + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName()
                 + " the inheritance relations were changed.";
         Optional<ASTODArtifact> astodArtifact =
@@ -600,7 +622,7 @@ public class Syn2SemDiff {
     if (analyseOverlapping) {
       for (ASTCDType astcdClass : syntaxDiff.srcExistsTgtNot()) {
         String comment =
-            "//In tgtCD the class "
+            "// In tgtCD the class "
                 + astcdClass.getSymbol().getInternalQualifiedName()
                 + " cannot be instantiated because of overlapping associations, but it can be instantiated in srcCD.";
         Optional<ASTODArtifact> astodArtifact =
@@ -620,7 +642,7 @@ public class Syn2SemDiff {
     if (staDiff) {
       for (ASTCDType astcdClass : syntaxDiff.hasDiffSuper()) {
         String comment =
-            "//The class "
+            "// The class "
                 + astcdClass.getSymbol().getInternalQualifiedName()
                 + " is part of a different inheritance tree.";
         Optional<ASTODArtifact> astodArtifact =
@@ -709,6 +731,7 @@ public class Syn2SemDiff {
     ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
     valueBuilder.setName("diff");
     valueBuilder.setContent("diffClass");
+    assert matchedObject != null;
     matchedObject.getModifier().getStereotype().addValues(valueBuilder.build());
 
     CommentBuilder commentBuilder = new CommentBuilder();
@@ -796,6 +819,7 @@ public class Syn2SemDiff {
     ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
     valueBuilder.setName("diff");
     valueBuilder.setContent("diffClass");
+    assert matchedObject != null;
     matchedObject.getModifier().getStereotype().addValues(valueBuilder.build());
 
     CommentBuilder commentBuilder = new CommentBuilder();
