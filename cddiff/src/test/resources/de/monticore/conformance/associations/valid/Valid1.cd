@@ -1,6 +1,6 @@
 import java.lang.String;
 
-classdiagram Reference {
+classdiagram Valid1 {
 
  abstract class AccountTop;
  abstract class PersonTop;

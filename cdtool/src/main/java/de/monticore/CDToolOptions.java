@@ -426,28 +426,27 @@ public class CDToolOptions {
   }
 
   /** adds options for Conformance Check */
-  public void initConformanceCheckOptions(){
+  public void initConformanceCheckOptions() {
     options.addOption(
-      Option.builder()
-        .longOpt("reference")
-        .hasArg()
-        .type(String.class)
-        .argName("file")
-        .numberOfArgs(1)
-        .desc(
-          "Parses the file as a reference CD and check if the the input CD is a valid concretization.")
-        .build());
+        Option.builder()
+            .longOpt("reference")
+            .hasArg()
+            .type(String.class)
+            .argName("file")
+            .numberOfArgs(1)
+            .desc(
+                "Parses the file as a reference CD and check if the the input CD is a valid concretization.")
+            .build());
 
     options.addOption(
-      Option.builder()
-        .longOpt("mapping")
-        .hasArg()
-        .type(String.class)
-        .argName("names")
-        .hasArgs()
-        .desc(
-          "Specify the names of stereotypes that are used as incarnation mappings in the concrete model. Default : 'mapTo'")
-        .build());
+        Option.builder()
+            .longOpt("mapping")
+            .hasArg()
+            .type(String.class)
+            .argName("names")
+            .hasArgs()
+            .desc(
+                "Specify the names of stereotypes that are used as incarnation mappings in the concrete model. Default : 'mapTo'")
+            .build());
   }
-
 }

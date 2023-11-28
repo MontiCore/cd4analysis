@@ -8,7 +8,6 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.conformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.conformance.conf.association.DeepAssocConfStrategy;
-import de.monticore.conformance.conf.association.StrictDeepAssocConfStrategy;
 import de.monticore.conformance.conf.attribute.CompAttributeChecker;
 import de.monticore.conformance.conf.attribute.EqNameAttributeChecker;
 import de.monticore.conformance.conf.attribute.STNamedAttributeChecker;
@@ -54,7 +53,7 @@ public class ConformanceChecker {
       System.out.println(
           "===== Check if "
               + concreteCD.getCDDefinition().getName()
-              + " is conform to "
+              + " conforms to "
               + referenceCD.getCDDefinition().getName()
               + " with respect to "
               + mapping
@@ -100,14 +99,7 @@ public class ConformanceChecker {
     BasicAssocConfStrategy assocChecker;
     boolean cardRestriction = params.contains(ALLOW_CARD_RESTRICTION);
 
-    if (params.contains(STRICT_INHERITANCE)) {
-      assocChecker =
-          new StrictDeepAssocConfStrategy(
-              concreteCD, referenceCD, typeInc, assocInc, cardRestriction);
-      typeChecker =
-          new DeepTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
-
-    } else if (params.contains(INHERITANCE)) {
+    if (params.contains(INHERITANCE)) {
       assocChecker =
           new DeepAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction);
       typeChecker =

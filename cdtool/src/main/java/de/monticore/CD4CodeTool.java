@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
+import static de.monticore.conformance.ConfParameter.*;
+import static de.monticore.conformance.ConfParameter.ALLOW_CARD_RESTRICTION;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
@@ -72,9 +75,6 @@ import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
 import org.apache.commons.io.FileUtils;
-
-import static de.monticore.conformance.ConfParameter.*;
-import static de.monticore.conformance.ConfParameter.ALLOW_CARD_RESTRICTION;
 
 public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
@@ -755,22 +755,24 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   }
 
   /** perform a conformance check */
-  protected void checkConformance(){
+  protected void checkConformance() {
     ASTCDCompilationUnit con = ast.deepClone();
     CDDiffUtil.refreshSymbolTable(con);
     ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
     List<String> mappings = List.of("mapTo");
-    if (cmd.hasOption("mapping")){
-       mappings = List.of(cmd.getOptionValues("mapping"));
+    if (cmd.hasOption("mapping")) {
+      mappings = List.of(cmd.getOptionValues("mapping"));
     }
-    if (ref != null){
+    if (ref != null) {
       CDDiffUtil.refreshSymbolTable(ref);
-        new ConformanceChecker(
-          Set.of(
-            STEREOTYPE_MAPPING,
-            NAME_MAPPING,
-            SRC_TARGET_ASSOC_MAPPING,
-            ALLOW_CARD_RESTRICTION)).checkConformance(con,ref,new LinkedHashSet<>(mappings));
+      new ConformanceChecker(
+              Set.of(
+                  STEREOTYPE_MAPPING,
+                  NAME_MAPPING,
+                  SRC_TARGET_ASSOC_MAPPING,
+                  INHERITANCE,
+                  ALLOW_CARD_RESTRICTION))
+          .checkConformance(con, ref, new LinkedHashSet<>(mappings));
     }
   }
 

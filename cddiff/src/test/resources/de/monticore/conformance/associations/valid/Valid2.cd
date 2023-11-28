@@ -1,6 +1,6 @@
 import java.lang.String;
 
-classdiagram Reference {
+classdiagram Valid2 {
 
  abstract class AccountTop;
  abstract class PersonTop;
@@ -10,7 +10,7 @@ classdiagram Reference {
 
   class Person  extends PersonTop;
 
-  association belongTo AccountTop    -> Person[1];
+  association belongTo AccountTop    <-> Person[1];
   association access   PersonTop     -> Account[*];
 }
 

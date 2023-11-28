@@ -31,6 +31,7 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
                 STEREOTYPE_MAPPING,
                 NAME_MAPPING,
                 SRC_TARGET_ASSOC_MAPPING,
+                INHERITANCE,
                 ALLOW_CARD_RESTRICTION));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("m1", "m2")));
   }
@@ -44,6 +45,7 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
                 STEREOTYPE_MAPPING,
                 NAME_MAPPING,
                 SRC_TARGET_ASSOC_MAPPING,
+                INHERITANCE,
                 ALLOW_CARD_RESTRICTION));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("m")));
   }
@@ -57,6 +59,7 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
                 STEREOTYPE_MAPPING,
                 NAME_MAPPING,
                 SRC_TARGET_ASSOC_MAPPING,
+                INHERITANCE,
                 ALLOW_CARD_RESTRICTION));
     assertFalse(checker.checkConformance(conCD, refCD, Set.of("m1", "m2")));
   }
@@ -117,18 +120,18 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
+  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd", "Valid2.cd"})
   public void testStrictDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
-    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
+    checker = new ConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"FalseDirection.cd", "inValid1.cd", "FalseCard.cd"})
+  @ValueSource(strings = {"FalseDirection.cd", "FalseCard.cd"})
   public void testStrictDeepAssocConformanceInvalid(String concrete) {
     parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
-    checker = new ConformanceChecker(Set.of(STRICT_INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
+    checker = new ConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
 }

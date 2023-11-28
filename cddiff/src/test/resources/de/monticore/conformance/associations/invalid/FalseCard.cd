@@ -1,6 +1,6 @@
 import java.lang.String;
 
-classdiagram Reference {
+classdiagram FalseCard {
 
   class AccountTop;
 
