@@ -1,0 +1,64 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV2 {
+  enum State{succRepaired, partRepaired, unsuccRepaired;}
+
+  class TechStore{}
+
+  <<abstract>> class Item{
+    int itemId;
+    String model;
+    float price;
+  }
+
+  class Goods extends Item{
+    List<String> specs;
+    Date delivered;
+    Date sold;
+  }
+
+  class Laptop extends Goods{}
+
+  class Smartphone extends Goods{}
+
+  <<abstract>> class Person{
+    String name;
+    String email;
+    List<String> boughtProducts;
+  }
+
+  class Customer extends Person{}
+
+  class Employee extends Person{}
+
+  class TurnedInDevices extends Item{
+    List<String> problems;
+    List<String> accessories;
+    State state;
+    Date broughtIn;
+    Date repaired;
+  }
+
+  class Factory{
+    int numbersOfWorkers;
+    int numberOfParts;
+  }
+
+  class Supplier{}
+
+  class SpareParts{
+    int daysForDelivery;
+  }
+
+  association TechStore -> (has) Goods [1..*];
+  association contracts [1..*] TechStore (deliversTo) <-> (purchases) Supplier [*];
+  association buyingItems Customer (inPossessionOf) <-> (buys) Goods [*];
+  association consultCustomer [1..*] Employee (isConsultedBy) <-> (consults) Customer [*];
+  association repairing [*] TurnedInDevices (repairs) <-> (isRepairedBy) Employee [1..*];
+  association sparePartsDelivery Supplier -> (delivers) SpareParts [1..*];
+  association forRepairingPurposes TurnedInDevices -> (needs) SpareParts [*];
+  association partsDetails [1..*] TechStore (getsDetailsFrom) <-> (sendDetails) Factory [1..*];
+  association discount Person -> (usesDiscountFor) TurnedInDevices [*];
+  association sendingInvoice [1..*] Employee (sendsBillForDelivery) <- Supplier;
+}

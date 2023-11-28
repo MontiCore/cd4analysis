@@ -1,0 +1,20 @@
+import java.lang.*;
+classdiagram CD52{
+
+  class A{}
+
+  class B extends A{}
+
+  class C extends B{}
+
+
+  class P{}
+
+  class Q extends P{}
+
+  class S extends Q{}
+
+  association old [1] S (s) <-> (r) A [1];
+
+  association old2 [1] S (s) <-> (r) C [1];
+}

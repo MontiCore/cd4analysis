@@ -7,21 +7,21 @@ import de.monticore.cdbasis._ast.ASTCDType;
 public class Matcher {
 
   public static boolean matchingAssocNameStrategy(
-      ASTCDAssociation srcElem,
-      ASTCDAssociation tgtElem,
-      ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+      ASTCDAssociation srcElem, ASTCDAssociation tgtElem, ASTCDCompilationUnit tgtCD) {
     NameAssocMatcher associationNameMatch = new NameAssocMatcher(tgtCD);
     return associationNameMatch.isMatched(srcElem, tgtElem);
   }
 
   public static boolean matchingNameTypeStrategy(
-      ASTCDType srcElem,
-      ASTCDType tgtElem,
-      ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+      ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
     NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
     return nameTypeMatch.isMatched(srcElem, tgtElem);
+  }
+
+  public static boolean matchingStructureTypeStrategy(
+      ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
+    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
+    return structureTypeMatch.isMatched(srcElem, tgtElem);
   }
 
   public static boolean matchingAssocSubToSuperClass(

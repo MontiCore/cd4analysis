@@ -16,13 +16,13 @@ import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.cocos.CDAssociationUniqueInHierarchy;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -31,8 +31,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.CDFullNameTrafo;
-import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
+import de.monticore.cddiff.syndiff.SyntaxDiffBuilder;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
@@ -42,6 +43,7 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
@@ -540,7 +542,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   @Override
   public void prettyPrint(ASTCDCompilationUnit ast, String ppTarget) {
-    CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
+    CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter =
+        new CD4CodeFullPrettyPrinter(new IndentPrinter());
     ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
     if (ppTarget == null) {
       System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
@@ -695,6 +698,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
+  /** perform syntactic comparison analysis of 2 CDs */
   protected void computeSyntaxDiff() {
 
     // clone the current CD
@@ -708,42 +712,38 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       return;
     }
 
-    // use fully qualified names for attributes and associations
-    new CDFullNameTrafo().transform(ast1);
-    new CDFullNameTrafo().transform(ast2);
-
     ast1 = ast1.deepClone();
     ast2 = ast2.deepClone();
 
     new CD4CodeDirectCompositionTrafo().transform(ast1);
     new CD4CodeDirectCompositionTrafo().transform(ast2);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+    CDDiffUtil.refreshSymbolTable(ast1);
+    CDDiffUtil.refreshSymbolTable(ast2);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
+    SyntaxDiffBuilder syntaxDiff = new SyntaxDiffBuilder(ast1, ast2);
 
     String printOption = cmd.getOptionValue("show", "diff");
+    if (printOption.equals("added")) {
+      System.out.println(syntaxDiff.printOnlyAdded());
+    }
     if (printOption.equals("diff")) {
-      syntaxDiff.print();
+      System.out.println(syntaxDiff.printDiff());
     }
-    if (printOption.equals("cd1")) {
-      syntaxDiff.printCD1();
+    if (printOption.equals("new")) {
+      System.out.println(syntaxDiff.printSrcCD());
     }
-    if (printOption.equals("cd2")) {
-      syntaxDiff.printCD2();
+    if (printOption.equals("old")) {
+      System.out.println(syntaxDiff.printTgtCD());
+    }
+    if (printOption.equals("deleted")) {
+      System.out.println(syntaxDiff.printOnlyDeleted());
+    }
+    if (printOption.equals("changed")) {
+      System.out.println(syntaxDiff.printOnlyChanged());
     }
     if (printOption.equals("both")) {
-      syntaxDiff.printCD1();
-      syntaxDiff.printCD2();
-    }
-    if (printOption.equals("all")) {
-      syntaxDiff.print();
-      syntaxDiff.printCD1();
-      System.out.println(System.lineSeparator());
-      syntaxDiff.printCD2();
-    }
-    if (printOption.equals("nocolor")) {
-      syntaxDiff.printNoColour();
+      System.out.println(syntaxDiff.printSrcCD());
+      System.out.println(syntaxDiff.printTgtCD());
     }
   }
 

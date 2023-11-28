@@ -1,0 +1,14 @@
+import java.lang.String;
+
+classdiagram Source2 {
+  enum EnumsCheck{e;}
+
+  class A extends B{
+    EnumsCheck e;
+    int added;
+    double a;
+    int i;
+  }
+
+  class B{}
+}

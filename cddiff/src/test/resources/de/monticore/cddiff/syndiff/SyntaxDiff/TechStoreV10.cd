@@ -1,0 +1,9 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV10 {
+  class Item{}
+  class Storage{}
+
+  association Item -> Storage;
+}

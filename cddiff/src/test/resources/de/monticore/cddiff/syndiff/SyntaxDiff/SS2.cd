@@ -1,0 +1,8 @@
+import java.lang.*;
+classdiagram SS2{
+
+  class P{}
+
+  class Q extends P{}
+
+}

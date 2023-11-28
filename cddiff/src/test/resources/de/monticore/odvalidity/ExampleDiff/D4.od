@@ -1,0 +1,8 @@
+objectdiagram OD4{
+  presi:Person{
+    String name = "Presi";
+    int age = 21;
+    String add = "Stolberg";
+    Degree degree = PHD;
+  };
+}

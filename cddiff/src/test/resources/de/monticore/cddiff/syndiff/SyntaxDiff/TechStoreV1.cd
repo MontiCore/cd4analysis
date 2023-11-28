@@ -1,0 +1,63 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV1 {
+  enum State{succRepaired, partRepaired, unsuccRepaired;}
+
+  class TechStore{}
+
+  <<abstract>> class Item{
+    int itemId;
+    String model;
+    float price;
+  }
+
+  class Goods extends Item{
+    List<String> specs;
+    Date delivered;
+    Date sold;
+  }
+
+  class Laptop extends Goods{}
+
+  class Smartphone extends Goods{}
+
+  <<abstract>> class Person{
+    int name;
+    String email;
+  }
+
+  class Customer extends Person{}
+
+  class Employee extends Person{}
+
+  class FinanceManagement{}
+
+  class ServiceItem extends Item{
+    List<String> problems;
+    List<String> scratches;
+    List<String> accessories;
+    State state;
+    Date broughtIn;
+    Date repaired;
+  }
+
+  class HR{}
+
+  class Factory{}
+
+  class Supplier{}
+
+  class SpareParts{
+    int daysForDelivery;
+  }
+
+  association TechStore -> (has) Item [1..*];
+  association forRepairingPurposes TechStore -> (needs) SpareParts [*];
+  association contracts [1] TechStore (deliversTo) <-> (purchases) Supplier [*];
+  association buyingGoods Person -> (buys) Goods [*];
+  association customerService Employee -> (consults) Customer [*];
+  association repaired ServiceItem -> (isRepairedBy) Person [1..*];
+  association HR -> (sendsInformation) FinanceManagement;
+  association sparePartsDelivery Supplier -> (delivers) SpareParts [1..*];
+}

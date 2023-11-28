@@ -375,7 +375,6 @@ public class CDToolOptions {
             .build());
   }
 
-  /** adds options for syntax diff access */
   public void initSyntaxDiffOptions() {
 
     options.addOption(
@@ -386,10 +385,9 @@ public class CDToolOptions {
             .argName("file")
             .numberOfArgs(1)
             .desc(
-                "Performs a syntactical difference analysis on the current CD in memory (old) and a "
-                    + "second CD (new) and prints the result to stdout. Default: outputs the "
-                    + "matched CD-elements with color-coded diffs (red for deleted, yellow for changed, "
-                    + "and green for newly added elements).")
+                "Performs a syntactical difference analysis on the current CD in memory (new) "
+                    + "and a second CD (old) and prints the result to stdout. Default: Outputs color-coded differences "
+                    + "(red for deleted, yellow for changed, and green for newly added elements) to stdout.")
             .build());
 
     options.addOption(
@@ -397,16 +395,17 @@ public class CDToolOptions {
             .longOpt("show")
             .hasArg()
             .type(String.class)
-            .argName("printoption")
+            .argName("print_option")
             .optionalArg(true)
             .numberOfArgs(1)
             .desc(
-                "Specifies the print option for `--syntaxdiff`: `diff` (default) prints the matched "
-                    + "CD-elements with color-coded diffs (red for deleted, yellow for changed, and "
-                    + "green for newly added elements). `cd1` will print only the old CD with "
-                    + "color-coded diffs and `cd2` only the new CD. `all` combines all the previous "
-                    + "options. `nocolor` prints the matched CD-elements with lines marked as - "
-                    + "(deleted), ~ (changed), + (added).")
+                "Specifies the print option for `--syntaxdiff`: "
+                    + "`diff` (default) prints only the differences in a color-coded format "
+                    + "(red for deleted, yellow for changed, and green for newly added elements). "
+                    + "`old` will print only the old CD with color-coded diffs and `new` only the new CD. "
+                    + "`both` prints both CDs. `added` prints only the added CD-elements; "
+                    + "`removed` prints only the removed CD-elements, "
+                    + "and `changed` prints only the changed CD-elements.")
             .build());
   }
 

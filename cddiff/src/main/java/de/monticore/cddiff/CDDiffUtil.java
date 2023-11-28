@@ -79,7 +79,7 @@ public class CDDiffUtil {
     return new String(roleName);
   }
 
-  protected static void saveDiffCDs2File(
+  public static void saveDiffCDs2File(
       ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, String outputPath) throws IOException {
     String cd1 = CD4CodeMill.prettyPrint(ast1, true);
     String cd2 = CD4CodeMill.prettyPrint(ast2, true);

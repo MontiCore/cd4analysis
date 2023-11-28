@@ -3,7 +3,7 @@ package de.monticore.matcher;
 import java.util.List;
 
 public interface MatchingStrategy<T> {
-  // Set with the matched elements in which we have the matched element, the concrete class diagram
+  // List with the matched elements in which we have the matched element, the concrete class diagram
   // and the reference class diagram
   List<T> getMatchedElements(T srcElem);
 

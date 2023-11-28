@@ -1,0 +1,12 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV4 {
+  class Customer{
+    String name;
+    Date boughtItem;
+    int numberOfBroughtItems;
+    int clientNumber;
+    Double discountFactor;
+  }
+}

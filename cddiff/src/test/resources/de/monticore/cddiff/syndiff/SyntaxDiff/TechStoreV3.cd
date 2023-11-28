@@ -1,0 +1,6 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV3 {
+  class Customer{}
+}

@@ -6,7 +6,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,21 +129,19 @@ public class SrcTgtAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
   }
 
   protected boolean checkReference(
-      String srcElem, String tgt, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+      String srcElem, String tgtElem, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     Optional<CDTypeSymbol> srcTypeSymbol = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem);
-    Optional<CDTypeSymbol> tgtTypeSymbol = tgtCD.getEnclosingScope().resolveCDTypeDown(tgt);
+    Optional<CDTypeSymbol> tgtTypeSymbol = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem);
 
     if (srcTypeSymbol.isPresent() && tgtTypeSymbol.isPresent()) {
       ASTCDType srcType = srcTypeSymbol.get().getAstNode();
       ASTCDType tgtType = tgtTypeSymbol.get().getAstNode();
       return typeMatcher.isMatched(srcType, tgtType);
     }
-    Log.error("Could not resolve match source classes!");
     return false;
   }
 
   protected boolean checkRole(ASTCDAssocSide srcElem, ASTCDAssocSide tgtElem) {
-
     return CDDiffUtil.inferRole(srcElem).equals(CDDiffUtil.inferRole(tgtElem));
   }
 }

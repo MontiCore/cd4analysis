@@ -1,0 +1,12 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV7 {
+  class Items{
+    int itemId;
+    String model;
+    float price;
+    Date broughtIn;
+    int storageAvailability;
+  }
+}

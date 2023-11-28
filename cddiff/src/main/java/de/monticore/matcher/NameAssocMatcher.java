@@ -13,6 +13,7 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
     this.tgtCD = tgtCD;
   }
 
+  // TODO: vij kyde moje da izpolyvash getMatchedElements iz koda
   /**
    * A set for the matched elements which can be per definition modified
    *
@@ -36,11 +37,7 @@ public class NameAssocMatcher implements MatchingStrategy<ASTCDAssociation> {
   @Override
   public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (tgtElem.isPresentName() && srcElem.isPresentName()) {
-      if (tgtElem.getName().equals(srcElem.getName())) {
-        return true;
-      } else {
-        System.out.println("Association names do not match!");
-      }
+      return tgtElem.getName().equals(srcElem.getName());
     }
     return false;
   }

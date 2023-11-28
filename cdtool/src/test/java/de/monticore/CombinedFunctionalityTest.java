@@ -5,17 +5,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiff;
-import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
+import de.monticore.cddiff.syndiff.CDSyntaxDiff;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.od4report.OD4ReportMill;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +49,7 @@ public class CombinedFunctionalityTest {
   }
 
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
-  @Test
+  @Test // Fixed test
   public void testMaCoCo() {
     String base_path = "src/test/resources/de/monticore/macoco/";
 
@@ -59,11 +64,27 @@ public class CombinedFunctionalityTest {
     ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", paramSet);
     assertNotNull(merged);
 
+    CDDiffUtil.refreshSymbolTable(merged);
+
     ASTCDCompilationUnit expected =
         parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
+    new CD4CodeDirectCompositionTrafo().transform(expected);
+    CDDiffUtil.refreshSymbolTable(expected);
 
-    assertEquals(
-        new ArrayList<>(),
-        CDDiff.computeSyntax2SemDiff(merged, expected, CDSemantics.STA_CLOSED_WORLD));
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(merged, expected);
+    Assertions.assertEquals(new ArrayList<>(), syntaxDiff.getBaseDiff());
+
+    // witnesses should be empty
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(merged, expected);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
+    OD4ReportMill.init();
+
+    if (!witnesses.isEmpty()) {
+      for (ASTODArtifact witness : witnesses) {
+        System.out.println(OD4ReportMill.prettyPrint(witness, true));
+      }
+      // fail if witnesses is not empty
+      fail();
+    }
   }
 }

@@ -179,7 +179,7 @@ public class CDDiff {
   /**
    * Computes the semantic difference between cd1 and cd2 via syntax analysis.
    *
-   * @param cdSemantics can be: SIMPLE_CLOSED_WORLD, MULTI_INSTANCE_CLOSED_WORLD
+   * @param cdSemantics can be: SIMPLE_CLOSED_WORLD, STA_CLOSED_WORLD
    * @return list of diff-witnesses
    */
   public static List<ASTODArtifact> computeSyntax2SemDiff(

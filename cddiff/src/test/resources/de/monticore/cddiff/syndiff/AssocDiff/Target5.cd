@@ -1,0 +1,10 @@
+import java.lang.String;
+import java.lang.*;
+
+classdiagram Target4 {
+  class A2 {}
+
+  class A3 extends A2 {}
+
+  association [1] A2 <-> A3 [1];
+}

@@ -1,0 +1,39 @@
+import java.lang.*;
+classdiagram CD12{
+
+  class Person{
+    String name;
+    int age;
+    String add;
+    Degree degree;
+  }
+
+  class Professor extends Person{
+    int officeNum;
+    String dep;
+    boolean isAtRetAge;
+  }
+
+  class Assistant extends Person{
+    int workHours;
+  }
+
+  class Student extends Person{
+    int semester;
+    double score;
+  }
+
+  class Project{
+    String name;
+  }
+
+  class Homework{
+    int id;
+  }
+
+  enum Degree {BACHELOR, MASTER, PHD;}
+
+  association [1..*] Assistant (researchedBy) -> (topic) Project [*];
+  association [1] Student (writtenFrom) -> (did) Homework [1];
+
+}

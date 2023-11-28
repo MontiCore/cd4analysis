@@ -1,0 +1,7 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV9 {
+  class Item{}
+  class Storage{}
+}

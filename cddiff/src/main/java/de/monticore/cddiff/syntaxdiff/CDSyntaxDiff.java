@@ -264,9 +264,6 @@ public class CDSyntaxDiff {
     List<Pair<Integer, String>> onlyCD1Sort = new ArrayList<>();
     List<Pair<Integer, String>> onlyCD2Sort = new ArrayList<>();
 
-    // System.out.println("Scope: ");
-    // System.out.println(cd1.getEnclosingScope().getRealPackageName());
-
     initial
         .append(System.lineSeparator())
         .append("In the following the syntax diff between ")

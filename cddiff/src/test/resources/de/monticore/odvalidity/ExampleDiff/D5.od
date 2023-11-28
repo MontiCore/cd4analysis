@@ -1,0 +1,17 @@
+objectdiagram D5{
+
+  <<instanceof="Person, Student">> averageStud:Student{
+    String name = "student";
+    int age = 21;
+    String add = "InformatikZentrum";
+    int semester = 6;
+    Degree degree = MASTER;
+    double score = 2.5;
+  };
+
+  firstHom:Homework{
+    int id = 1;
+  };
+
+  link averageStud (writtenFrom) -> (did) firstHom;
+}

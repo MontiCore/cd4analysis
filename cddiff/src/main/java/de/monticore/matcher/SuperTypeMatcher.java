@@ -2,8 +2,8 @@ package de.monticore.matcher;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
 import de.monticore.cddiff.CDDiffUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,23 +24,36 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
 
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
-    return tgtCD.getEnclosingScope().resolveCDTypeDownMany(srcElem.getName()).stream()
-        .map(CDTypeSymbolTOP::getAstNode)
-        .collect(Collectors.toList());
+    List<ASTCDType> result = new ArrayList<>();
+
+    result.addAll(
+        tgtCD.getCDDefinition().getCDClassesList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDInterfacesList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
+    result.addAll(
+        tgtCD.getCDDefinition().getCDEnumsList().stream()
+            .filter(type -> isMatched(srcElem, type))
+            .collect(Collectors.toList()));
+
+    return result;
   }
 
   /**
-   * A boolean method which checks the source class of the srcCD is a sub class pf the srcClass of
+   * A boolean method which checks if the source class of the srcCD is a subclass of the srcClass of
    * the tgtCD and if the associations are the same
    *
    * @param srcElem element from srcCD
    * @param tgtElem element from tgtCD
-   * @return true if the source class of the tgtCD is a sub class of the tgt of the srcCD and if the
+   * @return true if the source class of the tgtCD is a subclass of the tgt of the srcCD and if the
    *     associations are the same
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    return checkSuperClass(srcElem, tgtElem, tgtCD);
+    return checkSuperClass(srcElem, tgtElem, srcCD);
   }
 
   /**
@@ -49,8 +62,8 @@ public class SuperTypeMatcher implements MatchingStrategy<ASTCDType> {
    * @param tgtElem element from tgtCD
    * @return true if srcClass from tgtCD is a Super Class of srcClass from srcCd
    */
-  public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit tgtCD) {
-    return CDDiffUtil.getAllSuperTypes(tgtElem, tgtCD.getCDDefinition()).stream()
-        .anyMatch(tgtSuper -> typeMatcher.isMatched(srcElem, tgtSuper));
+  public boolean checkSuperClass(ASTCDType srcElem, ASTCDType tgtElem, ASTCDCompilationUnit srcCD) {
+    return CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
+        .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
   }
 }

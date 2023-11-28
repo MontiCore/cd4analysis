@@ -1,0 +1,15 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV5 {
+  class Item{}
+
+  class Goods extends Item{
+    int itemId;
+    float price;
+  }
+
+  class Laptop extends Goods{
+    String model;
+  }
+}
