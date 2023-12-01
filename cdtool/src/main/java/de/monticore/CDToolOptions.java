@@ -440,7 +440,7 @@ public class CDToolOptions {
 
     options.addOption(
         Option.builder()
-            .longOpt("mapping")
+            .longOpt("map")
             .hasArg()
             .type(String.class)
             .argName("names")

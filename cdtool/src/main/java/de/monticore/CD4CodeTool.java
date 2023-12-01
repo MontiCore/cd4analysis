@@ -760,8 +760,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     CDDiffUtil.refreshSymbolTable(con);
     ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
     List<String> mappings = List.of("mapTo");
-    if (cmd.hasOption("mapping")) {
-      mappings = List.of(cmd.getOptionValues("mapping"));
+    if (cmd.hasOption("map")) {
+      mappings = List.of(cmd.getOptionValues("map"));
     }
     if (ref != null) {
       CDDiffUtil.refreshSymbolTable(ref);
