@@ -137,6 +137,8 @@ def withTagGen = ("true").equals(getProperty('genTagging'))
 publishing {
   publications {
     def publ = maven(MavenPublication)
+    // Use the Jar and grammarsJar, as well as the dependencies and module information from :cdlang
+    publ.from project(":cdlang").components.java
 
     // trafolib is different
     // cdtool as -tool
@@ -149,19 +151,17 @@ publishing {
       ":language-server"
     ]
 
-    subprojectsToBePublished.each { subprojectName ->
-      publ.artifact(project(subprojectName).tasks.jar) {
-        group "de.monticore.lang"
+    subprojectsToBePublished
+      .findAll { it != ':cdlang' }
+      .each { subprojectName ->
+        publ.artifact(project(subprojectName).tasks.jar) {
+          group "de.monticore.lang"
+        }
       }
-    }
 
     publ.artifact(project(":cdtool").tasks.jar){
       group "de.monticore.lang"
       classifier "tool"
-    }
-
-    publ.artifact(project(":cdlang").tasks.grammarsJar){
-      group "de.monticore.lang"
     }
 
     publ.artifact(project(":cdtool").tasks.shadowJar)
