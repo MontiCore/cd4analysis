@@ -13,6 +13,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.types.check.SymTypeExpression;
@@ -331,5 +332,11 @@ public class CDDiffUtil {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
     final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
     cd.accept(completer);
+  }
+
+  /** using pretty printer to print OD */
+  public static String printOD(ASTODArtifact astodArtifact) {
+    // pretty print the AST
+    return OD4ReportMill.prettyPrint(astodArtifact, true);
   }
 }

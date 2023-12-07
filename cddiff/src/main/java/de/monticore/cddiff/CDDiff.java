@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.printOD;
-
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -202,7 +200,7 @@ public class CDDiff {
     } else {
       result.append("\t *************************  Diff Witnesses  ************************* \n");
       for (ASTODArtifact od : witnesses) {
-        result.append(printOD(od)).append(System.lineSeparator());
+        result.append(CDDiffUtil.printOD(od)).append(System.lineSeparator());
       }
     }
     return result.toString();
@@ -212,7 +210,7 @@ public class CDDiff {
     try {
       File out = new File(outputDirectory);
       for (ASTODArtifact od : ods) {
-        String odDesc = printOD(od);
+        String odDesc = CDDiffUtil.printOD(od);
         Alloy2ODGenerator.saveOD(odDesc, od.getObjectDiagram().getName(), out);
       }
     } catch (Exception e) {
