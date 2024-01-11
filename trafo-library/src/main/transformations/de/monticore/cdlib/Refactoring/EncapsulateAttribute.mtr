@@ -14,9 +14,9 @@ transformation EncapsulateAttribute {
   assign {
     $get = "get" +  capitalize($attrname);
     $set = "set" +  capitalize($attrname);
-    $type = $A.getMCType().printType(new de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter(new de.monticore.prettyprint.IndentPrinter()));
+    $type = $A.getMCType().printType();
   }
   where {
-    !("boolean").equals($A.getMCType().printType(new de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter(new de.monticore.prettyprint.IndentPrinter())))
+    !("boolean").equals($A.getMCType().printType())
   }
 }
