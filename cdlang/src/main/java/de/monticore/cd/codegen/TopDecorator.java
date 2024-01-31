@@ -139,7 +139,7 @@ public class TopDecorator {
     Log.enableFailQuick(failQuickEnabled);
   }
 
-  private Optional<ASTStereotype> getStereotype(ASTCDClass cdClass) {
+  protected Optional<ASTStereotype> getStereotype(ASTCDClass cdClass) {
     ASTModifier modifier = cdClass.getModifier();
     if (modifier != null && modifier.isPresentStereotype()) {
       return Optional.of(modifier.getStereotype());
@@ -148,6 +148,11 @@ public class TopDecorator {
   }
 
   protected class DetermineNameVisitor implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
+
+    /**
+     * Public constructor to construct the {@link #nameMap}
+     */
+    public DetermineNameVisitor() { }
 
     protected String packageName = "";
 
