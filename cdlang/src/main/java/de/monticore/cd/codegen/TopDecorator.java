@@ -149,10 +149,8 @@ public class TopDecorator {
 
   protected class DetermineNameVisitor implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
 
-    /**
-     * Public constructor to construct the {@link #nameMap}
-     */
-    public DetermineNameVisitor() { }
+    /** Public constructor to construct the {@link #nameMap} */
+    public DetermineNameVisitor() {}
 
     protected String packageName = "";
 

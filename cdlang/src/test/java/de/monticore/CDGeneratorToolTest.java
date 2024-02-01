@@ -64,6 +64,34 @@ public class CDGeneratorToolTest {
   }
 
   @Test
+  public void testGeneratorToolWithEmptyCDWithPackage() {
+    CDGeneratorTool.main(
+        new String[] {
+          "-i",
+          "src/test/resources/de/monticore/cdgentool/model/EmptyWithPackage.cd",
+          "-c2mc",
+          "-o",
+          "target/generated/example/standard",
+        });
+
+    assertTrue(new File("target/generated/example/standard/model/EmptyWithPackage").isDirectory());
+  }
+
+  @Test
+  public void testGeneratorToolWithEmptyCDWithoutPackage() {
+
+    CDGeneratorTool.main(
+        new String[] {
+          "-i",
+          "src/test/resources/de/monticore/cdgentool/model/EmptyWithoutPackage.cd",
+          "-c2mc",
+          "-o",
+          "target/generated/example/standard",
+        });
+    assertTrue(new File("target/generated/example/standard/EmptyWithoutPackage").isDirectory());
+  }
+
+  @Test
   public void testGeneratorToolWithCustomGeneratorTemplate() {
     CDGeneratorTool.main(
         new String[] {
