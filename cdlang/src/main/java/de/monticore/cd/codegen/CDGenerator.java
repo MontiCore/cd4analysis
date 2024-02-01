@@ -3,6 +3,7 @@ package de.monticore.cd.codegen;
 
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -38,7 +39,19 @@ public class CDGenerator {
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
+    String packageName;
 
+    try {
+      packageName = ((CD4CodeArtifactScope) compilationUnit.getEnclosingScope()).getPackageName();
+    } catch (NullPointerException e) {
+      packageName = "";
+    }
+    Path p =
+        Paths.get(
+            setup.getOutputDirectory().getAbsolutePath(),
+            packageName,
+            compilationUnit.getCDDefinition().getName());
+    p.toFile().mkdirs();
     // generate packages
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
       String packageAsPath =
