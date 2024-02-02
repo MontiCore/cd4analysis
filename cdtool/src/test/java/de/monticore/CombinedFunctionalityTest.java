@@ -15,9 +15,9 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
@@ -54,7 +54,7 @@ public class CombinedFunctionalityTest {
     String base_path = "src/test/resources/de/monticore/macoco/";
 
     Set<ASTCDCompilationUnit> mergeSet =
-        Arrays.stream(new File(base_path + "parts/").listFiles())
+        Arrays.stream(Paths.get(base_path, "parts").toFile().listFiles())
             .map(f -> parseCDModel(f.getAbsolutePath()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
