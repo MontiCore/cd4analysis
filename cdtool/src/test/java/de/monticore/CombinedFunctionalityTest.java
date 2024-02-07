@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -50,8 +52,8 @@ public class CombinedFunctionalityTest {
   }
 
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
-@Disabled
-@Test // Fixed test
+  @Test // Fixed test
+  @Disabled // TODO
   public void testMaCoCo() {
     String base_path = "src/test/resources/de/monticore/macoco/";
 

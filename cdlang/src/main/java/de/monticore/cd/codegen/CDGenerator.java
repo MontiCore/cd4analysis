@@ -39,19 +39,18 @@ public class CDGenerator {
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
-    String packageName;
+    String packageName = (compilationUnit.isPresentMCPackageDeclaration()?
+                          compilationUnit.getMCPackageDeclaration().getMCQualifiedName().getQName(): "");
 
-    try {
-      packageName = ((CD4CodeArtifactScope) compilationUnit.getEnclosingScope()).getPackageName();
-    } catch (NullPointerException e) {
-      packageName = "";
-    }
-    Path p =
+    if(definition.getCDClassesList().isEmpty() && definition.getCDEnumsList().isEmpty() && definition.getCDInterfacesList().isEmpty()){
+      Path p =
         Paths.get(
-            setup.getOutputDirectory().getAbsolutePath(),
-            packageName,
-            compilationUnit.getCDDefinition().getName());
-    p.toFile().mkdirs();
+          setup.getOutputDirectory().getAbsolutePath(),
+          packageName,
+          compilationUnit.getCDDefinition().getName());
+      p.toFile().mkdirs();
+    }
+
     // generate packages
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
       String packageAsPath =
