@@ -3,7 +3,6 @@ package de.monticore.cd.codegen;
 
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -39,15 +38,19 @@ public class CDGenerator {
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
-    String packageName = (compilationUnit.isPresentMCPackageDeclaration()?
-                          compilationUnit.getMCPackageDeclaration().getMCQualifiedName().getQName(): "");
+    String packageName =
+        (compilationUnit.isPresentMCPackageDeclaration()
+            ? compilationUnit.getMCPackageDeclaration().getMCQualifiedName().getQName()
+            : "");
 
-    if(definition.getCDClassesList().isEmpty() && definition.getCDEnumsList().isEmpty() && definition.getCDInterfacesList().isEmpty()){
+    if (definition.getCDClassesList().isEmpty()
+        && definition.getCDEnumsList().isEmpty()
+        && definition.getCDInterfacesList().isEmpty()) {
       Path p =
-        Paths.get(
-          setup.getOutputDirectory().getAbsolutePath(),
-          packageName,
-          compilationUnit.getCDDefinition().getName());
+          Paths.get(
+              setup.getOutputDirectory().getAbsolutePath(),
+              packageName,
+              compilationUnit.getCDDefinition().getName());
       p.toFile().mkdirs();
     }
 
