@@ -4,7 +4,7 @@
 
 # Class Diagram Languages: CD4A, CD4C
 
-[[_TOC_]]
+
 
 This introduction is 
 intended for *modelers* who use the class diagram (CD)
