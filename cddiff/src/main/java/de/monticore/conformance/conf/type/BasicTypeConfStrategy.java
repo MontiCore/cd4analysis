@@ -189,21 +189,31 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     return ref.stream()
         .allMatch(
             refAssoc ->
-                con.stream()
-                    .anyMatch(cAssoc -> assocInc.getMatchedElements(cAssoc).contains(refAssoc)));
+                (refAssoc.getModifier().isPresentStereotype()
+                        && refAssoc.getModifier().getStereotype().contains("optional"))
+                    || con.stream()
+                        .anyMatch(
+                            cAssoc -> assocInc.getMatchedElements(cAssoc).contains(refAssoc)));
   }
 
   protected boolean checkAttributeIncarnation(Set<ASTCDAttribute> con, Set<ASTCDAttribute> ref) {
     return ref.stream()
         .allMatch(
             refAttr ->
-                con.stream().anyMatch(conAttr -> attributeChecker.isMatched(conAttr, refAttr)));
+                (refAttr.getModifier().isPresentStereotype()
+                        && refAttr.getModifier().getStereotype().contains("optional"))
+                    || con.stream()
+                        .anyMatch(conAttr -> attributeChecker.isMatched(conAttr, refAttr)));
   }
 
   protected boolean checkMethodIncarnation(Set<ASTCDMethod> con, Set<ASTCDMethod> ref) {
     return ref.stream()
         .allMatch(
-            refAttr -> con.stream().anyMatch(conAttr -> methodChecker.isMatched(conAttr, refAttr)));
+            refMethod ->
+                (refMethod.getModifier().isPresentStereotype()
+                        && refMethod.getModifier().getStereotype().contains("optional"))
+                    || con.stream()
+                        .anyMatch(conMethod -> methodChecker.isMatched(conMethod, refMethod)));
   }
 
   protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete) {

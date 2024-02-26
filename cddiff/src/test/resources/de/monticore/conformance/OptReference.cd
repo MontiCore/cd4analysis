@@ -1,0 +1,17 @@
+import java.lang.String;
+
+classdiagram OptReference {
+  class Account {
+    String username;
+    String password;
+  }
+
+  class Item {
+    String id;
+  }
+
+  association hasItems Account -> (items)Item;
+
+  <<optional>> class Clazz;
+  <<optional>> association Item -> (clazz)Clazz;
+}

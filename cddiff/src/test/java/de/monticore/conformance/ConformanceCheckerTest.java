@@ -23,6 +23,20 @@ public class ConformanceCheckerTest extends ConfAbstractTest {
   }
 
   @Test
+  public void testOptConformanceCheck() {
+    parseModels("Concrete.cd", "OptReference.cd");
+    checker =
+        new ConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                INHERITANCE,
+                ALLOW_CARD_RESTRICTION));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
   public void testConformanceCheckAdapter() {
     parseModels("adapter/GraphAdapter.cd", "adapter/Adapter.cd");
     checker =

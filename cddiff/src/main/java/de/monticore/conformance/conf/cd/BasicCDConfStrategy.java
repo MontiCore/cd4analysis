@@ -18,6 +18,8 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
   protected ConformanceStrategy<ASTCDType> typeChecker;
   protected ConformanceStrategy<ASTCDAssociation> assocChecker;
 
+  protected String optTag = "optional";
+
   public BasicCDConfStrategy(
       ASTCDCompilationUnit refCD,
       MatchingStrategy<ASTCDType> typeInc,
@@ -72,7 +74,9 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     boolean conform = true;
 
     for (ASTCDType refType : refTypes) {
-      if (conTypes.stream().noneMatch(conType -> typeInc.isMatched(conType, refType))) {
+      if (!(refType.getModifier().isPresentStereotype()
+              && refType.getModifier().getStereotype().contains(optTag))
+          && conTypes.stream().noneMatch(conType -> typeInc.isMatched(conType, refType))) {
         Log.println(refType.getSymbol().getInternalQualifiedName() + " has no incarnation!");
         conform = false;
       }
@@ -85,8 +89,10 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     boolean conform = true;
 
     for (ASTCDAssociation refAssoc : refCD.getCDDefinition().getCDAssociationsList()) {
-      if (concrete.getCDDefinition().getCDAssociationsList().stream()
-          .noneMatch(conAssoc -> assocInc.isMatched(conAssoc, refAssoc))) {
+      if (!(refAssoc.getModifier().isPresentStereotype()
+              && refAssoc.getModifier().getStereotype().contains(optTag))
+          && concrete.getCDDefinition().getCDAssociationsList().stream()
+              .noneMatch(conAssoc -> assocInc.isMatched(conAssoc, refAssoc))) {
         System.out.println(CD4CodeMill.prettyPrint(refAssoc, false) + " has no incarnation!");
         conform = false;
       }
