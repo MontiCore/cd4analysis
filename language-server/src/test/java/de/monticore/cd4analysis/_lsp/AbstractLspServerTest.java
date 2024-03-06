@@ -3,7 +3,6 @@ package de.monticore.cd4analysis._lsp;
 import de.mclsg.lsp.util.AsyncUtilWithSyncExec;
 import de.monticore.io.paths.MCPath;
 import java.nio.file.Path;
-
 import org.eclipse.lsp4j.InitializedParams;
 import org.junit.jupiter.api.BeforeEach;
 
