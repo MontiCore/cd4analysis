@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDInterfaceCoCo;
-import de.monticore.cdinterfaceandenum._util.CDInterfaceAndEnumTypeDispatcher;
+import de.monticore.cdinterfaceandenum._util.ICDInterfaceAndEnumTypeDispatcher;
 import de.se_rwth.commons.logging.Log;
 
 public class CDAttributeInInterfaceIsPublic implements CDInterfaceAndEnumASTCDInterfaceCoCo {
@@ -17,10 +17,10 @@ public class CDAttributeInInterfaceIsPublic implements CDInterfaceAndEnumASTCDIn
 
   @Override
   public void check(ASTCDInterface node) {
-    CDInterfaceAndEnumTypeDispatcher typeDispatcher = CDInterfaceAndEnumMill.typeDispatcher();
+    ICDInterfaceAndEnumTypeDispatcher typeDispatcher = CDInterfaceAndEnumMill.typeDispatcher();
     for (ASTCDMember member : node.getCDMemberList()) {
-      if (typeDispatcher.isASTCDAttribute(member)) {
-        ASTCDAttribute attribute = typeDispatcher.asASTCDAttribute(member);
+      if (typeDispatcher.isCDBasisASTCDAttribute(member)) {
+        ASTCDAttribute attribute = typeDispatcher.asCDBasisASTCDAttribute(member);
         if (attribute.getModifier().isProtected() || attribute.getModifier().isPrivate()) {
           Log.error(String.format(ERROR_CODE + " " + ERROR_MSG, member.get_SourcePositionStart()));
         }
