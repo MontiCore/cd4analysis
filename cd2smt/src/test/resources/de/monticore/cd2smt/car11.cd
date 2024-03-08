@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.* ;
+ classdiagram car11 {
+    class Car {
+      double price;
+      String  manufacturer;
+      int numberOfWheel;
+      boolean isExpensive ;
+    }
+
+ }

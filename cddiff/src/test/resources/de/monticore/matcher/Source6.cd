@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram Source5 {
+  class Customer{
+    int a;
+    int b;
+    int c;
+    int d;
+  }
+}

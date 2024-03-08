@@ -1,0 +1,39 @@
+import java.lang.* ;
+ classdiagram car {
+
+    class BigCar extends Car {
+      boolean  isBig;
+    }
+
+    class Car  extends Element{
+      double price;
+      String  manufacturer;
+    }
+
+    class Motor extends Element{
+     int power ;
+    }
+
+    class Driver{
+     String name ;
+     int age;
+    }
+
+    class BigWheel extends Element{
+      boolean isBigWheel ;
+    }
+
+    class Element{
+      double weight;
+      String name;
+    }
+
+    class Colour;
+
+   association [1] Car(car)      --  (motor)    Motor[1];
+   association [1] Car           --             Driver[1];
+   association [1] BigCar        --             BigWheel[0..1];
+   association [1] Element        --            Colour[1..*];
+
+ }
+

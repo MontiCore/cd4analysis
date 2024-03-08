@@ -1,0 +1,40 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.String;
+import java.util.Date;
+
+classdiagram Lecture1 {
+
+  abstract class Being;
+
+  abstract class Person extends Being{
+    String fullName;
+    Date birthday;
+  }
+
+  interface Presenting;
+
+  interface Lecturer extends Presenting;
+
+  class Professor extends Person implements Lecturer{
+    String chair;
+  }
+
+  class PostDoc extends Person implements Lecturer;
+
+  class Lecture{
+    int credits;
+  }
+
+  class Room{
+    int id;
+  }
+
+  class Student extends Person{
+    int matrNr;
+  }
+
+  association [1] Lecturer (heldBy) -> (holds) Lecture [1..*];
+  association [*] Lecture (lecture) <-> (room) Room [1..*];
+  association [*] Lecture (attends) <- (attendees) Student [*];
+}

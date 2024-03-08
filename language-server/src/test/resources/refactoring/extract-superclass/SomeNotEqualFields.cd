@@ -1,0 +1,13 @@
+classdiagram SomeNotEqualFields {
+  class Class1 {
+    int field;
+    String a;
+  }
+  class Class2 {
+    String name;
+    int field;
+  }
+  class Class3 {
+    int field;
+  }
+}

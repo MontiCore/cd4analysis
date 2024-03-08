@@ -1,0 +1,10 @@
+classdiagram EmpA {
+
+  class Employee {
+  }
+
+  class Manager extends Employee {
+  }
+
+  association [*] Employee (manages) -> (managedBy) Manager [1];
+}

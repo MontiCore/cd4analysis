@@ -1,0 +1,19 @@
+import java.lang.String;
+
+classdiagram Source1 {
+  enum AddedEnum{a,b;}
+  enum MatchedEnum{k,m;}
+  class A {
+    int a;
+    String d;
+  }
+
+  class C{
+    int m;
+    AddedEnum a;
+  }
+
+  class B{}
+
+  association match A -> (b) B;
+}

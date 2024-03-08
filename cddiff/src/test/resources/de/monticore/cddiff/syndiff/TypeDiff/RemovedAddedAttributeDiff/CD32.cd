@@ -1,0 +1,12 @@
+import java.lang.*;
+classdiagram CD32{
+
+  abstract class A{
+    int age;
+  }
+
+  class B extends A{}
+
+  class C extends B{
+  }
+}

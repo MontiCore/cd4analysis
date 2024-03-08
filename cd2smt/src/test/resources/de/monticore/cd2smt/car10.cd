@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.* ;
+classdiagram car10 {
+
+   class BigBigCar  extends BigCar;
+
+   class BigCar extends Car;
+
+   class Car  extends Element;
+
+   class Motor extends Element;
+
+   class Driver;
+
+   class BigWheel extends Element;
+
+   class Element;
+
+   class Colour;
+
+  association [1] Car(car)      --  (motor)    Motor[1];
+  association [1] Car           --             Driver[1];
+  association [1] BigCar        --             BigWheel[0..1];
+  association [1] Element        --            Colour[1..*];
+
+}

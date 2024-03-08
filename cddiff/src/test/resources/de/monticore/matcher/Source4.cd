@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram Source4 {
+  class Customer{
+    int a;
+    double b;
+  }
+}

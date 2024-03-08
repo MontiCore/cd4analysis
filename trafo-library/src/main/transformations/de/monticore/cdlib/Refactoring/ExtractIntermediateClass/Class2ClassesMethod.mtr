@@ -1,0 +1,32 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation Class2ClassesMethod {
+  classdiagram $_{
+    class $parent;
+
+    class $subclass1 extends [[ $parent :- $newParent ]] {
+      [[ CDMethod $A1  :- ]]
+    }
+
+    class $subclass2 extends [[ $parent :- $newParent ]]{
+       [[ CDMethod $A2 :- ]]
+    }
+
+    [[ :- class $newParent extends $parent{
+       CDMethod $A1
+    } ]]
+
+    /*not <CDClass>  [[ class $_ extends $parent{
+      CDMethod $A
+    } ]]*/
+  }
+
+  assign{
+    $newParent = $subclass1.concat($subclass2);
+  }
+
+  where{
+    $A2.deepEquals($A1)/*&&
+    $A.deepEquals($A1)*/
+  }
+}

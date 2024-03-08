@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram Source3 {
+  class A extends B{
+    int a;
+  }
+  class B extends C{}
+  class C extends D{}
+  class D{}
+}

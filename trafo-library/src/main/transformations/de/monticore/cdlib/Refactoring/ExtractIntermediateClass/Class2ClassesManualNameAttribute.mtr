@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+transformation Class2ClassesManualNameAttribute {
+  classdiagram $_{
+    class $parent;
+
+    class $subclass1 extends [[ $parent :- $newParent ]] {
+      [[ CDAttribute $A1  :- ]]
+    }
+
+    class $subclass2 extends [[ $parent :- $newParent ]] {
+       [[ CDAttribute $A2 :- ]]
+    }
+
+    [[ :- class $newParent extends $parent{
+       CDAttribute $A1
+    } ]]
+  }
+
+  where{
+    $A2.deepEquals($A1)
+  }
+}

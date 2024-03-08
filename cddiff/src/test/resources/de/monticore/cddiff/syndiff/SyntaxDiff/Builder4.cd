@@ -1,0 +1,17 @@
+import java.lang.*;
+
+classdiagram Builder4 {
+
+  class A2 {}
+
+  class A3 {}
+
+  class A4 {}
+
+  class A5 extends A4 {}
+
+  association [1] A2 <-> (r) A5 [1..*];
+  association [*] A4 (q) <- A2 [1];
+  association [1] A4 -> A3 [0..1];
+
+}

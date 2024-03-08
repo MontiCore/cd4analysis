@@ -1,0 +1,31 @@
+import java.lang.String;
+
+classdiagram Target1 {
+  enum EnumsCheck{deleted, matched;}
+
+  enum DeletedEnumCheck{enumTwo;}
+
+   private class A{
+    EnumsCheck deleted;
+    double changed;
+    double deletedDouble;
+  }
+
+  class B extends C{}
+
+  class C{
+    int inheritedAttribute;
+    EnumsCheck inheritedEnumConstant;
+  }
+
+  class DeletedClassWithAttributes{
+    String stringOne;
+  }
+
+  class DeletedClassEmpty{}
+
+  association [0..1] A -> C [1..*];
+  association old [*] A -> B [1];
+  association [*] A -> DeletedClassWithAttributes [1];
+  association [*] C -> B [1];
+}

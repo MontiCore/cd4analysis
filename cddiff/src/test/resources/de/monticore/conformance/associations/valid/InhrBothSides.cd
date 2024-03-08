@@ -1,0 +1,15 @@
+import java.lang.String;
+
+classdiagram InhrBothSide {
+
+abstract  class AccountTop;
+abstract  class PersonTop;
+
+  class Account extends AccountTop;
+ <<ref="Account">> class BankAccount extends AccountTop;
+
+  class Person  extends PersonTop;
+
+  association belongTo AccountTop    -> Person[1];
+  association access   PersonTop     -> Account[*];
+}

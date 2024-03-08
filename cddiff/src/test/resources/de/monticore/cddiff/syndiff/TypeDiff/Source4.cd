@@ -1,0 +1,12 @@
+import java.lang.String;
+
+classdiagram Source4 {
+  class A implements B{
+    int a;
+    double b;
+  }
+
+  class B implements C{}
+
+  class C{}
+}

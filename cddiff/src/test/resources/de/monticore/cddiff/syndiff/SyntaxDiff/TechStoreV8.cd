@@ -1,0 +1,15 @@
+import java.lang.*;
+import java.util.Date;
+
+classdiagram TechStoreV8 {
+  enum State{succRepaired, partRepaired, unsuccRepaired;}
+
+  class Item{
+    int itemId;
+    String name;
+    String model;
+    float price;
+    State state;
+    int storageAvailability;
+  }
+}

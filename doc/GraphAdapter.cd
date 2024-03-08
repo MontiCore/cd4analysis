@@ -1,0 +1,35 @@
+classdiagram GraphAdapter {
+
+  // Client and Target
+
+  <<m1="Client", m2="Client">> class GraphicalEditor;
+
+  <<m1="Target", m2="Target">> interface GraphicalObject {
+    <<m1="operation", m2="operation">> void display();
+  }
+
+  association GraphicalEditor -> (uses) GraphicalObject;
+
+
+  // Adapter Pattern for Nodes
+
+  <<m1="Adapter">> class NodeAdapter implements GraphicalObject;
+
+  <<m1="Adaptee">> class Node{
+    <<m1="myOperation">> void getLabel();
+  }
+
+  association [1] NodeAdapter -> (adapts) Node [1];
+
+
+  // Adapter Pattern for Edges
+
+  <<m2="Adapter">> class EdgeAdapter implements GraphicalObject;
+
+  <<m2="Adaptee">> class Edge{
+    <<m2="myOperation">> void getLabel();
+  }
+
+  association [1] EdgeAdapter -> (adapts) Edge [1];
+
+}

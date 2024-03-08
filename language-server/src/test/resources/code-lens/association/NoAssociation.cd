@@ -1,0 +1,7 @@
+classdiagram NoAssociation {
+  class A;
+  class B extends A;
+  class C {
+    B b;
+  }
+}

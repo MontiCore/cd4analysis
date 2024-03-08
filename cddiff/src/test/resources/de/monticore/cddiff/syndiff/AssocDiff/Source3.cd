@@ -1,0 +1,12 @@
+import java.lang.String;
+
+classdiagram Source3 {
+  class A1;
+  class A2;
+  class A3;
+  class A4;
+
+  association [1..*] A1 -> A2 [0..1];
+  association [1] A2 <-> A3 [1..*];
+  association [*] A4 <- A2 [0..1];
+}

@@ -1,0 +1,214 @@
+/* (c) https://github.com/MontiCore/monticore */
+/* Originated by MontiCore/RWTH Aachen (CC BY 4.0)*/
+
+import java.time.ZonedDateTime;
+
+classdiagram Application {
+
+  class Projekt;
+  class Arbeitspaket;
+  class Person;
+  class Konto;
+  class DomainUser;
+  class Institut;
+  class F1Konto;
+  class Buchung;
+  class Freitext;
+
+
+
+  //----------------------------------------------
+  // =============== Stundenzettel ===============
+  //----------------------------------------------
+
+  class Stundenzettel {
+    StundenzettelStatus status;
+    ZonedDateTime zeit;
+    Optional<Long> abgegebenVonUserId;
+    Optional<ZonedDateTime> abgabeDatum;
+  }
+
+  association [1] Stundenzettel -> (eintraege) StundenzettelEintrag [*];
+
+  class StundenzettelEintrag {
+    ZonedDateTime uhrzeitVon;
+    Optional<ZonedDateTime> uhrzeitBis;
+    Optional<String> beschreibung;
+    /long stunden;
+    StundenzettelProjekt pauseOderSonstiges;
+  }
+
+  association [*] StundenzettelEintrag ->  Projekt [0..1];
+  association [*] StundenzettelEintrag ->  Arbeitspaket [0..1];
+
+  class StundenzettelHistorieEintrag {
+    ZonedDateTime bearbeitungsdatum;
+    Optional<Long> editorId;
+    Optional<String> editedBy;
+    String monat;
+    int jahr;
+    String changeOperation;
+  }
+
+  enum StundenzettelChangeOperation {
+    INVALID,
+    ABGEGEBEN,
+    INTERN_GEPRUEFT,
+    INTERN_ABGESCHLOSSEN;
+  }
+
+  association [1] Person ->  StundenzettelHistorieEintrag [*];
+
+  class Abwesenheit {
+    Abwesenheitsgrund grund;
+    ZonedDateTime  datumVon;
+    ZonedDateTime datumBis;
+    Optional<String> kommentar;
+    Optional<ZonedDateTime> uhrzeitVon;
+    Optional<ZonedDateTime> uhrzeitBis;
+    /long tageGesamt;
+    /long arbeitstage;
+  }
+
+  association [*] Abwesenheit -> Konto [0..1];
+
+  association [1] Abwesenheit -> UrlaubsGenehmigung [0..1];
+
+  class Arbeitstage {
+    ZonedDateTime guiltigAb;
+    ZonedDateTime guiltigBis;
+    List<Integer> wochenTage;
+  }
+
+  association [1] Person -> Arbeitstage [*];
+
+  class Jahresurlaub {
+    int jahr;
+    long tageAnzahl;
+    boolean istManuellerEintrag;
+  }
+
+  class UrlaubsGenehmigung {
+    Optional<ZonedDateTime> beantragt;
+    Optional<ZonedDateTime> genehmigt;
+    Optional<ZonedDateTime> geprueft;
+    Urlaubssstatus status;
+  }
+
+  class Sonderurlaub {
+    ZonedDateTime  datumVon;
+    ZonedDateTime datumBis;
+    long anzahl;
+  }
+
+  enum Abwesenheitsgrund {
+    U_URLAUB,
+    D_DIENSTREISE,
+    S_SONSTIGE;
+  }
+
+  enum Urlaubssstatus {
+    NONE,
+    BEANTRAGT,
+    GEPRUEFT,
+    PRUEFUNG_ABGELEHNT,
+    GENEHMIGT,
+    GENEHMIGUNG_ABGELEHNT;
+  }
+
+  enum StundenzettelStatus {
+    IN_ERFASSUNG,
+    INTERN_INPRUEFUNG,
+    INTERN_ABGESCHLOSSEN,
+    DRITTMITTELABTEILUNG_INPRUEFUNG,
+    DRITTMITTELABTEILUNG_ABGESCHLOSSEN,
+    ENDBERICHT_EINGEREICHT,
+    GEPRUEFT,
+    FOERDERGEBER_ABGESCHLOSSEN,
+    ABGESCHLOSSEN;
+  }
+
+  enum StundenzettelProjekt {
+    PAUSE,
+    SONSTIGE,
+    NONE;
+  }
+
+
+  //----------------------------------------------
+  // =============== Data Import ===============
+  //----------------------------------------------
+
+  // SAP API
+  class SAPVerbindung {
+    SAPverbindungsStatus status;
+  }
+
+  class Anfrage {
+    int ikz;
+    String bezeichner;
+    boolean letzteAnfrageErfolgreich;
+  }
+
+  enum SAPverbindungsStatus {
+    VERBUNDEN,
+    GETRENNT,
+    PROBLEM;
+  }
+
+  class PSPImportFilter{
+    boolean importThisPSPelement;
+    String name;
+    String pspElement;
+    Optional<ZonedDateTime> startDate;
+  }
+
+  association [*] PSPImportFilter -> (targetPSP) Konto [0..1];
+  association [1] SAPVerbindung -> (authorizedBy) DomainUser [*];
+  association [1] DomainUser -> (anfragen) Anfrage [*];
+  association [1] Anfrage -> (filteredKonten) PSPImportFilter [*];
+
+  class ExternKonto extends Konto {
+    Optional<ZonedDateTime> startDatum;
+    Optional<ZonedDateTime> endDatum;
+    Optional<String> importVermerk;
+    AbgleichType abgleichVerhalten;
+  }
+
+  enum AbgleichType {
+    IGNORE,
+    MANUEL,
+    AUTO_COPY;
+  }
+
+  association [*] ExternKonto -> (institut) Institut [0..1];
+  association [*] F1Konto -> (institut) Institut [0..1];
+
+  //----------------------------------------------
+  //Abgleich
+
+  class AbgleichsBuchung extends Buchung {
+      AbgleichsStatus abgleichsStatus;
+      Optional<String> abgleichKommentar;
+      String positionsNummer;
+      boolean deactivated;
+  }
+
+    enum AbgleichsStatus {
+      ABGESCHLOSSEN,
+      TEILWEISE_ABGESCHLOSSEN,
+      ABWEICHEND,
+      OFFEN,
+      VORGESCHLAGEN;
+    }
+
+  class AbgleichsGruppe {
+    String bezeichnung;
+  }
+
+  association AbgleichsGruppe -> (buchungen) Buchung [*];
+  association AbgleichsGruppe -> (abgleichsBuchungen) AbgleichsBuchung [*];
+  association AbgleichsGruppe -> (konto) Konto [1];
+
+
+}

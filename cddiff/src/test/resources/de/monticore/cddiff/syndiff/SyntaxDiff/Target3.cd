@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram Target3 {
+  class A extends B{}
+  class B extends C{}
+  class C extends D{}
+  class D{
+    int a;
+  }
+}

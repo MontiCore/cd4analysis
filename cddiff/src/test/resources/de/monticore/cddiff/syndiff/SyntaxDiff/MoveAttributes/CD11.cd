@@ -1,0 +1,22 @@
+import java.lang.*;
+classdiagram CD11{
+
+  class A extends D{
+  }
+
+  class B extends E{
+  }
+
+  class C extends E{
+  }
+
+  abstract class D{
+    int age;
+  }
+
+  abstract class E extends D{
+    String name;
+  }
+  //Refactoring of attributes with new abstract classes
+  //No diff-witness
+}

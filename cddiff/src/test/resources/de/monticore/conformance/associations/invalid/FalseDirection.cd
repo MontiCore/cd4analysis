@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram FalseDirection {
+
+  class AccountTop;
+
+  class Account extends AccountTop;
+
+  class Person ;
+
+  association belongTo Account    -> Person[1];
+  association access   Person      -> AccountTop [*];
+}

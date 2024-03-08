@@ -1,0 +1,11 @@
+import java.lang.String;
+
+classdiagram Target2 {
+  class Employee;
+
+  class Woman extends Employee;
+
+  class Customer;
+
+  association  CustomerService  [1..*] Customer (consults) <- (isConsultedBy) Woman [1..*];
+}

@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram car15 {
+
+   interface AutoInterface1;
+   interface AutoInterface2;
+   interface AutoInterface extends AutoInterface1, AutoInterface2;
+
+   class Color;
+   class Driver ;
+
+  class Auto implements AutoInterface;
+
+  association [1] AutoInterface1      --      Color[1];
+
+  association [1] AutoInterface2      --       Driver[1];
+
+
+}

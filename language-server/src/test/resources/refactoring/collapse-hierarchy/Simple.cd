@@ -1,0 +1,8 @@
+classdiagram Simple {
+  class Class1 {
+  }
+
+  class Class2 extends Class1 {
+    String field;
+  }
+}

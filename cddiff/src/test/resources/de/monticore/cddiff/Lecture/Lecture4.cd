@@ -1,0 +1,39 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.String;
+import java.util.Date;
+
+classdiagram Lecture3 {
+
+  abstract class Being;
+
+  abstract class Person{
+    String fullName;
+    Date birthday;
+  }
+
+  interface Presenting;
+
+  interface Lecturer;
+
+  class Professor{
+    String chair;
+  }
+
+  class PostDoc;
+
+  class Lecture{
+    int credits;
+  }
+
+  class Room{
+    int id;
+  }
+
+  class Student {
+    String fullName;
+    Date birthday;
+    int matrNr;
+  }
+
+}

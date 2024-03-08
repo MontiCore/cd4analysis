@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram Target3 {
+  private class A extends B{}
+
+  class B{}
+
+  public class C implements D{}
+
+  class D{}
+
+  class E{}
+}

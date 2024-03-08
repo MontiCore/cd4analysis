@@ -1,0 +1,6 @@
+/* (c) https://github.com/MontiCore/monticore */
+//conforms to AutomataSchema;
+tags TestComplete for Complete {
+ tag Complete with TaggedBy="TestComplete";
+ tag A with Exception;
+}

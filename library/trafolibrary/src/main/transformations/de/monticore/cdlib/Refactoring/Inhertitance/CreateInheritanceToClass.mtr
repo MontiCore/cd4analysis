@@ -1,7 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdlib.refactoring.inheritance.tf;
-transformation CreateInheritanceToClass {
-  classdiagram $_ {
-    class $subclass [[ :- extends $superclass ]] ;
-  }
-}

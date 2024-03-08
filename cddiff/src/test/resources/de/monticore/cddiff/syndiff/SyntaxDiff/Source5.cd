@@ -1,0 +1,16 @@
+import java.lang.String;
+
+classdiagram Source5 {
+  class ASTTechStore{}
+
+  public class ASTItem{
+    int itemID;
+    double price;
+  }
+
+  class Customer{}
+
+  association Customer -> (buys) ASTItem [*];
+
+  association storage ASTTechStore -> ASTItem [1..*];
+}

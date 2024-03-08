@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram Target4 {
+  class A;
+  class B;
+  class C;
+  class D;
+
+  association matchOne A -> D;
+  association matchTwo C -> B;
+  association matchThree D <- A;
+  association matchFour B <- D;
+}

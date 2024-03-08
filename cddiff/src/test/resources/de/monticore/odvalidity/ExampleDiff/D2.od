@@ -1,0 +1,10 @@
+objectdiagram D2{
+
+  <<instanceof="Person, Assistant">> goodAssistant:Assistant{
+    String name = "veryGoodAssistant";
+    int age = 28;
+    String add = "InformatikZentrum";
+    int workHours = 168;
+    Degree degree = MASTER;
+  };
+}

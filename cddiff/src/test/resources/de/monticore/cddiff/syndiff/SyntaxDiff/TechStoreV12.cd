@@ -1,0 +1,16 @@
+import java.lang.*;
+import java.util.Date;
+
+//Staro
+classdiagram TechStoreV12 {
+  class Item{}
+
+  class Goods extends Item{
+    int itemId;
+    float price;
+  }
+
+  class Laptop extends Goods{
+    String model;
+  }
+}

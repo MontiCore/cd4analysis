@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.Refactoring;
+import de.monticore.cdlib.TransformationUtil;
+transformation ClassAttribute {
+  classdiagram $_{
+
+    class $parent;
+
+    $b [[class $subclass1 extends [[ $parent :- $newParent ]] {
+      [[ CDAttribute $A1  :- ]]
+    } ]]
+
+    list $listName [[ $subclass [[class $_ extends [[$parent :- $newParent]] {
+      [[ CDAttribute $A2  :- ]]
+    }]] ]]
+
+    [[ :- $S [[ class $newParent extends $parent{
+       CDAttribute $A1
+    } ]] ]]
+  }
+
+  assign{
+    $newParent = "NewParentClass"+$subclass1;
+  }
+
+  where{
+    $A1.deepEquals($A2)
+  }
+
+  do{
+    List<de.monticore.cdbasis._ast.ASTCDClass> subs = Lists.newArrayList(get_$b());
+    subs.addAll(get_$subclass());
+    TransformationUtil.calculateAndSetName(get_$S(), subs);
+  }
+}

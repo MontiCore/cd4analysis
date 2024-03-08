@@ -1,0 +1,22 @@
+import java.lang.*;
+
+classdiagram Builder7 {
+
+  class A2 {}
+
+  class A3 {}
+
+  class A4 {}
+
+  abstract class C {}
+
+  abstract class A extends C {}
+
+   class A1 extends A {}
+
+  association [1..*] A <- A2 [1];
+  association [1..*] C <- A2 [1];
+  association [1] A1 <- A3 [1];
+  association [1] A1 <- A4 [0..1];
+
+}

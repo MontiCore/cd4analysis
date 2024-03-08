@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.String;
+import java.util.Date;
+
+classdiagram Machines5 {
+
+  interface UI;
+
+  abstract class Machine;
+
+  package old {
+    class Computer extends Machine implements UI;
+    class Car extends Machine implements UI;
+  }
+
+  package new {
+    class Computer extends Machine implements UI;
+    class Car extends Machine implements UI;
+    class Truck extends Machine implements UI;
+  }
+
+  package future {
+    class FlyingCar extends new.Car;
+    class SpaceCar extends FlyingCar;
+    class FutureThing;
+  }
+
+  class WeirdUI implements UI;
+
+  package ancient {
+    class Wheel extends Machine;
+  }
+
+}

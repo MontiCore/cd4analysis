@@ -1,0 +1,11 @@
+import java.lang.String;
+
+classdiagram Refinement4 {
+  class Customer{
+    double a;
+    double b;
+    double c;
+    double d;
+    double e;
+  }
+}

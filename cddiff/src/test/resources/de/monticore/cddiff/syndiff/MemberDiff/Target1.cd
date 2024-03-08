@@ -1,0 +1,7 @@
+import java.lang.String;
+
+classdiagram Target1 {
+  class A{
+    int a;
+  }
+}

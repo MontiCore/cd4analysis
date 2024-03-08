@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.* ;
+classdiagram car12 {
+ class BigCar {
+    boolean isExpensive ;
+    String name;
+    int numberOfWheel ;
+    double price ;
+  }
+
+ class Motor {
+    double price ;
+ }
+
+ class Driver{
+  String name ;
+ }
+
+  association [1] BigCar(car)      --  (motor) Motor[1];
+  association [1] Driver        --          BigCar[1];
+}

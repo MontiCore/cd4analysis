@@ -1,0 +1,14 @@
+import java.lang.String;
+
+classdiagram Target2 {
+  enum EnumsCheck{e;}
+
+  class A{
+    int a;
+  }
+
+  class B{
+    EnumsCheck e;
+    int i;
+  }
+}

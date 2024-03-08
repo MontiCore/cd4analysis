@@ -1,0 +1,10 @@
+classdiagram MyCompany {
+  class Company {
+  }
+  class Employee {
+  }
+  class Share {
+  }
+  association [1..*] Company (employer) <-> Employee [*];
+  association shareholding [1] Employee (shareholder) -- (owns) Share [*];
+}

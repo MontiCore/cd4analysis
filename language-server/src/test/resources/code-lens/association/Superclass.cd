@@ -1,0 +1,7 @@
+classdiagram Superclass {
+  class A;
+  class C;
+  class B extends A;
+
+  association [1] A -> C [1];
+}

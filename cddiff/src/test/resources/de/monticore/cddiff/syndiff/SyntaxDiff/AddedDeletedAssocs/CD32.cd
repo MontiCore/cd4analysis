@@ -1,0 +1,15 @@
+import java.lang.*;
+classdiagram CD32{
+
+  class A{}
+
+  class B{
+    int age;
+    String name;
+   }
+
+  class D{}
+
+  association [1] D -> (d) B [1];
+  association [1] A -> (r) D [0..1];
+}

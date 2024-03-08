@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram DigitalTwin1 {
+
+class Machine;
+class DigitalTwin {
+  -> (models) Model [*];
+  -> (shadows) DigitalShadow [*];
+}
+class Model;
+class DigitalShadow;
+
+association [*] DigitalTwin (twins) -> (original) Machine [1];
+
+
+}

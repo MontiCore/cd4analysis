@@ -4,38 +4,19 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 /* (c) https://github.com/MontiCore/monticore */
 
 plugins {
-  id "java"
-  id "monticore" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
-  id "com.github.johnrengelman.shadow" version "6.0.0" apply false
-  id "io.github.themrmilchmann.ecj" version "0.2.0" // Eclipse compiler as it's much faster than javac
-  id 'org.unbroken-dome.test-sets' version '4.0.0'
+  id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false) // Eclipse compiler as it's much faster than javac
   id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
 
-def var_path = "de.monticore"
-if (hasProperty('bootstrap')) {
-  group = "de.monticore.lang.bs"
-  var_path = "de.monticore.bs"
-} else {
-  group = "de.monticore.lang"
-}
-
 description = "CD4Analysis"
-sourceCompatibility = JavaVersion.VERSION_11
 buildDir = file("$projectDir/target")
 
 ext {
-  grammar_classifier = "grammars"
-  grammarDir = "src/main/grammars"
-  grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
-  trGrammarOutDir = "$buildDir/generated-sources/monticore-tr/sourcecode"
-  testGrammarDir = "src/test/grammars"
-  testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
   findbugs_version = "3.0.2"
   guava_version = "31.1-jre"
   antlr_version = "4.12.0"
-  plantuml_version = "1.2023.7"
+  plantuml_version = "1.2020.15"
   jackson_version = "2.13.4"
   junit_version = "5.9.0"
   commons_cli_version = "1.5.0"
@@ -48,178 +29,30 @@ ext {
   apache_commons_version = '4.4'
 }
 
-
-googleJavaFormat {
-  exclude '**/target/**'
+repositories {
+  mavenCentral()
 }
 
-verifyGoogleJavaFormat{
-  ignoreFailures true
-  exclude "**"
-}  // do not check format in "build"
+subprojects {
+  apply plugin: 'java-library'
+  apply plugin: 'io.github.themrmilchmann.ecj'
+  apply plugin: 'maven-publish'
 
-task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
+  sourceCompatibility = JavaVersion.VERSION_11
 
-task fmt {
-  dependsOn tasks.named("googleJavaFormat")
-}
-
-
-// configure non-standard source sets
-def genDir = "$buildDir/generated-sources/monticore/sourcecode"
-def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
-
-sourceSets {
-  main {
-    java.srcDirs += ["$genDir"]
-  }
-  test {
-    java.srcDirs += ["$testGenDir"]
-  }
-  grammars {
-    resources {
-      srcDirs([grammarDir, grammarOutDir])
-      include "**/*.mc4"
+  if (!hasProperty('bootstrap')) {
+    allprojects {
+      group = "de.monticore.lang.cd4analysis"
+    }
+  } else {
+    allprojects {
+      group = "de.monticore.lang.bs.cd4analysis"
     }
   }
-  trafo {
-    java.srcDirs = [trGrammarOutDir]
-  }
-  cd2plantuml {
-    java {}
-  }
-  cd2plantumltest {
-    java {}
-  }
-  cddiff {
-    java {}
-  }
-  cddifftest {
-    java {}
-  }
-  cdmerge {
-    java {}
-  }
-  cdmergetest {
-    java {}
-  }
-  cd2smt {
-    java {}
-  }
-  cd2smttest {
-    java {}
-  }
-  tool {
-    java {}
-  }
-  tooltest {
-    java {}
-  }
-}
 
-configurations {
-  grammars
-  cd2plantumlImplementation.extendsFrom(implementation)
-  cd2plantumltestImplementation.extendsFrom(testImplementation)
+  ext.grammarDir = 'src/main/grammars'
+  buildDir = file("$projectDir/target")
 
-  cddiffImplementation.extendsFrom(implementation)
-  cddifftestImplementation.extendsFrom(testImplementation)
-  cddifftestImplementation.extendsFrom(cddiffImplementation)
-
-  cdmergeImplementation.extendsFrom(implementation)
-  cdmergetestImplementation.extendsFrom(testImplementation)
-  cdmergetestImplementation.extendsFrom(cdmergeImplementation)
-
-  cd2smtImplementation.extendsFrom(cddiffImplementation)
-  cd2smttestImplementation.extendsFrom(cd2smtImplementation)
-  cd2smttestImplementation.extendsFrom(cddifftestImplementation)
-
-  toolImplementation.extendsFrom(cddiffImplementation)
-  toolImplementation.extendsFrom(cdmergeImplementation)
-  tooltestImplementation.extendsFrom(toolImplementation)
-  tooltestImplementation.extendsFrom(cddifftestImplementation)
-  tooltestImplementation.extendsFrom(cdmergetestImplementation)
-  grammar
-  cli
-  trafo
-  trafoImplementation.extendsFrom implementation
-  trafoCompileOnly.extendsFrom compileOnly
-}
-
-dependencies {
-  testImplementation project(path: ':')
-    testImplementation project(path: ':')
-    grammar("$var_path:monticore-grammar:$mc_version") {
-    capabilities {
-      requireCapability("$var_path:monticore-grammar-grammars")
-    }
-  }
-  implementation "$var_path:monticore-grammar:${project.properties['mc_version']}"
-  implementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
-  implementation "$var_path:class2mc:${project.properties['mc_version']}"
-  implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
-  implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
-  implementation "com.google.guava:guava:$guava_version"
-  implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
-  implementation "commons-cli:commons-cli:$commons_cli_version"
-  implementation "org.apache.commons:commons-lang3:$commons_lang_version"
-  implementation "org.antlr:antlr4-runtime:$antlr_version"
-  testImplementation "org.freemarker:freemarker:$freemarker_version"
-  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
-  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
-  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
-    requireCapability("de.monticore:monticore-runtime-tests") }
-  testImplementation "org.mockito:mockito-core:$mockito_version"
-  testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-  testImplementation(sourceSets.trafo.output.classesDirs)
-  testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
-
-  // dependencies for cd2plantuml
-  cd2plantumlImplementation(sourceSets.main.output.classesDirs)
-  cd2plantumlImplementation("net.sourceforge.plantuml:plantuml:$plantuml_version")
-
-  cd2plantumltestImplementation(sourceSets.cd2plantuml.output.classesDirs)
-  cd2plantumltestImplementation(sourceSets.test.output.classesDirs)
-  cd2plantumltestImplementation("net.sourceforge.plantuml:plantuml:$plantuml_version")
-
-  // dependencies for cddiff
-  cddiffImplementation("de.monticore.lang:od:$mc_version") {
-    exclude group: 'de.monticore.lang', module:'cd4analysis'
-  }
-  cddiffImplementation "edu.mit.alloy:alloy:6"
-  cddiffImplementation(sourceSets.main.output.classesDirs)
-
-  cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
-  cddifftestImplementation(sourceSets.test.output.classesDirs)
-
-  // dependencies for cdmerge
-  cdmergeImplementation(sourceSets.main.output.classesDirs)
-
-  cdmergetestImplementation(sourceSets.cdmerge.output.classesDirs)
-  cdmergetestImplementation(sourceSets.test.output.classesDirs)
-
-  //dependencies for cd2smt
-  cd2smtImplementation(sourceSets.cddiff.output.classesDirs)
-  cd2smtImplementation 'tools.aqua:z3-turnkey:4.11.2'
-
-  cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
-  cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
-
-  //dependencies for trafo
-  trafoImplementation project(path)
-  trafoImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
-
-  toolImplementation(sourceSets.cd2plantuml.output.classesDirs)
-  toolImplementation(sourceSets.cddiff.output.classesDirs)
-  toolImplementation(sourceSets.cdmerge.output.classesDirs)
-  tooltestImplementation(sourceSets.tool.output.classesDirs)
-
-  cd2plantumltestImplementation(sourceSets.cd2plantuml.output.classesDirs)
-}
-
-allprojects {
   repositories {
     if (("true").equals(getProperty('useLocalRepo'))) {
       mavenLocal()
@@ -231,395 +64,127 @@ allprojects {
     }
     mavenCentral()
   }
-}
 
-// list of all grammars, needed to have a fix order
-def grammarDependencies = [
-  CDBasis           : [],
-  CDInterfaceAndEnum: ["CDBasis"],
-  CDAssociation     : ["CDBasis"],
-  CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
-  CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
-  CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
-]
-
-// list of all grammars, needed to have a fix order
-def testGrammarDependencies = [
-  TestCDBasis           : ["CDBasis"],
-  TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
-  TestCDAssociation     : ["CDAssociation"],
-  TestCD4CodeBasis      : ["CD4CodeBasis"],
-  TestTypeImporter      : ["CD4Code"],
-]
-
-String createGrammarName(String name) {
-  "${grammarDir}/de/monticore/${name}.mc4"
-}
-
-String createTestGrammarName(String name) {
-  "${testGrammarDir}/de/monticore/${name}.mc4"
-}
-
-// one task per grammar file
-grammarDependencies.each {
-  def g = createGrammarName(it.key)
-  def grammarName = it.key
-  def dependencies = it.value
-
-  task "generateGrammar${grammarName}"(type: MCTask) {
-    def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
-    dependsOn dependsOnGrammars
-    templatePath("$projectDir/src/main/grammars")
-    def grammarFile = file g
-    grammar = grammarFile
-    outputDir = file grammarOutDir
-    handcodedPath "$projectDir/src/main/java"
-    def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
-
-    def uptoDate = incCheck(grammarIncludingPackage)
-
-    def superGrammarsList = dependencies.collect {
-      def grammar = file createGrammarName(it)
-      return grammar.toURI()
-    }
-    superGrammars.from(superGrammarsList)
-
-    outputs.upToDateWhen { uptoDate }
+  jar {
+    archiveBaseName = 'cd4analysis'
+    archiveClassifier = project.name
   }
-}
 
-task generate {
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
-}
-
-
-grammarDependencies.each {
-  def g = createGrammarName(it.key)
-  def grammarName = it.key
-  def dependencies = it.value
-  task "generateTRGrammar${grammarName}"(type: MCTask) {
-    def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
-    dependsOn dependsOnTRGrammars
-    dependsOn(project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } })
-    templatePath("$projectDir/src/main/grammars")
-    grammar = getTRFile(file (g), file (grammarOutDir))
-    outputDir = file trGrammarOutDir
-    handcodedPath "$projectDir/src/main/java"
-    isDSTL = true // Generate DST infrastructure
-    def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(file(grammar).toURI()).toString()
-
-    def uptoDate = incCheck(grammarIncludingPackage)
-
-    modelPath(grammarOutDir)
-    modelPath("$projectDir/$grammarDir")
-
-    outputs.upToDateWhen { uptoDate }
-  }
-}
-task generateTR {
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
-}
-
-// one task per test grammar file
-testGrammarDependencies.each {
-  def g = createTestGrammarName(it.key)
-  def grammarName = it.key
-  def dependencies = it.value
-
-  task "generateTestGrammar${grammarName}"(type: MCTask) {
-    // def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
-    dependsOn generateTR
-    templatePath("$projectDir/src/main/grammars")
-    def grammarFile = file g
-    grammar = file g
-    outputDir = file testGrammarOutDir
-    handcodedPath "$projectDir/src/test/java"
-    def grammarIncludingPackage = file(testGrammarDir).toURI().relativize(grammarFile.toURI()).toString()
-    def uptoDate = incCheck(grammarIncludingPackage)
-
-    def superGrammarsList = dependencies.collect {
-      def grammar = file createGrammarName(it)
-      return grammar.toURI()
-    }
-    superGrammars.from(superGrammarsList)
-
-    outputs.upToDateWhen { uptoDate }
-  }
-}
-
-task generateTest {
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
-}
-
-
-task generateTestTrafos {}
-fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
-  def g = it
-  def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
-  task "$taskname"(type: MontiTransExec) {
-    dependsOn(generateTest)
-    getClassPath().setFrom(sourceSets.trafo.runtimeClasspath)
-    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
-    input = file(g)
-    outputDir = file(testGrammarOutDir)
-  }
-  generateTestTrafos.dependsOn("$taskname")
-}
-
-
-compileJava {
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
-}
-
-compileTestJava {
-  dependsOn project.collect { it.tasks.withType(MCTask) }
-  dependsOn generateTestTrafos
-}
-
-task cd2plantumltest(type: Test) {
-  description = "Runs CD2PlantUML Tests"
-  group = "Verification"
-  testClassesDirs = sourceSets.cd2plantumltest.output.classesDirs
-  classpath += sourceSets.cd2plantumltest.runtimeClasspath
-  shouldRunAfter test
-}
-
-task cddifftest(type: Test) {
-  description = "Runs CDDiff Tests"
-  group = "Verification"
-  testClassesDirs = sourceSets.cddifftest.output.classesDirs
-  classpath += sourceSets.cddifftest.runtimeClasspath
-  shouldRunAfter test
-}
-
-task cdmergetest(type: Test) {
-    description = "Runs CDMerge Tests"
-    group = "Verification"
-    testClassesDirs = sourceSets.cdmergetest.output.classesDirs
-    classpath += sourceSets.cdmergetest.runtimeClasspath
-    shouldRunAfter test
-}
-
-task cd2smttest(type: Test) {
-    description = "Runs CD2SMT Tests"
-    group = "Verification"
-    testClassesDirs = sourceSets.cd2smttest.output.classesDirs
-    classpath += sourceSets.cd2smttest.runtimeClasspath
-    shouldRunAfter test
-}
-
-
-task tooltest(type: Test) {
-  description = "Runs Tool Tests"
-  group = "Verification"
-  testClassesDirs = sourceSets.tooltest.output.classesDirs
-  classpath += sourceSets.tooltest.runtimeClasspath
-  shouldRunAfter test
-}
-
-check.dependsOn cddifftest, cdmergetest, cd2smttest, tooltest, cd2plantumltest
-
-tasks.withType(JavaCompile) {
-  options.encoding = "UTF-8"
-  options.deprecation false
-  options.warnings = false
-  options.fork = true
-  options.headerOutputDirectory.convention(null)
-}
-
-tasks.withType(Test) {
-  // this won't work with setting the mills, as they can interleave and break thigs
-  // maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
-}
-
-tasks.withType(Test) {
-  useJUnitPlatform()
-  testLogging {
-    // controls whether test output is shown
-    showExceptions true
-    showCauses true
-    showStackTraces true
-    exceptionFormat TestExceptionFormat.FULL
-    info {
-      events TestLogEvent.FAILED,
-        TestLogEvent.PASSED,
-        TestLogEvent.SKIPPED,
-        TestLogEvent.STANDARD_OUT
-    }
-  }
-  afterTest { desc, result ->
-    logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
-  }
-  afterSuite { desc, result ->
-    if (!desc.parent) { // will match the outermost suite
-      def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
-      def startItem = '|  ', endItem = '  |'
-      logger.lifecycle startItem + output + endItem
-    }
-  }
-  reports {
-    junitXml.enabled = false
-    html.enabled = false
-  }
-}
-
-// build javadoc jar in addition
-task javadocJar(type: Jar) {
-  from javadoc
-  archiveClassifier = "javadoc"
-}
-// generated java doc contains errors, disable for now
-javadoc.failOnError(false)
-
-// build test sources jar in addition
-task testSourcesJar(type: Jar) {
-  from sourceSets.test.output + sourceSets.test.allSource
-  archiveClassifier = "testSources"
-}
-
-// build test sources jar in addition
-task cd2plantumlJar(type: Jar) {
-  from sourceSets.cd2plantuml.output + sourceSets.cd2plantuml.allSource
-  archiveClassifier = "cd2plantuml"
-}
-
-// build test sources jar in addition
-task cddiffJar(type: Jar) {
-  from sourceSets.cddiff.output + sourceSets.cddiff.allSource
-  archiveClassifier = "cddiff"
-}
-
-// build test sources jar in addition
-task cdmergeJar(type: Jar) {
-    from sourceSets.cdmerge.output + sourceSets.cdmerge.allSource
-    archiveClassifier = "cdmerge"
-}
-
-// build test sources jar in addition
-task cd2smtJar(type: Jar) {
-    from sourceSets.cd2smt.output + sourceSets.cd2smt.allSource
-    archiveClassifier = "cd2smt"
-}
-
-// build trafo in addition
-task trafoJar(type: Jar) {
-  from sourceSets.trafo.output
-  archiveClassifier = "trafo"
-}
-
-// build trafo sources in addition
-task trafoSourcesJar(type: Jar) {
-  from sourceSets.trafo.allSource
-  archiveClassifier = "trafo-sources"
-}
-
-
-// build test sources jar in addition
-task toolJar(type: Jar) {
-  from sourceSets.tool.output + sourceSets.tool.allSource
-  archiveClassifier = "tool"
-}
-
-task mainJar(type: Jar) {
-  from sourceSets.main.output + sourceSets.main.allSource
-  archiveClassifier = "main"
-}
-
-if(("false").equals(getProperty('publishMain'))) {
-  jar.dependsOn cddiffJar, cdmergeJar, cd2smtJar, toolJar
-  apply plugin: "com.github.johnrengelman.shadow"
-  shadowJar { // all in one jar
-    archiveFileName = 'MCCD.jar'
-    manifest {
-      attributes "Main-Class": "de.monticore.CD4CodeTool"
-    }
-    from sourceSets.tool.runtimeClasspath
-    archiveClassifier = "mc-tool"
-  }
-  assemble.dependsOn(shadowJar)
-}
-
-processGrammarsResources.dependsOn(generateTR)
-processGrammarsResources.dependsOn(project.tasks.withType(MCTask))
-tasks.withType(Jar) {
-  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-  dependsOn(processGrammarsResources)
-}
-
-
-testSets {
-  integrationTest {
-    dirName = '01.experiments'
-  }
-}
-
-//check.dependsOn integrationTest
-integrationTest.mustRunAfter test
-
-/*
-integrationTest {
+  tasks.withType(Test) {
+    useJUnitPlatform()
     testLogging {
-        showStandardStreams = true
+      // controls whether test output is shown
+      showExceptions true
+      showCauses true
+      showStackTraces true
+      exceptionFormat TestExceptionFormat.FULL
+      info {
+        events TestLogEvent.FAILED,
+          TestLogEvent.PASSED,
+          TestLogEvent.SKIPPED,
+          TestLogEvent.STANDARD_OUT
+      }
     }
-    outputs.upToDateWhen { false }
-    options.useJunit()
-}*/
-
-task testReport(type: TestReport) {
-  destinationDir = file("$buildDir/reports/allTests")
-  // Include the results from the 'test' task
-  reportOn tasks.withType(Test)
-}
-java {
-//  withJavadocJar()
-  withSourcesJar()
-  registerFeature('grammars') {
-    usingSourceSet(sourceSets.grammars)
+    afterTest { desc, result ->
+      logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
+    }
+    afterSuite { desc, result ->
+      if (!desc.parent) { // will match the outermost suite
+        def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+        def startItem = '|  ', endItem = '  |'
+        logger.lifecycle startItem + output + endItem
+      }
+    }
   }
+
+  tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.deprecation false
+    options.warnings = false
+    options.forkOptions.jvmArgs += ["-Xmx4G"]
+    // TODO: reevaluate with new ecj plugin
+    outputs.cacheIf { false } // ECJ has problem with caching
+  }
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(11)
+    }
+  }
+
+
 }
 
-sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
-
-jar.dependsOn grammarsJar
-
-
-artifacts {
-  archives cddiffJar
-  archives cdmergeJar
-  archives cd2smtJar
-  archives toolJar
-  archives mainJar
-  archives trafoJar
-  trafo trafoJar
+googleJavaFormat {
+  exclude '**/target/**'
 }
-// configure deployment
-/*publishing {
-  // configure what artifacts to publish
+
+verifyGoogleJavaFormat {
+  ignoreFailures true
+  exclude "**"
+}  // do not check format in "build"
+
+task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
+
+task fmt {
+  dependsOn tasks.named("googleJavaFormat")
+}
+
+evaluationDependsOnChildren()
+
+def withDSTLGen = ("true").equals(getProperty('genTR'))
+def withTagGen = ("true").equals(getProperty('genTagging'))
+
+publishing {
   publications {
-    if(("false").equals(getProperty('publishMain'))) {
-      mavenJava(MavenPublication) {
-        suppressPomMetadataWarningsFor('grammarsApiElements')
-        suppressPomMetadataWarningsFor('grammarsRuntimeElements')
-        from components.java
-        artifact testSourcesJar
-        artifact cddiffJar
-        artifact cdmergeJar
-        artifact cd2smtJar
-        artifact toolJar
-      }
-      "trafo"(MavenPublication) {
-        artifactId = project.name + "-trafo"
-        artifact trafoJar
-        artifact trafoSourcesJar { classifier 'source' }
+    def publ = maven(MavenPublication)
+    // Use the Jar and grammarsJar, as well as the dependencies and module information from :cdlang
+    publ.from project(":cdlang").components.java
+
+    // trafolib is different
+    // cdtool as -tool
+    def subprojectsToBePublished = [
+      ":cd2plantuml",
+      ":cd2smt",
+      ":cddiff",
+      ":cdlang",
+      ":cdmerge",
+      ":language-server"
+    ]
+
+    subprojectsToBePublished
+      .findAll { it != ':cdlang' }
+      .each { subprojectName ->
+        publ.artifact(project(subprojectName).tasks.jar) {
+          group "de.monticore.lang"
+        }
       }
 
-    }else{
-      mavenJava(MavenPublication) {
-        suppressPomMetadataWarningsFor('grammarsApiElements')
-        suppressPomMetadataWarningsFor('grammarsRuntimeElements')
-        from components.java
-        artifact mainJar
+    publ.artifact(project(":cdtool").tasks.jar){
+      group "de.monticore.lang"
+      classifier "tool"
+    }
+
+    publ.artifact(project(":cdtool").tasks.shadowJar)
+
+    if (("false").equals(getProperty('publishMain'))) {
+      publ.artifact(project(":cdlang").tasks.testSourcesJar) {
+        group "de.monticore.lang"
+      }
+      if (withDSTLGen) {
+        publ.artifact(project(":cdlang").tasks.trafoJar) {
+          group "de.monticore.lang"
+        }
+        publ.artifact(project(":cdlang").tasks.trafoSourcesJar) {
+          group "de.monticore.lang"
+        }
+      }
+      if (withTagGen) {
+        publ.artifact(project(":cdlang").tasks.taggingJar) {
+          group "de.monticore.lang"
+        }
+        publ.artifact(project(":cdlang").tasks.taggingSourcesJar) {
+          group "de.monticore.lang"
+        }
       }
     }
   }
@@ -628,20 +193,6 @@ artifacts {
     credentials.password mavenPassword
     def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
-    url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+    url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
   }
-}*/
-
-task testMain (type:Test) {
-  group("verification")
-  description("Tests the main sources set and its grammars with the test source set.")
-  testClassesDirs = sourceSets.test.output.classesDirs
-  classpath = sourceSets.test.runtimeClasspath
-}
-
-task buildMain (type:GradleBuild){
-  group("build")
-  description("Builds only the main source set with its grammars.")
-  dependsOn(classes)
-  dependsOn(testMain)
 }

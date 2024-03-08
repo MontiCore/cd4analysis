@@ -1,0 +1,12 @@
+import java.lang.String;
+
+classdiagram Target3 {
+  public class A1;
+  class A2;
+  class A3 extends A4;
+  class A4;
+
+  association [*] A1 -> A2 [0..1];
+  association [1] A2 <-> A3 [1];
+  association [1..*] A4 <-> A2 [*];
+}

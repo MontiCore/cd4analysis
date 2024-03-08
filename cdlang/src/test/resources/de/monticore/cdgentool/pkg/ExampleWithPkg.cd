@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package pkg;
+
+classdiagram ExampleWithPkg {
+
+  class A {
+    String s;
+  }
+
+}

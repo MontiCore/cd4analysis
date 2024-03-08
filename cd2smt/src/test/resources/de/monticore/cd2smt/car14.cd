@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram car14 {
+
+   interface AutoInterface1;
+   interface AutoInterface2;
+   interface AutoInterface3;
+
+   class Color;
+   class Country1;
+   class Country2;
+   class Driver ;
+
+  class Auto implements AutoInterface1, AutoInterface2 ,AutoInterface3;
+
+  association [1] AutoInterface1      --      Color[1];
+
+  association [1] AutoInterface2      --       Driver[1];
+
+  association [1] AutoInterface2      --      Country1[1];
+  association [1] AutoInterface2      --      Country2[1];
+
+}

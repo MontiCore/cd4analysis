@@ -1,0 +1,10 @@
+import java.lang.*;
+classdiagram SS1{
+
+  class P{}
+
+  class Q extends P{
+    int i;
+  }
+
+}

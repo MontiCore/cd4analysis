@@ -1,0 +1,23 @@
+import java.lang.String;
+
+classdiagram Target1 {
+  enum DeletedEnum{c,d;}
+  enum MatchedEnum{k,l;}
+  class A{
+    double a;
+    String f;
+  }
+
+  class D{}
+
+  class K{
+    int j;
+    DeletedEnum d;
+  }
+  class B{
+    int deleted;
+  }
+
+  association match A -> (c) B;
+  association D -> K;
+}

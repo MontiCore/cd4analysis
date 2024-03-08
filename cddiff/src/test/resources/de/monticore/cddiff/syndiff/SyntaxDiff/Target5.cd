@@ -1,0 +1,14 @@
+import java.lang.String;
+
+classdiagram Target5 {
+  class ASTTechStore{}
+
+  class Laptop{}
+
+  private class ASTItem{
+    double itemID;
+    String model;
+  }
+
+  association ASTTechStore -> ASTItem [*];
+}

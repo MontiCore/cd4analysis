@@ -1,0 +1,5 @@
+classdiagram Simple {
+  class Class1 {
+    String text;
+  }
+}
