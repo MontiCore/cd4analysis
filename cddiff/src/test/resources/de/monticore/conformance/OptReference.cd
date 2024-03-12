@@ -12,6 +12,8 @@ classdiagram OptReference {
 
   association hasItems Account -> (items)Item;
 
-  <<optional>> class Clazz;
+  <<optional>> class Clazz{
+    int number;
+  }
   <<optional>> association Item -> (clazz)Clazz;
 }
