@@ -55,7 +55,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
     // Unit
     try {
-      this.topDecorator.checkNeedsHandwrittenClass(false, clazz);
+      this.topDecorator.checkNeedsHandwrittenClass(false, clazz, clazz.getName());
       fail("No Exception thrown (should fail quick)");
     } catch (MCFatalError ignored) {
     }
@@ -79,7 +79,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
     ASTCDClass clazz = buildClassWithStereotype(stereoValue);
 
     // Unit
-    this.topDecorator.checkNeedsHandwrittenClass(true, clazz);
+    this.topDecorator.checkNeedsHandwrittenClass(true, clazz, clazz.getName());
 
     // CheckLogs
     List<Finding> findings = Log.getFindings();

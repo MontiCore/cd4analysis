@@ -62,9 +62,10 @@ public class TopDecorator {
     compUnit.getCDDefinition().getCDClassesList().stream()
         .filter(
             cdClass -> {
+              String qualifiedName = determineQualifiedName(cdClass, compUnit);
               boolean existsHw =
-                  existsHandwrittenClass(hwPath, determineQualifiedName(cdClass, compUnit));
-              checkNeedsHandwrittenClass(existsHw, cdClass);
+                  existsHandwrittenClass(hwPath, qualifiedName);
+              checkNeedsHandwrittenClass(existsHw, cdClass, qualifiedName);
               return existsHw;
             })
         .forEach(this::applyTopMechanism);
@@ -116,8 +117,13 @@ public class TopDecorator {
     modifier.setAbstract(true);
   }
 
+  @Deprecated
   protected void checkNeedsHandwrittenClass(boolean existsHw, ASTCDClass cdClass) {
-    // ensure fail quick
+    this.checkNeedsHandwrittenClass(existsHw, cdClass, "--qualified-class-name-not-given--");
+  }
+
+  protected void checkNeedsHandwrittenClass(boolean existsHw, ASTCDClass cdClass, String qualifiedName) {
+      // ensure fail quick
     boolean failQuickEnabled = Log.isFailQuickEnabled();
     Log.enableFailQuick(true);
 
@@ -131,7 +137,9 @@ public class TopDecorator {
         .ifPresent(
             needsTopStereo -> {
               if (!existsHw) {
-                Log.error(String.format("0xC0FFEE00: %s", needsTopStereo.getContent()));
+                String errorMsg = String.format("0xC0FFEE00: %s", needsTopStereo.getContent());
+                // an %s in the stereo is substituted with the qualified name of the missing class
+                Log.error(String.format(errorMsg, qualifiedName));
               }
             });
 
