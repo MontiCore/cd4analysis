@@ -60,23 +60,21 @@ public class TopDecorator {
     compUnit.accept(traverser);
 
     compUnit.getCDDefinition().getCDClassesList().stream()
-      .filter(cdClass -> shouldApplyTOPToClass(cdClass, compUnit))
-      .forEach(this::applyTopMechanism);
+        .filter(cdClass -> shouldApplyTOPToClass(cdClass, compUnit))
+        .forEach(this::applyTopMechanism);
 
     compUnit.getCDDefinition().getCDInterfacesList().stream()
-      .filter(cdInterface -> shouldApplyTOPToInterface(cdInterface, compUnit))
-      .forEach(this::applyTopMechanism);
+        .filter(cdInterface -> shouldApplyTOPToInterface(cdInterface, compUnit))
+        .forEach(this::applyTopMechanism);
 
     compUnit.getCDDefinition().getCDEnumsList().stream()
-      .filter(cdEnum -> shouldApplyTOPToEnum(cdEnum, compUnit))
-      .forEach(this::applyTopMechanism);
+        .filter(cdEnum -> shouldApplyTOPToEnum(cdEnum, compUnit))
+        .forEach(this::applyTopMechanism);
 
     return compUnit;
   }
 
-  /**
-   * Should the TOP mechanism be applied to a class
-   */
+  /** Should the TOP mechanism be applied to a class */
   protected boolean shouldApplyTOPToClass(ASTCDClass cdClass, ASTCDCompilationUnit compUnit) {
     String qualifiedName = determineQualifiedName(cdClass, compUnit);
     boolean existsHw = existsHandwrittenClass(hwPath, qualifiedName);
@@ -85,21 +83,16 @@ public class TopDecorator {
     return existsHw;
   }
 
-  /**
-   * Should the TOP mechanism be applied to an interface
-   */
-  protected boolean shouldApplyTOPToInterface(ASTCDInterface cdInterface, ASTCDCompilationUnit compUnit) {
+  /** Should the TOP mechanism be applied to an interface */
+  protected boolean shouldApplyTOPToInterface(
+      ASTCDInterface cdInterface, ASTCDCompilationUnit compUnit) {
     return existsHandwrittenClass(hwPath, determineQualifiedName(cdInterface, compUnit));
   }
 
-
-  /**
-   * Should the TOP mechanism be applied to an enum
-   */
+  /** Should the TOP mechanism be applied to an enum */
   protected boolean shouldApplyTOPToEnum(ASTCDEnum cdEnum, ASTCDCompilationUnit compUnit) {
     return existsHandwrittenClass(hwPath, determineQualifiedName(cdEnum, compUnit));
   }
-
 
   protected String determineQualifiedName(
       ASTCDType astcdtype, ASTCDCompilationUnit astcdCompilationUnit) {
@@ -110,9 +103,7 @@ public class TopDecorator {
     return constructQualifiedName(Lists.newArrayList(packageName), astcdtype.getName());
   }
 
-  /**
-   * Rename the (now abstract) class and its constructors
-   */
+  /** Rename the (now abstract) class and its constructors */
   protected void applyTopMechanism(ASTCDClass cdClass) {
     makeAbstract(cdClass);
     cdClass.setName(cdClass.getName() + TOP_SUFFIX);
@@ -144,12 +135,12 @@ public class TopDecorator {
   }
 
   /**
-   * Log an error, if the needsTop stereo is present on a class.
-   * Replace the first %s within the value of the stereo with the
-   * qualifiedName, and append it to the error message
+   * Log an error, if the needsTop stereo is present on a class. Replace the first %s within the
+   * value of the stereo with the qualifiedName, and append it to the error message
    */
-  protected void checkNeedsHandwrittenClass(boolean existsHw, ASTCDClass cdClass, String qualifiedName) {
-      // ensure fail quick
+  protected void checkNeedsHandwrittenClass(
+      boolean existsHw, ASTCDClass cdClass, String qualifiedName) {
+    // ensure fail quick
     boolean failQuickEnabled = Log.isFailQuickEnabled();
     Log.enableFailQuick(true);
 
