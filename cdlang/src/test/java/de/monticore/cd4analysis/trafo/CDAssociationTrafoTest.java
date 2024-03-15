@@ -114,10 +114,10 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     this.testWithCircularAssocs(new CDAssociationCreateFieldsFromNavigableRoles());
   }
 
-  protected void testWithCircularAssocs(CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsTrafo) throws IOException {
+  protected void testWithCircularAssocs(
+      CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsTrafo) throws IOException {
     ASTCDCompilationUnit compUnit = parse("cd/codegen/CyclicAssocs.cd");
     prepareST(compUnit);
-
 
     final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsTrafo);
@@ -125,10 +125,10 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     cdAssociationCreateFieldsTrafo.transform(compUnit);
 
     for (ASTCDClass clazz : compUnit.getCDDefinition().getCDClassesList()) {
-      assertNotEquals(clazz.getName() + " did not generate with its attribute",
-        0, clazz.getCDAttributeList().size());
+      assertNotEquals(
+          clazz.getName() + " did not generate with its attribute",
+          0,
+          clazz.getCDAttributeList().size());
     }
   }
-
-
 }
