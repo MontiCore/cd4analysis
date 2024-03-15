@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd.codegen;
+
+classdiagram CyclicAssocs {
+
+   class B1 {
+        -> (b2) B2;
+   }
+
+   class B2 {
+        -> (b1s) B1 [0..*];
+   }
+
+    class C1 {
+        -> (c2s) C2 [0..*];
+   }
+
+   class C2 {
+        -> (c1) C1;
+   }
+
+}
