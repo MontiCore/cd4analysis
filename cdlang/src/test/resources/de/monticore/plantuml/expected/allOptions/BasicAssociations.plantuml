@@ -1,0 +1,39 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class One {
+  {field} String name
+  {field} int number
+  {field} boolean exists
+}
+class Two {
+  {field} String name
+}
+class Three {
+  {field} String name
+}
+class Four {
+  {field} String name
+}
+One --* Two
+Two *--* Three
+Three *-- Four
+Four --* One
+Two --* One
+center footer generated with MontiCore using PlantUML
+@enduml

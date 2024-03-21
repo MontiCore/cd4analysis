@@ -1,0 +1,24 @@
+/* Dan-Tuong Le */
+
+package somePackage;
+
+  classdiagram Packages {
+
+    package someOtherPackage {
+      class A {
+        int a;
+      }
+
+      class B {
+
+      }
+
+    }
+
+    class C {
+      public someOtherPackage.A c;
+    }
+
+}
+
+

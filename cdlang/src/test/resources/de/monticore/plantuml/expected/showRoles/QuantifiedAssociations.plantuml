@@ -1,0 +1,24 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class One
+class Two
+class Three
+class Four
+center footer generated with MontiCore using PlantUML
+@enduml

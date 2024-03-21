@@ -1,0 +1,16 @@
+/* Yvonne Heimowski */
+
+classdiagram Enums {
+
+  enum State { DEAD, ALIVE, UNDEAD;
+ }
+
+ enum Color { RED, BLUE, YELLOW; }
+
+  public class Person {
+      State state;
+      Color color;
+  }
+
+
+}

@@ -1,0 +1,37 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class Abstrakt << abstract >> {
+  {field} boolean abstrakt
+}
+class Finale << final >> {
+  {field} String ohoho
+}
+class Statische << static >> {
+  {field} int spannung
+}
+class Lokal << local >>
+class Public
+class Protected << protected >>
+class PAF << private final abstract >>
+class RO << readonly >>
+class Derived << derived >>
+class PDR << public derived readonly >>
+interface Interface
+center footer generated with MontiCore using PlantUML
+@enduml
