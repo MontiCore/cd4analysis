@@ -19,6 +19,10 @@ classdiagram Concrete {
 
   class Deposit extends Item;
 
+
+
   association hasItems [1..*] BankAccount <-> Item [1..*];
   association  [1..*] Account -> (items)Item [1..*];
+
+  class Clazz;
 }

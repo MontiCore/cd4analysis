@@ -509,12 +509,12 @@ java -jar MCCD.jar -i src/Teaching.cd --merge src/Management.cd -o out -pp Unive
 
 Note that `--merge` does not use symbols from symbol files. Instead of using the `--merge` option 
 from the command line, you may also call the static method 
-[`CDMerge.merge()`](src/cdmerge/java/de/monticore/cdmerge/CDMerge.java) 
+[`CDMerge.merge()`](cdmerge/src/main/java/de/monticore/cdmerge/CDMerge.java) 
 with a set of appropriate 
-[`MergeParameter`](src/cdmerge/java/de/monticore/cdmerge/config/MergeParameter.java)
+[`MergeParameter`](cdmerge/src/java/de/monticore/cdmerge/config/MergeParameter.java)
 
 
-[ExampleModels]: src/test/resources/de/monticore/cd4analysis/examples
+[ExampleModels]: cdlang/src/test/resources/de/monticore/cd4analysis/examples
 [ToolDownload]: https://monticore.de/download/MCCD.jar
 [MCDownloadPage]: https://monticore.github.io/monticore/docs/Download/
 

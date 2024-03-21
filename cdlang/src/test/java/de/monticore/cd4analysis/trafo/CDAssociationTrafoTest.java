@@ -2,6 +2,7 @@
 package de.monticore.cd4analysis.trafo;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -9,6 +10,7 @@ import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
@@ -17,6 +19,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
@@ -96,6 +100,35 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
           Log.getFindings().get(1).getMsg());
 
       Log.getFindings().clear();
+    }
+  }
+
+  @Test
+  public void testWithCircularAssocsAll() throws IOException {
+    this.testWithCircularAssocs(new CDAssociationCreateFieldsFromAllRoles());
+  }
+
+  @Test
+  @Ignore // TODO: See #3940
+  public void testWithCircularAssocsNavigable() throws IOException {
+    this.testWithCircularAssocs(new CDAssociationCreateFieldsFromNavigableRoles());
+  }
+
+  protected void testWithCircularAssocs(
+      CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsTrafo) throws IOException {
+    ASTCDCompilationUnit compUnit = parse("cd/codegen/CyclicAssocs.cd");
+    prepareST(compUnit);
+
+    final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(cdAssociationCreateFieldsTrafo);
+    traverser.setCDAssociationHandler(cdAssociationCreateFieldsTrafo);
+    cdAssociationCreateFieldsTrafo.transform(compUnit);
+
+    for (ASTCDClass clazz : compUnit.getCDDefinition().getCDClassesList()) {
+      assertNotEquals(
+          clazz.getName() + " did not generate with its attribute",
+          0,
+          clazz.getCDAttributeList().size());
     }
   }
 }
