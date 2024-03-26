@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram Valid {
+classdiagram CDClassExtendsAtMostOneClassValid {
 
   package p1 {
     class A {
@@ -8,7 +8,6 @@ classdiagram Valid {
       int bar = 5;
     }
     class B extends A;
-    class C extends B, A;
   }
 
   package p2 {

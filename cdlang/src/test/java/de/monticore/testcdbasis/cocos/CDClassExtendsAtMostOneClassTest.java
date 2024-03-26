@@ -18,7 +18,7 @@ public class CDClassExtendsAtMostOneClassTest extends CDBasisTestBasis {
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDClassExtendsAtMostOneClass());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDClassExtendsAtMostOneClassValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
