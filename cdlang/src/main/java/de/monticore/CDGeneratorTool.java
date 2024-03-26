@@ -98,6 +98,9 @@ public class CDGeneratorTool extends CD4CodeTool {
 
       if (cmd.hasOption("c2mc")) {
         initializeClass2MC();
+      } else {
+        BasicSymbolsMill.initializeString();
+        BasicSymbolsMill.initializeObject();
       }
       BasicSymbolsMill.initializePrimitives();
 
