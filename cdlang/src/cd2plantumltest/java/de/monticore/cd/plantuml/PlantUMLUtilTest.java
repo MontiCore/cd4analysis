@@ -1,32 +1,31 @@
 package de.monticore.cd.plantuml;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static org.junit.Assert.*;
-
-
 public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
 
-  @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  @Rule public TemporaryFolder folder = new TemporaryFolder();
 
   /**
-   * Checks if the PlantUMLUtil.writeCdToPlantUmlModelFile works correctly and does print a .plantuml file into the correct output folder.
+   * Checks if the PlantUMLUtil.writeCdToPlantUmlModelFile works correctly and does print a
+   * .plantuml file into the correct output folder.
    */
   @Test
   public void testWriteCdToPlantUmlModelFile() {
     String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
-    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath(), "QuantifiedNamedAssociations.plantuml");
+    Path outputPath =
+        Paths.get(folder.getRoot().getAbsolutePath(), "QuantifiedNamedAssociations.plantuml");
     PlantUMLConfig config = new PlantUMLConfig();
 
     try {
@@ -54,12 +53,14 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
   }
 
   /**
-   * Checks if the PlantUMLUtil.writeCdToPlantUmlModelFile works correctly and does print a .svg file into the correct output folder.
+   * Checks if the PlantUMLUtil.writeCdToPlantUmlModelFile works correctly and does print a .svg
+   * file into the correct output folder.
    */
   @Test
   public void testWriteCdToPlantUmlSvg() {
     String pathCD = getFilePath("cd4analysis/prettyprint/QuantifiedNamedAssociations.cd");
-    Path outputPath = Paths.get(folder.getRoot().getAbsolutePath(), "QuantifiedNamedAssociations.svg");
+    Path outputPath =
+        Paths.get(folder.getRoot().getAbsolutePath(), "QuantifiedNamedAssociations.svg");
     PlantUMLConfig config = new PlantUMLConfig();
 
     try {
@@ -81,6 +82,5 @@ public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
     } catch (IOException ex) {
       fail(ex.getMessage());
     }
-
   }
 }

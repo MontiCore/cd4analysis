@@ -6,13 +6,10 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-
-import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-  implements CDBasisVisitor2, CDBasisHandler {
+    implements CDBasisVisitor2, CDBasisHandler {
 
   protected CDBasisTraverser traverser;
   private String visualization;
@@ -23,19 +20,20 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   public CDBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
-    visualization = "<style>\n" +
-      "\tclassDiagram {\n" +
-      "\t\tclass {\n" +
-      "\t\t\tBackgroundColor White\n" +
-      "\t\t\tRoundCorner 0\n" +
-      "\t  }\n" +
-      "\t  legend {\n" +
-      "      BackgroundColor White\n" +
-      "      RoundCorner 0\n" +
-      "    }\n" +
-      "</style>\n" +
-      "hide circle\n" +
-      "hide empty members\n";
+    visualization =
+        "<style>\n"
+            + "\tclassDiagram {\n"
+            + "\t\tclass {\n"
+            + "\t\t\tBackgroundColor White\n"
+            + "\t\t\tRoundCorner 0\n"
+            + "\t  }\n"
+            + "\t  legend {\n"
+            + "      BackgroundColor White\n"
+            + "      RoundCorner 0\n"
+            + "    }\n"
+            + "</style>\n"
+            + "hide circle\n"
+            + "hide empty members\n";
   }
 
   @Override
@@ -74,7 +72,6 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     println("skinparam classAttributeIconSize 0");
     unindent();
-
   }
 
   @Override
@@ -150,7 +147,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     print("class " + node.getName());
 
-    if(plantUMLConfig.getShowModifier() && hasModifier(node.getModifier())){
+    if (plantUMLConfig.getShowModifier() && hasModifier(node.getModifier())) {
       print(" << ");
       node.getModifier().accept(getTraverser());
       print(">>");
@@ -158,16 +155,17 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");
-      print(node.getSuperclassList().stream()
-        .map(s -> s.printType())
-        .collect(Collectors.joining(", ")));
+      print(
+          node.getSuperclassList().stream()
+              .map(s -> s.printType())
+              .collect(Collectors.joining(", ")));
     }
     if (node.isPresentCDInterfaceUsage()) {
       print(" implements ");
-      print(node.getInterfaceList().stream()
-        .map(s -> s.printType())
-        .collect(Collectors.joining(", ")));
-
+      print(
+          node.getInterfaceList().stream()
+              .map(s -> s.printType())
+              .collect(Collectors.joining(", ")));
     }
 
     if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {

@@ -19,7 +19,6 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
