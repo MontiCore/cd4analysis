@@ -10,7 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.datastructures.*;
 import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
-import de.monticore.cddiff.syn2semdiff.odgen.odGenerator;
+import de.monticore.cddiff.syn2semdiff.odgen.ODGenerator;
 import de.monticore.cddiff.syndiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -701,16 +701,16 @@ public class Syn2SemDiff {
   public List<ASTODElement> generateElements(
       ASTCDType astcdClass, String comment, Pair<ASTCDAttribute, String> pair) {
     Set<ASTODElement> elements;
-    odGenerator oDHelper;
+    ODGenerator oDHelper;
     if (diffSize == 0) {
       oDHelper =
-          new odGenerator(
+          new ODGenerator(
               Math.max(
                   helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
                   helper.getTgtCD().getCDDefinition().getCDClassesList().size()),
               helper);
     } else {
-      oDHelper = new odGenerator(diffSize, helper);
+      oDHelper = new ODGenerator(diffSize, helper);
     }
     elements = oDHelper.getObjForOD(astcdClass, pair);
     if (elements.isEmpty()) {
@@ -752,16 +752,16 @@ public class Syn2SemDiff {
    */
   public List<ASTODElement> generateElements(
       ASTCDAssociation association, List<Integer> integers, String comment) {
-    odGenerator oDHelper;
+    ODGenerator oDHelper;
     if (diffSize == 0) {
       oDHelper =
-          new odGenerator(
+          new ODGenerator(
               Math.max(
                   helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
                   helper.getTgtCD().getCDDefinition().getCDClassesList().size()),
               helper);
     } else {
-      oDHelper = new odGenerator(diffSize, helper);
+      oDHelper = new ODGenerator(diffSize, helper);
     }
     Pair<Set<ASTODElement>, ASTODElement> pair =
         oDHelper.getObjForOD(association, integers.get(0), integers.get(1));
@@ -789,16 +789,16 @@ public class Syn2SemDiff {
 
   public List<ASTODElement> generateElements(ASTCDType astcdClass, String comment) {
     Set<ASTODElement> elements;
-    odGenerator oDHelper;
+    ODGenerator oDHelper;
     if (diffSize == 0) {
       oDHelper =
-          new odGenerator(
+          new ODGenerator(
               Math.max(
                   helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
                   helper.getTgtCD().getCDDefinition().getCDClassesList().size()),
               helper);
     } else {
-      oDHelper = new odGenerator(diffSize, helper);
+      oDHelper = new ODGenerator(diffSize, helper);
     }
     elements = oDHelper.getObjForODSpec(astcdClass);
     if (elements.isEmpty()) {
