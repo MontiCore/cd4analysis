@@ -19,17 +19,15 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   protected ASTCDCompilationUnit src;
 
   @Test
-  public void testDTs(){
+  public void testDTs() {
     ASTCDCompilationUnit compilationUnitNew =
-      parseModel(
-        "src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
+        parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
     ASTCDCompilationUnit compilationUnitOld =
-      parseModel(
-        "src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
+        parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
 
-    CDSyntaxDiff synDiff = new CDSyntaxDiff(compilationUnitNew,compilationUnitOld);
-    Assert.assertEquals(4,synDiff.getAddedClasses().size());
-    Assert.assertEquals(2,synDiff.getAddedAssocs().size());
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    Assert.assertEquals(4, synDiff.getAddedClasses().size());
+    Assert.assertEquals(2, synDiff.getAddedAssocs().size());
   }
 
   @Test

@@ -137,7 +137,8 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
       List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
     MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchNameType =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
     MatchCDTypesToSuperTypes superTypeMatchStructureType =
         new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
     List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
@@ -168,7 +169,8 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     MatchCDAssocsByName nameAssocMatch = new MatchCDAssocsByName(tgtCD);
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
     MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchNameType =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
     MatchCDTypesToSuperTypes superTypeMatchStructureType =
         new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
     MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchStructureType =

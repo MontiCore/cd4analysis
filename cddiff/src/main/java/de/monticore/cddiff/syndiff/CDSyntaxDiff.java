@@ -1272,7 +1272,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   public void addAllAddedInterfaces(
-    ASTCDCompilationUnit srcCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+      ASTCDCompilationUnit srcCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     List<ASTCDInterface> tmp = new ArrayList<>(srcCD.getCDDefinition().getCDInterfacesList());
     for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
       if (computedMatchingMapTypes.containsKey(srcInterface)) {
@@ -1286,7 +1286,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   public void addAllDeletedInterfaces(
-    ASTCDCompilationUnit tgtCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+      ASTCDCompilationUnit tgtCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
     List<ASTCDInterface> tmp = new ArrayList<>(tgtCD.getCDDefinition().getCDInterfacesList());
     for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
       if (computedMatchingMapTypes.containsValue(tgtInterface)) {

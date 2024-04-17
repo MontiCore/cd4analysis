@@ -20,8 +20,8 @@ import de.monticore.cddiff.syn2semdiff.datastructures.*;
 import de.monticore.cddiff.syndiff.CDAssocDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchCDTypesByName;
 import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
+import de.monticore.cdmatcher.MatchCDTypesByName;
 import de.monticore.cdmatcher.MatchCDTypesToSuperTypes;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
@@ -3360,7 +3360,8 @@ public class Syn2SemDiffHelper {
 
   public void setMatcher() {
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchNameType =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
     matcher = new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
   }
 

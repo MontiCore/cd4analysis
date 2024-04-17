@@ -120,7 +120,8 @@ public class CD2CDCombinedMatching<T> {
     List<MatchingStrategy<ASTCDType>> matcherList = new ArrayList<>();
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
     MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchName = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchName =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
     MatchCDTypesToSuperTypes superTypeMatchStructure =
         new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
     matcherList.add(nameTypeMatch);

@@ -118,8 +118,8 @@ public class DiffPrinter extends SyntaxDiffHelper {
     if (!syntaxDiff.getAddedInterfaces().isEmpty()) {
       for (ASTCDInterface x : syntaxDiff.getAddedInterfaces()) {
         CDTypeDiff diff =
-          new CDTypeDiff(
-            x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
+            new CDTypeDiff(
+                x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
         String tmp = diff.printAddedType() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -130,8 +130,8 @@ public class DiffPrinter extends SyntaxDiffHelper {
     if (!syntaxDiff.getDeletedInterfaces().isEmpty()) {
       for (ASTCDInterface x : syntaxDiff.getDeletedInterfaces()) {
         CDTypeDiff diff =
-          new CDTypeDiff(
-            x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
+            new CDTypeDiff(
+                x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
         String tmp = diff.printRemovedType() + RESET;
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));

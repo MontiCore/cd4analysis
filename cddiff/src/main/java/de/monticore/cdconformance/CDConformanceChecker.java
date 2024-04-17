@@ -5,7 +5,6 @@ import static de.monticore.cdconformance.CDConfParameter.*;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdconformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.cdconformance.conf.association.DeepAssocConfStrategy;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
@@ -23,6 +22,7 @@ import de.monticore.cdconformance.inc.association.STNamedAssocIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
@@ -91,7 +91,8 @@ public class CDConformanceChecker {
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
-      assocInc.addIncStrategy(new MatchCDAssocsBySrcNameAndTgtRole(typeInc, concreteCD, referenceCD));
+      assocInc.addIncStrategy(
+          new MatchCDAssocsBySrcNameAndTgtRole(typeInc, concreteCD, referenceCD));
     }
 
     // init conformance Checker
