@@ -36,7 +36,7 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.CDFullNameTrafo;
-import de.monticore.cddiff.syndiff.SyntaxDiffBuilder;
+import de.monticore.cddiff.syndiff.SyntaxDiffPrinter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
@@ -727,7 +727,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     CDDiffUtil.refreshSymbolTable(ast1);
     CDDiffUtil.refreshSymbolTable(ast2);
 
-    SyntaxDiffBuilder syntaxDiff = new SyntaxDiffBuilder(ast1, ast2);
+    SyntaxDiffPrinter syntaxDiff = new SyntaxDiffPrinter(ast1, ast2);
 
     String printOption = cmd.getOptionValue("show", "diff");
     if (printOption.equals("added")) {

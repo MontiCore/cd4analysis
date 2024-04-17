@@ -2,9 +2,11 @@ package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
-public class SyntaxDiffBuilder extends DiffPrinter {
+public class SyntaxDiffPrinter extends DiffPrinter {
   ASTCDCompilationUnit srcCD;
   ASTCDCompilationUnit tgtCD;
+
+  CDSyntaxDiff syntaxDiff;
 
   /**
    * Constructs a SyntaxDiffBuilder instance for comparing two CDs.
@@ -12,11 +14,26 @@ public class SyntaxDiffBuilder extends DiffPrinter {
    * @param srcCD The source CD.
    * @param tgtCD The target CD.
    */
-  public SyntaxDiffBuilder(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public SyntaxDiffPrinter(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
-    setStrings(syntaxDiff);
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    setStrings(this.syntaxDiff);
+  }
+
+  public SyntaxDiffPrinter(CDSyntaxDiff syntaxDiff){
+    setSyntaxDiff(syntaxDiff);
+  }
+
+  public CDSyntaxDiff getSyntaxDiff() {
+    return syntaxDiff;
+  }
+
+  public void setSyntaxDiff(CDSyntaxDiff syntaxDiff){
+    this.srcCD = syntaxDiff.getSrcCD();
+    this.tgtCD = syntaxDiff.getTgtCD();
+    this.syntaxDiff = syntaxDiff;
+    setStrings(this.syntaxDiff);
   }
 
   // --print src
