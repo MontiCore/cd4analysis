@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static de.monticore.conformance.ConfParameter.*;
-import static de.monticore.conformance.ConfParameter.ALLOW_CARD_RESTRICTION;
+import static de.monticore.cdconformance.CDConfParameter.*;
+import static de.monticore.cdconformance.CDConfParameter.ALLOW_CARD_RESTRICTION;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -41,7 +41,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
-import de.monticore.conformance.ConformanceChecker;
+import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -765,7 +765,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     if (ref != null) {
       CDDiffUtil.refreshSymbolTable(ref);
-      new ConformanceChecker(
+      new CDConformanceChecker(
               Set.of(
                   STEREOTYPE_MAPPING,
                   NAME_MAPPING,

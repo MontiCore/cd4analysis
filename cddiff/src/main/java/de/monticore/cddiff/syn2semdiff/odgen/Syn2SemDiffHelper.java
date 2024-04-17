@@ -20,9 +20,9 @@ import de.monticore.cddiff.syn2semdiff.datastructures.*;
 import de.monticore.cddiff.syndiff.CDAssocDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.matcher.NameTypeMatcher;
-import de.monticore.matcher.SrcTgtAssocMatcher;
-import de.monticore.matcher.SuperTypeMatcher;
+import de.monticore.cdmatcher.MatchCDTypesByName;
+import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
+import de.monticore.cdmatcher.MatchCDTypesToSuperTypes;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -123,7 +123,7 @@ public class Syn2SemDiffHelper {
    */
   private List<ASTCDAssociation> deletedAssocs;
 
-  private SrcTgtAssocMatcher matcher;
+  private MatchCDAssocsBySrcNameAndTgtRole matcher;
   private List<CDAssocDiff> diffs;
 
   // CHECKED
@@ -3359,9 +3359,9 @@ public class Syn2SemDiffHelper {
   }
 
   public void setMatcher() {
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
-    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    matcher = new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
+    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchNameType = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    matcher = new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
   }
 
   public List<Pair<ASTCDClass, List<AssocStruct>>> sortDiffs(

@@ -16,10 +16,10 @@ import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syn2semdiff.datastructures.ClassSide;
 import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
-import de.monticore.matcher.MatchingStrategy;
-import de.monticore.matcher.NameTypeMatcher;
-import de.monticore.matcher.StructureTypeMatcher;
-import de.monticore.matcher.SuperTypeMatcher;
+import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.MatchCDTypesByName;
+import de.monticore.cdmatcher.MatchCDTypeByStructure;
+import de.monticore.cdmatcher.MatchCDTypesToSuperTypes;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -45,10 +45,10 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   private AssocStruct srcStruct;
   private AssocStruct tgtStruct;
 
-  NameTypeMatcher nameTypeMatch;
-  StructureTypeMatcher structureTypeMatch;
-  SuperTypeMatcher superTypeMatchStructure;
-  SuperTypeMatcher superTypeMatchName;
+  MatchCDTypesByName nameTypeMatch;
+  MatchCDTypeByStructure structureTypeMatch;
+  MatchCDTypesToSuperTypes superTypeMatchStructure;
+  MatchCDTypesToSuperTypes superTypeMatchName;
   List<MatchingStrategy<ASTCDType>> typeMatchers;
   // Print
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -90,10 +90,10 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
     this.baseDiff = new ArrayList<>();
-    nameTypeMatch = new NameTypeMatcher(tgtCD);
-    structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    superTypeMatchName = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    superTypeMatchStructure = new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    nameTypeMatch = new MatchCDTypesByName(tgtCD);
+    structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
+    superTypeMatchName = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    superTypeMatchStructure = new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
     typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
     typeMatchers.add(structureTypeMatch);
