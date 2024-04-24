@@ -239,11 +239,11 @@ classdiagram GraphAdapter {
 
 ```
 
-The class `de.monticore.cdconformance.ConformanceChecker` provides the method `checkConformance`
+The class `de.monticore.cdconformance.CDConformanceChecker` provides the method `checkConformance`
 which takes as input the concrete and reference model, each as an `ASTCDCompilationUnit`, 
 as well as a list of names of incarnation mappings encoded via stereotypes in the concrete model.
-The `ConformanceChecker` is initialized with a set of parameters from 
-`de.monticore.cdconformance.ConfParameter`.
+The `CDConformanceChecker` is initialized with a set of parameters from 
+`de.monticore.cdconformance.CDConfParameter`.
 
 Conformance Checking can also be used via the CD tool using the commands `--reference` to specify 
 a reference model and the command `--map` to specify the mapping names:
