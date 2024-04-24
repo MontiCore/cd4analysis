@@ -435,7 +435,7 @@ public class CDToolOptions {
             .argName("file")
             .numberOfArgs(1)
             .desc(
-                "Parses the file as a reference CD and check if the the input CD is a valid concretization.")
+                "Parses the file as a reference CD and checks if the the input CD specified by `-i` is conform to it.")
             .build());
 
     options.addOption(
@@ -446,7 +446,7 @@ public class CDToolOptions {
             .argName("names")
             .hasArgs()
             .desc(
-                "Specify the names of stereotypes that are used as incarnation mappings in the concrete model. Default : 'mapTo'")
+                "Specify the names of stereotypes that are used as incarnation mappings in the concrete model. Default : 'incarnates'")
             .build());
   }
 }

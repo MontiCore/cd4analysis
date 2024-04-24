@@ -759,7 +759,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ASTCDCompilationUnit con = ast.deepClone();
     CDDiffUtil.refreshSymbolTable(con);
     ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
-    List<String> mappings = List.of("mapTo");
+    List<String> mappings = List.of("incarnates");
     if (cmd.hasOption("map")) {
       mappings = List.of(cmd.getOptionValues("map"));
     }
