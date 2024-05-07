@@ -148,6 +148,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         if (cmd.hasOption("semdiff")) {
+          CDDiffUtil.setUseJavaTypes(true);
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
@@ -156,6 +157,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         if (cmd.hasOption("syntaxdiff")) {
+          CDDiffUtil.setUseJavaTypes(true);
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
