@@ -16,6 +16,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
@@ -29,6 +30,12 @@ import org.apache.commons.io.FileUtils;
 
 /** Collection of helper-methods for CDDiff. */
 public class CDDiffUtil {
+
+  private static boolean useJavaTypes;
+
+  public static void setUseJavaTypes(boolean useJavaTypes) {
+    CDDiffUtil.useJavaTypes = useJavaTypes;
+  }
 
   public static String escape2Alloy(String type) {
     return type.replaceAll("_", "__")
@@ -330,6 +337,9 @@ public class CDDiffUtil {
       CD4CodeMill.globalScope().removeSubScope(cd.getEnclosingScope());
     }
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    if (useJavaTypes) {
+      scope.addImports(new ImportStatement("java.lang", true));
+    }
     final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
     cd.accept(completer);
   }
