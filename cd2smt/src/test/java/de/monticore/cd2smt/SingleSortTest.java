@@ -1,7 +1,7 @@
 package de.monticore.cd2smt;
 
 import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SS;
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SSCOMB;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 import com.microsoft.z3.*;
@@ -13,7 +13,6 @@ import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -29,12 +28,11 @@ public class SingleSortTest extends CD2SMTAbstractTest {
     ctx = new Context(cfg);
   }
 
-  @Disabled("enum and abstract class conversion not yet implemented ")
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void CheckTypeUnicity(String cdfile) {
 
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator(SS, SE, DEFAULT);
+    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator(SSCOMB, SE, DEFAULT);
     ASTCDCompilationUnit ast = parseModel(cdfile);
     cd2SMTGenerator.cd2smt(ast, ctx);
     List<BoolExpr> constraints = new ArrayList<>();
