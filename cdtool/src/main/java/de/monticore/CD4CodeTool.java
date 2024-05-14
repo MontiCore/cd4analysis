@@ -757,6 +757,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   /** perform a conformance check */
   protected void checkConformance() {
     ASTCDCompilationUnit con = ast.deepClone();
+    new CD4CodeDirectCompositionTrafo().transform(con);
     CDDiffUtil.refreshSymbolTable(con);
     ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
     List<String> mappings = List.of("incarnates");
@@ -764,6 +765,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       mappings = List.of(cmd.getOptionValues("map"));
     }
     if (ref != null) {
+      new CD4CodeDirectCompositionTrafo().transform(ref);
       CDDiffUtil.refreshSymbolTable(ref);
       new CDConformanceChecker(
               Set.of(
