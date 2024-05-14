@@ -124,7 +124,12 @@ public class SSClassStrategy implements ClassStrategy {
     ast.getCDDefinition().getCDInterfacesList().forEach(this::declareCDType);
 
     // declare the datatype which indicate the real type of Each Expr
-    types = ctx.mkDatatypeSort("CDType", collectTypeConstructors());
+    Constructor<Sort>[] constructors = collectTypeConstructors();
+    if (constructors.length > 0) {
+      types = ctx.mkDatatypeSort("CDType", constructors);
+    } else {
+      Log.error("Empty class diagram is not permitted");
+    }
 
     // declare the function that maps each expression to his Type
     hasTypeFunc = ctx.mkFuncDecl("has_type", new Sort[] {sort, types}, ctx.mkBoolSort());
@@ -135,16 +140,36 @@ public class SSClassStrategy implements ClassStrategy {
    * declare a boolean constraint which ensures that each Object has a unique Type. (6)
    */
   protected IdentifiableBoolExpr buildTypeUniquenessConstraint() {
+    // constant representing an obj in SMT
     Expr<? extends Sort> obj = ctx.mkConst("obj", sort);
 
+    // three constants representing types in SMT
+    Expr<? extends Sort> type0 = ctx.mkConst("type0", types);
     Expr<? extends Sort> type1 = ctx.mkConst("type1", types);
     Expr<? extends Sort> type2 = ctx.mkConst("type2", types);
+
+    // constant obj has  a type (type0)
+    BoolExpr objectHasType =
+        ctx.mkExists(
+            new Expr[] {type0}, ctx.mkApp(hasTypeFunc, obj, type0), 0, null, null, null, null);
+
+    // constant obj cannot have two different types
     BoolExpr body =
         ctx.mkImplies(
             ctx.mkAnd(ctx.mkApp(hasTypeFunc, obj, type1), ctx.mkApp(hasTypeFunc, obj, type2)),
             ctx.mkEq(type1, type2));
 
-    BoolExpr res = ctx.mkForall(new Expr[] {obj, type1, type2}, body, 0, null, null, null, null);
+    // each object has a unique type
+    BoolExpr res =
+        ctx.mkForall(
+            new Expr[] {obj, type1, type2},
+            ctx.mkAnd(body, objectHasType),
+            0,
+            null,
+            null,
+            null,
+            null);
+
     return IdentifiableBoolExpr.buildIdentifiable(
         res, ast.get_SourcePositionStart(), Optional.of("Object_type_unique"));
   }
