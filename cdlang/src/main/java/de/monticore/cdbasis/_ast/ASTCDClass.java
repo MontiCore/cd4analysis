@@ -5,7 +5,7 @@ import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ASTCDClass extends ASTCDClassTOP {
@@ -15,7 +15,8 @@ public class ASTCDClass extends ASTCDClassTOP {
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
     if (!isPresentCDExtendUsage()) {
-      return new ArrayList<ASTMCObjectType>();
+      // Return an empty, immutable (!!) list to not skip some updates without knowledge
+      return Collections.emptyList();
     }
     return getCDExtendUsage().getSuperclassList();
   }
@@ -38,7 +39,8 @@ public class ASTCDClass extends ASTCDClassTOP {
   @Override
   public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDInterfaceUsage()) {
-      return new ArrayList<ASTMCObjectType>();
+      // Return an empty, immutable (!!) list to not skip some updates without knowledge
+      return Collections.emptyList();
     }
     return getCDInterfaceUsage().getInterfaceList();
   }
