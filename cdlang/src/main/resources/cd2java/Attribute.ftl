@@ -1,4 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
+${tc.include("cd2java.JavaDoc")}
 ${tc.include("cd2java.Annotations")}
 <#-- Annotations hook -->
 ${defineHookPoint("AttributeContent:Annotations")}

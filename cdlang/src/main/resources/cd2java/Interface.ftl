@@ -13,6 +13,8 @@ ${cdPrinter.printImportList(cd4c.getImportList(ast))}
 <#-- Imports hook -->
 ${defineHookPoint("InterfaceContent:Imports")}
 
+${tc.include("cd2java.JavaDoc")}
+
 ${tc.include("cd2java.Annotations")}
 
 <#-- Annotations hook -->
