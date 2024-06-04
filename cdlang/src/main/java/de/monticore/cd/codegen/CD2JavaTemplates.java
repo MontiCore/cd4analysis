@@ -25,5 +25,7 @@ public final class CD2JavaTemplates {
 
   public static final String ANNOTATIONS = "cd2java.Annotations";
 
+  public static final String JAVADOC = "cd2java.JavaDoc";
+
   private CD2JavaTemplates() {}
 }
