@@ -117,17 +117,7 @@ public class CD2CDCombinedMatching<T> {
       ASTCDCompilationUnit tgtCD) {
     double weight = 0;
 
-    List<MatchingStrategy<ASTCDType>> matcherList = new ArrayList<>();
-    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchName =
-        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchStructure =
-        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
-    matcherList.add(nameTypeMatch);
-    matcherList.add(structureTypeMatch);
-    matcherList.add(superTypeMatchName);
-    matcherList.add(superTypeMatchStructure);
+    List<MatchingStrategy<ASTCDType>> matcherList = initMatching4AssocTypes(srcCD, tgtCD);
 
     Optional<CDTypeSymbol> srcTypeSymbolLeft =
         srcCD.getEnclosingScope().resolveCDTypeDown(srcElem.getLeftQualifiedName().getQName());
@@ -164,5 +154,21 @@ public class CD2CDCombinedMatching<T> {
       }
     }
     return weight;
+  }
+
+  protected List<MatchingStrategy<ASTCDType>> initMatching4AssocTypes(
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    List<MatchingStrategy<ASTCDType>> matcherList = new ArrayList<>();
+    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
+    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchName =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchStructure =
+        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
+    matcherList.add(nameTypeMatch);
+    matcherList.add(structureTypeMatch);
+    matcherList.add(superTypeMatchName);
+    matcherList.add(superTypeMatchStructure);
+    return matcherList;
   }
 }
