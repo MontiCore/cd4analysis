@@ -1,12 +1,12 @@
 package de.monticore.cdmatcher;
 
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** Matches classes / interfaces by structure. */
 public class MatchCDTypeByStructure implements MatchingStrategy<ASTCDType> {
 
   private final ASTCDCompilationUnit tgtCD;
@@ -16,11 +16,19 @@ public class MatchCDTypeByStructure implements MatchingStrategy<ASTCDType> {
     this.tgtCD = tgtCD;
   }
 
-  /**
-   * A set for the matched elements which can be per definition modified
-   *
-   * @return all elements which have been matched
-   */
+  public MatchCDTypeByStructure(ASTCDCompilationUnit tgtCD, double threshold) {
+    this.tgtCD = tgtCD;
+    this.threshold = threshold;
+  }
+
+  public void setThreshold(double threshold) {
+    this.threshold = threshold;
+  }
+
+  public double getThreshold() {
+    return threshold;
+  }
+
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     List<ASTCDType> result = new ArrayList<>();
@@ -33,34 +41,12 @@ public class MatchCDTypeByStructure implements MatchingStrategy<ASTCDType> {
         tgtCD.getCDDefinition().getCDInterfacesList().stream()
             .filter(type -> isMatched(srcElem, type))
             .collect(Collectors.toList()));
-
     return result;
   }
 
+  /** CDTypes are matched if there is a sufficient number of matching attributes. */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    List<ASTCDAttribute> srcAttr = new ArrayList<>(srcElem.getCDAttributeList());
-    List<ASTCDAttribute> tgtAttr = new ArrayList<>(tgtElem.getCDAttributeList());
-
-    List<ASTCDAttribute> tgtAttrDeletedAttr = new ArrayList<>(tgtAttr);
-    List<ASTCDAttribute> similarities = new ArrayList<>();
-
-    for (ASTCDAttribute x : srcAttr) {
-      for (ASTCDAttribute y : tgtAttr) {
-        if (x.getName().equals(y.getName())) {
-          tgtAttrDeletedAttr.remove(y);
-          similarities.add(x);
-        }
-      }
-    }
-
-    List<ASTCDAttribute> allAttributes = new ArrayList<>(srcAttr);
-    allAttributes.addAll(tgtAttrDeletedAttr);
-
-    // Jaccard Index
-    double weight = (double) similarities.size() / allAttributes.size();
-
-    // Chosen threshold
-    return weight >= threshold;
+    return new CDTypeSimilarity().computeWeight(srcElem, tgtElem) >= threshold;
   }
 }

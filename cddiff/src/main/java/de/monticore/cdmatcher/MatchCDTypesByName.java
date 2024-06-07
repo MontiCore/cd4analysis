@@ -14,11 +14,6 @@ public class MatchCDTypesByName implements MatchingStrategy<ASTCDType> {
     this.tgtCD = tgtCD;
   }
 
-  /**
-   * A set for the matched elements which can be per definition modified
-   *
-   * @return all elements which have been matched
-   */
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
     List<ASTCDType> result = new ArrayList<>();
@@ -39,19 +34,9 @@ public class MatchCDTypesByName implements MatchingStrategy<ASTCDType> {
     return result;
   }
 
-  /**
-   * A boolean method which gives if the name of the tgterence type from tgtCD is matched with the
-   * name of the srccrete type from srcCD
-   *
-   * @param srcElem The tgterence type which we pick from the tgterence class diagram
-   * @param tgtElem The srccrete type which we pick from the srccrete class diagram
-   * @return true if both types have the same name
-   */
+  /** Match types iff they have the same name. */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    if (srcElem.getName().equals(tgtElem.getName())) {
-      return true;
-    }
-    return false;
+    return srcElem.getName().equals(tgtElem.getName());
   }
 }
