@@ -25,11 +25,6 @@ public class MatchCDAssocsBySrcNameAndTgtRole implements MatchingStrategy<ASTCDA
     this.tgtCD = tgtCD;
   }
 
-  /**
-   * A set for the matched elements which can be per definition modified and edited
-   *
-   * @return all elements which have been matched
-   */
   @Override
   public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream()
@@ -38,22 +33,21 @@ public class MatchCDAssocsBySrcNameAndTgtRole implements MatchingStrategy<ASTCDA
   }
 
   /**
-   * A boolean method which gives if the element1 from srcCD is matched with the element2 from srcCD
-   *
-   * @param srcElem element from srcCD
-   * @param tgtElem element from srcCD
-   * @return true if the source classes and the role names on the side of the target class match
+   * Match two associations iff the role-names match in a navigable direction and the corresponding
+   * source-types match, as well.
    */
   @Override
   public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     return check(srcElem, tgtElem) || checkReverse(srcElem, tgtElem);
   }
 
-  // Check the directions of the associations and proving the source classes and the roles
+  /** Match two associations, assuming both are written in the same orientation. */
   protected boolean check(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
 
     boolean match = false;
 
+    // for the left side of both associations first check navigability, then the referenced classes
+    // and role-names
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableRight()
             || !tgtElem.getCDAssocDir().isDefinitiveNavigableLeft())
         && (srcElem.getCDAssocDir().isDefinitiveNavigableRight()
@@ -65,6 +59,7 @@ public class MatchCDAssocsBySrcNameAndTgtRole implements MatchingStrategy<ASTCDA
               && checkRole(srcElem.getRight(), tgtElem.getRight());
     }
 
+    // same as above but for the right side of the association
     if ((tgtElem.getCDAssocDir().isDefinitiveNavigableLeft()
             || !tgtElem.getCDAssocDir().isDefinitiveNavigableRight())
         && (srcElem.getCDAssocDir().isDefinitiveNavigableLeft()
@@ -80,6 +75,7 @@ public class MatchCDAssocsBySrcNameAndTgtRole implements MatchingStrategy<ASTCDA
     return match;
   }
 
+  /** Match two associations, assuming both are written in opposite orientations. */
   protected boolean checkReverse(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
 
     boolean match = false;
@@ -110,6 +106,7 @@ public class MatchCDAssocsBySrcNameAndTgtRole implements MatchingStrategy<ASTCDA
     return match;
   }
 
+  /** We check if the referenced types match using the provided type-matcher. */
   protected boolean checkReference(String srcElem, String tgtElem) {
     Optional<CDTypeSymbol> srcTypeSymbol = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem);
     Optional<CDTypeSymbol> tgtTypeSymbol = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem);

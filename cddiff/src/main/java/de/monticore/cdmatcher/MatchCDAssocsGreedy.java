@@ -6,6 +6,11 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Fall-back Matching Strategy for Tool-assisted Concretization Should be executed if no incarnation
+ * is defined by the incarnation mapping. If multiple elements are matched, abort.
+ * (CDMerge-compliant)
+ */
 public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcNameAndTgtRole {
 
   public MatchCDAssocsGreedy(
@@ -22,6 +27,10 @@ public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcNameAndTgtRole {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Associations are matched iff (1) referenced types match (2) association names match if present
+   * (3) role-names match if present
+   */
   @Override
   public boolean isMatched(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (srcElem.isPresentName()

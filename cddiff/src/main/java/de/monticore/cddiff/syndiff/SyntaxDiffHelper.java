@@ -148,9 +148,9 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     typeMatchers.add(superTypeMatchStructureType);
 
     CD2CDCombinedMatching<ASTCDType> combinedMatching =
-        new CD2CDCombinedMatching<>(listToMatch, srcCD, tgtCD, typeMatchers);
+        new CombinedCDTypeMatching(listToMatch, srcCD, tgtCD, typeMatchers);
 
-    return combinedMatching.getFinalMap();
+    return combinedMatching.getMatches();
   }
 
   /**
@@ -183,8 +183,8 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     assocMatchers.add(associationSrcTgtMatchStructureType);
 
     CD2CDCombinedMatching<ASTCDAssociation> combinedMatching =
-        new CD2CDCombinedMatching<>(listToMatch, srcCD, tgtCD, assocMatchers);
+        new CombinedCDAssocMatching(listToMatch, srcCD, tgtCD, assocMatchers);
 
-    return combinedMatching.getFinalMap();
+    return combinedMatching.getMatches();
   }
 }
