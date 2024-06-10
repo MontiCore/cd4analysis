@@ -1,7 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -405,21 +404,13 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       ASTCDType tgtType,
       ASTCDCompilationUnit tgtCD,
       ASTCDCompilationUnit srcCD) {
-    Set<ASTCDType> superTypesOfTgtType =
-        getAllSuper(tgtType, (ICD4CodeArtifactScope) tgtCD.getEnclosingScope());
-    superTypesOfTgtType.remove(tgtType);
+
+    Set<ASTCDAttribute> srcSuperAttributes = collectInheritedAttributes(srcType, srcCD);
+    Set<ASTCDAttribute> tgtSuperAttributes = collectInheritedAttributes(tgtType, tgtCD);
 
     for (ASTCDAttribute srcAttr : srcType.getCDAttributeList()) {
-      boolean inheritedFound = false;
-      for (ASTCDType x : superTypesOfTgtType) {
-        for (ASTCDAttribute tgtAttr : x.getCDAttributeList()) {
-          if (tgtAttr.getName().equals(srcAttr.getName())) {
-            inheritedFound = true;
-            break;
-          }
-        }
-      }
-      if (inheritedFound) {
+      if (tgtSuperAttributes.stream()
+          .anyMatch(tgtAttr -> tgtAttr.getName().equals(srcAttr.getName()))) {
         inheritedAttributes.add(srcAttr);
         if (!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
           baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
@@ -427,28 +418,41 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
       }
     }
 
-    Set<ASTCDType> superTypesOfSrcType =
-        getAllSuper(srcType, (ICD4CodeArtifactScope) srcCD.getEnclosingScope());
-    superTypesOfSrcType.remove(srcType);
+    tgtType
+        .getCDAttributeList()
+        .forEach(
+            attr ->
+                srcSuperAttributes.stream()
+                    .filter(superAttr -> superAttr.getName().equals(attr.getName()))
+                    .findAny()
+                    .ifPresent(superAttr -> removedBcInh.add(attr)));
 
-    List<ASTCDAttribute> attrFromSuperTypes = new ArrayList<>();
-    for (ASTCDType x : superTypesOfSrcType) {
-      attrFromSuperTypes.addAll(x.getCDAttributeList());
+    if (!removedBcInh.isEmpty() && !baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
+      baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
     }
+  }
 
-    for (ASTCDAttribute x : tgtType.getCDAttributeList()) {
-      for (ASTCDAttribute a : attrFromSuperTypes) {
-        if (x.getName().equals(a.getName())) {
-          removedBcInh.add(x);
-        }
-      }
-    }
+  private Set<ASTCDAttribute> collectInheritedAttributes(ASTCDType type, ASTCDCompilationUnit cd) {
+    Set<ASTCDAttribute> inheritedAttributes = new HashSet<>();
 
-    if (!removedBcInh.isEmpty()) {
-      if (!baseDiff.contains(DiffTypes.INHERITED_ATTRIBUTE)) {
-        baseDiff.add(DiffTypes.INHERITED_ATTRIBUTE);
-      }
-    }
+    // collect all attributes of all super-types
+    getAllSuper(type, (ICD4CodeArtifactScope) cd.getEnclosingScope())
+        .forEach(superType -> inheritedAttributes.addAll(superType.getCDAttributeList()));
+
+    // remove all attributes that also explicitly appear in the type itself
+    // prevents incorrect diff if attribute appears in sub- & super-type of both CDs (e.g.
+    // MaCoCo.cd)
+    inheritedAttributes.removeIf(
+        superAttr ->
+            type.getCDAttributeList().stream()
+                .anyMatch(
+                    attr ->
+                        attr.getName().equals(superAttr.getName())
+                            && attr.getMCType()
+                                .printType()
+                                .equals(superAttr.getMCType().printType())));
+
+    return inheritedAttributes;
   }
 
   /**
