@@ -2,17 +2,14 @@ package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.MethodChecker;
+import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class STNamedMethodChecker implements MethodChecker {
-  protected String mapping;
-  protected ASTCDType refType;
-  protected ASTCDType conType;
-
-  public STNamedMethodChecker(String mapping) {
+public class STNamedMethodChecker extends AbstractMethodChecker {
+  public STNamedMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
+    this.typeMatcher = typeMatcher;
   }
 
   @Override
@@ -31,25 +28,5 @@ public class STNamedMethodChecker implements MethodChecker {
       return ref.getName().equals(refName);
     }
     return false;
-  }
-
-  @Override
-  public ASTCDType getReferenceType() {
-    return this.refType;
-  }
-
-  @Override
-  public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
-  }
-
-  @Override
-  public ASTCDType getConcreteType() {
-    return conType;
-  }
-
-  @Override
-  public void setConcreteType(ASTCDType conType) {
-    this.conType = conType;
   }
 }

@@ -74,20 +74,20 @@ public class CDConformanceChecker {
     typeInc = new CompTypeIncStrategy(referenceCD, mapping);
     assocInc = new CompAssocIncStrategy(referenceCD, mapping);
     attrInc = new CompAttributeChecker(mapping);
-    methInc = new CompMethodChecker(mapping);
+    methInc = new CompMethodChecker(mapping, typeInc);
 
     if (params.contains(STEREOTYPE_MAPPING)) {
       typeInc.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new STNamedAttributeChecker(mapping));
-      methInc.addIncStrategy(new STNamedMethodChecker(mapping));
+      methInc.addIncStrategy(new STNamedMethodChecker(mapping, typeInc));
     }
 
     if (params.contains(NAME_MAPPING)) {
       typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new EqNameAttributeChecker(mapping));
-      methInc.addIncStrategy(new EqNameMethodChecker(mapping));
+      methInc.addIncStrategy(new EqNameMethodChecker(mapping, typeInc));
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {

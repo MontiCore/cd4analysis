@@ -2,23 +2,20 @@ package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.MethodChecker;
+import de.monticore.cdconformance.conf.ICDMethodChecker;
+import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompMethodChecker implements MethodChecker {
-  protected String mapping;
-  protected ASTCDType conType;
+public class CompMethodChecker extends AbstractMethodChecker {
+  List<ICDMethodChecker> methodCheckers = new ArrayList<>();
 
-  protected ASTCDType refType;
-
-  List<MethodChecker> methodCheckers = new ArrayList<>();
-
-  public CompMethodChecker(String mapping) {
+  public CompMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
+    this.typeMatcher = typeMatcher;
   }
 
-  public void addIncStrategy(MethodChecker checker) {
+  public void addIncStrategy(ICDMethodChecker checker) {
     methodCheckers.add(checker);
   }
 
@@ -26,7 +23,7 @@ public class CompMethodChecker implements MethodChecker {
   public List<ASTCDMethod> getMatchedElements(ASTCDMethod concrete) {
     List<ASTCDMethod> refElements = new ArrayList<>();
 
-    for (MethodChecker checker : methodCheckers) {
+    for (ICDMethodChecker checker : methodCheckers) {
       refElements.addAll(checker.getMatchedElements(concrete));
       if (!refElements.isEmpty()) {
         return refElements;
@@ -42,19 +39,9 @@ public class CompMethodChecker implements MethodChecker {
   }
 
   @Override
-  public ASTCDType getReferenceType() {
-    return refType;
-  }
-
-  @Override
   public void setReferenceType(ASTCDType refType) {
     this.refType = refType;
     methodCheckers.forEach(checker -> checker.setReferenceType(refType));
-  }
-
-  @Override
-  public ASTCDType getConcreteType() {
-    return conType;
   }
 
   @Override

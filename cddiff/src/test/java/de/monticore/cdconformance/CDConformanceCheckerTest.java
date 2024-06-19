@@ -51,6 +51,34 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
 
   @Test
+  public void testMethodConformanceCheck() {
+    parseModels("methods/ValidMethods.cd", "methods/ReferenceMethods.cd");
+    checker =
+        new CDConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                INHERITANCE,
+                ALLOW_CARD_RESTRICTION));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("incarnates")));
+  }
+
+  @Test
+  public void testFalseMethodConformanceCheck() {
+    parseModels("methods/InvalidMethods.cd", "methods/ReferenceMethods.cd");
+    checker =
+        new CDConformanceChecker(
+            Set.of(
+                STEREOTYPE_MAPPING,
+                NAME_MAPPING,
+                SRC_TARGET_ASSOC_MAPPING,
+                INHERITANCE,
+                ALLOW_CARD_RESTRICTION));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("incarnates")));
+  }
+
+  @Test
   public void testConformanceCheckAdapter() {
     parseModels("adapter/GraphAdapter.cd", "adapter/Adapter.cd");
     checker =

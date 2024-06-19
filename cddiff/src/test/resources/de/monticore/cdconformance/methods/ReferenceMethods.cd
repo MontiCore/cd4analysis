@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.String;
+
+classdiagram ReferenceMethods {
+
+  class Operator {
+    void operation(String input, Parameter param);
+  }
+
+  class Parameter;
+
+}

@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.CDAttributeChecker;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
-import de.monticore.cdconformance.conf.MethodChecker;
+import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdmatcher.MatchingStrategy;
@@ -23,7 +23,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
 
   protected CDAttributeChecker attributeChecker;
 
-  protected MethodChecker methodChecker;
+  protected ICDMethodChecker methodChecker;
   protected MatchingStrategy<ASTCDType> typeInc;
   protected MatchingStrategy<ASTCDAssociation> assocInc;
 
@@ -31,7 +31,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
       ASTCDCompilationUnit conCD,
       ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker,
-      MethodChecker methodChecker,
+      ICDMethodChecker methodChecker,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc) {
     this.refCD = refCD;
