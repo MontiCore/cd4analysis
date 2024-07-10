@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
@@ -14,7 +14,8 @@ public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
     if (isPresentMCPackageDeclaration()) {
       return this.mCPackageDeclaration.get().getMCQualifiedName().getPartsList();
     } else {
-      return new ArrayList<String>();
+      // Return an empty, immutable (!!) list to not skip some updates without knowledge
+      return Collections.emptyList();
     }
   }
 }
