@@ -6,6 +6,8 @@ classdiagram Reference {
   class Account {
     String username;
     String password;
+
+    void operation(String input);
   }
 
   class Item {

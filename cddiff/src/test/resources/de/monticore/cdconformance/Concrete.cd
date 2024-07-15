@@ -6,11 +6,15 @@ classdiagram Concrete {
   <<ref="Account">> class BankAccount {
     <<ref = "username">> String name;
     <<ref = "password">> String password;
+
+    <<ref= "operation">> boolean execute(String input);
   }
 
    class Account {
       String username;
       String password;
+
+      void operation(String input);
     }
 
   <<ref="Item">> abstract class Item {

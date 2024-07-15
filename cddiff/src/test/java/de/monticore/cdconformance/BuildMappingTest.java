@@ -3,6 +3,8 @@ package de.monticore.cdconformance;
 import static de.monticore.cdconformance.CDConfParameter.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -71,6 +73,19 @@ public class BuildMappingTest extends ConfAbstractTest {
     Assertions.assertEquals("id", refAttributes.get(0).getName());
   }
 
+  @Test
+  public void testMethodMap() {
+    ASTCDType bAccount = getType("BankAccount", conCD);
+    ASTCDMethod method = getMethod("BankAccount", "execute", conCD);
+    List<ASTCDMethod> refMethod = checker.getRefElements(bAccount, method);
+    Assertions.assertEquals(1, refMethod.size());
+    Assertions.assertEquals("operation", refMethod.get(0).getName());
+
+    List<ASTCDMethod> conElements = checker.getConElements(refMethod.get(0));
+    Assertions.assertEquals(2, conElements.size());
+    Assertions.assertEquals("execute", conElements.get(0).getName());
+  }
+
   private ASTCDType getType(String name, ASTCDCompilationUnit cd) {
     Optional<CDTypeSymbol> symbol = cd.getEnclosingScope().resolveCDType(name);
     Assertions.assertTrue(symbol.isPresent());
@@ -90,5 +105,13 @@ public class BuildMappingTest extends ConfAbstractTest {
     Optional<FieldSymbol> symbol = cd.getEnclosingScope().resolveField(name);
     Assertions.assertTrue(symbol.isPresent());
     return (ASTCDAttribute) symbol.get().getAstNode();
+  }
+
+  private ASTCDMethod getMethod(String typeName, String methodName, ASTCDCompilationUnit cd) {
+    Optional<CDTypeSymbol> type = cd.getEnclosingScope().resolveCDType(typeName);
+    Assertions.assertTrue(type.isPresent());
+    ASTCDMethodSignature method = type.get().getMethodSignatureList(methodName).get(0).getAstNode();
+
+    return (ASTCDMethod) method;
   }
 }

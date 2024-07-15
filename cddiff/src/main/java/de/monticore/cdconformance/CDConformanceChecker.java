@@ -3,6 +3,7 @@ package de.monticore.cdconformance;
 import static de.monticore.cdconformance.CDConfParameter.*;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdconformance.conf.association.BasicAssocConfStrategy;
@@ -42,6 +43,7 @@ public class CDConformanceChecker {
   protected Map<ASTCDAttribute, List<ASTCDAttribute>> attributeMap = new HashMap<>();
 
   protected Map<ASTCDAssociation, List<ASTCDAssociation>> assocMap = new HashMap<>();
+  protected Map<ASTCDMethod, List<ASTCDMethod>> methodMap = new HashMap<>();
 
   public CDConformanceChecker(Set<CDConfParameter> params) {
     this.params = params;
@@ -172,7 +174,7 @@ public class CDConformanceChecker {
     }
 
     typeMap.put(ref, concretes);
-    return checkAttributeMapping(ref, multiInc);
+    return checkAttributeMapping(ref, multiInc) && checkMethodMapping(ref, multiInc);
   }
 
   protected boolean checkAssocMapping(
@@ -196,6 +198,30 @@ public class CDConformanceChecker {
     return true;
   }
 
+  protected boolean checkMethodMapping(ASTCDType refType, boolean multiInc) {
+
+    for (ASTCDMethod refMethod : refType.getCDMethodList()) {
+      List<ASTCDMethod> conMethods = new ArrayList<>();
+      for (ASTCDType conType : getConElements(refType)) {
+        for (ASTCDMethod conMethod : conType.getCDMethodList()) {
+          if (getRefElements(conType, conMethod).contains(refMethod)) {
+            conMethods.add(conMethod);
+          }
+        }
+      }
+      if (conMethods.size() > 1 && !multiInc) {
+        Log.info(
+            "Type " + refMethod.getName() + " has multiple incarnations ",
+            this.getClass().getName());
+        return false;
+      }
+
+      methodMap.put(refMethod, conMethods);
+    }
+
+    return true;
+  }
+
   public List<ASTCDType> getRefElements(ASTCDType con) {
     return typeInc.getMatchedElements(con);
   }
@@ -216,6 +242,18 @@ public class CDConformanceChecker {
     return refElements;
   }
 
+  public List<ASTCDMethod> getRefElements(ASTCDType conType, ASTCDMethod con) {
+    List<ASTCDMethod> refElements = new ArrayList<>();
+    getRefElements(conType)
+        .forEach(
+            refType -> {
+              methInc.setConcreteType(conType);
+              methInc.setReferenceType(refType);
+              refElements.addAll(methInc.getMatchedElements(con));
+            });
+    return refElements;
+  }
+
   public List<ASTCDType> getConElements(ASTCDType con) {
     return typeMap.containsKey(con) ? typeMap.get(con) : new ArrayList<>();
   }
@@ -226,5 +264,9 @@ public class CDConformanceChecker {
 
   public List<ASTCDAttribute> getConElements(ASTCDAttribute con) {
     return attributeMap.containsKey(con) ? attributeMap.get(con) : new ArrayList<>();
+  }
+
+  public List<ASTCDMethod> getConElements(ASTCDMethod con) {
+    return methodMap.containsKey(con) ? methodMap.get(con) : new ArrayList<>();
   }
 }
