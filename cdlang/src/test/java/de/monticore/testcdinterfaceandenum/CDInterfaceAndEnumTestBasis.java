@@ -61,7 +61,7 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
   }
 
   protected void completeSymTab(ASTCDCompilationUnit ast) {
-    TestCDInterfaceAndEnumTraverser t = TestCDInterfaceAndEnumMill.traverser();
+    TestCDInterfaceAndEnumTraverser t = TestCDInterfaceAndEnumMill.inheritanceTraverser();
 
     // add 4 cd basis
     CDBasisSymbolTableCompleter symTabCompBasis = new CDBasisSymbolTableCompleter();

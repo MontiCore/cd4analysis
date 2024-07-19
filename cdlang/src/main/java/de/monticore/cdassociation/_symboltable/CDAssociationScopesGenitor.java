@@ -77,7 +77,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
    */
   protected boolean initialize_SymAssociation(
       SymAssociationBuilder symAssociation, ASTCDAssociation node) {
-    CDAssociationTraverser t = CDAssociationMill.traverser();
+    CDAssociationTraverser t = CDAssociationMill.inheritanceTraverser();
     t.add4CDAssociation(new CDAssocTypeForSymAssociationVisitor(symAssociation));
     node.getCDAssocType().accept(t);
 

@@ -25,7 +25,7 @@ public class CD4Code2ODDelegator {
   protected final ReportingRepository reporting;
 
   public CD4Code2ODDelegator(IndentPrinter printer, ReportingRepository reporting) {
-    this.traverser = CD4CodeMill.traverser();
+    this.traverser = CD4CodeMill.inheritanceTraverser();
     this.pp = printer;
     this.reporting = reporting;
 

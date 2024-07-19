@@ -51,7 +51,7 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     { // add FieldSymbols for the CDRoleSymbols
       final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromNavigableRoles =
           new CDAssociationCreateFieldsFromNavigableRoles();
-      final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+      final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
       traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
       traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
       cdAssociationCreateFieldsFromNavigableRoles.transform(astcdCompilationUnit);
@@ -85,7 +85,7 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     { // add FieldSymbols for the CDRoleSymbols
       final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
           new CDAssociationCreateFieldsFromAllRoles();
-      final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+      final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
       traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
       traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
 
@@ -118,7 +118,7 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     ASTCDCompilationUnit compUnit = parse("cd/codegen/CyclicAssocs.cd");
     prepareST(compUnit);
 
-    final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+    final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsTrafo);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsTrafo);
     cdAssociationCreateFieldsTrafo.transform(compUnit);

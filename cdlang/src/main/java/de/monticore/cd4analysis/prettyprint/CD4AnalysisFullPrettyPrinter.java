@@ -39,7 +39,7 @@ public class CD4AnalysisFullPrettyPrinter {
 
   public CD4AnalysisFullPrettyPrinter(IndentPrinter printer) {
     this.printer = printer;
-    this.traverser = CD4AnalysisMill.traverser();
+    this.traverser = CD4AnalysisMill.inheritanceTraverser();
 
     cdBasis = new CDBasisPrettyPrinter(printer);
     traverser.add4CDBasis(cdBasis);

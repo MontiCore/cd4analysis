@@ -32,7 +32,7 @@ public class CD4CodePlantUMLFullPrettyPrinter {
     this.plantUMLPrettyPrintUtil = plantUMLPrettyPrintUtil;
     final IndentPrinter printer = this.plantUMLPrettyPrintUtil.getPrinter();
 
-    this.traverser = CD4CodeMill.traverser();
+    this.traverser = CD4CodeMill.inheritanceTraverser();
     CDBasisPlantUMLPrettyPrinter cdBasis =
         new CDBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
     traverser.add4CDBasis(cdBasis);

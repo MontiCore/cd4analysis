@@ -19,7 +19,7 @@ public class CDBasisPackageNameLowerCaseTrafo implements CDBasisVisitor2 {
   }
 
   public void transform(ASTCDCompilationUnit ast) {
-    CDBasisTraverser t = CDBasisMill.traverser();
+    CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
     t.add4CDBasis(this);
     ast.accept(t);
   }
