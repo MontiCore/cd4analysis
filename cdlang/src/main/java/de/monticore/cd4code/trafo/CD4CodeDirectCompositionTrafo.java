@@ -19,7 +19,7 @@ public class CD4CodeDirectCompositionTrafo {
 
   public CD4CodeDirectCompositionTrafo(CDAfterParseHelper cdAfterParseHelper) {
     this.cdAfterParseHelper = cdAfterParseHelper;
-    this.traverser = CD4CodeMill.inheritanceTraverser();
+    this.traverser = CD4CodeMill.traverser();
 
     init(cdAfterParseHelper, traverser);
   }

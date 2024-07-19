@@ -31,7 +31,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinter {
 
   public CD4AnalysisPlantUMLFullPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
     this.plantUMLPrettyPrintUtil = plantUMLPrettyPrintUtil;
-    this.traverser = CD4AnalysisMill.inheritanceTraverser();
+    this.traverser = CD4AnalysisMill.traverser();
     final IndentPrinter printer = this.plantUMLPrettyPrintUtil.getPrinter();
 
     CDBasisPlantUMLPrettyPrinter cdBasis =

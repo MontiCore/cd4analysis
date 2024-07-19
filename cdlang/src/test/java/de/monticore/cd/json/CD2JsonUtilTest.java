@@ -40,7 +40,7 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
     // ToDo: not needed? This trafo leads to errors. Without, everything seems to be ok.
     // first add roles if they don't exist
     //    CDAssociationRoleNameTrafo associationRoleNameTrafo = new CDAssociationRoleNameTrafo();
-    //    CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    //    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
     //    traverser.add4CDAssociation(associationRoleNameTrafo);
     //    traverser.setCDAssociationHandler(associationRoleNameTrafo);
     //    associationRoleNameTrafo.setTraverser(traverser);
@@ -49,7 +49,7 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
     // then add roles as fields
     CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromAllRoles =
         new CDAssociationCreateFieldsFromNavigableRoles();
-    CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.setTraverser(traverser);

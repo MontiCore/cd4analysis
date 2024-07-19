@@ -22,7 +22,7 @@ public class CD4Analysis2ODDelegator {
   protected final ReportingRepository reporting;
 
   public CD4Analysis2ODDelegator(IndentPrinter printer, ReportingRepository reporting) {
-    this.traverser = CD4AnalysisMill.inheritanceTraverser();
+    this.traverser = CD4AnalysisMill.traverser();
     this.pp = printer;
     this.reporting = reporting;
 

@@ -53,7 +53,7 @@ public class TopDecorator {
   }
 
   public ASTCDCompilationUnit decorate(final ASTCDCompilationUnit compUnit) {
-    CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    CD4CodeTraverser traverser = CD4CodeMill.traverser();
     DetermineNameVisitor nameVisitor = new DetermineNameVisitor();
     traverser.add4CDBasis(nameVisitor);
     traverser.add4CDInterfaceAndEnum(nameVisitor);

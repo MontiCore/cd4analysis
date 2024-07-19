@@ -28,7 +28,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
 
   public <T extends ASTCDElement> List<T> getCDElementListBy(CDElementVisitor.Options... options) {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(options);
-    CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
+    CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     this.accept(t);
     return cdElementVisitor.getElements();
@@ -51,7 +51,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   public List<ASTCDPackage> getCDPackagesList() {
     final CDElementVisitor cdElementVisitor =
         CDMill.cDElementVisitor(CDElementVisitor.Options.PACKAGES);
-    CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
+    CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     this.accept(t);
     return cdElementVisitor.getElements();
@@ -60,7 +60,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   public List<ASTCDClass> getCDClassesList() {
     final CDElementVisitor cdElementVisitor =
         CDMill.cDElementVisitor(CDElementVisitor.Options.CLASSES);
-    CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
+    CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     this.accept(t);
     return cdElementVisitor.getElements();
@@ -69,7 +69,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   public List<ASTCDInterface> getCDInterfacesList() {
     final CDElementVisitor cdElementVisitor =
         CDMill.cDElementVisitor(CDElementVisitor.Options.INTERFACES);
-    CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.inheritanceTraverser();
+    CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     t.add4CDInterfaceAndEnum(cdElementVisitor);
     this.accept(t);
@@ -79,7 +79,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   public List<ASTCDEnum> getCDEnumsList() {
     final CDElementVisitor cdElementVisitor =
         CDMill.cDElementVisitor(CDElementVisitor.Options.ENUMS);
-    CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.inheritanceTraverser();
+    CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     t.add4CDInterfaceAndEnum(cdElementVisitor);
     this.accept(t);
@@ -89,7 +89,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   public List<ASTCDAssociation> getCDAssociationsList() {
     final CDElementVisitor cdElementVisitor =
         CDMill.cDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
-    CDAssociationTraverser t = CDAssociationMill.inheritanceTraverser();
+    CDAssociationTraverser t = CDAssociationMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     t.add4CDAssociation(cdElementVisitor);
     this.accept(t);

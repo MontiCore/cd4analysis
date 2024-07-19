@@ -161,7 +161,7 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
     // the cd has 7 associations or compositions
     assertEquals(7, node.getCDDefinition().getCDAssociationsList().size());
 
-    TestCDAssociationTraverser t = TestCDAssociationMill.inheritanceTraverser();
+    TestCDAssociationTraverser t = TestCDAssociationMill.traverser();
     CDAssociationDirectCompositionTrafo trafo = new CDAssociationDirectCompositionTrafo();
     t.add4CDAssociation(trafo);
     t.add4CDBasis(trafo);

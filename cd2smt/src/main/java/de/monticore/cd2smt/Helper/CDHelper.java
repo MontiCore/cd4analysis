@@ -322,7 +322,7 @@ public class CDHelper {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
     final CDAssociationVisitor2 visitor2 = new RemoveAssocCardinality();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(visitor2);
     ast.accept(traverser);
   }

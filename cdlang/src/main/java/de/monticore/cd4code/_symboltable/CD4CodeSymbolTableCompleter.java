@@ -27,7 +27,7 @@ public class CD4CodeSymbolTableCompleter {
 
   public CD4CodeSymbolTableCompleter(
       List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.traverser = CD4CodeMill.inheritanceTraverser();
+    this.traverser = CD4CodeMill.traverser();
 
     final CDBasisSymbolTableCompleter cDBasisVisitor =
         new CDBasisSymbolTableCompleter(new FullSynthesizeFromCD4Code());

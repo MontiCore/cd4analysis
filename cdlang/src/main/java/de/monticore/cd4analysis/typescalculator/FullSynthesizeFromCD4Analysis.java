@@ -13,7 +13,7 @@ public class FullSynthesizeFromCD4Analysis extends AbstractSynthesize {
   }
 
   public FullSynthesizeFromCD4Analysis() {
-    this(CD4AnalysisMill.inheritanceTraverser());
+    this(CD4AnalysisMill.traverser());
   }
 
   public void init(CD4AnalysisTraverser traverser) {

@@ -61,7 +61,7 @@ public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
   }
 
   public void transform(ASTCDCompilationUnit ast) {
-    CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
+    CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(this);
     ast.accept(t);
   }

@@ -183,7 +183,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             cmd.hasOption("defaultpackage")
                 && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
         if (defaultPackage) {
-          final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
           final CDBasisCombinePackagesTrafo cdBasis = new CDBasisCombinePackagesTrafo();
           traverser.add4CDBasis(cdBasis);
 
@@ -239,7 +239,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
               { // add FieldSymbols for all the CDRoleSymbols
                 final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
                     new CDAssociationCreateFieldsFromAllRoles();
-                final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+                final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
                 traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
                 traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
                 cdAssociationCreateFieldsFromAllRoles.transform(ast);
@@ -250,7 +250,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
                 final CDAssociationCreateFieldsFromNavigableRoles
                     cdAssociationCreateFieldsFromNavigableRoles =
                         new CDAssociationCreateFieldsFromNavigableRoles();
-                final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+                final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
                 traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
                 traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
                 cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
@@ -317,7 +317,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           GeneratorSetup generatorSetup = new GeneratorSetup();
 
           // setup default package when generating
-          CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
+          CD4CodeTraverser t = CD4CodeMill.traverser();
           t.add4CDBasis(new CDBasisDefaultPackageTrafo());
           ast.accept(t);
 

@@ -48,7 +48,7 @@ public class CD4CodeFullPrettyPrinter {
 
   public CD4CodeFullPrettyPrinter(IndentPrinter printer) {
     this.printer = printer;
-    this.traverser = CD4CodeMill.inheritanceTraverser();
+    this.traverser = CD4CodeMill.traverser();
     cdBasis = new CDBasisPrettyPrinter(printer);
     traverser.add4CDBasis(cdBasis);
     traverser.setCDBasisHandler(cdBasis);

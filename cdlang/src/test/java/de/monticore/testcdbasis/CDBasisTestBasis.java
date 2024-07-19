@@ -45,7 +45,7 @@ public class CDBasisTestBasis extends TestBasis {
   }
 
   protected void completeSymTab(ASTCDCompilationUnit ast) {
-    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t.add4CDBasis(symTabComp);
     t.add4OOSymbols(symTabComp);

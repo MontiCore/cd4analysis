@@ -46,7 +46,7 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(3, cd.getCDElementList().size());
 
     // after parse trafo
-    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
     CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     astOpt.get().accept(t);
@@ -71,7 +71,7 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(4, cd.getCDElementList().size());
 
     // after parse trafo
-    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
     CDBasisCombinePackagesTrafo trafo1 = new CDBasisCombinePackagesTrafo();
     CDBasisDefaultPackageTrafo trafo2 = new CDBasisDefaultPackageTrafo();
     t.add4CDBasis(trafo1);
@@ -120,7 +120,7 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(classA, cd.getCDElement(0));
 
     // after parse trafo
-    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
+    TestCDBasisTraverser t = TestCDBasisMill.traverser();
     CDBasisCombinePackagesTrafo trafo1 = new CDBasisCombinePackagesTrafo();
     CDBasisDefaultPackageTrafo trafo2 = new CDBasisDefaultPackageTrafo();
     t.add4CDBasis(trafo1);

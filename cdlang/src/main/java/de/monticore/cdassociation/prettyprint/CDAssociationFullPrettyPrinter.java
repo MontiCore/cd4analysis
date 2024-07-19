@@ -35,7 +35,7 @@ public class CDAssociationFullPrettyPrinter {
   }
 
   public CDAssociationFullPrettyPrinter(IndentPrinter printer) {
-    this.traverser = CDAssociationMill.inheritanceTraverser();
+    this.traverser = CDAssociationMill.traverser();
     this.printer = printer;
 
     MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer);

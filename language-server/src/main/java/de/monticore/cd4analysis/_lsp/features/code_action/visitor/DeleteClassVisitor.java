@@ -16,7 +16,7 @@ public class DeleteClassVisitor implements CDBasisVisitor2 {
   }
 
   public static void deleteClass(ASTNode parentAst, ASTCDType toDelete) {
-    CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
     DeleteClassVisitor visitor = new DeleteClassVisitor(toDelete);
     traverser.add4CDBasis(visitor);
     parentAst.accept(traverser);

@@ -53,7 +53,7 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
 
   protected void roleNameTrafo(ASTCDCompilationUnit ast) {
     CDAssociationRoleNameTrafo trafo = new CDAssociationRoleNameTrafo();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(trafo);
     ast.accept(traverser);
   }

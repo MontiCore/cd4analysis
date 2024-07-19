@@ -104,7 +104,7 @@ public class CDMemberVisitor
   }
 
   public void run(ASTCDBasisNode ast) { // TBD: How to achieve this without downcasts?
-    CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
+    CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(this);
 
     if (t instanceof CD4CodeTraverser) {

@@ -38,7 +38,7 @@ public class CDAssociationSymbolTest extends CDAssociationTestBasis {
     final ASTCDCompilationUnit astcdCompilationUnit = parseModel(model);
 
     // after parse trafo
-    TestCDAssociationTraverser t = TestCDAssociationMill.inheritanceTraverser();
+    TestCDAssociationTraverser t = TestCDAssociationMill.traverser();
     CDAssociationDirectCompositionTrafo trafo = new CDAssociationDirectCompositionTrafo();
     t.add4CDBasis(trafo);
     t.add4CDAssociation(trafo);

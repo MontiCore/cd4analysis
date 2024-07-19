@@ -33,7 +33,7 @@ public class CD4CodeBasisFullPrettyPrinter {
   }
 
   public CD4CodeBasisFullPrettyPrinter(IndentPrinter printer) {
-    this.traverser = CD4CodeBasisMill.inheritanceTraverser();
+    this.traverser = CD4CodeBasisMill.traverser();
     this.printer = printer;
 
     CD4CodeBasisPrettyPrinter cdCode = new CD4CodeBasisPrettyPrinter(printer);

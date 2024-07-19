@@ -54,14 +54,14 @@ public class CDAssociationTestBasis extends TestBasis {
 
   protected void afterParseTrafo(ASTCDCompilationUnit ast) {
     // first transform every direct composition into teal ones
-    TestCDAssociationTraverser t1 = TestCDAssociationMill.inheritanceTraverser();
+    TestCDAssociationTraverser t1 = TestCDAssociationMill.traverser();
     CDAssociationDirectCompositionTrafo dirComp = new CDAssociationDirectCompositionTrafo();
     t1.add4CDBasis(dirComp);
     t1.add4CDAssociation(dirComp);
     ast.accept(t1);
 
     // in a second pass, a missing role names
-    TestCDAssociationTraverser t2 = TestCDAssociationMill.inheritanceTraverser();
+    TestCDAssociationTraverser t2 = TestCDAssociationMill.traverser();
     CDAssociationRoleNameTrafo roleName = new CDAssociationRoleNameTrafo();
     t2.add4CDAssociation(roleName);
     ast.accept(t2);
@@ -76,7 +76,7 @@ public class CDAssociationTestBasis extends TestBasis {
   }
 
   protected void completeSymTab(ASTCDCompilationUnit ast) {
-    TestCDAssociationTraverser t = TestCDAssociationMill.inheritanceTraverser();
+    TestCDAssociationTraverser t = TestCDAssociationMill.traverser();
 
     // add 4 cd basis
     CDBasisSymbolTableCompleter symTabCompBasis = new CDBasisSymbolTableCompleter();

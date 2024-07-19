@@ -32,7 +32,7 @@ public class CDInterfaceAndEnumFullPrettyPrinter {
 
   public CDInterfaceAndEnumFullPrettyPrinter(IndentPrinter printer) {
 
-    this.traverser = CDInterfaceAndEnumMill.inheritanceTraverser();
+    this.traverser = CDInterfaceAndEnumMill.traverser();
     this.printer = printer;
 
     MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer);

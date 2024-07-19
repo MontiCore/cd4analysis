@@ -41,7 +41,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
     final ASTCDCompilationUnit compilationUnit = astcdCompilationUnit.get();
 
     // Rund default trafos
-    TestCDBasisTraverser traverser = TestCDBasisMill.inheritanceTraverser();
+    TestCDBasisTraverser traverser = TestCDBasisMill.traverser();
     traverser.add4CDBasis(new CDBasisCombinePackagesTrafo());
     compilationUnit.accept(traverser);
 
@@ -55,7 +55,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
     artifactScope = TestCDBasisMill.scopesGenitorDelegator().createFromAST(compilationUnit);
 
     // complete symbol table
-    TestCDBasisTraverser t2 = TestCDBasisMill.inheritanceTraverser();
+    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
