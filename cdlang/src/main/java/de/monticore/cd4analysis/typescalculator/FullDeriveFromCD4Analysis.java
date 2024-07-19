@@ -8,7 +8,7 @@ import de.monticore.types.check.*;
 public class FullDeriveFromCD4Analysis extends AbstractDerive {
 
   public FullDeriveFromCD4Analysis() {
-    this(CD4AnalysisMill.traverser());
+    this(CD4AnalysisMill.inheritanceTraverser());
   }
 
   public FullDeriveFromCD4Analysis(CD4AnalysisTraverser traverser) {
@@ -17,10 +17,6 @@ public class FullDeriveFromCD4Analysis extends AbstractDerive {
   }
 
   public void init(CD4AnalysisTraverser traverser) {
-    final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
-    deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
-    traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);
-
     final DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals =
         new DeriveSymTypeOfMCCommonLiterals();
     deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(getTypeCheckResult());
