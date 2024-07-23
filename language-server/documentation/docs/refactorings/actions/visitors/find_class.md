@@ -18,7 +18,7 @@ public class FindClassVisitor implements CDBasisVisitor2 {
   }
 
   public static ASTCDType findClass(ASTNode parentAst, ASTCDType find) {
-    CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+    CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     FindClassVisitor findClassVisitor = new FindClassVisitor(find);
     traverser.add4CDBasis(findClassVisitor);
     parentAst.accept(traverser);

@@ -51,7 +51,7 @@ public class CDInterfaceAndEnumDeSerTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     // after parse trafo
-    TestCDInterfaceAndEnumTraverser t = TestCDInterfaceAndEnumMill.traverser();
+    TestCDInterfaceAndEnumTraverser t = TestCDInterfaceAndEnumMill.inheritanceTraverser();
     CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     ast.accept(t);
@@ -60,7 +60,7 @@ public class CDInterfaceAndEnumDeSerTest {
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
     // complete symbol table
-    TestCDInterfaceAndEnumTraverser t2 = TestCDInterfaceAndEnumMill.traverser();
+    TestCDInterfaceAndEnumTraverser t2 = TestCDInterfaceAndEnumMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabCompCdBasis = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabCompCdBasis);
     t2.add4OOSymbols(symTabCompCdBasis);

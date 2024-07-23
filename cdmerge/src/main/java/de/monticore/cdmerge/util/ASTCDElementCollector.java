@@ -35,7 +35,7 @@ public class ASTCDElementCollector
     this.ownPackage = new LinkedList<String>();
     this.imports = new LinkedList<String>();
 
-    this.traverser = CD4CodeMill.traverser();
+    this.traverser = CD4CodeMill.inheritanceTraverser();
 
     this.traverser.add4CDBasis(this);
     this.traverser.add4CDAssociation(this);

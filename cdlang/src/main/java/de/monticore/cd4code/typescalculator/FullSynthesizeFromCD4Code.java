@@ -8,7 +8,7 @@ import de.monticore.types.check.*;
 public class FullSynthesizeFromCD4Code extends AbstractSynthesize {
 
   public FullSynthesizeFromCD4Code() {
-    this(CD4CodeMill.traverser());
+    this(CD4CodeMill.inheritanceTraverser());
   }
 
   public FullSynthesizeFromCD4Code(CD4CodeTraverser traverser) {

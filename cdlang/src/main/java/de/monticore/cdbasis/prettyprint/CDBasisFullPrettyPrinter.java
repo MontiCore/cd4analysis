@@ -31,7 +31,7 @@ public class CDBasisFullPrettyPrinter {
 
   public CDBasisFullPrettyPrinter(IndentPrinter printer) {
     this.printer = printer;
-    this.traverser = CDBasisMill.traverser();
+    this.traverser = CDBasisMill.inheritanceTraverser();
     MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer);
     traverser.add4MCCommonLiterals(commonLiterals);
     traverser.setMCCommonLiteralsHandler(commonLiterals);

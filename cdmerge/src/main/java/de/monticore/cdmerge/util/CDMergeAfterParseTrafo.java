@@ -18,7 +18,7 @@ public class CDMergeAfterParseTrafo {
 
   public CDMergeAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     this.cdAfterParseHelper = cdAfterParseHelper;
-    this.traverser = CD4CodeMill.traverser();
+    this.traverser = CD4CodeMill.inheritanceTraverser();
 
     init(cdAfterParseHelper, traverser);
   }

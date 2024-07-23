@@ -135,7 +135,7 @@ public class CDGeneratorTool extends CD4CodeTool {
           { // add FieldSymbols for all the CDRoleSymbols
             final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
                 new CDAssociationCreateFieldsFromAllRoles();
-            final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+            final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
             traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
             traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
             asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
@@ -146,7 +146,7 @@ public class CDGeneratorTool extends CD4CodeTool {
             final CDAssociationCreateFieldsFromNavigableRoles
                 cdAssociationCreateFieldsFromNavigableRoles =
                     new CDAssociationCreateFieldsFromNavigableRoles();
-            final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+            final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
             traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
             traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
             asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
@@ -172,7 +172,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         GeneratorSetup setup = new GeneratorSetup();
 
         // setup default package when generating
-        CD4CodeTraverser t = CD4CodeMill.traverser();
+        CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
         t.add4CDBasis(new CDBasisDefaultPackageTrafo());
         asts.forEach(ast -> ast.accept(t));
 
