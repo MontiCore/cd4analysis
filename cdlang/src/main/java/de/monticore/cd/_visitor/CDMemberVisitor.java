@@ -63,18 +63,14 @@ public class CDMemberVisitor
 
   @Override
   public void visit(ASTCDMethod node) {
-    if (options.contains(Options.ALL)
-        || options.contains(Options.METHOD_SIGNATURES)
-        || options.contains(Options.METHODS)) {
+    if (options.contains(Options.METHODS)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDConstructor node) {
-    if (options.contains(Options.ALL)
-        || options.contains(Options.METHOD_SIGNATURES)
-        || options.contains(Options.CONSTRUCTORS)) {
+    if (options.contains(Options.CONSTRUCTORS)) {
       elements.add(node);
     }
   }
