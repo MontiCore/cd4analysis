@@ -105,7 +105,7 @@ dependencies {
 
     testImplementation(sourceSets.trafo.output.classesDirs)
     testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
-    grammar("de.mc:monticore-grammar-trafo:$mc_version:grammars") // TODO: Remove when migrating to the new MC plugin
+    grammar("de.monticore:monticore-grammar-trafo:$mc_version:grammars") // TODO: Remove when migrating to the new MC plugin
   }
   //dependencies for tagging
   if (withTagGen) {
