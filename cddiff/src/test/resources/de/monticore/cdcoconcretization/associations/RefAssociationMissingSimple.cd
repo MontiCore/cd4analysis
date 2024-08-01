@@ -1,0 +1,7 @@
+classdiagram RefAssociationMissingSimple {
+  class Employee {
+  }
+  class Department {
+  }
+  association Employee -- Department;
+}

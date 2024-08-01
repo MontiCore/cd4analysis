@@ -1,0 +1,7 @@
+classdiagram RefAssociationMissingCardinality {
+  class Employee {
+  }
+  class Department {
+  }
+  association [1..*] Employee <-> Department [1];
+}

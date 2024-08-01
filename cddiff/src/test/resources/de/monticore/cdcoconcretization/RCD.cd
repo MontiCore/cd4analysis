@@ -1,0 +1,14 @@
+//reference model
+classdiagram RCD {
+  class Staff {
+    int id;
+  }
+  class Department {
+    String name;
+  }
+  class Project {
+    int contributors;
+  }
+  association [1..*] Staff (employed) <-> Department [1];
+  association Department <-> (hasProjects) Project [0..5];
+}

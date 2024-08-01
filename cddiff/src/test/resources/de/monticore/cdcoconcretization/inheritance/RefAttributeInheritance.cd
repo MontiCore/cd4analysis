@@ -1,0 +1,7 @@
+classdiagram RefAttributeInheritance {
+  class Person {
+    int number;
+  }
+  class Teacher extends Person {
+  }
+}

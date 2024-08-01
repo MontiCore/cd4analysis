@@ -1,0 +1,28 @@
+//merged model of RCD and ICCD
+classdiagram CCCD{
+  class Employee {
+    int id;
+    float salary;
+  }
+  class Info {
+    String address;
+  }
+  class Operations {
+    int id;
+    int supervisorID;
+    String name;
+  }
+  class Administration {
+    int id;
+    int managerID;
+	  String name;
+  }
+  class Project {
+    int contributors;
+  }
+  association [1..*] Employee (employed) <-> Operations [1];
+  association [1..*] Employee (employed) <-> Administration [1];
+  association Employee -> Info [1];
+  association Operations <-> (hasProjects) Project [0..5];
+  association Administration <-> (hasProjects) Project [0..5];
+}

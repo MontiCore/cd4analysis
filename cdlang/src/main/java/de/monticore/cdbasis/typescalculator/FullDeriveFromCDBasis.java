@@ -5,7 +5,6 @@ import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
-import de.monticore.types.check.DeriveSymTypeOfLiterals;
 
 public class FullDeriveFromCDBasis extends AbstractDerive {
 
