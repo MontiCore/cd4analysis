@@ -1,0 +1,10 @@
+classdiagram RefTypeMissing {
+  class Employee {
+  }
+  abstract class Staff {
+  }
+  enum Colour{;
+  }
+  interface Method{
+  }
+}

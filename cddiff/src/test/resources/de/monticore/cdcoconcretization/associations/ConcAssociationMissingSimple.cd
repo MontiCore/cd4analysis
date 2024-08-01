@@ -1,0 +1,6 @@
+classdiagram ConcAssociationMissingSimple {
+  class Employee {
+  }
+  class Department {
+  }
+}

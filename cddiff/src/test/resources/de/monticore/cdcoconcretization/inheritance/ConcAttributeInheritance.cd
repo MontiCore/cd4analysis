@@ -1,0 +1,5 @@
+classdiagram ConcAttributeInheritance {
+  class Teacher {
+    int number;
+  }
+}

@@ -321,7 +321,7 @@ public class ReductionTrafo {
    * removes redundant occurrences of attributes in subclasses that are already inherited from a
    * superclass
    */
-  public void removeRedundantAttributes(ASTCDCompilationUnit ast) {
+  public static void removeRedundantAttributes(ASTCDCompilationUnit ast) {
     CDDiffUtil.refreshSymbolTable(ast);
     for (ASTCDClass astcdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()) {

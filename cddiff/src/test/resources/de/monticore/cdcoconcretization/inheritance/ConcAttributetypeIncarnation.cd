@@ -1,0 +1,5 @@
+classdiagram ConcAttributetypeIncarnation {
+  class Teacher  {
+    double number;
+  }
+}

@@ -1,0 +1,7 @@
+classdiagram RefAssociationMissingRolename {
+  class Employee {
+  }
+  class Department {
+  }
+  association Employee (employed) <-> Department;
+}

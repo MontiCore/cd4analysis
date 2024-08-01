@@ -1,0 +1,7 @@
+classdiagram ConcAssociationMissingFinal {
+  class Employee {
+  }
+  class Department {
+  }
+  association [1..*] Employee (employed) <-> Department [1];
+}

@@ -1,0 +1,4 @@
+classdiagram ConcTypeMissing {
+  class Employee {
+  }
+}
