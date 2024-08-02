@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.CDMatch;
 import de.monticore.cdmerge.matching.strategies.AssociationMatcher;
@@ -54,7 +55,8 @@ public abstract class CDMatcher extends MatcherBase {
     return getAttributeMatcher().findMatchingAttributes(findMatchingClasses());
   }
 
-  public ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations() {
+  public ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations()
+      throws MergingException {
     return getAssociationMatcher().findMatchingAssociations();
   }
 
@@ -85,5 +87,5 @@ public abstract class CDMatcher extends MatcherBase {
     return getTypeMatcher().findMatchingEnums();
   }
 
-  public abstract CDMatch createCDMatch(List<ASTCDDefinition> cds);
+  public abstract CDMatch createCDMatch(List<ASTCDDefinition> cds) throws MergingException;
 }

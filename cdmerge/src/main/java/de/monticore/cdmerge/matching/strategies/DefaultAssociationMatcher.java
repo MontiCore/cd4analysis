@@ -1,11 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.matching.strategies;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDQualifier;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
@@ -18,14 +20,17 @@ import java.util.*;
 public class DefaultAssociationMatcher extends MatcherBase implements AssociationMatcher {
 
   private boolean onlyNamedAssociations;
+  private boolean failAmbiguousAssociations;
 
   public DefaultAssociationMatcher(MergeBlackBoard blackBoard) {
     super(blackBoard);
     this.onlyNamedAssociations = blackBoard.getConfig().mergeOnlyNamedAssociations();
+    this.failAmbiguousAssociations = blackBoard.getConfig().isFailAmbiguous();
   }
 
   @Override
-  public ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations() {
+  public ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations()
+      throws MergingException {
 
     ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> matches =
         new ASTMatchGraph<ASTCDAssociation, ASTCDDefinition>(getCurrentCDs());
@@ -47,24 +52,39 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
         for (int i = j + 1; i < getCurrentCDs().size(); i++) {
           cd2 = getCurrentCDs().get(i);
           for (ASTCDAssociation assoc2 : cd2.getCDAssociationsList()) {
+            // Force unambiguous matching for multi-associations
             if (multipleAssociations.get(cd1).contains(assoc1)
                 || multipleAssociations.get(cd2).contains(assoc2)) {
-              // Force Name match for multiple associations
-              // FIXME: Also matching with explicit Roles or matching identical definition should
-              // be possible? We need a best match then
-              //	\item Sofern es mindestens eine weitere Assoziation zwischen $a$ und $b$ in
-              //	einem der Quelldiagramme gibt, auf welche die beiden obigen Bedingungen
-              //	zutreffen, muss zusätzlich entweder der Assoziationsname oder ein expliziter
-              //	Rollenname für beide zu verschmelzende Assoziationen definiert und identisch
-              //	sein. Diese Assoziationsnamen bzw. Rollennamen müssen eindeutig übereinstimmen.
-              // \item Sofern mehr als eine Assoziation in einem der Quelldiagramme existiert,
-              // welche die Bedinungen 1-3 erfüllt kann die Komposition nicht eindeutig
-              // durchgeführt werden und wird abgebrochen, da Rollennamen und Assoziationsnamen
-              // zwischen zwei Typen eindeutig bleiben müssen.
-              // Fehler schmeißen, dass kein eindeutiger Match gefunden wurde. Aber nicht hier,
-              // sondern nach dem Match teil.
+              Set<ASTCDAssociation> alternatives1 = new HashSet<>(multipleAssociations.get(cd1));
+              alternatives1.remove(assoc1);
+              Set<ASTCDAssociation> alternatives2 = new HashSet<>(multipleAssociations.get(cd2));
+              alternatives2.remove(assoc2);
               if (!nameMatch(assoc1, assoc2, true)) {
-                continue;
+                if (!match(assoc1, assoc2)) {
+                  continue;
+                }
+                if (alternatives1.stream().anyMatch(alt1 -> match(alt1, assoc2))) {
+                  if (failAmbiguousAssociations) {
+                    throw new MergingException(
+                        "Could not merge due to ambiguous match for "
+                            + CD4CodeMill.prettyPrint(assoc2, false)
+                            + " in CD "
+                            + cd2.getName());
+                  } else {
+                    continue;
+                  }
+                }
+                if (alternatives2.stream().anyMatch(alt2 -> match(assoc1, alt2))) {
+                  if (failAmbiguousAssociations) {
+                    throw new MergingException(
+                        "Could not merge due to ambiguous match for "
+                            + CD4CodeMill.prettyPrint(assoc1, false)
+                            + " in CD "
+                            + cd1.getName());
+                  } else {
+                    continue;
+                  }
+                }
               }
             }
             if (match(assoc1, assoc2)) {

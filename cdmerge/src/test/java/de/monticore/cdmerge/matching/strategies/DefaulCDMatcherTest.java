@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.matching.DefaultCDMatcher;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
@@ -94,7 +95,7 @@ public class DefaulCDMatcherTest extends BaseTest {
   }
 
   @Test
-  public void testFindAssociations() {
+  public void testFindAssociations() throws MergingException {
     ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> result =
         this.testant.findMatchingAssociations();
     List<MatchNode<ASTCDAssociation, ASTCDDefinition>> nodes;

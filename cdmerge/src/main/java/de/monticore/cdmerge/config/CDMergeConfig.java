@@ -458,6 +458,10 @@ public class CDMergeConfig {
     return this.parameters.get(MergeParameter.FAIL_FAST).equals(MergeParameter.ON);
   }
 
+  public boolean isFailAmbiguous() {
+    return this.parameters.get(MergeParameter.FAIL_AMBIGUOUS).equals(MergeParameter.ON);
+  }
+
   public boolean mergeOnlyNamedAssociations() {
     return this.parameters
             .get(MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS)

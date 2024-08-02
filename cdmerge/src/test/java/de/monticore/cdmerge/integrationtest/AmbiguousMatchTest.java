@@ -16,29 +16,24 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 
-public class AssociativityTest extends BaseTest {
-
+public class AmbiguousMatchTest extends BaseTest {
   private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/notAssociative/A.cd";
+      "src/test/resources/class_diagrams" + "/Association/ambiguousMatch/A.cd";
 
   private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/notAssociative/B.cd";
-
-  private static final String INPUT_MODEL_3 =
-      "src/test/resources/class_diagrams" + "/notAssociative/C.cd";
+      "src/test/resources/class_diagrams" + "/Association/ambiguousMatch/B.cd";
 
   @Test
   public void testAssociationNonAssociative() throws IOException {
     List<String> inputModels = new ArrayList<>();
     inputModels.add(INPUT_MODEL_1);
     inputModels.add(INPUT_MODEL_2);
-    inputModels.add(INPUT_MODEL_3);
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     try {
       cdMerger.mergeCDs();
       fail("Expected Merging Exception due to non associative input CDs");
     } catch (MergingException e) {
-      assertTrue(e.getMessage().contains("Input CDs are NOT associative"));
+      assertTrue(e.getMessage().contains("Could not merge due to ambiguous match for"));
     }
   }
 
@@ -47,6 +42,7 @@ public class AssociativityTest extends BaseTest {
         getConfigBuilder()
             .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
             .withParam(MergeParameter.ASSERT_ASSOCIATIVITY)
+            .withParam(MergeParameter.FAIL_AMBIGUOUS)
             .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));

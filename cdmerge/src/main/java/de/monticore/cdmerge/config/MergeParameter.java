@@ -74,6 +74,9 @@ public enum MergeParameter {
   /** Abort merging process on first error Default: OFF */
   FAIL_FAST("failFast", "ff", MergeParameter.OFF, true),
 
+  /** Abort merge if association match is ambiguous, Default: OFF */
+  FAIL_AMBIGUOUS("failAmbiguous", "fa", MergeParameter.OFF, true),
+
   /**
    * Produces (a lot of) debug output (Level DEBUG, FINE, INFO) during matching and merging - only
    * useful for testing / debugging scenarios

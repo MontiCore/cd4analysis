@@ -3,6 +3,7 @@ package de.monticore.cdmerge.matching.strategies;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 
 /** Determines if two associations match */
@@ -10,7 +11,8 @@ public interface AssociationMatcher {
 
   boolean match(ASTCDAssociation association1, ASTCDAssociation association2);
 
-  ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations();
+  ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations()
+      throws MergingException;
 
   boolean rolesMatch(
       ASTCDAssociation association1, ASTCDAssociation association2, int numRolesToMatch);

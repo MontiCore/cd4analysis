@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.Match;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
@@ -113,7 +114,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
   }
 
   @Test
-  public void findMatchingAssociationsTest() throws IOException {
+  public void findMatchingAssociationsTest() throws IOException, MergingException {
     CDMergeConfig.Builder b = new CDMergeConfig.Builder(false);
     b.withParam(MergeParameter.MODEL_PATH, MODEL_PATH)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
