@@ -108,17 +108,24 @@ public abstract class MergerBase {
     modifier.setFinal(modifier1.isFinal() || modifier2.isFinal());
 
     // STEREOTYPES
-    if (modifier1.isPresentStereotype() && modifier2.isPresentStereotype()) {
-      if (modifier1.getStereotype().deepEquals(modifier2.getStereotype())) {
-        modifier.setStereotype(modifier1.getStereotype());
-      } else {
-        logError("Cannot match Modifies: Stereotyes do not match", modifier1, modifier2);
-        return Optional.empty();
+    if (modifier1.isPresentStereotype()) {
+      modifier.setStereotype(modifier1.getStereotype().deepClone());
+      if (modifier2.isPresentStereotype()) {
+        if (modifier1.getStereotype().getValuesList().stream()
+            .anyMatch(
+                sv1 ->
+                    modifier2.getStereotype().getValuesList().stream()
+                        .anyMatch(
+                            sv2 ->
+                                sv1.getName().equals(sv2.getName())
+                                    && !sv1.getValue().equals(sv2.getValue())))) {
+          logError("Cannot match Modifiers: Stereotypes do not match", modifier1, modifier2);
+          return Optional.empty();
+        }
+        modifier.getStereotype().addAllValues(modifier2.getStereotype().getValuesList());
       }
-    } else if (modifier1.isPresentStereotype()) {
-      modifier.setStereotype(modifier1.getStereotype());
     } else if (modifier2.isPresentStereotype()) {
-      modifier.setStereotype(modifier2.getStereotype());
+      modifier.setStereotype(modifier2.getStereotype().deepClone());
     } else {
       modifier.setStereotypeAbsent();
     }
