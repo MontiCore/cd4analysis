@@ -170,20 +170,13 @@ publishing {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {
         group "de.monticore.lang"
       }
-      if (withDSTLGen) {
-        publ.artifact(project(":cdlang").tasks.trafoJar) {
-          group "de.monticore.lang"
-        }
-        publ.artifact(project(":cdlang").tasks.trafoSourcesJar) {
-          group "de.monticore.lang"
-        }
-      }
+      // Trafos are published in :cdlang
       if (withTagGen) {
-        publ.artifact(project(":cdlang").tasks.taggingJar) {
-          group "de.monticore.lang"
-        }
-        publ.artifact(project(":cdlang").tasks.taggingSourcesJar) {
-          group "de.monticore.lang"
+        // If available, publish tagging here too
+        "tagging"(MavenPublication) {
+          artifactId = project.name + "-tagging"
+          artifact project(":cdlang").tasks.taggingJar { archiveAppendix = 'tagging' }
+          artifact project(":cdlang").tasks.taggingSourcesJar { archiveAppendix = 'tagging'; archiveClassifier = 'sources' }
         }
       }
     }
@@ -196,3 +189,12 @@ publishing {
     url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
   }
 }
+
+
+/*
+ TODO (ALu): Once all dependant projects are published,
+  we can properly use transitive dependencies:
+   - cd4analysis (empty grammar project -> depends on cd4a:cdlang
+   - ...
+
+ */
