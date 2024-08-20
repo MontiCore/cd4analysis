@@ -18,14 +18,20 @@ repositories {
   }
 }
 
-dependencies {
-  // Language and parent language
-  grammar(project(path: ':cdlang')) {
-    capabilities {
-      requireCapability("de.monticore.lang:cdlang-grammars")
+configurations {
+  grammar { // require the "grammar" configuration to resolve "monticore-grammar-api" usages
+    attributes {
+      it.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.class, "monticore-grammar-api"))
+      // Note: This should not be necessary, but due to cd4as gradle setup we have to actually select
+      it.attribute(Attribute.of('monticore.generator.sourceset', String), "main")
     }
   }
-  grammar "de.monticore:monticore-grammar:$mc_version:grammars"
+}
+
+dependencies {
+  // Language and parent language
+  grammar project(":cdlang")
+  grammar "de.monticore:monticore-grammar:$mc_version"
   implementation project(":cdlang")
 
   // Dependencies of cd4analysis, all marked as runtime in pom => we need to specify them here
@@ -63,3 +69,4 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
 compileJava.dependsOn autoconfigure
 
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)
+tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsForVariantJar)

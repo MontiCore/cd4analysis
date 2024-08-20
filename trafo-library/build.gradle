@@ -2,9 +2,10 @@
 plugins {
   id "java"
   id "java-library"
-  id "monticore" version "$mc_version" // MontiCore Plugin
+  id "de.monticore.generator" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
 }
+import de.monticore.MontiTransExec
 
 
 group = "de.monticore.lang"
@@ -39,24 +40,23 @@ configurations { grammar }
 
 
 dependencies {
-  implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
-  implementation group: 'de.monticore', name: 'monticore-grammar', version: mc_version
-  implementation group: 'de.monticore', name: 'monticore-grammar-trafo', version: mc_version
-  grammar group: 'de.monticore', name: 'monticore-grammar', version: mc_version, classifier: 'grammars'
+  grammar group: 'de.monticore', name: 'monticore-grammar-trafo', version: mc_version
+  grammar group: 'de.monticore', name: 'monticore-grammar', version: mc_version
 
-  // Depend on cd4analysis by using the current (imported) project
-  implementation project(":cdlang")
-  implementation project(path: ":cdlang", configuration: 'trafo')
-  implementation project(path: ":cdlang", configuration: 'grammars')
-  grammar(project(path: ':cdlang')) {
-    capabilities {
-      requireCapability("de.monticore.lang:cdlang-grammars")
-    }
-  }
+  // Depend on cd4a-trafos - This is done both as a local project, and with proper dependency substitution
+  // add the dependency to cd4analysis trafos to the grammar config,
+  // adding it as a dependency to the trafo publication
+  // Note: This dependency will be substituted by its subproject
+  grammar(group: project.getGroup(), name: "cd4analysis-trafo", version: project.getVersion())
+  // use the grammar configuration (for trafos) to add transitive dependencies of :cdlang
+  grammar(project(path: ":cdlang", configuration: 'trafoGrammar'))
+  // add the outgoing trafo grammar (symbols/models) of the subproject to the modelpath
+  grammarSymbolDependencies project(path: ':cdlang', configuration: 'trafoGrammarSymbolOutElements')
+  // add the compiled trafo java classes of the subproject to the classpath
+  implementation files(project(":cdlang").sourceSets.trafo.output.classesDirs)
 
-  implementation group: 'de.se_rwth.commons', name: 'se-commons-utilities', version: commons_version
+
   implementation group: 'de.se_rwth.commons', name: 'se-commons-groovy', version: commons_version
-  implementation group: 'de.se_rwth.commons', name: 'se-commons-logging', version: commons_version
 
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
@@ -64,6 +64,23 @@ dependencies {
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 
   compileOnly 'org.freemarker:freemarker:2.3.28'
+}
+
+configurations.configureEach {
+  resolutionStrategy.dependencySubstitution {
+    // Substitute cd4lang-trafo with the actual (live) subprojects trafo variant
+    substitute module("de.monticore.lang:cd4analysis-trafo") using variant(project(":cdlang"), {
+      attributes {
+        it.attribute(Attribute.of('monticore.generator.sourceset', String), "trafo")
+      }
+    })
+    // Also substitute :cdlang with its trafo variant
+    substitute project(":cdlang") using variant(project(":cdlang"), {
+      attributes {
+        it.attribute(Attribute.of('monticore.generator.sourceset', String), "trafo")
+      }
+    })
+  }
 }
 
 repositories {
@@ -101,7 +118,7 @@ fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each
   def g = it
   def taskname = "buildCD4ATrafoLibTrafos${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
 
-  task "$taskname" (type: MontiTransExec){
+  task "$taskname" (type: MontiTransExec.class){
     getClassPath().setFrom(
       project(":cdlang").configurations.trafoRuntimeClasspath,
       project(":cdlang").sourceSets.trafo.output
