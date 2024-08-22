@@ -17,14 +17,11 @@ import de.monticore.cdconformance.conf.method.EqNameMethodChecker;
 import de.monticore.cdconformance.conf.method.STNamedMethodChecker;
 import de.monticore.cdconformance.conf.type.BasicTypeConfStrategy;
 import de.monticore.cdconformance.conf.type.DeepTypeConfStrategy;
-import de.monticore.cdconformance.inc.association.CompAssocIncStrategy;
-import de.monticore.cdconformance.inc.association.EqNameAssocIncStrategy;
-import de.monticore.cdconformance.inc.association.STNamedAssocIncStrategy;
+import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -93,8 +90,8 @@ public class CDConformanceChecker {
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
-      assocInc.addIncStrategy(
-          new MatchCDAssocsBySrcNameAndTgtRole(typeInc, concreteCD, referenceCD));
+      assocInc.addIncStrategy(new RolePrefixInNavDirIncStrategy(typeInc, concreteCD, referenceCD));
+      assocInc.addIncStrategy(new RolePrefixIfPresentIncStrategy(typeInc, concreteCD, referenceCD));
     }
 
     // init conformance Checker
