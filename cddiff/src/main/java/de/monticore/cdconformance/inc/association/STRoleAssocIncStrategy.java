@@ -11,10 +11,10 @@ public class STRoleAssocIncStrategy extends MatchCDAssocsBySrcNameAndTgtRole {
   protected String mapping;
 
   public STRoleAssocIncStrategy(
-    MatchingStrategy<ASTCDType> typeMatcher,
-    ASTCDCompilationUnit srcCD,
-    ASTCDCompilationUnit tgtCD,
-    String mapping) {
+      MatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD,
+      String mapping) {
     super(typeMatcher, srcCD, tgtCD);
     this.mapping = mapping;
   }
@@ -22,8 +22,8 @@ public class STRoleAssocIncStrategy extends MatchCDAssocsBySrcNameAndTgtRole {
   @Override
   protected boolean checkRole(ASTCDAssocSide concrete, ASTCDAssocSide reference) {
     if (concrete.getModifier().isPresentStereotype()
-      && concrete.getModifier().getStereotype().contains(mapping)
-      && reference.isPresentCDRole()) {
+        && concrete.getModifier().getStereotype().contains(mapping)
+        && reference.isPresentCDRole()) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
       return reference.getCDRole().getName().equals(refName);
     }

@@ -642,7 +642,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.setWidth(110);
+    formatter.setWidth(80);
     formatter.printHelp(
         "Examples in case the Tool file is called MCCD.jar: "
             + System.lineSeparator()
