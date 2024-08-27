@@ -74,25 +74,30 @@ classdiagram MyCompany {
 This example CD contains the following information:
 - The CD is contained in the package `corp` and is called `MyCompany`.
 - The package `corp` also serves as the default package for all classes in the CD.
-- The CD defines the six (6) classes `Entity`,`Person`, `Address`, `Company`, `Employee`, and `Share`. 
+- The CD defines the six (6) classes `Entity`,`Person`, `Address`, `Company`, 
+  `Employee`, and `Share`. 
 - `Entity` is an abstract class, and therefore cannot be instantiated directly.
-- `Person` and `Address` are contained in the package `people`. Packages can be used to structure the classes contained in a CD.
-- The class `Employee` extends the class `Person` (like in Java, implementation of interfaces
-  are also possible).
+- `Person` and `Address` are contained in the package `people`. 
+  Packages can be used to structure the classes contained in a CD.
+- The class `Employee` extends the class `Person` (like in Java, implementation 
+  of interfaces are also possible).
 - Each class may contain attributes, which have a type and name.
-- The CD uses available default types (which are basic types from Java), imported types 
-  (like `Date`), and predefined forms of generic types (e.g., `List<.>`),
+- The CD uses available default types (which are basic types from Java), 
+- imported types (like `Date`), and predefined forms of generic types (e.g., 
+  `List<.>`),
 - Enums can also be defined (eg., `CorpKind` ).
-- The CD contains associations and compositions that are defined between two classes.
-- An association can have a name and navigation information (e.g., `<->`),.
-- Each side of an association can have a role name, a cardinality (e.g., `[0..1]`) and certain predefined 
-  tags/stereotypes (e.g., `{ordered}`).
-- Associations and attributes may also reference qualified types (e.g., `[java.util.Date]`).
+- The CD contains associations and compositions that are defined between two 
+  classes.
+- An association can have a name and navigation information (e.g., `<->`).
+- Each side of an association can have a role name, a cardinality (e.g., 
+  `[0..1]`) and certain predefined tags/stereotypes (e.g., `{ordered}`).
+- Associations and attributes may also reference qualified types (e.g., 
+  `[java.util.Date]`).
 
 More examples can be found [here][ExampleModels].
 
-The CD language infrastructure can be used as a command-line tool from shell or gradle, 
-as well as a framework with dirct Java API access.
+The CD language infrastructure can be used as a command-line tool from shell or
+gradle, as well as a framework with direct Java API access.
 
 ## Command Line Interface Tool
  
@@ -114,14 +119,16 @@ and Gradle are installed and available for use (e.g., in bash).
 A ready to use version of the tool can be downloaded in the form of an
 executable JAR file.
 You can use [**this download link**][ToolDownload] for downloading the tool. 
-Alternatively, the `wget` command can be used to download the latest version into your working directory:
+Alternatively, the `wget` command can be used to download the latest version 
+into your working directory:
 ```shell
 wget "https://monticore.de/download/MCCD.jar" -O MCCD.jar
 ``` 
 
 ### Actions and Parameters of the Tool
 
-The tool provides quite a number of executable actions and configurable parameters. 
+The tool provides quite a number of executable actions and configurable
+parameters. 
 These commands are examples for calling the tool:
 
 ```shell
@@ -131,7 +138,8 @@ java -jar MCCD.jar -i src/MyLife --path symbols -pp
 ```
 
 To try them out for yourself download and put the files
-[MyAddress.cd](doc/MyAddress.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. The second command needs to be executed before the third.
+[MyAddress.cd](doc/MyAddress.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. 
+The second command needs to be executed before the third.
 
 The possible options are:
 
@@ -211,12 +219,12 @@ which reads a file containing a CD model as input, or `--stdin`,
 which parses the input CD from `stdin` instead.
 If no additional options are specified, the tool processes the model,
 but does not produce any further output, except for error messages or 
-a message indicating success. Note that processing means that the tool parses the model, builds its 
-symbol table, and then checks whether the model satisfies all context 
-conditions.
+a message indicating success. Note that processing means that the tool parses
+the model, builds its symbol table, and then checks whether the model satisfies
+all context conditions.
 
-If you want to try this out yourself, copy the `MCCD.jar` into a directory of your 
-choice. Then create a text file `src/MyExample.cd` 
+If you want to try this out yourself, copy the `MCCD.jar` into a directory of 
+your choice. Then create a text file `src/MyExample.cd` 
 ([also available here](doc/MyExample.cd)) in a `src` subdirectory of the
 directory where `MCCD.jar` is located containing e.g. the following simple CD 
 (please note that, like in Java, filename and model name in the file have to be
@@ -318,8 +326,8 @@ Successfully parsed src/MyExample
 Successfully checked the CoCos for MyExample
 Creation of symbol table src/MyExample.cdsym successful
 ```
-The symbol file contains a JSON representation of the symbols defined in the CD,
-which are type, association, interface, attribute and method symbols.
+The symbol file contains a JSON representation of the symbols defined in the 
+CD, which are type, association, interface, attribute and method symbols.
 
 E.g., for storing the symbols of `src/MyExample.cd` in the file 
 `symbols/MyExample.cdsym`, execute the following command:
@@ -357,7 +365,7 @@ java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrol
 
 ### Step 5: Importing Symbol Files Using a Path
 
-MontiCore is designed for modularity (both on the model and the language level).
+MontiCore is designed for modularity (both on the model and language level).
 The CD languages are participating in the symbol exchange infrastructure.
 We import a symbol file defining type symbols that are used by a CD.
 
@@ -429,13 +437,14 @@ Great!
 
 ### Step 6: Create a Default Package in the Class Diagram
 
-The class diagram languages support structuring the CD into packages (similar to
-Java).
+The class diagram languages support structuring the CD into packages (similar 
+to Java).
 For classes with no explicit defined package the tool can assume those classes 
 to be in a default package. This default is calculated as follows:
 1. If the class diagram itself is defined in a package, this package is 
    propagated to the classes contained in the cd.
-2. If such a package is not explicitly given, the default 'de.monticore' is used.
+2. If such a package is not explicitly given, the default 'de.monticore' 
+   is used.
 
 ### Step 7: Generating .java-Files
 
@@ -450,7 +459,8 @@ java -jar MCCD.jar -i src/MyExample.cd --gen -o out
 ```
 Note that the option `--fieldfromrole` must be used with the appropriate
 argument in order to generate attributes for associations contained in the input CD. 
-Use the following commands in order to generate .java-files for the CD `MyCompany`([available here](doc/MyCompany.cd)):
+Use the following commands in order to generate .java-files for the CD 
+`MyCompany`([available here](doc/MyCompany.cd)):
 
 ```shell
 java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
@@ -458,16 +468,15 @@ java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
 
 ### Step 8: The Semantic Difference of Two Class Diagrams
 
-We define the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 and
-CD2 as the set of all object diagrams that are valid in CD1 but invalid in CD2. 
-These object diagrams are also referred to as diff-witnesses. We observe
-that this difference is asymmetric. For more details on semantic 
-differencing:
+We define the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 
+and CD2 as the set of all object diagrams that are valid in CD1 but invalid in 
+CD2. These object diagrams are also referred to as diff-witnesses. We observe
+that this difference is asymmetric. For more details on semantic differencing:
 
 https://www.se-rwth.de/topics/Semantics.php
 
-The option `--semdiff <file>` computes the semantic difference of the current CD in memory
-and the CD specified by the argument.
+The option `--semdiff <file>` computes the semantic difference of the current 
+CD in memory and the CD specified by the argument.
 
 For the following examples, download the files 
 [MyEmployees1.cd](doc/MyEmployees1.cd) and [MyEmployees2.cd](doc/MyEmployees2.cd) 
@@ -479,8 +488,9 @@ java -jar MCCD.jar -i src/MyEmployees1.cd --semdiff scr/MyEmployees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
-that are generated in the output directory; the default is to generate one diff-witness. 
-Once again, the option `-o` can be used to specify the output directory; the default is `.`:
+that are generated in the output directory; the default is to generate one 
+diff-witness. Once again, the option `-o` can be used to specify the output 
+directory; the default is `.`:
 
 ```shell
 java -jar MCCD.jar -i src/MyEmployees1.cd  --semdiff src/MyEmployees2.cd --difflimit 20 -o out
@@ -488,13 +498,14 @@ java -jar MCCD.jar -i src/MyEmployees1.cd  --semdiff src/MyEmployees2.cd --diffl
 
 Note that `--semdiff` does not use symbols from symbol files. 
 
-More on the available syntactic and semantic differening operations can be found 
+More on the available syntactic and semantic differencing operations for class
+diagrams (including conformance checking to reference models) can be found 
 [here](cddiff/index.md).
 
 ### Step 9: Merging Two Class Diagram
 
-The option `--merge <file>` merges the input-CD with the CD specified by the argument 
-iff the two are semantically compatible.
+The option `--merge <file>` merges the input-CD with the CD specified by the 
+argument iff the two are semantically compatible.
 The result is stored in memory as the current CD.
 
 For the following examples, download the files 
@@ -505,15 +516,15 @@ save them in `src`:
 java -jar MCCD.jar -i src/Teaching.cd --merge src/Management.cd -pp
 ```
 
-If `-pp` is used in conjunction with `--merge`, the name of the merged CD always corresponds to the 
-name of the file (without the suffix `.cd`):
+If `-pp` is used in conjunction with `--merge`, the name of the merged CD 
+always corresponds to the name of the file (without the suffix `.cd`):
 
 ```shell
 java -jar MCCD.jar -i src/Teaching.cd --merge src/Management.cd -o out -pp UniversitySystem.cd
 ```
 
-Note that `--merge` does not use symbols from symbol files. Instead of using the `--merge` option 
-from the command line, you may also call the static method 
+Note that `--merge` does not use symbols from symbol files. Instead of using 
+the `--merge` option from the command line, you may also call the static method 
 [`CDMerge.merge()`](cdmerge/src/main/java/de/monticore/cdmerge/CDMerge.java) 
 with a set of appropriate 
 [`MergeParameter`](cdmerge/src/java/de/monticore/cdmerge/config/MergeParameter.java)
