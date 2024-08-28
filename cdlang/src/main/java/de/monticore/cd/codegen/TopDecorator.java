@@ -129,6 +129,11 @@ public class TopDecorator {
     modifier.setAbstract(true);
   }
 
+  /** Make nameMap accessible for usage outside CD4Analysis package. */
+  public Map<ASTCDType, String> getNameMap() {
+    return nameMap;
+  }
+
   @Deprecated
   protected void checkNeedsHandwrittenClass(boolean existsHw, ASTCDClass cdClass) {
     this.checkNeedsHandwrittenClass(existsHw, cdClass, "--qualified-class-name-not-given--");
