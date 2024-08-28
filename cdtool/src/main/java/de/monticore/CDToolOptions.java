@@ -68,8 +68,8 @@ public class CDToolOptions {
             .argName("file")
             .numberOfArgs(1)
             .desc(
-                "Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can "
-                    + "be used to read the input CD from stdin. Using one of the two options is "
+                "Reads the source file and parses the contents as a CD. Alternatively, `--stdin` "
+                    + "can be used to read the input CD from stdin. Using one of the two options is "
                     + "mandatory for all further operations.")
             .build());
 
@@ -207,9 +207,9 @@ public class CDToolOptions {
             .hasArgs()
             .type(String.class)
             .desc(
-                "Configure a path for adding handwritten code when generating with the option '--gen'. "
-                    + "This leads to TOP-classes being generated for all classes that are already "
-                    + "present in the handwritten code.")
+                "Configure a path for adding handwritten code when generating with the option "
+                    + "'--gen'. This leads to TOP-classes being generated for all classes that are "
+                    + "already present in the handwritten code.")
             .build());
   }
 
@@ -322,9 +322,9 @@ public class CDToolOptions {
             .argName("file")
             .numberOfArgs(1)
             .desc(
-                "Parses the file as a second CD and compares it semantically with the first CD that "
-                    + "is currently in memory. Output: object diagrams (witnesses) that are valid in "
-                    + "the first CD, but invalid in the second CD. This is a semantics-based, "
+                "Parses the file as a second CD and compares it semantically with the first CD that"
+                    + " is currently in memory. Output: object diagrams (witnesses) that are valid"
+                    + " in the first CD, but invalid in the second CD. This is a semantics-based, "
                     + "asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php")
             .build());
 
@@ -387,8 +387,9 @@ public class CDToolOptions {
             .numberOfArgs(1)
             .desc(
                 "Performs a syntactical difference analysis on the current CD in memory (new) "
-                    + "and a second CD (old) and prints the result to stdout. Default: Outputs color-coded differences "
-                    + "(red for deleted, yellow for changed, and green for newly added elements) to stdout.")
+                    + "and a second CD (old) and prints the result to stdout. "
+                    + "Default: Outputs color-coded differences (red for deleted, yellow for "
+                    + "changed, and green for newly added elements) to stdout.")
             .build());
 
     options.addOption(
@@ -403,7 +404,8 @@ public class CDToolOptions {
                 "Specifies the print option for `--syntaxdiff`: "
                     + "`diff` (default) prints only the differences in a color-coded format "
                     + "(red for deleted, yellow for changed, and green for newly added elements). "
-                    + "`old` will print only the old CD with color-coded diffs and `new` only the new CD. "
+                    + "`old` will print only the old CD with color-coded diffs and `new` only the "
+                    + "new CD. "
                     + "`both` prints both CDs. `added` prints only the added CD-elements; "
                     + "`removed` prints only the removed CD-elements, "
                     + "and `changed` prints only the changed CD-elements.")
@@ -415,13 +417,12 @@ public class CDToolOptions {
     options.addOption(
         Option.builder()
             .longOpt("merge")
-            .hasArg()
+            .hasArgs()
             .type(String.class)
-            .argName("file")
-            .numberOfArgs(1)
+            .argName("files")
             .desc(
-                "Parses the file as a second CD and merges it with the input CD (iff semantically "
-                    + "sound). The result is stored in memory.")
+                "Parses the files as additional CDs and merges them with the input CD (iff "
+                    + "semantically sound). The result is stored in memory.")
             .build());
   }
 
@@ -435,7 +436,8 @@ public class CDToolOptions {
             .argName("file")
             .numberOfArgs(1)
             .desc(
-                "Parses the file as a reference CD and checks if the the input CD specified by `-i` is conform to it.")
+                "Parses the file as a reference CD and checks if the the input CD specified by `-i`"
+                    + " is conform to it.")
             .build());
 
     options.addOption(
@@ -446,7 +448,8 @@ public class CDToolOptions {
             .argName("names")
             .hasArgs()
             .desc(
-                "Specify the names of stereotypes that are used as incarnation mappings in the concrete model. Default : 'incarnates'")
+                "Specify the names of stereotypes that are used as incarnation mappings in the "
+                    + "concrete model. Default : 'incarnates'")
             .build());
   }
 }

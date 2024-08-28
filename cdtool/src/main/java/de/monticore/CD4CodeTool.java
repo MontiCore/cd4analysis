@@ -784,7 +784,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   public void mergeCDs() {
     Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
     mergeSet.add(ast);
-    mergeSet.add(parse(cmd.getOptionValue("merge")));
+    Arrays.stream(cmd.getOptionValues("merge")).forEach(p -> mergeSet.add(parse(p)));
 
     String cdName = "Merge.cd";
     if (cmd.hasOption("pp")
