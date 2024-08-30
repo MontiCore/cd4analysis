@@ -58,7 +58,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
             + classFromCd2.getName());
 
     ASTModifier modifier =
-        mergeModifier(classFromCd1.getModifier(), classFromCd1.getModifier())
+        mergeModifier(classFromCd1.getModifier(), classFromCd2.getModifier())
             .orElseGet(() -> CD4CodeMill.modifierBuilder().build());
     // ================
     // === Modifier ===

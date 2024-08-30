@@ -1,0 +1,8 @@
+<<A1>>
+classdiagram CD1{
+  <<A2>>
+  class C {
+    <<A3>>
+    String cd1;
+  }
+}
