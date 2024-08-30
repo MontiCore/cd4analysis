@@ -505,7 +505,8 @@ diagrams (including conformance checking to reference models) can be found
 ### Step 9: Merging Two Class Diagram
 
 The option `--merge <files>` merges the input-CD with the CDs specified by the 
-argument iff the two are semantically compatible.
+argument iff the two are semantically compatible 
+[[LRSS23](https://www.se-rwth.de/publications/CDMerge-Semantically-Sound-Merging-of-Class-Diagrams-for-Software-Component-Integration.pdf)].
 The result is stored in memory as the current CD.
 
 For the following examples, download the files 
@@ -527,7 +528,7 @@ Note that `--merge` does not use symbols from symbol files. Instead of using
 the `--merge` option from the command line, you may also call the static method 
 [`CDMerge.merge()`](cdmerge/src/main/java/de/monticore/cdmerge/CDMerge.java) 
 with a set of appropriate 
-[`MergeParameter`](cdmerge/src/java/de/monticore/cdmerge/config/MergeParameter.java)
+[`MergeParameter`](cdmerge/src/java/de/monticore/cdmerge/config/MergeParameter.java).
 
 
 [ExampleModels]: cdlang/src/test/resources/de/monticore/cd4analysis/examples
