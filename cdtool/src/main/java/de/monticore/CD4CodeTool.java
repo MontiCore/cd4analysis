@@ -796,6 +796,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     Set<MergeParameter> paramSet = new HashSet<>();
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);
+    paramSet.add(MergeParameter.FAIL_AMBIGUOUS);
     ASTCDCompilationUnit mergeResult = CDMerge.merge(mergeSet, cdName, paramSet);
 
     if (mergeResult != null) {
