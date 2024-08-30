@@ -95,17 +95,19 @@ public abstract class MergerBase {
     // CDElements
     modifier.setLocal(modifier1.isLocal() && modifier2.isLocal());
 
-    modifier.setDerived(modifier1.isDerived() || modifier2.isDerived());
-
-    modifier.setAbstract(modifier1.isAbstract() && modifier2.isAbstract());
+    // AND CONDITIONS (restrict access)
     modifier.setReadonly(modifier1.isReadonly() && modifier2.isReadonly());
     modifier.setPrivate(modifier1.isPrivate() && modifier2.isPrivate());
-    modifier.setPublic(modifier1.isPublic() && modifier2.isPublic());
-    modifier.setProtected(modifier1.isProtected() && modifier2.isProtected());
     modifier.setStatic(modifier1.isStatic() && modifier2.isStatic());
 
-    // OR CONDITIONS
+    // OR CONDITIONS (guarantee access / semantic properties)
+    modifier.setDerived(modifier1.isDerived() || modifier2.isDerived());
+    modifier.setAbstract(modifier1.isAbstract() || modifier2.isAbstract());
     modifier.setFinal(modifier1.isFinal() || modifier2.isFinal());
+    modifier.setPublic(modifier1.isPublic() || modifier2.isPublic());
+    if (!modifier.isPublic()) {
+      modifier.setProtected(modifier1.isProtected() || modifier2.isProtected());
+    }
 
     // STEREOTYPES
     if (modifier1.isPresentStereotype()) {
@@ -130,6 +132,6 @@ public abstract class MergerBase {
       modifier.setStereotypeAbsent();
     }
 
-    return Optional.of(modifier1);
+    return Optional.of(modifier);
   }
 }
