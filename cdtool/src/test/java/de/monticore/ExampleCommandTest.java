@@ -1,11 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import de.monticore.cd.OutTestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -21,15 +16,24 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.mockito.Mockito;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ExampleCommandTest extends OutTestBasis {
 
@@ -175,16 +179,23 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testStoringSymbolsPerPathsExample1() {
+    // Given
     String fileName = "src/test/resources/doc/MyLife.cd";
-    try {
-      CD4CodeTool.main(new String[] {"-i", fileName});
-    } catch (Error e) {
-      Assert.assertTrue(
-          e.getMessage().contains("MyLife.cd:<19,9>: 0xA0324 Cannot find symbol Address"));
-      Log.clearFindings();
-      return;
-    }
-    fail();
+    CD4CodeTool tool = Mockito.spy(CD4CodeTool.class);
+    Mockito.doAnswer(it -> {
+      LogStub.init();
+      Log.enableFailQuick(true);
+      CD4CodeMill.init();
+      return null;
+    }).when(tool).init();
+
+    // When
+    tool.run(new String[]{"-i", fileName});
+
+    // Then
+    Assertions.assertEquals(3, Log.getFindingsCount(), "Actual findings: " + Log.getFindings().toString());
+    Assert.assertEquals("0xA0324 Cannot find symbol Address", Log.getFindings().get(0).getMsg());
+    Log.clearFindings();
   }
 
   /**
