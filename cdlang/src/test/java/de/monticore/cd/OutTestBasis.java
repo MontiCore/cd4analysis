@@ -3,8 +3,15 @@ package de.monticore.cd;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import de.se_rwth.commons.logging.IErrorHook;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
+import de.se_rwth.commons.logging.MCFatalError;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.mockito.Mockito;
 
 /** a base class for tests to use stdout and stderr */
 public class OutTestBasis extends TestBasis {
@@ -17,7 +24,7 @@ public class OutTestBasis extends TestBasis {
     System.setErr(new PrintStream(errContent));
   }
 
-  @Before
+  @After
   public void reset() {
     outContent.reset();
     errContent.reset();

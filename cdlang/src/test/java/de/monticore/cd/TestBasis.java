@@ -34,8 +34,8 @@ public class TestBasis {
   /** have a temporary folder for the tests */
   @Rule public TemporaryFolder folder = new TemporaryFolder();
 
-  @BeforeClass
-  public static void setup() {
+  @Before
+  public void setup() {
     LogStub.init();
     Log.enableFailQuick(false);
   }
