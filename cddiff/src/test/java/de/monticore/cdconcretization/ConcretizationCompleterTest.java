@@ -1,4 +1,4 @@
-package de.monticore.cddiff.cdcoconcretization;
+package de.monticore.cdconcretization;
 
 import static de.monticore.cdconformance.CDConfParameter.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,9 +7,6 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdcoconcretization.CoconcretizationMerge;
-import de.monticore.cdcoconcretization.DefaultAssocIncCompleter;
-import de.monticore.cdcoconcretization.DefaultTypeIncCompleter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -20,8 +17,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 // todo: tests aufteilen
 
-public class CDCoconcretizationTest {
-  public static final String dir = "src/test/resources/de/monticore/cdcoconcretization/";
+public class ConcretizationCompleterTest {
+  public static final String dir = "src/test/resources/de/monticore/cdconcretization/";
 
   protected ASTCDCompilationUnit refCD;
 
@@ -59,9 +56,9 @@ public class CDCoconcretizationTest {
 
   @Test
   @Disabled
-  public void testCoconcretizationMerge() {
+  public void testCoconcretizationMerge() throws CompletionException {
     parseModels("ICCD.cd", "RCD.cd");
-    CoconcretizationMerge merger = new CoconcretizationMerge();
+    ConcretizationCompleter merger = new ConcretizationCompleter();
     merger.merge(refCD, conCD);
     conCD.getCDDefinition().setName("RCD");
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
@@ -79,13 +76,13 @@ public class CDCoconcretizationTest {
         new DefaultTypeIncCompleter(conCD, refCD, "incarnates");
     incarnationCompleter.identifyAndAddMissingTypeIncarnations();
     conCD.getCDDefinition().setName("RefTypeMissing");
-    System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
     assertTrue(conCD.deepEquals(refCD));
   }
 
   /** Test that checks if completeInheritance works correctly (after adding the types) */
   @Test
-  public void testTypeMissingInheritance() {
+  public void testTypeMissingInheritance() throws CompletionException {
     parseModels("inheritance/ConcMissingInheritance.cd", "inheritance/RefMissingInheritance.cd");
     DefaultTypeIncCompleter incarnationCompleter =
         new DefaultTypeIncCompleter(conCD, refCD, "incarnates");
@@ -99,7 +96,7 @@ public class CDCoconcretizationTest {
    * are added based on predefined CDs.
    */
   @Test
-  public void testMissingAttributes() {
+  public void testMissingAttributes() throws CompletionException {
     parseModels(
         "attributes/valid/ConcAttributesMissing.cd", "attributes/valid/RefAttributesMissing.cd");
     DefaultTypeIncCompleter incarnationCompleter =
@@ -107,12 +104,12 @@ public class CDCoconcretizationTest {
 
     conCD.getCDDefinition().setName("RefAttributesMissing");
     incarnationCompleter.completeIncarnations();
-    System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
     assertTrue(conCD.deepEquals(refCD));
   }
 
   @Test
-  public void testMissingEnumMember() {
+  public void testMissingEnumMember() throws CompletionException {
     parseModels("types/enums/ConcEnumMemberMissing.cd", "types/enums/RefEnumMemberMissing.cd");
     DefaultTypeIncCompleter incarnationCompleter =
         new DefaultTypeIncCompleter(conCD, refCD, "incarnates");
@@ -123,7 +120,7 @@ public class CDCoconcretizationTest {
   }
 
   @Test
-  public void testMultipleIncarnation() {
+  public void testMultipleIncarnation() throws CompletionException {
     parseModels(
         "multipleIncarnation/ConcMultipleIncarnation.cd",
         "multipleIncarnation/RefMultipleIncarnation.cd");
@@ -149,7 +146,7 @@ public class CDCoconcretizationTest {
 
   /** Test that checks if attributes are inherited in the correct way with a valid example. */
   @Test
-  public void testInheritanceValid() {
+  public void testInheritanceValid() throws CompletionException {
     parseModels(
         "inheritance/ConcAttributeInheritance.cd", "inheritance/RefAttributeInheritance.cd");
     DefaultTypeIncCompleter incarnationCompleter =
@@ -179,7 +176,6 @@ public class CDCoconcretizationTest {
   // AssociationTests
 
   @Test
-  @Disabled
   public void testAssocMissingSimple() {
     parseModels(
         "associations/ConcAssociationMissingSimple.cd",
@@ -187,14 +183,27 @@ public class CDCoconcretizationTest {
 
     DefaultAssocIncCompleter incarnationCompleter =
         new DefaultAssocIncCompleter(conCD, refCD, "incarnates");
-    incarnationCompleter.completeIncarnations();
-    conCD.getCDDefinition().setName("RefAssociationMissingSimple");
-    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-    // assertTrue(conCD.deepEquals(refCD));
+    try {
+      incarnationCompleter.completeIncarnations();
+      conCD.getCDDefinition().setName("RefAssociationMissingSimple");
+      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+      assertTrue(
+        new CDConformanceChecker(
+          Set.of(
+            STEREOTYPE_MAPPING,
+            NAME_MAPPING,
+            SRC_TARGET_ASSOC_MAPPING,
+            INHERITANCE,
+            ALLOW_CARD_RESTRICTION))
+          .checkConformance(conCD, refCD, Set.of("ref")));
+
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
   }
 
   @Test
-  @Disabled
   public void testAssocMissingCardinality() {
     parseModels(
         "associations/ConcAssociationMissingCardinality.cd",
@@ -202,14 +211,17 @@ public class CDCoconcretizationTest {
 
     DefaultAssocIncCompleter incarnationCompleter =
         new DefaultAssocIncCompleter(conCD, refCD, "incarnates");
-    incarnationCompleter.completeIncarnations();
-    conCD.getCDDefinition().setName("RefAssociationMissingCardinality");
-    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-    assertTrue(conCD.deepEquals(refCD));
+    try {
+      incarnationCompleter.completeIncarnations();
+      conCD.getCDDefinition().setName("RefAssociationMissingCardinality");
+      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      assertTrue(conCD.deepEquals(refCD, false));
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
   }
 
   @Test
-  @Disabled
   public void testAssocMissingRolename() {
     parseModels(
         "associations/ConcAssociationMissingRolename.cd",
@@ -217,14 +229,17 @@ public class CDCoconcretizationTest {
 
     DefaultAssocIncCompleter incarnationCompleter =
         new DefaultAssocIncCompleter(conCD, refCD, "incarnates");
-    incarnationCompleter.completeIncarnations();
-    conCD.getCDDefinition().setName("RefAssociationMissingRolename");
-    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-    assertTrue(conCD.deepEquals(refCD));
+    try {
+      incarnationCompleter.completeIncarnations();
+      conCD.getCDDefinition().setName("RefAssociationMissingRolename");
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      assertTrue(conCD.deepEquals(refCD));
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
   }
 
   @Test
-  @Disabled
   public void testAssocMissingFinal() {
     parseModels(
         "associations/ConcAssociationMissingFinal.cd",
@@ -232,12 +247,111 @@ public class CDCoconcretizationTest {
 
     DefaultAssocIncCompleter incarnationCompleter =
         new DefaultAssocIncCompleter(conCD, refCD, "incarnates");
-    incarnationCompleter.completeIncarnations();
-    conCD.getCDDefinition().setName("RefAssociationMissingFinal");
-    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-    assertTrue(conCD.deepEquals(refCD));
+    try {
+      incarnationCompleter.completeIncarnations();
+      conCD.getCDDefinition().setName("RefAssociationMissingFinal");
+      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+      assertTrue(
+        new CDConformanceChecker(
+          Set.of(
+            STEREOTYPE_MAPPING,
+            NAME_MAPPING,
+            SRC_TARGET_ASSOC_MAPPING,
+            INHERITANCE,
+            ALLOW_CARD_RESTRICTION))
+          .checkConformance(conCD, refCD, Set.of("ref")));
+
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
   }
 
+  @Test
+  public void testAssocMultipleTypeIncarnation() {
+    parseModels(
+      "associations/ConcAssocMultipleTypeIncarnation.cd",
+      "associations/RefAssocMultipleTypeIncarnation.cd");
+
+    DefaultAssocIncCompleter incarnationCompleter =
+      new DefaultAssocIncCompleter(conCD, refCD, "ref");
+    try {
+      incarnationCompleter.completeIncarnations();
+      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+      assertTrue(
+        new CDConformanceChecker(
+          Set.of(
+            STEREOTYPE_MAPPING,
+            NAME_MAPPING,
+            SRC_TARGET_ASSOC_MAPPING,
+            INHERITANCE,
+            ALLOW_CARD_RESTRICTION))
+          .checkConformance(conCD, refCD, Set.of("ref")));
+
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testAssociationReverseMatch() {
+    parseModels(
+      "associations/ConcAssociationReverseMatch.cd",
+      "associations/RefAssociationReverseMatch.cd");
+
+    DefaultAssocIncCompleter incarnationCompleter =
+      new DefaultAssocIncCompleter(conCD, refCD, "ref");
+    try {
+      incarnationCompleter.completeIncarnations();
+      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+      assertTrue(
+        new CDConformanceChecker(
+          Set.of(
+            STEREOTYPE_MAPPING,
+            NAME_MAPPING,
+            SRC_TARGET_ASSOC_MAPPING,
+            INHERITANCE,
+            ALLOW_CARD_RESTRICTION))
+          .checkConformance(conCD, refCD, Set.of("ref")));
+
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void testAssocRename() {
+    parseModels(
+      "associations/ConcAssocRename.cd",
+      "associations/RefAssocRename.cd");
+
+    DefaultAssocIncCompleter incarnationCompleter =
+      new DefaultAssocIncCompleter(conCD, refCD, "ref");
+    try {
+      incarnationCompleter.completeIncarnations();
+      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+      assertTrue(
+        new CDConformanceChecker(
+          Set.of(
+            STEREOTYPE_MAPPING,
+            NAME_MAPPING,
+            SRC_TARGET_ASSOC_MAPPING,
+            INHERITANCE,
+            ALLOW_CARD_RESTRICTION))
+          .checkConformance(conCD, refCD, Set.of("ref")));
+
+    } catch (CompletionException e) {
+      fail(e.getMessage());
+    }
+  }
+
+
   // todo: more complex tests with edge cases
+
+
+
 
 }

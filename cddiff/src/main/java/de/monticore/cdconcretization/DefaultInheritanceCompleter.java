@@ -1,4 +1,4 @@
-package de.monticore.cdcoconcretization;
+package de.monticore.cdconcretization;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;

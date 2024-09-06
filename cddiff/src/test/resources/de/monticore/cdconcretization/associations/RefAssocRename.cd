@@ -1,0 +1,12 @@
+classdiagram RefAssocRename {
+
+  class A {
+  }
+  class B {
+  }
+
+  association A -- (partOf) B;
+
+
+
+}

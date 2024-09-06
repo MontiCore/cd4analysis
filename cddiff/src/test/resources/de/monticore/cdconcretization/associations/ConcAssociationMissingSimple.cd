@@ -3,4 +3,10 @@ classdiagram ConcAssociationMissingSimple {
   }
   class Department {
   }
+  class A {
+
+  }
+  class B {
+
+  }
 }

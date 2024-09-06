@@ -1,0 +1,7 @@
+classdiagram RefAssocMultipleTypeIncarnation {
+  class A {
+  }
+  class B {
+  }
+  association A <-> B;
+}

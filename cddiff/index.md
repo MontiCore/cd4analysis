@@ -21,7 +21,10 @@
 `CDDiff` is a submodule of the `CD4Analysis` project that focuses on syntactic 
 and semantic difference analysis for [UML/P] Class Diagrams. 
 The submodule itself is subdivided into the following packages:
-1. `de.monticore.cdconformence` 
+1. `de.monticore.cdconcretization`
+    * implements a tool for completing concrete Class Diagrams based on a
+    reference model (work in progress).
+2. `de.monticore.cdconformence` 
     * implements an automatic conformance checker for Reference Class Diagrams.
 2. `de.monticore.cddiff`
     * implements syntactic and semantic differencing operators for Class 
@@ -302,3 +305,9 @@ public interface MatchingStrategy<T> {
 The matching strategies are used both in the syntactic difference analysis and 
 the conformance checker to identify incarnations.
 In both cases multiple matching strategies are used in combination.
+
+## Completing Concretizations of Reference Class Diagrams (upcoming)
+
+We are currently developing a tool that would allow for automatic completion of
+incomplete Class Diagrams based on a Reference Model.
+As of now, the tool is still under development and not ready to use.

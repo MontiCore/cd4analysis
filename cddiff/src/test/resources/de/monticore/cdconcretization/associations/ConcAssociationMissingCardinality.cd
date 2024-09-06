@@ -3,5 +3,10 @@ classdiagram ConcAssociationMissingCardinality {
   }
   class Department {
   }
+  class A {
+  }
+  class B {
+  }
   association Employee <-> Department;
+  association A <-> B ;
 }

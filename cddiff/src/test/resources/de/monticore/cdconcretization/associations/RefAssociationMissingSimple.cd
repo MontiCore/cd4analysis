@@ -3,5 +3,12 @@ classdiagram RefAssociationMissingSimple {
   }
   class Department {
   }
+  class A {
+
+  }
+  class B {
+
+  }
   association Employee -- Department;
+  association A (partOf) -- B;
 }

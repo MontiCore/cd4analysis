@@ -1,4 +1,4 @@
-package de.monticore.cdcoconcretization;
+package de.monticore.cdconcretization;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;

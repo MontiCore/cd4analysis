@@ -1,3 +1,0 @@
-- test von attributes nur falsch rumgedreht
-- identifyAndAddMissingEnumIncarnations(cEnum, (ASTCDEnum) rType); ist der cast da ok oder nicht, weil durch das isInstanceOf ist ja eine versicherung dass das geht-
-- buildTypeIncarnation von Enum musste ich auf CDMemberList wechseln von CDEnumList

@@ -3,5 +3,5 @@ classdiagram RefAssociationMissingFinal {
   }
   class Department {
   }
-  association [1..*] Employee (employed) <-> Department [1];
+  association [1] Department -> Employee [1..*];
 }

@@ -1,4 +1,4 @@
-package de.monticore.cdcoconcretization;
+package de.monticore.cdconcretization;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -45,16 +45,15 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
   }
 
   @Override
-  public void completeIncarnations() {
+  public void completeIncarnations() throws CompletionException {
 
-    // must be done first
+    // First step:
     identifyAndAddMissingTypeIncarnations();
 
     // inheritance must be completed before adding missing member incarnations
     DefaultInheritanceCompleter defaultInheritanceCompleter = new DefaultInheritanceCompleter();
     defaultInheritanceCompleter.setTypeMatcher(compTypeIncStrategy);
     defaultInheritanceCompleter.completeInheritance(rcd, ccd);
-    // inheritanceCompleter.completeInheritance(rcd, ccd);
 
     // complete member incarnations
     for (ASTCDClass cClass : ccd.getCDDefinition().getCDClassesList()) {
@@ -67,7 +66,7 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
           identifyAndAddMissingAttributeIncarnations(cClass, rType);
           // todo: completeMethodIncarnations
         } else {
-          // todo: Throw Custom Exception
+          throw new CompletionException("A class got matched to a different type.");
         }
       }
     }
@@ -77,7 +76,7 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
           identifyAndAddMissingAttributeIncarnations(cInterface, rType);
           // todo: completeMethodIncarnations
         } else {
-          // todo: Throw Custom Exception
+          throw new CompletionException("An interface got matched to a different type.");
         }
       }
     }
@@ -86,7 +85,7 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
         if (rType instanceof ASTCDEnum) {
           identifyAndAddMissingEnumIncarnations(cEnum, (ASTCDEnum) rType);
         } else {
-          // todo: Throw Custom Exception
+          throw new CompletionException("An Enum got matched to a different type.");
         }
       }
     }
