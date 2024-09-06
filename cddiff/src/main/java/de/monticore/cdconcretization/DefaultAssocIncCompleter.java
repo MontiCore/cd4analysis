@@ -44,8 +44,10 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
     compAssocIncStrategy = new CompAssocIncStrategy(refCD, mapping);
     compAssocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
     compAssocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
-    compAssocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(compTypeIncStrategy, conCD, refCD));
-    compAssocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(compTypeIncStrategy, conCD, refCD));
+    compAssocIncStrategy.addIncStrategy(
+        new RolePrefixInNavDirIncStrategy(compTypeIncStrategy, conCD, refCD));
+    compAssocIncStrategy.addIncStrategy(
+        new RolePrefixIfPresentIncStrategy(compTypeIncStrategy, conCD, refCD));
 
     this.helper = new ConcretizationHelper(ccd, rcd, compTypeIncStrategy, compAssocIncStrategy);
   }
@@ -98,7 +100,8 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
 
     // Get all supertypes of the left type and right type of the concrete association
     Set<ASTCDType> cLeftSuperTypes = CDDiffUtil.getAllSuperTypes(cLeftType, ccd.getCDDefinition());
-    Set<ASTCDType> cRightSuperTypes = CDDiffUtil.getAllSuperTypes(rRightType, ccd.getCDDefinition());
+    Set<ASTCDType> cRightSuperTypes =
+        CDDiffUtil.getAllSuperTypes(rRightType, ccd.getCDDefinition());
 
     // Determine if the concrete association matches the reference association in the standard
     // direction.
@@ -212,10 +215,10 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
       String roleName,
       String oppositeQName,
       String currentQName,
-      boolean isRightSide) throws CompletionException {
+      boolean isRightSide)
+      throws CompletionException {
 
     boolean renamed = false;
-
 
     ASTCDType oppositeType = helper.getAssocTypeByQName(ccd, oppositeQName);
 
@@ -269,7 +272,6 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
     return renamed;
   }
 
-
   private void completeAssocNavigability(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc) {
     // if cAssoc has complementary navigation it becomes bidirectional, else copy navigation of
     // rAssoc
@@ -291,9 +293,9 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
         || (cAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
             && rAssoc.getCDAssocDir().isDefinitiveNavigableLeft())) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDBiDirBuilder().build());
-    } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableRight()){
+    } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDRightToLeftDirBuilder().build());
-    } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableLeft()){
+    } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDLeftToRightDirBuilder().build());
     } else {
       cAssoc.setCDAssocDir(CD4CodeMill.cDUnspecifiedDirBuilder().build());
@@ -447,12 +449,16 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
           if (association.getRight().isPresentCDRole()) {
             // If a role name is already present, append the type incarnation's name to it
             association
-              .getRight()
-              .getCDRole()
-              .setName(association.getRight().getCDRole().getName() + "_" + otherTypeInc.getName());
+                .getRight()
+                .getCDRole()
+                .setName(
+                    association.getRight().getCDRole().getName() + "_" + otherTypeInc.getName());
           }
           if (association.getLeft().isPresentCDRole()) {
-            association.getLeft().getCDRole().setName(association.getLeft().getCDRole().getName() + "_" + typeInc.getName());
+            association
+                .getLeft()
+                .getCDRole()
+                .setName(association.getLeft().getCDRole().getName() + "_" + typeInc.getName());
           }
 
         } else {
@@ -477,16 +483,21 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
 
           if (association.getLeft().isPresentCDRole()) {
             association
-              .getLeft()
-              .getCDRole()
-              .setName(association.getLeft().getCDRole().getName() + "_" + otherTypeInc.getName());
+                .getLeft()
+                .getCDRole()
+                .setName(
+                    association.getLeft().getCDRole().getName() + "_" + otherTypeInc.getName());
           }
           if (association.getRight().isPresentCDRole()) {
-            association.getRight().getCDRole().setName(association.getRight().getCDRole().getName() + "_" + typeInc.getName());
+            association
+                .getRight()
+                .getCDRole()
+                .setName(association.getRight().getCDRole().getName() + "_" + typeInc.getName());
           }
         }
 
-        if (ccd.getCDDefinition().getCDAssociationsList().stream().noneMatch(a -> a.deepEquals(association))) {
+        if (ccd.getCDDefinition().getCDAssociationsList().stream()
+            .noneMatch(a -> a.deepEquals(association))) {
           ccd.getCDDefinition().addCDElement(association);
         }
 
@@ -616,8 +627,8 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
       fail = true;
     }
     if (fail) {
-      //throw new CompletionException(
-          //"Something went wrong when identifying missing association incarnations.");
+      // throw new CompletionException(
+      // "Something went wrong when identifying missing association incarnations.");
     }
     return false;
   }

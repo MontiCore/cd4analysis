@@ -370,10 +370,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
               "0xCD0E4: options [%s] are missing, but are required",
               Joiners.COMMA.join(e.getMissingOptions())));
     } catch (MissingArgumentException e) {
-      Log.error(String.format("0xCD0E5: option '%s' is missing an argument.\n" +
-          "Description of this option: %s",
-        e.getOption().getLongOpt(),
-        e.getOption().getDescription()));
+      Log.error(
+          String.format(
+              "0xCD0E5: option '%s' is missing an argument.\n" + "Description of this option: %s",
+              e.getOption().getLongOpt(), e.getOption().getDescription()));
     } catch (NumberFormatException e) {
       Log.error(
           "0xCD0E6: options --diffsize and --difflimit each require an " + "integer as argument");

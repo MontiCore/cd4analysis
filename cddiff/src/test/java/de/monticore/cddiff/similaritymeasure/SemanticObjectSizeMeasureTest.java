@@ -12,12 +12,10 @@ import org.junit.Test;
 public class SemanticObjectSizeMeasureTest extends CDDiffTestBasis {
 
   /**
-   * Note: This test tests again a given "difference" and this difference
-   * depends on the specific AST-CD , thus changes to upstream grammars cause
-   * this test to fail.
-   * In case this test is desired again: Please test against concrete differences/etc.
-   * and not against an abstract difference value that is subject to changes.
-   *
+   * Note: This test tests again a given "difference" and this difference depends on the specific
+   * AST-CD , thus changes to upstream grammars cause this test to fail. In case this test is
+   * desired again: Please test against concrete differences/etc. and not against an abstract
+   * difference value that is subject to changes.
    */
   @Ignore
   @Test

@@ -7,7 +7,6 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.inc.association.CompAssocIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,9 +23,11 @@ public class ConcretizationHelper {
   private final Map<String, ASTCDType> roleToTypeMapping;
 
   // Constructor
-  public ConcretizationHelper(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd,
-                               CompTypeIncStrategy compTypeIncStrategy,
-                               CompAssocIncStrategy compAssocIncStrategy) {
+  public ConcretizationHelper(
+      ASTCDCompilationUnit ccd,
+      ASTCDCompilationUnit rcd,
+      CompTypeIncStrategy compTypeIncStrategy,
+      CompAssocIncStrategy compAssocIncStrategy) {
     this.ccd = ccd;
     this.rcd = rcd;
     this.compTypeIncStrategy = compTypeIncStrategy;
@@ -43,6 +44,7 @@ public class ConcretizationHelper {
       processAssociationsForType(refType);
     }
   }
+
   private void processAssociationsForType(ASTCDType refType) throws CompletionException {
     for (ASTCDAssociation refAssoc : getAssociationsReferencingType(refType, rcd)) {
       // Get all concrete types that incarnate refType
@@ -65,20 +67,23 @@ public class ConcretizationHelper {
   }
 
   // Helper to get all associations in the reference diagram that reference a given type
-  private Set<ASTCDAssociation> getAssociationsReferencingType(ASTCDType refType, ASTCDCompilationUnit cd) {
+  private Set<ASTCDAssociation> getAssociationsReferencingType(
+      ASTCDType refType, ASTCDCompilationUnit cd) {
     return cd.getCDDefinition().getCDAssociationsList().stream()
-      .filter(refAssoc -> {
-        try {
-          return isAssociationReferencingType(refAssoc, refType);
-        } catch (CompletionException e) {
-          throw new RuntimeException(e);
-        }
-      })
-      .collect(Collectors.toSet());
+        .filter(
+            refAssoc -> {
+              try {
+                return isAssociationReferencingType(refAssoc, refType);
+              } catch (CompletionException e) {
+                throw new RuntimeException(e);
+              }
+            })
+        .collect(Collectors.toSet());
   }
 
   // Check if an association references a type on either side
-  private boolean isAssociationReferencingType(ASTCDAssociation assoc, ASTCDType type) throws CompletionException {
+  private boolean isAssociationReferencingType(ASTCDAssociation assoc, ASTCDType type)
+      throws CompletionException {
     ASTCDType assocLeftType = getAssocLeftType(rcd, assoc);
     ASTCDType assocRightType = getAssocRightType(rcd, assoc);
     return type.equals(assocLeftType) || type.equals(assocRightType);
@@ -87,21 +92,26 @@ public class ConcretizationHelper {
   // Helper to get all concrete types that incarnate the reference type
   private Set<ASTCDType> getConcreteTypesForReferenceType(ASTCDType refType) {
     return getCDTypes(ccd).stream()
-      .filter(conType -> compTypeIncStrategy.isMatched(conType, refType))
-      .collect(Collectors.toSet());
+        .filter(conType -> compTypeIncStrategy.isMatched(conType, refType))
+        .collect(Collectors.toSet());
   }
 
   // Helper to get all concrete associations for a given concrete type and reference association
-  private Set<ASTCDAssociation> getConcreteAssociationsForType(ASTCDType conType, ASTCDAssociation refAssoc) {
+  private Set<ASTCDAssociation> getConcreteAssociationsForType(
+      ASTCDType conType, ASTCDAssociation refAssoc) {
     return ccd.getCDDefinition().getCDAssociationsList().stream()
-      .filter(conAssoc -> compAssocIncStrategy.isMatched(conAssoc, refAssoc) &&
-        getTypeFromAssocSide(conAssoc.getLeft()).equals(conType) ||
-        getTypeFromAssocSide(conAssoc.getRight()).equals(conType))
-      .collect(Collectors.toSet());
+        .filter(
+            conAssoc ->
+                compAssocIncStrategy.isMatched(conAssoc, refAssoc)
+                        && getTypeFromAssocSide(conAssoc.getLeft()).equals(conType)
+                    || getTypeFromAssocSide(conAssoc.getRight()).equals(conType))
+        .collect(Collectors.toSet());
   }
 
   // Process both sides of the association to map roles and other types
-  private void processAssociationSides(ASTCDAssociation refAssoc, ASTCDAssociation conAssoc, ASTCDType refType, ASTCDType conType) throws CompletionException {
+  private void processAssociationSides(
+      ASTCDAssociation refAssoc, ASTCDAssociation conAssoc, ASTCDType refType, ASTCDType conType)
+      throws CompletionException {
     // Get reference and concrete sides
     ASTCDAssocSide refAssocSide = getAssociationSideForType(refAssoc, refType);
     ASTCDAssocSide conAssocSide = getAssociationSideForType(conAssoc, conType);
@@ -115,7 +125,8 @@ public class ConcretizationHelper {
   }
 
   // Helper to get the correct side of the association for a given type
-  private ASTCDAssocSide getAssociationSideForType(ASTCDAssociation assoc, ASTCDType type) throws CompletionException {
+  private ASTCDAssocSide getAssociationSideForType(ASTCDAssociation assoc, ASTCDType type)
+      throws CompletionException {
     ASTCDType leftType = getAssocLeftType(ccd, assoc);
     return (compTypeIncStrategy.isMatched(leftType, type)) ? assoc.getLeft() : assoc.getRight();
   }
@@ -126,15 +137,20 @@ public class ConcretizationHelper {
   }
 
   // Helper to map roles and types between reference and concrete associations
-  private void mapRolesAndTypes(ASTCDAssocSide refAssocSide, ASTCDAssocSide conAssocSide,
-                                ASTCDAssocSide refOtherSide, ASTCDAssocSide conOtherSide,
-                                ASTCDType refType, ASTCDType conType) {
+  private void mapRolesAndTypes(
+      ASTCDAssocSide refAssocSide,
+      ASTCDAssocSide conAssocSide,
+      ASTCDAssocSide refOtherSide,
+      ASTCDAssocSide conOtherSide,
+      ASTCDType refType,
+      ASTCDType conType) {
     // Map roles between reference and concrete sides
     Optional<String> refRole = getRoleName(refAssocSide);
     Optional<String> conRole = getRoleName(conAssocSide);
 
     if (refRole.isPresent() && conRole.isPresent()) {
-      roleMapping.put(refType.getName() + "." + refRole.get(), conType.getName() + "." + conRole.get());
+      roleMapping.put(
+          refType.getName() + "." + refRole.get(), conType.getName() + "." + conRole.get());
     }
 
     // Map reference role to the other reference type
@@ -148,7 +164,9 @@ public class ConcretizationHelper {
 
   // Helper to get the role name of an association side
   private Optional<String> getRoleName(ASTCDAssocSide assocSide) {
-    return assocSide.isPresentCDRole() ? Optional.of(assocSide.getCDRole().getName()) : Optional.empty();
+    return assocSide.isPresentCDRole()
+        ? Optional.of(assocSide.getCDRole().getName())
+        : Optional.empty();
   }
 
   // Helper to get the type from an association side
@@ -165,8 +183,10 @@ public class ConcretizationHelper {
     return cdTypes;
   }
 
-  ASTCDType getAssocLeftType(ASTCDCompilationUnit cd, ASTCDAssociation assoc) throws CompletionException {
-    Optional<CDTypeSymbol> typeSymbol = cd.getEnclosingScope().resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
+  ASTCDType getAssocLeftType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
+      throws CompletionException {
+    Optional<CDTypeSymbol> typeSymbol =
+        cd.getEnclosingScope().resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
 
     if (typeSymbol.isPresent()) {
       return typeSymbol.get().getAstNode();
@@ -175,8 +195,10 @@ public class ConcretizationHelper {
     }
   }
 
-  ASTCDType getAssocRightType(ASTCDCompilationUnit cd, ASTCDAssociation assoc) throws CompletionException {
-    Optional<CDTypeSymbol> typeSymbol = cd.getEnclosingScope().resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
+  ASTCDType getAssocRightType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
+      throws CompletionException {
+    Optional<CDTypeSymbol> typeSymbol =
+        cd.getEnclosingScope().resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
 
     if (typeSymbol.isPresent()) {
       return typeSymbol.get().getAstNode();
@@ -194,5 +216,4 @@ public class ConcretizationHelper {
       throw new CompletionException("There was a problem getting a type from an association");
     }
   }
-
 }

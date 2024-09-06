@@ -18,12 +18,11 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.se_rwth.commons.logging.LogStub;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

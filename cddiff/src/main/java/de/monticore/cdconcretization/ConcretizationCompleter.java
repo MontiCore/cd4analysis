@@ -5,7 +5,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 public class ConcretizationCompleter implements IMergeStrategy {
 
   @Override
-  public ASTCDCompilationUnit merge(ASTCDCompilationUnit rcd, ASTCDCompilationUnit iccd) throws CompletionException {
+  public ASTCDCompilationUnit merge(ASTCDCompilationUnit rcd, ASTCDCompilationUnit iccd)
+      throws CompletionException {
     ASTCDCompilationUnit cccd = iccd.deepClone();
 
     DefaultTypeIncCompleter typeCompleter = new DefaultTypeIncCompleter(cccd, rcd, "ref");

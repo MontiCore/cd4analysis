@@ -186,17 +186,17 @@ public class ConcretizationCompleterTest {
     try {
       incarnationCompleter.completeIncarnations();
       conCD.getCDDefinition().setName("RefAssociationMissingSimple");
-      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
       assertTrue(
-        new CDConformanceChecker(
-          Set.of(
-            STEREOTYPE_MAPPING,
-            NAME_MAPPING,
-            SRC_TARGET_ASSOC_MAPPING,
-            INHERITANCE,
-            ALLOW_CARD_RESTRICTION))
-          .checkConformance(conCD, refCD, Set.of("ref")));
+          new CDConformanceChecker(
+                  Set.of(
+                      STEREOTYPE_MAPPING,
+                      NAME_MAPPING,
+                      SRC_TARGET_ASSOC_MAPPING,
+                      INHERITANCE,
+                      ALLOW_CARD_RESTRICTION))
+              .checkConformance(conCD, refCD, Set.of("ref")));
 
     } catch (CompletionException e) {
       fail(e.getMessage());
@@ -214,7 +214,7 @@ public class ConcretizationCompleterTest {
     try {
       incarnationCompleter.completeIncarnations();
       conCD.getCDDefinition().setName("RefAssociationMissingCardinality");
-      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
       assertTrue(conCD.deepEquals(refCD, false));
     } catch (CompletionException e) {
       fail(e.getMessage());
@@ -250,17 +250,17 @@ public class ConcretizationCompleterTest {
     try {
       incarnationCompleter.completeIncarnations();
       conCD.getCDDefinition().setName("RefAssociationMissingFinal");
-      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
       assertTrue(
-        new CDConformanceChecker(
-          Set.of(
-            STEREOTYPE_MAPPING,
-            NAME_MAPPING,
-            SRC_TARGET_ASSOC_MAPPING,
-            INHERITANCE,
-            ALLOW_CARD_RESTRICTION))
-          .checkConformance(conCD, refCD, Set.of("ref")));
+          new CDConformanceChecker(
+                  Set.of(
+                      STEREOTYPE_MAPPING,
+                      NAME_MAPPING,
+                      SRC_TARGET_ASSOC_MAPPING,
+                      INHERITANCE,
+                      ALLOW_CARD_RESTRICTION))
+              .checkConformance(conCD, refCD, Set.of("ref")));
 
     } catch (CompletionException e) {
       fail(e.getMessage());
@@ -270,24 +270,24 @@ public class ConcretizationCompleterTest {
   @Test
   public void testAssocMultipleTypeIncarnation() {
     parseModels(
-      "associations/ConcAssocMultipleTypeIncarnation.cd",
-      "associations/RefAssocMultipleTypeIncarnation.cd");
+        "associations/ConcAssocMultipleTypeIncarnation.cd",
+        "associations/RefAssocMultipleTypeIncarnation.cd");
 
     DefaultAssocIncCompleter incarnationCompleter =
-      new DefaultAssocIncCompleter(conCD, refCD, "ref");
+        new DefaultAssocIncCompleter(conCD, refCD, "ref");
     try {
       incarnationCompleter.completeIncarnations();
-      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
       assertTrue(
-        new CDConformanceChecker(
-          Set.of(
-            STEREOTYPE_MAPPING,
-            NAME_MAPPING,
-            SRC_TARGET_ASSOC_MAPPING,
-            INHERITANCE,
-            ALLOW_CARD_RESTRICTION))
-          .checkConformance(conCD, refCD, Set.of("ref")));
+          new CDConformanceChecker(
+                  Set.of(
+                      STEREOTYPE_MAPPING,
+                      NAME_MAPPING,
+                      SRC_TARGET_ASSOC_MAPPING,
+                      INHERITANCE,
+                      ALLOW_CARD_RESTRICTION))
+              .checkConformance(conCD, refCD, Set.of("ref")));
 
     } catch (CompletionException e) {
       fail(e.getMessage());
@@ -297,24 +297,24 @@ public class ConcretizationCompleterTest {
   @Test
   public void testAssociationReverseMatch() {
     parseModels(
-      "associations/ConcAssociationReverseMatch.cd",
-      "associations/RefAssociationReverseMatch.cd");
+        "associations/ConcAssociationReverseMatch.cd",
+        "associations/RefAssociationReverseMatch.cd");
 
     DefaultAssocIncCompleter incarnationCompleter =
-      new DefaultAssocIncCompleter(conCD, refCD, "ref");
+        new DefaultAssocIncCompleter(conCD, refCD, "ref");
     try {
       incarnationCompleter.completeIncarnations();
-      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
       assertTrue(
-        new CDConformanceChecker(
-          Set.of(
-            STEREOTYPE_MAPPING,
-            NAME_MAPPING,
-            SRC_TARGET_ASSOC_MAPPING,
-            INHERITANCE,
-            ALLOW_CARD_RESTRICTION))
-          .checkConformance(conCD, refCD, Set.of("ref")));
+          new CDConformanceChecker(
+                  Set.of(
+                      STEREOTYPE_MAPPING,
+                      NAME_MAPPING,
+                      SRC_TARGET_ASSOC_MAPPING,
+                      INHERITANCE,
+                      ALLOW_CARD_RESTRICTION))
+              .checkConformance(conCD, refCD, Set.of("ref")));
 
     } catch (CompletionException e) {
       fail(e.getMessage());
@@ -323,35 +323,29 @@ public class ConcretizationCompleterTest {
 
   @Test
   public void testAssocRename() {
-    parseModels(
-      "associations/ConcAssocRename.cd",
-      "associations/RefAssocRename.cd");
+    parseModels("associations/ConcAssocRename.cd", "associations/RefAssocRename.cd");
 
     DefaultAssocIncCompleter incarnationCompleter =
-      new DefaultAssocIncCompleter(conCD, refCD, "ref");
+        new DefaultAssocIncCompleter(conCD, refCD, "ref");
     try {
       incarnationCompleter.completeIncarnations();
-      //System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
       assertTrue(
-        new CDConformanceChecker(
-          Set.of(
-            STEREOTYPE_MAPPING,
-            NAME_MAPPING,
-            SRC_TARGET_ASSOC_MAPPING,
-            INHERITANCE,
-            ALLOW_CARD_RESTRICTION))
-          .checkConformance(conCD, refCD, Set.of("ref")));
+          new CDConformanceChecker(
+                  Set.of(
+                      STEREOTYPE_MAPPING,
+                      NAME_MAPPING,
+                      SRC_TARGET_ASSOC_MAPPING,
+                      INHERITANCE,
+                      ALLOW_CARD_RESTRICTION))
+              .checkConformance(conCD, refCD, Set.of("ref")));
 
     } catch (CompletionException e) {
       fail(e.getMessage());
     }
   }
 
-
   // todo: more complex tests with edge cases
-
-
-
 
 }
