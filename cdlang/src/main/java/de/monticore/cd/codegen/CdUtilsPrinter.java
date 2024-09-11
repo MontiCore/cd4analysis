@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
 import de.monticore.cdbasis._ast.ASTCDPackage;
@@ -96,11 +96,11 @@ public class CdUtilsPrinter {
    * @return String representation of the ASTType
    */
   public String printType(ASTMCType type) {
-    return new CD4CodeFullPrettyPrinter().prettyprint(type);
+    return new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(type);
   }
 
   public String printType(ASTMCReturnType type) {
-    return new CD4CodeFullPrettyPrinter().prettyprint(type);
+    return new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(type);
   }
 
   /**
@@ -149,6 +149,6 @@ public class CdUtilsPrinter {
   }
 
   public String printExpression(ASTExpression expr) {
-    return new CD4CodeFullPrettyPrinter().prettyprint(expr);
+    return new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(expr);
   }
 }

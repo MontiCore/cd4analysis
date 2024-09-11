@@ -6,7 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.CDModifier;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -27,7 +28,7 @@ public final class DecoratorAssert {
   }
 
   public static void assertDeepEquals(ASTMCType expected, ASTMCType actual) {
-    CD4CodeFullPrettyPrinter p = new CD4CodeFullPrettyPrinter();
+    CD4CodeFullPrettyPrinter p = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     assertEquals(p.prettyprint(expected), p.prettyprint(actual));
   }
 
@@ -52,12 +53,12 @@ public final class DecoratorAssert {
   public static void assertDeepEquals(Class<?> expected, ASTNode actual) {
     assertTrue(actual instanceof ASTMCType);
     assertEquals(
-        expected.getSimpleName(), (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+        expected.getSimpleName(), (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint((ASTMCType) actual));
   }
 
   public static void assertDeepEquals(String name, ASTNode actual) {
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(name, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(name, (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint((ASTMCType) actual));
   }
 
   public static void assertBoolean(ASTNode actual) {
@@ -82,19 +83,19 @@ public final class DecoratorAssert {
   public static void assertOptionalOf(Class<?> clazz, ASTNode actual) {
     String type = "Optional<" + clazz.getSimpleName() + ">";
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(type, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(type, (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint((ASTMCType) actual));
   }
 
   public static void assertOptionalOf(String name, ASTNode actual) {
     String type = "Optional<" + name + ">";
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(type, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(type, (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint((ASTMCType) actual));
   }
 
   public static void assertListOf(Class<?> clazz, ASTNode actual) {
     String type = "List<" + clazz.getSimpleName() + ">";
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(type, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(type, (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint((ASTMCType) actual));
   }
 
   public static void assertListOf(String name, ASTNode actual) {
