@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._ast;
 
-import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
+import de.monticore.cdassociation._prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import java.util.List;
