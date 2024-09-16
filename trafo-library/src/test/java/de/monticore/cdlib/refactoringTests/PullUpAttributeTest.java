@@ -12,8 +12,7 @@ import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelp
 import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.BeforeClass;
@@ -191,7 +190,7 @@ public class PullUpAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+            .printType(),
         utility
             .getAst()
             .getCDDefinition()
@@ -200,7 +199,7 @@ public class PullUpAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())));
+            .printType());
     assertTrue(
         utility
             .getAst()

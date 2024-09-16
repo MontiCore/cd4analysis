@@ -12,8 +12,6 @@ import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelp
 import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.BeforeClass;
@@ -55,7 +53,7 @@ public class ExtractIntermediateClassTest {
   public void testExtractSuperclasses3ClassesAutoName() throws IOException {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule23Classes");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -86,7 +84,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -111,7 +109,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA3", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         1,
@@ -136,7 +134,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
 
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(
@@ -202,7 +200,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
   }
 
   /** Test method extractAllSuperclasses with auto generated name */
@@ -211,7 +209,7 @@ public class ExtractIntermediateClassTest {
 
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule2");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -242,7 +240,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -267,7 +265,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         0,
@@ -342,7 +340,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals(
         "ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(5).printSuperclasses());
   }
@@ -352,7 +350,7 @@ public class ExtractIntermediateClassTest {
   public void testExtractSuperclasses3ClassesManualName() throws IOException {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule23Classes");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -383,7 +381,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -408,7 +406,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA3", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         1,
@@ -433,7 +431,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
 
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(
@@ -514,7 +512,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals(
         "ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(6).printSuperclasses());
   }
@@ -525,7 +523,7 @@ public class ExtractIntermediateClassTest {
 
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule2");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -556,7 +554,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -581,7 +579,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         0,
@@ -654,7 +652,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals(
         "ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(5).printSuperclasses());
   }
@@ -666,7 +664,7 @@ public class ExtractIntermediateClassTest {
     FileUtility utility =
         new FileUtility("cdlib/EvaluationCDs/EvaluationRule2CounterexampleExtractSuperclass");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -697,7 +695,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -722,7 +720,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         0,
@@ -775,7 +773,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -800,7 +798,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         0,
@@ -848,7 +846,7 @@ public class ExtractIntermediateClassTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals(
         "ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(7).printSuperclasses());
   }

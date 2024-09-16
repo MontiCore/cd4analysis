@@ -13,8 +13,7 @@ import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelp
 import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+;
 import de.se_rwth.commons.logging.Log;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,7 +51,7 @@ public class RemoveAttributeTest {
   public void testRemoveAttribute() {
     FileUtility utility = new FileUtility("cdlib/RemoveAttribute");
     Remove refactoring = new Remove();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check input, namely there should be two overloading occurrences of
     // getUserName attribute
@@ -62,17 +61,17 @@ public class RemoveAttributeTest {
 
     ASTCDAttribute attributeFirst = classA.getCDAttributeList().get(0);
     assertEquals("a", attributeFirst.getName());
-    assertEquals("int", attributeFirst.getMCType().printType(btfpp));
+    assertEquals("int", attributeFirst.getMCType().printType());
     assertEquals(true, attributeFirst.getModifier().isPublic());
 
     ASTCDAttribute attributeSecond = classA.getCDAttributeList().get(1);
     assertEquals("b", attributeSecond.getName());
-    assertEquals("String", attributeSecond.getMCType().printType(btfpp));
+    assertEquals("String", attributeSecond.getMCType().printType());
     assertEquals(true, attributeSecond.getModifier().isPrivate());
 
     ASTCDAttribute attributeThird = classA.getCDAttributeList().get(2);
     assertEquals("c", attributeThird.getName());
-    assertEquals("int", attributeThird.getMCType().printType(btfpp));
+    assertEquals("int", attributeThird.getMCType().printType());
 
     // remove an attribute
     refactoring.removeAttribute("A", "b", utility.getAst());
@@ -82,11 +81,11 @@ public class RemoveAttributeTest {
 
     attributeFirst = classA.getCDAttributeList().get(0);
     assertEquals("a", attributeFirst.getName());
-    assertEquals("int", attributeFirst.getMCType().printType(btfpp));
+    assertEquals("int", attributeFirst.getMCType().printType());
     assertEquals(true, attributeFirst.getModifier().isPublic());
 
     attributeSecond = classA.getCDAttributeList().get(1);
     assertEquals("c", attributeThird.getName());
-    assertEquals("int", attributeThird.getMCType().printType(btfpp));
+    assertEquals("int", attributeThird.getMCType().printType());
   }
 }

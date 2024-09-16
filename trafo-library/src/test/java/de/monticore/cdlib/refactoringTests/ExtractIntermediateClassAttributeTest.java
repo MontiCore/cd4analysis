@@ -12,8 +12,6 @@ import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelp
 import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.BeforeClass;
@@ -59,7 +57,7 @@ public class ExtractIntermediateClassAttributeTest {
     //		System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(utility.getAst()));
 
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals(
@@ -89,7 +87,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -114,7 +112,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA3", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         1,
@@ -139,7 +137,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
 
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(
@@ -207,7 +205,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
   }
 
   /** Test method testExtractSuperclassesManualNameAttribute */
@@ -218,7 +216,7 @@ public class ExtractIntermediateClassAttributeTest {
         new ExtractIntermediateClassArbitraryNumber();
     //		System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(utility.getAst()));
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
+
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -249,7 +247,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals(
         1,
@@ -274,7 +272,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
     assertEquals("ClassA3", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(
         1,
@@ -299,7 +297,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
 
     assertEquals("ClassB1", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(
@@ -367,7 +365,7 @@ public class ExtractIntermediateClassAttributeTest {
             .getCDAttributeList()
             .get(0)
             .getMCType()
-            .printType(btfpp));
+            .printType());
   }
 
   /** Test method testExtractSuperclassesAutoNameMethod */

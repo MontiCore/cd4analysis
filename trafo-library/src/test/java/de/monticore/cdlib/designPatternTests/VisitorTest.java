@@ -15,7 +15,6 @@ import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -4,7 +4,6 @@ package de.monticore.cdlib.refactorings;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdlib.Refactoring.*;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 
 /**
  * Rename a class or an attribute
@@ -70,7 +69,7 @@ public class Rename implements Refactoring {
       if (rename
           .get_$C()
           .getMCType()
-          .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+          .printType()
           .equals("boolean")) {
         // Rename Getter und Setters for a boolean
         RenameGetterAndSetter renameWith = new RenameGetterAndSetter(ast);
