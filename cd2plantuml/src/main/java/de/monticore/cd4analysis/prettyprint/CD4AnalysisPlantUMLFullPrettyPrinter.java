@@ -9,16 +9,16 @@ import de.monticore.cdassociation.prettyprint.CDAssociationPlantUMLPrettyPrinter
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.prettyprint.CDBasisPlantUMLPrettyPrinter;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPlantUMLPrettyPrinter;
-import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
-import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
-import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
+import de.monticore.expressions.bitexpressions._prettyprint.BitExpressionsPrettyPrinter;
+import de.monticore.expressions.commonexpressions._prettyprint.CommonExpressionsPrettyPrinter;
+import de.monticore.expressions.expressionsbasis._prettyprint.ExpressionsBasisPrettyPrinter;
+import de.monticore.literals.mccommonliterals._prettyprint.MCCommonLiteralsPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.prettyprint.UMLModifierPrettyPrinter;
-import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
-import de.monticore.types.prettyprint.MCArrayTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.types.mcarraytypes._prettyprint.MCArrayTypesPrettyPrinter;
+import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesPrettyPrinter;
+import de.monticore.types.mccollectiontypes._prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.umlmodifier._prettyprint.UMLModifierPrettyPrinter;
+import de.monticore.umlstereotype._prettyprint.UMLStereotypePrettyPrinter;
 
 public class CD4AnalysisPlantUMLFullPrettyPrinter {
 
@@ -49,39 +49,39 @@ public class CD4AnalysisPlantUMLFullPrettyPrinter {
     traverser.add4CDAssociation(cdAssoc);
     traverser.setCDAssociationHandler(cdAssoc);
 
-    MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer);
+    MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer, false);
     traverser.add4MCBasicTypes(basicTypes);
     traverser.setMCBasicTypesHandler(basicTypes);
 
-    UMLStereotypePrettyPrinter umlStereotype = new UMLStereotypePrettyPrinter(printer);
+    UMLStereotypePrettyPrinter umlStereotype = new UMLStereotypePrettyPrinter(printer, false);
     traverser.add4UMLStereotype(umlStereotype);
     traverser.setUMLStereotypeHandler(umlStereotype);
 
-    UMLModifierPrettyPrinter umlModifier = new UMLModifierPrettyPrinter(printer);
+    UMLModifierPrettyPrinter umlModifier = new UMLModifierPrettyPrinter(printer, false);
     traverser.add4UMLModifier(umlModifier);
     traverser.setUMLModifierHandler(umlModifier);
 
-    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer);
+    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer, false);
     traverser.add4MCCollectionTypes(collectionTypes);
     traverser.setMCCollectionTypesHandler(collectionTypes);
 
-    MCArrayTypesPrettyPrinter arrayTypes = new MCArrayTypesPrettyPrinter(printer);
+    MCArrayTypesPrettyPrinter arrayTypes = new MCArrayTypesPrettyPrinter(printer, false);
     traverser.add4MCArrayTypes(arrayTypes);
     traverser.setMCArrayTypesHandler(arrayTypes);
 
-    ExpressionsBasisPrettyPrinter expressionsBasis = new ExpressionsBasisPrettyPrinter(printer);
+    ExpressionsBasisPrettyPrinter expressionsBasis = new ExpressionsBasisPrettyPrinter(printer, false);
     traverser.add4ExpressionsBasis(expressionsBasis);
     traverser.setExpressionsBasisHandler(expressionsBasis);
 
-    MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer);
+    MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer, false);
     traverser.add4MCCommonLiterals(commonLiterals);
     traverser.setMCCommonLiteralsHandler(commonLiterals);
 
-    BitExpressionsPrettyPrinter bitExpressions = new BitExpressionsPrettyPrinter(printer);
+    BitExpressionsPrettyPrinter bitExpressions = new BitExpressionsPrettyPrinter(printer, false);
     traverser.add4BitExpressions(bitExpressions);
     traverser.setBitExpressionsHandler(bitExpressions);
 
-    CommonExpressionsPrettyPrinter commonExpressions = new CommonExpressionsPrettyPrinter(printer);
+    CommonExpressionsPrettyPrinter commonExpressions = new CommonExpressionsPrettyPrinter(printer, false);
     traverser.add4CommonExpressions(commonExpressions);
     traverser.setCommonExpressionsHandler(commonExpressions);
   }
