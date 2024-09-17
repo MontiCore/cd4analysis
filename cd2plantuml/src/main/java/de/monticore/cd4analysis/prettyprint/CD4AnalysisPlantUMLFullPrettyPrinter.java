@@ -61,7 +61,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinter {
     traverser.add4UMLModifier(umlModifier);
     traverser.setUMLModifierHandler(umlModifier);
 
-    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer, false);
+    MCCollectionTypesPrettyPrinter collectionTypes =
+        new MCCollectionTypesPrettyPrinter(printer, false);
     traverser.add4MCCollectionTypes(collectionTypes);
     traverser.setMCCollectionTypesHandler(collectionTypes);
 
@@ -69,11 +70,13 @@ public class CD4AnalysisPlantUMLFullPrettyPrinter {
     traverser.add4MCArrayTypes(arrayTypes);
     traverser.setMCArrayTypesHandler(arrayTypes);
 
-    ExpressionsBasisPrettyPrinter expressionsBasis = new ExpressionsBasisPrettyPrinter(printer, false);
+    ExpressionsBasisPrettyPrinter expressionsBasis =
+        new ExpressionsBasisPrettyPrinter(printer, false);
     traverser.add4ExpressionsBasis(expressionsBasis);
     traverser.setExpressionsBasisHandler(expressionsBasis);
 
-    MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer, false);
+    MCCommonLiteralsPrettyPrinter commonLiterals =
+        new MCCommonLiteralsPrettyPrinter(printer, false);
     traverser.add4MCCommonLiterals(commonLiterals);
     traverser.setMCCommonLiteralsHandler(commonLiterals);
 
@@ -81,7 +84,8 @@ public class CD4AnalysisPlantUMLFullPrettyPrinter {
     traverser.add4BitExpressions(bitExpressions);
     traverser.setBitExpressionsHandler(bitExpressions);
 
-    CommonExpressionsPrettyPrinter commonExpressions = new CommonExpressionsPrettyPrinter(printer, false);
+    CommonExpressionsPrettyPrinter commonExpressions =
+        new CommonExpressionsPrettyPrinter(printer, false);
     traverser.add4CommonExpressions(commonExpressions);
     traverser.setCommonExpressionsHandler(commonExpressions);
   }

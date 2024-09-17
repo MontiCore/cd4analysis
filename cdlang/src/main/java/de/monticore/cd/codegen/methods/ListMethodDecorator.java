@@ -65,7 +65,8 @@ public abstract class ListMethodDecorator extends AbstractMethodDecorator {
         method.getCDParameterList().stream()
             .map(ASTCDParameter::getName)
             .collect(Collectors.joining(", "));
-    String returnType = (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint(method.getMCReturnType());
+    String returnType =
+        (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint(method.getMCReturnType());
 
     return new TemplateHookPoint(
         "methods.MethodDelegate", attributeName, methodName, parameterCall, returnType);

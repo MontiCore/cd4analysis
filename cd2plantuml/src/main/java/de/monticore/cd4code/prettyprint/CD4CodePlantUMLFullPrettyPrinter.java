@@ -69,7 +69,8 @@ public class CD4CodePlantUMLFullPrettyPrinter {
     traverser.add4UMLModifier(umlModifier);
     traverser.setUMLModifierHandler(umlModifier);
 
-    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer, false);
+    MCCollectionTypesPrettyPrinter collectionTypes =
+        new MCCollectionTypesPrettyPrinter(printer, false);
     traverser.add4MCCollectionTypes(collectionTypes);
     traverser.setMCCollectionTypesHandler(collectionTypes);
 
@@ -82,15 +83,18 @@ public class CD4CodePlantUMLFullPrettyPrinter {
     traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
     traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
 
-    MCFullGenericTypesPrettyPrinter fullGenericTypes = new MCFullGenericTypesPrettyPrinter(printer, false);
+    MCFullGenericTypesPrettyPrinter fullGenericTypes =
+        new MCFullGenericTypesPrettyPrinter(printer, false);
     traverser.add4MCFullGenericTypes(fullGenericTypes);
     traverser.setMCFullGenericTypesHandler(fullGenericTypes);
 
-    ExpressionsBasisPrettyPrinter expressionsBasis = new ExpressionsBasisPrettyPrinter(printer, false);
+    ExpressionsBasisPrettyPrinter expressionsBasis =
+        new ExpressionsBasisPrettyPrinter(printer, false);
     traverser.add4ExpressionsBasis(expressionsBasis);
     traverser.setExpressionsBasisHandler(expressionsBasis);
 
-    MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer, false);
+    MCCommonLiteralsPrettyPrinter commonLiterals =
+        new MCCommonLiteralsPrettyPrinter(printer, false);
     traverser.add4MCCommonLiterals(commonLiterals);
     traverser.setMCCommonLiteralsHandler(commonLiterals);
 
@@ -98,7 +102,8 @@ public class CD4CodePlantUMLFullPrettyPrinter {
     traverser.add4BitExpressions(bitExpressions);
     traverser.setBitExpressionsHandler(bitExpressions);
 
-    CommonExpressionsPrettyPrinter commonExpressions = new CommonExpressionsPrettyPrinter(printer, false);
+    CommonExpressionsPrettyPrinter commonExpressions =
+        new CommonExpressionsPrettyPrinter(printer, false);
     traverser.add4CommonExpressions(commonExpressions);
     traverser.setCommonExpressionsHandler(commonExpressions);
   }

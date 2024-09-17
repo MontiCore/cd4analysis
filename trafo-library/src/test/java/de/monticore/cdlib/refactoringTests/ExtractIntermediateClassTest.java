@@ -54,7 +54,6 @@ public class ExtractIntermediateClassTest {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule23Classes");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
 
-
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals(
@@ -210,7 +209,6 @@ public class ExtractIntermediateClassTest {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule2");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
 
-
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals(
@@ -350,7 +348,6 @@ public class ExtractIntermediateClassTest {
   public void testExtractSuperclasses3ClassesManualName() throws IOException {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule23Classes");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
@@ -524,7 +521,6 @@ public class ExtractIntermediateClassTest {
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/EvaluationRule2");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
 
-
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals(
@@ -664,7 +660,6 @@ public class ExtractIntermediateClassTest {
     FileUtility utility =
         new FileUtility("cdlib/EvaluationCDs/EvaluationRule2CounterexampleExtractSuperclass");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());

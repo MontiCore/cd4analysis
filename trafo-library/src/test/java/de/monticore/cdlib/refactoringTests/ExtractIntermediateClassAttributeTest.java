@@ -57,7 +57,6 @@ public class ExtractIntermediateClassAttributeTest {
     //		System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(utility.getAst()));
 
-
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals(
@@ -216,7 +215,6 @@ public class ExtractIntermediateClassAttributeTest {
         new ExtractIntermediateClassArbitraryNumber();
     //		System.out.println(new CDPrettyPrinterConcreteVisitor(new
     // IndentPrinter()).prettyprint(utility.getAst()));
-
 
     // Check if input ast is correct
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());

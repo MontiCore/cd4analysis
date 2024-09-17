@@ -51,7 +51,6 @@ public class RemoveAttributeTest {
     FileUtility utility = new FileUtility("cdlib/RemoveAttribute");
     Remove refactoring = new Remove();
 
-
     // Check input, namely there should be two overloading occurrences of
     // getUserName attribute
     ASTCDClass classA = utility.getAst().getCDDefinition().getCDClassesList().get(0);

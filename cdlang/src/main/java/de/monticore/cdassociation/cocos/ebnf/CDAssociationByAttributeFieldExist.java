@@ -13,7 +13,8 @@ import de.se_rwth.commons.logging.Log;
 /** Checks that the attribute connected by associations exist. */
 public class CDAssociationByAttributeFieldExist implements CDAssociationASTCDAssociationCoCo {
 
-  protected CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter(new IndentPrinter(), false);
+  protected CDAssociationPrettyPrinter prettyPrinter =
+      new CDAssociationPrettyPrinter(new IndentPrinter(), false);
 
   @Override
   public void check(ASTCDAssociation assoc) {
