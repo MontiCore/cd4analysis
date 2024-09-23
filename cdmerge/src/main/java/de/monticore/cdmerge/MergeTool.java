@@ -205,7 +205,7 @@ public class MergeTool {
       if (!mergeStepResult.isSuccessful()) {
         throw new MergingException(
             "Errors during merge step "
-                + step
+                + intermediateName
                 + ". Will cancel further processing here. Check log for details",
             mergeStepResult);
       }
