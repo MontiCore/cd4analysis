@@ -13,6 +13,7 @@ import de.monticore.cdmerge.merging.strategies.TypeMerger;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /** Abstract base class for concrete CD merging strategies */
 public abstract class CDMerger {
@@ -87,7 +88,15 @@ public abstract class CDMerger {
                                     && !sv1.getValue().equals(sv2.getValue())))) {
           return Optional.empty();
         }
-        stereotype.get().addAllValues(modifier2.getStereotype().getValuesList());
+        stereotype
+            .get()
+            .addAllValues(
+                modifier2.getStereotype().getValuesList().stream()
+                    .filter(
+                        sv2 ->
+                            modifier1.getStereotype().getValuesList().stream()
+                                .noneMatch(sv1 -> sv1.getName().equals(sv2.getName())))
+                    .collect(Collectors.toList()));
       }
     } else if (modifier2.isPresentStereotype()) {
       stereotype = Optional.of(modifier2.getStereotype().deepClone());
