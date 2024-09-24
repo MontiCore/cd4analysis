@@ -8,13 +8,14 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public class CDMerge {
 
   @Deprecated
-  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs) {
+  public static ASTCDCompilationUnit merge(List<ASTCDCompilationUnit> inputs) {
     return merge(inputs, "Merge", new HashSet<>());
   }
 
@@ -24,7 +25,7 @@ public class CDMerge {
    * @return composite CD
    */
   public static ASTCDCompilationUnit merge(
-      Set<ASTCDCompilationUnit> inputCDs,
+      List<ASTCDCompilationUnit> inputCDs,
       String compositeCDName,
       Set<MergeParameter> mergeParameters) {
 
@@ -59,7 +60,7 @@ public class CDMerge {
 
   /** helper-method that constructs the CDMergeConfig */
   private static CDMergeConfig getConfig(
-      Set<ASTCDCompilationUnit> inputModels, String name, Set<MergeParameter> mergeParameters) {
+      List<ASTCDCompilationUnit> inputModels, String name, Set<MergeParameter> mergeParameters) {
     CDMergeConfig.Builder builder =
         new CDMergeConfig.Builder(false)
             .withParam(MergeParameter.AST_BASED)

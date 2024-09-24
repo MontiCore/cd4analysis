@@ -7,8 +7,9 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.MergeParameter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class CDMergeTest extends BaseTest {
   public void testMerge() {
 
     final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     try {
       inputSet.add(loadModel(srcDir + "A.cd"));
       inputSet.add(loadModel(srcDir + "B.cd"));
@@ -35,7 +36,7 @@ public class CDMergeTest extends BaseTest {
   @Test
   public void testMotivatingExample() {
     final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     try {
       inputSet.add(loadModel(srcDir + "Teaching.cd"));
       inputSet.add(loadModel(srcDir + "Management.cd"));
@@ -57,7 +58,7 @@ public class CDMergeTest extends BaseTest {
   @Test
   public void testUMLPExample() {
     final String srcDir = "src/test/resources/class_diagrams/umlp/";
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     ASTCDCompilationUnit expected = null;
     try {
       expected = loadModel(srcDir + "MergeDriveAndEmployment.umlp");
