@@ -79,4 +79,50 @@ public class CDMergeTest extends BaseTest {
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
     Assert.assertTrue(mergedCD.deepEquals(expected, false));
   }
+
+  @Test
+  public void testCarRental_correct() {
+    final String srcDir = "src/test/resources/class_diagrams/carrental/";
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    ASTCDCompilationUnit expected = null;
+    try {
+      inputSet.add(loadModel(srcDir + "Renting.cd"));
+      inputSet.add(loadModel(srcDir + "Trucks.cd"));
+      inputSet.add(loadModel(srcDir + "Cars.cd"));
+    } catch (IOException e) {
+      fail("IO exception while accessing input models: " + e.getMessage());
+    }
+
+    HashSet<MergeParameter> params = new HashSet<>();
+
+    params.add(MergeParameter.LOG_VERBOSE);
+    params.add(MergeParameter.LOG_TO_CONSOLE);
+
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
+
+    Assert.assertNotNull(mergedCD);
+  }
+
+  @Test
+  public void testCarRental_failed() {
+    final String srcDir = "src/test/resources/class_diagrams/carrental/";
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    ASTCDCompilationUnit expected = null;
+    try {
+      inputSet.add(loadModel(srcDir + "Trucks.cd"));
+      inputSet.add(loadModel(srcDir + "Cars.cd"));
+      inputSet.add(loadModel(srcDir + "Renting.cd"));
+    } catch (IOException e) {
+      fail("IO exception while accessing input models: " + e.getMessage());
+    }
+
+    HashSet<MergeParameter> params = new HashSet<>();
+
+    params.add(MergeParameter.LOG_VERBOSE);
+    params.add(MergeParameter.LOG_TO_CONSOLE);
+
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
+
+    Assert.assertNull(mergedCD);
+  }
 }
