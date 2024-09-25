@@ -15,8 +15,6 @@ public class ASTCDCardOpt extends ASTCDCardOptTOP {
     return CardinalityMill.cardinalityBuilder()
         .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits("0").build())
         .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits("1").build())
-        .setLowerBound(0)
-        .setUpperBound(1)
         .build();
   }
 }
