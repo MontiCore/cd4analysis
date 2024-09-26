@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class CDMergeTest extends BaseTest {
@@ -104,9 +103,9 @@ public class CDMergeTest extends BaseTest {
     Assert.assertNotNull(mergedCD);
   }
 
-  @Ignore // TODO: Failed nach der Parserumstellung nicht mehr?
+  // Testet eine andere Reihenfolge der Eingabe-CDs (mit Kommentaren)
   @Test
-  public void testCarRental_failed() {
+  public void testCarRental_2() {
     final String srcDir = "src/test/resources/class_diagrams/carrental/";
     List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     ASTCDCompilationUnit expected = null;
@@ -125,6 +124,6 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
 
-    Assert.assertNull(mergedCD);
+    Assert.assertNotNull(mergedCD);
   }
 }

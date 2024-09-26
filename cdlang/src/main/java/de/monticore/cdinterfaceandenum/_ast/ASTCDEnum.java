@@ -7,8 +7,9 @@ import de.monticore.cdinterfaceandenum._prettyprint.CDInterfaceAndEnumFullPretty
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
   protected final CDInterfaceAndEnumFullPrettyPrinter printer =
@@ -21,7 +22,7 @@ public class ASTCDEnum extends ASTCDEnumTOP {
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
-    return new ArrayList<ASTMCObjectType>();
+    return Collections.emptyList(); // empty unmodifiable list
   }
 
   @Override
@@ -32,13 +33,13 @@ public class ASTCDEnum extends ASTCDEnumTOP {
   @Override
   public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDInterfaceUsage()) {
-      return new ArrayList<ASTMCObjectType>();
+      return Collections.emptyList(); // empty unmodifiable list
     }
     return getCDInterfaceUsage().getInterfaceList();
   }
 
   /**
-   * Prints the interfaces
+   * Prints the name of the interfaces as a comma-separated string
    *
    * @return String representation of the interfaces
    */
@@ -47,8 +48,8 @@ public class ASTCDEnum extends ASTCDEnumTOP {
     if (!isPresentCDInterfaceUsage()) {
       return PrettyPrintUtil.EMPTY_STRING;
     }
-    printer.getPrinter().clearBuffer();
-    printer.getTraverser().traverse(getCDInterfaceUsage());
-    return printer.getPrinter().getContent();
+    return getCDInterfaceUsage().getInterfaceList().stream()
+        .map(ASTMCObjectType::printType)
+        .collect(Collectors.joining(","));
   }
 }
