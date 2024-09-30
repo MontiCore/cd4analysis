@@ -56,9 +56,7 @@ public class CDDeSerHelper {
     return this.symAssocForDeserialization.put(hash, symAssociation);
   }
 
-  /**
-   * Clean up after this singleton
-   */
+  /** Clean up after this singleton */
   public static void reset() {
     INSTANCE = null;
   }
