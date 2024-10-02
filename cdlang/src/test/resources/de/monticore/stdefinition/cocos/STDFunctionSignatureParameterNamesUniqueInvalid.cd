@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.stdefinition.symboltable;
+
+symtabdefinition STDFunctionSignatureParameterNamesUniqueInvalid {
+
+  void f(int x, int y, int x);
+
+}

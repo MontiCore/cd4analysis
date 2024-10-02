@@ -23,6 +23,7 @@ if(!hasProperty('bootstrap')) {
   include(':cd2smt')
   include(':cdmerge')
   include(':cdtool')
+  include(':stdefinitiontool')
   include(':language-server')
   if("true".equals(getProperty('genTR'))){
     include(":trafo-library")

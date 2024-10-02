@@ -12,17 +12,17 @@ import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.cocos.CDAssociationUniqueInHierarchy;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -796,8 +796,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   /** Additional CoCo-Check for Code-Generation */
   protected void runGeneratorCoCo() {
-    CD4AnalysisCoCos generalCoCos = new CD4AnalysisCoCos();
-    CD4AnalysisCoCoChecker checker = generalCoCos.createNewChecker();
+    CD4CodeCoCos generalCoCos = new CD4CodeCoCos();
+    CD4CodeCoCoChecker checker = generalCoCos.createNewChecker();
 
     checker.addCoCo(new CDAssociationUniqueInHierarchy());
     checker.checkAll(ast);
