@@ -47,7 +47,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
   @Test
   public void completeModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-      p.parse(getFilePath("cd4code/parser/Complete.cd"));
+        p.parse(getFilePath("cd4code/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 

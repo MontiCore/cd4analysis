@@ -4,7 +4,6 @@ package de.monticore.stdefinition._symboltable;
 import de.monticore.stdefinition._ast.ASTSTDFunction;
 import de.monticore.stdefinition._ast.ASTSTDVariable;
 import de.monticore.stdefinition._visitor.STDefinitionVisitor2;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
