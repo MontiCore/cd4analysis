@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationNoTypeParametersInvalid {
+
+  // Here, in the test, a typevariable is added to the scope of A;
+  // The typevariable cannot be added to the model in TestCDAssociation,
+  // but is not specific to CD4C.
+  class A;
+  class B;
+
+  association foo A -> B;
+
+}

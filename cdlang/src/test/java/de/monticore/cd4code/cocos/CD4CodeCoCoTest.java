@@ -32,13 +32,26 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void completeModel() throws IOException {
+  public void completeCDBasisModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
         p.parse(getFilePath("cdbasis/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    checkLogError();
+
+    cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);
+  }
+
+  @Test
+  public void completeModel() throws IOException {
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+      p.parse(getFilePath("cd4code/parser/Complete.cd"));
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    prepareST(node);
     checkLogError();
 
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);

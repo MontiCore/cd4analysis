@@ -1,0 +1,58 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+/* Alpha-version: This is intended to become a MontiCore stable grammar. */
+
+/**
+ * MCG for the definition of a symbol table as a manually defined file.
+ *
+ * STDefinition describes symbol tables including
+ *   * PackageSymbols
+ *   * TypeSymbols
+ *   * FunctionSymbols
+ *   * VariableSymbol
+ *
+ * STDefinition is used to define symbol tables,
+ * as these files are more maintainable than their JSON representation.
+ * However, these files are only meant as human readable and
+ * modifiable text that are then mapped into the real symbol tables.
+ *
+ * This grammar combines
+ *   * CD4Code
+ *       for Java-esque Symbols
+ *   * MCFunctionTypes
+ *       for function types
+ *   * MCStructuralTypes
+ *       for union, intersection, and tuple types
+ */
+
+grammar STDefinition extends
+    de.monticore.CD4Code,
+    de.monticore.types.MCFunctionTypes,
+    de.monticore.types.MCStructuralTypes {
+
+  /** An ASTSTDFunction contains the information to create a FunctionSymbol.
+   * It only contains the information that is stored in the symbol.
+   */
+  scope STDFunction implements CDElement, Function =
+    TypeParameters?
+    MCReturnType
+    Name
+    "(" (CDParameter || ",")* ")"
+    ";";
+
+  /** An ASTSTDVariable contains the information to create a VariableSymbol.
+   * It does not contain information which are not stored in the symbol.
+   */
+  STDVariable implements CDElement, Variable =
+    MCType
+    Name
+    ";";
+
+  /**
+   * This rule allows additional keywords for classdiagram
+   */
+  replacekeyword "classdiagram": "symtabdefinition", "classdiagram";
+
+  start CDCompilationUnit;
+}

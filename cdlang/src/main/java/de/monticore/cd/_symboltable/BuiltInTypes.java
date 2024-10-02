@@ -22,10 +22,7 @@ public class BuiltInTypes {
       BasicSymbolsMill.initializePrimitives();
 
       if (withCollectionType) {
-        setUpCD4AType(globalScope, "List", "T");
-        setUpCD4AType(globalScope, "Optional", "T");
-        setUpCD4AType(globalScope, "Set", "T");
-        setUpCD4AType(globalScope, "Map", "K", "V");
+        setUpCollectionTypes(globalScope);
       }
 
       final OOClass2MCResolver resolver = new OOClass2MCResolver();
@@ -49,6 +46,13 @@ public class BuiltInTypes {
                   resolver.resolveAdaptedOOTypeSymbol(
                       foundSymbols, name, modifier, predicate::test)));
     }
+  }
+
+  public static void setUpCollectionTypes(IOOSymbolsGlobalScope globalScope) {
+    setUpCD4AType(globalScope, "List", "T");
+    setUpCD4AType(globalScope, "Optional", "T");
+    setUpCD4AType(globalScope, "Set", "T");
+    setUpCD4AType(globalScope, "Map", "K", "V");
   }
 
   protected static void setUpCD4AType(

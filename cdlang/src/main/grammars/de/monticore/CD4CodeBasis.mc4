@@ -5,11 +5,13 @@ package de.monticore;
  * Adaptations -- if any -- are conservative. */
 
 /**
-   This component grammar describes the method signatures that 
-   are used by CD4Code.
-   
-   It contains method and constructor signatures including 
-   visibility modifiers.
+   This component grammar describes the classes, interfaces,
+   and method signatures that are used by CD4Code.
+
+   It contains class and interfaces including type parameters.
+
+   It contains method and constructor signatures including
+   visibility modifiers and type parameters.
 
    It uses CDBasis.mc4, which allows a rather free
    combination with other extensions.
@@ -18,7 +20,30 @@ package de.monticore;
 component grammar CD4CodeBasis extends
     de.monticore.CDBasis,
     de.monticore.CDInterfaceAndEnum,
-    de.monticore.expressions.CommonExpressions {
+    de.monticore.expressions.CommonExpressions,
+    de.monticore.types.TypeParameters {
+
+  /* ==== Classes and Interfaces ==== */
+  @Override
+  CDClass implements CDType =
+    Modifier "class" Name
+    TypeParameters?
+    CDExtendUsage?
+    CDInterfaceUsage?
+    ( "{"
+        CDMember*
+      "}"
+    | ";" );
+
+  @Override
+  CDInterface implements CDType =
+    Modifier "interface" Name
+    TypeParameters?
+    CDExtendUsage?
+    ( "{"
+        CDMember*
+      "}"
+    | ";" );
 
   /* ==== Methods ==== */
   /** Introduction of the new form of symbol: the Method
@@ -31,6 +56,7 @@ component grammar CD4CodeBasis extends
    */
   CDMethod implements CDMethodSignature =
     Modifier
+    TypeParameters?
     MCReturnType
     Name "(" (CDParameter || ",")* ")"
     CDThrowsDeclaration?
@@ -40,6 +66,7 @@ component grammar CD4CodeBasis extends
    */
   CDConstructor implements CDMethodSignature =
     Modifier
+    TypeParameters?
     Name "(" (CDParameter || ",")* ")"
     CDThrowsDeclaration?
     ";";
@@ -62,7 +89,7 @@ component grammar CD4CodeBasis extends
   ;
 
   /* ==== Symbols ==== */
-  /** Method knows its signature, whether it is a constructor, 
+  /** Method knows its signature, whether it is a constructor,
       visibility
    */
   symbolrule CDMethodSignature =
