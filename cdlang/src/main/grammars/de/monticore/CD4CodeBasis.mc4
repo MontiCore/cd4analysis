@@ -24,6 +24,7 @@ component grammar CD4CodeBasis extends
     de.monticore.types.TypeParameters {
 
   /* ==== Classes and Interfaces ==== */
+  
   @Override
   CDClass implements CDType =
     Modifier "class" Name
@@ -46,9 +47,11 @@ component grammar CD4CodeBasis extends
     | ";" );
 
   /* ==== Methods ==== */
+  
   /** Introduction of the new form of symbol: the Method
    */
-  interface scope symbol CDMethodSignature extends CDMember, Method = Name CDParameter*;
+  interface scope symbol CDMethodSignature extends CDMember, Method = 
+    Name CDParameter*;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
@@ -84,11 +87,13 @@ component grammar CD4CodeBasis extends
     Name Arguments?;
 
   /* ==== AST extensions ==== */
+  
   astrule CDMethod =
     isDefault: boolean
   ;
 
   /* ==== Symbols ==== */
+  
   /** Method knows its signature, whether it is a constructor,
       visibility
    */
