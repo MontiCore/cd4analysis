@@ -1,0 +1,38 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.time.LocalDateTime;
+
+/**
+ * This is a model-component for an application representing a car rental.
+ *
+ * Here we focus on car-related information.
+ */
+classdiagram Cars {
+
+  /**
+   * Declare the RentableItem class, although it is detailed in Renting.umlp,
+   * to maintain a valid Cars class diagram.
+   */
+  abstract class RentableItem;
+
+  class Car extends RentableItem {
+    String model;
+    String maker;
+    float costPerDay;
+    derived float mileage;
+  }
+
+  class MileageDataPoint {
+    LocalDateTime recordDate;
+    float mileage;
+  }
+
+  // To be able to create a histogram, the mileage is tracked along with the
+  // data entry date.
+  association [1] Car -> (dataPoint) MileageDataPoint [*];
+
+  // TODO EX 2.2 b): Add MAINTENANCE
+  enum RentableStatus {
+    MAINTENANCE;
+  }
+}

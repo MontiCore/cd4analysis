@@ -7,8 +7,9 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.MergeParameter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class CDMergeTest extends BaseTest {
   public void testMerge() {
 
     final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     try {
       inputSet.add(loadModel(srcDir + "A.cd"));
       inputSet.add(loadModel(srcDir + "B.cd"));
@@ -35,7 +36,7 @@ public class CDMergeTest extends BaseTest {
   @Test
   public void testMotivatingExample() {
     final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     try {
       inputSet.add(loadModel(srcDir + "Teaching.cd"));
       inputSet.add(loadModel(srcDir + "Management.cd"));
@@ -57,7 +58,7 @@ public class CDMergeTest extends BaseTest {
   @Test
   public void testUMLPExample() {
     final String srcDir = "src/test/resources/class_diagrams/umlp/";
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     ASTCDCompilationUnit expected = null;
     try {
       expected = loadModel(srcDir + "MergeDriveAndEmployment.umlp");
@@ -77,5 +78,52 @@ public class CDMergeTest extends BaseTest {
     Assert.assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
     Assert.assertTrue(mergedCD.deepEquals(expected, false));
+  }
+
+  @Test
+  public void testCarRental_correct() {
+    final String srcDir = "src/test/resources/class_diagrams/carrental/";
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    ASTCDCompilationUnit expected = null;
+    try {
+      inputSet.add(loadModel(srcDir + "Renting.cd"));
+      inputSet.add(loadModel(srcDir + "Trucks.cd"));
+      inputSet.add(loadModel(srcDir + "Cars.cd"));
+    } catch (IOException e) {
+      fail("IO exception while accessing input models: " + e.getMessage());
+    }
+
+    HashSet<MergeParameter> params = new HashSet<>();
+
+    params.add(MergeParameter.LOG_VERBOSE);
+    params.add(MergeParameter.LOG_TO_CONSOLE);
+
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
+
+    Assert.assertNotNull(mergedCD);
+  }
+
+  // Testet eine andere Reihenfolge der Eingabe-CDs (mit Kommentaren)
+  @Test
+  public void testCarRental_2() {
+    final String srcDir = "src/test/resources/class_diagrams/carrental/";
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    ASTCDCompilationUnit expected = null;
+    try {
+      inputSet.add(loadModel(srcDir + "Trucks.cd"));
+      inputSet.add(loadModel(srcDir + "Cars.cd"));
+      inputSet.add(loadModel(srcDir + "Renting.cd"));
+    } catch (IOException e) {
+      fail("IO exception while accessing input models: " + e.getMessage());
+    }
+
+    HashSet<MergeParameter> params = new HashSet<>();
+
+    params.add(MergeParameter.LOG_VERBOSE);
+    params.add(MergeParameter.LOG_TO_CONSOLE);
+
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
+
+    Assert.assertNotNull(mergedCD);
   }
 }

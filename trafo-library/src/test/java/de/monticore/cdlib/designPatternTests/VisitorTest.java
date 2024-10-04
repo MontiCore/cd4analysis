@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import com.google.common.collect.Lists;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdlib.designPattern.VisitorPattern;
 import de.monticore.cdlib.utilities.FileUtility;
@@ -15,7 +15,6 @@ import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -203,7 +202,9 @@ public class VisitorTest {
             .getName());
 
     // Test number of methods
-    System.err.println(new CD4CodeFullPrettyPrinter().prettyprint(utility.getAst()));
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+    System.err.println(
+        new CD4CodeFullPrettyPrinter(new IndentPrinter()).prettyprint(utility.getAst()));
     assertEquals(
         1, utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDMethodList().size());
     assertEquals(
@@ -217,116 +218,106 @@ public class VisitorTest {
     assertEquals(
         2, utility.getAst().getCDDefinition().getCDClassesList().get(5).getCDMethodList().size());
 
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
     // Test Return Type
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(0))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(0)
+                .getCDMethodList()
+                .get(0)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(1)
-                    .getCDMethodList()
-                    .get(0))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(1)
+                .getCDMethodList()
+                .get(0)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(2)
-                    .getCDMethodList()
-                    .get(0))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(2)
+                .getCDMethodList()
+                .get(0)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(3)
-                    .getCDMethodList()
-                    .get(0))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(3)
+                .getCDMethodList()
+                .get(0)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(4)
-                    .getCDMethodList()
-                    .get(0))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(4)
+                .getCDMethodList()
+                .get(0)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(5)
-                    .getCDMethodList()
-                    .get(0))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(5)
+                .getCDMethodList()
+                .get(0)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(3)
-                    .getCDMethodList()
-                    .get(1))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(3)
+                .getCDMethodList()
+                .get(1)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(4)
-                    .getCDMethodList()
-                    .get(1))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(4)
+                .getCDMethodList()
+                .get(1)
+                .getMCReturnType()));
     assertEquals(
         "void",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(5)
-                    .getCDMethodList()
-                    .get(1))
-            .getMCReturnType()
-            .printType(btfpp));
+        pp.prettyprint(
+            utility
+                .getAst()
+                .getCDDefinition()
+                .getCDClassesList()
+                .get(5)
+                .getCDMethodList()
+                .get(1)
+                .getMCReturnType()));
 
     // Test Return Parameter Name
     assertEquals(

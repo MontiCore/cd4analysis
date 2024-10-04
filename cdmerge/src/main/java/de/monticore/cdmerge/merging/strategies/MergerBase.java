@@ -10,6 +10,7 @@ import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Provides logging, config and access to merge blackboard to all matchers and merging strategies
@@ -124,7 +125,15 @@ public abstract class MergerBase {
           logError("Cannot match Modifiers: Stereotypes do not match", modifier1, modifier2);
           return Optional.empty();
         }
-        modifier.getStereotype().addAllValues(modifier2.getStereotype().getValuesList());
+        modifier
+            .getStereotype()
+            .addAllValues(
+                modifier2.getStereotype().getValuesList().stream()
+                    .filter(
+                        sv2 ->
+                            modifier1.getStereotype().getValuesList().stream()
+                                .noneMatch(sv1 -> sv1.getName().equals(sv2.getName())))
+                    .collect(Collectors.toList()));
       }
     } else if (modifier2.isPresentStereotype()) {
       modifier.setStereotype(modifier2.getStereotype().deepClone());

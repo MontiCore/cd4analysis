@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.time.LocalDateTime;
+
+classdiagram Trucks {
+
+  abstract class RentableItem; // TODO EX 2.3: implicit
+
+  abstract class Vehicle extends RentableItem {
+    // pull up Car's attributes to its new super-class
+    String model; // TODO EX 2.3
+    String maker;
+    float costPerDay;
+    derived float mileage;
+  }
+
+  // overwrite inheritance
+  class Car extends Vehicle; // TODO EX 2.3
+
+  // Trucks are also Vehicles
+  class Truck extends Vehicle { // TODO EX 2.3
+    float tonnage; // TODO EX 2.3
+  }
+
+  class MileageDataPoint; // TODO EX 2.3: implicit
+
+  class TruckMileageDataPoint extends MileageDataPoint { // TODO EX 2.3: TruckMileageDataPoint
+    float longitude;
+    float latitude;
+  }
+
+  association [1] Truck -> (dataPoint) TruckMileageDataPoint [*]; // TODO EX 2.3: or as an attribute
+}

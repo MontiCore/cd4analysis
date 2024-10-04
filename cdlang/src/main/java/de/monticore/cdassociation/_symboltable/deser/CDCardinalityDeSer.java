@@ -36,7 +36,6 @@ public class CDCardinalityDeSer {
     try {
       builder
           .setMany(false)
-          .setLowerBound(Integer.parseInt(bounds[0]))
           .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits(bounds[0]).build());
       if (bounds.length == 2) {
         if (bounds[1].equals("*")) {
@@ -44,14 +43,10 @@ public class CDCardinalityDeSer {
         } else {
           builder
               .setNoUpperLimit(false)
-              .setUpperBound(Integer.parseInt(bounds[1]))
               .setUpperBoundLit(CardinalityMill.natLiteralBuilder().setDigits(bounds[1]).build());
         }
       } else {
-        builder
-            .setNoUpperLimit(false)
-            .setUpperBound(Integer.parseInt(bounds[0]))
-            .setUpperBoundLitAbsent();
+        builder.setNoUpperLimit(false).setUpperBoundLitAbsent();
       }
       return CDAssociationMill.cDCardOtherBuilder().setCardinality(builder.build()).build();
     } catch (NumberFormatException e) {

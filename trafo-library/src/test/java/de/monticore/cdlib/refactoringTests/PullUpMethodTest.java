@@ -13,8 +13,6 @@ import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelp
 import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.BeforeClass;
@@ -96,7 +94,7 @@ public class PullUpMethodTest {
                     .getCDMethodList()
                     .get(0))
             .getMCReturnType()
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())));
+            .printType());
     assertEquals(
         0,
         ((ASTCDMethod)
@@ -125,7 +123,6 @@ public class PullUpMethodTest {
     FileUtility utility =
         new FileUtility("cdlib/EvaluationCDs/EvaluationRule1MethodCounterExample");
     PullUp refactoring = new PullUp();
-    MCBasicTypesFullPrettyPrinter btfpp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
     // Perform transformation
     assertFalse(refactoring.pullUpMethods(utility.getAst()));
@@ -166,7 +163,7 @@ public class PullUpMethodTest {
                     .getCDMethodList()
                     .get(0))
             .getMCReturnType()
-            .printType(btfpp));
+            .printType());
     assertEquals(
         0,
         ((ASTCDMethod)
@@ -215,7 +212,7 @@ public class PullUpMethodTest {
                     .getCDMethodList()
                     .get(0))
             .getMCReturnType()
-            .printType(btfpp));
+            .printType());
     assertEquals(
         0,
         ((ASTCDMethod)
@@ -271,7 +268,7 @@ public class PullUpMethodTest {
     assertEquals(
         ((ASTCDMethod) oldAST.getCDDefinition().getCDClassesList().get(0).getCDMethodList().get(0))
             .getMCReturnType()
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+            .printType(),
         ((ASTCDMethod)
                 utility
                     .getAst()
@@ -281,7 +278,7 @@ public class PullUpMethodTest {
                     .getCDMethodList()
                     .get(0))
             .getMCReturnType()
-            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())));
+            .printType());
     assertTrue(
         ((ASTCDMethod)
                 utility

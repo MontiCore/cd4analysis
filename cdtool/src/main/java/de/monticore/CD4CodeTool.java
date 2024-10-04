@@ -2,7 +2,6 @@
 package de.monticore;
 
 import static de.monticore.cdconformance.CDConfParameter.*;
-import static de.monticore.cdconformance.CDConfParameter.ALLOW_CARD_RESTRICTION;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -52,28 +51,14 @@ import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.AmbiguousOptionException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingArgumentException;
-import org.apache.commons.cli.MissingOptionException;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 
 public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
@@ -785,7 +770,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   /** perform merge of 2 CDs */
   public void mergeCDs() {
-    Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
+    List<ASTCDCompilationUnit> mergeSet = new ArrayList<>();
     mergeSet.add(ast);
     Arrays.stream(cmd.getOptionValues("merge")).forEach(p -> mergeSet.add(parse(p)));
 
