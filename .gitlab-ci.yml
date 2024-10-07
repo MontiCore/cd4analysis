@@ -19,6 +19,9 @@ stages:
 
 build:
   stage: build
+  only:
+    - branches
+    - merge_requests
   except:
     - develop
   script:
