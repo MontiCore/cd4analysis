@@ -1,19 +1,19 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.stdefinition._symboltable;
+package de.monticore.symtabdefinition._symboltable;
 
 import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
-import de.monticore.stdefinition.STDefinitionMill;
-import de.monticore.stdefinition._visitor.STDefinitionTraverser;
+import de.monticore.symtabdefinition.SymTabDefinitionMill;
+import de.monticore.symtabdefinition._visitor.SymTabDefinitionTraverser;
 
-public class STDefinitionFullSymbolTableCompleter {
+public class SymTabDefinitionFullSymbolTableCompleter {
 
-  protected STDefinitionTraverser traverser;
+  protected SymTabDefinitionTraverser traverser;
 
-  public STDefinitionFullSymbolTableCompleter() {
-    this.traverser = STDefinitionMill.inheritanceTraverser();
+  public SymTabDefinitionFullSymbolTableCompleter() {
+    this.traverser = SymTabDefinitionMill.inheritanceTraverser();
 
     CDBasisSymbolTableCompleter cDBasisVisitor =
         new CDBasisSymbolTableCompleter(new FullSynthesizeFromCD4Code());
@@ -26,12 +26,12 @@ public class STDefinitionFullSymbolTableCompleter {
         new CD4CodeBasisSymbolTableCompleter(new FullSynthesizeFromCD4Code());
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
     traverser.add4CDBasis(cd4CodeBasisVisitor);
-    STDefinitionSymbolTableCompleter stDefinitionVisitor =
-        new STDefinitionSymbolTableCompleter(new FullSynthesizeFromCD4Code());
-    traverser.add4STDefinition(stDefinitionVisitor);
+    SymTabDefinitionSymbolTableCompleter stDefinitionVisitor =
+        new SymTabDefinitionSymbolTableCompleter(new FullSynthesizeFromCD4Code());
+    traverser.add4SymTabDefinition(stDefinitionVisitor);
   }
 
-  public STDefinitionTraverser getTraverser() {
+  public SymTabDefinitionTraverser getTraverser() {
     return this.traverser;
   }
 }

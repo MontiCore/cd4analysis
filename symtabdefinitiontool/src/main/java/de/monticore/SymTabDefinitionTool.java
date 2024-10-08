@@ -6,13 +6,13 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.class2mc.OOClass2MCResolver;
-import de.monticore.stdefinition.STDefinitionMill;
-import de.monticore.stdefinition._symboltable.ISTDefinitionArtifactScope;
-import de.monticore.stdefinition._symboltable.ISTDefinitionGlobalScope;
-import de.monticore.stdefinition._symboltable.STDefinitionFullSymbolTableCompleter;
-import de.monticore.stdefinition.cocos.STDefinitionCoCos;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json;
+import de.monticore.symtabdefinition.SymTabDefinitionMill;
+import de.monticore.symtabdefinition._symboltable.ISymTabDefinitionArtifactScope;
+import de.monticore.symtabdefinition._symboltable.ISymTabDefinitionGlobalScope;
+import de.monticore.symtabdefinition._symboltable.SymTabDefinitionFullSymbolTableCompleter;
+import de.monticore.symtabdefinition.cocos.SymTabDefinitionCoCos;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -29,11 +29,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.UnrecognizedOptionException;
 
-public class STDefinitionTool extends de.monticore.stdefinition.STDefinitionTool {
+public class SymTabDefinitionTool extends de.monticore.symtabdefinition.SymTabDefinitionTool {
 
-  protected static final String MODEL_FILE_EXTENSION = "stdefinition";
+  protected static final String MODEL_FILE_EXTENSION = "symtabdefinition";
 
-  protected static final String SYMTAB_FILE_EXTENSION = "stdefinitionsym";
+  protected static final String SYMTAB_FILE_EXTENSION = "symtabdefinitionsym";
 
   protected static final String OPTION_HELP = "h";
   protected static final String OPTION_VERSION = "v";
@@ -47,7 +47,7 @@ public class STDefinitionTool extends de.monticore.stdefinition.STDefinitionTool
   protected static final String OPTION_NOARTIFACTNAME = "na";
 
   public static void main(String[] args) {
-    STDefinitionTool tool = new STDefinitionTool();
+    SymTabDefinitionTool tool = new SymTabDefinitionTool();
     tool.run(args);
   }
 
@@ -93,7 +93,7 @@ public class STDefinitionTool extends de.monticore.stdefinition.STDefinitionTool
       // transformations which are necessary to do after parsing
       new CD4CodeDirectCompositionTrafo().transform(ast);
 
-      ISTDefinitionGlobalScope gs = STDefinitionMill.globalScope();
+      ISymTabDefinitionGlobalScope gs = SymTabDefinitionMill.globalScope();
       // add default symbols
       BasicSymbolsMill.initializePrimitives();
       // add collection types
@@ -113,7 +113,7 @@ public class STDefinitionTool extends de.monticore.stdefinition.STDefinitionTool
         gs.getSymbolPath().addEntry(Paths.get(path));
       }
 
-      ISTDefinitionArtifactScope artifactScope = createSymbolTable(ast);
+      ISymTabDefinitionArtifactScope artifactScope = createSymbolTable(ast);
 
       // remove artifact scope name
       if (cmd.hasOption(OPTION_NOARTIFACTNAME)) {
@@ -269,24 +269,25 @@ public class STDefinitionTool extends de.monticore.stdefinition.STDefinitionTool
 
   @Override
   public void completeSymbolTable(ASTCDCompilationUnit ast) {
-    ast.accept(new STDefinitionFullSymbolTableCompleter().getTraverser());
+    ast.accept(new SymTabDefinitionFullSymbolTableCompleter().getTraverser());
   }
 
   @Override
   public void runDefaultCoCos(ASTCDCompilationUnit ast) {
-    new STDefinitionCoCos().getCheckerForAllCoCos().checkAll(ast);
+    new SymTabDefinitionCoCos().getCheckerForAllCoCos().checkAll(ast);
   }
 
   public void storeOOSymbols(
-      de.monticore.stdefinition._symboltable.ISTDefinitionArtifactScope scope, String path) {
+      de.monticore.symtabdefinition._symboltable.ISymTabDefinitionArtifactScope scope,
+      String path) {
 
     OOSymbolsSymbols2Json symbols2Json = new OOSymbolsSymbols2Json();
     symbols2Json.store(scope, path);
   }
 
   protected void initializeClass2MC() {
-    STDefinitionMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
-    STDefinitionMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
+    SymTabDefinitionMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
+    SymTabDefinitionMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
   }
 
   // helper
@@ -312,7 +313,7 @@ public class STDefinitionTool extends de.monticore.stdefinition.STDefinitionTool
     return !path.getFileName().toString().substring(1).contains(".");
   }
 
-  public String getFilePathForFileOrDir(ISTDefinitionArtifactScope scope, String path) {
+  public String getFilePathForFileOrDir(ISymTabDefinitionArtifactScope scope, String path) {
     if (!isLikelyFolderPath(path)) {
       return path;
     } else {

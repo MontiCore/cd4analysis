@@ -1,27 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.stdefinition.cocos;
+package de.monticore.symtabdefinition.cocos;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.stdefinition.STDefinitionTestBasis;
+import de.monticore.symtabdefinition.SymTabDefinitionTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class STDVariableUniqueTest extends STDefinitionTestBasis {
+public class STDVariableUniqueTest extends SymTabDefinitionTestBasis {
 
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new STDVariableUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        parser.parse(getFilePath("stdefinition/cocos/STDVariableUniqueValid.cd"));
-    assertTrue(optAST.isPresent());
-    final ASTCDCompilationUnit ast = optAST.get();
+    final ASTCDCompilationUnit ast = parse("stdefinition/cocos/STDVariableUniqueValid.cd");
     prepareST(ast);
-    checkLogError();
     coCoChecker.checkAll(ast);
     checkLogError();
   }
@@ -29,12 +24,8 @@ public class STDVariableUniqueTest extends STDefinitionTestBasis {
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new STDVariableUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        parser.parse(getFilePath("stdefinition/cocos/STDVariableUniqueInvalid.cd"));
-    assertTrue(optAST.isPresent());
-    final ASTCDCompilationUnit ast = optAST.get();
+    final ASTCDCompilationUnit ast = parse("stdefinition/cocos/STDVariableUniqueInvalid.cd");
     prepareST(ast);
-    checkLogError();
     coCoChecker.checkAll(ast);
     assertEquals(2, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xFDC23"));

@@ -3,7 +3,7 @@ plugins {
   id "com.github.johnrengelman.shadow" version "6.0.0"
 }
 
-description = "STDefinition: Tool"
+description = "SymTabDefinition: Tool"
 
 dependencies {
   implementation(project(':cdlang'))
@@ -30,7 +30,7 @@ task toolJar(type: Jar) {
 apply plugin: "com.github.johnrengelman.shadow"
   shadowJar {
     manifest {
-      attributes "Main-Class": "de.monticore.STDefinitionTool"
+      attributes "Main-Class": "de.monticore.SymTabDefinitionTool"
     }
     archiveFileName = "MCSTD.jar"
     archiveClassifier = "std-tool"

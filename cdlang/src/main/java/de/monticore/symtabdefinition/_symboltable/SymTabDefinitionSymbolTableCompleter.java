@@ -1,18 +1,18 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.stdefinition._symboltable;
+package de.monticore.symtabdefinition._symboltable;
 
-import de.monticore.stdefinition._ast.ASTSTDFunction;
-import de.monticore.stdefinition._ast.ASTSTDVariable;
-import de.monticore.stdefinition._visitor.STDefinitionVisitor2;
+import de.monticore.symtabdefinition._ast.ASTSTDFunction;
+import de.monticore.symtabdefinition._ast.ASTSTDVariable;
+import de.monticore.symtabdefinition._visitor.SymTabDefinitionVisitor2;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
-public class STDefinitionSymbolTableCompleter implements STDefinitionVisitor2 {
+public class SymTabDefinitionSymbolTableCompleter implements SymTabDefinitionVisitor2 {
 
   protected ISynthesize typeSynthesizer;
 
-  public STDefinitionSymbolTableCompleter(ISynthesize typeSynthesizer) {
+  public SymTabDefinitionSymbolTableCompleter(ISynthesize typeSynthesizer) {
     this.typeSynthesizer = typeSynthesizer;
   }
 

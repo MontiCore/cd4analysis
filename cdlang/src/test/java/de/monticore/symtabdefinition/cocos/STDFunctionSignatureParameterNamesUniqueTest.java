@@ -1,26 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.stdefinition.cocos;
+package de.monticore.symtabdefinition.cocos;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.stdefinition.STDefinitionTestBasis;
+import de.monticore.symtabdefinition.SymTabDefinitionTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class STDFunctionSignatureParameterNamesUniqueTest extends STDefinitionTestBasis {
+public class STDFunctionSignatureParameterNamesUniqueTest extends SymTabDefinitionTestBasis {
 
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new STDFunctionSignatureParameterNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        parser.parse(
-            getFilePath("stdefinition/cocos/STDFunctionSignatureParameterNamesUniqueValid.cd"));
-    assertTrue(optAST.isPresent());
-    final ASTCDCompilationUnit ast = optAST.get();
+    final ASTCDCompilationUnit ast =
+        parse("stdefinition/cocos/STDFunctionSignatureParameterNamesUniqueValid.cd");
     Log.getFindings().clear();
     coCoChecker.checkAll(ast);
     checkLogError();
@@ -29,11 +25,8 @@ public class STDFunctionSignatureParameterNamesUniqueTest extends STDefinitionTe
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new STDFunctionSignatureParameterNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        parser.parse(
-            getFilePath("stdefinition/cocos/STDFunctionSignatureParameterNamesUniqueInvalid.cd"));
-    assertTrue(optAST.isPresent());
-    final ASTCDCompilationUnit ast = optAST.get();
+    final ASTCDCompilationUnit ast =
+        parse("stdefinition/cocos/STDFunctionSignatureParameterNamesUniqueInvalid.cd");
     Log.getFindings().clear();
     coCoChecker.checkAll(ast);
     assertEquals(1, Log.getFindings().size());

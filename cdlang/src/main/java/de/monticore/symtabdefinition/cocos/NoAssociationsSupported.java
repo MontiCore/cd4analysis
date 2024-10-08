@@ -1,5 +1,5 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.stdefinition.cocos;
+package de.monticore.symtabdefinition.cocos;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;

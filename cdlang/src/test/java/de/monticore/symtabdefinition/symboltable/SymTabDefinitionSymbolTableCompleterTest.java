@@ -1,28 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.stdefinition.symboltable;
+package de.monticore.symtabdefinition.symboltable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.stdefinition.STDefinitionTestBasis;
-import de.monticore.stdefinition._symboltable.ISTDefinitionArtifactScope;
+import de.monticore.symtabdefinition.SymTabDefinitionTestBasis;
+import de.monticore.symtabdefinition._symboltable.ISymTabDefinitionArtifactScope;
 import java.io.IOException;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
-public class STDefinitionSymbolTableCompleterTest extends STDefinitionTestBasis {
+public class SymTabDefinitionSymbolTableCompleterTest extends SymTabDefinitionTestBasis {
 
   // TypeVariables are moved into their respective scopes
   @Test
   public void testMovedTypeVariablesIntoCorrectScopes() throws IOException {
-    final Optional<ASTCDCompilationUnit> optAST =
-        parser.parse(getFilePath("stdefinition/symboltable/Complete.cd"));
-    assertTrue(optAST.isPresent());
-    final ASTCDCompilationUnit ast = optAST.get();
+    final ASTCDCompilationUnit ast = parse("stdefinition/symboltable/Complete.cd");
     prepareST(ast);
-    checkLogError();
-    ISTDefinitionArtifactScope as = (ISTDefinitionArtifactScope) ast.getEnclosingScope();
+    ISymTabDefinitionArtifactScope as = (ISymTabDefinitionArtifactScope) ast.getEnclosingScope();
     assertEquals(0, as.getTypeVarSymbols().size());
     assertEquals(0, as.resolveFunction("f").get().getSpannedScope().getTypeVarSymbols().size());
     assertEquals(

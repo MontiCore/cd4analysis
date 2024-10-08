@@ -1,17 +1,17 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.stdefinition.parser;
+package de.monticore.symtabdefinition.parser;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.stdefinition.STDefinitionTestBasis;
-import de.monticore.stdefinition._ast.ASTSTDFunction;
-import de.monticore.stdefinition._ast.ASTSTDVariable;
+import de.monticore.symtabdefinition.SymTabDefinitionTestBasis;
+import de.monticore.symtabdefinition._ast.ASTSTDFunction;
+import de.monticore.symtabdefinition._ast.ASTSTDVariable;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class STDefinitionParserTest extends STDefinitionTestBasis {
+public class SymTabDefinitionParserTest extends SymTabDefinitionTestBasis {
 
   @ParameterizedTest
   @ValueSource(

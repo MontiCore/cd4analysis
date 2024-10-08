@@ -1,15 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.stdefinition.cocos;
+package de.monticore.symtabdefinition.cocos;
 
-import de.monticore.stdefinition._ast.ASTSTDVariable;
-import de.monticore.stdefinition._cocos.STDefinitionASTSTDVariableCoCo;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symtabdefinition._ast.ASTSTDVariable;
+import de.monticore.symtabdefinition._cocos.SymTabDefinitionASTSTDVariableCoCo;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
 /** Ensures that a variable's fully qualified name does not occur twice. */
-public class STDVariableUnique implements STDefinitionASTSTDVariableCoCo {
+public class STDVariableUnique implements SymTabDefinitionASTSTDVariableCoCo {
 
   @Override
   public void check(ASTSTDVariable node) {

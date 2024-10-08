@@ -1,15 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.stdefinition._symboltable;
+package de.monticore.symtabdefinition._symboltable;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 
-public class STDefinitionScopesGenitor extends STDefinitionScopesGenitorTOP {
+public class SymTabDefinitionScopesGenitor extends SymTabDefinitionScopesGenitorTOP {
 
   @Override
-  public ISTDefinitionArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
-    ISTDefinitionArtifactScope as = super.createFromAST(rootNode);
+  public ISymTabDefinitionArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
+    ISymTabDefinitionArtifactScope as = super.createFromAST(rootNode);
 
     // set package
     if (rootNode.isPresentMCPackageDeclaration()) {

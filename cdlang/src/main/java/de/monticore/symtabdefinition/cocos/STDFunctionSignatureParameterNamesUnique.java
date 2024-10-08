@@ -1,14 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.stdefinition.cocos;
+package de.monticore.symtabdefinition.cocos;
 
 import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
-import de.monticore.stdefinition._ast.ASTSTDFunction;
-import de.monticore.stdefinition._cocos.STDefinitionASTSTDFunctionCoCo;
+import de.monticore.symtabdefinition._ast.ASTSTDFunction;
+import de.monticore.symtabdefinition._cocos.SymTabDefinitionASTSTDFunctionCoCo;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
-public class STDFunctionSignatureParameterNamesUnique implements STDefinitionASTSTDFunctionCoCo {
+public class STDFunctionSignatureParameterNamesUnique
+    implements SymTabDefinitionASTSTDFunctionCoCo {
 
   @Override
   public void check(ASTSTDFunction node) {
