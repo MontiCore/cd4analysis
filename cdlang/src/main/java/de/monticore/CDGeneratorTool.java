@@ -84,13 +84,13 @@ public class CDGeneratorTool extends CD4CodeTool {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
-      if (!cmd.hasOption("i") || cmd.hasOption("h")) {
-        printHelp(options);
-        return;
-      }
-
       if (cmd.hasOption("v")) {
         printVersion();
+        // do not continue when version is printed
+        return;
+      } else if (!cmd.hasOption("i") || cmd.hasOption("h")) {
+        printHelp(options);
+        return;
       }
 
       Log.init();

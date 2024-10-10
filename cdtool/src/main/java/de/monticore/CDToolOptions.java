@@ -49,6 +49,8 @@ public class CDToolOptions {
             .longOpt("help")
             .desc("Prints short help; other options are ignored. ")
             .build());
+    options.addOption(
+        Option.builder("v").longOpt("version").desc("Prints version information").build());
 
     initCheck();
     initPrettyPrinter(showPlantUML);
