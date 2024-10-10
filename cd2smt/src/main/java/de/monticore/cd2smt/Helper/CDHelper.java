@@ -13,6 +13,9 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2smt.Helper.visitor.RemoveAssocCardinality;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
@@ -147,12 +150,25 @@ public class CDHelper {
   }
 
   public static void createCDSymTab(ASTCDCompilationUnit ast) {
-    CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
-    BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
-    CD4AnalysisSymbolTableCompleter c =
-        new CD4AnalysisSymbolTableCompleter(
-            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
-    ast.accept(c.getTraverser());
+    // ScopesGenitorDelegators and STC are not available via composed mills,
+    // which is why we have to use this instanceof check to handle
+    // CD4A and CD4C differently
+    // See monticore/monticore#4324
+    if (CD4AnalysisMill.globalScope() instanceof CD4CodeGlobalScope) {
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+      BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+      CD4CodeSymbolTableCompleter c =
+          new CD4CodeSymbolTableCompleter(
+              ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+      ast.accept(c.getTraverser());
+    } else {
+      CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+      BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
+      CD4AnalysisSymbolTableCompleter c =
+          new CD4AnalysisSymbolTableCompleter(
+              ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+      ast.accept(c.getTraverser());
+    }
   }
 
   public static Sort mcType2Sort(Context ctx, ASTMCType astmcType) {
