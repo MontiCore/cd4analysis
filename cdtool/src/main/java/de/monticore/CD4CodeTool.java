@@ -390,6 +390,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         printHelp((CDToolOptions.SubCommand) null);
       }
       return false;
+    } else if (cmd.hasOption("v")) {
+      printVersion();
+      // do not continue when version is printed
+      return false;
     } else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
@@ -638,7 +642,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             + System.lineSeparator()
             + "java -jar MCCD.jar -i src/Person.cd -pp target/Person.cd"
             + System.lineSeparator()
-            + "",
+            + System.lineSeparator()
+            + "Options:",
         cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
