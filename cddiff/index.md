@@ -35,7 +35,7 @@ The submodule itself is subdivided into the following packages:
     * implements a tool that determines whether an Object Diagram models a 
     valid instance of a Class Diagram.
 
-[[_TOC_]]
+
 
 ## Semantic Differencing for Class Diagrams
 We consider the semantics of a Class Diagram to be the set of object structures
