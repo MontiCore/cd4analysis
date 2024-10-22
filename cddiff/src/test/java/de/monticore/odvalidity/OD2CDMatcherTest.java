@@ -4,10 +4,9 @@ package de.monticore.odvalidity;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.nio.file.Paths;
-
-import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

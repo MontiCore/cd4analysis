@@ -15,11 +15,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 
 /** Provides some helpers for tests. */

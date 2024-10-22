@@ -11,12 +11,11 @@ import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.monticore.odlink._prettyprint.ODLinkFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
-
-import de.se_rwth.commons.logging.LogStub;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

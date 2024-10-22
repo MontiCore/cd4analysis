@@ -8,14 +8,13 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-
-import de.se_rwth.commons.logging.LogStub;
 import org.apache.commons.io.file.PathUtils;
 import org.junit.Assert;
 import org.junit.Before;
