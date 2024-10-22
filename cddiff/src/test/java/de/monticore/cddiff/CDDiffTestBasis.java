@@ -18,6 +18,8 @@ import de.se_rwth.commons.logging.Log;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 
 /** Provides some helpers for tests. */
@@ -25,7 +27,7 @@ public abstract class CDDiffTestBasis {
 
   @Before
   public void setup() {
-    Log.init();
+    LogStub.init();
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();

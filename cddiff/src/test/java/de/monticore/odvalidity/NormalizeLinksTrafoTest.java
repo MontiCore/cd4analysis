@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,6 +31,7 @@ public class NormalizeLinksTrafoTest {
 
     OD4ReportMill.reset();
     OD4ReportMill.init();
+    LogStub.init();
     Log.enableFailQuick(false);
     trafo = new NormalizeLinksTrafo();
   }

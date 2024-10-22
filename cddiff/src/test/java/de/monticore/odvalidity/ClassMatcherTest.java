@@ -8,6 +8,8 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +42,7 @@ public class ClassMatcherTest {
 
   @Before
   public void initTests() {
+    LogStub.init();
     CD4CodeMill.init();
     Log.enableFailQuick(false);
   }

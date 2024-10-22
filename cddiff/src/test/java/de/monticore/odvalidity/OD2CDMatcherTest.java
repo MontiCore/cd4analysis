@@ -6,6 +6,8 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.nio.file.Paths;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +32,7 @@ public class OD2CDMatcherTest {
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
     CD4CodeMill.globalScope().init();
-    Log.init();
+    LogStub.init();
     Log.enableFailQuick(false);
     cdModel1 = new File(resources + validCDModel);
     odModel1 = new File(resources + validODModel);

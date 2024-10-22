@@ -7,6 +7,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +28,7 @@ public class ModelLoaderTest {
   @Before
   public void reloadModels() {
 
+    LogStub.init();
     Log.enableFailQuick(false);
     String resources = "src/test/resources/de/monticore/odvalidity/";
     cdModel1 = new File(resources + validCDModel);

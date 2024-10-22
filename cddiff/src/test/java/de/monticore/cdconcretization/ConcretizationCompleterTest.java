@@ -12,6 +12,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ public class ConcretizationCompleterTest {
 
   @BeforeEach
   public void setup() {
-    Log.init();
+    LogStub.init();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();

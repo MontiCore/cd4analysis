@@ -8,6 +8,8 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +43,7 @@ public class STAMatchingTest {
 
   @Before
   public void loadModels() {
+    LogStub.init();
     Log.enableFailQuick(false);
 
     CD4CodeMill.reset();

@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.apache.commons.io.file.PathUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,7 +30,7 @@ public class CDDiffCLIToolTest {
 
   @Before
   public void init() {
-    Log.init();
+    LogStub.init();
   }
 
   @Test

@@ -9,6 +9,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class ConfAbstractTest {
@@ -22,7 +24,7 @@ public abstract class ConfAbstractTest {
 
   @BeforeEach
   public void setup() {
-    Log.init();
+    LogStub.init();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();

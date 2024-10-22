@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +41,7 @@ public class AssociationsMatcherTest {
   @Before
   public void before() {
 
+    LogStub.init();
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
