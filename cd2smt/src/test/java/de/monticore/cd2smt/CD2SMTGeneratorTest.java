@@ -8,8 +8,8 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -52,7 +52,7 @@ public class CD2SMTGeneratorTest {
           CD4CodeMill.parser().parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
       Assert.assertTrue(optCD.isPresent());
       astCD = optCD.get();
-      (new CD4AnalysisAfterParseTrafo()).transform(astCD);
+      (new CD4CodeAfterParseTrafo()).transform(astCD);
     } catch (IOException e) {
       Assert.fail(e.getMessage());
     }

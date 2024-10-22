@@ -11,10 +11,7 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2smt.Helper.visitor.RemoveAssocCardinality;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
@@ -150,25 +147,13 @@ public class CDHelper {
   }
 
   public static void createCDSymTab(ASTCDCompilationUnit ast) {
-    // ScopesGenitorDelegators and STC are not available via composed mills,
-    // which is why we have to use this instanceof check to handle
-    // CD4A and CD4C differently
-    // See monticore/monticore#4324
-    if (CD4AnalysisMill.globalScope() instanceof CD4CodeGlobalScope) {
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-      BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
-      CD4CodeSymbolTableCompleter c =
-          new CD4CodeSymbolTableCompleter(
-              ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
-      ast.accept(c.getTraverser());
-    } else {
-      CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
-      BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
-      CD4AnalysisSymbolTableCompleter c =
-          new CD4AnalysisSymbolTableCompleter(
-              ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
-      ast.accept(c.getTraverser());
-    }
+    // Always use CD4CodeMill instead of CD4AnalysisMill in cd2smt to prevent issues in ocl2smt
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    CD4CodeSymbolTableCompleter c =
+        new CD4CodeSymbolTableCompleter(
+            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    ast.accept(c.getTraverser());
   }
 
   public static Sort mcType2Sort(Context ctx, ASTMCType astmcType) {
@@ -338,7 +323,7 @@ public class CDHelper {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
     final CDAssociationVisitor2 visitor2 = new RemoveAssocCardinality();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    final CDAssociationTraverser traverser = CD4CodeMill.inheritanceTraverser();
     traverser.add4CDAssociation(visitor2);
     ast.accept(traverser);
   }
