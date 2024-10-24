@@ -270,6 +270,12 @@ the mapping names:
 java -jar cdtool/target/libs/MCCD.jar -i doc/GraphAdapter.cd --reference doc/Adapter.cd --map m1 m2
 ```
 
+If no mapping is specified, we assume a mapping of name `incarnates` by default,
+as demonstrated by the following example for our [`IOAdapter`](../doc/IOAdapter.cd):
+
+```
+java -jar cdtool/target/libs/MCCD.jar -i doc/IOAdapter.cd --reference doc/Adapter.cd
+```
 
 ## Matching Strategies for Syntactical Difference Analysis
 
