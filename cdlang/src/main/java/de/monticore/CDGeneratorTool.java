@@ -78,6 +78,8 @@ public class CDGeneratorTool extends CD4CodeTool {
    */
   public void run(String[] args) {
 
+    this.init();
+
     Options options = initOptions();
 
     try {
@@ -92,9 +94,6 @@ public class CDGeneratorTool extends CD4CodeTool {
         printHelp(options);
         return;
       }
-
-      Log.init();
-      CD4CodeMill.init();
 
       if (cmd.hasOption("c2mc")) {
         initializeClass2MC();
