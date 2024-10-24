@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -95,13 +96,15 @@ public class CDGeneratorTool extends CD4CodeTool {
         return;
       }
 
-      if (cmd.hasOption("c2mc")) {
+      BasicSymbolsMill.initializePrimitives();
+
+      final boolean c2mc = cmd.hasOption("c2mc");
+      if (c2mc) {
         initializeClass2MC();
       } else {
         BasicSymbolsMill.initializeString();
         BasicSymbolsMill.initializeObject();
       }
-      BasicSymbolsMill.initializePrimitives();
 
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts =
@@ -115,11 +118,16 @@ public class CDGeneratorTool extends CD4CodeTool {
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
 
-      Collection<ICD4CodeArtifactScope> scopes =
-          asts.stream()
-              .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
-              .collect(Collectors.toList());
-      asts.forEach(this::completeSymbolTable);
+      // Create the symbol-table (symbol table creation phase 1)
+      List<ICD4CodeArtifactScope> scopes = new ArrayList<>(asts.size());
+      for (ASTCDCompilationUnit ast : asts) {
+        scopes.add(this.createSymbolTable(ast, c2mc));
+      }
+
+      // Complete the symbol-table (symbol table creation phase 2)
+      for (ASTCDCompilationUnit ast : asts) {
+        this.completeSymbolTable(ast);
+      }
 
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
