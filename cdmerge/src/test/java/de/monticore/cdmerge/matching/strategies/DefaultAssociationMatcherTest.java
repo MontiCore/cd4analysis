@@ -120,7 +120,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     // FIXME USCHOEN!
     blackBoard.initOrReset(
@@ -140,7 +140,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES)
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES)
         .withParam(MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS);
     blackBoard = new MergeBlackBoard(b.build());
     blackBoard.initOrReset(
@@ -162,7 +162,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     blackBoard.initOrReset(
         blackBoard.getConfig().getInputCDs().get(0),
@@ -198,7 +198,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     this.testant = new DefaultAssociationMatcher(blackBoard);
     blackBoard.initOrReset(

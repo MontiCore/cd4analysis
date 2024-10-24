@@ -16,19 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
 
-public class TypesHeterogenousClassInterface extends BaseTest {
+public class TypesHeterogeneousClassInterface extends BaseTest {
 
   private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams/Types" + "/heterogenousClassInterface/A.cd";
+      "src/test/resources/class_diagrams/Types" + "/heterogeneousClassInterface/A.cd";
 
   private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams/Types" + "/heterogenousClassInterface/B.cd";
+      "src/test/resources/class_diagrams/Types" + "/heterogeneousClassInterface/B.cd";
 
   private static final String EXPECTED =
-      "src/test/resources/class_diagrams/Types" + "/heterogenousClassInterface/mergedCD.cd";
+      "src/test/resources/class_diagrams/Types" + "/heterogeneousClassInterface/mergedCD.cd";
 
   @Test
-  public void testTypesHeterogenousClassInterface() throws IOException, MergingException {
+  public void testTypesHeterogeneousClassInterface() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
     inputModels.add(INPUT_MODEL_1);
     inputModels.add(INPUT_MODEL_2);
@@ -46,7 +46,7 @@ public class TypesHeterogenousClassInterface extends BaseTest {
         getConfigBuilder()
             .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
             .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
-            .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES, MergeParameter.ON);
+            .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES, MergeParameter.ON);
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);

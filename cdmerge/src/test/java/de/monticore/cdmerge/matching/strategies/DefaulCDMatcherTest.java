@@ -44,7 +44,7 @@ public class DefaulCDMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
 
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     ASTCDCompilationUnit cd1 = loadModel(MODEL_PATH + "/" + INPUT_MODEL_A);

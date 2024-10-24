@@ -166,4 +166,14 @@ public class CDMergeTest extends BaseTest {
 
     Assert.assertNotNull(mergedCD);
   }
+
+  @Test
+  public void testParseMrgConfig() {
+    final String file = "src/test/resources/json/mrg-config.json";
+    Assert.assertTrue(
+        CDMerge.parseMrgConfig(file)
+            .containsAll(
+                Set.of(
+                    MergeParameter.MERGE_COMMENTS, MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS)));
+  }
 }

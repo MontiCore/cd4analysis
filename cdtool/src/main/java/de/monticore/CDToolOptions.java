@@ -426,6 +426,19 @@ public class CDToolOptions {
                 "Parses the files as additional CDs and merges them with the input CD (iff "
                     + "semantically sound). The result is stored in memory.")
             .build());
+
+    options.addOption(
+        Option.builder()
+            .longOpt("mrg-config")
+            .hasArg()
+            .type(String.class)
+            .argName("file")
+            .desc(
+                "Parses a json-file containing a list of \"Merge Parameters\" that should be "
+                    + "applied when using `--merge`. Unknown and unsupported parameters are "
+                    + "ignored, only boolean parameters are supported at CLI level. "
+                    + "\"LOG_TO_CONSOLE\" and \"FAIL_AMBIGUOUS\" are used by default.")
+            .build());
   }
 
   /** adds options for Conformance Check */

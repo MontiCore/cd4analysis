@@ -34,14 +34,14 @@ public class DefaultTypeMerger extends TypeMerger {
   public void mergeTypes(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchresult) {
     try {
       if (getConfig().allowHeterogeneousMerge()
-          && !this.typeMergeStrategy.canMergeHeterogenousTypes()) {
+          && !this.typeMergeStrategy.canMergeHeterogeneousTypes()) {
         logWarning(
-            "CD Merge was configured to allow merging of heterogenous types, but the provided "
+            "CD Merge was configured to allow merging of heterogeneous types, but the provided "
                 + "TypeMergingStrategy does not support this. Merge will therefore continue only "
                 + "merging homogenous types!");
       }
       if (getConfig().allowHeterogeneousMerge()
-          && this.typeMergeStrategy.canMergeHeterogenousTypes()) {
+          && this.typeMergeStrategy.canMergeHeterogeneousTypes()) {
         mergeAllTypes(cd1, cd2, matchresult);
         interfaceToClassInheritance();
       } else {
@@ -64,9 +64,9 @@ public class DefaultTypeMerger extends TypeMerger {
       throws MergingException {
 
     if (getConfig().allowHeterogeneousMerge()
-        && !this.typeMergeStrategy.canMergeHeterogenousTypes()) {
+        && !this.typeMergeStrategy.canMergeHeterogeneousTypes()) {
       logWarning(
-          "CD Merge was configured to allow merging of heterogenous type, though the provided "
+          "CD Merge was configured to allow merging of heterogeneous type, though the provided "
               + "TypeMergingStrategy does not support this. Merge will therefore continue only "
               + "merging homogenous types!");
     }

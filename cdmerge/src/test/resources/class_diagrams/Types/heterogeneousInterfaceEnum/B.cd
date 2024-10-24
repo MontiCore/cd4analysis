@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package heterogenousInterfaceEnum;
+package heterogeneousInterfaceEnum;
 classdiagram B {
 	
 	enum Color { RED, GREEN, BLUE; }

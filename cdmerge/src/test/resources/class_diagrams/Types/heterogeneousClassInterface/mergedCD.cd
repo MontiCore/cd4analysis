@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package heterogenousClassInterface;
+package heterogeneousClassInterface;
 classdiagram mergedCD {
 
 	interface Human;

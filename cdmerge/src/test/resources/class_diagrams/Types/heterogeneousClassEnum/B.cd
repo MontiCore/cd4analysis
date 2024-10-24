@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package heterogenousClassEnum;
+package heterogeneousClassEnum;
 classdiagram B {
 
 	enum ABC {A, B, C; }
