@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package heterogenousInterfaceEnum;
+package heterogeneousInterfaceEnum;
 classdiagram A {
 	 
 	 interface RGB;

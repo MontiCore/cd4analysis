@@ -70,7 +70,7 @@ public class GeneralFourClassDiagrams extends BaseTest {
         getConfigBuilder()
             .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
             .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
-            .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES, MergeParameter.ON)
+            .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES, MergeParameter.ON)
             // FIXME Tool works but CoCo Fails
             .withParam(MergeParameter.DISABLE_CONTEXT_CONDITIONS);
     for (String m : inputModels) {

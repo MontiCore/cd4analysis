@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package heterogenousClassEnum;
+package heterogeneousClassEnum;
 classdiagram mergedCD {
 
 	class ABC{

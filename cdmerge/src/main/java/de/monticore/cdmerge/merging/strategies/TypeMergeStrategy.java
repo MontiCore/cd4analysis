@@ -39,10 +39,10 @@ public interface TypeMergeStrategy {
   ASTCDInterface merge(ASTCDInterface left, ASTCDInterface right);
 
   /**
-   * Returns true if this strategy offers support to merge heterogenous types, i.e. classes with
+   * Returns true if this strategy offers support to merge heterogeneous types, i.e. classes with
    * interfaces Thus returns true if the operation {@link mergeClassWithInterface} is implemented
    */
-  default boolean canMergeHeterogenousTypes() {
+  default boolean canMergeHeterogeneousTypes() {
     return false;
   }
 
@@ -55,7 +55,7 @@ public interface TypeMergeStrategy {
    */
   default ASTCDClass merge(ASTCDClass astClass, ASTCDInterface astInterface) {
     throw new UnsupportedOperationException(
-        "This Strategy does not support heterogenous type merges");
+        "This Strategy does not support heterogeneous type merges");
   }
 
   /**
@@ -67,7 +67,7 @@ public interface TypeMergeStrategy {
    */
   default ASTCDClass merge(ASTCDClass astClass, ASTCDEnum astEnum) {
     throw new UnsupportedOperationException(
-        "This Strategy does not support heterogenous type merges");
+        "This Strategy does not support heterogeneous type merges");
   }
 
   /**
@@ -79,6 +79,6 @@ public interface TypeMergeStrategy {
    */
   default ASTCDEnum merge(ASTCDInterface element, ASTCDEnum enm) {
     throw new UnsupportedOperationException(
-        "This Strategy does not support heterogenous type merges");
+        "This Strategy does not support heterogeneous type merges");
   }
 }
