@@ -649,11 +649,7 @@ The method body definition is exactly the same.
 - `0xCDXCX`-`0xCDXDX`: CD4A
 - `0xCDXEX`-`0xCDXFX`: CD4Code
 
-#### CoCos (`0xCDCXX`)
-- `0xCDC0X`: CDBasisEbnf (`0xCDC3X` for CDInterfaceAndEnumEbnf...)
-- `0xCDC1X`: CDBasisMCG
-- `0xCDC2X`: CDBasisMCG2Ebnf
-  
+#### CoCos (`0xCDCXX`)  
 #### Symboltable (`0xCDAXX`)
 #### Other Errors (`0xCD0XX`)
 
