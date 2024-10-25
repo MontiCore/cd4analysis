@@ -111,7 +111,8 @@ public class CDGeneratorTool extends CD4CodeTool {
           this.parse(".cd", this.createModelPath(cmd).getEntries());
       Log.enableFailQuick(true);
 
-      asts.forEach(this::transform);
+      // apply trafos needed for symbol table creation
+      asts = this.trafoBeforeSymtab(asts);
 
       if (cmd.hasOption("path")) {
         String[] paths = splitPathEntries(cmd.getOptionValue("path"));
@@ -178,10 +179,8 @@ public class CDGeneratorTool extends CD4CodeTool {
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
 
-        // setup default package when generating
-        CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
-        t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-        asts.forEach(ast -> ast.accept(t));
+        // apply trafos needed for code generation
+        asts = this.trafoBeforeCodegen(asts);
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
@@ -315,15 +314,54 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   /**
-   * transforms the ast using th
+   * Applies the transformations prerequisite to symbol table creation.
+   * @deprecated
+   * this method in no longer supported and scheduled for removal.
+   * <p> Use {@link #trafoBeforeSymtab(Collection)} instead.
    *
    * @param ast The input AST
    * @return The transformed AST
    */
+  @Deprecated(forRemoval = true)
   public ASTCDCompilationUnit transform(ASTCDCompilationUnit ast) {
     CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
     ast.accept(trafo.getTraverser());
     return ast;
+  }
+
+  /**
+   * Applies the transformations (trafos) prerequisite to symbol table creation.
+   * Trafos are applied in place, that is, the input asts are mutated.
+   *
+   * @param asts the asts to be transformed
+   * @return asts the transformed asts
+   */
+  public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
+    CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
+    asts.forEach(ast -> ast.accept(trafo.getTraverser()));
+    return asts;
+  }
+
+  /**
+   * Applies the transformations (trafos) prerequisite to code generation.
+   * Trafos are applied in place, that is, the input asts are mutated.
+   *
+   * @param asts the asts to be transformed
+   * @return asts the transformed asts
+   */
+  public Collection<ASTCDCompilationUnit> trafoBeforeCodegen(Collection<ASTCDCompilationUnit> asts) {
+    CD4CodeTraverser trafo = createBeforeCodegenTrafo();
+    asts.forEach(ast -> ast.accept(trafo));
+    return asts;
+  }
+
+  /**
+   * @return traverser with the trafos needed for codegeneration
+   */
+  protected CD4CodeTraverser createBeforeCodegenTrafo() {
+    CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
+    t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+    return t;
   }
 
   /**
