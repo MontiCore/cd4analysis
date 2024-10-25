@@ -19,7 +19,10 @@ import org.apache.commons.io.FileUtils;
 
 public class CDMerge {
 
-  /** Set of Merge Parameters that are supported by the CD tool's CLI command `--mrg-config` */
+  /**
+   * Set of Merge Parameters that are supported by the CD tool's CLI command `--mrg-config` as
+   * defined in the README.
+   */
   public static final Set<MergeParameter> SUPPORTED_PARAMETERS =
       Set.of(
           MergeParameter.ASSERT_ASSOCIATIVITY,

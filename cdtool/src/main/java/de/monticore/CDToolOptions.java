@@ -442,7 +442,7 @@ public class CDToolOptions {
                     + CDMerge.SUPPORTED_PARAMETERS.stream()
                         .map(Enum::name)
                         .collect(Collectors.toSet())
-                    + ". \"LOG_TO_CONSOLE\" and \"FAIL_AMBIGUOUS\" are used by default.")
+                    + ". By default, LOG_TO_CONSOLE and FAIL_AMBIGUOUS are used.")
             .build());
   }
 
