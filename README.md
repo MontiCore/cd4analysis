@@ -157,7 +157,7 @@ The possible options are:
 | `--json`                          | Writes a "Schema.json" to the output directory.                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `-nt,--nobuiltintypes`            | If this option is used, built-in-types will not be considered.                                                                                                                                                                                                                                                                                                                                                                                         |
 | `--merge <files>`                 | Parses the files as additional CDs and merges them with the input CD (iff semantically sound). The result is stored in memory.                                                                                                                                                                                                                                                                                                                         |
-| `--mrg-config`                    | Parses a json-file containing a list of \"Merge Parameters\" that should be applied when using `--merge`. Unknown and unsupported parameters are ignored, only boolean parameters are supported at CLI level. "LOG_TO_CONSOLE" and "FAIL_AMBIGUOUS" are used by default.                                                                                                                                                                               |
+| `--mrg-config`                    | Parses a json-file containing a list of \"Merge Parameters\" that should be applied when using `--merge`. Unknown and unsupported parameters are ignored. The supported parameters are defined [here](cdmerge/src/main/java/de/monticore/cdmerge/CDMerge.java). `"LOG_TO_CONSOLE"` and `"FAIL_AMBIGUOUS"` are used by default.                                                                                                                         |
 | `-o,--output <dir>`               | Defines the path for generated files (optional; default is: `.`).                                                                                                                                                                                                                                                                                                                                                                                      |
 | `--open-world`                    | Compute the open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`).                                                                                                                                                                                                                                                                      |
 | `--path <dirlist>`                | Artifact path for importable symbols, separated by spaces (default is: `.`).                                                                                                                                                                                                                                                                                                                                                                           |
@@ -529,7 +529,8 @@ Note that `--merge` does not use symbols from symbol files. Instead of using
 the `--merge` option from the command line, you may also call the static method 
 [`CDMerge.merge()`](cdmerge/src/main/java/de/monticore/cdmerge/CDMerge.java) 
 with a set of appropriate 
-[`MergeParameter`](cdmerge/src/java/de/monticore/cdmerge/config/MergeParameter.java).
+[`MergeParameter`](cdmerge/src/main/java/de/monticore/cdmerge/config/MergeParameter.java)
+[(defined here)](cdmerge/src/main/java/de/monticore/cdmerge/config/MergeParameter.java).
 
 The option `--mrg-config` can also be used to specify a json-file containing a 
 json-object that specifies a list of "Merge Parameters", e.g.:
@@ -539,7 +540,10 @@ json-object that specifies a list of "Merge Parameters", e.g.:
   "Merge Parameters": ["MERGE_COMMENTS", "MERGE_ONLY_NAMED_ASSOCIATIONS"]
 }
 ```
-
+Unknown and unsupported parameters are ignored. 
+The supported parameters are listed 
+[here](cdmerge/src/main/java/de/monticore/cdmerge/CDMerge.java). 
+`"LOG_TO_CONSOLE"` and `"FAIL_AMBIGUOUS"` are used by default.
 
 [ExampleModels]: cdlang/src/test/resources/de/monticore/cd4analysis/examples
 [ToolDownload]: https://monticore.de/download/MCCD.jar

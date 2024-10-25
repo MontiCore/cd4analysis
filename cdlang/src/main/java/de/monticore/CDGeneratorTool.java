@@ -315,10 +315,9 @@ public class CDGeneratorTool extends CD4CodeTool {
 
   /**
    * Applies the transformations prerequisite to symbol table creation.
-   * @deprecated
-   * this method in no longer supported and scheduled for removal.
-   * <p> Use {@link #trafoBeforeSymtab(Collection)} instead.
    *
+   * @deprecated this method in no longer supported and scheduled for removal.
+   *     <p>Use {@link #trafoBeforeSymtab(Collection)} instead.
    * @param ast The input AST
    * @return The transformed AST
    */
@@ -330,8 +329,8 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   /**
-   * Applies the transformations (trafos) prerequisite to symbol table creation.
-   * Trafos are applied in place, that is, the input asts are mutated.
+   * Applies the transformations (trafos) prerequisite to symbol table creation. Trafos are applied
+   * in place, that is, the input asts are mutated.
    *
    * @param asts the asts to be transformed
    * @return asts the transformed asts
@@ -343,21 +342,20 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   /**
-   * Applies the transformations (trafos) prerequisite to code generation.
-   * Trafos are applied in place, that is, the input asts are mutated.
+   * Applies the transformations (trafos) prerequisite to code generation. Trafos are applied in
+   * place, that is, the input asts are mutated.
    *
    * @param asts the asts to be transformed
    * @return asts the transformed asts
    */
-  public Collection<ASTCDCompilationUnit> trafoBeforeCodegen(Collection<ASTCDCompilationUnit> asts) {
+  public Collection<ASTCDCompilationUnit> trafoBeforeCodegen(
+      Collection<ASTCDCompilationUnit> asts) {
     CD4CodeTraverser trafo = createBeforeCodegenTrafo();
     asts.forEach(ast -> ast.accept(trafo));
     return asts;
   }
 
-  /**
-   * @return traverser with the trafos needed for codegeneration
-   */
+  /** @return traverser with the trafos needed for codegeneration */
   protected CD4CodeTraverser createBeforeCodegenTrafo() {
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());

@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 
 public class CDMerge {
 
+  /** Set of Merge Parameters that are supported by the CD tool's CLI command `--mrg-config` */
   public static final Set<MergeParameter> SUPPORTED_PARAMETERS =
       Set.of(
           MergeParameter.ASSERT_ASSOCIATIVITY,
@@ -100,6 +101,13 @@ public class CDMerge {
     return builder.build();
   }
 
+  /**
+   * Parses a json-object containing "Merge Parameters" as a json-array. Unsupported and unknown
+   * parameters are filtered out.
+   *
+   * @param file containing the json-object
+   * @return set of supported MergeParameter specified in the json-array
+   */
   public static Set<MergeParameter> parseMrgConfig(String file) {
     Set<MergeParameter> mergeParameters = new HashSet<>();
     try {
