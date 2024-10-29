@@ -189,6 +189,8 @@ have multiple incarnations within the same mapping.
 If for a specific element in the reference model no incarnation is defined in
 the mapping, but an element of the same kind and equal name exists in the 
 concrete model, it is mapped to this element by default.
+For associations, if no name is specified, we also consider matching role-names 
+and referenced types as an additional fall-back option for the mapping.
 The tool checks conformance for each mapping that is specified.
 This can be done independently, as the mappings are in super-position.
 Consider for example the case of concreting the `Adapter`-pattern to a 
@@ -271,8 +273,10 @@ java -jar cdtool/target/libs/MCCD.jar -i doc/GraphAdapter.cd --reference doc/Ada
 ```
 
 If no mapping name is specified via `--map`, the conformance checker assumes 
-that elements are mapped via the stereotype `<<incarnates = "...">>` by default,
-as demonstrated by the following example for [`IOAdapter`](../doc/IOAdapter.cd):
+that the stereotype `<<incarnates="...">>` is applied to elements in the 
+concrete CD (e.g., classes) in order to map them to corresponding elements in 
+the reference model, as demonstrated by the following example for 
+[`IOAdapter`](../doc/IOAdapter.cd):
 
 ```
 java -jar cdtool/target/libs/MCCD.jar -i doc/IOAdapter.cd --reference doc/Adapter.cd
