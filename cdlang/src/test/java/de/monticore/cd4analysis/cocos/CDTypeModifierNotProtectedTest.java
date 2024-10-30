@@ -1,21 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.cocos;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.cocos.CDTypeModifierNotPrivate;
 import de.monticore.cdbasis.cocos.CDTypeModifierNotProtected;
-import de.monticore.cdbasis.cocos.ebnf.CDPackageUniqueCDTypeNames;
 import de.se_rwth.commons.logging.Log;
-import org.junit.After;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Test;
 
 public class CDTypeModifierNotProtectedTest extends CD4AnalysisTestBasis {
 
@@ -23,7 +20,7 @@ public class CDTypeModifierNotProtectedTest extends CD4AnalysisTestBasis {
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDTypeModifierNotProtected());
     final Optional<ASTCDCompilationUnit> optAST =
-      p.parse(getFilePath("cd4analysis/cocos/CDTypeModifierNotProtectedInvalid.cd"));
+        p.parse(getFilePath("cd4analysis/cocos/CDTypeModifierNotProtectedInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

@@ -1,10 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import de.monticore.cdmerge.CDMerge;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import org.apache.commons.cli.*;
 
 public class CDToolOptions {
@@ -438,11 +436,10 @@ public class CDToolOptions {
             .desc(
                 "Parses a json-file containing a list of \"Merge Parameters\" that should be "
                     + "applied when using `--merge`. Unknown and unsupported parameters are "
-                    + "ignored, only boolean parameters are supported at CLI level. The supported parameters are: "
-                    + CDMerge.SUPPORTED_PARAMETERS.stream()
-                        .map(Enum::name)
-                        .collect(Collectors.toSet())
-                    + ". By default, LOG_TO_CONSOLE and FAIL_AMBIGUOUS are used.")
+                    + "ignored, only boolean parameters are supported at CLI level. "
+                    + "The supported parameters are listed here: "
+                    + "https://github.com/MontiCore/cd4analysis/tree/develop/cdmerge/index.md/#list-of-merge-parameters-supported-by-the-cd-tool. "
+                    + "By default, \"LOG_TO_CONSOLE\" and \"FAIL_AMBIGUOUS\" are used.")
             .build());
   }
 

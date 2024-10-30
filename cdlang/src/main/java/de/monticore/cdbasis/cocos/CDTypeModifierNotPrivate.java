@@ -7,7 +7,7 @@ import de.se_rwth.commons.logging.Log;
 
 public class CDTypeModifierNotPrivate implements CDBasisASTCDTypeCoCo {
 
-  public final static String ERROR_CODE = "0xCDC21";
+  public static final String ERROR_CODE = "0xCDC21";
 
   @Override
   public void check(ASTCDType node) {
