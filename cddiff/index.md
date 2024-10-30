@@ -26,12 +26,12 @@ The submodule itself is subdivided into the following packages:
     reference model (work in progress).
 2. `de.monticore.cdconformence` 
     * implements an automatic conformance checker for Reference Class Diagrams.
-2. `de.monticore.cddiff`
+3. `de.monticore.cddiff`
     * implements syntactic and semantic differencing operators for Class 
       Diagrams.
-3. `de.monticore.cdmatcher` 
+4. `de.monticore.cdmatcher` 
     * contains strategies for matching Class Diagram elements.
-4. `de.monticore.odvalidity` 
+5. `de.monticore.odvalidity` 
     * implements a tool that determines whether an Object Diagram models a 
     valid instance of a Class Diagram.
 
