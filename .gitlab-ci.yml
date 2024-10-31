@@ -14,8 +14,8 @@ before_script:
 
 stages:
   - build
-  - trigger
   - mirror
+  - trigger
 
 build:
   stage: build
