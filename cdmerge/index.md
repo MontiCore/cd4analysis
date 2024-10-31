@@ -112,44 +112,23 @@ Unknown and unsupported parameters are ignored. If the option `--mrg-config` is 
 `LOG_TO_CONSOLE` and `FAIL_AMBIGUOUS` are used by default.
 
 
-### List of Merge Parameters Supported by the CD Tool
+### List of Merge Parameters supported by the CD Tool:
 
-* `ASSERT_ASSOCIATIVITY`:
-  * The input models will be checked for associativity stability (i.e. input 
-    order). This test performs several mergers and slows down the merging 
-    process but gives indication on inconsistencies.
-* `DISABLE_CONTEXT_CONDITIONS`
-  * Disables the check of `cd4analysis` context conditions for the input Class 
-    Diagrams and the merged model.
-* `DISABLE_POSTMERGE_VALIDATION`
-  * Disables the post merging validation of the resulting Class Diagram.
-* `DISABLE_MODEL_REFACTORINGS`
-  * Disable clean-up and post-merge refactorings of the final model.
-* `FAIL_FAST`
-  * Abort merging process immediately when the first error is detected.
-* `FAIL_AMBIGUOUS`
-  * Abort the merging process if matching of associations is ambiguous.
-* `LOG_DEBUG`
-  * Logs debug information (Level DEBUG, FINE, INFO) during matching and 
-    merging.
-* `LOG_STDERR`
-  * Stay silent on standard output and defer all logging to standard error.
-* `LOG_VERBOSE`
-  * Logs more information (Level FINE and INFO) and reports each merged element.
-* `LOG_TO_CONSOLE`
-  * Write all Log entries immediately to standard output.
-* `MERGE_COMMENTS`
-  * Merge all comments of all model elements from the source diagrams.
-* `MERGE_ONLY_NAMED_ASSOCIATIONS`
-  * Only merge associations with defined association name. 
-    Guarantees associativity of the merge.
-* `MERGE_HETEROGENEOUS_TYPES`
-  * Allows the merger of classes with interfaces.
-* `PRIMITIVE_TYPE_CONVERSION`
-  * Enables the merging of compatible primitive type attributes like int and 
-    long.
-* `STRICT`
-  * Combination of the parameters `MERGE_ONLY_NAMED_ASSOCIATIONS` 
-    and `WARNING_AS_ERRORS`.
-* `WARNINGS_AS_ERRORS`
-  * Treat warnings as errors, i.e., cancel merge process on each warning.
+| Merge Parameter                 | Explanation                                                                                                                                                                                     |
+|---------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ASSERT_ASSOCIATIVITY`          | The input models will be checked for associativity stability (i.e. input order). This test performs several mergers and slows down the merging process but gives indication on inconsistencies. |
+| `DISABLE_CONTEXT_CONDITIONS`    | Disables the check of `cd4analysis` context conditions for the input Class Diagrams and the merged model.                                                                                       |
+| `DISABLE_POSTMERGE_VALIDATION`  | Disables the post merging validation of the resulting Class Diagram.                                                                                                                            |
+| `DISABLE_MODEL_REFACTORINGS`    | Disable clean-up and post-merge refactorings of the final model.                                                                                                                                |
+| `FAIL_FAST`                     | Abort the merging process immediately when the first error is detected.                                                                                                                         |
+| `FAIL_AMBIGUOUS`                | Abort the merging process if matching of associations is ambiguous.                                                                                                                             |
+| `LOG_DEBUG`                     | Logs debug information (Level `DEBUG`, `FINE`, `INFO`) during matching and merging.                                                                                                             |
+| `LOG_STDERR`                    | Stay silent on standard output and defer all logging to standard error.                                                                                                                         |
+| `LOG_VERBOSE`                   | Logs more information (Level `FINE` and `INFO`) and reports each merged element.                                                                                                                |
+| `LOG_TO_CONSOLE`                | Write all Log entries immediately to standard output.                                                                                                                                           |
+| `MERGE_COMMENTS`                | Merge all comments of all model elements from the source diagrams.                                                                                                                              |
+| `MERGE_ONLY_NAMED_ASSOCIATIONS` | Only merge associations with defined association name. Guarantees associativity of the merge.                                                                                                   |
+| `MERGE_HETEROGENEOUS_TYPES`     | Allows the merger of classes with interfaces.                                                                                                                                                   |
+| `PRIMITIVE_TYPE_CONVERSION`     | Enables the merging of compatible primitive type attributes like int and long.                                                                                                                  |
+| `STRICT`                        | Combination of the parameters `MERGE_ONLY_NAMED_ASSOCIATIONS` and `WARNING_AS_ERRORS`.                                                                                                          |
+| `WARNINGS_AS_ERRORS`            | Treat warnings as errors, i.e., cancel merge process on each warning.                                                                                                                           |
