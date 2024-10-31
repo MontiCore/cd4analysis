@@ -1,5 +1,5 @@
 classdiagram RefMultipleIncarnation {
   class Department {
-    int id;
+    int deptID;
   }
 }

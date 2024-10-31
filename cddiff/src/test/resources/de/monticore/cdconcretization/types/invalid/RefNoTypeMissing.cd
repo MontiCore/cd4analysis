@@ -1,6 +1,0 @@
-classdiagram RefNoTypeMissing {
-  class Employee {
-  }
-  class Staff {
-  }
-}

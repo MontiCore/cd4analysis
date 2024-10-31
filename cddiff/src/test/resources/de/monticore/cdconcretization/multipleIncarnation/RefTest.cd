@@ -1,0 +1,9 @@
+classdiagram RefTest {
+  class Company {
+  }
+
+  class Employee {
+  }
+  association Company -- Employee [1..*];
+
+}

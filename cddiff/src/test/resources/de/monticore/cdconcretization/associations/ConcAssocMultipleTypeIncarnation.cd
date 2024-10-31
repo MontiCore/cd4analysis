@@ -1,12 +1,10 @@
 classdiagram ConcAssocMultipleTypeIncarnation {
-
-  class A {
+  class Teacher {
   }
-  class B {
+  <<ref="Department">> class MathDept {
   }
-  <<ref="B">> class C {
+  <<ref="Department">> class ScienceDept {
   }
-  <<ref="B">> class D {
-  }
-
 }
+
+

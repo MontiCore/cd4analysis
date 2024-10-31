@@ -1,4 +1,5 @@
-//reference model
+import java.lang.String;
+
 classdiagram RCD {
   class Staff {
     int id;

@@ -1,7 +1,7 @@
 classdiagram RefAssocMultipleTypeIncarnation {
-  class A {
+  class Teacher {
   }
-  class B {
+  class Department {
   }
-  association A <-> B;
+  association Teacher (hasTeacher) <-> (teachesIn) Department;
 }

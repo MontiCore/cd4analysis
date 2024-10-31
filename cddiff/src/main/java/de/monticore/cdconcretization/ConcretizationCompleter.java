@@ -2,19 +2,20 @@ package de.monticore.cdconcretization;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
-public class ConcretizationCompleter implements IMergeStrategy {
+public class ConcretizationCompleter implements ICompletionStrategy {
 
   @Override
-  public ASTCDCompilationUnit merge(ASTCDCompilationUnit rcd, ASTCDCompilationUnit iccd)
+  public ASTCDCompilationUnit complete(ASTCDCompilationUnit rcd, ASTCDCompilationUnit iccd)
       throws CompletionException {
-    ASTCDCompilationUnit cccd = iccd.deepClone();
 
-    DefaultTypeIncCompleter typeCompleter = new DefaultTypeIncCompleter(cccd, rcd, "ref");
-    DefaultAssocIncCompleter assocCompleter = new DefaultAssocIncCompleter(cccd, rcd, "ref");
+    DefaultTypeIncCompleter typeCompleter = new DefaultTypeIncCompleter(iccd, rcd, "ref");
+    DefaultAssocIncCompleter assocCompleter = new DefaultAssocIncCompleter(iccd, rcd, "ref");
 
     typeCompleter.completeIncarnations();
     assocCompleter.completeIncarnations();
 
-    return cccd;
+    ConcretizationHelper.reorderElements(iccd.getCDDefinition());
+
+    return iccd;
   }
 }

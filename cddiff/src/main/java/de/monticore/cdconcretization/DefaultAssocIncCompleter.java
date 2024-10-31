@@ -20,7 +20,7 @@ import de.monticore.tf.odrulegeneration._ast.ASTAssociation;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssociation> {
+public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssociation> {
 
   protected ASTCDCompilationUnit rcd;
   protected ASTCDCompilationUnit ccd;
@@ -54,7 +54,7 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
 
   @Override
   public void completeIncarnations() throws CompletionException {
-    // First, complete the incarnations, so add stuff to the underspecified incarnation
+    // First: complete the incarnations, so add stuff to the underspecified incarnation
     // or do nothing to the over-specified incarnation
 
     // Iterate through all concrete associations
@@ -79,12 +79,10 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
                 SRC_TARGET_ASSOC_MAPPING,
                 INHERITANCE,
                 ALLOW_CARD_RESTRICTION));
-    /*
+
     if (!checker.checkConformance(ccd, rcd, mapping)) {
       throw new CompletionException("The association completion result is not conform");
     }
-
-     */
   }
 
   private void handleAssociation(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc)
@@ -178,7 +176,7 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
     renameRoleIfConflicting(cAssoc);
   }
 
-  private boolean renameRoleIfConflicting(ASTCDAssociation assoc) throws CompletionException {
+  private void renameRoleIfConflicting(ASTCDAssociation assoc) throws CompletionException {
     /* Wenn es eine andere Assoziation mit gleichem Rollennamen gibt
            und der Typ auf der gegenüberliegenden Seite gleich / Subtyp / Supertyp ist,
            dann ändere den entsprechenden Rollennamen für assoc!
@@ -206,8 +204,6 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
               assoc.getLeftQualifiedName().getQName(),
               false);
     }
-
-    return renamed;
   }
 
   private boolean checkAndRenameConflict(
@@ -278,11 +274,16 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
     if ((cAssoc.getCDAssocDir().isDefinitiveNavigableRight()
             && rAssoc.getCDAssocDir().isDefinitiveNavigableLeft())
         || (cAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
-            && rAssoc.getCDAssocDir().isDefinitiveNavigableRight())) {
+            && rAssoc.getCDAssocDir().isDefinitiveNavigableRight())
+        || rAssoc.getCDAssocDir().isBidirectional()) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDBiDirBuilder().build());
-    } else {
-      cAssoc.setCDAssocDir(rAssoc.getCDAssocDir().deepClone());
+    } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
+      cAssoc.setCDAssocDir(CD4CodeMill.cDLeftToRightDirBuilder().build());
+    } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      cAssoc.setCDAssocDir(CD4CodeMill.cDRightToLeftDirBuilder().build());
     }
+    // else
+    // unspecified or overspecifiedf by cAssoc, so do nothing
   }
 
   private void completeAssocNavigabilityReverse(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc) {
@@ -291,15 +292,16 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
     if ((cAssoc.getCDAssocDir().isDefinitiveNavigableRight()
             && rAssoc.getCDAssocDir().isDefinitiveNavigableRight())
         || (cAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
-            && rAssoc.getCDAssocDir().isDefinitiveNavigableLeft())) {
+            && rAssoc.getCDAssocDir().isDefinitiveNavigableLeft())
+        || rAssoc.getCDAssocDir().isBidirectional()) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDBiDirBuilder().build());
     } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableRight()) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDRightToLeftDirBuilder().build());
     } else if (rAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
       cAssoc.setCDAssocDir(CD4CodeMill.cDLeftToRightDirBuilder().build());
-    } else {
-      cAssoc.setCDAssocDir(CD4CodeMill.cDUnspecifiedDirBuilder().build());
     }
+    // else
+    // unspecified or overspecifiedf by cAssoc, so do nothing
   }
 
   private void completeAssocCardinality(ASTCDAssocSide cAssocSide, ASTCDAssocSide rAssocSide)
@@ -411,6 +413,60 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
     }
   }
 
+  private void processTypeIncarnations(
+      Set<ASTCDType> rTypeIncarnation,
+      Set<ASTCDType> rOppositeTypeIncarnations,
+      Set<ASTCDType> typeInc2Process,
+      Set<ASTCDAssociation> assocIncarnations,
+      Set<ASTCDAssociation> assocGreedyMatches,
+      ASTCDDefinition cd,
+      ASTCDAssociation rAssoc)
+      throws CompletionException {
+
+    // Iterate over each type incarnation in rTypeIncarnation
+    for (ASTCDType typeInc : rTypeIncarnation) {
+      // Retrieve all supertypes for the current type incarnation from the cd
+      Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(typeInc, cd);
+
+      // First, attempt to find a match among the specific association incarnations
+      Optional<ASTCDAssociation> match =
+          processAssociations(superTypes, rOppositeTypeIncarnations, assocIncarnations, cd);
+
+      // If a match is found, remove the current type incarnation from the set to be processed and
+      // continue
+      if (match.isPresent()) {
+        typeInc2Process.remove(typeInc);
+        continue;
+      }
+
+      // If no match is found in specific incarnations, try matching against the greedy matches
+      match = processAssociations(superTypes, rOppositeTypeIncarnations, assocGreedyMatches, cd);
+
+      // If a match is found among the greedy matches, remove the current type incarnation from the
+      // set to be processed
+      // and handle the association accordingly
+      if (match.isPresent()) {
+        typeInc2Process.remove(typeInc);
+        handleAssociation(match.get(), rAssoc);
+      }
+    }
+  }
+
+  private Optional<ASTCDAssociation> processAssociations(
+      Set<ASTCDType> superTypes,
+      Set<ASTCDType> oppositeTypeIncarnations,
+      Set<ASTCDAssociation> associations,
+      ASTCDDefinition cd)
+      throws CompletionException {
+    for (ASTCDAssociation assoc : associations) {
+      // Check if there is a match with the left side of the association
+      if (checkAssociationMatch(superTypes, oppositeTypeIncarnations, assoc, cd)) {
+        return Optional.of(assoc); // Match found, return the association
+      }
+    }
+    return Optional.empty(); // No match found, return empty
+  }
+
   private void processTypeInc2Process(
       Set<ASTCDType> typeInc2Process,
       Set<ASTCDType> otherTypeIncs,
@@ -500,66 +556,8 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
             .noneMatch(a -> a.deepEquals(association))) {
           ccd.getCDDefinition().addCDElement(association);
         }
-
-        // Handle the role names for the left and right types based on the direction
-        // This section checks if the role names are present and appends the type name if necessary
-
       }
     }
-  }
-
-  private void processTypeIncarnations(
-      Set<ASTCDType> rTypeIncarnation,
-      Set<ASTCDType> rOppositeTypeIncarnations,
-      Set<ASTCDType> typeInc2Process,
-      Set<ASTCDAssociation> assocIncarnations,
-      Set<ASTCDAssociation> assocGreedyMatches,
-      ASTCDDefinition cd,
-      ASTCDAssociation rAssoc)
-      throws CompletionException {
-
-    // Iterate over each type incarnation in rTypeIncarnation
-    for (ASTCDType typeInc : rTypeIncarnation) {
-      // Retrieve all supertypes for the current type incarnation from the cd
-      Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(typeInc, cd);
-
-      // First, attempt to find a match among the specific association incarnations
-      Optional<ASTCDAssociation> match =
-          processAssociations(superTypes, rOppositeTypeIncarnations, assocIncarnations, cd);
-
-      // If a match is found, remove the current type incarnation from the set to be processed and
-      // continue
-      if (match.isPresent()) {
-        typeInc2Process.remove(typeInc);
-        continue;
-      }
-
-      // If no match is found in specific incarnations, try matching against the greedy matches
-      match = processAssociations(superTypes, rOppositeTypeIncarnations, assocGreedyMatches, cd);
-
-      // If a match is found among the greedy matches, remove the current type incarnation from the
-      // set to be processed
-      // and handle the association accordingly
-      if (match.isPresent()) {
-        typeInc2Process.remove(typeInc);
-        handleAssociation(match.get(), rAssoc);
-      }
-    }
-  }
-
-  private Optional<ASTCDAssociation> processAssociations(
-      Set<ASTCDType> superTypes,
-      Set<ASTCDType> oppositeTypeIncarnations,
-      Set<ASTCDAssociation> associations,
-      ASTCDDefinition cd)
-      throws CompletionException {
-    for (ASTCDAssociation assoc : associations) {
-      // Check if there is a match with the left side of the association
-      if (checkAssociationMatch(superTypes, oppositeTypeIncarnations, assoc, cd)) {
-        return Optional.of(assoc); // Match found, return the association
-      }
-    }
-    return Optional.empty(); // No match found, return empty
   }
 
   private boolean checkAssociationMatch(
@@ -627,8 +625,8 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
       fail = true;
     }
     if (fail) {
-      // throw new CompletionException(
-      // "Something went wrong when identifying missing association incarnations.");
+      throw new CompletionException(
+          "Something went wrong when identifying missing association incarnations.");
     }
     return false;
   }
@@ -639,5 +637,9 @@ public class DefaultAssocIncCompleter implements IncarnationCompleter<ASTAssocia
 
   protected Boolean getIntersectCardinality() {
     return intersectCardinality;
+  }
+
+  public CompAssocIncStrategy getCompAssocIncStrategy() {
+    return this.compAssocIncStrategy;
   }
 }

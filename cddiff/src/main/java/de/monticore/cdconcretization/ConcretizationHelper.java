@@ -2,8 +2,7 @@ package de.monticore.cdconcretization;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.inc.association.CompAssocIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
@@ -18,9 +17,9 @@ public class ConcretizationHelper {
   private final CompAssocIncStrategy compAssocIncStrategy;
 
   // Mappings to store results
-  private final Map<String, String> typeMapping;
-  private final Map<String, String> roleMapping;
-  private final Map<String, ASTCDType> roleToTypeMapping;
+  public Map<String, Set<String>> typeMapping;
+  public Map<String, Set<String>> roleMapping;
+  public Map<String, Set<String>> roleToTypeMapping;
 
   // Constructor
   public ConcretizationHelper(
@@ -53,14 +52,17 @@ public class ConcretizationHelper {
       // Process each concrete type that incarnates refType
       for (ASTCDType conType : concreteTypes) {
         // Map reference type to concrete type
-        typeMapping.put(refType.getName(), conType.getName());
+        typeMapping.computeIfAbsent(refType.getName(), k -> new HashSet<>()).add(conType.getName());
 
         // Get concrete associations incarnating the reference association and referencing conType
         Set<ASTCDAssociation> conAssocSet = getConcreteAssociationsForType(conType, refAssoc);
 
         for (ASTCDAssociation conAssoc : conAssocSet) {
-          // Process role names and other side type mappings
-          processAssociationSides(refAssoc, conAssoc, refType, conType);
+          // Process left and right side of associations separately
+          processAssociationSides(
+              refAssoc.getLeft(), conAssoc.getLeft(), refAssoc.getRight(), conAssoc.getRight());
+          processAssociationSides(
+              refAssoc.getRight(), conAssoc.getRight(), refAssoc.getLeft(), conAssoc.getLeft());
         }
       }
     }
@@ -98,68 +100,47 @@ public class ConcretizationHelper {
 
   // Helper to get all concrete associations for a given concrete type and reference association
   private Set<ASTCDAssociation> getConcreteAssociationsForType(
-      ASTCDType conType, ASTCDAssociation refAssoc) {
-    return ccd.getCDDefinition().getCDAssociationsList().stream()
-        .filter(
-            conAssoc ->
-                compAssocIncStrategy.isMatched(conAssoc, refAssoc)
-                        && getTypeFromAssocSide(conAssoc.getLeft()).equals(conType)
-                    || getTypeFromAssocSide(conAssoc.getRight()).equals(conType))
-        .collect(Collectors.toSet());
+      ASTCDType conType, ASTCDAssociation refAssoc) throws CompletionException {
+    Set<ASTCDAssociation> set = new HashSet<>();
+    for (ASTCDAssociation assoc : ccd.getCDDefinition().getCDAssociationsList()) {
+      if (compAssocIncStrategy.isMatched(assoc, refAssoc)
+          && (getTypeFromAssocSide(assoc.getLeft()).equals(conType)
+              || getTypeFromAssocSide(assoc.getRight()).equals(conType))) {
+        set.add(assoc);
+      }
+    }
+    return set;
   }
 
   // Process both sides of the association to map roles and other types
   private void processAssociationSides(
-      ASTCDAssociation refAssoc, ASTCDAssociation conAssoc, ASTCDType refType, ASTCDType conType)
-      throws CompletionException {
-    // Get reference and concrete sides
-    ASTCDAssocSide refAssocSide = getAssociationSideForType(refAssoc, refType);
-    ASTCDAssocSide conAssocSide = getAssociationSideForType(conAssoc, conType);
-
-    // Get the other side for both reference and concrete associations
-    ASTCDAssocSide refOtherSide = getOtherSide(refAssoc, refAssocSide);
-    ASTCDAssocSide conOtherSide = getOtherSide(conAssoc, conAssocSide);
-
-    // Map roles and other side types
-    mapRolesAndTypes(refAssocSide, conAssocSide, refOtherSide, conOtherSide, refType, conType);
-  }
-
-  // Helper to get the correct side of the association for a given type
-  private ASTCDAssocSide getAssociationSideForType(ASTCDAssociation assoc, ASTCDType type)
-      throws CompletionException {
-    ASTCDType leftType = getAssocLeftType(ccd, assoc);
-    return (compTypeIncStrategy.isMatched(leftType, type)) ? assoc.getLeft() : assoc.getRight();
-  }
-
-  // Helper to get the other side of the association
-  private ASTCDAssocSide getOtherSide(ASTCDAssociation assoc, ASTCDAssocSide side) {
-    return (side.equals(assoc.getLeft())) ? assoc.getRight() : assoc.getLeft();
-  }
-
-  // Helper to map roles and types between reference and concrete associations
-  private void mapRolesAndTypes(
       ASTCDAssocSide refAssocSide,
       ASTCDAssocSide conAssocSide,
       ASTCDAssocSide refOtherSide,
-      ASTCDAssocSide conOtherSide,
-      ASTCDType refType,
-      ASTCDType conType) {
-    // Map roles between reference and concrete sides
+      ASTCDAssocSide conOtherSide)
+      throws CompletionException {
+
+    // Get reference and concrete role names for the current side
     Optional<String> refRole = getRoleName(refAssocSide);
     Optional<String> conRole = getRoleName(conAssocSide);
 
+    // Add reference role to concrete role mapping
     if (refRole.isPresent() && conRole.isPresent()) {
-      roleMapping.put(
-          refType.getName() + "." + refRole.get(), conType.getName() + "." + conRole.get());
+      addToMapping(roleMapping, refRole.get(), conRole.get());
     }
 
-    // Map reference role to the other reference type
+    // Map the reference role to the other reference type (for roleToTypeMapping)
     ASTCDType refOtherType = getTypeFromAssocSide(refOtherSide);
-    refRole.ifPresent(role -> roleToTypeMapping.put(refType.getName() + "." + role, refOtherType));
+    refRole.ifPresent(role -> addToMapping(roleToTypeMapping, role, refOtherType.getName()));
 
-    // Map concrete role to the other concrete type
+    // Map the concrete role to the other concrete type (for roleToTypeMapping)
     ASTCDType conOtherType = getTypeFromAssocSide(conOtherSide);
-    conRole.ifPresent(role -> roleToTypeMapping.put(conType.getName() + "." + role, conOtherType));
+    conRole.ifPresent(role -> addToMapping(roleToTypeMapping, role, conOtherType.getName()));
+  }
+
+  private void addToMapping(Map<String, Set<String>> map, String key, String value) {
+    // If the key doesn't exist, create a new set for it
+    map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
   }
 
   // Helper to get the role name of an association side
@@ -170,9 +151,17 @@ public class ConcretizationHelper {
   }
 
   // Helper to get the type from an association side
-  private ASTCDType getTypeFromAssocSide(ASTCDAssocSide side) {
+  private ASTCDType getTypeFromAssocSide(ASTCDAssocSide side) throws CompletionException {
     // how to get QName from side?
-    return ccd.getEnclosingScope().resolveCDTypeDown(side.getName()).get().getAstNode();
+    Optional<CDTypeSymbol> typeSymbol =
+        ccd.getEnclosingScope()
+            .resolveCDTypeDown(side.getMCQualifiedType().getMCQualifiedName().getQName());
+
+    if (typeSymbol.isPresent()) {
+      return typeSymbol.get().getAstNode();
+    } else {
+      throw new CompletionException("There was a problem getting a type from an association");
+    }
   }
 
   protected Set<ASTCDType> getCDTypes(ASTCDCompilationUnit cd) {
@@ -215,5 +204,13 @@ public class ConcretizationHelper {
     } else {
       throw new CompletionException("There was a problem getting a type from an association");
     }
+  }
+
+  public static void reorderElements(ASTCDDefinition cdDefinition) {
+    List<ASTCDClass> classList = new ArrayList<>(cdDefinition.getCDClassesList());
+    List<ASTCDAssociation> assocList = new ArrayList<>(cdDefinition.getCDAssociationsList());
+    cdDefinition.getCDElementList().clear();
+    cdDefinition.addAllCDElements(classList);
+    cdDefinition.addAllCDElements(assocList);
   }
 }
