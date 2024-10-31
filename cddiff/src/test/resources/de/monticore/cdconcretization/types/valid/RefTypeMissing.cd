@@ -1,10 +1,19 @@
+import java.lang.String;
 classdiagram RefTypeMissing {
-  class Employee {
+  interface Teachable {
   }
-  abstract class Staff {
+
+  class Course implements Teachable {
   }
-  enum Colour{;
+
+  enum CourseStatus {
+    ACTIVE,
+    COMPLETED,
+    CANCELLED;
   }
-  interface Method{
+
+  enum CourseType {
+    LECTURE,
+    EXERCICE;
   }
 }

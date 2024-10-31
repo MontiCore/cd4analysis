@@ -1,6 +1,0 @@
-classdiagram ConcNoTypeMissing {
-  class Employee {
-  }
-  class Staff {
-  }
-}

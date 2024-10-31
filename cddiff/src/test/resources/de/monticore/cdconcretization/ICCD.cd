@@ -1,17 +1,18 @@
-//concrete model
+import java.lang.String;
+
 classdiagram ICCD {
-  class Employee {
+  <<ref="Staff">> class Employee {
     int id;
     float salary;
   }
   class Info {
     String address;
   }
-  class Operations {
+  <<ref="Department">> class Operations {
     int id;
     int supervisorID;
   }
-  class Administration {
+  <<ref="Department">> class Administration {
     int id;
     int managerID;
   }

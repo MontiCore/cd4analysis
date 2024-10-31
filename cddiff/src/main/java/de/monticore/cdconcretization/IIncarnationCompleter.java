@@ -1,5 +1,5 @@
 package de.monticore.cdconcretization;
 
-public interface IncarnationCompleter<Kind> {
+public interface IIncarnationCompleter<Kind> {
   void completeIncarnations() throws CompletionException;
 }

@@ -1,0 +1,24 @@
+classdiagram ConcEvaluation {
+  class Project {
+  }
+
+  class Staff {
+    int staffID;
+  }
+
+  <<ref="Department">> class Administration {
+  }
+
+  <<ref="Intern">> class Trainee {
+    int supervisorID;
+  }
+
+  class Employee {
+    <<ref="id">> int employeeID;
+  }
+
+  association staffEmployment Staff -- Employee;
+  association Staff -- Project;
+  <<ref="internshipProgram">> association traineeProgram
+    Administration (hostAdm) <- (trainee) Trainee [0..*];
+}

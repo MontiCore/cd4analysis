@@ -14,10 +14,11 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> {
+public class DefaultTypeIncCompleter implements IIncarnationCompleter<ASTCDType> {
 
   protected ASTCDCompilationUnit rcd;
   protected ASTCDCompilationUnit ccd;
@@ -47,7 +48,8 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
   @Override
   public void completeIncarnations() throws CompletionException {
 
-    // First step:
+    importImportStatementsfromRCD();
+
     identifyAndAddMissingTypeIncarnations();
 
     // inheritance must be completed before adding missing member incarnations
@@ -110,8 +112,7 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
 
     for (ASTCDEnumConstant rEnum : rEnumSet) {
       if (enumInCCD.getCDEnumConstantList().stream()
-          .noneMatch(
-              cEnum -> cEnum.getSymbol().getFullName().equals(rEnum.getSymbol().getFullName()))) {
+          .noneMatch(cEnumMember -> cEnumMember.getName().equals(rEnum.getName()))) {
         buildEnumIncarnation(rEnum, enumInCCD);
       }
     }
@@ -120,7 +121,6 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
   public void identifyAndAddMissingAttributeIncarnations(
       ASTCDType typeInCCD, ASTCDType referenceType) {
     CompAttributeChecker compAttributeChecker = initAttributeChecker(typeInCCD, referenceType);
-    // vllt attribut typen inkarnation behandeln beim kopieren
     // Set of all the reference type attributes that have no match with the attributes of the
     // concrete type
     Set<ASTCDAttribute> rAttributeSet =
@@ -238,7 +238,6 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
 
   private void buildEnumIncarnation(ASTCDEnumConstant rEnumMember, ASTCDEnum ccdEnum) {
     ASTCDEnumConstant clone = rEnumMember.deepClone();
-    // clone.setCDInterfaceUsageAbsent();
     ccdEnum.getCDEnumConstantList().add(clone);
   }
 
@@ -251,5 +250,25 @@ public class DefaultTypeIncCompleter implements IncarnationCompleter<ASTCDType> 
   private void buildAttributeIncarnation(ASTCDAttribute rAttribute, ASTCDType ccdType) {
     ASTCDAttribute clone = rAttribute.deepClone();
     ccdType.addCDMember(clone);
+  }
+
+  private void importImportStatementsfromRCD() {
+    for (ASTMCImportStatement importStatement : rcd.getMCImportStatementList()) {
+      boolean alreadyExists = false;
+      for (ASTMCImportStatement existingImport : ccd.getMCImportStatementList()) {
+        if (existingImport.getQName().equals(importStatement.getQName())
+            && existingImport.isStar() == importStatement.isStar()) {
+          alreadyExists = true;
+          break;
+        }
+      }
+      if (!alreadyExists) {
+        ccd.getMCImportStatementList().add(importStatement);
+      }
+    }
+  }
+
+  public CompTypeIncStrategy getTypeStrategy() {
+    return this.compTypeIncStrategy;
   }
 }

@@ -1,0 +1,12 @@
+classdiagram ConcHelper {
+
+  class A {
+  }
+  class B {
+  }
+  <<ref="B">> class C {
+  }
+  <<ref="B">> class D {
+  }
+
+}

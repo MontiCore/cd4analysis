@@ -1,0 +1,7 @@
+classdiagram RefHelper {
+  class A {
+  }
+  class B {
+  }
+  association  A (rolesNameLeft) <-> (roleNameRight) B;
+}
