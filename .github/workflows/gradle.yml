@@ -23,7 +23,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout project sources
         uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
   deploy:
     permissions:
       packages: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build
     if: github.ref == 'refs/heads/dev'
     steps:
@@ -53,7 +53,7 @@ jobs:
   # Trigger GitHub downstream projects (without reporting the pipeline result)
   trigger-github-downstream:
     needs: [ deploy ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         project: [ "MontiCore/statecharts" ]
