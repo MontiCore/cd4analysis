@@ -56,7 +56,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        project: [ "MontiCore/statecharts" ]
+        project: [ "MontiCore/statecharts", "MontiCore/ocl" ]
     steps:
       - name: Trigger ${{ matrix.project }}
         uses: peter-evans/repository-dispatch@v3
