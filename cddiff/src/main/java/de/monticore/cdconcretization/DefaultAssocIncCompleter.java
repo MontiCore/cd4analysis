@@ -4,7 +4,8 @@ import static de.monticore.cdconformance.CDConfParameter.*;
 
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -17,7 +18,9 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.tf.odrulegeneration._ast.ASTAssociation;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssociation> {

@@ -15,7 +15,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import java.util.*;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DefaultTypeIncCompleter implements IIncarnationCompleter<ASTCDType> {

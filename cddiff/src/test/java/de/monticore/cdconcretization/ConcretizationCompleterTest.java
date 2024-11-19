@@ -6,16 +6,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.CDConformanceChecker;
-import de.se_rwth.commons.logging.LogStub;
+import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-// todo: tests aufteilen
 
 public class ConcretizationCompleterTest {
   public static final String dir = "src/test/resources/de/monticore/cdconcretization/";
@@ -26,7 +27,7 @@ public class ConcretizationCompleterTest {
 
   @BeforeEach
   public void setup() {
-    LogStub.init();
+    Log.init();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
@@ -55,24 +56,11 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
-  @Disabled
-  public void testCoconcretizationMerge() throws CompletionException {
-    parseModels("ICCD.cd", "RCD.cd");
-
-    ConcretizationCompleter merger = new ConcretizationCompleter();
-    merger.complete(refCD, conCD);
-    conCD.getCDDefinition().setName("CCCD");
-    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-    assertTrue(conCD.deepEquals(refCD));
-  }
-
-  @Test
   public void testEvaluation() throws CompletionException {
     parseModels("ConcEvaluation.cd", "RefEvaluation.cd");
 
-    ConcretizationCompleter merger = new ConcretizationCompleter();
-    merger.complete(refCD, conCD);
-    // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+    ConcretizationCompleter completer = new ConcretizationCompleter();
+    completer.complete(refCD, conCD);
 
     assertTrue(
         new CDConformanceChecker(
@@ -152,10 +140,26 @@ public class ConcretizationCompleterTest {
         "multipleIncarnation/ConcMultipleIncarnation.cd",
         "multipleIncarnation/RefMultipleIncarnation.cd");
     DefaultTypeIncCompleter incarnationCompleter = new DefaultTypeIncCompleter(conCD, refCD, "ref");
-
-    conCD.getCDDefinition().setName("ConcMultipleIncarnation");
     incarnationCompleter.completeIncarnations();
     // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+    assertTrue(
+        new CDConformanceChecker(
+                Set.of(
+                    STEREOTYPE_MAPPING,
+                    NAME_MAPPING,
+                    SRC_TARGET_ASSOC_MAPPING,
+                    INHERITANCE,
+                    ALLOW_CARD_RESTRICTION))
+            .checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
+  public void testMIBothSides() throws CompletionException {
+    parseModels("multipleIncarnation/ConcMIBothSides.cd", "multipleIncarnation/RefMIBothSides.cd");
+
+    ConcretizationCompleter completer = new ConcretizationCompleter();
+    completer.complete(refCD, conCD);
 
     assertTrue(
         new CDConformanceChecker(
@@ -372,7 +376,7 @@ public class ConcretizationCompleterTest {
 
   // ConcretizationHelper tests
   @Test
-  public void testCDHelper() throws CompletionException {
+  public void testCDHelperMappings() throws CompletionException {
     parseModels("helper/ConcHelper.cd", "helper/RefHelper.cd");
 
     DefaultTypeIncCompleter defaultTypeIncCompleter =
@@ -382,7 +386,8 @@ public class ConcretizationCompleterTest {
 
     defaultTypeIncCompleter.completeIncarnations();
     defaultAssocIncCompleter.completeIncarnations();
-    // System.out.println(CD4CodeMill.prettyPrint(conCD,false));
+
+    System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
     ConcretizationHelper helper =
         new ConcretizationHelper(
@@ -392,9 +397,62 @@ public class ConcretizationCompleterTest {
             defaultAssocIncCompleter.getCompAssocIncStrategy());
 
     helper.mapReferenceToConcreteRoles();
-    // System.out.println("typemapping: " + helper.typeMapping);
-    // System.out.println("roleMapping: " + helper.roleMapping);
-    // System.out.println("roleToTypeMapping: " + helper.roleToTypeMapping);
 
+    Map<CDTypeSymbol, Set<CDTypeSymbol>> actualMap = helper.typeMapping;
+
+    Map<String, Set<String>> expectedMap = new HashMap<>();
+    expectedMap.put("B", new HashSet<>(Arrays.asList("B", "C", "D")));
+    expectedMap.put("A", new HashSet<>(Collections.singleton("A")));
+
+    Map<String, Set<String>> actualMapTemp = new HashMap<>();
+    for (Map.Entry<CDTypeSymbol, Set<CDTypeSymbol>> entry : actualMap.entrySet()) {
+      String keyName = entry.getKey().getName();
+      Set<String> valueNames =
+          entry.getValue().stream().map(CDTypeSymbol::getName).collect(Collectors.toSet());
+      actualMapTemp.put(keyName, valueNames);
+    }
+    assertEquals(actualMapTemp, expectedMap);
+
+    Map<CDRoleSymbol, Set<CDRoleSymbol>> actualMap2 = helper.roleMapping;
+
+    Map<String, Set<String>> expectedMap2 = new HashMap<>();
+    expectedMap2.put(
+        "roleNameRight",
+        new HashSet<>(Arrays.asList("roleNameRight_C", "roleNameRight_D", "roleNameRight_B")));
+    expectedMap2.put(
+        "roleNameLeft",
+        new HashSet<>(Arrays.asList("roleNameLeft_A", "roleNameLeft_A", "roleNameLeft_A")));
+
+    Map<String, Set<String>> actualMapTemp2 = new HashMap<>();
+    for (Map.Entry<CDRoleSymbol, Set<CDRoleSymbol>> entry : actualMap2.entrySet()) {
+      String keyName = entry.getKey().getName();
+      Set<String> valueNames =
+          entry.getValue().stream().map(CDRoleSymbol::getName).collect(Collectors.toSet());
+      actualMapTemp2.put(keyName, valueNames);
+    }
+    assertEquals(actualMapTemp2, expectedMap2);
+    // todo: there is a bug somewhere in the mapping of roles to their respective other type
+    /*
+
+    Map<CDRoleSymbol, Set<CDTypeSymbol>> actualMap3 = helper.roleToTypeMapping;
+
+    Map<String, Set<String>> expectedMap3 = new HashMap<>();
+    expectedMap3.put("roleNameRight_D", new HashSet<>(Collections.singleton("A")));
+    expectedMap3.put("roleNameRight_B", new HashSet<>(Collections.singleton("A")));
+    expectedMap3.put("roleNameRight_C", new HashSet<>(Collections.singleton("A")));
+    expectedMap3.put("roleNameLeft_A", new HashSet<>(Arrays.asList("C", "B", "D")));
+
+
+    Map<String, Set<String>> actualMapTemp3 = new HashMap<>();
+    for (Map.Entry<CDRoleSymbol, Set<CDTypeSymbol>> entry : actualMap3.entrySet()) {
+      String keyName = entry.getKey().getName();
+      Set<String> valueNames = entry.getValue().stream()
+        .map(CDTypeSymbol::getName)
+        .collect(Collectors.toSet());
+      actualMapTemp3.put(keyName, valueNames);
+    }
+    assertEquals(actualMapTemp3, expectedMap3);
+
+     */
   }
 }
