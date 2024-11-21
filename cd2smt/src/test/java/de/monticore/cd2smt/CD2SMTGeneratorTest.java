@@ -20,10 +20,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 
 public class CD2SMTGeneratorTest {
   protected final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/cd2smt";
@@ -97,9 +97,16 @@ public class CD2SMTGeneratorTest {
   public void EnumerationTest() {
     setup("car21.cd");
     ASTCDEnum astcdEnum = (ASTCDEnum) CDHelper.getASTCDType("Color", astCD.getCDDefinition());
-    Assertions.assertNotNull(astcdEnum);
+    Assert.assertNotNull(astcdEnum);
     Expr<? extends Sort> enumConstant =
         cd2SMTGenerator.getEnumConstant(astcdEnum, astcdEnum.getCDEnumConstant(0));
-    Assertions.assertEquals("RED", enumConstant.toString());
+    Assert.assertEquals("RED", enumConstant.toString());
+  }
+
+  @After
+  public void cleanUp() {
+    if (context != null) {
+      context.close();
+    }
   }
 }
