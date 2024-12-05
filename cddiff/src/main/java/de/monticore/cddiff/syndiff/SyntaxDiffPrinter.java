@@ -2,6 +2,8 @@ package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
+import java.util.List;
+
 public class SyntaxDiffPrinter extends DiffPrinter {
   ASTCDCompilationUnit srcCD;
   ASTCDCompilationUnit tgtCD;
@@ -17,7 +19,7 @@ public class SyntaxDiffPrinter extends DiffPrinter {
   public SyntaxDiffPrinter(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
-    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, List.of());
     setStrings(this.syntaxDiff);
   }
 

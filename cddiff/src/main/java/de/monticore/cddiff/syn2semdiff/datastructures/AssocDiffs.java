@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syn2semdiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDType;
+
 import java.util.List;
 
 public class AssocDiffs {

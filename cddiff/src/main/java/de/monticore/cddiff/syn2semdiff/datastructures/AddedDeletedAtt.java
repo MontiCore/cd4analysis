@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syn2semdiff.datastructures;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+
 import java.util.ArrayList;
 import java.util.List;
 

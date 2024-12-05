@@ -5,6 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -134,14 +135,38 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    * @return A map containing matched CD types between source and target CDs.
    */
   public Map<ASTCDType, ASTCDType> computeMatchingMapTypes(
-      List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
+    List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
+    if (matchingStrategies.isEmpty()) {
+      matchingStrategies = Arrays.asList(de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy.values());
+    }
+    for (de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy matchingStrategy : matchingStrategies) {
+      switch (matchingStrategy) {
+        case NAME_TYPE_MATCHING:
+          MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
+          typeMatchers.add(nameTypeMatch);
+          break;
+        case STRUCTURE_TYPE_MATCHING:
+          MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
+          typeMatchers.add(structureTypeMatch);
+          break;
+        case SUPER_TYPE_MATCHER:
+          MatchCDTypesToSuperTypes superTypeMatchNameType =
+              new MatchCDTypesToSuperTypes(new MatchCDTypesByName(tgtCD), srcCD, tgtCD);
+          MatchCDTypesToSuperTypes superTypeMatchStructureType =
+              new MatchCDTypesToSuperTypes(new MatchCDTypeByStructure(tgtCD), srcCD, tgtCD);
+          typeMatchers.add(superTypeMatchNameType);
+          typeMatchers.add(superTypeMatchStructureType);
+          break;
+
+      }
+    }
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
     MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
     MatchCDTypesToSuperTypes superTypeMatchNameType =
         new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
     MatchCDTypesToSuperTypes superTypeMatchStructureType =
         new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
-    List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
     typeMatchers.add(structureTypeMatch);
     typeMatchers.add(superTypeMatchNameType);
@@ -165,7 +190,27 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    * @return A map containing matched CD associations between source and target CDs.
    */
   public Map<ASTCDAssociation, ASTCDAssociation> computeMatchingMapAssocs(
-      List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+      List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
+    List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
+    if (matchingStrategies.isEmpty()) {
+      matchingStrategies = Arrays.asList(de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy.values());
+    }
+    for (de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy matchingStrategy : matchingStrategies) {
+      switch (matchingStrategy) {
+        case NAME_ASSOCIATION_MATCHING:
+          MatchCDAssocsByName nameAssocMatch = new MatchCDAssocsByName(tgtCD);
+          assocMatchers.add(nameAssocMatch);
+          break;
+        case SOURCE_TARGET_MATCHING:
+          MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchNameType =
+              new MatchCDAssocsBySrcNameAndTgtRole(new MatchCDTypesByName(tgtCD), srcCD, tgtCD);
+          MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchStructureType =
+              new MatchCDAssocsBySrcNameAndTgtRole(new MatchCDTypeByStructure(tgtCD), srcCD, tgtCD);
+          assocMatchers.add(associationSrcTgtMatchNameType);
+          assocMatchers.add(associationSrcTgtMatchStructureType);
+          break;
+      }
+    }
     MatchCDAssocsByName nameAssocMatch = new MatchCDAssocsByName(tgtCD);
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
     MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
@@ -177,7 +222,6 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
         new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchStructureType, srcCD, tgtCD);
     MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchNameType =
         new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
-    List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatchNameType);
     assocMatchers.add(associationSrcTgtMatchStructureType);

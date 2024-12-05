@@ -1,10 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
-import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
-
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -23,7 +19,10 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
+
 import java.util.*;
+
+import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
 
 /**
  * This class computes the differences between two ASTCDAssociation nodes. It analyzes the role
@@ -36,9 +35,9 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   private final ASTCDCompilationUnit tgtCD;
   ASTCDType srcLeftType, srcRightType, tgtLeftType, tgtRightType;
   private boolean isReversed;
-  private List<DiffTypes> baseDiff;
+  private final List<DiffTypes> baseDiff;
   List<ASTCDType> srcCDTypes;
-  private Syn2SemDiffHelper helper;
+  private final Syn2SemDiffHelper helper;
   private Pair<ASTCDAssocSide, ASTCDAssocSide> srcSide;
   private Pair<ASTCDAssocSide, ASTCDAssocSide> tgtSide;
 
@@ -83,7 +82,8 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       ASTCDAssociation tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD,
-      Syn2SemDiffHelper helper) {
+      Syn2SemDiffHelper helper,
+      List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
     this.helper = helper;
@@ -112,7 +112,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
             .resolveCDTypeDown(srcElem.getRightQualifiedName().getQName())
             .get()
             .getAstNode());
-    assocDiff(srcElem, tgtElem, typeMatchers);
+    assocDiff(srcElem, tgtElem, matchingStrategies);
     setStrings();
   }
 
@@ -307,7 +307,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
         matchedTypeTgt.ifPresent(
             astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
         // subclassesA.remove(helper.findMatchedTypeTgt(leftNew).get());
-        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
+        List<ASTCDType> subClassesASrc = helper.getTypes(subclassesA, true);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(leftNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
@@ -326,7 +326,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
         matchedTypeTgt.ifPresent(
             astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
         // subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
-        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
+        List<ASTCDType> subClassesASrc = helper.getTypes(subclassesA, true);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(rightNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
@@ -360,7 +360,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
         matchedTypeTgt.ifPresent(
             astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
         // subclassesA.remove(helper.findMatchedTypeTgt(rightNew).get());
-        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
+        List<ASTCDType> subClassesASrc = helper.getTypes(subclassesA, true);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(rightNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
@@ -377,7 +377,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
         Optional<ASTCDType> matchedTypeTgt = helper.findMatchedTypeTgt(leftNew);
         matchedTypeTgt.ifPresent(
             astcdType -> subclassesA.removeIf(subclass -> subclass.equals(astcdType)));
-        List<ASTCDType> subClassesASrc = helper.getSrcTypes(subclassesA);
+        List<ASTCDType> subClassesASrc = helper.getTypes(subclassesA, true);
         List<ASTCDClass> inheritance = helper.getSrcSubMap().get(leftNew);
         subClassesASrc.removeAll(inheritance);
         for (ASTCDType subclass : subClassesASrc) {
@@ -392,19 +392,6 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     return null;
   }
 
-  public boolean changedToSuper(ASTCDClass classNew, ASTCDClass classOld) {
-    return isSuperOf(
-        classNew.getSymbol().getInternalQualifiedName().replace(".", "_"),
-        classOld.getSymbol().getInternalQualifiedName().replace(".", "_"),
-        (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
-  }
-
-  public boolean changedToSub(ASTCDClass classNew, ASTCDClass classOld) {
-    return isSuperOf(
-        classOld.getSymbol().getInternalQualifiedName().replace(".", "_"),
-        classNew.getSymbol().getInternalQualifiedName().replace(".", "_"),
-        (ICD4CodeArtifactScope) helper.getSrcCD().getEnclosingScope());
-  }
 
   /*--------------------------------------------------------------------*/
 
@@ -414,12 +401,12 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
    *
    * @param srcAssoc The source ASTCDAssociation.
    * @param tgtAssoc The target ASTCDAssociation.
-   * @param typeMatchers List of matching strategies for CD types.
+   * @param matchingStrategies The list of matching strategies to be used.
    */
   private void assocDiff(
-      ASTCDAssociation srcAssoc,
-      ASTCDAssociation tgtAssoc,
-      List<MatchingStrategy<ASTCDType>> typeMatchers) {
+    ASTCDAssociation srcAssoc,
+    ASTCDAssociation tgtAssoc,
+    List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
 
     // Association Type
     Optional<ASTCDAssocType> srcAssocType = Optional.of(srcAssoc.getCDAssocType());
@@ -492,12 +479,12 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     tgtRightSymbol.ifPresent(cdTypeSymbol -> this.tgtRightType = cdTypeSymbol.getAstNode());
 
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies);
 
     ASTCDAssocSide targetVirtualLeft = tgtAssoc.getLeft();
     ASTCDAssocSide targetVirtualRight = tgtAssoc.getRight();
 
-    setIsReversed(srcAssoc, tgtAssoc);
+    setIsReversed(srcAssoc, tgtAssoc, matchingStrategies);
 
     if (isReversed) {
       targetVirtualLeft = tgtAssoc.getRight();
@@ -704,9 +691,9 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     tgtLineOfCode = tgtAssoc.get_SourcePositionStart().getLine();
   }
 
-  private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
+  private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc, List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies);
 
     isReversed = false;
 

@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.datastructures.*;
+import de.monticore.cddiff.syn2semdiff.helpers.ODGenHelper;
 import de.monticore.cddiff.syn2semdiff.odgen.ODGenerator;
 import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
 import de.monticore.cddiff.syndiff.CDSyntaxDiff;
@@ -28,6 +29,7 @@ public class Syn2SemDiff {
   private int indexClass = 1;
   private int indexAssoc = 1;
   private final Syn2SemDiffHelper helper;
+  private final ODGenHelper odGenHelper;
   private final CDSyntaxDiff syntaxDiff;
   private int diffLimit = 0;
   private int diffSize = 0;
@@ -45,8 +47,18 @@ public class Syn2SemDiff {
    */
   public Syn2SemDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
-    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, List.of());
     this.helper = syntaxDiff.getHelper();
+    this.odGenHelper = new ODGenHelper(srcCD, helper);
+    helper.findDuplicatedAssocs();
+    syntaxDiff.findOverlappingAssocs();
+  }
+
+  public Syn2SemDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy> matchingStrategies) {
+    ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, matchingStrategies);
+    this.helper = syntaxDiff.getHelper();
+    this.odGenHelper = new ODGenHelper(srcCD, helper);
     helper.findDuplicatedAssocs();
     syntaxDiff.findOverlappingAssocs();
   }
@@ -69,8 +81,9 @@ public class Syn2SemDiff {
       int diffSize,
       boolean analyseOverlapping) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
-    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, List.of());
     this.helper = syntaxDiff.getHelper();
+    this.odGenHelper = new ODGenHelper(srcCD, helper);
     this.diffLimit = diffLimit;
     this.diffSize = diffSize;
     if (analyseOverlapping) {
@@ -708,11 +721,13 @@ public class Syn2SemDiff {
               Math.max(
                   helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
                   helper.getTgtCD().getCDDefinition().getCDClassesList().size()),
-              helper);
+            helper,
+            odGenHelper
+            );
     } else {
-      oDHelper = new ODGenerator(diffSize, helper);
+      oDHelper = new ODGenerator(diffSize, helper, odGenHelper);
     }
-    elements = oDHelper.getObjForOD(astcdClass, pair);
+    elements = oDHelper.getObjForODGeneral(astcdClass, null, pair, 1, 1).a;
     if (elements.isEmpty()) {
       return new ArrayList<>();
     }
@@ -759,12 +774,14 @@ public class Syn2SemDiff {
               Math.max(
                   helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
                   helper.getTgtCD().getCDDefinition().getCDClassesList().size()),
-              helper);
+              helper,
+              odGenHelper
+            );
     } else {
-      oDHelper = new ODGenerator(diffSize, helper);
+      oDHelper = new ODGenerator(diffSize, helper, odGenHelper);
     }
-    Pair<Set<ASTODElement>, ASTODElement> pair =
-        oDHelper.getObjForOD(association, integers.get(0), integers.get(1));
+    Pair<Set<ASTODElement>, Optional<ASTODElement>> pair =
+        oDHelper.getObjForODGeneral(null, association, null, integers.get(0), integers.get(1));
     if (pair.a.isEmpty()) {
       return new ArrayList<>();
     }
@@ -774,16 +791,15 @@ public class Syn2SemDiff {
     ASTStereoValueBuilder valueBuilder = new ASTStereoValueBuilder();
     valueBuilder.setName("diff");
     valueBuilder.setContent("diffAssoc");
-    if (pair.b instanceof ASTODLink) {
-      ((ASTODLink) pair.b)
+    if (pair.b.isPresent() && pair.b.get() instanceof ASTODLink) {
+      ((ASTODLink) pair.b.get())
           .setStereotype(OD4ReportMill.stereotypeBuilder().addValues(valueBuilder.build()).build());
-    } else {
-      ((ASTODObject) pair.b).getModifier().getStereotype().addValues(valueBuilder.build());
-    }
+    } else
+        pair.b.ifPresent(astodElement -> ((ASTODObject) astodElement).getModifier().getStereotype().addValues(valueBuilder.build()));
 
     CommentBuilder commentBuilder = new CommentBuilder();
     commentBuilder.setText(comment);
-    pair.b.set_PreCommentList(List.of(commentBuilder.build()));
+    pair.b.get().set_PreCommentList(List.of(commentBuilder.build()));
     return new ArrayList<>(elements);
   }
 
@@ -796,11 +812,13 @@ public class Syn2SemDiff {
               Math.max(
                   helper.getSrcCD().getCDDefinition().getCDClassesList().size(),
                   helper.getTgtCD().getCDDefinition().getCDClassesList().size()),
-              helper);
+              helper,
+              odGenHelper
+            );
     } else {
-      oDHelper = new ODGenerator(diffSize, helper);
+      oDHelper = new ODGenerator(diffSize, helper, odGenHelper);
     }
-    elements = oDHelper.getObjForODSpec(astcdClass);
+    elements = oDHelper.getObjForODGeneral(astcdClass, null, null, 1, 1).a;
     if (elements.isEmpty()) {
       return new ArrayList<>();
     }

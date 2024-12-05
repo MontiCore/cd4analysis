@@ -1,6 +1,8 @@
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
@@ -42,7 +44,7 @@ public interface ICDTypeDiff {
 
   List<DiffTypes> getBaseDiff();
 
-  public void setBaseDiff(List<DiffTypes> baseDiff);
+  void setBaseDiff(List<DiffTypes> baseDiff);
 
   /**
    * Compute all changed attributes in all classes.

@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.ast.ASTNode;
+
 import java.util.Optional;
 
 public class CDNodeDiff<SrcType extends ASTNode, TgtType extends ASTNode> {
