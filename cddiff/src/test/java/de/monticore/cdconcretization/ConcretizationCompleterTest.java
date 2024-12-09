@@ -131,7 +131,15 @@ public class ConcretizationCompleterTest {
     incarnationCompleter.completeIncarnations();
     conCD.getCDDefinition().setName("RefEnumMemberMissing");
     // System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-    assertTrue(conCD.deepEquals(refCD));
+    assertTrue(
+        new CDConformanceChecker(
+                Set.of(
+                    STEREOTYPE_MAPPING,
+                    NAME_MAPPING,
+                    SRC_TARGET_ASSOC_MAPPING,
+                    INHERITANCE,
+                    ALLOW_CARD_RESTRICTION))
+            .checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   @Test

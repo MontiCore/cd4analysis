@@ -1,4 +1,4 @@
 classdiagram RefEnumMemberMissing {
-  enum Colour{RED;
+  enum Colour{RED,GREEN,BLUE;
   }
 }

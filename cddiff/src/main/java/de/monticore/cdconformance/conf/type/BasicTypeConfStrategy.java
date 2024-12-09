@@ -11,10 +11,10 @@ import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
@@ -141,19 +141,29 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     return false;
   }
 
+  /** We check that all reference enum constants are preserved in relative order. */
   public boolean checkConformance(ASTCDEnum concrete, ASTCDEnum ref) {
-    if (concrete.getCDEnumConstantList().stream()
-        .allMatch(
-            conConst -> ref.getCDEnumConstantList().stream().anyMatch(conConst::deepEquals))) {
-      return true;
-    } else {
-      System.out.println(
-          concrete.getSymbol().getInternalQualifiedName()
-              + " is not a valid incarnation of "
-              + ref.getSymbol().getInternalQualifiedName());
-      System.out.println("Enumeration constants are missing!");
-      return false;
+
+    List<ASTCDEnumConstant> cConstants = new ArrayList<>(concrete.getCDEnumConstantList());
+
+    for (ASTCDEnumConstant rConstant : ref.getCDEnumConstantList()) {
+      Optional<ASTCDEnumConstant> cConstant =
+          cConstants.stream().filter(r -> r.getName().equals(rConstant.getName())).findFirst();
+      if (cConstant.isEmpty()) {
+        System.out.println(
+            concrete.getSymbol().getInternalQualifiedName()
+                + " is not a valid incarnation of "
+                + ref.getSymbol().getInternalQualifiedName());
+        System.out.println(
+            "Enumeration constant: "
+                + rConstant.getName()
+                + "is missing or at the wrong position!");
+        return false;
+      }
+      cConstants = cConstants.subList(cConstants.indexOf(cConstant.get()), cConstants.size());
     }
+
+    return true;
   }
 
   /** check if all attributes of the reference type are incarnated */

@@ -15,6 +15,9 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -93,29 +96,35 @@ public class DefaultTypeIncCompleter implements IIncarnationCompleter<ASTCDType>
     }
   }
 
-  public void identifyAndAddMissingEnumIncarnations(ASTCDEnum enumInCCD, ASTCDEnum referenceEnum) {
+  public void identifyAndAddMissingEnumIncarnations(ASTCDEnum enumInCCD, ASTCDEnum referenceEnum)
+      throws CompletionException {
 
-    // Set of all the reference type enum-members that have no match with the enum-members of the
-    // concrete enum
-    Set<ASTCDEnumConstant> rEnumSet =
-        referenceEnum.getCDEnumConstantList().stream()
-            .filter(
-                rEnumMember ->
-                    enumInCCD.getCDEnumConstantList().stream()
-                        .noneMatch(
-                            cEnumMember ->
-                                cEnumMember
-                                    .getSymbol()
-                                    .getFullName()
-                                    .equals(rEnumMember.getSymbol().getFullName())))
-            .collect(Collectors.toSet());
+    List<ASTCDEnumConstant> processed = new ArrayList<>();
+    List<ASTCDEnumConstant> toProcess = new ArrayList<>(enumInCCD.getCDEnumConstantList());
 
-    for (ASTCDEnumConstant rEnum : rEnumSet) {
-      if (enumInCCD.getCDEnumConstantList().stream()
-          .noneMatch(cEnumMember -> cEnumMember.getName().equals(rEnum.getName()))) {
-        buildEnumIncarnation(rEnum, enumInCCD);
+    for (ASTCDEnumConstant rConstant : referenceEnum.getCDEnumConstantList()) {
+      Optional<ASTCDEnumConstant> cConstant =
+          toProcess.stream().filter(r -> r.getName().equals(rConstant.getName())).findFirst();
+      if (cConstant.isPresent()) {
+        processed.addAll(toProcess.subList(0, toProcess.indexOf(cConstant.get()) + 1));
+        toProcess =
+            new ArrayList<>(
+                toProcess.subList(toProcess.indexOf(cConstant.get()) + 1, toProcess.size()));
+      } else {
+        if (enumInCCD.getCDEnumConstantList().stream()
+            .anyMatch(c -> c.getName().equals(rConstant.getName()))) {
+          throw new CompletionException(
+              "Order of enum constant incarnations in "
+                  + enumInCCD.getName()
+                  + " is not conform! Completion will be aborted");
+        }
+        processed.add(rConstant.deepClone());
       }
     }
+
+    processed.addAll(toProcess);
+
+    enumInCCD.setCDEnumConstantList(processed);
   }
 
   public void identifyAndAddMissingAttributeIncarnations(
