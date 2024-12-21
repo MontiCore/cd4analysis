@@ -289,6 +289,10 @@ public class ODGenerator {
   /**
    * Create the elements for an object diagram starting from a given class/association.
    * If the difference is based on an added constant, the pair is used.
+   * <p>
+   * If cardinalityLeft and cardinalityRight are both set to -1, then the difference
+   * is about change from singleton to non-singleton in the given class. This shouldn't
+   * lead to problems as there is no other case, where this int is used.
    *
    * @param astcdType class to start from.
    * @param attrPair pair of attribute and enum constant.
@@ -326,6 +330,10 @@ public class ODGenerator {
       // ASTCDType handling for concrete classes
       classToUse = (ASTCDClass) astcdType;
       packages = createChainsForNewClass(classToUse, new HashSet<>(), mapSrc, mapTgt, attrPair);
+      if (cardinalityLeft == -1 && cardinalityRight == -1) {
+        // Add one more instance of the class for the change from singleton to non-singleton
+        packages.addAll(createChainsForNewClass(classToUse, new HashSet<>(), mapSrc, mapTgt, null));
+      }
     }
 
     // Check if packages were created correctly
