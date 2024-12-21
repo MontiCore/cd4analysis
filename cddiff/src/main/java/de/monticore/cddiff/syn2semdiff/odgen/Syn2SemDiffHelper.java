@@ -2749,19 +2749,60 @@ public class Syn2SemDiffHelper {
    * Get two non-abstract subclasses for a given pair.
    *
    * @param pair pair of classes.
+   * @param pairTgt pair of classes from tgtCD
    * @return pair of non-abstract subclasses.
    */
-  public Pair<ASTCDType, ASTCDType> getClassesForAssoc(Pair<ASTCDType, ASTCDType> pair) {
+  public Pair<ASTCDType, ASTCDType> getClassesForAssoc(Pair<ASTCDType, ASTCDType> pair, Pair<ASTCDType, ASTCDType> pairTgt, boolean isReversed) {
     Optional<ASTCDClass> left = Optional.empty();
     Optional<ASTCDClass> right = Optional.empty();
+    ASTCDClass possibleClassToUseForLeftSideBasedOnLeftTgt = getCDClass(srcCD, pairTgt.a.getSymbol().getInternalQualifiedName());
+    ASTCDClass possibleClassToUseForLeftSideBasedOnRightTgt = getCDClass(srcCD, pairTgt.b.getSymbol().getInternalQualifiedName());
     if (pair.a.getModifier().isAbstract() || pair.a instanceof ASTCDInterface) {
-      left = minSubClass(pair.a, true);
+      // If the class is abstract, check if the old class that was used for the association in tgtCD
+      // exists in srcCD and can be used
+      if (isReversed) {
+        if (possibleClassToUseForLeftSideBasedOnRightTgt != null &&
+          srcSubMap.get(pair.a).contains(possibleClassToUseForLeftSideBasedOnRightTgt) &&
+          !possibleClassToUseForLeftSideBasedOnRightTgt.getModifier().isAbstract()) {
+          left = Optional.of(possibleClassToUseForLeftSideBasedOnRightTgt);
+        }
+      } else if (possibleClassToUseForLeftSideBasedOnLeftTgt != null &&
+        srcSubMap.get(pair.a).contains(possibleClassToUseForLeftSideBasedOnLeftTgt) &&
+        !possibleClassToUseForLeftSideBasedOnLeftTgt.getModifier().isAbstract()) {
+        left = Optional.of(possibleClassToUseForLeftSideBasedOnLeftTgt);
+      } else {
+        left = minSubClass(pair.a, true);
+      }
     }
+    ASTCDClass possibleClassToUseForRightSideBasedOnLeftTgt = getCDClass(srcCD, pairTgt.a.getSymbol().getInternalQualifiedName());
+    ASTCDClass possibleClassToUseForRightSideBasedOnRightTgt = getCDClass(srcCD, pairTgt.b.getSymbol().getInternalQualifiedName());
     if (pair.b.getModifier().isAbstract() || pair.b instanceof ASTCDInterface) {
-      right = minSubClass(pair.b, true);
+      // Same idea
+      if (isReversed) {
+        if(possibleClassToUseForRightSideBasedOnLeftTgt != null &&
+          srcSubMap.get(pair.b).contains(possibleClassToUseForRightSideBasedOnLeftTgt) &&
+          !possibleClassToUseForRightSideBasedOnLeftTgt.getModifier().isAbstract()) {
+        right = Optional.of(possibleClassToUseForRightSideBasedOnLeftTgt);
+        }
+      } else if (possibleClassToUseForRightSideBasedOnRightTgt != null &&
+        srcSubMap.get(pair.b).contains(possibleClassToUseForRightSideBasedOnRightTgt) &&
+        !possibleClassToUseForRightSideBasedOnRightTgt.getModifier().isAbstract()) {
+        right = Optional.of(possibleClassToUseForRightSideBasedOnRightTgt);
+      } else {
+        right = minSubClass(pair.b, true);
+      }
     }
     if (left.isPresent() && right.isPresent()) {
       return new Pair<>(left.get(), right.get());
+    }
+    return null;
+  }
+
+  public static ASTCDClass getCDClass(ASTCDCompilationUnit compilationUnit, String className) {
+    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      if (astcdClass.getSymbol().getInternalQualifiedName().equals(className)) {
+        return astcdClass;
+      }
     }
     return null;
   }

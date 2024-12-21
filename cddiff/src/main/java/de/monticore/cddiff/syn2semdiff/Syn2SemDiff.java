@@ -47,7 +47,7 @@ public class Syn2SemDiff {
    */
   public Syn2SemDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
-    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, List.of());
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.helper = syntaxDiff.getHelper();
     this.odGenHelper = new ODGenHelper(srcCD, helper);
     helper.findDuplicatedAssocs();
@@ -81,7 +81,7 @@ public class Syn2SemDiff {
       int diffSize,
       boolean analyseOverlapping) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
-    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, List.of());
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
     this.helper = syntaxDiff.getHelper();
     this.odGenHelper = new ODGenHelper(srcCD, helper);
     this.diffLimit = diffLimit;

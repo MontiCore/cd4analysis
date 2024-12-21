@@ -53,6 +53,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public Syn2SemDiffHelper helper;
   private final List<MatchingStrategy> matchingStrategies;
 
+  public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    this(srcCD, tgtCD, List.of()); // Use all matching strategies
+  }
+
   public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy> matchingStrategies) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
@@ -907,8 +911,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
       Pair<ASTCDType, ASTCDType> pairDef = getConnectedTypes(assocDiff.getSrcElem(), srcCD);
       Pair<ASTCDType, ASTCDType> pair;
-      if (pairDef.a.getModifier().isAbstract() || pairDef.b.getModifier().isAbstract()) {
-        pair = helper.getClassesForAssoc(pairDef);
+      if (pairDef.a.getModifier().isAbstract() || pairDef.b.getModifier().isAbstract() || pairDef.a instanceof ASTCDInterface || pairDef.b instanceof ASTCDInterface) {
+        pair = helper.getClassesForAssoc(pairDef, getConnectedTypes(assocDiff.getTgtElem(), tgtCD), assocDiff.isReversed());
       } else {
         pair = pairDef;
       }
