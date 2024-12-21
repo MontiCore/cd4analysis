@@ -119,7 +119,7 @@ public class Syn2SemDiff {
                 + " and their subclasses.";
         Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(association.a, Arrays.asList(1, 1)),
+                oDTitleForAssoc(association.a),
                 generateElements(association.a, Arrays.asList(1, 1), comment));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
@@ -411,7 +411,7 @@ public class Syn2SemDiff {
           }
           Optional<ASTODArtifact> astodArtifact =
               generateArtifact(
-                  oDTitleForAssoc(assocStruct.getAssociation(), Arrays.asList(1, 1)),
+                  oDTitleForAssoc(assocStruct.getAssociation()),
                   generateElements(
                       assocStruct.getAssociation(), Arrays.asList(1, 1), comment.toString()));
           if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
@@ -443,7 +443,7 @@ public class Syn2SemDiff {
                   + ".";
           Optional<ASTODArtifact> astodArtifact =
               generateArtifact(
-                  oDTitleForAssoc(assocStruct.getAssociation(), Arrays.asList(1, 1)),
+                  oDTitleForAssoc(assocStruct.getAssociation()),
                   generateElements(assocStruct.getAssociation(), Arrays.asList(1, 1), comment));
           if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
             artifactList.add(astodArtifact.get());
@@ -574,7 +574,7 @@ public class Syn2SemDiff {
         list1.set(0, 1);
         Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruct.getAssociation(), list1),
+                oDTitleForAssoc(assocDiffStruct.getAssociation()),
                 generateElements(assocDiffStruct.getAssociation(), list1, comment.toString()));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
@@ -588,7 +588,7 @@ public class Syn2SemDiff {
         list2.set(1, 1);
         Optional<ASTODArtifact> astodArtifact2 =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruct.getAssociation(), list2),
+                oDTitleForAssoc(assocDiffStruct.getAssociation()),
                 generateElements(assocDiffStruct.getAssociation(), list2, comment.toString()));
         if (astodArtifact2.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact2.get());
@@ -601,7 +601,7 @@ public class Syn2SemDiff {
       } else {
         Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruct.getAssociation(), list),
+                oDTitleForAssoc(assocDiffStruct.getAssociation()),
                 generateElements(assocDiffStruct.getAssociation(), list, comment.toString()));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
@@ -894,7 +894,7 @@ public class Syn2SemDiff {
    * @param association association that causes the diff.
    * @return title for OD.
    */
-  public String oDTitleForAssoc(ASTCDAssociation association, List<Integer> sides) {
+  public String oDTitleForAssoc(ASTCDAssociation association) {
     String srcName;
     String tgtName;
     Pair<ASTCDType, ASTCDType> pair =
@@ -911,7 +911,7 @@ public class Syn2SemDiff {
         tgtName = pair.b.getSymbol().getInternalQualifiedName().replace(".", "_");
       }
     }
-    String stringBuilder = "AssocDiff_" + indexAssoc + "_" + srcName + "_" + tgtName + "_" + sides.toString();
+    String stringBuilder = "AssocDiff_" + indexAssoc + "_" + srcName + "_" + tgtName;
     indexAssoc++;
     return stringBuilder;
   }
