@@ -142,10 +142,6 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     for (de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy matchingStrategy : matchingStrategies) {
       switch (matchingStrategy) {
-        case NAME_TYPE_MATCHING:
-          MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-          typeMatchers.add(nameTypeMatch);
-          break;
         case STRUCTURE_TYPE_MATCHING:
           MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
           typeMatchers.add(structureTypeMatch);
@@ -162,15 +158,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
       }
     }
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType =
-        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchStructureType =
-        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
     typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatchNameType);
-    typeMatchers.add(superTypeMatchStructureType);
 
     CD2CDCombinedMatching<ASTCDType> combinedMatching =
         new CombinedCDTypeMatching(listToMatch, srcCD, tgtCD, typeMatchers);
@@ -211,20 +199,6 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
           break;
       }
     }
-    MatchCDAssocsByName nameAssocMatch = new MatchCDAssocsByName(tgtCD);
-    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchNameType =
-        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    MatchCDTypesToSuperTypes superTypeMatchStructureType =
-        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
-    MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchStructureType =
-        new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchStructureType, srcCD, tgtCD);
-    MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchNameType =
-        new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
-    assocMatchers.add(nameAssocMatch);
-    assocMatchers.add(associationSrcTgtMatchNameType);
-    assocMatchers.add(associationSrcTgtMatchStructureType);
 
     CD2CDCombinedMatching<ASTCDAssociation> combinedMatching =
         new CombinedCDAssocMatching(listToMatch, srcCD, tgtCD, assocMatchers);

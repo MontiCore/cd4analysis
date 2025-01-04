@@ -2556,7 +2556,8 @@ public class Syn2SemDiffHelper {
         if (sameAssociationTypeSrcTgt(assocStruct, assocStructTgt)) { // the given pair is a match
           foundMatch = true;
           break;
-        } else if (matcher.isMatched(
+        } else if ((matchingStrategies.isEmpty() || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING))
+        && matcher.isMatched(
             assocStruct.getAssociation(),
             assocStructTgt.getAssociation())) { // the given pair is a CDAssocDiff
           foundMatch = true;
@@ -2613,7 +2614,6 @@ public class Syn2SemDiffHelper {
                     && obj.getTgtElem() == tgtAssocStruct.getUnmodifiedAssoc());
   }
 
-  // TODO: Check if can be merged with srcAssocsExist
   /**
    * Search for an association in tgtCD that can't be matched with an association in srcCD.
    *
@@ -2631,7 +2631,8 @@ public class Syn2SemDiffHelper {
           foundMatch = true;
 
           break;
-        } else if (matcher.isMatched(
+        } else if ((matchingStrategies.isEmpty() || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING))
+          && matcher.isMatched(
             assocStructSrc.getAssociation(), assocStruct.getAssociation())) {
           foundMatch = true;
           if (!containedInList(assocStructSrc, assocStruct)) {
@@ -2664,72 +2665,6 @@ public class Syn2SemDiffHelper {
         }
         if (classToUse != null) {
           list.add(new Pair<>(classToUse, assocStruct));
-        }
-      }
-    }
-    return list;
-  }
-
-  public List<Pair<ASTCDClass, AssocStruct>> assocsExist(
-    List<AssocStruct> assocStructs, ASTCDType astcdType, boolean isSource) {
-    ArrayListMultimap<ASTCDType, AssocStruct> mapToUse = isSource ? srcMap : tgtMap;
-    ArrayListMultimap<ASTCDType, ASTCDClass> subMap = isSource ? srcSubMap : tgtSubMap;
-    List<Pair<ASTCDClass, AssocStruct>> list = new ArrayList<>();
-    for (AssocStruct assocStruct : assocStructs) {
-      boolean foundMatch = false;
-      for (AssocStruct assocStructTgt : mapToUse.get(astcdType)) {
-        if (sameAssociationTypeSrcTgt(assocStruct, assocStructTgt)) { // the given pair is a match
-          foundMatch = true;
-          break;
-        } else if (matcher.isMatched(// TODO: here must be one more change
-          assocStruct.getAssociation(),
-          assocStructTgt.getAssociation())) { // the given pair is a CDAssocDiff
-          foundMatch = true;
-          if (!containedInList(
-            assocStruct, assocStructTgt)) { // the CDAssocDiff is not already in the list
-            diffs.add(
-              new CDAssocDiff(
-                assocStruct.getUnmodifiedAssoc(),
-                assocStructTgt.getUnmodifiedAssoc(),
-                srcCD,
-                tgtCD,
-                this,
-                matchingStrategies));
-          }
-          break;
-        }
-      }
-      if (!foundMatch) { // if a match for the assocStruct from src is not found in tgt - create a
-        // diff-witness
-        ASTCDClass classToUse = null;
-        ASTCDType type = isSource? astcdType : findMatchedTypeSrc(astcdType).get();
-        if (type instanceof ASTCDClass && !type.getModifier().isAbstract()) {
-          classToUse = (ASTCDClass) type;
-        } else {
-          for (ASTCDClass subClass :
-            subMap.get(
-              findMatchedTypeSrc(astcdType)
-                .get())) { // search for a class that doesn't have the association in tgtCD.
-            Optional<ASTCDType> subTgt = isSource? findMatchedTypeTgt(subClass) : findMatchedTypeSrc(subClass);
-            if (subTgt.isPresent()
-              && ((isSource && !classHasAssociationSrcTgt(assocStruct, subTgt.get()))
-            || (!isSource && !classHasAssociationTgtSrc(assocStruct, subTgt.get()))) ) {
-              classToUse = subClass;
-              break;
-            }
-          }
-        }
-        if (classToUse != null) {
-          if (isSource) {
-            for (AssocStruct subAssoc : mapToUse.get(classToUse)) {
-              if (sameAssociationType(subAssoc, assocStruct)) {
-                list.add(new Pair<>(classToUse, subAssoc));
-                break;
-              }
-            }
-          } else {
-            list.add(new Pair<>(classToUse, assocStruct));
-          }
         }
       }
     }
@@ -3290,7 +3225,6 @@ public class Syn2SemDiffHelper {
     return false;
   }
 
-  // TODO: Merge those two
   /**
    * Delete associations from subclasses in tgtCD.
    *

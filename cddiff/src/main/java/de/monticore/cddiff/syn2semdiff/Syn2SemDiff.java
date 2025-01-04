@@ -34,6 +34,7 @@ public class Syn2SemDiff {
   private int diffLimit = 0;
   private int diffSize = 0;
   private boolean analyseOverlapping = true;
+  private List<MatchingStrategy> matchingStrategies = new ArrayList<>();
 
   public Syn2SemDiffHelper getHelper() {
     return helper;
@@ -54,9 +55,19 @@ public class Syn2SemDiff {
     syntaxDiff.findOverlappingAssocs();
   }
 
+  /**
+   * Create a DiffHelper to compare the two diagrams without limitations on the generated objects.
+   *
+   * @param srcCD source diagram
+   * @param tgtCD target diagram
+   * @param matchingStrategies matching strategies to use for comparison
+   *
+   * If the list for strategies is empty, then all strategies are used.
+   */
   public Syn2SemDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy> matchingStrategies) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, matchingStrategies);
+    this.matchingStrategies = matchingStrategies;
     this.helper = syntaxDiff.getHelper();
     this.odGenHelper = new ODGenHelper(srcCD, helper);
     helper.findDuplicatedAssocs();
@@ -72,7 +83,8 @@ public class Syn2SemDiff {
    * @param diffLimit maximum number of generated diagrams
    * @param diffSize maximum number of objects in the generated diagrams
    * @param analyseOverlapping if true, overlapping associations are analysed (for Open-World diff)
-   *     If diffLimit or diffSize is 0, then there is no limit.
+   *
+   * If diffLimit or diffSize is 0, then there is no limit.
    */
   public Syn2SemDiff(
       ASTCDCompilationUnit srcCD,
@@ -95,6 +107,43 @@ public class Syn2SemDiff {
   }
 
   /**
+   * Create a DiffHelper to compare the two diagrams with a limit on the number of generated
+   * objects.
+   *
+   * @param srcCD source diagram
+   * @param tgtCD target diagram
+   * @param diffLimit maximum number of generated diagrams
+   * @param diffSize maximum number of objects in the generated diagrams
+   * @param analyseOverlapping if true, overlapping associations are analysed (for Open-World diff)
+   * @param matchingStrategies matching strategies to use for comparison
+   * <p>
+   * If diffLimit or diffSize is 0, then there is no limit.
+   * If the list for strategies is empty, then all strategies are used.
+   */
+  public Syn2SemDiff(
+    ASTCDCompilationUnit srcCD,
+    ASTCDCompilationUnit tgtCD,
+    int diffLimit,
+    int diffSize,
+    boolean analyseOverlapping,
+    List<MatchingStrategy> matchingStrategies
+    ) {
+    ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
+    this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, matchingStrategies);
+    this.matchingStrategies = matchingStrategies;
+    this.helper = syntaxDiff.getHelper();
+    this.odGenHelper = new ODGenHelper(srcCD, helper);
+    this.diffLimit = diffLimit;
+    this.diffSize = diffSize;
+    if (analyseOverlapping) {
+      helper.findDuplicatedAssocs();
+      syntaxDiff.findOverlappingAssocs();
+    } else {
+      this.analyseOverlapping = false;
+    }
+  }
+
+  /**
    * Generates a list of ODs for the given diagrams. For each change in the diagrams, the element
    * (class or association) is annotated with <<diff>> and a comment is added. The diffLimit and
    * diffSize are respected.
@@ -104,74 +153,17 @@ public class Syn2SemDiff {
    */
   public List<ASTODArtifact> generateODs(boolean staDiff) {
     List<ASTODArtifact> artifactList = new ArrayList<>();
-    for (Pair<ASTCDAssociation, List<ASTCDType>> association : syntaxDiff.addedAssocList()) {
-      Pair<ASTCDType, ASTCDType> pair =
-          Syn2SemDiffHelper.getConnectedTypes(association.a, helper.getSrcCD());
-      if (!helper.getNotInstClassesSrc().contains(pair.a)
-          && !helper.getNotInstClassesSrc().contains(pair.b)) {
+    if (matchingStrategies.isEmpty() || matchingStrategies.contains(MatchingStrategy.NAME_TYPE_MATCHING)) {
+      for (Pair<ASTCDType, ASTCDType> astcdClass1 : syntaxDiff.addedClassList()) {
         String comment =
-            "// A new associations has been added to the diagram."
-                + System.lineSeparator()
-                + "// This association allows a new relation between the classes "
-                + pair.a.getSymbol().getInternalQualifiedName()
-                + " and "
-                + pair.b.getSymbol().getInternalQualifiedName()
-                + " and their subclasses.";
-        Optional<ASTODArtifact> astodArtifact =
-            generateArtifact(
-                oDTitleForAssoc(association.a),
-                generateElements(association.a, Arrays.asList(1, 1), comment));
-        if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact.get());
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
-          }
-        } else if (astodArtifact.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact.get());
-        }
-      }
-    }
-
-    for (Pair<ASTCDType, ASTCDType> astcdClass1 : syntaxDiff.addedClassList()) {
-      String comment =
           "// A new class "
-              + astcdClass1.a.getSymbol().getInternalQualifiedName()
-              + " has been added and now there is a change in the class "
-              + astcdClass1.b.getSymbol().getInternalQualifiedName()
-              + ".";
-      Optional<ASTODArtifact> astodArtifact =
+            + astcdClass1.a.getSymbol().getInternalQualifiedName()
+            + " has been added and now there is a change in the class "
+            + astcdClass1.b.getSymbol().getInternalQualifiedName()
+            + ".";
+        Optional<ASTODArtifact> astodArtifact =
           generateArtifact(
-              oDTitleForClass(astcdClass1.b), generateElements(astcdClass1.b, comment, null));
-      if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-        artifactList.add(astodArtifact.get());
-        if (artifactList.size() == diffLimit) {
-          return artifactList;
-        }
-      } else if (astodArtifact.isPresent() && diffLimit == 0) {
-        artifactList.add(astodArtifact.get());
-      }
-    }
-
-    for (Pair<ASTCDAssociation, List<ASTCDType>> pair : syntaxDiff.deletedAssocList()) {
-      List<ASTCDType> list = pair.b;
-      for (ASTCDType astcdClass : list) {
-        String comment =
-            "// The association between "
-                + Syn2SemDiffHelper.getConnectedTypes(pair.a, helper.getTgtCD())
-                    .a
-                    .getSymbol()
-                    .getInternalQualifiedName()
-                + " and "
-                + Syn2SemDiffHelper.getConnectedTypes(pair.a, helper.getTgtCD())
-                    .b
-                    .getSymbol()
-                    .getInternalQualifiedName()
-                + "for the class "
-                + astcdClass.getSymbol().getInternalQualifiedName()
-                + " has been removed from the diagram.";
-        Optional<ASTODArtifact> astodArtifact =
-            generateArtifact(
-                oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null));
+            oDTitleForClass(astcdClass1.b), generateElements(astcdClass1.b, comment, null));
         if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
           artifactList.add(astodArtifact.get());
           if (artifactList.size() == diffLimit) {
@@ -181,180 +173,29 @@ public class Syn2SemDiff {
           artifactList.add(astodArtifact.get());
         }
       }
-    }
 
-    for (TypeDiffStruct typeDiffStruct : syntaxDiff.changedTypes()) {
-      if (typeDiffStruct.getAddedDeletedAttributes() != null
+      for (TypeDiffStruct typeDiffStruct : syntaxDiff.changedTypes()) {
+        if (typeDiffStruct.getAddedDeletedAttributes() != null
           && !typeDiffStruct.getAddedDeletedAttributes().isEmpty()) {
-        for (Pair<ASTCDClass, AddedDeletedAtt> attribute :
+          for (Pair<ASTCDClass, AddedDeletedAtt> attribute :
             typeDiffStruct.getAddedDeletedAttributes()) {
-          StringBuilder comment =
+            StringBuilder comment =
               new StringBuilder(
-                  "// Because of the class "
-                      + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                      + " the attribute/s ");
-          for (ASTCDAttribute attribute1 : attribute.b.getAddedAttributes()) {
-            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
-          }
-          comment.append(System.lineSeparator()).append("// is/are added and the attributes");
-          for (ASTCDAttribute attribute1 : attribute.b.getDeletedAttributes()) {
-            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
-          }
-          comment
+                "// Because of the class "
+                  + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+                  + " the attribute/s ");
+            for (ASTCDAttribute attribute1 : attribute.b.getAddedAttributes()) {
+              comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
+            }
+            comment.append(System.lineSeparator()).append("// is/are added and the attributes");
+            for (ASTCDAttribute attribute1 : attribute.b.getDeletedAttributes()) {
+              comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
+            }
+            comment
               .append(System.lineSeparator())
               .append("// is/are deleted in ")
               .append(attribute.a.getSymbol().getInternalQualifiedName());
-          Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
-          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
-            }
-          } else if (astodArtifact.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact.get());
-          }
-        }
-      }
-      if (typeDiffStruct.getAddedAttributes() != null
-          && !typeDiffStruct.getAddedAttributes().isEmpty()) {
-        for (Pair<ASTCDClass, List<ASTCDAttribute>> attribute :
-            typeDiffStruct.getAddedAttributes()) {
-          StringBuilder comment =
-              new StringBuilder(
-                  "// Because of the class "
-                      + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                      + " the attribute/s ");
-          for (ASTCDAttribute attribute1 : attribute.b) {
-            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
-          }
-          comment
-              .append(System.lineSeparator())
-              .append("// is/are added in ")
-              .append(attribute.a.getSymbol().getInternalQualifiedName());
-          Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
-          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
-            }
-          } else if (astodArtifact.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact.get());
-          }
-        }
-      }
-      if (typeDiffStruct.getMemberDiff() != null) {
-        for (Pair<ASTCDClass, ASTCDAttribute> attribute : typeDiffStruct.getMemberDiff()) {
-          StringBuilder comment =
-              new StringBuilder(
-                  "// Because of the class "
-                      + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                      + " the attribute "
-                      + attribute.b.getName()
-                      + " is changed in "
-                      + attribute.a.getSymbol().getInternalQualifiedName());
-          comment
-              .append(System.lineSeparator())
-              .append(" from ")
-              .append(getOldAtt(attribute.b, typeDiffStruct).getMCType().printType())
-              .append(" to ")
-              .append(attribute.b.getMCType().printType());
-          Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
-          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
-            }
-          } else if (astodArtifact.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact.get());
-          }
-        }
-      }
-      if (typeDiffStruct.getChangedStereotype()) {
-        String comment =
-            "// In the class "
-                + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                + " the stereotype is changed from abstract";
-        Optional<ASTODArtifact> astodArtifact =
-            generateArtifact(
-                oDTitleForClass(typeDiffStruct.getAstcdType()),
-                generateElements(typeDiffStruct.getAstcdType(), comment, null));
-        if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact.get());
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
-          }
-        } else if (astodArtifact.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact.get());
-        }
-      }
-      if (typeDiffStruct.getDeletedAttributes() != null
-          && !typeDiffStruct.getDeletedAttributes().isEmpty()) {
-        for (Pair<ASTCDClass, List<ASTCDAttribute>> attribute :
-            typeDiffStruct.getDeletedAttributes()) {
-          StringBuilder comment =
-              new StringBuilder(
-                  "// Because of the class "
-                      + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                      + " the attribute/s ");
-          for (ASTCDAttribute attribute1 : attribute.b) {
-            comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
-          }
-          comment
-              .append(System.lineSeparator())
-              .append("// is/are deleted in ")
-              .append(attribute.a.getSymbol().getInternalQualifiedName());
-          Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
-          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
-            }
-          } else if (astodArtifact.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact.get());
-          }
-        }
-      }
-      if (typeDiffStruct.isOnlySingletonChanged()) {
-        StringBuilder comment =
-            new StringBuilder(
-                "// In the class "
-                    + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                    + " the class is changed from singleton to non-singleton");
-        if (typeDiffStruct.isChangedSingleton()) {
-          Optional<ASTODArtifact> astodArtifact2;
-          astodArtifact2 =
-              generateArtifact(
-                  oDTitleForClass(typeDiffStruct.getAstcdType()),
-                  generateElements(typeDiffStruct.getAstcdType(), comment.toString()));
-          if (astodArtifact2.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact2.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
-            }
-          } else if (astodArtifact2.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact2.get());
-          }
-        }
-      }
-    }
-
-    for (TypeDiffStruct typeDiffStruct : syntaxDiff.changedTypes()) {
-      if (typeDiffStruct.getAddedConstants() != null) {
-        for (ASTCDEnumConstant constant : typeDiffStruct.getAddedConstants().b) {
-          Pair<ASTCDClass, ASTCDAttribute> astcdClass =
-              getClassForEnum((ASTCDEnum) typeDiffStruct.getAstcdType());
-          if (astcdClass != null) {
-            String comment =
-                "// In the enum "
-                    + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                    + " the following constant is added: "
-                    + constant.getName()
-                    + ".";
-            Optional<ASTODArtifact> astodArtifact =
-                generateArtifact(
-                    oDTitleForClass(astcdClass.a),
-                    generateElements(
-                        astcdClass.a, comment, new Pair<>(astcdClass.b, constant.getName())));
+            Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
             if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
               artifactList.add(astodArtifact.get());
               if (artifactList.size() == diffLimit) {
@@ -365,269 +206,481 @@ public class Syn2SemDiff {
             }
           }
         }
+        if (typeDiffStruct.getAddedAttributes() != null
+          && !typeDiffStruct.getAddedAttributes().isEmpty()) {
+          for (Pair<ASTCDClass, List<ASTCDAttribute>> attribute :
+            typeDiffStruct.getAddedAttributes()) {
+            StringBuilder comment =
+              new StringBuilder(
+                "// Because of the class "
+                  + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+                  + " the attribute/s ");
+            for (ASTCDAttribute attribute1 : attribute.b) {
+              comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
+            }
+            comment
+              .append(System.lineSeparator())
+              .append("// is/are added in ")
+              .append(attribute.a.getSymbol().getInternalQualifiedName());
+            Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
+            if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+              artifactList.add(astodArtifact.get());
+              if (artifactList.size() == diffLimit) {
+                return artifactList;
+              }
+            } else if (astodArtifact.isPresent() && diffLimit == 0) {
+              artifactList.add(astodArtifact.get());
+            }
+          }
+        }
+        if (typeDiffStruct.getMemberDiff() != null) {
+          for (Pair<ASTCDClass, ASTCDAttribute> attribute : typeDiffStruct.getMemberDiff()) {
+            StringBuilder comment =
+              new StringBuilder(
+                "// Because of the class "
+                  + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+                  + " the attribute "
+                  + attribute.b.getName()
+                  + " is changed in "
+                  + attribute.a.getSymbol().getInternalQualifiedName());
+            comment
+              .append(System.lineSeparator())
+              .append(" from ")
+              .append(getOldAtt(attribute.b, typeDiffStruct).getMCType().printType())
+              .append(" to ")
+              .append(attribute.b.getMCType().printType());
+            Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
+            if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+              artifactList.add(astodArtifact.get());
+              if (artifactList.size() == diffLimit) {
+                return artifactList;
+              }
+            } else if (astodArtifact.isPresent() && diffLimit == 0) {
+              artifactList.add(astodArtifact.get());
+            }
+          }
+        }
+        if (typeDiffStruct.getChangedStereotype()) {
+          String comment =
+            "// In the class "
+              + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+              + " the stereotype is changed from abstract";
+          Optional<ASTODArtifact> astodArtifact =
+            generateArtifact(
+              oDTitleForClass(typeDiffStruct.getAstcdType()),
+              generateElements(typeDiffStruct.getAstcdType(), comment, null));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
+          }
+        }
+        if (typeDiffStruct.getDeletedAttributes() != null
+          && !typeDiffStruct.getDeletedAttributes().isEmpty()) {
+          for (Pair<ASTCDClass, List<ASTCDAttribute>> attribute :
+            typeDiffStruct.getDeletedAttributes()) {
+            StringBuilder comment =
+              new StringBuilder(
+                "// Because of the class "
+                  + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+                  + " the attribute/s ");
+            for (ASTCDAttribute attribute1 : attribute.b) {
+              comment.append(System.lineSeparator()).append("// ").append(attribute1.getName());
+            }
+            comment
+              .append(System.lineSeparator())
+              .append("// is/are deleted in ")
+              .append(attribute.a.getSymbol().getInternalQualifiedName());
+            Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
+            if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+              artifactList.add(astodArtifact.get());
+              if (artifactList.size() == diffLimit) {
+                return artifactList;
+              }
+            } else if (astodArtifact.isPresent() && diffLimit == 0) {
+              artifactList.add(astodArtifact.get());
+            }
+          }
+        }
+        if (typeDiffStruct.isOnlySingletonChanged()) {
+          StringBuilder comment =
+            new StringBuilder(
+              "// In the class "
+                + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+                + " the class is changed from singleton to non-singleton");
+          if (typeDiffStruct.isChangedSingleton()) {
+            Optional<ASTODArtifact> astodArtifact2;
+            astodArtifact2 =
+              generateArtifact(
+                oDTitleForClass(typeDiffStruct.getAstcdType()),
+                generateElements(typeDiffStruct.getAstcdType(), comment.toString()));
+            if (astodArtifact2.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+              artifactList.add(astodArtifact2.get());
+              if (artifactList.size() == diffLimit) {
+                return artifactList;
+              }
+            } else if (astodArtifact2.isPresent() && diffLimit == 0) {
+              artifactList.add(astodArtifact2.get());
+            }
+          }
+        }
+      }
+
+      for (TypeDiffStruct typeDiffStruct : syntaxDiff.changedTypes()) {
+        if (typeDiffStruct.getAddedConstants() != null) {
+          for (ASTCDEnumConstant constant : typeDiffStruct.getAddedConstants().b) {
+            Pair<ASTCDClass, ASTCDAttribute> astcdClass =
+              getClassForEnum((ASTCDEnum) typeDiffStruct.getAstcdType());
+            if (astcdClass != null) {
+              String comment =
+                "// In the enum "
+                  + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
+                  + " the following constant is added: "
+                  + constant.getName()
+                  + ".";
+              Optional<ASTODArtifact> astodArtifact =
+                generateArtifact(
+                  oDTitleForClass(astcdClass.a),
+                  generateElements(
+                    astcdClass.a, comment, new Pair<>(astcdClass.b, constant.getName())));
+              if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+                artifactList.add(astodArtifact.get());
+                if (artifactList.size() == diffLimit) {
+                  return artifactList;
+                }
+              } else if (astodArtifact.isPresent() && diffLimit == 0) {
+                artifactList.add(astodArtifact.get());
+              }
+            }
+          }
+        }
       }
     }
 
-    List<AssocMatching> assocDiffs = syntaxDiff.getAssocDiffs();
-    for (AssocMatching assocMatching : assocDiffs) {
-      if (!assocMatching.getNotMatchedAssocsInSrc().isEmpty()
+    if (matchingStrategies.isEmpty() || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+      for (Pair<ASTCDAssociation, List<ASTCDType>> association : syntaxDiff.addedAssocList()) {
+        Pair<ASTCDType, ASTCDType> pair =
+          Syn2SemDiffHelper.getConnectedTypes(association.a, helper.getSrcCD());
+        if (!helper.getNotInstClassesSrc().contains(pair.a)
+          && !helper.getNotInstClassesSrc().contains(pair.b)) {
+          String comment =
+            "// A new associations has been added to the diagram."
+              + System.lineSeparator()
+              + "// This association allows a new relation between the classes "
+              + pair.a.getSymbol().getInternalQualifiedName()
+              + " and "
+              + pair.b.getSymbol().getInternalQualifiedName()
+              + " and their subclasses.";
+          Optional<ASTODArtifact> astodArtifact =
+            generateArtifact(
+              oDTitleForAssoc(association.a),
+              generateElements(association.a, Arrays.asList(1, 1), comment));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
+          }
+        }
+      }
+
+      for (Pair<ASTCDAssociation, List<ASTCDType>> pair : syntaxDiff.deletedAssocList()) {
+        List<ASTCDType> list = pair.b;
+        for (ASTCDType astcdClass : list) {
+          String comment =
+            "// The association between "
+              + Syn2SemDiffHelper.getConnectedTypes(pair.a, helper.getTgtCD())
+              .a
+              .getSymbol()
+              .getInternalQualifiedName()
+              + " and "
+              + Syn2SemDiffHelper.getConnectedTypes(pair.a, helper.getTgtCD())
+              .b
+              .getSymbol()
+              .getInternalQualifiedName()
+              + "for the class "
+              + astcdClass.getSymbol().getInternalQualifiedName()
+              + " has been removed from the diagram.";
+          Optional<ASTODArtifact> astodArtifact =
+            generateArtifact(
+              oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
+          }
+        }
+      }
+
+      List<AssocMatching> assocDiffs = syntaxDiff.getAssocDiffs();
+      for (AssocMatching assocMatching : assocDiffs) {
+        if (!assocMatching.getNotMatchedAssocsInSrc().isEmpty()
           && !assocMatching.getNotMatchedAssocsInTgt().isEmpty()) {
-        for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInSrc()) {
-          StringBuilder comment =
+          for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInSrc()) {
+            StringBuilder comment =
               new StringBuilder(
-                  "// The class "
-                      + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
-                      + " has an association that isn't in srcCD: "
-                      + Syn2SemDiffHelper.getConnectedTypes(
-                              assocStruct.getAssociation(), helper.getSrcCD())
-                          .a
-                          .getSymbol()
-                          .getInternalQualifiedName()
-                      + " - "
-                      + Syn2SemDiffHelper.getConnectedTypes(
-                              assocStruct.getAssociation(), helper.getSrcCD())
-                          .b
-                          .getSymbol()
-                          .getInternalQualifiedName()
-                      + System.lineSeparator()
-                      + "// and association/s that isn't/aren't in tgtCD:");
-          for (AssocStruct tgtAssocs : assocMatching.getNotMatchedAssocsInTgt()) {
-            comment
+                "// The class "
+                  + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
+                  + " has an association that isn't in srcCD: "
+                  + Syn2SemDiffHelper.getConnectedTypes(
+                    assocStruct.getAssociation(), helper.getSrcCD())
+                  .a
+                  .getSymbol()
+                  .getInternalQualifiedName()
+                  + " - "
+                  + Syn2SemDiffHelper.getConnectedTypes(
+                    assocStruct.getAssociation(), helper.getSrcCD())
+                  .b
+                  .getSymbol()
+                  .getInternalQualifiedName()
+                  + System.lineSeparator()
+                  + "// and association/s that isn't/aren't in tgtCD:");
+            for (AssocStruct tgtAssocs : assocMatching.getNotMatchedAssocsInTgt()) {
+              comment
                 .append(System.lineSeparator())
                 .append("// ")
                 .append(
-                    Syn2SemDiffHelper.getConnectedTypes(
-                            tgtAssocs.getAssociation(), helper.getTgtCD())
-                        .a
-                        .getSymbol()
-                        .getInternalQualifiedName())
+                  Syn2SemDiffHelper.getConnectedTypes(
+                      tgtAssocs.getAssociation(), helper.getTgtCD())
+                    .a
+                    .getSymbol()
+                    .getInternalQualifiedName())
                 .append(" ")
                 .append(
-                    Syn2SemDiffHelper.getConnectedTypes(
-                            tgtAssocs.getAssociation(), helper.getTgtCD())
-                        .b
-                        .getSymbol()
-                        .getInternalQualifiedName());
-          }
-          Optional<ASTODArtifact> astodArtifact =
-              generateArtifact(
-                  oDTitleForAssoc(assocStruct.getAssociation()),
-                  generateElements(
-                      assocStruct.getAssociation(), Arrays.asList(1, 1), comment.toString()));
-          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
+                  Syn2SemDiffHelper.getConnectedTypes(
+                      tgtAssocs.getAssociation(), helper.getTgtCD())
+                    .b
+                    .getSymbol()
+                    .getInternalQualifiedName());
             }
-          } else if (astodArtifact.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact.get());
+            Optional<ASTODArtifact> astodArtifact =
+              generateArtifact(
+                oDTitleForAssoc(assocStruct.getAssociation()),
+                generateElements(
+                  assocStruct.getAssociation(), Arrays.asList(1, 1), comment.toString()));
+            if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+              artifactList.add(astodArtifact.get());
+              if (artifactList.size() == diffLimit) {
+                return artifactList;
+              }
+            } else if (astodArtifact.isPresent() && diffLimit == 0) {
+              artifactList.add(astodArtifact.get());
+            }
           }
-        }
-      } else if (!assocMatching.getNotMatchedAssocsInSrc().isEmpty()) {
-        for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInSrc()) {
-          String comment =
+        } else if (!assocMatching.getNotMatchedAssocsInSrc().isEmpty()) {
+          for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInSrc()) {
+            String comment =
               "// The class "
-                  + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
-                  + " has an association that isn't in tgtCD: "
-                  + Syn2SemDiffHelper.getConnectedTypes(
-                          assocStruct.getAssociation(), helper.getSrcCD())
-                      .a
-                      .getSymbol()
-                      .getInternalQualifiedName()
-                  + " - "
-                  + Syn2SemDiffHelper.getConnectedTypes(
-                          assocStruct.getAssociation(), helper.getSrcCD())
-                      .b
-                      .getSymbol()
-                      .getInternalQualifiedName()
-                  + ".";
-          Optional<ASTODArtifact> astodArtifact =
+                + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
+                + " has an association that isn't in tgtCD: "
+                + Syn2SemDiffHelper.getConnectedTypes(
+                  assocStruct.getAssociation(), helper.getSrcCD())
+                .a
+                .getSymbol()
+                .getInternalQualifiedName()
+                + " - "
+                + Syn2SemDiffHelper.getConnectedTypes(
+                  assocStruct.getAssociation(), helper.getSrcCD())
+                .b
+                .getSymbol()
+                .getInternalQualifiedName()
+                + ".";
+            Optional<ASTODArtifact> astodArtifact =
               generateArtifact(
-                  oDTitleForAssoc(assocStruct.getAssociation()),
-                  generateElements(assocStruct.getAssociation(), Arrays.asList(1, 1), comment));
-          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-            artifactList.add(astodArtifact.get());
-            if (artifactList.size() == diffLimit) {
-              return artifactList;
+                oDTitleForAssoc(assocStruct.getAssociation()),
+                generateElements(assocStruct.getAssociation(), Arrays.asList(1, 1), comment));
+            if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+              artifactList.add(astodArtifact.get());
+              if (artifactList.size() == diffLimit) {
+                return artifactList;
+              }
+            } else if (astodArtifact.isPresent() && diffLimit == 0) {
+              artifactList.add(astodArtifact.get());
             }
-          } else if (astodArtifact.isPresent() && diffLimit == 0) {
-            artifactList.add(astodArtifact.get());
           }
-        }
-      } else {
-        StringBuilder comment =
+        } else {
+          StringBuilder comment =
             new StringBuilder(
-                "// The class "
-                    + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
-                    + " has association/s that isn't/aren't in src:");
-        for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInTgt()) {
-          comment
+              "// The class "
+                + assocMatching.getClassToInstantiate().getSymbol().getInternalQualifiedName()
+                + " has association/s that isn't/aren't in src:");
+          for (AssocStruct assocStruct : assocMatching.getNotMatchedAssocsInTgt()) {
+            comment
               .append(System.lineSeparator())
               .append("// ")
               .append(
-                  Syn2SemDiffHelper.getConnectedTypes(
-                          assocStruct.getAssociation(), helper.getTgtCD())
-                      .a
-                      .getSymbol()
-                      .getInternalQualifiedName())
+                Syn2SemDiffHelper.getConnectedTypes(
+                    assocStruct.getAssociation(), helper.getTgtCD())
+                  .a
+                  .getSymbol()
+                  .getInternalQualifiedName())
               .append(" - ")
               .append(
-                  Syn2SemDiffHelper.getConnectedTypes(
-                          assocStruct.getAssociation(), helper.getTgtCD())
-                      .b
-                      .getSymbol()
-                      .getInternalQualifiedName());
-        }
-        comment.append(".");
-        Optional<ASTODArtifact> astodArtifact;
-        astodArtifact =
-            generateArtifact(
-                oDTitleForClass(assocMatching.getClassToInstantiate()),
-                generateElements(assocMatching.getClassToInstantiate(), comment.toString(), null));
-        if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact.get());
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
+                Syn2SemDiffHelper.getConnectedTypes(
+                    assocStruct.getAssociation(), helper.getTgtCD())
+                  .b
+                  .getSymbol()
+                  .getInternalQualifiedName());
           }
-        } else if (astodArtifact.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact.get());
+          comment.append(".");
+          Optional<ASTODArtifact> astodArtifact;
+          astodArtifact =
+            generateArtifact(
+              oDTitleForClass(assocMatching.getClassToInstantiate()),
+              generateElements(assocMatching.getClassToInstantiate(), comment.toString(), null));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
+          }
         }
       }
-    }
 
-    for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
-      Pair<ASTCDType, ASTCDType> pair =
+      for (AssocDiffStruct assocDiffStruct : syntaxDiff.changedAssoc()) {
+        Pair<ASTCDType, ASTCDType> pair =
           Syn2SemDiffHelper.getConnectedTypes(assocDiffStruct.getAssociation(), helper.getSrcCD());
-      StringBuilder comment =
+        StringBuilder comment =
           new StringBuilder(
-              "// In the association between "
-                  + pair.a.getSymbol().getInternalQualifiedName()
-                  + " and "
-                  + pair.b.getSymbol().getInternalQualifiedName()
-                  + " the following is changed: ");
-      if (assocDiffStruct.isChangedDir()) {
-        comment
+            "// In the association between "
+              + pair.a.getSymbol().getInternalQualifiedName()
+              + " and "
+              + pair.b.getSymbol().getInternalQualifiedName()
+              + " the following is changed: ");
+        if (assocDiffStruct.isChangedDir()) {
+          comment
             .append(System.lineSeparator())
             .append("// direction - ")
             .append(Syn2SemDiffHelper.getDirection(assocDiffStruct.getAssociation()).toString());
-      }
-      if (assocDiffStruct.getChangedCard() != null && !assocDiffStruct.getChangedCard().isEmpty()) {
-        comment
+        }
+        if (assocDiffStruct.getChangedCard() != null && !assocDiffStruct.getChangedCard().isEmpty()) {
+          comment
             .append(System.lineSeparator())
             .append("// cardinalities - ")
             .append(assocDiffStruct.getChangedCard().toString());
-      }
-      if (assocDiffStruct.getChangedRoleNames() != null
+        }
+        if (assocDiffStruct.getChangedRoleNames() != null
           && !assocDiffStruct.getChangedRoleNames().isEmpty()) {
-        comment.append(System.lineSeparator()).append("// role name - ");
-        for (Pair<ClassSide, ASTCDRole> pair1 : assocDiffStruct.getChangedRoleNames()) {
-          comment
+          comment.append(System.lineSeparator()).append("// role name - ");
+          for (Pair<ClassSide, ASTCDRole> pair1 : assocDiffStruct.getChangedRoleNames()) {
+            comment
               .append("[")
               .append(pair1.a.toString())
               .append(", ")
               .append(pair1.b.getName())
               .append("] ");
+          }
         }
-      }
-      if (assocDiffStruct.getChangedTgt() != null) {
-        comment
+        if (assocDiffStruct.getChangedTgt() != null) {
+          comment
             .append(System.lineSeparator())
             .append("// changed target - ")
             .append(assocDiffStruct.getChangedTgt().getSymbol().getInternalQualifiedName());
-      }
-      if (assocDiffStruct.getChangedSrc() != null) {
-        comment
+        }
+        if (assocDiffStruct.getChangedSrc() != null) {
+          comment
             .append(System.lineSeparator())
             .append("// changed source - ")
             .append(assocDiffStruct.getChangedSrc().getSymbol().getInternalQualifiedName());
-      }
-      ArrayList<Integer> list = new ArrayList<>();
-      if (assocDiffStruct.getChangedCard() != null && assocDiffStruct.getChangedCard().isEmpty()) {
-        list.add(1);
-        list.add(1);
-      } else if (assocDiffStruct.getChangedCard() != null
+        }
+        ArrayList<Integer> list = new ArrayList<>();
+        if (assocDiffStruct.getChangedCard() != null && assocDiffStruct.getChangedCard().isEmpty()) {
+          list.add(1);
+          list.add(1);
+        } else if (assocDiffStruct.getChangedCard() != null
           && assocDiffStruct.getChangedCard().size() == 1) {
-        if (assocDiffStruct.getChangedCard().get(0).a == ClassSide.Left) {
-          list.add(assocDiffStruct.getChangedCard().get(0).b);
-          list.add(1);
-        } else {
-          list.add(1);
-          list.add(assocDiffStruct.getChangedCard().get(0).b);
+          if (assocDiffStruct.getChangedCard().get(0).a == ClassSide.Left) {
+            list.add(assocDiffStruct.getChangedCard().get(0).b);
+            list.add(1);
+          } else {
+            list.add(1);
+            list.add(assocDiffStruct.getChangedCard().get(0).b);
+          }
+        } else if (assocDiffStruct.getChangedCard() != null) {
+          if (assocDiffStruct.getChangedCard().get(0).a == ClassSide.Left) {
+            list.add(assocDiffStruct.getChangedCard().get(0).b);
+            list.add(assocDiffStruct.getChangedCard().get(1).b);
+          } else {
+            list.add(assocDiffStruct.getChangedCard().get(1).b);
+            list.add(assocDiffStruct.getChangedCard().get(0).b);
+          }
         }
-      } else if (assocDiffStruct.getChangedCard() != null) {
-        if (assocDiffStruct.getChangedCard().get(0).a == ClassSide.Left) {
-          list.add(assocDiffStruct.getChangedCard().get(0).b);
-          list.add(assocDiffStruct.getChangedCard().get(1).b);
-        } else {
-          list.add(assocDiffStruct.getChangedCard().get(1).b);
-          list.add(assocDiffStruct.getChangedCard().get(0).b);
+        if (list.isEmpty()) {
+          list.add(1);
+          list.add(1);
         }
-      }
-      if (list.isEmpty()) {
-        list.add(1);
-        list.add(1);
-      }
-      if ((list.get(0) == 0 && list.get(1) == 0)
+        if ((list.get(0) == 0 && list.get(1) == 0)
           || (list.get(0) == 0 && list.get(1) == 2)
           || (list.get(0) == 2 && list.get(1) == 0)) {
-        List<Integer> list1 = new ArrayList<>(list);
-        list1.set(0, 1);
-        Optional<ASTODArtifact> astodArtifact =
+          List<Integer> list1 = new ArrayList<>(list);
+          list1.set(0, 1);
+          Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruct.getAssociation()),
-                generateElements(assocDiffStruct.getAssociation(), list1, comment.toString()));
-        if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact.get());
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
+              oDTitleForAssoc(assocDiffStruct.getAssociation()),
+              generateElements(assocDiffStruct.getAssociation(), list1, comment.toString()));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
           }
-        } else if (astodArtifact.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact.get());
-        }
-        List<Integer> list2 = new ArrayList<>(list);
-        list2.set(1, 1);
-        Optional<ASTODArtifact> astodArtifact2 =
+          List<Integer> list2 = new ArrayList<>(list);
+          list2.set(1, 1);
+          Optional<ASTODArtifact> astodArtifact2 =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruct.getAssociation()),
-                generateElements(assocDiffStruct.getAssociation(), list2, comment.toString()));
-        if (astodArtifact2.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact2.get());
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
+              oDTitleForAssoc(assocDiffStruct.getAssociation()),
+              generateElements(assocDiffStruct.getAssociation(), list2, comment.toString()));
+          if (astodArtifact2.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact2.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact2.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact2.get());
           }
-        } else if (astodArtifact2.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact2.get());
-        }
-      } else {
-        Optional<ASTODArtifact> astodArtifact =
+        } else {
+          Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
-                oDTitleForAssoc(assocDiffStruct.getAssociation()),
-                generateElements(assocDiffStruct.getAssociation(), list, comment.toString()));
-        if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact.get());
-        } else if (astodArtifact.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact.get());
+              oDTitleForAssoc(assocDiffStruct.getAssociation()),
+              generateElements(assocDiffStruct.getAssociation(), list, comment.toString()));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
+          }
         }
       }
-    }
 
-    for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
-      if (!helper.getNotInstClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
-        String comment =
+      for (InheritanceDiff inheritanceDiff : syntaxDiff.mergeInheritanceDiffs()) {
+        if (!helper.getNotInstClassesSrc().contains(inheritanceDiff.getAstcdClasses().a)) {
+          String comment =
             "// For the class "
-                + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName()
-                + " the inheritance relations were changed.";
-        Optional<ASTODArtifact> astodArtifact =
+              + inheritanceDiff.getAstcdClasses().a.getSymbol().getInternalQualifiedName()
+              + " the inheritance relations were changed.";
+          Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
-                oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
-                generateElements(inheritanceDiff.getAstcdClasses().a, comment, null));
-        if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-          artifactList.add(astodArtifact.get());
-          if (artifactList.size() == diffLimit) {
-            return artifactList;
+              oDTitleForClass(inheritanceDiff.getAstcdClasses().a),
+              generateElements(inheritanceDiff.getAstcdClasses().a, comment, null));
+          if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+            artifactList.add(astodArtifact.get());
+            if (artifactList.size() == diffLimit) {
+              return artifactList;
+            }
+          } else if (astodArtifact.isPresent() && diffLimit == 0) {
+            artifactList.add(astodArtifact.get());
           }
-        } else if (astodArtifact.isPresent() && diffLimit == 0) {
-          artifactList.add(astodArtifact.get());
         }
       }
     }
@@ -780,8 +833,6 @@ public class Syn2SemDiff {
     } else {
       oDHelper = new ODGenerator(diffSize, helper, odGenHelper);
     }
-    System.out.println(comment);
-    System.out.println(integers);
     Pair<Set<ASTODElement>, Optional<ASTODElement>> pair =
         oDHelper.getObjForODGeneral(null, association, null, integers.get(0), integers.get(1));
     if (pair.a.isEmpty()) {

@@ -609,7 +609,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     return list;
   }
 
-  // CHECKED
   @Override
   public List<ASTCDType> isAssocAdded(ASTCDAssociation association) {
     ASTCDType isAddedSrc = null;
@@ -792,6 +791,9 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDType>>> addedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDType>>> associationList = new ArrayList<>();
+    if (!matchingStrategies.isEmpty() && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+      return associationList;
+    }
     for (ASTCDAssociation association : addedAssocs) {
       List<ASTCDType> list = isAssocAdded(association);
       if (!list.isEmpty()) {
@@ -805,6 +807,9 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDType>>> deletedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDType>>> list = new ArrayList<>();
+    if (!matchingStrategies.isEmpty() && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+      return list;
+    }
     for (ASTCDAssociation association : deletedAssocs) {
       Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(association, tgtCD);
       if (association.getCDAssocDir().isBidirectional()) {
@@ -1058,6 +1063,9 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public List<AssocMatching> getAssocDiffs() {
+    if (!matchingStrategies.isEmpty() && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+      return List.of();
+    }
     List<Pair<ASTCDClass, List<AssocStruct>>> srcAssocExistsTgtNot = srcAssocExistsTgtNot();
     List<Pair<ASTCDClass, List<AssocStruct>>> tgtAssocExistsSrcNot = tgtAssocsExistsSrcNot();
     List<AssocMatching> result = new ArrayList<>();
