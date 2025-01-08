@@ -379,6 +379,28 @@ public class CD4CTest extends CD4CodeTestBasis {
     Log.clearFindings();
   }
 
+  @Test
+  public void testTypeParams() {
+    // Build class for testing
+    ASTCDClass clazz =
+      CD4CodeMill.cDClassBuilder()
+        .setName("HelloWorldWithTypeParams")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+        .setTypeParameters(CD4CodeMill.typeParametersBuilder().addTypeParameter(
+          CD4CodeMill.typeParameterBuilder().setName("C").build()
+        ).build())
+        .build();
+
+    CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.TypeParamMethod");
+
+    checkLogError();
+
+    // generate Java-Code
+    GeneratorEngine generatorEngine = new GeneratorEngine(config);
+    final Path output = Paths.get(clazz.getName() + ".java");
+    generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
+  }
+
   protected ASTCDPackage createDeafaultPkg() {
     return CD4CodeMill.cDPackageBuilder()
         .setMCQualifiedName(

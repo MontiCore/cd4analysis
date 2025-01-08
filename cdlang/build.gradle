@@ -111,6 +111,16 @@ dependencies {
 
 }
 
+tasks.generateMCGrammars.configure {
+  // Use an empty templates directory (as we do not override any)
+  tmplDir = project.layout.buildDirectory.dir("empty_templates")
+  tmplDir.get().getAsFile().mkdirs()
+}
+tasks.generateTestMCGrammars.configure {
+  // Use an empty templates directory (as we do not override any)
+  tmplDir = project.layout.buildDirectory.dir("empty_templates_test")
+  tmplDir.get().getAsFile().mkdirs()
+}
 
 if (withTagGen) {
   // Explicitly configure tagging
