@@ -380,7 +380,7 @@ public class CD4CTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testTypeParams() {
+  public void testTypeParamsClass() {
     // Build class for testing
     ASTCDClass clazz =
       CD4CodeMill.cDClassBuilder()
@@ -393,12 +393,34 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.TypeParamMethod");
 
+    CD4C.getInstance().addConstructor(clazz, "de.monticore.cd.methodtemplates.TypeParamConstructor");
+
     checkLogError();
 
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
+  }
+
+  @Test
+  public void testTypeParamsConstructor() {
+    // Build class for testing
+    ASTCDInterface interfaze =
+      CD4CodeMill.cDInterfaceBuilder()
+        .setName("IHelloWorldWithTypeParams")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+        .setTypeParameters(CD4CodeMill.typeParametersBuilder().addTypeParameter(
+          CD4CodeMill.typeParameterBuilder().setName("I").build()
+        ).build())
+        .build();
+
+    checkLogError();
+
+    // generate Java-Code
+    GeneratorEngine generatorEngine = new GeneratorEngine(config);
+    final Path output = Paths.get(interfaze.getName() + ".java");
+    generatorEngine.generate("cd2java.Interface", output, interfaze, createDeafaultPkg());
   }
 
   protected ASTCDPackage createDeafaultPkg() {
