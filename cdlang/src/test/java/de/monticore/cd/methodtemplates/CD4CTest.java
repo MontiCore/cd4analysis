@@ -53,13 +53,14 @@ public class CD4CTest extends CD4CodeTestBasis {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     config = new GeneratorSetup();
     config.setGlex(glex);
-    config.setOutputDirectory(new File("target/generated"));
+    config.setOutputDirectory(new File("target/generated/cd4c/de/monticore"));
     config.setTracing(false);
     config.setAdditionalTemplatePaths(
         Lists.newArrayList(new File("src/main/resources"), new File("src/test/resources")));
 
     // Configure CD4C
     CD4C.init(config);
+    CD4C.getInstance().setEmptyBodyTemplate("cd2java.EmptyBody");
 
     // create diagram
     node = p.parse(getFilePath("cd4code/generator/Simple.cd")).get();
@@ -230,16 +231,15 @@ public class CD4CTest extends CD4CodeTestBasis {
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
 
-    final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
     // try to create a print method that already exists
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
 
     checkLogError();
 
     // generate Java-Code
+    // Note: The syntax is incorrect, as 2 methods with the same signature are generated
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
-    final Path output = Paths.get(clazz.getName() + ".java");
+    final Path output = Paths.get(clazz.getName() + ".java.incorrectsyntax");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
 
@@ -343,7 +343,7 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     CD4C.getInstance().addDefaultClassPredicates();
 
-    // try to create a print method that already exists
+    // Add an attributes
     CD4C.getInstance().addAttribute(clazz, "int counter;");
 
     assertEquals(1, Log.getFindingsCount());
@@ -391,9 +391,13 @@ public class CD4CTest extends CD4CodeTestBasis {
         ).build())
         .build();
 
+    // Add a method with type params
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.TypeParamMethod");
-
+    // and a constructor with refining type params
     CD4C.getInstance().addConstructor(clazz, "de.monticore.cd.methodtemplates.TypeParamConstructor");
+
+    CD4C.getInstance().addAttribute(clazz, "List<String> stringList;");
+    CD4C.getInstance().addAttribute(clazz, "List<C> genericList;");
 
     checkLogError();
 
@@ -404,8 +408,8 @@ public class CD4CTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testTypeParamsConstructor() {
-    // Build class for testing
+  public void testTypeParamsInterface() {
+    // Build interface for testing
     ASTCDInterface interfaze =
       CD4CodeMill.cDInterfaceBuilder()
         .setName("IHelloWorldWithTypeParams")
@@ -414,6 +418,9 @@ public class CD4CTest extends CD4CodeTestBasis {
           CD4CodeMill.typeParameterBuilder().setName("I").build()
         ).build())
         .build();
+
+    // add a method with type params and a default implementation
+    CD4C.getInstance().addMethod(interfaze, "de.monticore.cd.methodtemplates.TypeParamMethod");
 
     checkLogError();
 
