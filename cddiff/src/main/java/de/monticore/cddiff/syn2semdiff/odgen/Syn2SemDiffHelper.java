@@ -1245,8 +1245,7 @@ public class Syn2SemDiffHelper {
     if (pair.a.getSymbol().getInternalQualifiedName()
       .equals(astcdClass.getSymbol().getInternalQualifiedName())) {
       map.put(astcdClass, createAssocStruct(copyAssoc, original, pair.a, pair.b, ClassSide.Left, false, null));
-    }
-    if (pair.b.getSymbol().getInternalQualifiedName()
+    } else if (pair.b.getSymbol().getInternalQualifiedName()
       .equals(astcdClass.getSymbol().getInternalQualifiedName())) {
       map.put(astcdClass, createAssocStruct(copyAssoc, original, pair.b, pair.a, ClassSide.Right, false, null));
     }
