@@ -23,10 +23,10 @@ import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
@@ -1164,655 +1164,213 @@ public class Syn2SemDiffHelper {
   public void setMaps() {
     srcMap = ArrayListMultimap.create();
     tgtMap = ArrayListMultimap.create();
-    List<ASTCDType> srcTypes = new ArrayList<>();
-    srcTypes.addAll(srcCD.getCDDefinition().getCDClassesList());
-    srcTypes.addAll(srcCD.getCDDefinition().getCDInterfacesList());
+    processSourceTypes();
+    processTargetTypes();
+    inheritAssociations(srcCD, true);
+    inheritAssociations(tgtCD, false);
+    findNonInstantiableClasses();
+    checkRoleNameConflicts();
+  }
+
+  private void processSourceTypes() {
+    List<ASTCDType> srcTypes = getTypes(srcCD);
     for (ASTCDType astcdClass : srcTypes) {
-      for (ASTCDAssociation astcdAssociation : getCDAssociationsListForType(astcdClass, true)) {
-        Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(astcdAssociation, getSrcCD());
-        if (pair.a == null) {
-          continue;
-        }
-        ASTCDAssociation copyAssoc = astcdAssociation.deepClone(); // create virtual association
-        copyAssoc.setName(" ");
-        if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-          copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-        }
-        if (!copyAssoc.getRight().isPresentCDCardinality()) {
-          copyAssoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-        }
-        if (copyAssoc.getCDAssocType().isComposition()) {
-          copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-        }
-        copyAssoc
-            .getLeft()
-            .setCDRole(
-                CD4CodeMill.cDRoleBuilder()
-                    .setName(CDDiffUtil.inferRole(astcdAssociation.getLeft()))
-                    .build());
-        copyAssoc
-            .getRight()
-            .setCDRole(
-                CD4CodeMill.cDRoleBuilder()
-                    .setName(CDDiffUtil.inferRole(astcdAssociation.getRight()))
-                    .build());
-        if ((pair.a
-            .getSymbol()
-            .getInternalQualifiedName()
-            .equals(
-                astcdClass
-                    .getSymbol()
-                    .getInternalQualifiedName()))) { // if the class is on the left side
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            getSrcMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc,
-                        AssocDirection.BiDirectional,
-                        ClassSide.Left,
-                        astcdClass,
-                        pair.b));
-          } else if (astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight()) {
-            getSrcMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc, AssocDirection.LeftToRight, ClassSide.Left, astcdClass, pair.b));
-          }
-        }
-        if ((pair.b
-            .getSymbol()
-            .getInternalQualifiedName()
-            .equals(
-                astcdClass
-                    .getSymbol()
-                    .getInternalQualifiedName()))) { // if the class is on the right side
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            getSrcMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc,
-                        AssocDirection.BiDirectional,
-                        ClassSide.Right,
-                        astcdClass,
-                        pair.a));
-          } else if (astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft()) {
-            getSrcMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc,
-                        AssocDirection.RightToLeft,
-                        ClassSide.Right,
-                        astcdClass,
-                        pair.a));
-          }
-        }
-      }
+      processAssociations(astcdClass, getCDAssociationsListForType(astcdClass, true), true);
     }
+  }
 
-    List<ASTCDType> tgtTypes = new ArrayList<>();
-    tgtTypes.addAll(tgtCD.getCDDefinition().getCDClassesList());
-    tgtTypes.addAll(tgtCD.getCDDefinition().getCDInterfacesList());
+  private void processTargetTypes() {
+    List<ASTCDType> tgtTypes = getTypes(tgtCD);
     for (ASTCDType astcdClass : tgtTypes) {
-      for (ASTCDAssociation astcdAssociation : getCDAssociationsListForType(astcdClass, false)) {
-        Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(astcdAssociation, getTgtCD());
-        if (pair.a == null) {
-          continue;
-        }
-        ASTCDAssociation copyAssoc = astcdAssociation.deepClone();
-        copyAssoc.setName(" ");
-        if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-          copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-        }
-        if (!copyAssoc.getRight().isPresentCDCardinality()) {
-          copyAssoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-        }
-        copyAssoc
-            .getLeft()
-            .setCDRole(
-                CD4CodeMill.cDRoleBuilder()
-                    .setName(CDDiffUtil.inferRole(astcdAssociation.getLeft()))
-                    .build());
-        copyAssoc
-            .getRight()
-            .setCDRole(
-                CD4CodeMill.cDRoleBuilder()
-                    .setName(CDDiffUtil.inferRole(astcdAssociation.getRight()))
-                    .build());
-        if (copyAssoc.getCDAssocType().isComposition()) {
-          copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-        }
-        if ((pair.a
-            .getSymbol()
-            .getInternalQualifiedName()
-            .equals(astcdClass.getSymbol().getInternalQualifiedName()))) {
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            getTgtMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc,
-                        AssocDirection.BiDirectional,
-                        ClassSide.Left,
-                        astcdClass,
-                        pair.b));
-          } else if (astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight()) {
-            getTgtMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc, AssocDirection.LeftToRight, ClassSide.Left, astcdClass, pair.b));
-          }
-        }
-        if ((pair.b
-            .getSymbol()
-            .getInternalQualifiedName()
-            .equals(astcdClass.getSymbol().getInternalQualifiedName()))) {
-          if (astcdAssociation.getCDAssocDir().isBidirectional()) {
-            getTgtMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc,
-                        AssocDirection.BiDirectional,
-                        ClassSide.Right,
-                        astcdClass,
-                        pair.a));
-          } else if (astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft()) {
-            getTgtMap()
-                .put(
-                    astcdClass,
-                    new AssocStruct(
-                        copyAssoc,
-                        AssocDirection.RightToLeft,
-                        ClassSide.Right,
-                        astcdClass,
-                        pair.a));
-          }
-        }
-      }
-    }
-
-    for (ASTCDType astcdClass : srcTypes) { // acquire all associations from supertypes
-      Set<ASTCDType> superTypes =
-          CDDiffUtil.getAllSuperTypes(astcdClass, getSrcCD().getCDDefinition());
-      superTypes.remove(astcdClass);
-      for (ASTCDType superClass : superTypes) { // getAllSuperTypes CDDffUtils
-        for (ASTCDAssociation association : getCDAssociationsListForType(superClass, true)) {
-          Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(association, getSrcCD());
-          if (pair.a == null) {
-            continue;
-          }
-          if ((pair.a
-              .getSymbol()
-              .getInternalQualifiedName()
-              .equals(
-                  superClass
-                      .getSymbol()
-                      .getInternalQualifiedName()))) { // if the class is on the left side
-            ASTCDAssociation copyAssoc = association.deepClone();
-            copyAssoc
-                .getLeft()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getLeft()))
-                        .build());
-            copyAssoc
-                .getRight()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getRight()))
-                        .build());
-            copyAssoc
-                .getLeft()
-                .setMCQualifiedType(
-                    CD4CodeMill.mCQualifiedTypeBuilder()
-                        .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(
-                                astcdClass
-                                    .getSymbol()
-                                    .getInternalQualifiedName())) // change the left associated type
-                        // to the given one
-                        .build());
-            copyAssoc.setName(" ");
-            if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (!copyAssoc.getRight().isPresentCDCardinality()) {
-              copyAssoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (copyAssoc.getCDAssocType().isComposition()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-            }
-            if (association.getCDAssocDir().isBidirectional()) {
-              getSrcMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          copyAssoc,
-                          AssocDirection.BiDirectional,
-                          ClassSide.Left,
-                          true,
-                          superClass,
-                          pair.b,
-                          association));
-            } else if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
-              getSrcMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          copyAssoc,
-                          AssocDirection.LeftToRight,
-                          ClassSide.Left,
-                          true,
-                          superClass,
-                          pair.b,
-                          association));
-            }
-          }
-          if ((pair.b
-              .getSymbol()
-              .getInternalQualifiedName()
-              .equals(
-                  superClass
-                      .getSymbol()
-                      .getInternalQualifiedName()))) { // if the class is on the right side
-            ASTCDAssociation copyAssoc = association.deepClone();
-            copyAssoc
-                .getLeft()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getLeft()))
-                        .build());
-            copyAssoc
-                .getRight()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getRight()))
-                        .build());
-            copyAssoc
-                .getRight()
-                .setMCQualifiedType(
-                    CD4CodeMill.mCQualifiedTypeBuilder()
-                        .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(
-                                astcdClass
-                                    .getSymbol()
-                                    .getInternalQualifiedName())) // change the right associated
-                        // type to the given one
-                        .build());
-            copyAssoc.setName(" ");
-            if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (!copyAssoc.getRight().isPresentCDCardinality()) {
-              copyAssoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (copyAssoc.getCDAssocType().isComposition()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-            }
-            if (association.getCDAssocDir().isBidirectional()) {
-              getSrcMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          copyAssoc,
-                          AssocDirection.BiDirectional,
-                          ClassSide.Right,
-                          true,
-                          superClass,
-                          pair.a,
-                          association));
-            } else if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
-              getSrcMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          copyAssoc,
-                          AssocDirection.RightToLeft,
-                          ClassSide.Right,
-                          true,
-                          superClass,
-                          pair.a,
-                          association));
-            }
-          }
-        }
-      }
-    }
-
-    for (ASTCDType astcdClass : tgtTypes) { // same procedure for tgtCD
-      Set<ASTCDType> superClasses =
-          CDDiffUtil.getAllSuperTypes(astcdClass, tgtCD.getCDDefinition());
-      superClasses.remove(astcdClass);
-      for (ASTCDType superClass : superClasses) {
-        for (ASTCDAssociation association : getCDAssociationsListForType(superClass, false)) {
-          Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(association, getTgtCD());
-          if (pair.a == null) {
-            continue;
-          }
-          if ((pair.a
-              .getSymbol()
-              .getInternalQualifiedName()
-              .equals(superClass.getSymbol().getInternalQualifiedName()))) {
-            // change left side from superClass to subClass
-            ASTCDAssociation copyAssoc = association.deepClone();
-            copyAssoc
-                .getLeft()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getLeft()))
-                        .build());
-            copyAssoc
-                .getRight()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getRight()))
-                        .build());
-            copyAssoc
-                .getLeft()
-                .setMCQualifiedType(
-                    CD4CodeMill.mCQualifiedTypeBuilder()
-                        .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(
-                                astcdClass.getSymbol().getInternalQualifiedName()))
-                        .build());
-            copyAssoc.setName(" ");
-            if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (!copyAssoc.getRight().isPresentCDCardinality()) {
-              copyAssoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (copyAssoc.getCDAssocType().isComposition()) {
-              copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-            }
-            if (association.getCDAssocDir().isBidirectional()) {
-              getTgtMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          copyAssoc,
-                          AssocDirection.BiDirectional,
-                          ClassSide.Left,
-                          true,
-                          superClass,
-                          pair.b,
-                          association));
-            } else if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
-              getTgtMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          copyAssoc,
-                          AssocDirection.LeftToRight,
-                          ClassSide.Left,
-                          true,
-                          superClass,
-                          pair.b,
-                          association));
-            }
-          }
-          if ((pair.b
-              .getSymbol()
-              .getInternalQualifiedName()
-              .equals(superClass.getSymbol().getInternalQualifiedName()))) {
-            // change right side from superClass to subclass
-            ASTCDAssociation assocForSubClass = association.deepClone();
-            assocForSubClass
-                .getLeft()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getLeft()))
-                        .build());
-            assocForSubClass
-                .getRight()
-                .setCDRole(
-                    CD4CodeMill.cDRoleBuilder()
-                        .setName(CDDiffUtil.inferRole(association.getRight()))
-                        .build());
-            assocForSubClass
-                .getRight()
-                .setMCQualifiedType(
-                    CD4CodeMill.mCQualifiedTypeBuilder()
-                        .setMCQualifiedName(
-                            MCQualifiedNameFacade.createQualifiedName(
-                                astcdClass.getSymbol().getInternalQualifiedName()))
-                        .build());
-            assocForSubClass.setName(" ");
-            if (!assocForSubClass.getLeft().isPresentCDCardinality()) {
-              assocForSubClass.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (!assocForSubClass.getRight().isPresentCDCardinality()) {
-              assocForSubClass.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-            }
-            if (assocForSubClass.getCDAssocType().isComposition()) {
-              assocForSubClass.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-            }
-            if (association.getCDAssocDir().isBidirectional()) {
-              getTgtMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          assocForSubClass,
-                          AssocDirection.BiDirectional,
-                          ClassSide.Right,
-                          true,
-                          superClass,
-                          pair.a,
-                          association));
-            } else if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
-              getTgtMap()
-                  .put(
-                      astcdClass,
-                      new AssocStruct(
-                          assocForSubClass,
-                          AssocDirection.RightToLeft,
-                          ClassSide.Right,
-                          true,
-                          superClass,
-                          pair.a,
-                          association));
-            }
-          }
-        }
-      }
-    }
-    for (ASTCDClass astcdClass :
-        srcCD
-            .getCDDefinition()
-            .getCDClassesList()) { // if a class contains an attribute twice - directly and from a
-      // superclass
-      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b; // it is not instantiable
-      for (ASTCDAttribute attribute : attributes) {
-        for (ASTCDAttribute attribute1 : attributes) {
-          if (attribute != attribute1
-              && attribute.getName().equals(attribute1.getName())
-              && !attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
-            notInstClassesSrc.add(astcdClass);
-            break;
-          }
-          break;
-        }
-      }
-    }
-    for (ASTCDClass astcdClass : tgtCD.getCDDefinition().getCDClassesList()) {
-      List<ASTCDAttribute> attributes = getAllAttrTgt(astcdClass).b;
-      for (ASTCDAttribute attribute : attributes) {
-        for (ASTCDAttribute attribute1 : attributes) {
-          if (attribute != attribute1
-              && attribute.getName().equals(attribute1.getName())
-              && !attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
-            notInstClassesTgt.add(astcdClass);
-            break;
-          }
-          break;
-        }
-      }
-    }
-    for (ASTCDClass astcdClass :
-        srcCD
-            .getCDDefinition()
-            .getCDClassesList()) { // if a class contains an attribute with the same name as a role
-      // name
-      List<ASTCDAttribute> attributes = getAllAttr(astcdClass).b; // it is not instantiable
-      for (ASTCDAttribute attribute : attributes) {
-        if (sameRoleNameAndClass(attribute.getName(), astcdClass, true)) {
-          notInstClassesSrc.add(astcdClass);
-          break;
-        }
-      }
-    }
-    for (ASTCDClass astcdClass : tgtCD.getCDDefinition().getCDClassesList()) {
-      List<ASTCDAttribute> attributes = getAllAttrTgt(astcdClass).b;
-      for (ASTCDAttribute attribute : attributes) {
-        if (sameRoleNameAndClass(attribute.getName(), astcdClass, false)) {
-          notInstClassesTgt.add(astcdClass);
-          break;
-        }
-      }
+      processAssociations(astcdClass, getCDAssociationsListForType(astcdClass, false), false);
     }
   }
-  // TODO: Replace with new functions
-  public void setMap() {
-    initializeMaps();
-    checkForDuplicateAttributes();
-    initializeNotInstClasses();
+
+  private List<ASTCDType> getTypes(ASTCDCompilationUnit compilationUnit) {
+    List<ASTCDType> types = new ArrayList<>();
+    types.addAll(compilationUnit.getCDDefinition().getCDClassesList());
+    types.addAll(compilationUnit.getCDDefinition().getCDInterfacesList());
+    return types;
   }
 
-  public void initializeMaps() {
-    srcMap = ArrayListMultimap.create();
-    tgtMap = ArrayListMultimap.create();
+  private void processAssociations(ASTCDType astcdClass, List<ASTCDAssociation> associations, boolean isSource) {
+    for (ASTCDAssociation astcdAssociation : associations) {
+      Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(astcdAssociation, isSource ? srcCD : tgtCD);
+      if (pair.a == null) continue;
 
-    // Process source types
-    List<ASTCDType> srcTypes = new ArrayList<>();
-    srcTypes.addAll(srcCD.getCDDefinition().getCDClassesList());
-    srcTypes.addAll(srcCD.getCDDefinition().getCDInterfacesList());
-    processAssociations(srcCD, srcTypes, srcMap, true);
+      ASTCDAssociation copyAssoc = createVirtualAssociation(astcdAssociation);
+      updateAssociationRoles(copyAssoc, astcdAssociation);
 
-    // Process target types
-    List<ASTCDType> tgtTypes = new ArrayList<>();
-    tgtTypes.addAll(tgtCD.getCDDefinition().getCDClassesList());
-    tgtTypes.addAll(tgtCD.getCDDefinition().getCDInterfacesList());
-    processAssociations(tgtCD, tgtTypes, tgtMap, false);
-  }
-
-  private void processAssociations(ASTCDCompilationUnit cdUnit, List<ASTCDType> types, ArrayListMultimap<ASTCDType, AssocStruct> map, boolean isSource) {
-    for (ASTCDType astcdClass : types) {
-      for (ASTCDAssociation astcdAssociation : getCDAssociationsListForType(astcdClass, isSource)) {
-        Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(astcdAssociation, cdUnit);
-        if (pair.a == null) {
-          continue;
-        }
-        ASTCDAssociation copyAssoc = prepareAssociationCopy(astcdAssociation);
-
-        // Process Left Side
-        if (pair.a.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName())) {
-          handleAssocStruct(copyAssoc, astcdAssociation, map, astcdClass, pair.b, ClassSide.Left);
-        }
-
-        // Process Right Side
-        if (pair.b.getSymbol().getInternalQualifiedName().equals(astcdClass.getSymbol().getInternalQualifiedName())) {
-          handleAssocStruct(copyAssoc, astcdAssociation, map, astcdClass, pair.a, ClassSide.Right);
-        }
+      if (isSource) {
+        handleAssociationMapping(astcdClass, astcdAssociation, pair, copyAssoc, srcMap);
+      } else {
+        handleAssociationMapping(astcdClass, astcdAssociation, pair, copyAssoc, tgtMap);
       }
     }
   }
 
-  // Method to prepare a deep clone of the association with default values
-  private ASTCDAssociation prepareAssociationCopy(ASTCDAssociation association) {
-    ASTCDAssociation copyAssoc = association.deepClone();
+  private ASTCDAssociation createVirtualAssociation(ASTCDAssociation original) {
+    ASTCDAssociation copyAssoc = original.deepClone();
     copyAssoc.setName(" ");
-
-    // Ensure cardinalities are set
-    if (!copyAssoc.getLeft().isPresentCDCardinality()) {
-      copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-    }
-    if (!copyAssoc.getRight().isPresentCDCardinality()) {
-      copyAssoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
-    }
-
-    // Handle composition association
-    if (copyAssoc.getCDAssocType().isComposition()) {
-      copyAssoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
-    }
-
-    // Set role names
-    copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getLeft())).build());
-    copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder().setName(CDDiffUtil.inferRole(association.getRight())).build());
-
+    ensureCardinalities(copyAssoc);
     return copyAssoc;
   }
 
-  // Handle AssocStruct creation and add it to the map
-  private void handleAssocStruct(ASTCDAssociation copyAssoc, ASTCDAssociation originalAssoc, ArrayListMultimap<ASTCDType, AssocStruct> map,
-                                 ASTCDType astcdClass, ASTCDType connectedType, ClassSide side) {
-    if (originalAssoc.getCDAssocDir().isBidirectional()) {
-      map.put(astcdClass, new AssocStruct(copyAssoc, AssocDirection.BiDirectional, side, astcdClass, connectedType));
-    } else if ((side == ClassSide.Left && originalAssoc.getCDAssocDir().isDefinitiveNavigableRight()) ||
-      (side == ClassSide.Right && originalAssoc.getCDAssocDir().isDefinitiveNavigableLeft())) {
-      AssocDirection direction = (side == ClassSide.Left) ? AssocDirection.LeftToRight : AssocDirection.RightToLeft;
-      map.put(astcdClass, new AssocStruct(copyAssoc, direction, side, astcdClass, connectedType));
+  private void ensureCardinalities(ASTCDAssociation assoc) {
+    if (!assoc.getLeft().isPresentCDCardinality()) {
+      assoc.getLeft().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
+    }
+    if (!assoc.getRight().isPresentCDCardinality()) {
+      assoc.getRight().setCDCardinality(CD4CodeMill.cDCardMultBuilder().build());
+    }
+    if (assoc.getCDAssocType().isComposition()) {
+      assoc.getLeft().setCDCardinality(CD4CodeMill.cDCardOneBuilder().build());
     }
   }
 
-  // Helper method to process classes and check for duplicate attributes
-  private void processClassesForDuplicateAttributes(ASTCDCompilationUnit cdUnit, Set<ASTCDType> notInstClasses, Function<ASTCDClass, Pair<?, List<ASTCDAttribute>>> getAttrFunction) {
-    for (ASTCDClass astcdClass : cdUnit.getCDDefinition().getCDClassesList()) {
-      List<ASTCDAttribute> attributes = getAttrFunction.apply(astcdClass).b;  // Extract attributes
+  private void updateAssociationRoles(ASTCDAssociation copyAssoc, ASTCDAssociation original) {
+    copyAssoc.getLeft().setCDRole(CD4CodeMill.cDRoleBuilder()
+      .setName(CDDiffUtil.inferRole(original.getLeft())).build());
+    copyAssoc.getRight().setCDRole(CD4CodeMill.cDRoleBuilder()
+      .setName(CDDiffUtil.inferRole(original.getRight())).build());
+  }
 
-      for (ASTCDAttribute attribute : attributes) {
-        for (ASTCDAttribute attribute1 : attributes) {
-          if (attribute != attribute1
-            && attribute.getName().equals(attribute1.getName())
-            && !attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
-            notInstClasses.add(astcdClass);  // Add the class to the set if conditions are met
-            break;
+  private void handleAssociationMapping(
+    ASTCDType astcdClass,
+    ASTCDAssociation original,
+    Pair<ASTCDType, ASTCDType> pair,
+    ASTCDAssociation copyAssoc,
+    ArrayListMultimap<ASTCDType, AssocStruct> map
+  ) {
+    if (pair.a.getSymbol().getInternalQualifiedName()
+      .equals(astcdClass.getSymbol().getInternalQualifiedName())) {
+      map.put(astcdClass, createAssocStruct(copyAssoc, original, pair.a, pair.b, ClassSide.Left, false, null));
+    }
+    if (pair.b.getSymbol().getInternalQualifiedName()
+      .equals(astcdClass.getSymbol().getInternalQualifiedName())) {
+      map.put(astcdClass, createAssocStruct(copyAssoc, original, pair.b, pair.a, ClassSide.Right, false, null));
+    }
+  }
+
+  private AssocStruct createAssocStruct(
+    ASTCDAssociation assoc,
+    ASTCDAssociation original,
+    ASTCDType astcdType,
+    ASTCDType connectedType,
+    ClassSide side,
+    Boolean isSuperAssoc,
+    ASTCDType superClass
+  ) {
+    AssocDirection direction = determineAssocDirection(original, side);
+    if (!isSuperAssoc) {
+      return new AssocStruct(assoc, direction, side, astcdType, connectedType);
+    }
+    return new AssocStruct(assoc, direction, side, true, superClass, connectedType, original);
+  }
+
+  private AssocDirection determineAssocDirection(ASTCDAssociation assoc, ClassSide side) {
+    if (assoc.getCDAssocDir().isBidirectional()) {
+      return AssocDirection.BiDirectional;
+    }
+    return side == ClassSide.Left
+      ? AssocDirection.LeftToRight
+      : AssocDirection.RightToLeft;
+  }
+
+  private void inheritAssociations(ASTCDCompilationUnit compilationUnit, boolean isSource) {
+    List<ASTCDType> types = getTypes(compilationUnit);
+    for (ASTCDType astcdClass : types) {
+      Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(astcdClass, compilationUnit.getCDDefinition());
+      superTypes.remove(astcdClass);
+
+      for (ASTCDType superClass : superTypes) {
+        List<ASTCDAssociation> associations = getCDAssociationsListForType(superClass, isSource);
+        for (ASTCDAssociation assoc : associations) {
+          Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(assoc, compilationUnit);
+          if (pair.a == null) continue;
+
+          processInheritedAssociation(astcdClass, assoc, superClass, pair, isSource);
+        }
+      }
+    }
+  }
+
+  private void processInheritedAssociation(
+    ASTCDType subClass,
+    ASTCDAssociation assoc,
+    ASTCDType superClass,
+    Pair<ASTCDType, ASTCDType> pair,
+    boolean isSource
+  ) {
+    ArrayListMultimap<ASTCDType, AssocStruct> map = isSource ? srcMap : tgtMap;
+    if (pair.a.getSymbol().getInternalQualifiedName()
+      .equals(superClass.getSymbol().getInternalQualifiedName())) {
+      ASTCDAssociation copyAssoc = createInheritedAssoc(assoc, subClass, ClassSide.Left);
+      map.put(subClass, createAssocStruct(copyAssoc, assoc, subClass, pair.b, ClassSide.Left, true, superClass));
+    }
+    if (pair.b.getSymbol().getInternalQualifiedName()
+      .equals(superClass.getSymbol().getInternalQualifiedName())) {
+      ASTCDAssociation copyAssoc = createInheritedAssoc(assoc, subClass, ClassSide.Right);
+      map.put(subClass, createAssocStruct(copyAssoc, assoc, subClass, pair.a, ClassSide.Right, true, superClass));
+    }
+  }
+
+  private ASTCDAssociation createInheritedAssoc(ASTCDAssociation original, ASTCDType subClass, ClassSide side) {
+    ASTCDAssociation assoc = original.deepClone();
+    assoc.setName(" ");
+    updateAssociationRoles(assoc, original);
+    ensureCardinalities(assoc);
+
+    if (side == ClassSide.Left) {
+      assoc.getLeft().setMCQualifiedType(createQualifiedType(subClass));
+    } else {
+      assoc.getRight().setMCQualifiedType(createQualifiedType(subClass));
+    }
+    return assoc;
+  }
+
+  private ASTMCQualifiedType createQualifiedType(ASTCDType type) {
+    return CD4CodeMill.mCQualifiedTypeBuilder()
+      .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(type.getSymbol().getInternalQualifiedName()))
+      .build();
+  }
+
+  private void findNonInstantiableClasses() {
+    findDuplicateAttributes(srcCD, notInstClassesSrc, true);
+    findDuplicateAttributes(tgtCD, notInstClassesTgt, false);
+  }
+
+  private void findDuplicateAttributes(ASTCDCompilationUnit compilationUnit, Set<ASTCDType> notInstClasses, boolean isSource) {
+    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      List<ASTCDAttribute> attributes = isSource ? getAllAttr(astcdClass).b : getAllAttrTgt(astcdClass).b;
+      for (int i = 0; i < attributes.size(); i++) {
+        for (int j = i + 1; j < attributes.size(); j++) {
+          ASTCDAttribute attr1 = attributes.get(i);
+          ASTCDAttribute attr2 = attributes.get(j);
+          if (attr1 != attr2 && attr1.getName().equals(attr2.getName())
+            && !attr1.getMCType().printType().equals(attr2.getMCType().printType())) {
+            notInstClasses.add(astcdClass);
           }
         }
       }
     }
   }
 
-  public void checkForDuplicateAttributes() {
-    // Process srcCD classes
-    processClassesForDuplicateAttributes(srcCD, notInstClassesSrc, this::getAllAttr);
-
-    // Process tgtCD classes
-    processClassesForDuplicateAttributes(tgtCD, notInstClassesTgt, this::getAllAttrTgt);
+  private void checkRoleNameConflicts() {
+    checkRoleNameConflicts(srcCD, notInstClassesSrc, true);
+    checkRoleNameConflicts(tgtCD, notInstClassesTgt, false);
   }
 
-
-  // Helper method to process classes and attributes for source or target CD
-  private void processClassesForNotInst(ASTCDCompilationUnit cdUnit, Set<ASTCDType> notInstClasses, Function<ASTCDClass, Pair<?, List<ASTCDAttribute>>> getAttrFunction) {
-    for (ASTCDClass astcdClass : cdUnit.getCDDefinition().getCDClassesList()) {
-      List<ASTCDAttribute> attributes = getAttrFunction.apply(astcdClass).b;  // Extract attributes
-
+  private void checkRoleNameConflicts(ASTCDCompilationUnit compilationUnit, Set<ASTCDType> notInstClasses, boolean isSource) {
+    for (ASTCDClass astcdClass : compilationUnit.getCDDefinition().getCDClassesList()) {
+      List<ASTCDAttribute> attributes = isSource ? getAllAttr(astcdClass).b : getAllAttrTgt(astcdClass).b;
       for (ASTCDAttribute attribute : attributes) {
-        for (ASTCDAttribute attribute1 : attributes) {
-          if (attribute != attribute1
-            && attribute.getName().equals(attribute1.getName())
-            && !attribute.getMCType().printType().equals(attribute1.getMCType().printType())) {
-            notInstClasses.add(astcdClass);  // Add the class to the set if conditions are met
-            break;
-          }
+        if (sameRoleNameAndClass(attribute.getName(), astcdClass, isSource)) {
+          notInstClasses.add(astcdClass);
+          break;
         }
       }
     }
-  }
-
-  public void initializeNotInstClasses() {
-    // Process srcCD classes
-    processClassesForNotInst(srcCD, notInstClassesSrc, this::getAllAttr);
-
-    // Process tgtCD classes
-    processClassesForNotInst(tgtCD, notInstClassesTgt, this::getAllAttrTgt);
   }
 
 
@@ -1871,14 +1429,6 @@ public class Syn2SemDiffHelper {
         }
       }
     }
-  }
-
-  public void processSuperClassRelations() {
-    // Process srcCD interfaces and classes
-    processInterfacesAndClasses(srcCD, srcSubMap);
-
-    // Process tgtCD interfaces and classes
-    processInterfacesAndClasses(tgtCD, tgtSubMap);
   }
 
   private boolean sameRoleNameAndClass(String roleName, ASTCDClass astcdClass, boolean isSource) {
