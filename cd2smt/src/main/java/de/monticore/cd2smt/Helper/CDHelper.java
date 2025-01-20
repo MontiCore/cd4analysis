@@ -167,7 +167,7 @@ public class CDHelper {
         res = ctx.mkIntSort();
         break;
       case "double":
-        res = ctx.mkRealSort();
+        res = ctx.mkFPSortDouble();
         break;
       case "java.lang.String":
       case "String":

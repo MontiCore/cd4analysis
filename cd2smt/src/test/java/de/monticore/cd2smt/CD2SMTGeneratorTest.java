@@ -78,7 +78,7 @@ public class CD2SMTGeneratorTest {
       Assert.assertNotNull(attr);
       switch (attribute.getName()) {
         case "price":
-          Assert.assertEquals(attr.getSort(), context.mkRealSort());
+          Assert.assertEquals(attr.getSort(), context.mkFPSortDouble());
           break;
         case "manufacturer":
           Assert.assertEquals(attr.getSort(), context.mkStringSort());
