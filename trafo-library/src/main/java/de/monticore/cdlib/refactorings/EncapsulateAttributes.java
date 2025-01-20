@@ -46,25 +46,24 @@ public class EncapsulateAttributes implements Refactoring {
    * @return true, if applied successfully
    */
   public boolean encapsulateAttributes(List<String> attributes, ASTCDCompilationUnit ast) {
-    for (int i = 0; i < attributes.size(); i++) {
+    for (String attribute : attributes) {
       EncapsulateAttribute encapsulateAttribute = new EncapsulateAttribute(ast);
-      encapsulateAttribute.set_$attrname(attributes.get(i));
+      encapsulateAttribute.set_$attrname(attribute);
       if (encapsulateAttribute.doPatternMatching()) {
         encapsulateAttribute.doReplacement();
       } else {
         EncapsulateAttributeBoolean encapsulateBoolean = new EncapsulateAttributeBoolean(ast);
-        encapsulateBoolean.set_$attrname(attributes.get(i));
+        encapsulateBoolean.set_$attrname(attribute);
         if (encapsulateBoolean.doPatternMatching()) {
           encapsulateBoolean.doReplacement();
         } else {
           Log.info(
-              "0xF4061:Could not find attribute " + attributes.get(i),
-              EncapsulateAttributes.class.getName());
+            "0xF4061:Could not find attribute " + attribute,
+            EncapsulateAttributes.class.getName());
           return false;
         }
       }
-      return true;
     }
-    return false;
+    return true;
   }
 }
