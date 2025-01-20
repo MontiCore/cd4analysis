@@ -7,7 +7,9 @@ import de.monticore.cdlib.designpatterns.adapter.tf.ClassAdapter;
 import de.monticore.cdlib.designpatterns.adapter.tf.ClassAdapterMethod;
 import de.monticore.cdlib.designpatterns.adapter.tf.ObjectAdapter;
 import de.monticore.cdlib.designpatterns.adapter.tf.ObjectAdapterMethod;
+import de.monticore.cdlib.utilities.TransformationUtility;
 import de.se_rwth.commons.logging.Log;
+
 import java.io.IOException;
 
 /**
@@ -89,6 +91,22 @@ public class AdapterPattern implements DesignPattern {
     return false;
   }
 
+  /**
+   * Applies the object adapter pattern to a class with name {@code adapteeName} with methods
+   *
+   * @param adapteeName - name of the adaptee class
+   * @param targetName - name of the target
+   * @param methodName - the method name
+   * @param ast - class diagram to be transformed
+   * @return true, if applied successfully
+   */
+  public boolean introduceObjectAdapterPattern(
+    String adapteeName, String targetName, String methodName, ASTCDCompilationUnit ast)
+    throws IOException {
+    ASTCDMethod method = new TransformationUtility().getMethod(adapteeName, methodName, ast);
+    return introduceObjectAdapterPattern(adapteeName, targetName, method, ast);
+  }
+
   /* Class adapter with methods */
 
   /**
@@ -121,6 +139,22 @@ public class AdapterPattern implements DesignPattern {
         "0xF4013: Could not introduce Design Pattern Object Adapter",
         AdapterPattern.class.getName());
     return false;
+  }
+
+  /**
+   * Applies the class adapter pattern to a class with name {@code adapteeName} with methods
+   *
+   * @param adapteeName - name of the adaptee class
+   * @param targetName - name of the target
+   * @param methodName - the method name
+   * @param ast - class diagram to be transformed
+   * @return true, if applied successfully
+   */
+  public boolean introduceClassAdapterPattern(
+    String adapteeName, String targetName, String methodName, ASTCDCompilationUnit ast)
+    throws IOException {
+    ASTCDMethod method = new TransformationUtility().getMethod(adapteeName, methodName, ast);
+    return introduceClassAdapterPattern(adapteeName, targetName, method, ast);
   }
 
   /* Class adapter without methods */
