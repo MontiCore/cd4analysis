@@ -137,4 +137,18 @@ public class ToolTest extends OutTestBasis {
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }
+
+  @Test
+  @Ignore // TODO JRa: success depends on gradle.properties genTR
+  public void testTrafoTemplate() {
+    final File cd = new File(TOOL_PATH + "trafo/Vehicle1.cd");
+    final File trafoFp = new File(TOOL_PATH + "trafo/");
+    assertTrue(cd.exists());
+    assertTrue(trafoFp.exists());
+
+    CD4CodeTool.main(new String[]{"-i", cd.toString(), "-fp", trafoFp.toString(), "--trafoTemplate", "VehicleTrafo", "-pp"});
+
+    assertContains(getOut(), "public void setYear(Integer year)");
+    assertTrue(getErr(), getErr().isEmpty());
+  }
 }

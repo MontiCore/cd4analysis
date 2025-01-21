@@ -1,0 +1,18 @@
+classdiagram Vehicle1 {
+	class Vehicle {
+	}
+
+	class Car extends Vehicle {
+		public String brand;
+		public String model;
+		public Integer year;
+		public Integer numberOfDoors;
+	}
+
+	class Truck extends Vehicle {
+		public String brand;
+		public String model;
+		public Integer year;
+		public Double maxLoad;
+	}
+}
