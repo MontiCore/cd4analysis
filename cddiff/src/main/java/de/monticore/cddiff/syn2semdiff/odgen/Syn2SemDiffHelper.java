@@ -772,7 +772,7 @@ public class Syn2SemDiffHelper {
       astcdType.getSymbol().getInternalQualifiedName(),
       subType.getSymbol().getInternalQualifiedName(),
       (ICD4CodeArtifactScope) (isSource ? srcCD.getEnclosingScope() : tgtCD.getEnclosingScope())
-    )).isPresent();
+    )).isPresent() || (subType.getSymbol().isIsAbstract() && typeToMatch.isPresent() && srcSubMap.get(subType).contains(typeToMatch.get()));
   }
 
   /**
