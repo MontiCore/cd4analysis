@@ -529,6 +529,20 @@ Note that `--merge` does not use symbols from symbol files. More information on
 concepts behind as well as the capabilities of `CDMerge` can be found 
 [here](cdmerge/index.md).
 
+### Step 10: Transformation of Models
+
+The tool supports the execution of transformation templates and thus enables the transformation of models.
+These transformations are carried out after all pre-processing steps, but before any artifacts (such as pretty print, symbol table or Java code) are generated.
+
+The `--trafoTemplate <templatename>` option can be used to execute transformation templates.
+In addition, the `-fp` option can be used to adjust the path of the template directory.
+
+```shell
+java -jar MCCD.jar -i src/MyExample.cd -fp src --trafoTemplate MyExample.ftl -pp
+```
+
+You can find more information on transformation templates [here](trafo-library/index.md).
+
 [ExampleModels]: cdlang/src/test/resources/de/monticore/cd4analysis/examples
 [ToolDownload]: https://monticore.de/download/MCCD.jar
 [MCDownloadPage]: https://monticore.github.io/monticore/docs/Download/
