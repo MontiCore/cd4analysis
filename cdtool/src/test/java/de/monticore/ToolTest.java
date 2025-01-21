@@ -4,12 +4,15 @@ package de.monticore;
 import static org.junit.Assert.assertTrue;
 
 import de.monticore.cd.OutTestBasis;
+
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.commons.cli.ParseException;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.rules.ExpectedException;
 
 public class ToolTest extends OutTestBasis {
@@ -19,13 +22,20 @@ public class ToolTest extends OutTestBasis {
 
   protected static final String TOOL_PATH = "src/test/resources/de/monticore/";
 
+  protected void assertContains(String haystack, String needle) {
+    if (!haystack.contains(needle)) {
+      Assertions.fail(String.format("%1$s did not contain `%2$s`", haystack, needle));
+    }
+  }
+
   @Test
   public void testMerge() {
-    final String cd1 = "src/test/doc/MyEmployees2.cd";
-    final String cd2 = "src/test/doc/MyEmployees1.cd";
-    CD4CodeTool.main(new String[] {"-i", cd1, "--merge", cd2});
+    final String cd1 = "src/test/resources/doc/MyEmployees2.cd";
+    final String cd2 = "src/test/resources/doc/MyEmployees1.cd";
+    CD4CodeTool.main(new String[]{"-i", cd1, "--merge", cd2});
 
-    // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertContains(getOut(), "Successfully parsed src/test/resources/doc/MyEmployees2.cd");
+    assertContains(getOut(), "Successfully checked the CoCos for class diagram Merge");
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -35,53 +45,55 @@ public class ToolTest extends OutTestBasis {
     final String cd2 = TOOL_PATH + "cdmerge/Person/B.cd";
     final String cd3 = TOOL_PATH + "cdmerge/Person/C.cd";
     final String out = "target/generated/multi-merge";
-    CD4CodeTool.main(new String[] {"-i", cd1, "--merge", cd2, cd3, "-o", out, "-pp", "Merge.cd"});
+
+    CD4CodeTool.main(new String[]{"-i", cd1, "--merge", cd2, cd3, "-o", out, "-pp", "Merge.cd"});
+
+    assertContains(getOut(), "Successfully parsed src/test/resources/de/monticore/cdmerge/Person/A.cd");
+    assertContains(getOut(), "successful");
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   @Test
   public void testTool() throws IOException, ParseException {
-    final File file = new File("src/test/resources/de/monticore/cd/Complete.cd");
-    assertTrue(file.exists());
-    final String fileName = file.toString();
-    CD4CodeTool.main(new String[] {"-i", fileName, "-f", "false"});
+    final String cd = TOOL_PATH + "cd/Complete.cd";
 
-    // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    CD4CodeTool.main(new String[]{"-i", cd, "-f", "false"});
+
+    assertContains(getOut(), "Successfully parsed src/test/resources/de/monticore/cd/Complete.cd");
+    assertContains(getOut(), "Successfully checked the CoCos for class diagram Complete");
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   @Test
   public void testHelp() throws IOException, ParseException {
-    final File file = new File(TOOL_PATH + "cd/Complete.cd");
-    assertTrue(file.exists());
-    final String fileName = file.toString();
-    CD4CodeTool.main(new String[] {"-i", fileName, "-h", "-f", "false"});
+    final String cd = TOOL_PATH + "cd/Complete.cd";
 
-    // assertTrue(getOut(), getOut().startsWith("usage: cd-"));
+    CD4CodeTool.main(new String[]{"-i", cd, "-h", "-f", "false"});
+
+    assertContains(getOut(), "usage:");
+    assertContains(getOut(), "Further details: https://www.se-rwth.de/topics/");
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   @Test
   public void testToolNoBuiltInTypes() throws IOException, ParseException {
-    final File file = new File(TOOL_PATH + "cd/Complete.cd");
-    assertTrue(file.exists());
-    final String fileName = file.toString();
+    final String cd = TOOL_PATH + "cd/Complete.cd";
 
-    CD4CodeTool.main(new String[] {"-i", fileName, "-nt", "-f", "false"});
+    CD4CodeTool.main(new String[]{"-i", cd, "-nt", "-f", "false"});
 
-    // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertContains(getOut(), "Successfully parsed src/test/resources/de/monticore/cd/Complete.cd");
+    assertContains(getOut(), "Successfully checked the CoCos for class diagram Complete");
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   @Test
   public void testSymbolPath() throws IOException, ParseException {
-    final File file = new File(TOOL_PATH + "cd/Complete.cd");
-    assertTrue(file.exists());
-    final String fileName = file.toString();
+    final String cd = TOOL_PATH + "cd/Complete.cd";
 
-    CD4CodeTool.main(new String[] {"-i", fileName, "-f", "false"});
+    CD4CodeTool.main(new String[]{"-i", cd, "-f", "false"});
 
-    // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertContains(getOut(), "Successfully parsed src/test/resources/de/monticore/cd/Complete.cd");
+    assertContains(getOut(), "Successfully checked the CoCos for class diagram Complete");
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -94,9 +106,9 @@ public class ToolTest extends OutTestBasis {
 
     // for now check for the NullPointerException
     CD4CodeTool.main(
-        new String[] {
-          "-i", fileName, "-f", "false", "-pp", getTmpFilePath("Complete.puml"), "-puml"
-        });
+      new String[]{
+        "-i", fileName, "-f", "false", "-pp", getTmpFilePath("Complete.puml"), "-puml"
+      });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.puml")));
   }
@@ -110,16 +122,16 @@ public class ToolTest extends OutTestBasis {
 
     // for now check for the NullPointerException
     CD4CodeTool.main(
-        new String[] {
-          "-i",
-          fileName,
-          "-f",
-          "--pp",
-          getTmpFilePath("Complete.svg"),
-          "--puml",
-          "--svg",
-          "--showAttr"
-        });
+      new String[]{
+        "-i",
+        fileName,
+        "-f",
+        "--pp",
+        getTmpFilePath("Complete.svg"),
+        "--puml",
+        "--svg",
+        "--showAttr"
+      });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }
@@ -133,7 +145,7 @@ public class ToolTest extends OutTestBasis {
 
     // for now check for the NullPointerException
     CD4CodeTool.main(
-        new String[] {"-i", fileName, "-f", "--puml", "--svg", "-attr", "assoc", "--showRoles"});
+      new String[]{"-i", fileName, "-f", "--puml", "--svg", "-attr", "assoc", "--showRoles"});
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }
