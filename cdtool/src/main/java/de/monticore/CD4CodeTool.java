@@ -184,6 +184,28 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           System.out.printf(PARSE_SUCCESSFUL, model);
         }
 
+        if (cmd.hasOption("trafoTemplate")) {
+          GlobalExtensionManagement glex = new GlobalExtensionManagement();
+          GeneratorSetup generatorSetup = new GeneratorSetup();
+
+          if (cmd.hasOption("fp")) { // Template path
+            generatorSetup.setAdditionalTemplatePaths(
+              Arrays.stream(cmd.getOptionValues("fp"))
+                .map(Paths::get)
+                .map(Path::toFile)
+                .collect(Collectors.toList()));
+          }
+
+          generatorSetup.setGlex(glex);
+          generatorSetup.setOutputDirectory(new File(outputPath));
+
+          String trafoTemplate = cmd.getOptionValue("trafoTemplate", "");
+          TemplateController tc = generatorSetup.getNewTemplateController(trafoTemplate);
+          TemplateHookPoint hpp = new TemplateHookPoint(trafoTemplate);
+          List<Object> trafoTemplateArgs = Collections.emptyList();
+          hpp.processValue(tc, ast, trafoTemplateArgs);
+        }
+
         if (cmd.hasOption("pp")) { // pretty print
           String ppTarget = cmd.getOptionValue("pp");
           prettyPrint(ast, ppTarget);

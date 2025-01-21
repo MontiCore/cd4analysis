@@ -5,6 +5,8 @@ plugins {
 
 description = "CD4Analysis: Tool"
 
+def withDSTLGen = ("true").equals(getProperty('genTR'))
+
 configurations {
   // An extra configuration that is used by the shadow plugin, since we don't want cd2smt or plantuml in the tools jar.
   // All its dependencies will be automatically added to implementation
@@ -20,6 +22,12 @@ dependencies {
   // in the tool
   implementationWithoutExtras(project(":cd2plantuml")){
     transitive = false
+  }
+
+  if (withDSTLGen){
+    implementationWithoutExtras(project(":trafo-library")) {
+      transitive = false
+    }
   }
 
   implementation(project(":cd2plantuml"))

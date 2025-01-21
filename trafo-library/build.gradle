@@ -129,6 +129,7 @@ fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each
     tasks.sourcesJar.dependsOn it
   }
   buildCD4ATrafoLibTrafos.dependsOn("$taskname")
+  generateMCGrammars.dependsOn += "$taskname"
 }
 
 compileJava.dependsOn += buildCD4ATrafoLibTrafos

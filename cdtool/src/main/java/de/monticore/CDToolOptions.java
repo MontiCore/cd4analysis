@@ -59,6 +59,7 @@ public class CDToolOptions {
     initSyntaxDiffOptions();
     initMergeOptions();
     initConformanceCheckOptions();
+    initTrafoTemplateOptions();
   }
 
   protected void initCheck() {
@@ -468,5 +469,21 @@ public class CDToolOptions {
                 "Specify the names of stereotypes that are used as incarnation mappings in the "
                     + "concrete model. Default : 'incarnates'")
             .build());
+  }
+
+  public void initTrafoTemplateOptions() {
+    options.addOption(
+      Option.builder()
+        .longOpt("trafoTemplate")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc(
+          "Executes this template after the initial AST construction. This allows "
+            + "the execution of transformations (optional, `-fp` is needed to specify the "
+            + "template path).")
+        .build());
   }
 }
