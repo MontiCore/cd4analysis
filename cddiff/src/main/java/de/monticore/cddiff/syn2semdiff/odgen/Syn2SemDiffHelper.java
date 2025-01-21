@@ -816,7 +816,7 @@ public class Syn2SemDiffHelper {
    */
   public boolean classHasAssociationSrcTgt(AssocStruct assocStruct, ASTCDType tgtType) {
     for (AssocStruct assocStruct1 : tgtMap.get(tgtType)) {
-      if (sameAssociationTypeSrcTgt(assocStruct1, assocStruct)) {
+      if (sameAssociationTypeSrcTgt(assocStruct, assocStruct1)) {
         return true;
       }
     }
@@ -2118,8 +2118,7 @@ public class Syn2SemDiffHelper {
                     assocStructTgt.getUnmodifiedAssoc(),
                     srcCD,
                     tgtCD,
-                    this,
-                  matchingStrategies));
+                    this));
           }
           break;
         }
@@ -2191,8 +2190,7 @@ public class Syn2SemDiffHelper {
                     assocStruct.getUnmodifiedAssoc(),
                     srcCD,
                     tgtCD,
-                    this,
-                  matchingStrategies));
+                    this));
           }
           break;
         }

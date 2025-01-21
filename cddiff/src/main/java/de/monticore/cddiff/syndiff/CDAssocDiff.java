@@ -82,8 +82,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       ASTCDAssociation tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD,
-      Syn2SemDiffHelper helper,
-      List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
+      Syn2SemDiffHelper helper) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
     this.helper = helper;
@@ -112,7 +111,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
             .resolveCDTypeDown(srcElem.getRightQualifiedName().getQName())
             .get()
             .getAstNode());
-    assocDiff(srcElem, tgtElem, matchingStrategies);
+    assocDiff(srcElem, tgtElem);
     setStrings();
   }
 
@@ -401,12 +400,10 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
    *
    * @param srcAssoc The source ASTCDAssociation.
    * @param tgtAssoc The target ASTCDAssociation.
-   * @param matchingStrategies The list of matching strategies to be used.
    */
   private void assocDiff(
     ASTCDAssociation srcAssoc,
-    ASTCDAssociation tgtAssoc,
-    List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
+    ASTCDAssociation tgtAssoc) {
 
     // Association Type
     Optional<ASTCDAssocType> srcAssocType = Optional.of(srcAssoc.getCDAssocType());
@@ -479,12 +476,12 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     tgtRightSymbol.ifPresent(cdTypeSymbol -> this.tgtRightType = cdTypeSymbol.getAstNode());
 
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies);
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
 
     ASTCDAssocSide targetVirtualLeft = tgtAssoc.getLeft();
     ASTCDAssocSide targetVirtualRight = tgtAssoc.getRight();
 
-    setIsReversed(srcAssoc, tgtAssoc, matchingStrategies);
+    setIsReversed(srcAssoc, tgtAssoc);
 
     if (isReversed) {
       targetVirtualLeft = tgtAssoc.getRight();
@@ -691,9 +688,9 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     tgtLineOfCode = tgtAssoc.get_SourcePositionStart().getLine();
   }
 
-  private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc, List<de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy> matchingStrategies) {
+  private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
     Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies);
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
 
     isReversed = false;
 
