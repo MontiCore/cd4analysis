@@ -15,7 +15,6 @@ public class ASTCDCardAtLeastOne extends ASTCDCardAtLeastOneTOP {
     return CardinalityMill.cardinalityBuilder()
         .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits("1").build())
         .setUpperBoundLitAbsent()
-        .setLowerBound(1)
         .setNoUpperLimit(true)
         .build();
   }

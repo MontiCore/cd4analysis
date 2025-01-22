@@ -5,14 +5,16 @@ import de.monticore.cd.CDMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
-import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.cdassociation._prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 
 /** Checks that the attribute connected by associations exist. */
 public class CDAssociationByAttributeFieldExist implements CDAssociationASTCDAssociationCoCo {
 
-  protected CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
+  protected CDAssociationPrettyPrinter prettyPrinter =
+      new CDAssociationPrettyPrinter(new IndentPrinter(), false);
 
   @Override
   public void check(ASTCDAssociation assoc) {

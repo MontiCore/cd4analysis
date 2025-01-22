@@ -1,0 +1,38 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class Person {
+  {field} String name
+  {field} int age
+  {field} String adress
+  {field} long id
+  {field} String birthplace
+  {field} List<Person> children
+  {field} Person parent1
+  {field} Person parent2
+  {field} java.util.Date birthday
+  {field} boolean happy
+  {field} double bankBalance
+}
+class Alphabet {
+  {field} List<char> alphabet
+  {field} int length
+  {field} List<String> umlaute
+}
+center footer generated with MontiCore using PlantUML
+@enduml

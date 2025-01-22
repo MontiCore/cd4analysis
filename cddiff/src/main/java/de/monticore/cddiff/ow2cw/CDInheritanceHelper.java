@@ -27,7 +27,7 @@ public class CDInheritanceHelper {
       if (supertype != cdType) {
         for (ASTCDAttribute duplicate : supertype.getCDAttributeList()) {
           if (attribute.getName().equals(duplicate.getName())
-              && attribute.getMCType().printType().equals(duplicate.printType())) {
+              && attribute.getMCType().printType().equals(duplicate.getMCType().printType())) {
             return Optional.of(duplicate);
           }
         }

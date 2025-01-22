@@ -49,7 +49,7 @@ public class CDBasisDeSerTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     // after parse trafo
-    TestCDBasisTraverser t = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
     CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     ast.accept(t);
@@ -58,7 +58,7 @@ public class CDBasisDeSerTest {
     ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
     // complete symbol table
-    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t2 = TestCDBasisMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);

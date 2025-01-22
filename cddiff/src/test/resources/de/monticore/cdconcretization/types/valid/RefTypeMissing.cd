@@ -1,0 +1,19 @@
+import java.lang.String;
+classdiagram RefTypeMissing {
+  interface Teachable {
+  }
+
+  class Course implements Teachable {
+  }
+
+  enum CourseStatus {
+    ACTIVE,
+    COMPLETED,
+    CANCELLED;
+  }
+
+  enum CourseType {
+    LECTURE,
+    EXERCICE;
+  }
+}

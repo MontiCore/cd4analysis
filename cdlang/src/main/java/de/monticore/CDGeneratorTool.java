@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,46 +79,56 @@ public class CDGeneratorTool extends CD4CodeTool {
    */
   public void run(String[] args) {
 
+    this.init();
+
     Options options = initOptions();
 
     try {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
-      if (!cmd.hasOption("i") || cmd.hasOption("h")) {
+      if (cmd.hasOption("v")) {
+        printVersion();
+        // do not continue when version is printed
+        return;
+      } else if (!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
       }
 
-      if (cmd.hasOption("v")) {
-        printVersion();
-      }
-
-      Log.init();
-      CD4CodeMill.init();
-
-      if (cmd.hasOption("c2mc")) {
-        initializeClass2MC();
-      }
       BasicSymbolsMill.initializePrimitives();
+
+      final boolean c2mc = cmd.hasOption("c2mc");
+      if (c2mc) {
+        initializeClass2MC();
+      } else {
+        BasicSymbolsMill.initializeString();
+        BasicSymbolsMill.initializeObject();
+      }
 
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts =
           this.parse(".cd", this.createModelPath(cmd).getEntries());
       Log.enableFailQuick(true);
 
-      asts.forEach(this::transform);
+      // apply trafos needed for symbol table creation
+      asts = this.trafoBeforeSymtab(asts);
 
       if (cmd.hasOption("path")) {
         String[] paths = splitPathEntries(cmd.getOptionValue("path"));
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
 
-      Collection<ICD4CodeArtifactScope> scopes =
-          asts.stream()
-              .map(ast -> createSymbolTable(ast, cmd.hasOption("c2mc")))
-              .collect(Collectors.toList());
-      asts.forEach(this::completeSymbolTable);
+      // Create the symbol-table (symbol table creation phase 1)
+      List<ICD4CodeArtifactScope> scopes = new ArrayList<>(asts.size());
+      for (ASTCDCompilationUnit ast : asts) {
+        scopes.add(this.createSymbolTable(ast, c2mc));
+      }
+
+      // Complete the symbol-table (symbol table creation phase 2)
+      for (ASTCDCompilationUnit ast : asts) {
+        this.completeSymbolTable(ast);
+      }
 
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
@@ -132,7 +143,7 @@ public class CDGeneratorTool extends CD4CodeTool {
           { // add FieldSymbols for all the CDRoleSymbols
             final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
                 new CDAssociationCreateFieldsFromAllRoles();
-            final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+            final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
             traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
             traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
             asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
@@ -143,7 +154,7 @@ public class CDGeneratorTool extends CD4CodeTool {
             final CDAssociationCreateFieldsFromNavigableRoles
                 cdAssociationCreateFieldsFromNavigableRoles =
                     new CDAssociationCreateFieldsFromNavigableRoles();
-            final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+            final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
             traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
             traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
             asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
@@ -168,10 +179,8 @@ public class CDGeneratorTool extends CD4CodeTool {
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
 
-        // setup default package when generating
-        CD4CodeTraverser t = CD4CodeMill.traverser();
-        t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-        asts.forEach(ast -> ast.accept(t));
+        // apply trafos needed for code generation
+        asts = this.trafoBeforeCodegen(asts);
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
@@ -305,15 +314,52 @@ public class CDGeneratorTool extends CD4CodeTool {
   }
 
   /**
-   * transforms the ast using th
+   * Applies the transformations prerequisite to symbol table creation.
    *
+   * @deprecated this method in no longer supported and scheduled for removal.
+   *     <p>Use {@link #trafoBeforeSymtab(Collection)} instead.
    * @param ast The input AST
    * @return The transformed AST
    */
+  @Deprecated(forRemoval = true)
   public ASTCDCompilationUnit transform(ASTCDCompilationUnit ast) {
     CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
     ast.accept(trafo.getTraverser());
     return ast;
+  }
+
+  /**
+   * Applies the transformations (trafos) prerequisite to symbol table creation. Trafos are applied
+   * in place, that is, the input asts are mutated.
+   *
+   * @param asts the asts to be transformed
+   * @return asts the transformed asts
+   */
+  public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
+    CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
+    asts.forEach(ast -> ast.accept(trafo.getTraverser()));
+    return asts;
+  }
+
+  /**
+   * Applies the transformations (trafos) prerequisite to code generation. Trafos are applied in
+   * place, that is, the input asts are mutated.
+   *
+   * @param asts the asts to be transformed
+   * @return asts the transformed asts
+   */
+  public Collection<ASTCDCompilationUnit> trafoBeforeCodegen(
+      Collection<ASTCDCompilationUnit> asts) {
+    CD4CodeTraverser trafo = createBeforeCodegenTrafo();
+    asts.forEach(ast -> ast.accept(trafo));
+    return asts;
+  }
+
+  /** @return traverser with the trafos needed for codegeneration */
+  protected CD4CodeTraverser createBeforeCodegenTrafo() {
+    CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
+    t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+    return t;
   }
 
   /**

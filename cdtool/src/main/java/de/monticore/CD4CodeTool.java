@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static de.monticore.conformance.ConfParameter.*;
-import static de.monticore.conformance.ConfParameter.ALLOW_CARD_RESTRICTION;
+import static de.monticore.cdconformance.CDConfParameter.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -13,17 +12,17 @@ import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.cocos.CDAssociationUniqueInHierarchy;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -33,15 +32,15 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.CDFullNameTrafo;
-import de.monticore.cddiff.syndiff.SyntaxDiffBuilder;
+import de.monticore.cddiff.syndiff.SyntaxDiffPrinter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
 import de.monticore.cdmerge.config.MergeParameter;
-import de.monticore.conformance.ConformanceChecker;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -52,28 +51,14 @@ import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.AmbiguousOptionException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingArgumentException;
-import org.apache.commons.cli.MissingOptionException;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 
 public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
@@ -148,6 +133,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         if (cmd.hasOption("semdiff")) {
+          CDDiffUtil.setUseJavaTypes(true);
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
@@ -156,6 +142,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         if (cmd.hasOption("syntaxdiff")) {
+          CDDiffUtil.setUseJavaTypes(true);
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
@@ -181,7 +168,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             cmd.hasOption("defaultpackage")
                 && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
         if (defaultPackage) {
-          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+          final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
           final CDBasisCombinePackagesTrafo cdBasis = new CDBasisCombinePackagesTrafo();
           traverser.add4CDBasis(cdBasis);
 
@@ -237,7 +224,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
               { // add FieldSymbols for all the CDRoleSymbols
                 final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
                     new CDAssociationCreateFieldsFromAllRoles();
-                final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+                final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
                 traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
                 traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
                 cdAssociationCreateFieldsFromAllRoles.transform(ast);
@@ -248,7 +235,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
                 final CDAssociationCreateFieldsFromNavigableRoles
                     cdAssociationCreateFieldsFromNavigableRoles =
                         new CDAssociationCreateFieldsFromNavigableRoles();
-                final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+                final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
                 traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
                 traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
                 cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
@@ -315,7 +302,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           GeneratorSetup generatorSetup = new GeneratorSetup();
 
           // setup default package when generating
-          CD4CodeTraverser t = CD4CodeMill.traverser();
+          CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
           t.add4CDBasis(new CDBasisDefaultPackageTrafo());
           ast.accept(t);
 
@@ -368,7 +355,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
               "0xCD0E4: options [%s] are missing, but are required",
               Joiners.COMMA.join(e.getMissingOptions())));
     } catch (MissingArgumentException e) {
-      Log.error(String.format("0xCD0E5: option '%s' is missing an argument", e.getOption()));
+      Log.error(
+          String.format(
+              "0xCD0E5: option '%s' is missing an argument.\n" + "Description of this option: %s",
+              e.getOption().getLongOpt(), e.getOption().getDescription()));
     } catch (NumberFormatException e) {
       Log.error(
           "0xCD0E6: options --diffsize and --difflimit each require an " + "integer as argument");
@@ -399,6 +389,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       } else {
         printHelp((CDToolOptions.SubCommand) null);
       }
+      return false;
+    } else if (cmd.hasOption("v")) {
+      printVersion();
+      // do not continue when version is printed
       return false;
     } else {
 
@@ -640,7 +634,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.setWidth(110);
+    formatter.setWidth(80);
     formatter.printHelp(
         "Examples in case the Tool file is called MCCD.jar: "
             + System.lineSeparator()
@@ -648,7 +642,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             + System.lineSeparator()
             + "java -jar MCCD.jar -i src/Person.cd -pp target/Person.cd"
             + System.lineSeparator()
-            + "",
+            + System.lineSeparator()
+            + "Options:",
         cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
@@ -727,7 +722,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     CDDiffUtil.refreshSymbolTable(ast1);
     CDDiffUtil.refreshSymbolTable(ast2);
 
-    SyntaxDiffBuilder syntaxDiff = new SyntaxDiffBuilder(ast1, ast2);
+    SyntaxDiffPrinter syntaxDiff = new SyntaxDiffPrinter(ast1, ast2);
 
     String printOption = cmd.getOptionValue("show", "diff");
     if (printOption.equals("added")) {
@@ -757,15 +752,17 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   /** perform a conformance check */
   protected void checkConformance() {
     ASTCDCompilationUnit con = ast.deepClone();
+    new CD4CodeDirectCompositionTrafo().transform(con);
     CDDiffUtil.refreshSymbolTable(con);
     ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
-    List<String> mappings = List.of("mapTo");
+    List<String> mappings = List.of("incarnates");
     if (cmd.hasOption("map")) {
       mappings = List.of(cmd.getOptionValues("map"));
     }
     if (ref != null) {
+      new CD4CodeDirectCompositionTrafo().transform(ref);
       CDDiffUtil.refreshSymbolTable(ref);
-      new ConformanceChecker(
+      new CDConformanceChecker(
               Set.of(
                   STEREOTYPE_MAPPING,
                   NAME_MAPPING,
@@ -778,9 +775,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   /** perform merge of 2 CDs */
   public void mergeCDs() {
-    Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
+    List<ASTCDCompilationUnit> mergeSet = new ArrayList<>();
     mergeSet.add(ast);
-    mergeSet.add(parse(cmd.getOptionValue("merge")));
+    Arrays.stream(cmd.getOptionValues("merge")).forEach(p -> mergeSet.add(parse(p)));
 
     String cdName = "Merge.cd";
     if (cmd.hasOption("pp")
@@ -792,6 +789,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     Set<MergeParameter> paramSet = new HashSet<>();
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);
+    paramSet.add(MergeParameter.FAIL_AMBIGUOUS);
+    if (cmd.hasOption("mrg-config") && cmd.getOptionValue("mrg-config") != null) {
+      paramSet = CDMerge.parseMrgConfig(cmd.getOptionValue("mrg-config"));
+    }
     ASTCDCompilationUnit mergeResult = CDMerge.merge(mergeSet, cdName, paramSet);
 
     if (mergeResult != null) {
@@ -803,8 +804,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   /** Additional CoCo-Check for Code-Generation */
   protected void runGeneratorCoCo() {
-    CD4AnalysisCoCos generalCoCos = new CD4AnalysisCoCos();
-    CD4AnalysisCoCoChecker checker = generalCoCos.createNewChecker();
+    CD4CodeCoCos generalCoCos = new CD4CodeCoCos();
+    CD4CodeCoCoChecker checker = generalCoCos.createNewChecker();
 
     checker.addCoCo(new CDAssociationUniqueInHierarchy());
     checker.checkAll(ast);

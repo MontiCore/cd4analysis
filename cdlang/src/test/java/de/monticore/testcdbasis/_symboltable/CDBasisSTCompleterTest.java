@@ -61,7 +61,7 @@ public class CDBasisSTCompleterTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     // after parse trafo
-    TestCDBasisTraverser t = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
     CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     ast.accept(t);
@@ -70,7 +70,7 @@ public class CDBasisSTCompleterTest {
     ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
     // complete symbol table
-    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t2 = TestCDBasisMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
@@ -137,7 +137,7 @@ public class CDBasisSTCompleterTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
 
     // after parse trafo
-    TestCDBasisTraverser t = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
     CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     ast.accept(t);
@@ -209,7 +209,7 @@ public class CDBasisSTCompleterTest {
     createSymbolTableFromAST(ast);
 
     // complete symbol table
-    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t2 = TestCDBasisMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
@@ -228,7 +228,7 @@ public class CDBasisSTCompleterTest {
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
     CDBasisSymbolTableCompleter c = new CDBasisSymbolTableCompleter();
-    TestCDBasisTraverser t = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
     t.add4CDBasis(c);
     t.add4OOSymbols(c);
 
@@ -281,7 +281,7 @@ public class CDBasisSTCompleterTest {
     assertFalse(a.getSymbol().isIsPublic());
 
     // complete symbol table
-    TestCDBasisTraverser t2 = TestCDBasisMill.traverser();
+    TestCDBasisTraverser t2 = TestCDBasisMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);

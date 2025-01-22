@@ -1,0 +1,7 @@
+classdiagram RefAttributetypeIncarnation {
+  class Person {
+    int number;
+  }
+  class Teacher extends Person {
+  }
+}

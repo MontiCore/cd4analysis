@@ -15,6 +15,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public abstract class CDDiffTestBasis {
 
   @Before
   public void setup() {
-    Log.init();
+    LogStub.init();
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();

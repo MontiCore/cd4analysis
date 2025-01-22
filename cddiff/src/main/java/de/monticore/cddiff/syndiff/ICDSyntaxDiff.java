@@ -20,6 +20,10 @@ public interface ICDSyntaxDiff {
 
   List<ASTCDClass> getDeletedClasses();
 
+  List<ASTCDInterface> getAddedInterfaces();
+
+  List<ASTCDInterface> getDeletedInterfaces();
+
   List<ASTCDEnum> getAddedEnums();
 
   List<ASTCDEnum> getDeletedEnums();
@@ -46,7 +50,7 @@ public interface ICDSyntaxDiff {
 
   List<DiffTypes> getBaseDiff();
 
-  public void setBaseDiff(List<DiffTypes> baseDiff);
+  void setBaseDiff(List<DiffTypes> baseDiff);
 
   void setChangedTypes(List<CDTypeDiff> changedTypes);
 
@@ -54,7 +58,11 @@ public interface ICDSyntaxDiff {
 
   void setAddedClasses(List<ASTCDClass> addedClasses);
 
-  public void setDeletedClasses(List<ASTCDClass> deletedClasses);
+  void setDeletedClasses(List<ASTCDClass> deletedClasses);
+
+  void setAddedInterfaces(List<ASTCDInterface> addedInterfaces);
+
+  void setDeletedInterfaces(List<ASTCDInterface> deletedInterfaces);
 
   void setAddedEnums(List<ASTCDEnum> addedEnums);
 

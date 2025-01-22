@@ -88,13 +88,24 @@ public class MergeTool {
       MergeBlackBoard mergeBlackBoard, ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2) {
     Map<String, ASTMCImportStatement> newImports = new HashMap<>();
     for (ASTMCImportStatement impStatement : cd1.getMCImportStatementList()) {
-      newImports.put(impStatement.getQName(), impStatement);
+      if (!isImportMergedModel(impStatement)) {
+        newImports.put(impStatement.getQName(), impStatement);
+      }
     }
     for (ASTMCImportStatement impStatement : cd2.getMCImportStatementList()) {
-      newImports.put(impStatement.getQName(), impStatement);
+      if (!isImportMergedModel(impStatement)) {
+        newImports.put(impStatement.getQName(), impStatement);
+      }
     }
 
     mergeBlackBoard.setImportStatementList(new ArrayList<>(newImports.values()));
+  }
+
+  private boolean isImportMergedModel(ASTMCImportStatement impStatement) {
+    // This should work because the CDs' symbols are in the global scopes
+    return getConfig().getInputCDs().stream()
+        .anyMatch(
+            cd -> impStatement.getQName().contains(cd.getCDDefinition().getSymbol().getFullName()));
   }
 
   private void setPackage(
@@ -205,7 +216,7 @@ public class MergeTool {
       if (!mergeStepResult.isSuccessful()) {
         throw new MergingException(
             "Errors during merge step "
-                + step
+                + intermediateName
                 + ". Will cancel further processing here. Check log for details",
             mergeStepResult);
       }

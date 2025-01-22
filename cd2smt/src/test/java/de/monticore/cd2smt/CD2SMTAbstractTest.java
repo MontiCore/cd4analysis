@@ -1,12 +1,9 @@
 package de.monticore.cd2smt;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import com.microsoft.z3.Context;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -16,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.Arguments;
 
@@ -38,16 +36,17 @@ public class CD2SMTAbstractTest {
 
   protected ASTCDCompilationUnit parseModel(String modelFile) {
     Path model = Paths.get(Paths.get(RELATIVE_MODEL_PATH, modelFile).toString());
-    CD4AnalysisParser parser = CD4AnalysisMill.parser();
+    CD4CodeParser parser = CD4CodeMill.parser();
     Optional<ASTCDCompilationUnit> optAutomaton;
     try {
       optAutomaton = parser.parseCDCompilationUnit(model.toString());
-      assertTrue(optAutomaton.isPresent());
-      (new CD4AnalysisAfterParseTrafo()).transform(optAutomaton.get());
+      Assertions.assertTrue(optAutomaton.isPresent());
+      (new CD4CodeAfterParseTrafo()).transform(optAutomaton.get());
       return optAutomaton.get();
     } catch (Exception e) {
       e.printStackTrace();
-      fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
+      Assertions.fail(
+          "There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
 
     return null;
@@ -101,5 +100,12 @@ public class CD2SMTAbstractTest {
         Arguments.of("car20.cd"), // don't terminate
         Arguments.of("car21.cd")); // don't terminate
     // Arguments.of("car.cd"));         // don't terminate
+  }
+
+  @AfterEach
+  void cleanUp() {
+    if (ctx != null) {
+      ctx.close();
+    }
   }
 }

@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+/**
+ * This is a model-component for an application representing a car rental.
+ *
+ * Here we focus on customer-related information.
+ */
+classdiagram CustomerService {
+
+  class Customer {
+    String name;
+    String email; //TODO EX 2.1: Add E-Mail
+  }
+
+  // TODO EX 2.1: Add VIP Status
+  // Some customers are special to the car rental agency
+  class VIPStatus {
+     String personalGreetingAtTheDesk;
+  }
+
+  association Customer -> (vipStatus) VIPStatus [0..1]; // TODO EX 2.1: add Status
+
+}

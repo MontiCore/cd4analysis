@@ -2,26 +2,24 @@
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  private final CD4CodeFullPrettyPrinter printer =
-      new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
     if (!isPresentCDExtendUsage()) {
-      return new ArrayList<ASTMCObjectType>();
+      // Return an empty, immutable (!!) list to not skip some updates without knowledge
+      return Collections.emptyList();
     }
     return getCDExtendUsage().getSuperclassList();
   }
 
   /**
-   * Prints the superclass
+   * Prints the name of the superclass(es) as a comma-separated string
    *
    * @return String representation of the superclasses
    */
@@ -30,21 +28,23 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (!isPresentCDExtendUsage()) {
       return PrettyPrintUtil.EMPTY_STRING;
     }
-    printer.getPrinter().clearBuffer();
-    printer.getTraverser().traverse(getCDExtendUsage());
-    return printer.getPrinter().getContent().strip();
+
+    return getCDExtendUsage().getSuperclassList().stream()
+        .map(ASTMCObjectType::printType)
+        .collect(Collectors.joining(","));
   }
 
   @Override
   public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDInterfaceUsage()) {
-      return new ArrayList<ASTMCObjectType>();
+      // Return an empty, immutable (!!) list to not skip some updates without knowledge
+      return Collections.emptyList();
     }
     return getCDInterfaceUsage().getInterfaceList();
   }
 
   /**
-   * Prints the interfaces
+   * Prints the name of the interfaces as a comma-separated string
    *
    * @return String representation of the interfaces
    */
@@ -53,8 +53,8 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (!isPresentCDInterfaceUsage()) {
       return PrettyPrintUtil.EMPTY_STRING;
     }
-    printer.getPrinter().clearBuffer();
-    printer.getTraverser().traverse(getCDInterfaceUsage());
-    return printer.getPrinter().getContent().strip();
+    return getCDInterfaceUsage().getInterfaceList().stream()
+        .map(ASTMCObjectType::printType)
+        .collect(Collectors.joining(","));
   }
 }

@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.io.FileInputStream;
+
+classdiagram IOAdapter {
+
+  <<incarnates = "Client">>
+  class Compiler;
+
+  <<incarnates = "Client">>
+  class Assembler;
+
+  <<incarnates = "Target">>
+  interface InOut {
+    <<incarnates="operation">>
+    void readFile();
+  }
+
+  <<incarnates = "Adapter">>
+  class LocalIO implements InOut{
+    void readFile();
+  }
+
+  package java.io {
+    <<incarnates = "Adaptee">>
+    class FileInputStream{
+      <<incarnates = "myOperation">>
+      int read();
+    }
+  }
+
+  association Compiler -> (uses) InOut;
+  association Assembler -> (uses) InOut;
+  association [1] LocalIO -> (adapts) java.io.FileInputStream [1];
+}

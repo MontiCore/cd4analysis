@@ -1,0 +1,7 @@
+classdiagram RefAssociationReverseMatch {
+  class A {
+  }
+  class B {
+  }
+  association A (partOf) -> B [*];
+}

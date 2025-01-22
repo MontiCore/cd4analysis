@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+// TODO: Change from static singleton to a given lifetime monticore/monticore#4306
 public class CDDeSerHelper {
   protected static CDDeSerHelper INSTANCE;
   protected Set<SymAssociation> symAssocForSerialization;
@@ -53,5 +54,10 @@ public class CDDeSerHelper {
   public SymAssociation addSymAssociationForDeserialization(
       int hash, SymAssociation symAssociation) {
     return this.symAssocForDeserialization.put(hash, symAssociation);
+  }
+
+  /** Clean up after this singleton */
+  public static void reset() {
+    INSTANCE = null;
   }
 }

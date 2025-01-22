@@ -1,0 +1,31 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+enum State {
+  DEAD
+  ALIVE
+  UNDEAD
+}
+enum Color {
+  RED
+  BLUE
+  YELLOW
+}
+class Person
+center footer generated with MontiCore using PlantUML
+@enduml

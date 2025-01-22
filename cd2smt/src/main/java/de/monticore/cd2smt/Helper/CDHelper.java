@@ -11,8 +11,8 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2smt.Helper.visitor.RemoveAssocCardinality;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
@@ -147,10 +147,11 @@ public class CDHelper {
   }
 
   public static void createCDSymTab(ASTCDCompilationUnit ast) {
-    CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
-    BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
-    CD4AnalysisSymbolTableCompleter c =
-        new CD4AnalysisSymbolTableCompleter(
+    // Always use CD4CodeMill instead of CD4AnalysisMill in cd2smt to prevent issues in ocl2smt
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    CD4CodeSymbolTableCompleter c =
+        new CD4CodeSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
   }
@@ -166,7 +167,7 @@ public class CDHelper {
         res = ctx.mkIntSort();
         break;
       case "double":
-        res = ctx.mkRealSort();
+        res = ctx.mkFPSortDouble();
         break;
       case "java.lang.String":
       case "String":
@@ -322,7 +323,7 @@ public class CDHelper {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
     final CDAssociationVisitor2 visitor2 = new RemoveAssocCardinality();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    final CDAssociationTraverser traverser = CD4CodeMill.inheritanceTraverser();
     traverser.add4CDAssociation(visitor2);
     ast.accept(traverser);
   }

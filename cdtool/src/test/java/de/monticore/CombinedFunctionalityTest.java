@@ -1,6 +1,7 @@
 package de.monticore;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -55,10 +56,10 @@ public class CombinedFunctionalityTest {
   public void testMaCoCo() {
     String base_path = "src/test/resources/de/monticore/macoco/";
 
-    Set<ASTCDCompilationUnit> mergeSet =
+    List<ASTCDCompilationUnit> mergeSet =
         Arrays.stream(Paths.get(base_path, "parts").toFile().listFiles())
             .map(f -> parseCDModel(f.getAbsolutePath()))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+            .collect(Collectors.toList());
 
     Set<MergeParameter> paramSet = new HashSet<>();
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);

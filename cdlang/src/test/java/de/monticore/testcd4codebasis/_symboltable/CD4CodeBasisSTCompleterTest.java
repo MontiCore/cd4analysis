@@ -117,7 +117,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
 
     CDBasisSymbolTableCompleter cdBasisCompleter = new CDBasisSymbolTableCompleter();
     CD4CodeBasisSymbolTableCompleter cd4codeCompleter = new CD4CodeBasisSymbolTableCompleter();
-    TestCD4CodeBasisTraverser t = TestCD4CodeBasisMill.traverser();
+    TestCD4CodeBasisTraverser t = TestCD4CodeBasisMill.inheritanceTraverser();
     t.add4CDBasis(cdBasisCompleter);
     t.add4OOSymbols(cdBasisCompleter);
     t.add4CD4CodeBasis(cd4codeCompleter);
@@ -143,7 +143,7 @@ public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
             .get("B");
 
     CD4CodeBasisSymbolTableCompleter completer = new CD4CodeBasisSymbolTableCompleter();
-    CD4CodeBasisTraverser traverser = CD4CodeBasisMill.traverser();
+    CD4CodeBasisTraverser traverser = CD4CodeBasisMill.inheritanceTraverser();
     traverser.add4CD4CodeBasis(completer);
     traverser.add4CDBasis(completer);
     ast.accept(traverser);

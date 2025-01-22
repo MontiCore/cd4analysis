@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.stdefinition.symboltable;
+
+symtabdefinition Valid {
+
+  int f();
+
+  <T> T getTarget();
+
+  <T> List<T> concat(List<T>... lists);
+
+  package p {
+    <K, V extends java.lang.String> Map<K, V> getMapString();
+  }
+
+  int intVar;
+
+  Map<int, java.lang.String> mapVar;
+
+  class C <T>;
+  class D extends C<int>;
+
+}

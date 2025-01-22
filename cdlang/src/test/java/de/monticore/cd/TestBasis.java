@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -34,8 +33,8 @@ public class TestBasis {
   /** have a temporary folder for the tests */
   @Rule public TemporaryFolder folder = new TemporaryFolder();
 
-  @BeforeClass
-  public static void setup() {
+  @Before
+  public void setup() {
     LogStub.init();
     Log.enableFailQuick(false);
   }

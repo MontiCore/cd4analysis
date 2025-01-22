@@ -1,0 +1,84 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
+
+/**
+ * Auxiliary tool for tool developers!
+ * This MontiCore grammar is usable for the definition of a
+ * symbol table as a manually defined file.
+ *
+ * SymTabDefinitions tool developers allow to describe symbols with the
+ * following kinds
+ *   * PackageSymbols
+ *   * TypeSymbols
+ *   * FunctionSymbols
+ *   * VariableSymbol
+ * Please note thatsuch symbols are then known and accepted
+ * by the typecheck (when appropriate import statements are given),
+ * but code generator, analysis tools etc. need alsp to know how these
+ * special or basic symbols are to be handled.
+ * Examples are: Math functions, such as "min(.,.)", stream processing
+ * types and functions, etc.
+ *
+ * SymTabDefinition is used as an auxiliary tool to define symbols,
+ * of the most relevant and used kinds.
+ * This includes classes, attributes and methods as well as
+ * functions and variables.
+ * Using this auxiliary mechanism to define symbols of these kinds
+ * allows developers to use these symbols in various forms of Expressions.
+ * These auxiliary mechanism is introduces, because these files are more
+ * maintainable than the actual JSON representation.
+ * However, these files are only meant as human readable and
+ * modifiable text that are then mapped into the real symbol tables,
+ * which will already be done ba the tool developer.
+ *
+ * The normal product developer will neither have to write such files
+ * nor will s:he have to compile such a file into a symbol table.
+ * Instead the product developer can introduce new smybols in appropriate
+ * models, i.E. e.g. a class diagram.
+ * Alternatively, the class2MC mechanism can be used to import
+ * symbols (i.e. class, attribute, methods) already available in
+ * Java classes.
+ *
+ * This grammar combines
+ *   * CD4Code
+ *       for Java-esque Symbols
+ *   * MCFunctionTypes
+ *       for function types
+ *   * MCStructuralTypes
+ *       for union, intersection, and tuple types
+ */
+
+grammar SymTabDefinition extends
+    de.monticore.CD4Code,
+    de.monticore.types.MCFunctionTypes,
+    de.monticore.types.MCStructuralTypes {
+
+  /**
+   * An ASTSTDFunction contains the information to create a FunctionSymbol.
+   * It only contains the information that is stored in the symbol.
+   */
+  scope STDFunction implements CDElement, Function =
+    TypeParameters?
+    MCReturnType
+    Name
+    "(" (CDParameter || ",")* ")"
+    ";";
+
+  /**
+   * An ASTSTDVariable contains the information to create a VariableSymbol.
+   * It does not contain information which are not stored in the symbol.
+   */
+  STDVariable implements CDElement, Variable =
+    MCType
+    Name
+    ";";
+
+  /**
+   * This rule allows additional keywords for classdiagram
+   */
+  replacekeyword "classdiagram": "symtabdefinition", "classdiagram";
+
+  start CDCompilationUnit;
+}

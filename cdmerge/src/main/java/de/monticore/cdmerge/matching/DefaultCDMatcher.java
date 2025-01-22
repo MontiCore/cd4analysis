@@ -2,6 +2,7 @@
 package de.monticore.cdmerge.matching;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.matching.matchresult.CDMatch;
 import de.monticore.cdmerge.matching.strategies.AssociationMatcher;
@@ -25,7 +26,7 @@ public class DefaultCDMatcher extends CDMatcher {
   }
 
   @Override
-  public CDMatch createCDMatch(List<ASTCDDefinition> cds) {
+  public CDMatch createCDMatch(List<ASTCDDefinition> cds) throws MergingException {
     CDMatch matchResult = new CDMatch(cds);
     matchResult.setMatchedTypes(findMatchingTypes());
     matchResult.setMatchedClasses(findMatchingClasses());

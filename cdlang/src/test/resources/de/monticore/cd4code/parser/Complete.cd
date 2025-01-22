@@ -39,4 +39,11 @@ classdiagram Complete {
     ;
     java.lang.String name;
   }
+
+  class F <T, U extends C> {
+    <X, Y extends C> F(X x, Y y);
+    public <E> java.util.List<E> concat(java.util.List<E>... lists);
+  }
+
+  class G <V> extends F<java.lang.String, C>;
 }

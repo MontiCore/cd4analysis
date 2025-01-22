@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-/** Handles all user-specified configurations for the composition of classdiagrams */
+/** Handles all user-specified configurations for the composition of class diagrams */
 public class CDMergeConfig {
 
   private final ImmutableMap<MergeParameter, String> parameters;
@@ -102,7 +102,7 @@ public class CDMergeConfig {
       return this;
     }
 
-    /** Adds a Classdiagram File to the input */
+    /** Adds a class diagram file to the input */
     public Builder addInputFile(String fileName) {
       this._inputFiles.add(fileName);
       return this;
@@ -184,7 +184,7 @@ public class CDMergeConfig {
                 Log.trace(
                     "No valid class diagramm found for input file "
                         + modelFile
-                        + " will check Modelpath, too",
+                        + " will check model-path, too",
                     "CDMerge");
                 modelFile =
                     Paths.get(_parameters.get(MergeParameter.MODEL_PATH), modelFile)
@@ -202,7 +202,7 @@ public class CDMergeConfig {
             if (_inputFiles.size() < 2) {
               throw new IllegalArgumentException(
                   "No valid or sufficient (at least 2) input models specified as explicit "
-                      + "inputmodels");
+                      + "input models");
             }
           } else {
             if (!_parameters.get(MergeParameter.MODEL_PATH).isEmpty()) {
@@ -213,7 +213,7 @@ public class CDMergeConfig {
             } else {
               throw new IllegalArgumentException(
                   "No valid or sufficient (at least 2) input models specified either in a global "
-                      + "model path or as explicit inputmodels");
+                      + "model path or as explicit input models");
             }
           }
         }
@@ -221,12 +221,12 @@ public class CDMergeConfig {
 
       // Configure the preferences
       _precedences = new PrecedenceConfig();
-      String[] precendeceValues = _parameters.get(MergeParameter.PRECEDENCE).split(INPUT_SEPARATOR);
-      if (precendeceValues.length > 0) {
-        for (String prec : precendeceValues) {
+      String[] precedenceValues = _parameters.get(MergeParameter.PRECEDENCE).split(INPUT_SEPARATOR);
+      if (precedenceValues.length > 0) {
+        for (String prec : precedenceValues) {
           _precedences.addPrecedence(prec);
           if (_precedences.conflictsPresent()) {
-            throw new IllegalArgumentException("Conflicting precendece " + prec);
+            throw new IllegalArgumentException("Conflicting precedence " + prec);
           }
         }
       }
@@ -290,7 +290,7 @@ public class CDMergeConfig {
 
       if (isOn(MergeParameter.PRIMITIVE_TYPE_CONVERSION) && isOn(MergeParameter.STRICT)) {
         System.out.println(
-            "Invalid paramater combination: "
+            "Invalid parameter combination: "
                 + MergeParameter.PRIMITIVE_TYPE_CONVERSION
                 + " cannot be used together with "
                 + MergeParameter.STRICT);
@@ -342,7 +342,7 @@ public class CDMergeConfig {
     for (Path file : inputFiles) {
       cd = parseCDFile(file.toAbsolutePath().toString());
       if (cd.isEmpty()) {
-        throw new RuntimeException("No valid classdiagram found in " + file);
+        throw new RuntimeException("No valid class diagram found in " + file);
       }
       this.inputCDs.add(cd.get());
     }
@@ -373,7 +373,7 @@ public class CDMergeConfig {
       try {
         cd = parseCDFile(file);
       } catch (RuntimeException e) {
-        // Catch and Reformat Monticore Runtime Exceptions for gentle program exit
+        // Catch and Reformat MontiCore Runtime Exceptions for gentle program exit
         throw new RuntimeException(
             "Issues while processing input model: " + file + " Reason: " + e.getMessage(), e);
       }
@@ -394,7 +394,7 @@ public class CDMergeConfig {
     try {
       return CDMergeUtils.parseCDFile(modelfile, true);
     } catch (IOException e) {
-      Log.error("Unable to parse modelfile " + modelfile + ". " + e.getMessage());
+      Log.error("Unable to parse model file " + modelfile + ". " + e.getMessage());
     }
     return Optional.empty();
   }
@@ -420,7 +420,7 @@ public class CDMergeConfig {
   }
 
   public boolean allowHeterogeneousMerge() {
-    return this.parameters.get(MergeParameter.MERGE_HETEROGENOUS_TYPES).equals(MergeParameter.ON);
+    return this.parameters.get(MergeParameter.MERGE_HETEROGENEOUS_TYPES).equals(MergeParameter.ON);
   }
 
   public boolean isVerbose() {
@@ -440,7 +440,7 @@ public class CDMergeConfig {
   }
 
   public boolean isMCLogSilent() {
-    return this.parameters.get(MergeParameter.MS_LOGGER_SILENT).equals(MergeParameter.ON)
+    return this.parameters.get(MergeParameter.MC_LOGGER_SILENT).equals(MergeParameter.ON)
         || this.parameters.get(MergeParameter.LOG_SILENT).equals(MergeParameter.ON);
   }
 
@@ -456,6 +456,10 @@ public class CDMergeConfig {
 
   public boolean isFailFast() {
     return this.parameters.get(MergeParameter.FAIL_FAST).equals(MergeParameter.ON);
+  }
+
+  public boolean isFailAmbiguous() {
+    return this.parameters.get(MergeParameter.FAIL_AMBIGUOUS).equals(MergeParameter.ON);
   }
 
   public boolean mergeOnlyNamedAssociations() {
@@ -514,7 +518,7 @@ public class CDMergeConfig {
 
   /**
    * Returns true if the parameter param is a boolean parameter and if it is enabled, throws an
-   * {@link UnsupportedOperationException} if the method is called on a non boolean value
+   * {@link UnsupportedOperationException} if the method is called on a non-boolean value
    */
   public boolean isEnabled(MergeParameter param) {
     if (param.isBooleanParameter()) {
@@ -523,7 +527,7 @@ public class CDMergeConfig {
       throw new UnsupportedOperationException(
           "The specified parameter '"
               + param
-              + "' is a non booelan parameter! Call String getValue() instead!");
+              + "' is a non boolean parameter! Call String getValue() instead!");
     }
   }
 

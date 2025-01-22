@@ -30,6 +30,16 @@ public class ToolTest extends OutTestBasis {
   }
 
   @Test
+  public void testMultiMerge() {
+    final String cd1 = TOOL_PATH + "cdmerge/Person/A.cd";
+    final String cd2 = TOOL_PATH + "cdmerge/Person/B.cd";
+    final String cd3 = TOOL_PATH + "cdmerge/Person/C.cd";
+    final String out = "target/generated/multi-merge";
+    CD4CodeTool.main(new String[] {"-i", cd1, "--merge", cd2, cd3, "-o", out, "-pp", "Merge.cd"});
+    assertTrue(getErr(), getErr().isEmpty());
+  }
+
+  @Test
   public void testTool() throws IOException, ParseException {
     final File file = new File("src/test/resources/de/monticore/cd/Complete.cd");
     assertTrue(file.exists());

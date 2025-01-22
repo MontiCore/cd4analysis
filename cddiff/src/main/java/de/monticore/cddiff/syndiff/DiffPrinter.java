@@ -3,6 +3,7 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -104,6 +105,30 @@ public class DiffPrinter extends SyntaxDiffHelper {
 
     if (!syntaxDiff.getDeletedClasses().isEmpty()) {
       for (ASTCDClass x : syntaxDiff.getDeletedClasses()) {
+        CDTypeDiff diff =
+            new CDTypeDiff(
+                x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
+        String tmp = diff.printRemovedType() + RESET;
+        onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+      }
+    }
+
+    if (!syntaxDiff.getAddedInterfaces().isEmpty()) {
+      for (ASTCDInterface x : syntaxDiff.getAddedInterfaces()) {
+        CDTypeDiff diff =
+            new CDTypeDiff(
+                x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
+        String tmp = diff.printAddedType() + RESET;
+        onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+        diffSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
+      }
+    }
+
+    if (!syntaxDiff.getDeletedInterfaces().isEmpty()) {
+      for (ASTCDInterface x : syntaxDiff.getDeletedInterfaces()) {
         CDTypeDiff diff =
             new CDTypeDiff(
                 x, x, syntaxDiff.getTgtCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());

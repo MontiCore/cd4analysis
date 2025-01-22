@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.lsp4j.CodeLens;
+import org.eclipse.lsp4j.InitializedParams;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -40,6 +41,7 @@ public abstract class AbstractCodeLensTest extends AbstractLspServerTest {
 
     MockLanguageClient client = new MockLanguageClient();
     languageServer.connect(client);
+    languageServer.initialized(new InitializedParams());
   }
 
   public List<? extends CodeLens> codeLens(String uri) {

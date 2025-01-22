@@ -85,9 +85,6 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter extends PlantUMLPrettyPrint
 
   @Override
   public void traverse(ASTCDEnum node) {
-    if (!node.getCDEnumConstantList().isEmpty()) {
-      println("__ Enum Constants __");
-    }
     node.streamCDEnumConstants()
         .forEach(
             c -> {

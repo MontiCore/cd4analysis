@@ -8,6 +8,7 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -39,6 +40,7 @@ public class AssociationsMatcherTest {
   @Before
   public void before() {
 
+    LogStub.init();
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();

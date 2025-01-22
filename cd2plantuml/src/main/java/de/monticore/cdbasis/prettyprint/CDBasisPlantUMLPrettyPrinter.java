@@ -12,6 +12,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CDBasisVisitor2, CDBasisHandler {
 
   protected CDBasisTraverser traverser;
+  private String visualization;
 
   public CDBasisPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -19,6 +20,20 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   public CDBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
+    visualization =
+        "<style>\n"
+            + "\tclassDiagram {\n"
+            + "\t\tclass {\n"
+            + "\t\t\tBackgroundColor White\n"
+            + "\t\t\tRoundCorner 0\n"
+            + "\t  }\n"
+            + "\t  legend {\n"
+            + "      BackgroundColor White\n"
+            + "      RoundCorner 0\n"
+            + "    }\n"
+            + "</style>\n"
+            + "hide circle\n"
+            + "hide empty members\n";
   }
 
   @Override
@@ -43,6 +58,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void visit(ASTCDDefinition node) {
     printComment(node, node.getName());
     println("@startuml");
+    println(visualization);
     indent();
     if (getPlantUMLConfig().getOrtho()) {
       println("skinparam linetype ortho");
@@ -55,20 +71,14 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     }
 
     println("skinparam classAttributeIconSize 0");
-
-    println("skinparam legend {");
-    indent();
-    println("BorderColor black");
-    println("BackGroundColor white");
     unindent();
-    println("}");
   }
 
   @Override
   public void traverse(ASTCDDefinition node) {
     println("legend top right");
     indent();
-    println(node.getDefaultPackageName() + "." + node.getName() + " CD");
+    println("CD");
     unindent();
     println("end legend");
 
@@ -133,22 +143,28 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void visit(ASTCDClass node) {
     nameStack.push(node.getName());
-
     printComment(node);
 
     print("class " + node.getName());
+
+    if (plantUMLConfig.getShowModifier() && hasModifier(node.getModifier())) {
+      print(" << ");
+      node.getModifier().accept(getTraverser());
+      print(">>");
+    }
+
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");
       print(
-          node.getSymbol().getSuperClassesOnly().stream()
-              .map(s -> s.getTypeInfo().getFullName())
+          node.getSuperclassList().stream()
+              .map(s -> s.printType())
               .collect(Collectors.joining(", ")));
     }
     if (node.isPresentCDInterfaceUsage()) {
       print(" implements ");
       print(
-          node.getSymbol().getInterfaceList().stream()
-              .map(s -> s.getTypeInfo().getFullName())
+          node.getInterfaceList().stream()
+              .map(s -> s.printType())
               .collect(Collectors.joining(", ")));
     }
 

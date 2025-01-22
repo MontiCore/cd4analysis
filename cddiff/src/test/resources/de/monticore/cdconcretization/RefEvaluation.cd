@@ -1,0 +1,21 @@
+import java.lang.String;
+classdiagram RefEvaluation {
+  class Person {
+    String name;
+    int age;
+  }
+  class Department {
+    String name;
+  }
+  class Employee extends Person {
+    int id;
+  }
+  class Intern extends Person {
+    int supervisorID;
+  }
+  class Staff {
+  }
+  association staffEmployment Staff (partOf) <-> (member) Employee [1..*];
+  association departmentAssignment [1] Staff <-> Department [1];
+  association internshipProgram Department -- (intern) Intern;
+}

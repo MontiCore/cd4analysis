@@ -1,0 +1,35 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class A << abstract >> {
+  {field} int a
+}
+class B extends A {
+  {field} int b
+}
+class C extends A {
+  {field} int c
+}
+class D extends B {
+  {field} int d
+}
+class E extends B {
+  {field} int e
+}
+center footer generated with MontiCore using PlantUML
+@enduml

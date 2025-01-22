@@ -78,7 +78,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
     parseModels("Source5.cd", "Target5.cd");
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
     System.out.println(syntaxDiff.getMatchedClasses());
-    SyntaxDiffBuilder sb = new SyntaxDiffBuilder(src, tgt);
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
     System.out.println(sb.printDiff());
   }
 

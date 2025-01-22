@@ -23,6 +23,7 @@ import java.util.Optional;
  * modelfile1 modelfile2 Further parameters @see {@link MergeParameter} (prefix each parameter with
  * "-")
  */
+@Deprecated
 public class CliMergeTool {
 
   public static void main(String[] args) throws FileNotFoundException, IOException {

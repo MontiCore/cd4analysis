@@ -71,7 +71,7 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     final ASTCDCompilationUnit astcdCompilationUnit = parseModel(model);
 
     // after parse trafo
-    TestCDAssociationTraverser t = TestCDAssociationMill.traverser();
+    TestCDAssociationTraverser t = TestCDAssociationMill.inheritanceTraverser();
     CDAssociationDirectCompositionTrafo trafo = new CDAssociationDirectCompositionTrafo();
     t.add4CDBasis(trafo);
     t.add4CDAssociation(trafo);

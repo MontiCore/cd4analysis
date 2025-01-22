@@ -10,6 +10,7 @@ import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Provides logging, config and access to merge blackboard to all matchers and merging strategies
@@ -95,34 +96,51 @@ public abstract class MergerBase {
     // CDElements
     modifier.setLocal(modifier1.isLocal() && modifier2.isLocal());
 
-    modifier.setDerived(modifier1.isDerived() || modifier2.isDerived());
-
-    modifier.setAbstract(modifier1.isAbstract() && modifier2.isAbstract());
+    // AND CONDITIONS (restrict access)
     modifier.setReadonly(modifier1.isReadonly() && modifier2.isReadonly());
     modifier.setPrivate(modifier1.isPrivate() && modifier2.isPrivate());
-    modifier.setPublic(modifier1.isPublic() && modifier2.isPublic());
-    modifier.setProtected(modifier1.isProtected() && modifier2.isProtected());
     modifier.setStatic(modifier1.isStatic() && modifier2.isStatic());
 
-    // OR CONDITIONS
+    // OR CONDITIONS (guarantee access / semantic properties)
+    modifier.setDerived(modifier1.isDerived() || modifier2.isDerived());
+    modifier.setAbstract(modifier1.isAbstract() || modifier2.isAbstract());
     modifier.setFinal(modifier1.isFinal() || modifier2.isFinal());
+    modifier.setPublic(modifier1.isPublic() || modifier2.isPublic());
+    if (!modifier.isPublic()) {
+      modifier.setProtected(modifier1.isProtected() || modifier2.isProtected());
+    }
 
     // STEREOTYPES
-    if (modifier1.isPresentStereotype() && modifier2.isPresentStereotype()) {
-      if (modifier1.getStereotype().deepEquals(modifier2.getStereotype())) {
-        modifier.setStereotype(modifier1.getStereotype());
-      } else {
-        logError("Cannot match Modifies: Stereotyes do not match", modifier1, modifier2);
-        return Optional.empty();
+    if (modifier1.isPresentStereotype()) {
+      modifier.setStereotype(modifier1.getStereotype().deepClone());
+      if (modifier2.isPresentStereotype()) {
+        if (modifier1.getStereotype().getValuesList().stream()
+            .anyMatch(
+                sv1 ->
+                    modifier2.getStereotype().getValuesList().stream()
+                        .anyMatch(
+                            sv2 ->
+                                sv1.getName().equals(sv2.getName())
+                                    && !sv1.getValue().equals(sv2.getValue())))) {
+          logError("Cannot match Modifiers: Stereotypes do not match", modifier1, modifier2);
+          return Optional.empty();
+        }
+        modifier
+            .getStereotype()
+            .addAllValues(
+                modifier2.getStereotype().getValuesList().stream()
+                    .filter(
+                        sv2 ->
+                            modifier1.getStereotype().getValuesList().stream()
+                                .noneMatch(sv1 -> sv1.getName().equals(sv2.getName())))
+                    .collect(Collectors.toList()));
       }
-    } else if (modifier1.isPresentStereotype()) {
-      modifier.setStereotype(modifier1.getStereotype());
     } else if (modifier2.isPresentStereotype()) {
-      modifier.setStereotype(modifier2.getStereotype());
+      modifier.setStereotype(modifier2.getStereotype().deepClone());
     } else {
       modifier.setStereotypeAbsent();
     }
 
-    return Optional.of(modifier1);
+    return Optional.of(modifier);
   }
 }

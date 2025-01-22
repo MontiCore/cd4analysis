@@ -3,7 +3,7 @@ package de.monticore.cddiff.syndiff;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.matcher.*;
+import de.monticore.cdmatcher.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -135,21 +135,22 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    */
   public Map<ASTCDType, ASTCDType> computeMatchingMapTypes(
       List<ASTCDType> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
-    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructureType =
-        new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
+    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
+    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchNameType =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchStructureType =
+        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
     List<MatchingStrategy<ASTCDType>> typeMatchers = new ArrayList<>();
     typeMatchers.add(nameTypeMatch);
     typeMatchers.add(structureTypeMatch);
     typeMatchers.add(superTypeMatchNameType);
     typeMatchers.add(superTypeMatchStructureType);
 
-    CombinedMatching<ASTCDType> combinedMatching =
-        new CombinedMatching<>(listToMatch, srcCD, tgtCD, typeMatchers);
+    CD2CDCombinedMatching<ASTCDType> combinedMatching =
+        new CombinedCDTypeMatching(listToMatch, srcCD, tgtCD, typeMatchers);
 
-    return combinedMatching.getFinalMap();
+    return combinedMatching.getMatches();
   }
 
   /**
@@ -165,24 +166,25 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
    */
   public Map<ASTCDAssociation, ASTCDAssociation> computeMatchingMapAssocs(
       List<ASTCDAssociation> listToMatch, ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    NameAssocMatcher nameAssocMatch = new NameAssocMatcher(tgtCD);
-    NameTypeMatcher nameTypeMatch = new NameTypeMatcher(tgtCD);
-    StructureTypeMatcher structureTypeMatch = new StructureTypeMatcher(tgtCD);
-    SuperTypeMatcher superTypeMatchNameType = new SuperTypeMatcher(nameTypeMatch, srcCD, tgtCD);
-    SuperTypeMatcher superTypeMatchStructureType =
-        new SuperTypeMatcher(structureTypeMatch, srcCD, tgtCD);
-    SrcTgtAssocMatcher associationSrcTgtMatchStructureType =
-        new SrcTgtAssocMatcher(superTypeMatchStructureType, srcCD, tgtCD);
-    SrcTgtAssocMatcher associationSrcTgtMatchNameType =
-        new SrcTgtAssocMatcher(superTypeMatchNameType, srcCD, tgtCD);
+    MatchCDAssocsByName nameAssocMatch = new MatchCDAssocsByName(tgtCD);
+    MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
+    MatchCDTypeByStructure structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchNameType =
+        new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
+    MatchCDTypesToSuperTypes superTypeMatchStructureType =
+        new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
+    MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchStructureType =
+        new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchStructureType, srcCD, tgtCD);
+    MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchNameType =
+        new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
     List<MatchingStrategy<ASTCDAssociation>> assocMatchers = new ArrayList<>();
     assocMatchers.add(nameAssocMatch);
     assocMatchers.add(associationSrcTgtMatchNameType);
     assocMatchers.add(associationSrcTgtMatchStructureType);
 
-    CombinedMatching<ASTCDAssociation> combinedMatching =
-        new CombinedMatching<>(listToMatch, srcCD, tgtCD, assocMatchers);
+    CD2CDCombinedMatching<ASTCDAssociation> combinedMatching =
+        new CombinedCDAssocMatching(listToMatch, srcCD, tgtCD, assocMatchers);
 
-    return combinedMatching.getFinalMap();
+    return combinedMatching.getMatches();
   }
 }

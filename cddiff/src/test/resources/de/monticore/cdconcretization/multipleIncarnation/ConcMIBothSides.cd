@@ -1,0 +1,15 @@
+classdiagram ConcMIBothsides {
+
+  <<ref="SuperTeacher">> class SuperTeacher1 {
+  }
+  <<ref="SuperTeacher">> class SuperTeacher2 {
+  }
+  <<ref="Teacher">> class Teacher1 {
+  }
+  <<ref="Teacher">> class Teacher2 {
+  }
+  <<ref="Department">> class Department1 {
+  }
+  <<ref="Department">> class Department2 {
+  }
+}

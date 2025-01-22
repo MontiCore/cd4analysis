@@ -74,6 +74,9 @@ public enum MergeParameter {
   /** Abort merging process on first error Default: OFF */
   FAIL_FAST("failFast", "ff", MergeParameter.OFF, true),
 
+  /** Abort merge if association match is ambiguous, Default: OFF */
+  FAIL_AMBIGUOUS("failAmbiguous", "fa", MergeParameter.OFF, true),
+
   /**
    * Produces (a lot of) debug output (Level DEBUG, FINE, INFO) during matching and merging - only
    * useful for testing / debugging scenarios
@@ -93,8 +96,8 @@ public enum MergeParameter {
   // FIXME not implemented
   PROPAGATE_LOG("propagateLog", "plog", MergeParameter.OFF, true),
 
-  /** Precvent MC to log direcltly to Standard Output/Standard Err. Default: Activated */
-  MS_LOGGER_SILENT("MCLoggerSilent", "noMClog", MergeParameter.ON, true),
+  /** Prevent MC to log directly to Standard Output/Standard Err. Default: Activated */
+  MC_LOGGER_SILENT("MCLoggerSilent", "noMClog", MergeParameter.ON, true),
 
   /** Merge all comments of all model elements from the source diagrams Default: OFF */
   MERGE_COMMENTS("mergeComments", "mc", MergeParameter.OFF, true),
@@ -106,7 +109,7 @@ public enum MergeParameter {
   MERGE_ONLY_NAMED_ASSOCIATIONS("mergeOnlyNamedAssociations", "mona", MergeParameter.OFF, true),
 
   /** Allows the merger of classes with abstract classes and interfaces Default: OFF */
-  MERGE_HETEROGENOUS_TYPES("mergeHeterogenousTypes", "mht", MergeParameter.OFF, true),
+  MERGE_HETEROGENEOUS_TYPES("mergeHeterogeneousTypes", "mht", MergeParameter.OFF, true),
 
   /** Enables the merging of compatible primitive type attributes like int and long Default: OFF */
   PRIMITIVE_TYPE_CONVERSION("allowPrimitiveTypeConversion", "ptc", MergeParameter.OFF, true),

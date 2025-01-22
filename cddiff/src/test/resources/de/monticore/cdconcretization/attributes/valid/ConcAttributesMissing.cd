@@ -1,0 +1,5 @@
+classdiagram RefAttributesMissing {
+  class Employee {
+    int number;
+  }
+}

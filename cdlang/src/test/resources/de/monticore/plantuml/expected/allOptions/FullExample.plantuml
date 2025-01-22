@@ -1,0 +1,65 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class Person {
+  {field} public String name
+  {field} protected int age
+  {field} final long id
+  {field} readonly String birthplace
+  {field} protected derived boolean married
+  {field} List<Person> children
+  {field} derived Person parent1
+  {field} derived Person parent2
+  {field} java.util.Date birthday
+  {field} HappinessLevel happy
+  {field} private double bankBalance
+}
+class Address {
+  {field} String streetname
+  {field} int streetnumber
+  {field} int postalcode
+  {field} String country
+}
+interface Pair {
+  {field} Person person1
+  {field} Person person2
+}
+class Couple implements Pair {
+  {field} boolean married
+}
+class Child extends Person
+enum HappinessLevel {
+  NONEXISTENT
+  LOW
+  MEDIUM
+  HIGH
+  EXTREM
+}
+class BirthCertificate << private readonly >> {
+  {field} java.util.Date birthday
+  {field} final String ausstellungsdatum
+}
+class Hospital {
+  {field} String name
+}
+Person "*" *--* "1" Address : address
+Hospital --* "1..*" Person : hires
+Person --* "1" Hospital : worksAt
+Hospital --* "1" Address
+center footer generated with MontiCore using PlantUML
+@enduml

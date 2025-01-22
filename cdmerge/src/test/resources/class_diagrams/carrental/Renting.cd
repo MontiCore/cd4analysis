@@ -1,0 +1,44 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.time.LocalDateTime;
+
+// One could also use "classdiagram Renting {", but the umlp tool prefers the
+// first syntax
+classdiagram Renting {
+
+  abstract class RentableItem {
+    String name;
+    RentableStatus rentableStatus; //TODO EX 2.1: Add rentableStatus attribute
+    derived boolean available;
+  }
+
+  enum RentableStatus {
+    AVAILABLE, RENTED;
+  }
+
+  class RentalTransaction {
+    // We can use Java types, such as LocalDateTime that we have imported above
+    LocalDateTime rentalDate;
+    float totalCost;
+  }
+
+  // TODO EX 2.1: Add return date
+  association [1] RentalTransaction -> (returnDate) LocalDateTime [0..1];
+
+  class Customer;
+
+  association [*] RentalTransaction <-> Customer [1];
+
+  <<singleton>>  // There only ever exists one instance of a singleton
+  class RentalService {
+    RentalTransaction rentItem(RentableItem rentable);
+    void returnItem(RentalTransaction rentalTransaction);
+    void processPayment(RentalTransaction rentalTransaction);  // TODO EX 2.2 a): add another command
+  }
+
+  association [1] RentalService -> RentableItem [*];
+
+  // TODO EX 2.2 a): Add assoc
+  association transactionManagement [1] RentalService (service) -> (transactions) RentalTransaction [*];
+
+}

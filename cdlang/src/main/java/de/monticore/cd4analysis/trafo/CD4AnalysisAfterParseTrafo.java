@@ -18,7 +18,7 @@ public class CD4AnalysisAfterParseTrafo {
 
   public CD4AnalysisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     this.cdAfterParseHelper = cdAfterParseHelper;
-    this.traverser = CD4AnalysisMill.traverser();
+    this.traverser = CD4AnalysisMill.inheritanceTraverser();
 
     init(cdAfterParseHelper, traverser);
   }

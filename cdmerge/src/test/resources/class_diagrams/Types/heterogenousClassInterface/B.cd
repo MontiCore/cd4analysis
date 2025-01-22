@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-package heterogenousClassInterface;
-classdiagram B {
-
-	
-	class Person{
-		String name;
-	}
-}

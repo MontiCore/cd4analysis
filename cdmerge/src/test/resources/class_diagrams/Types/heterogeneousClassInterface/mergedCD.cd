@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package heterogeneousClassInterface;
+classdiagram mergedCD {
+
+	interface Human;
+	
+	class Person implements Human{
+		String name;
+	}
+
+}

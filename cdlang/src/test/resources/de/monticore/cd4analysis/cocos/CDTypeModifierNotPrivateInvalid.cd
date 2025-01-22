@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDTypeModifierNotPrivateInvalid {
+
+  private class A;
+
+  private enum B;
+
+  private interface C;
+}

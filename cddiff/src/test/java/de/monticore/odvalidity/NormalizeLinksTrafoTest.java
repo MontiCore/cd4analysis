@@ -11,6 +11,7 @@ import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.monticore.odlink._prettyprint.ODLinkFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -29,6 +30,7 @@ public class NormalizeLinksTrafoTest {
 
     OD4ReportMill.reset();
     OD4ReportMill.init();
+    LogStub.init();
     Log.enableFailQuick(false);
     trafo = new NormalizeLinksTrafo();
   }

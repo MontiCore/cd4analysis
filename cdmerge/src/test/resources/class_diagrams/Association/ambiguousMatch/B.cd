@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package noMatch;
+classdiagram B {
+
+	class A;
+	class B;
+
+	association A -- B;
+
+}

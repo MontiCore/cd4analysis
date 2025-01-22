@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package heterogeneousInterfaceEnum;
+classdiagram mergedCD {
+
+ 	interface RGB;
+
+	enum Color implements RGB { RED, GREEN, BLUE ;}
+
+}

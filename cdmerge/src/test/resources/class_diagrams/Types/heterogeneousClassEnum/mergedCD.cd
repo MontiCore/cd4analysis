@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package heterogeneousClassEnum;
+classdiagram mergedCD {
+
+	class ABC{
+		String alphabet;
+		public final static String A;
+		public final static String B;
+		public final static String C;
+	}
+}

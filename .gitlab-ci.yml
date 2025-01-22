@@ -1,6 +1,6 @@
 # (c) https://github.com/MontiCore/monticore
 
-image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.4.2-jdk11
+image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.6.4-jdk11
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -14,11 +14,14 @@ before_script:
 
 stages:
   - build
-  - trigger
   - mirror
+  - trigger
 
 build:
   stage: build
+  only:
+    - branches
+    - merge_requests
   except:
     - develop
   script:
@@ -86,6 +89,17 @@ trigger-umlp:
   only:
     - develop
 
+# Run the MontiVerse against MRs
+trigger_montiverse:
+  stage: trigger
+  trigger:
+    project: monticore/montiverseci
+  variables:
+    CD4A_BRANCH: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+
+
 # Mirrors this repository's `develop` and `master` branches to GitHub.
 #
 # The mirror will always be at either HEAD or HEAD+1 (depending on whether cleanup is necessary).
@@ -124,6 +138,5 @@ githubmirror:
     - (git commit -m "[Mirror] Replace all internal links and references") || true
     - git remote add github git@github.com:MontiCore/cd4analysis.git
     - git push github $CI_COMMIT_BRANCH --force
-  only:
-    - develop
-    - master
+  when:
+    rules: never

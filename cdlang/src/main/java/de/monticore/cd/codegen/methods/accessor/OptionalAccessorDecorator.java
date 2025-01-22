@@ -51,7 +51,8 @@ public class OptionalAccessorDecorator extends AbstractMethodDecorator {
     String name = String.format(GET, nativeAttributeName);
     ASTMCType type = service.getFirstTypeArgument(ast.getMCType()).deepClone();
     ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), type, name);
-    String generatedErrorCode = service.getGeneratedErrorCode(ast.getName() + ast.printType());
+    String generatedErrorCode =
+        service.getGeneratedErrorCode(ast.getName() + ast.getMCType().printType());
     this.replaceTemplate(
         EMPTY_BODY,
         method,

@@ -71,3 +71,36 @@ assemble.dependsOn(shadowJar)
 
 
 jar.dependsOn(shadowJar)
+
+// Test the CLI-jar (produced by the shadowJar task)
+sourceSets {
+  tooltest
+}
+
+dependencies {
+  tooltestImplementation platform('org.junit:junit-bom:5.9.1')
+  tooltestImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.register('toolTest', Test) {
+  description = 'Runs tool integration tests.'
+  group = 'verification'
+
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath = sourceSets.tooltest.runtimeClasspath
+  shouldRunAfter test
+  dependsOn shadowJar
+
+  useJUnitPlatform()
+
+  testLogging {
+    events "passed"
+  }
+
+  // Pass path to the tool jar to the test
+  systemProperty "toolJarFile",  tasks.shadowJar.outputs.files.singleFile
+  // Pass mc_version to the test
+  systemProperty "mc_version",  mc_version
+}
+
+check.dependsOn toolTest

@@ -16,6 +16,7 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
 
   @Test
   public void completeModel() throws IOException {
+
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
         p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/Simple.cd"));
 

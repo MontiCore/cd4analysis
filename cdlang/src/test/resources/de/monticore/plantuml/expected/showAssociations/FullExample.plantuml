@@ -1,0 +1,38 @@
+@startuml
+<style>
+	classDiagram {
+		class {
+			BackgroundColor White
+			RoundCorner 0
+	  }
+	  legend {
+      BackgroundColor White
+      RoundCorner 0
+    }
+</style>
+hide circle
+hide empty members
+  skinparam classAttributeIconSize 0
+legend top right
+  CD
+end legend
+class Person
+class Address
+interface Pair
+class Couple implements Pair
+class Child extends Person
+enum HappinessLevel {
+  NONEXISTENT
+  LOW
+  MEDIUM
+  HIGH
+  EXTREM
+}
+class BirthCertificate
+class Hospital
+Person *--* Address : address
+Hospital --* Person : hires
+Person --* Hospital : worksAt
+Hospital --* Address
+center footer generated with MontiCore using PlantUML
+@enduml

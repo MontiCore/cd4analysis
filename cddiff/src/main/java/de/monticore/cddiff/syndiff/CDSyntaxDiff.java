@@ -32,6 +32,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   private List<CDAssocDiff> changedAssocs;
   private List<ASTCDClass> addedClasses;
   private List<ASTCDClass> deletedClasses;
+  private List<ASTCDInterface> addedInterfaces;
+  private List<ASTCDInterface> deletedInterfaces;
   private List<ASTCDEnum> addedEnums;
   private List<ASTCDEnum> deletedEnums;
   private List<ASTCDClass> addedClassesSem;
@@ -71,6 +73,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     this.changedAssocs = new ArrayList<>();
     this.addedClasses = new ArrayList<>();
     this.deletedClasses = new ArrayList<>();
+    this.addedInterfaces = new ArrayList<>();
+    this.deletedInterfaces = new ArrayList<>();
     this.addedEnums = new ArrayList<>();
     this.deletedEnums = new ArrayList<>();
     this.addedClassesSem = new ArrayList<>();
@@ -171,8 +175,28 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   }
 
   @Override
+  public List<ASTCDInterface> getAddedInterfaces() {
+    return addedInterfaces;
+  }
+
+  @Override
+  public List<ASTCDInterface> getDeletedInterfaces() {
+    return deletedInterfaces;
+  }
+
+  @Override
   public void setDeletedClasses(List<ASTCDClass> deletedClasses) {
     this.deletedClasses = deletedClasses;
+  }
+
+  @Override
+  public void setAddedInterfaces(List<ASTCDInterface> addedInterfaces) {
+    this.addedInterfaces = addedInterfaces;
+  }
+
+  @Override
+  public void setDeletedInterfaces(List<ASTCDInterface> deletedInterfaces) {
+    this.deletedInterfaces = deletedInterfaces;
   }
 
   @Override
@@ -1247,6 +1271,34 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     }
   }
 
+  public void addAllAddedInterfaces(
+      ASTCDCompilationUnit srcCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    List<ASTCDInterface> tmp = new ArrayList<>(srcCD.getCDDefinition().getCDInterfacesList());
+    for (ASTCDInterface srcInterface : srcCD.getCDDefinition().getCDInterfacesList()) {
+      if (computedMatchingMapTypes.containsKey(srcInterface)) {
+        tmp.remove(srcInterface);
+      }
+    }
+    addedInterfaces.addAll(tmp);
+    if (!tmp.isEmpty() && !baseDiff.contains(DiffTypes.ADDED_INTERFACE)) {
+      baseDiff.add(DiffTypes.ADDED_INTERFACE);
+    }
+  }
+
+  public void addAllDeletedInterfaces(
+      ASTCDCompilationUnit tgtCD, Map<ASTCDType, ASTCDType> computedMatchingMapTypes) {
+    List<ASTCDInterface> tmp = new ArrayList<>(tgtCD.getCDDefinition().getCDInterfacesList());
+    for (ASTCDInterface tgtInterface : tgtCD.getCDDefinition().getCDInterfacesList()) {
+      if (computedMatchingMapTypes.containsValue(tgtInterface)) {
+        tmp.remove(tgtInterface);
+      }
+    }
+    deletedInterfaces.addAll(tmp);
+    if (!tmp.isEmpty() && !baseDiff.contains(DiffTypes.DELETED_INTERFACE)) {
+      baseDiff.add(DiffTypes.DELETED_INTERFACE);
+    }
+  }
+
   /**
    * Adds added enumeration types in the source CD to the 'addedEnums' list based on matching maps
    * between source and target CD types. It identifies the enumeration types in the source CD that
@@ -1443,6 +1495,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     addAllChangedAssocs();
     addAllAddedClasses(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
     addAllDeletedClasses(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllAddedInterfaces(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
+    addAllDeletedInterfaces(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));
     addAllAddedClassesSem(srcCD, tgtCD);
     addAllDeletedClassesSem(tgtCD, tgtCD);
     addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD));

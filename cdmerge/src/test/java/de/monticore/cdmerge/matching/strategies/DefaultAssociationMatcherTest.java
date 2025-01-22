@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.Match;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
@@ -113,13 +114,13 @@ public class DefaultAssociationMatcherTest extends BaseTest {
   }
 
   @Test
-  public void findMatchingAssociationsTest() throws IOException {
+  public void findMatchingAssociationsTest() throws IOException, MergingException {
     CDMergeConfig.Builder b = new CDMergeConfig.Builder(false);
     b.withParam(MergeParameter.MODEL_PATH, MODEL_PATH)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     // FIXME USCHOEN!
     blackBoard.initOrReset(
@@ -139,7 +140,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES)
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES)
         .withParam(MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS);
     blackBoard = new MergeBlackBoard(b.build());
     blackBoard.initOrReset(
@@ -161,7 +162,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     blackBoard.initOrReset(
         blackBoard.getConfig().getInputCDs().get(0),
@@ -197,7 +198,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     this.testant = new DefaultAssociationMatcher(blackBoard);
     blackBoard.initOrReset(

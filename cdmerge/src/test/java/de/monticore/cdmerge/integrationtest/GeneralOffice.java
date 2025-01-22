@@ -46,7 +46,7 @@ public class GeneralOffice extends BaseTest {
         getConfigBuilder()
             .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
             .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
-            .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES)
+            .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES)
             .withParam(MergeParameter.DISABLE_CONTEXT_CONDITIONS);
 
     for (String m : inputModels) {

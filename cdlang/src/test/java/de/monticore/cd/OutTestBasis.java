@@ -3,7 +3,7 @@ package de.monticore.cd;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.BeforeClass;
 
 /** a base class for tests to use stdout and stderr */
@@ -17,7 +17,7 @@ public class OutTestBasis extends TestBasis {
     System.setErr(new PrintStream(errContent));
   }
 
-  @Before
+  @After
   public void reset() {
     outContent.reset();
     errContent.reset();

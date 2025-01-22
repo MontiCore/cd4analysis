@@ -10,6 +10,10 @@ import de.monticore.cdmerge.matching.matchresult.CDMatch;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.merging.strategies.AssociationMerger;
 import de.monticore.cdmerge.merging.strategies.TypeMerger;
+import de.monticore.umlmodifier._ast.ASTModifier;
+import de.monticore.umlstereotype._ast.ASTStereotype;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /** Abstract base class for concrete CD merging strategies */
 public abstract class CDMerger {
@@ -37,6 +41,15 @@ public abstract class CDMerger {
 
   public void mergeCDs(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchResult) {
 
+    mergeStereotypes(cd1.getModifier(), cd2.getModifier())
+        .ifPresent(
+            st ->
+                mergeBlackBoard
+                    .getIntermediateMergedCD()
+                    .getCDDefinition()
+                    .getModifier()
+                    .setStereotype(st));
+
     if (mergeBlackBoard.getConfig().mergeComments()) {
       mergeBlackBoard.addLog(
           ErrorLevel.FINE, "Merging CD Comments", MergePhase.CD_MERGING, cd1, cd2);
@@ -55,6 +68,40 @@ public abstract class CDMerger {
     mergeBlackBoard.addLog(
         ErrorLevel.FINE, "Merging associations", MergePhase.ASSOCIATION_MERGING, cd1, cd2);
     mergeAssociations(cd1, cd2, matchResult);
+  }
+
+  private Optional<ASTStereotype> mergeStereotypes(ASTModifier modifier1, ASTModifier modifier2) {
+
+    Optional<ASTStereotype> stereotype = Optional.empty();
+
+    // STEREOTYPES
+    if (modifier1.isPresentStereotype()) {
+      stereotype = Optional.of(modifier1.getStereotype().deepClone());
+      if (modifier2.isPresentStereotype()) {
+        if (stereotype.get().getValuesList().stream()
+            .anyMatch(
+                sv1 ->
+                    modifier2.getStereotype().getValuesList().stream()
+                        .anyMatch(
+                            sv2 ->
+                                sv1.getName().equals(sv2.getName())
+                                    && !sv1.getValue().equals(sv2.getValue())))) {
+          return Optional.empty();
+        }
+        stereotype
+            .get()
+            .addAllValues(
+                modifier2.getStereotype().getValuesList().stream()
+                    .filter(
+                        sv2 ->
+                            modifier1.getStereotype().getValuesList().stream()
+                                .noneMatch(sv1 -> sv1.getName().equals(sv2.getName())))
+                    .collect(Collectors.toList()));
+      }
+    } else if (modifier2.isPresentStereotype()) {
+      stereotype = Optional.of(modifier2.getStereotype().deepClone());
+    }
+    return stereotype;
   }
 
   protected void mergeTypes(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchResult) {

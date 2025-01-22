@@ -1,0 +1,14 @@
+classdiagram RefTest {
+  class Company {
+  }
+
+  <<ref="Employee">> class Worker {
+  }
+
+  <<ref="Employee">> class Manager {
+  }
+
+  association Company -- Manager [1];
+  association Company -- Worker [0..1];
+
+}

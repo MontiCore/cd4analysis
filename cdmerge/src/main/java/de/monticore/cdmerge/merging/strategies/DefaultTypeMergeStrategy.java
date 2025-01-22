@@ -36,7 +36,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
   }
 
   @Override
-  public boolean canMergeHeterogenousTypes() {
+  public boolean canMergeHeterogeneousTypes() {
     return true;
   }
 
@@ -57,7 +57,9 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
             + "."
             + classFromCd2.getName());
 
-    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
+    ASTModifier modifier =
+        mergeModifier(classFromCd1.getModifier(), classFromCd2.getModifier())
+            .orElseGet(() -> CD4CodeMill.modifierBuilder().build());
     // ================
     // === Modifier ===
     // ================
@@ -209,7 +211,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
                   "Attention: Classes have different superclasses but it is assumed, that "
                       + "superclass '"
                       + nameSuperClass
-                      + "' will be heterogenously merged with interface '"
+                      + "' will be heterogeneously merged with interface '"
                       + interfacePossibleSuperclass.get().getName()
                       + "' and thus form a valid type hierarchy in the merged CD. Will be checked"
                       + " in Pos-Merge-Validation if activated.",
@@ -249,7 +251,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
                   "Attention: Classes have different superclasses but it is assumed, that "
                       + "superclass '"
                       + nameSuperClass
-                      + "' will be heterogenously merged with interface '"
+                      + "' will be heterogeneously merged with interface '"
                       + interfacePossibleSuperclass.get().getName()
                       + "' and thus form a valid type hierarchy in the merged CD. Will be checked"
                       + " in Pos-Merge-Validation if activated.",

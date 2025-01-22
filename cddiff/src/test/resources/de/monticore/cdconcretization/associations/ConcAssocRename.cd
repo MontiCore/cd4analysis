@@ -1,0 +1,12 @@
+classdiagram ConcAssocExtra {
+
+  class A {
+  }
+  <<ref = "B">> class B1 {
+  }
+  <<ref = "B">> class B2 {
+  }
+
+  association A -- (partOf) B1;
+
+}

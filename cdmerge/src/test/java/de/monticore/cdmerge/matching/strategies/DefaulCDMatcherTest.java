@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
+import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.matching.DefaultCDMatcher;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
@@ -43,7 +44,7 @@ public class DefaulCDMatcherTest extends BaseTest {
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_A)
         .withParam(MergeParameter.INPUT_MODELS, INPUT_MODEL_B)
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
+        .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES);
 
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     ASTCDCompilationUnit cd1 = loadModel(MODEL_PATH + "/" + INPUT_MODEL_A);
@@ -94,7 +95,7 @@ public class DefaulCDMatcherTest extends BaseTest {
   }
 
   @Test
-  public void testFindAssociations() {
+  public void testFindAssociations() throws MergingException {
     ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> result =
         this.testant.findMatchingAssociations();
     List<MatchNode<ASTCDAssociation, ASTCDDefinition>> nodes;

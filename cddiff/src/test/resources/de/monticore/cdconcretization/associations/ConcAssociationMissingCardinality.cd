@@ -1,0 +1,12 @@
+classdiagram ConcAssociationMissingCardinality {
+  class Employee {
+  }
+  class Department {
+  }
+  class A {
+  }
+  class B {
+  }
+  association Employee <-> Department;
+  association A <-> B ;
+}

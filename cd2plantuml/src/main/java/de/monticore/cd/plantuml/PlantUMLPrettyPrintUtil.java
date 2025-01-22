@@ -5,6 +5,7 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
   protected PlantUMLConfig plantUMLConfig;
   protected Stack<String> nameStack;
-  protected AtomicBoolean immediatelyPrintAssociations = new AtomicBoolean(false);
+  protected AtomicBoolean immediatelyPrintAssociations = new AtomicBoolean(true);
   protected final Set<ASTCDAssociation> associations;
 
   public PlantUMLPrettyPrintUtil() {
@@ -86,5 +87,24 @@ public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
     }
 
     return text.substring(0, 5) + "~";
+  }
+
+  /**
+   * This method is used to figure our if a modifier for a class exists. Therefore, it checks for
+   * the given modifier the possibile types it can be. This methods exclude the isPublic option, as
+   * this modifier is the default and therefore should not change the look of the PlantUML model
+   *
+   * @param modifier ASTModifier that should be checked
+   * @return if modifier is abstract, static, local, final, derived, private, protected or readonly
+   */
+  public boolean hasModifier(ASTModifier modifier) {
+    return modifier.isAbstract()
+        || modifier.isStatic()
+        || modifier.isLocal()
+        || modifier.isFinal()
+        || modifier.isDerived()
+        || modifier.isProtected()
+        || modifier.isPrivate()
+        || modifier.isReadonly();
   }
 }

@@ -54,9 +54,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void visit(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
-      if (immediatelyPrintAssociations.get()
-          && node.getLeft().isPresentSymbol()
-          && node.getRight().isPresentSymbol()) {
+      if (immediatelyPrintAssociations.get()) {
         printComment(node);
         node.getCDAssocType().accept(getTraverser());
       }
@@ -66,14 +64,14 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void traverse(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
-      if (immediatelyPrintAssociations.get()
-          && node.getLeft().isPresentSymbol()
-          && node.getRight().isPresentSymbol()) {
+      if (immediatelyPrintAssociations.get()) {
+        node.getLeftQualifiedName().accept(getTraverser());
         node.getLeft().accept(getTraverser());
         print(" ");
         node.getCDAssocDir().accept(getTraverser());
         print(" ");
         node.getRight().accept(getTraverser());
+        node.getRightQualifiedName().accept(getTraverser());
       } else {
         associations.add(node);
       }
@@ -83,9 +81,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void endVisit(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
-      if (immediatelyPrintAssociations.get()
-          && node.getLeft().isPresentSymbol()
-          && node.getRight().isPresentSymbol()) {
+      if (immediatelyPrintAssociations.get()) {
         if (plantUMLConfig.getShowAssoc() && node.isPresentName()) {
           print(" : " + shorten(node.getName()));
         }
@@ -136,25 +132,27 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void handle(ASTCDAssocLeftSide node) {
-    if (!node.isPresentCDRole()) {
-      return;
-    }
-
-    print(node.getCDRole().getSymbol().getType().getTypeInfo().getFullName());
 
     if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality())
         || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print(" \"");
     }
 
-    if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
-      node.getCDCardinality().accept(getTraverser());
-      print(" ");
-    }
-
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
       node.getCDRole().accept(getTraverser());
     }
+
+    if (plantUMLConfig.getShowCard()
+        && node.isPresentCDCardinality()
+        && plantUMLConfig.getShowRoles()
+        && node.isPresentCDRole()) {
+      print(" ");
+    }
+
+    if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
+      node.getCDCardinality().accept(getTraverser());
+    }
+
     /*
     if (node.isPresentCDOrdered()) {
       print(" <<");
@@ -171,9 +169,6 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void handle(ASTCDAssocRightSide node) {
-    if (!node.isPresentCDRole()) {
-      return;
-    }
 
     if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality())
         || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
@@ -187,12 +182,19 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print(">>");
     }
      */
+
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
       node.getCDRole().accept(getTraverser());
     }
 
-    if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
+    if (plantUMLConfig.getShowCard()
+        && node.isPresentCDCardinality()
+        && plantUMLConfig.getShowRoles()
+        && node.isPresentCDRole()) {
       print(" ");
+    }
+
+    if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
       node.getCDCardinality().accept(getTraverser());
     }
 
@@ -200,8 +202,6 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
         || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print("\" ");
     }
-
-    print(node.getCDRole().getSymbol().getType().getTypeInfo().getFullName());
   }
 
   @Override

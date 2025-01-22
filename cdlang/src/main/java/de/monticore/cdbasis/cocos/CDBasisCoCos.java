@@ -48,6 +48,8 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
 
     // CDType
     checker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());
+    checker.addCoCo(new CDTypeModifierNotPrivate());
+    checker.addCoCo(new CDTypeModifierNotProtected());
 
     // CDDefinition
     checker.addCoCo(new CDDefinitionNameUpperCase());

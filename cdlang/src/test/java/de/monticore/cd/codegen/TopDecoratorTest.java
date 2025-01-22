@@ -17,6 +17,7 @@ import de.monticore.umlmodifier.UMLModifierMill;
 import de.monticore.umlstereotype.UMLStereotypeMill;
 import de.monticore.umlstereotype._ast.ASTStereoValue;
 import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.IErrorHook;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import de.se_rwth.commons.logging.MCFatalError;
@@ -47,6 +48,10 @@ public class TopDecoratorTest extends DecoratorTestCase {
   public void testTopNeededHwNotFound() {
     // Replaces the log stub  with normal log to check for properly configured fail quick
     Log.init();
+    // Replace terminate behavior
+    IErrorHook onError = Mockito.mock(IErrorHook.class);
+    Mockito.doThrow(new MCFatalError("")).when(onError).terminate();
+    Log.setErrorHook(onError);
 
     // Setup
     String reasonString = "needStereoReason";
@@ -55,7 +60,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
     // Unit
     try {
-      this.topDecorator.checkNeedsHandwrittenClass(false, clazz);
+      this.topDecorator.checkNeedsHandwrittenClass(false, clazz, clazz.getName());
       fail("No Exception thrown (should fail quick)");
     } catch (MCFatalError ignored) {
     }
@@ -72,6 +77,10 @@ public class TopDecoratorTest extends DecoratorTestCase {
   public void testTopNeededHwFound() {
     // Replaces the log stub  with normal log to check for properly configured fail quick
     Log.init();
+    // Replace terminate behavior
+    IErrorHook onError = Mockito.mock(IErrorHook.class);
+    Mockito.doThrow(new MCFatalError("")).when(onError).terminate();
+    Log.setErrorHook(onError);
 
     // Setup
     String reasonString = "needStereoReason";
@@ -79,7 +88,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
     ASTCDClass clazz = buildClassWithStereotype(stereoValue);
 
     // Unit
-    this.topDecorator.checkNeedsHandwrittenClass(true, clazz);
+    this.topDecorator.checkNeedsHandwrittenClass(true, clazz, clazz.getName());
 
     // CheckLogs
     List<Finding> findings = Log.getFindings();

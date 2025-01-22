@@ -28,7 +28,7 @@ public class AssociativityTest extends BaseTest {
       "src/test/resources/class_diagrams" + "/notAssociative/C.cd";
 
   @Test
-  public void testAssociationNonAssociative() throws IOException, MergingException {
+  public void testAssociationNonAssociative() throws IOException {
     List<String> inputModels = new ArrayList<>();
     inputModels.add(INPUT_MODEL_1);
     inputModels.add(INPUT_MODEL_2);

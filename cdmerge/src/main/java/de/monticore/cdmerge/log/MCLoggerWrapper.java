@@ -29,13 +29,6 @@ public class MCLoggerWrapper extends Log {
   }
 
   @Override
-  protected void doErrPrint(String msg) {
-    if (!disableSystemReporting) {
-      super.doErrPrint(msg);
-    }
-  }
-
-  @Override
   protected void doPrintStackTrace(Throwable t) {
     if (!disableSystemReporting) {
       super.doPrintStackTrace(t);
@@ -75,11 +68,6 @@ public class MCLoggerWrapper extends Log {
   @Override
   protected boolean doIsFailQuickEnabled() {
     return this.quickFail;
-  }
-
-  @Override
-  protected boolean doIsNonZeroExitEnabled() {
-    return this.isNonZeroExit;
   }
 
   protected void setLevel(ErrorLevel level) {

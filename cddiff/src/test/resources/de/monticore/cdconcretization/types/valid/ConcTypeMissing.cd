@@ -1,0 +1,13 @@
+import java.lang.String;
+classdiagram ConcTypeMissing {
+
+  class Course {
+  }
+
+  enum CourseType {
+    LECTURE,
+    SEMINAR,
+    TUTORIAL;
+
+  }
+}

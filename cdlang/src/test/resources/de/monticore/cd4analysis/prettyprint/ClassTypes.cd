@@ -1,0 +1,50 @@
+/* Yvonne Heimowski */
+
+classdiagram ClassTypes {
+
+  abstract class Abstrakt {
+      boolean abstrakt;
+  }
+
+  final class Finale {
+      String ohoho;
+  }
+
+  static class Statische {
+      int spannung;
+  }
+
+  local class Lokal {
+
+  }
+
+
+
+  public class Public {
+
+  }
+
+  protected class Protected {
+
+  }
+
+  private abstract final class PAF {
+
+  }
+
+  readonly class RO {
+
+  }
+
+  derived class Derived {
+
+  }
+
+  public derived readonly class PDR {
+
+  }
+
+  interface Interface {
+
+  }
+}
