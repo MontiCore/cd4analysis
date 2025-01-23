@@ -26,7 +26,8 @@ public abstract class CDDiffTestBasis {
 
   @Before
   public void setup() {
-    LogStub.init();
+    //LogStub.init();
+    Log.init(); //todo: @Presiyan revert after fixing the bug
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
