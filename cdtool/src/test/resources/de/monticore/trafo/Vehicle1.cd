@@ -1,3 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+
 classdiagram Vehicle1 {
 	class Vehicle {
 	}

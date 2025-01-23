@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib;
 
 import com.google.common.collect.Maps;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class CDTransformationRunner {
