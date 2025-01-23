@@ -44,14 +44,6 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
 
     Assert.assertTrue(witnesses.isEmpty());
 
-    for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitOld, compilationUnitNew, od)) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
-      }
-    }
   }
 
   @Test
@@ -68,14 +60,6 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
 
     Assert.assertTrue(witnesses.isEmpty());
 
-    for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitOld, compilationUnitNew, od)) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
-      }
-    }
   }
 
   @Test
@@ -121,7 +105,7 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     }
   }
 
-  //fixme: produces instance that is NOT a diff-witness according to
+
   @Test
   public void testDT23(){
     ASTCDCompilationUnit compilationUnitNew =

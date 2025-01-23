@@ -264,7 +264,7 @@ public class Syn2SemDiff {
           String comment =
               "// In the class "
                   + typeDiffStruct.getAstcdType().getSymbol().getInternalQualifiedName()
-                  + " the stereotype is changed from abstract";
+                  + " the `abstract` modifier was removed.";
           Optional<ASTODArtifact> astodArtifact =
               generateArtifact(
                   oDTitleForClass(typeDiffStruct.getAstcdType()),
@@ -718,7 +718,7 @@ public class Syn2SemDiff {
         String comment =
             "// The class "
                 + astcdClass.getSymbol().getInternalQualifiedName()
-                + " is part of a different inheritance tree.";
+                + " is part of a different inheritance hierarchy.";
         Optional<ASTODArtifact> astodArtifact =
             generateArtifact(
                 oDTitleForClass(astcdClass), generateElements(astcdClass, comment, null));
