@@ -269,9 +269,10 @@ public class Syn2SemDiffHelper {
    *
    * @param astcdClass target class
    * @param isSource for srcMap if true, for tgtMap if false
+   * @param makeConditionStrict if false, the condition is strict, if true, the condition is relaxed
    * @return list of associations
    */
-  public List<AssocStruct> getOtherAssocs(ASTCDType astcdClass, boolean isSource) {
+  public List<AssocStruct> getOtherAssocs(ASTCDType astcdClass, boolean isSource, boolean makeConditionStrict) {
     List<AssocStruct> list = new ArrayList<>();
     ArrayListMultimap<ASTCDType, AssocStruct> map = isSource ? srcMap : tgtMap;
 
@@ -285,13 +286,13 @@ public class Syn2SemDiffHelper {
 
           if (assocStruct.getSide().equals(ClassSide.Left)
               && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
-              && (assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+              && (makeConditionStrict || assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
                   || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())
               && connectedTypes.b == astcdClass) {
             list.add(assocStruct.deepClone());
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
-              && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
+              && (makeConditionStrict || assocStruct.getAssociation().getRight().getCDCardinality().isOne()
                   || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())
               && connectedTypes.a == astcdClass) {
             list.add(assocStruct.deepClone());
@@ -317,7 +318,20 @@ public class Syn2SemDiffHelper {
             astcdClass, isSource ? srcCD.getCDDefinition() : tgtCD.getCDDefinition());
 
     for (ASTCDType astcdClass1 : superTypes) {
-      list.addAll(getOtherAssocs(astcdClass1, isSource));
+      list.addAll(getOtherAssocs(astcdClass1, isSource, false));
+    }
+
+    return list;
+  }
+
+  public List<AssocStruct> getAllOtherAssocsSpecCase(ASTCDType astcdClass, boolean isSource) {
+    List<AssocStruct> list = new ArrayList<>();
+    Set<ASTCDType> superTypes =
+      CDDiffUtil.getAllSuperTypes(
+        astcdClass, isSource ? srcCD.getCDDefinition() : tgtCD.getCDDefinition());
+
+    for (ASTCDType astcdClass1 : superTypes) {
+      list.addAll(getOtherAssocs(astcdClass1, isSource, true));
     }
 
     return list;
@@ -770,26 +784,28 @@ public class Syn2SemDiffHelper {
    * Check if the classes are in an inheritance relation. For this, the matched classes in
    * srcCD/tgtCD of the tgtClass/srcClass are compared with isSuper() to the srcClass.
    *
-   * @param subType class from srcCD/trgCD.
-   * @param superType class from tgtCD/srcCD.
+   * @param type1 class from srcCD/trgCD.
+   * @param type2 class from tgtCD/srcCD.
    * @return true if the condition is fulfilled.
    */
-  public boolean compareTypes(ASTCDType subType, ASTCDType superType, boolean isSource) {
+  public boolean compareTypes(ASTCDType type1, ASTCDType type2, boolean isSource) {
     Optional<ASTCDType> typeToMatch =
-        isSource ? findMatchedTypeSrc(superType) : findMatchedTypeTgt(superType);
+        isSource ? findMatchedTypeSrc(type2) : findMatchedTypeTgt(type2);
+    Optional<ASTCDType> type1Matched =
+        isSource ? findMatchedTypeTgt(type1) : findMatchedTypeSrc(type1);
 
     return typeToMatch
             .filter(
                 astcdType ->
                     isSuperOf(
                         astcdType.getSymbol().getInternalQualifiedName(),
-                        subType.getSymbol().getInternalQualifiedName(),
+                        type1.getSymbol().getInternalQualifiedName(),
                         (ICD4CodeArtifactScope)
                             (isSource ? srcCD.getEnclosingScope() : tgtCD.getEnclosingScope())))
             .isPresent()
-        || (subType.getSymbol().isIsAbstract()
-            && typeToMatch.isPresent()
-            && srcSubMap.get(subType).contains(typeToMatch.get()));
+        || (typeToMatch.isPresent()
+            && srcSubMap.get(type1).contains(typeToMatch.get()))
+        || (isSource? tgtSubMap.get(type2).contains(type1Matched.get()) : srcSubMap.get(type1).contains(typeToMatch.get()));
   }
 
   /**
@@ -864,7 +880,7 @@ public class Syn2SemDiffHelper {
    * @return true, if an association has the same association type.
    */
   public boolean classIsTgtSrcTgt(AssocStruct association, ASTCDType tgtType) {
-    for (AssocStruct assocStruct : getAllOtherAssocs(tgtType, false)) {
+    for (AssocStruct assocStruct : getAllOtherAssocsSpecCase(tgtType, false)) {
       if (sameAssociationTypeSrcTgt(association, assocStruct)) {
         return true;
       }

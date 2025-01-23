@@ -103,7 +103,7 @@ public class ODGenHelper {
   public int getClassSize(ASTCDClass astcdClass) {
     int attributeCount = syn2SemDiffHelper.getAllAttr(astcdClass).b.size();
     int associationCount = syn2SemDiffHelper.getAssociationCount(astcdClass, true);
-    int otherAssocsCount = syn2SemDiffHelper.getOtherAssocs(astcdClass, true).size();
+    int otherAssocsCount = syn2SemDiffHelper.getOtherAssocs(astcdClass, true, false).size();
     return attributeCount + associationCount + otherAssocsCount;
   }
 
@@ -219,7 +219,7 @@ public class ODGenHelper {
     Set<ASTCDClass> superClassSet =
         CDDiffUtil.getAllSuperclasses(astcdClass, srcCD.getCDDefinition().getCDClassesList());
     for (ASTCDClass superClass : superClassSet) {
-      assocStructs.addAll(syn2SemDiffHelper.getOtherAssocs(superClass, true));
+      assocStructs.addAll(syn2SemDiffHelper.getOtherAssocs(superClass, true, false));
     }
     List<AssocStruct> copy = new ArrayList<>(assocStructs);
     for (AssocStruct assocStruct : copy) {
