@@ -5,6 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syn2semdiff.datastructures.ClassSide;
+import de.monticore.cddiff.syn2semdiff.helpers.ODGenHelper;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;
@@ -22,7 +23,7 @@ public class Package {
   private final ASTCDAssociation astcdAssociation;
   private final ClassSide side;
   private final ODBuilder ODBuilder = new ODBuilder();
-  private final Syn2SemDiffHelper helper;
+  private final ODGenHelper odGenHelper;
 
   public Package(
       ASTCDClass leftObject,
@@ -33,18 +34,20 @@ public class Package {
       ClassSide side,
       boolean isProcessedLeft,
       boolean isProcessedRight,
-      Syn2SemDiffHelper helper) {
+      Syn2SemDiffHelper helper,
+      ODGenHelper odGenHelper) {
+    this.odGenHelper = odGenHelper;
     this.leftObject =
         ODBuilder.buildObj(
             idSrc,
             leftObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperTypes(leftObject),
+            odGenHelper.getSuperTypes(leftObject),
             getAttributesOD(leftObject, helper));
     this.rightObject =
         ODBuilder.buildObj(
             idTgt,
             rightObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperTypes(rightObject),
+            odGenHelper.getSuperTypes(rightObject),
             getAttributesOD(rightObject, helper));
     this.association =
         ODBuilder.buildLink(
@@ -57,7 +60,6 @@ public class Package {
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
-    this.helper = helper;
   }
 
   public Package(
@@ -67,7 +69,7 @@ public class Package {
       ClassSide side,
       boolean isProcessedLeft,
       boolean isProcessedRight,
-      Syn2SemDiffHelper helper) {
+      ODGenHelper odGenHelper) {
     this.leftObject = leftObject;
     this.rightObject = rightObject;
     this.association =
@@ -81,7 +83,7 @@ public class Package {
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
-    this.helper = helper;
+    this.odGenHelper = null;
   }
 
   public Package(
@@ -92,12 +94,14 @@ public class Package {
       ClassSide side,
       boolean isProcessedLeft,
       boolean isProcessedRight,
-      Syn2SemDiffHelper helper) {
+      Syn2SemDiffHelper helper,
+      ODGenHelper odGenHelper) {
+    this.odGenHelper = odGenHelper;
     this.leftObject =
         ODBuilder.buildObj(
             idSrc,
             leftObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperTypes(leftObject),
+            odGenHelper.getSuperTypes(leftObject),
             getAttributesOD(leftObject, helper));
     this.rightObject = rightObject;
     this.association =
@@ -111,7 +115,6 @@ public class Package {
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
-    this.helper = helper;
   }
 
   public Package(
@@ -122,13 +125,15 @@ public class Package {
       ClassSide side,
       boolean isProcessedLeft,
       boolean isProcessedRight,
-      Syn2SemDiffHelper helper) {
+      Syn2SemDiffHelper helper,
+      ODGenHelper odGenHelper) {
+    this.odGenHelper = odGenHelper;
     this.leftObject = leftObject;
     this.rightObject =
         ODBuilder.buildObj(
             idTgt,
             rightObject.getSymbol().getInternalQualifiedName(),
-            helper.getSuperTypes(rightObject),
+            odGenHelper.getSuperTypes(rightObject),
             getAttributesOD(rightObject, helper));
     this.association =
         ODBuilder.buildLink(
@@ -141,10 +146,9 @@ public class Package {
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
-    this.helper = helper;
   }
 
-  public Package(ASTODObject leftObject, Syn2SemDiffHelper helper) {
+  public Package(ASTODObject leftObject, ODGenHelper odGenHelper) {
     this.leftObject = leftObject;
     this.rightObject = null;
     this.association = null;
@@ -152,15 +156,17 @@ public class Package {
     this.side = ClassSide.Left;
     this.isProcessedLeft = true;
     this.isProcessedRight = false;
-    this.helper = helper;
+    this.odGenHelper = odGenHelper;
   }
 
-  public Package(ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper) {
+  public Package(
+      ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper, ODGenHelper odGenHelper) {
+    this.odGenHelper = odGenHelper;
     this.leftObject =
         ODBuilder.buildObj(
             id,
             astcdClass.getSymbol().getInternalQualifiedName(),
-            helper.getSuperTypes(astcdClass),
+            odGenHelper.getSuperTypes(astcdClass),
             getAttributesOD(astcdClass, helper));
     this.rightObject = null;
     this.association = null;
@@ -168,7 +174,6 @@ public class Package {
     this.side = ClassSide.Left;
     this.isProcessedLeft = false;
     this.isProcessedRight = false;
-    this.helper = helper;
   }
 
   public ASTODObject getLeftObject() {
@@ -203,7 +208,7 @@ public class Package {
     List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
     for (ASTCDAttribute attribute : attributes) {
-      Pair<Boolean, String> attIsEnum = helper.attIsEnum(attribute);
+      Pair<Boolean, String> attIsEnum = odGenHelper.attIsEnum(attribute);
       if (attIsEnum.a) {
         odAttributes.add(
             ODBuilder.buildAttr(

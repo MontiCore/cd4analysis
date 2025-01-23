@@ -41,7 +41,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc1() {
     parseModels("Source1.cd", "Target1.cd");
 
-    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt);
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(synDiff.printDiff());
   }
 
@@ -49,7 +49,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc2() {
     parseModels("Source2.cd", "Target2.cd");
 
-    CDSyntaxDiff associationDiff = new CDSyntaxDiff(src, tgt);
+    CDSyntaxDiff associationDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(associationDiff.printDiff());
     // System.out.println(associationDiff.getBaseDiff());
     // System.out.println(associationDiff.getMatchedAssocs());
@@ -59,7 +59,7 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc3() {
     parseModels("Source3.cd", "Target3.cd");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(syntaxDiff.printSrcCD());
     // System.out.println(syntaxDiff.printTgtCD());
     // System.out.println(syntaxDiff.getBaseDiff());
@@ -69,14 +69,14 @@ public class AssocDiffTest extends CDDiffTestBasis {
   public void testAssoc4() {
     parseModels("Source4.cd", "Target4.cd");
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, List.of());
     System.out.println(syntaxDiff.getBaseDiff());
   }
 
   @Test
   public void testAssoc5() {
     parseModels("Source5.cd", "Target5.cd");
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, List.of());
     System.out.println(syntaxDiff.getMatchedClasses());
     SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
     System.out.println(sb.printDiff());
