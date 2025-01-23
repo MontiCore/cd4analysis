@@ -272,7 +272,8 @@ public class Syn2SemDiffHelper {
    * @param makeConditionStrict if false, the condition is strict, if true, the condition is relaxed
    * @return list of associations
    */
-  public List<AssocStruct> getOtherAssocs(ASTCDType astcdClass, boolean isSource, boolean makeConditionStrict) {
+  public List<AssocStruct> getOtherAssocs(
+      ASTCDType astcdClass, boolean isSource, boolean makeConditionStrict) {
     List<AssocStruct> list = new ArrayList<>();
     ArrayListMultimap<ASTCDType, AssocStruct> map = isSource ? srcMap : tgtMap;
 
@@ -286,13 +287,15 @@ public class Syn2SemDiffHelper {
 
           if (assocStruct.getSide().equals(ClassSide.Left)
               && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
-              && (makeConditionStrict || assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+              && (makeConditionStrict
+                  || assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
                   || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())
               && connectedTypes.b == astcdClass) {
             list.add(assocStruct.deepClone());
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && !assocStruct.getDirection().equals(AssocDirection.BiDirectional)
-              && (makeConditionStrict || assocStruct.getAssociation().getRight().getCDCardinality().isOne()
+              && (makeConditionStrict
+                  || assocStruct.getAssociation().getRight().getCDCardinality().isOne()
                   || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())
               && connectedTypes.a == astcdClass) {
             list.add(assocStruct.deepClone());
@@ -327,8 +330,8 @@ public class Syn2SemDiffHelper {
   public List<AssocStruct> getAllOtherAssocsSpecCase(ASTCDType astcdClass, boolean isSource) {
     List<AssocStruct> list = new ArrayList<>();
     Set<ASTCDType> superTypes =
-      CDDiffUtil.getAllSuperTypes(
-        astcdClass, isSource ? srcCD.getCDDefinition() : tgtCD.getCDDefinition());
+        CDDiffUtil.getAllSuperTypes(
+            astcdClass, isSource ? srcCD.getCDDefinition() : tgtCD.getCDDefinition());
 
     for (ASTCDType astcdClass1 : superTypes) {
       list.addAll(getOtherAssocs(astcdClass1, isSource, true));
@@ -803,9 +806,10 @@ public class Syn2SemDiffHelper {
                         (ICD4CodeArtifactScope)
                             (isSource ? srcCD.getEnclosingScope() : tgtCD.getEnclosingScope())))
             .isPresent()
-        || (typeToMatch.isPresent()
-            && srcSubMap.get(type1).contains(typeToMatch.get()))
-        || (isSource? tgtSubMap.get(type2).contains(type1Matched.get()) : srcSubMap.get(type1).contains(typeToMatch.get()));
+        || (typeToMatch.isPresent() && srcSubMap.get(type1).contains(typeToMatch.get()))
+        || (isSource
+            ? tgtSubMap.get(type2).contains(type1Matched.get())
+            : srcSubMap.get(type1).contains(typeToMatch.get()));
   }
 
   /**
