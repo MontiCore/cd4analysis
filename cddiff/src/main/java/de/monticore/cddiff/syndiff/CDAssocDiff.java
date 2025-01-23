@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
+
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -19,10 +21,7 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.*;
-
-import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
 
 /**
  * This class computes the differences between two ASTCDAssociation nodes. It analyzes the role
@@ -391,7 +390,6 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     return null;
   }
 
-
   /*--------------------------------------------------------------------*/
 
   /**
@@ -401,9 +399,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
    * @param srcAssoc The source ASTCDAssociation.
    * @param tgtAssoc The target ASTCDAssociation.
    */
-  private void assocDiff(
-    ASTCDAssociation srcAssoc,
-    ASTCDAssociation tgtAssoc) {
+  private void assocDiff(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
 
     // Association Type
     Optional<ASTCDAssocType> srcAssocType = Optional.of(srcAssoc.getCDAssocType());

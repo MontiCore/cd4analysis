@@ -1,5 +1,8 @@
 package de.monticore.cddiff.syndiff;
 
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
+
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -15,9 +18,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
-
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
 
 /**
  * This is the core class for semantic differencing. It contains the results of the syntactic
@@ -57,7 +57,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     this(srcCD, tgtCD, List.of()); // Use all matching strategies
   }
 
-  public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, List<MatchingStrategy> matchingStrategies) {
+  public CDSyntaxDiff(
+      ASTCDCompilationUnit srcCD,
+      ASTCDCompilationUnit tgtCD,
+      List<MatchingStrategy> matchingStrategies) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
     CDDiffUtil.refreshSymbolTable(srcCD);
@@ -485,7 +488,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     boolean isContained = false;
     Optional<ASTCDType> matched = helper.findMatchedTypeTgt(astcdClass);
 
-      for (AssocStruct newAssocs : helper.getSrcMap().get(astcdClass)) {
+    for (AssocStruct newAssocs : helper.getSrcMap().get(astcdClass)) {
       for (AssocStruct srcStruct :
           helper.getTgtMap().get(helper.findMatchedTypeTgt(subClass).get())) {
         if (helper.sameAssociationTypeSrcTgt(newAssocs, srcStruct)) {
@@ -519,7 +522,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public List<ASTCDType> isAssocDeleted(ASTCDAssociation association, ASTCDType astcdClass) {
     ASTCDType isDeletedSrc = null;
     ASTCDType isDeletedTgt = null;
-    Optional<AssocStruct> assocStruct = helper.getAssocStructByUnmod(astcdClass, association, false);
+    Optional<AssocStruct> assocStruct =
+        helper.getAssocStructByUnmod(astcdClass, association, false);
     if (assocStruct
         .isPresent()) { // if assocStruc is null, then the association is deleted because of
       // overlapping
@@ -791,7 +795,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDType>>> addedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDType>>> associationList = new ArrayList<>();
-    if (!matchingStrategies.isEmpty() && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+    if (!matchingStrategies.isEmpty()
+        && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
       return associationList;
     }
     for (ASTCDAssociation association : addedAssocs) {
@@ -807,7 +812,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<Pair<ASTCDAssociation, List<ASTCDType>>> deletedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDType>>> list = new ArrayList<>();
-    if (!matchingStrategies.isEmpty() && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+    if (!matchingStrategies.isEmpty()
+        && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
       return list;
     }
     for (ASTCDAssociation association : deletedAssocs) {
@@ -907,7 +913,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<AssocDiffStruct> changedAssoc() {
     List<AssocDiffStruct> list = new ArrayList<>();
-      for (CDAssocDiff assocDiff : helper.getDiffs()) {
+    for (CDAssocDiff assocDiff : helper.getDiffs()) {
       Pair<AssocStruct, AssocStruct> matchedPairs =
           helper.getStructsForAssocDiff(
               assocDiff.getSrcElem(), assocDiff.getTgtElem(), assocDiff.isReversed());
@@ -916,8 +922,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
       Pair<ASTCDType, ASTCDType> pairDef = getConnectedTypes(assocDiff.getSrcElem(), srcCD);
       Pair<ASTCDType, ASTCDType> pair;
-      if (pairDef.a.getModifier().isAbstract() || pairDef.b.getModifier().isAbstract() || pairDef.a instanceof ASTCDInterface || pairDef.b instanceof ASTCDInterface) {
-        pair = helper.getClassesForAssoc(pairDef, getConnectedTypes(assocDiff.getTgtElem(), tgtCD), assocDiff.isReversed());
+      if (pairDef.a.getModifier().isAbstract()
+          || pairDef.b.getModifier().isAbstract()
+          || pairDef.a instanceof ASTCDInterface
+          || pairDef.b instanceof ASTCDInterface) {
+        pair =
+            helper.getClassesForAssoc(
+                pairDef, getConnectedTypes(assocDiff.getTgtElem(), tgtCD), assocDiff.isReversed());
       } else {
         pair = pairDef;
       }
@@ -1063,7 +1074,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public List<AssocMatching> getAssocDiffs() {
-    if (!matchingStrategies.isEmpty() && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+    if (!matchingStrategies.isEmpty()
+        && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
       return List.of();
     }
     List<Pair<ASTCDClass, List<AssocStruct>>> srcAssocExistsTgtNot = srcAssocExistsTgtNot();
@@ -1500,24 +1512,35 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       List<MatchingStrategy> matchingStrategies) {
     addAllMatchedTypes(computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
     addAllMatchedAssocs(
-        computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD, matchingStrategies));
+        computeMatchingMapAssocs(
+            srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD, matchingStrategies));
     addAllChangedTypes();
     addAllChangedAssocs();
-    addAllAddedClasses(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
-    addAllDeletedClasses(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
-    addAllAddedInterfaces(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
-    addAllDeletedInterfaces(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+    addAllAddedClasses(
+        srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+    addAllDeletedClasses(
+        tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+    addAllAddedInterfaces(
+        srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+    addAllDeletedInterfaces(
+        tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
     addAllAddedClassesSem(srcCD, tgtCD);
     addAllDeletedClassesSem(tgtCD, tgtCD);
     addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
-    addAllDeletedEnums(tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+    addAllDeletedEnums(
+        tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
     addAllAddedAssocs(
         srcCD,
-        computeMatchingMapAssocs(srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD, matchingStrategies));
+        computeMatchingMapAssocs(
+            srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD, matchingStrategies));
     addAllDeletedAssocs(tgtCD);
     addAllAddedInheritance(
-        srcCDScope, tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+        srcCDScope,
+        tgtCDScope,
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
     addAllDeletedInheritance(
-        srcCDScope, tgtCDScope, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+        srcCDScope,
+        tgtCDScope,
+        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
   }
 }

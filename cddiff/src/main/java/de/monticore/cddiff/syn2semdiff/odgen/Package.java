@@ -10,7 +10,6 @@ import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.odlink._ast.ASTODLink;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,16 +26,16 @@ public class Package {
   private final ODGenHelper odGenHelper;
 
   public Package(
-    ASTCDClass leftObject,
-    String idSrc,
-    ASTCDClass rightObject,
-    String idTgt,
-    ASTCDAssociation association,
-    ClassSide side,
-    boolean isProcessedLeft,
-    boolean isProcessedRight,
-    Syn2SemDiffHelper helper,
-    ODGenHelper odGenHelper) {
+      ASTCDClass leftObject,
+      String idSrc,
+      ASTCDClass rightObject,
+      String idTgt,
+      ASTCDAssociation association,
+      ClassSide side,
+      boolean isProcessedLeft,
+      boolean isProcessedRight,
+      Syn2SemDiffHelper helper,
+      ODGenHelper odGenHelper) {
     this.odGenHelper = odGenHelper;
     this.leftObject =
         ODBuilder.buildObj(
@@ -160,7 +159,8 @@ public class Package {
     this.odGenHelper = odGenHelper;
   }
 
-  public Package(ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper, ODGenHelper odGenHelper) {
+  public Package(
+      ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper, ODGenHelper odGenHelper) {
     this.odGenHelper = odGenHelper;
     this.leftObject =
         ODBuilder.buildObj(

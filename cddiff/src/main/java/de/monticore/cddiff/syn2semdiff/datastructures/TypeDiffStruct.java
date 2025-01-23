@@ -7,7 +7,6 @@ import de.monticore.cddiff.syndiff.DiffTypes;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.List;
 
 /**

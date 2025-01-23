@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syn2semdiff.odgen;
 
+import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.getConnectedTypes;
+
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -14,8 +16,6 @@ import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODObject;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
-
-import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.getConnectedTypes;
 
 public class ODGenerator {
   private final Syn2SemDiffHelper helper;
@@ -287,12 +287,12 @@ public class ODGenerator {
   }
 
   /**
-   * Create the elements for an object diagram starting from a given class/association.
-   * If the difference is based on an added constant, the pair is used.
-   * <p>
-   * If cardinalityLeft and cardinalityRight are both set to -1, then the difference
-   * is about change from singleton to non-singleton in the given class. This shouldn't
-   * lead to problems as there is no other case, where this int is used.
+   * Create the elements for an object diagram starting from a given class/association. If the
+   * difference is based on an added constant, the pair is used.
+   *
+   * <p>If cardinalityLeft and cardinalityRight are both set to -1, then the difference is about
+   * change from singleton to non-singleton in the given class. This shouldn't lead to problems as
+   * there is no other case, where this int is used.
    *
    * @param astcdType class to start from.
    * @param attrPair pair of attribute and enum constant.
@@ -303,15 +303,17 @@ public class ODGenerator {
    *     difference. If the set is empty, an object diagram for this association isn't possible.
    */
   public Pair<Set<ASTODElement>, Optional<ASTODElement>> getObjForODGeneral(
-    ASTCDType astcdType,
-    ASTCDAssociation association,
-    Pair<ASTCDAttribute, String> attrPair,
-    Integer cardinalityLeft,
-    Integer cardinalityRight) {
+      ASTCDType astcdType,
+      ASTCDAssociation association,
+      Pair<ASTCDAttribute, String> attrPair,
+      Integer cardinalityLeft,
+      Integer cardinalityRight) {
 
     Set<ASTODElement> elements = new HashSet<>();
-    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap.create();
-    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap.create();
+    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc =
+        ArrayListMultimap.create();
+    ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt =
+        ArrayListMultimap.create();
     ASTCDClass classToUse;
     Set<Package> packages;
     ASTODElement link = null;
@@ -347,7 +349,8 @@ public class ODGenerator {
     // Process unprocessed objects in packages
     while (!findUnprocessedObjects(packages).isEmpty()) {
       for (ASTODObject astodObject : findUnprocessedObjects(packages)) {
-        if (maxNumberOfClasses < getNumberOfObjects(packages)) return new Pair<>(elements, Optional.empty());
+        if (maxNumberOfClasses < getNumberOfObjects(packages))
+          return new Pair<>(elements, Optional.empty());
         Set<Package> toAdd = createChainsForExistingObj(astodObject, packages, mapSrc, mapTgt);
         if (toAdd == null) return new Pair<>(elements, Optional.empty());
         packages.addAll(toAdd);
@@ -366,7 +369,6 @@ public class ODGenerator {
 
     return new Pair<>(elements, Optional.ofNullable(link));
   }
-
 
   /**
    * Create a new object for a class. This is only used at the start of the algorithm for creating
@@ -432,7 +434,8 @@ public class ODGenerator {
         if (tgtObject == null
             && subclass.isPresent()
             && (rightClass.getModifier().isAbstract()
-                || (odGenHelper.getClassSize(subclass.get()) <= odGenHelper.getClassSize(rightClass)))) {
+                || (odGenHelper.getClassSize(subclass.get())
+                    <= odGenHelper.getClassSize(rightClass)))) {
           if (odGenHelper.singletonObj(subclass.get(), mapSrc, mapTgt)) {
             return null;
           }
@@ -468,8 +471,7 @@ public class ODGenerator {
                 ClassSide.Left,
                 true,
                 false,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
 
       } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -497,7 +499,8 @@ public class ODGenerator {
         if (tgtObject == null
             && subclass.isPresent()
             && (leftClass.getModifier().isAbstract()
-                || (odGenHelper.getClassSize(subclass.get()) <= odGenHelper.getClassSize(leftClass)))) {
+                || (odGenHelper.getClassSize(subclass.get())
+                    <= odGenHelper.getClassSize(leftClass)))) {
           if (odGenHelper.singletonObj(subclass.get(), mapSrc, mapTgt)) {
             return null;
           }
@@ -533,8 +536,7 @@ public class ODGenerator {
                 ClassSide.Right,
                 false,
                 true,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
       }
     }
@@ -597,8 +599,7 @@ public class ODGenerator {
                 ClassSide.Right,
                 false,
                 true,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
 
       } else {
@@ -656,8 +657,7 @@ public class ODGenerator {
                 ClassSide.Left,
                 true,
                 false,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
       }
     }
@@ -689,9 +689,7 @@ public class ODGenerator {
     for (AssocStruct assocStruct :
         helper
             .getSrcMap()
-            .get(
-                ODGenHelper.getCDClass(
-                    helper.getSrcCD(), object.getMCObjectType().printType()))) {
+            .get(ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()))) {
       if (assocStruct.getSide().equals(ClassSide.Left)
           && assocStruct.isToBeProcessed()
           && (assocStruct.getAssociation().getRight().getCDCardinality().isOne()
@@ -765,8 +763,7 @@ public class ODGenerator {
         if (tgtObject == null && !rightClass.getModifier().isAbstract()) {
           tgtObject =
               getTgtObject(
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   rightClass,
                   mapSrc,
@@ -775,8 +772,7 @@ public class ODGenerator {
         if (tgtObject == null) {
           tgtObject =
               getSubTgtObject(
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   rightClass,
                   mapSrc,
@@ -823,8 +819,7 @@ public class ODGenerator {
                 ClassSide.Left,
                 true,
                 false,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
 
       } else if (assocStruct.getSide().equals(ClassSide.Right)
@@ -845,8 +840,7 @@ public class ODGenerator {
         if (tgtObject == null && !leftClass.getModifier().isAbstract()) {
           tgtObject =
               getTgtObject(
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   leftClass,
                   mapSrc,
@@ -855,8 +849,7 @@ public class ODGenerator {
         if (tgtObject == null) {
           tgtObject =
               getSubTgtObject(
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   assocStruct,
                   leftClass,
                   mapSrc,
@@ -864,7 +857,8 @@ public class ODGenerator {
         }
         if (tgtObject == null
             && helper
-                .minSubClass(getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a, true)
+                .minSubClass(
+                    getConnectedTypes(assocStruct.getAssociation(), helper.getSrcCD()).a, true)
                 .isPresent()
             && (leftClass.getModifier().isAbstract()
                 || (odGenHelper.getClassSize(sub.get()) <= odGenHelper.getClassSize(leftClass)))) {
@@ -903,8 +897,7 @@ public class ODGenerator {
                 ClassSide.Right,
                 false,
                 true,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
       }
     }
@@ -924,8 +917,7 @@ public class ODGenerator {
               getRealSrc(
                   leftClass,
                   assocStruct,
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -934,8 +926,7 @@ public class ODGenerator {
               getSubRealSrc(
                   leftClass,
                   assocStruct,
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -979,8 +970,7 @@ public class ODGenerator {
                 ClassSide.Right,
                 false,
                 true,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
       } else {
         Optional<ASTCDClass> right =
@@ -996,8 +986,7 @@ public class ODGenerator {
               getRealSrc(
                   rightClass,
                   assocStruct,
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -1006,8 +995,7 @@ public class ODGenerator {
               getSubRealSrc(
                   rightClass,
                   assocStruct,
-                  ODGenHelper.getCDClass(
-                      helper.getSrcCD(), object.getMCObjectType().printType()),
+                  ODGenHelper.getCDClass(helper.getSrcCD(), object.getMCObjectType().printType()),
                   mapSrc,
                   mapTgt);
         }
@@ -1045,8 +1033,7 @@ public class ODGenerator {
                 ClassSide.Left,
                 true,
                 false,
-                odGenHelper
-            );
+                odGenHelper);
         packages.add(pack);
       }
     }
@@ -1082,20 +1069,20 @@ public class ODGenerator {
     List<ASTODObject> typeObjectsSrc = odGenHelper.getObjectsOfType(tgtToFind, srcMap);
     if (!typeObjects.isEmpty() || !typeObjectsSrc.isEmpty()) {
       if (assocStruct.getSide().equals(ClassSide.Left)
-        && !(assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
-        || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())
-        && (assocStruct.getAssociation().getRight().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+          && !(assocStruct.getAssociation().getLeft().getCDCardinality().isOne()
+              || assocStruct.getAssociation().getLeft().getCDCardinality().isOpt())
+          && (assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+              || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
         if (!typeObjects.isEmpty()) {
           return typeObjects.get(0);
         } else {
           return typeObjectsSrc.get(0);
         }
       } else if (assocStruct.getSide().equals(ClassSide.Right)
-        && !(assocStruct.getAssociation().getRight().getCDCardinality().isOne()
-        || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())
-        && (assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+          && !(assocStruct.getAssociation().getRight().getCDCardinality().isOne()
+              || assocStruct.getAssociation().getRight().getCDCardinality().isOpt())
+          && (assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+              || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
         if (!typeObjects.isEmpty()) {
           return typeObjects.get(0);
         } else {
@@ -1136,13 +1123,8 @@ public class ODGenerator {
                 .equals(ClassSide.Left) // not-searched class of assocStruc on the left side
             && assocStructToMatch.b.equals(
                 ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-          && compareForTgtCase(
-            false,
-          assocStruct,
-          assocStructToMatch,
-          leftClassAssocStruct,
-          rightClassToMatch
-        )) {
+            && compareForTgtCase(
+                false, assocStruct, assocStructToMatch, leftClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct
@@ -1150,35 +1132,20 @@ public class ODGenerator {
                 .equals(ClassSide.Right) // src of assocStruc on the right side
             && assocStructToMatch.b.equals(
                 ClassSide.Right) // tgt of assocStructToMatch on the right side!!!
-          && compareForTgtCase(
-            false,
-            assocStruct,
-            assocStructToMatch,
-            rightClassAssocStruct,
-            leftClassToMatch
-        )) {
+            && compareForTgtCase(
+                false, assocStruct, assocStructToMatch, rightClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForTgtCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              leftClassToMatch
-            )) {
+            && compareForTgtCase(
+                true, assocStruct, assocStructToMatch, leftClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Left)
-          && compareForTgtCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              rightClassToMatch
-            )) {
+            && compareForTgtCase(
+                true, assocStruct, assocStructToMatch, rightClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         }
@@ -1202,46 +1169,26 @@ public class ODGenerator {
         if (assocStruct.getSide().equals(ClassSide.Left) // not-searched class on the left side
             && assocStructToMatch.b.equals(
                 ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-          && compareForTgtCase(
-            false,
-          assocStruct,
-          assocStructToMatch,
-          leftClassAssocStruct,
-          rightClassToMatch)
-        ) {
+            && compareForTgtCase(
+                false, assocStruct, assocStructToMatch, leftClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForTgtCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              leftClassToMatch)
-            ) {
+            && compareForTgtCase(
+                true, assocStruct, assocStructToMatch, leftClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Left)
-          && compareForTgtCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              rightClassToMatch)
-        ) {
+            && compareForTgtCase(
+                true, assocStruct, assocStructToMatch, rightClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForTgtCase(
-              false,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              leftClassToMatch)
-            ) {
+            && compareForTgtCase(
+                false, assocStruct, assocStructToMatch, rightClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         }
@@ -1253,67 +1200,63 @@ public class ODGenerator {
     return null;
   }
 
-  private boolean compareForTgtCase(boolean sameSide,
-                                    AssocStruct assocStruct,
-                                    Pair<AssocStruct, ClassSide> assocStructToMatch,
-                                    ASTCDClass astcdClass,
-                                    ASTCDClass astcdClassToMatch) {
-    return CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), sameSide
-      ? assocStructToMatch.a.getAssociation().getLeft()
-      : assocStructToMatch.a.getAssociation().getRight())
-      && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), sameSide
-      ? assocStructToMatch.a.getAssociation().getRight()
-      : assocStructToMatch.a.getAssociation().getLeft())
-      && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
-      && (astcdClass
-      .getSymbol()
-      .getInternalQualifiedName()
-      .equals(astcdClassToMatch.getSymbol().getInternalQualifiedName())
-      || helper
-      .getSrcSubMap()
-      .get(astcdClass)
-      .contains(astcdClassToMatch)
-      || helper
-      .getSrcSubMap()
-      .get(astcdClassToMatch)
-      .contains(astcdClass)
-      || helper
-      .getSrcSubMap()
-      .get(assocStruct.getOriginalType())
-      .contains(astcdClassToMatch));
+  private boolean compareForTgtCase(
+      boolean sameSide,
+      AssocStruct assocStruct,
+      Pair<AssocStruct, ClassSide> assocStructToMatch,
+      ASTCDClass astcdClass,
+      ASTCDClass astcdClassToMatch) {
+    return CDAssociationHelper.matchRoleNames(
+            assocStruct.getAssociation().getLeft(),
+            sameSide
+                ? assocStructToMatch.a.getAssociation().getLeft()
+                : assocStructToMatch.a.getAssociation().getRight())
+        && CDAssociationHelper.matchRoleNames(
+            assocStruct.getAssociation().getRight(),
+            sameSide
+                ? assocStructToMatch.a.getAssociation().getRight()
+                : assocStructToMatch.a.getAssociation().getLeft())
+        && helper.matchDirectionInReverse(assocStruct, assocStructToMatch)
+        && (astcdClass
+                .getSymbol()
+                .getInternalQualifiedName()
+                .equals(astcdClassToMatch.getSymbol().getInternalQualifiedName())
+            || helper.getSrcSubMap().get(astcdClass).contains(astcdClassToMatch)
+            || helper.getSrcSubMap().get(astcdClassToMatch).contains(astcdClass)
+            || helper
+                .getSrcSubMap()
+                .get(assocStruct.getOriginalType())
+                .contains(astcdClassToMatch));
   }
 
-  private boolean compareForSrcCase(boolean sameSide,
-                             AssocStruct assocStruct,
-                             Pair<AssocStruct, ClassSide> assocStructToMatch,
-                             ASTCDClass astcdClass,
-                             ASTCDClass astcdClassToMatch) {
-    return CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getLeft(), sameSide
-      ? assocStructToMatch.a.getAssociation().getLeft()
-      : assocStructToMatch.a.getAssociation().getRight())
-      && CDAssociationHelper.matchRoleNames(assocStruct.getAssociation().getRight(), sameSide
-      ? assocStructToMatch.a.getAssociation().getRight()
-      : assocStructToMatch.a.getAssociation().getLeft())
-      && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
-      && (astcdClass
-      .getSymbol()
-      .getInternalQualifiedName()
-      .equals(astcdClassToMatch.getSymbol().getInternalQualifiedName())
-      || helper
-      .getSrcSubMap()
-      .get(astcdClass)
-      .contains(astcdClassToMatch)
-      || helper
-      .getSrcSubMap()
-      .get(astcdClassToMatch)
-      .contains(astcdClass)
-      || helper
-      .getSrcSubMap()
-      .get(assocStruct.getOriginalTgtType())
-      .contains(astcdClassToMatch));
+  private boolean compareForSrcCase(
+      boolean sameSide,
+      AssocStruct assocStruct,
+      Pair<AssocStruct, ClassSide> assocStructToMatch,
+      ASTCDClass astcdClass,
+      ASTCDClass astcdClassToMatch) {
+    return CDAssociationHelper.matchRoleNames(
+            assocStruct.getAssociation().getLeft(),
+            sameSide
+                ? assocStructToMatch.a.getAssociation().getLeft()
+                : assocStructToMatch.a.getAssociation().getRight())
+        && CDAssociationHelper.matchRoleNames(
+            assocStruct.getAssociation().getRight(),
+            sameSide
+                ? assocStructToMatch.a.getAssociation().getRight()
+                : assocStructToMatch.a.getAssociation().getLeft())
+        && Syn2SemDiffHelper.matchDirection(assocStruct, assocStructToMatch)
+        && (astcdClass
+                .getSymbol()
+                .getInternalQualifiedName()
+                .equals(astcdClassToMatch.getSymbol().getInternalQualifiedName())
+            || helper.getSrcSubMap().get(astcdClass).contains(astcdClassToMatch)
+            || helper.getSrcSubMap().get(astcdClassToMatch).contains(astcdClass)
+            || helper
+                .getSrcSubMap()
+                .get(assocStruct.getOriginalTgtType())
+                .contains(astcdClassToMatch));
   }
-
-
 
   /**
    * Search for a possible target object (subclasses of the needed type) for a given class. This
@@ -1394,46 +1337,26 @@ public class ODGenerator {
                   .equals(ClassSide.Left) // not-searched class of assocStruc on the left side
               && subAssocStruct.b.equals(
                   ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-            && compareForTgtCase(
-              false,
-              assocStruct,
-              subAssocStruct,
-              leftClassAssocStruct,
-              rightClassToMatch
-            )) {
+              && compareForTgtCase(
+                  false, assocStruct, subAssocStruct, leftClassAssocStruct, rightClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
               && subAssocStruct.b.equals(ClassSide.Right)
-            && compareForTgtCase(
-              true,
-              assocStruct,
-              subAssocStruct,
-              leftClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForTgtCase(
+                  true, assocStruct, subAssocStruct, leftClassAssocStruct, leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && subAssocStruct.b.equals(ClassSide.Right)
-            && compareForTgtCase(
-              false,
-              assocStruct,
-              subAssocStruct,
-              rightClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForTgtCase(
+                  false, assocStruct, subAssocStruct, rightClassAssocStruct, leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && subAssocStruct.b.equals(ClassSide.Left)
-            && compareForTgtCase(
-              true,
-              assocStruct,
-              subAssocStruct,
-              rightClassAssocStruct,
-              rightClassToMatch
-          )) {
+              && compareForTgtCase(
+                  true, assocStruct, subAssocStruct, rightClassAssocStruct, rightClassToMatch)) {
             matched = true;
             break;
           }
@@ -1458,46 +1381,26 @@ public class ODGenerator {
                   .equals(ClassSide.Left) // not-searched class of assocStruc on the left side
               && subAssocStruct.b.equals(
                   ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-            && compareForTgtCase(
-              false,
-              assocStruct,
-              subAssocStruct,
-              leftClassAssocStruct,
-              rightClassToMatch
-          )) {
+              && compareForTgtCase(
+                  false, assocStruct, subAssocStruct, leftClassAssocStruct, rightClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
               && subAssocStruct.b.equals(ClassSide.Right)
-            && compareForTgtCase(
-              true,
-              assocStruct,
-              subAssocStruct,
-              leftClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForTgtCase(
+                  true, assocStruct, subAssocStruct, leftClassAssocStruct, leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && subAssocStruct.b.equals(ClassSide.Right)
-            && compareForTgtCase(
-              false,
-              assocStruct,
-              subAssocStruct,
-              rightClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForTgtCase(
+                  false, assocStruct, subAssocStruct, rightClassAssocStruct, leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && subAssocStruct.b.equals(ClassSide.Left)
-            && compareForTgtCase(
-              true,
-              assocStruct,
-              subAssocStruct,
-              rightClassAssocStruct,
-              rightClassToMatch
-          )) {
+              && compareForTgtCase(
+                  true, assocStruct, subAssocStruct, rightClassAssocStruct, rightClassToMatch)) {
             matched = true;
             break;
           }
@@ -1632,46 +1535,38 @@ public class ODGenerator {
                   .equals(ClassSide.Left) // searched class of assocStruc on the left side
               && assocStructToMatch.b.equals(
                   ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-            && compareForSrcCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              rightClassToMatch
-            )) { // not needed - tgt must be same
+              && compareForSrcCase(
+                  true,
+                  assocStruct,
+                  assocStructToMatch,
+                  rightClassAssocStruct,
+                  rightClassToMatch)) { // not needed - tgt must be same
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
               && assocStructToMatch.b.equals(ClassSide.Right)
-            && compareForSrcCase(
-              false,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForSrcCase(
+                  false,
+                  assocStruct,
+                  assocStructToMatch,
+                  rightClassAssocStruct,
+                  leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && assocStructToMatch.b.equals(ClassSide.Right)
-            && compareForSrcCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForSrcCase(
+                  true, assocStruct, assocStructToMatch, leftClassAssocStruct, leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && assocStructToMatch.b.equals(ClassSide.Left)
-            && compareForSrcCase(
-              false,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              rightClassToMatch
-          )) {
+              && compareForSrcCase(
+                  false,
+                  assocStruct,
+                  assocStructToMatch,
+                  leftClassAssocStruct,
+                  rightClassToMatch)) {
             matched = true;
             break;
           }
@@ -1696,46 +1591,38 @@ public class ODGenerator {
                   .equals(ClassSide.Left) // searched class of assocStruc on the left side
               && assocStructToMatch.b.equals(
                   ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-            && compareForSrcCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              rightClassToMatch
-          )) { // not needed - tgt must be same
+              && compareForSrcCase(
+                  true,
+                  assocStruct,
+                  assocStructToMatch,
+                  rightClassAssocStruct,
+                  rightClassToMatch)) { // not needed - tgt must be same
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Left)
               && assocStructToMatch.b.equals(ClassSide.Right)
-            && compareForSrcCase(
-              false,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForSrcCase(
+                  false,
+                  assocStruct,
+                  assocStructToMatch,
+                  rightClassAssocStruct,
+                  leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && assocStructToMatch.b.equals(ClassSide.Right)
-            && compareForSrcCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              leftClassToMatch
-          )) {
+              && compareForSrcCase(
+                  true, assocStruct, assocStructToMatch, leftClassAssocStruct, leftClassToMatch)) {
             matched = true;
             break;
           } else if (assocStruct.getSide().equals(ClassSide.Right)
               && assocStructToMatch.b.equals(ClassSide.Left)
-            && compareForSrcCase(
-              false,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              rightClassToMatch
-          )) {
+              && compareForSrcCase(
+                  false,
+                  assocStruct,
+                  assocStructToMatch,
+                  leftClassAssocStruct,
+                  rightClassToMatch)) {
             matched = true;
             break;
           }
@@ -1773,16 +1660,16 @@ public class ODGenerator {
     List<ASTODObject> typeObjectsTgt = odGenHelper.getObjectsOfType(srcToFind, tgtMap);
     if (!typeObjects.isEmpty() || !typeObjectsTgt.isEmpty()) {
       if (assocStruct.getSide().equals(ClassSide.Left)
-        && (assocStruct.getAssociation().getRight().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
+          && (assocStruct.getAssociation().getRight().getCDCardinality().isMult()
+              || assocStruct.getAssociation().getRight().getCDCardinality().isAtLeastOne())) {
         if (typeObjects.isEmpty()) {
           return typeObjectsTgt.get(0);
         } else {
           return typeObjects.get(0);
         }
       } else if (assocStruct.getSide().equals(ClassSide.Right)
-        && (assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
-        || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
+          && (assocStruct.getAssociation().getLeft().getCDCardinality().isMult()
+              || assocStruct.getAssociation().getLeft().getCDCardinality().isAtLeastOne())) {
         if (typeObjects.isEmpty()) {
           return typeObjectsTgt.get(0);
         } else {
@@ -1823,46 +1710,26 @@ public class ODGenerator {
                 .equals(ClassSide.Left) // searched class of assocStruc on the left side
             && assocStructToMatch.b.equals(
                 ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-          && compareForSrcCase(
-            true,
-          assocStruct,
-          assocStructToMatch,
-          rightClassAssocStruct,
-          rightClassToMatch
-        )) {
+            && compareForSrcCase(
+                true, assocStruct, assocStructToMatch, rightClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForSrcCase(
-              false,
-              assocStruct,
-              assocStructToMatch,
-              rightClassAssocStruct,
-              leftClassToMatch
-            )) {
+            && compareForSrcCase(
+                false, assocStruct, assocStructToMatch, rightClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Left)
-          && compareForSrcCase(
-            false,
-            assocStruct,
-            assocStructToMatch,
-            leftClassAssocStruct,
-            rightClassToMatch
-        )) {
+            && compareForSrcCase(
+                false, assocStruct, assocStructToMatch, leftClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForSrcCase(
-              true,
-              assocStruct,
-              assocStructToMatch,
-              leftClassAssocStruct,
-              leftClassToMatch
-            )) {
+            && compareForSrcCase(
+                true, assocStruct, assocStructToMatch, leftClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         }
@@ -1887,46 +1754,26 @@ public class ODGenerator {
                 .equals(ClassSide.Left) // searched class of assocStruc on the left side
             && assocStructToMatch.b.equals(
                 ClassSide.Left) // searched class of assocStructToMatch on the left side!!!
-          && compareForSrcCase(
-            true,
-          assocStruct,
-          assocStructToMatch,
-          rightClassAssocStruct,
-          rightClassToMatch
-        )) {
+            && compareForSrcCase(
+                true, assocStruct, assocStructToMatch, rightClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Left)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForSrcCase(
-            false,
-            assocStruct,
-            assocStructToMatch,
-            rightClassAssocStruct,
-            leftClassToMatch
-        )) {
+            && compareForSrcCase(
+                false, assocStruct, assocStructToMatch, rightClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Left)
-          && compareForSrcCase(
-            false,
-            assocStruct,
-            assocStructToMatch,
-            leftClassAssocStruct,
-            rightClassToMatch
-        )) {
+            && compareForSrcCase(
+                false, assocStruct, assocStructToMatch, leftClassAssocStruct, rightClassToMatch)) {
           matched = true;
           break;
         } else if (assocStruct.getSide().equals(ClassSide.Right)
             && assocStructToMatch.b.equals(ClassSide.Right)
-          && compareForSrcCase(
-            true,
-            assocStruct,
-            assocStructToMatch,
-            leftClassAssocStruct,
-            leftClassToMatch
-        )) {
+            && compareForSrcCase(
+                true, assocStruct, assocStructToMatch, leftClassAssocStruct, leftClassToMatch)) {
           matched = true;
           break;
         }

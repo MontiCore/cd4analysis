@@ -1,5 +1,8 @@
 package de.monticore.cddiff.syndiff;
 
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
+
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.*;
@@ -11,11 +14,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import edu.mit.csail.sdg.alloy4.Pair;
-
 import java.util.*;
-
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
 
 /**
  * This class is responsible for comparing two CD types (classes or enumerations) and identifying
