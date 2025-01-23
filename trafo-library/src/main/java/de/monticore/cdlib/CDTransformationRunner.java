@@ -30,21 +30,21 @@ public class CDTransformationRunner {
   }
   
   public void transform(CDTransformationLibType type, Map<String, Object> params) {
-    Map<String, CDTransformationParameter<?>> wrappedParams = wrapParameterValues(params);
+    Map<String, CDTransformationParameter> wrappedParams = wrapParameterValues(params);
     _transform(type, wrappedParams);
   }
   
   private void _transform(CDTransformationLibType type,
-      Map<String, CDTransformationParameter<?>> params) {
+      Map<String, CDTransformationParameter> params) {
     try {
       type.apply(this.ast, params);
     }
     catch (IOException ex) {
-      Log.error("0x4A522: Transformation failed: " + type, ex);
+      Log.error("0x4A521: Transformation failed: " + type, ex);
     }
   }
   
-  private static Map<String, CDTransformationParameter<?>> wrapParameterValues(
+  private static Map<String, CDTransformationParameter> wrapParameterValues(
       Map<String, Object> params) {
     return Maps.transformValues(params, CDTransformationParameter::fromObject);
   }
@@ -54,24 +54,19 @@ public class CDTransformationRunner {
   }
   
   public void genericTransform(ODRule trafo, Map<String, Object> params) {
-    Map<String, CDTransformationParameter<?>> wrappedParams = wrapParameterValues(params);
+    Map<String, CDTransformationParameter> wrappedParams = wrapParameterValues(params);
     _genericTransform(trafo, wrappedParams);
   }
   
-  private void _genericTransform(ODRule trafo, Map<String, CDTransformationParameter<?>> params) {
+  private void _genericTransform(ODRule trafo, Map<String, CDTransformationParameter> params) {
     applyParameters(trafo, params);
     if (trafo.doPatternMatching()) {
       trafo.doReplacement();
     }
   }
   
-  private void applyParameters(ODRule trafo, Map<String, CDTransformationParameter<?>> params) {
-    for (Map.Entry<String, CDTransformationParameter<?>> param : params.entrySet()) {
-      if (param.getValue() instanceof List) {
-        Log.warn("Ignoring list parameter: " + param.getKey() + " in generic transformation: "
-            + trafo.getClass().getSimpleName());
-        continue;
-      }
+  private void applyParameters(ODRule trafo, Map<String, CDTransformationParameter> params) {
+    for (Map.Entry<String, CDTransformationParameter> param : params.entrySet()) {
       try {
         Method valueSetter =
             trafo.getClass().getDeclaredMethod("set_$" + param.getKey(), String.class);
@@ -84,7 +79,7 @@ public class CDTransformationRunner {
       }
       catch (InvocationTargetException | IllegalAccessException e) {
         Log.error(
-            "0x4A523: Could not set parameter: " + param.getKey() + " in generic transformation: "
+            "0x4A522: Could not set parameter: " + param.getKey() + " in generic transformation: "
                 + trafo.getClass().getSimpleName(), e);
       }
     }

@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface CDTransformationCaller {
   
-  boolean apply(ASTCDCompilationUnit ast, Map<String, CDTransformationParameter<?>> params)
+  boolean apply(ASTCDCompilationUnit ast, Map<String, CDTransformationParameter> params)
       throws IOException;
 }

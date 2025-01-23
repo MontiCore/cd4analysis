@@ -176,8 +176,7 @@ public enum CDTransformationLibType {
     new PushDown().pushDown(params.get("superClassName").asString(), ast)),
   PUSH_DOWN_ALL_ATTRIBUTES((ast, params) ->
     new PushDown().pushDownAllAttributes(params.get("superClassName").asString(), ast)),
-  PUSH_DOWN_ATTRIBUTES((ast, params) ->
-  {
+  PUSH_DOWN_ATTRIBUTES((ast, params) -> {
     if (params.containsKey("subClasses")) {
       return new PushDown().pushDownAttributes(params.get("superClassName").asString(),
           params.get("subClasses").asList(), params.get("attributes").asList(), ast);
@@ -188,8 +187,7 @@ public enum CDTransformationLibType {
   }),
   PUSH_DOWN_ALL_METHODS((ast, params) ->
     new PushDown().pushDownAllMethods(params.get("superClassName").asString(), ast)),
-  PUSH_DOWN_METHODS((ast, params) ->
-  {
+  PUSH_DOWN_METHODS((ast, params) -> {
     if (params.containsKey("subClasses")) {
       return new PushDown().pushDownMethods(params.get("superClassName").asString(),
           params.get("subClasses").asList(), params.get("methods").asList(), ast);
@@ -257,7 +255,8 @@ public enum CDTransformationLibType {
     this.callback = trafoCallback;
   }
 
-  public boolean apply(ASTCDCompilationUnit ast, Map<String, CDTransformationParameter<?>> params) throws IOException {
+  public boolean apply(ASTCDCompilationUnit ast,
+      Map<String, CDTransformationParameter> params) throws IOException {
     return this.callback.apply(ast, params);
   }
 }
