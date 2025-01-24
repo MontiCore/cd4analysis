@@ -61,6 +61,7 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+  testImplementation "org.mockito:mockito-inline:$mockito_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 
   compileOnly 'org.freemarker:freemarker:2.3.28'

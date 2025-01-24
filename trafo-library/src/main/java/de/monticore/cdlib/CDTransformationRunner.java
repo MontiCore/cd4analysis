@@ -25,8 +25,13 @@ public class CDTransformationRunner {
   }
   
   public void transform(String trafoName, Map<String, Object> params) {
-    CDTransformationLibType type = CDTransformationLibType.valueOf(trafoName);
-    transform(type, params);
+    try {
+      CDTransformationLibType type = CDTransformationLibType.valueOf(trafoName);
+      transform(type, params);
+    }
+    catch (IllegalArgumentException e) {
+      Log.error("0x4A523: Unknown transformation: " + trafoName);
+    }
   }
   
   public void transform(CDTransformationLibType type, Map<String, Object> params) {
