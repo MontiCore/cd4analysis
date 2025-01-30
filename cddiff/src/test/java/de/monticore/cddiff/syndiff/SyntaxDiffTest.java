@@ -5,6 +5,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ASTCDCompilationUnit compilationUnitOld =
         parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
 
-    CDSyntaxDiff synDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld);
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, List.of());
     Assert.assertEquals(4, synDiff.getAddedClasses().size());
     Assert.assertEquals(2, synDiff.getAddedAssocs().size());
   }

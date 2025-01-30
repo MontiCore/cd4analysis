@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.*;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isAttributInSuper;
 
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -27,15 +28,15 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   private List<ASTCDAttribute> addedAttributes;
   private List<ASTCDAttribute> deletedAttributes;
   private List<ASTCDAttribute> inheritedAttributes;
-  private List<ASTCDAttribute> removedBcInh;
+  private final List<ASTCDAttribute> removedBcInh;
   private List<ASTCDEnumConstant> addedConstants;
   private List<ASTCDEnumConstant> deletedConstants;
-  private List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes;
-  private List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> matchedConstants;
+  private final List<Pair<ASTCDAttribute, ASTCDAttribute>> matchedAttributes;
+  private final List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> matchedConstants;
   private List<DiffTypes> baseDiff;
   ASTCDCompilationUnit tgtCD;
   int srcLineOfCode, tgtLineOfCode;
-  private Syn2SemDiffHelper helper;
+  private final Syn2SemDiffHelper helper;
 
   // Print
   private StringBuilder outputSrc,
@@ -322,7 +323,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
         astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
           if (helper.getNotInstClassesSrc().contains(type)
-              && new Syn2SemDiffHelper().isAttContainedInClassTgt(attribute, (ASTCDClass) type)) {
+              && new Syn2SemDiffHelper().isAttContainedInClassTgt(attribute, type)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
             break;
           }

@@ -74,7 +74,7 @@ public class CombinedFunctionalityTest {
     new CD4CodeDirectCompositionTrafo().transform(expected);
     CDDiffUtil.refreshSymbolTable(expected);
 
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(merged, expected);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(merged, expected, List.of());
     Assertions.assertEquals(new ArrayList<>(), syntaxDiff.getBaseDiff());
 
     // witnesses should be empty

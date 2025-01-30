@@ -43,15 +43,6 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assert.assertTrue(witnesses.isEmpty());
-
-    for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitOld, compilationUnitNew, od)) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
-      }
-    }
   }
 
   @Test
@@ -67,15 +58,6 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
     Assert.assertTrue(witnesses.isEmpty());
-
-    for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitOld, compilationUnitNew, od)) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
-      }
-    }
   }
 
   @Test
@@ -111,8 +93,49 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
 
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-    for (ASTODArtifact witness : witnesses) {
-      System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(witness));
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(
+              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail();
+      }
+    }
+  }
+
+  @Test
+  public void testDT23() {
+    ASTCDCompilationUnit compilationUnitNew =
+        parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+    ASTCDCompilationUnit compilationUnitOld =
+        parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(
+              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail();
+      }
+    }
+  }
+
+  @Test
+  public void testDT32() {
+    ASTCDCompilationUnit compilationUnitNew =
+        parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
+    ASTCDCompilationUnit compilationUnitOld =
+        parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+    Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
+    List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher()
+          .checkIfDiffWitness(
+              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assert.fail();
+      }
     }
   }
 }
