@@ -1,0 +1,50 @@
+# (c) https://github.com/MontiCore/monticore
+name: Test Proposed Changes
+
+concurrency: # run this test workflow only once per "branch"
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push: # run this pipeline on every push
+    paths-ignore:
+      - "*.md" # do not run this pipeline if the only change was to markdown files
+    branches-ignore: [ "dev" ] # Do not run this on the default branch
+
+env:
+  GRADLE_VERSION: 7.4 # Gradle version used
+  GRADLE_CLI_OPTS: "-Pci --build-cache  -PgenTR=false -PgenTagging=true" # CLI options passed to Gradle
+  GRADLE_BUILD_ACTION_CACHE_KEY_JOB: "test-cache-${{ github.head_ref }}.${{ github.sha }}"
+
+permissions:
+  contents: read 
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project sources
+        uses: actions/checkout@v3
+      - name: Gradle build
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: ${{env.GRADLE_VERSION}}
+          arguments: build ${{env.GRADLE_CLI_OPTS}}
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v3
+        if: always() # always run even if the previous step fails
+        with:
+          name: junit-test-results
+          path: '**/target/test-results/test/TEST-*.xml'
+          retention-days: 1
+  
+
+  # Run the MontiVerse pipeline (tests this change on a suite of projects)
+  trigger-montiverse:
+    needs: [ build ]
+    uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
+    with:
+      project: "CD4A"
+    secrets: inherit
+
