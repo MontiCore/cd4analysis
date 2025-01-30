@@ -37,6 +37,6 @@ jobs:
     needs: [ build ]
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
-      project: "SECOMMONS"
+      project: "CD4A"
     secrets: inherit
 
