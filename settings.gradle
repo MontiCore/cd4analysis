@@ -28,4 +28,5 @@ if(!hasProperty('bootstrap')) {
   if("true".equals(getProperty('genTR'))){
     include(":trafo-library")
   }
+  include(':cdtool:cdgradle')
 }
