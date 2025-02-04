@@ -8,15 +8,12 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdgen.decorators.data.AbstractDecorator;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
-import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 
@@ -32,6 +29,8 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
 
   @Override
   public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
+    //We check that the SetterDecorator has added a Setter for an attribute,
+    // thus the Setter decorator has to run before.
     return List.of(SetterDecorator.class);
   }
 
@@ -41,27 +40,27 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
 
   @Override
   public void visit(ASTCDClass node) {
+    // Only act if we should decorate the class
     if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
+      // Get the parent (package or CDDef)
       var origParent = this.decoratorData.getParent(node).get();
+      // and the parent, but now the element of the target CD
       var decParent = this.decoratorData.getAsDecorated(origParent);
 
+      // Create a new class with the "Builder" suffix
       var builderClassB = CD4CodeMill.cDClassBuilder();
       builderClassB.setName(node.getName() + "Builder");
       builderClassB.setModifier(node.getModifier().deepClone());
       var builderClass = builderClassB.build();
+      // Add the builder class to the decorated CD
+      addElementToParent(decParent, builderClass);
 
+      // Add a build() method to the builder class
       ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint("methods.builder.build", node.getName())));
-
-      if (decParent instanceof ASTCDDefinition)
-        ((ASTCDDefinition) decParent).addCDElement(builderClass);
-      else if (decParent instanceof ASTCDPackage)
-        ((ASTCDPackage) decParent).addCDElement(builderClass);
-      else
-        throw new IllegalStateException("Unhandled parent " + decParent.getClass().getName());
-
       addToClass(builderClass, buildMethod);
 
+      // Add the builder class & build method to the stack
       decoratedBuilderClasses.add(builderClass);
       decoratedBuildMethods.add(buildMethod);
       enabled.push(true);
@@ -80,28 +79,36 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
 
   @Override
   public void visit(ASTCDAttribute attribute) {
+    // Only do work if we are in a builder-enabled class
     if (!enabled.peek()) return;
 
+    // We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
+    // TODO: In a perfect world, we would extract the name from the symbol or SetterDecorator data
     var methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
     if (methods == null || methods.isEmpty()) {
-      Log.warn("Skipping builder pattern of " + attribute.getName(), attribute.get_SourcePositionStart());
+      Log.warn("Skipping builder pattern of " + attribute.getName() + " due to missing Setter methods", attribute.get_SourcePositionStart());
       return;
     }
 
     var decClazz = this.decoratedBuilderClasses.peek();
     var decMethod = this.decoratedBuildMethods.peek();
+    // Add an attribute to the builder class
     decClazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
+
+    // Use the template hook-point to add a call to the setter to the build() method
     if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
-    } else if (attribute.getMCType() instanceof ASTMCListType) {
+    } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
-    } else if (attribute.getMCType() instanceof ASTMCSetType) {
+    } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
-    } else if (attribute.getMCType() instanceof ASTMCOptionalType) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n")));
+    } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n")));
     } else {
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     }
+
+    // TODO: Create chainable(?) methods
   }
 
   @Override

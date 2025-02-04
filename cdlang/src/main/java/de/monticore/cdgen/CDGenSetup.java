@@ -6,7 +6,7 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdgen.creators.CopyCreator;
-import de.monticore.cdgen.decorators.DecoratorData;
+import de.monticore.cdgen.decorators.data.DecoratorData;
 import de.monticore.cdgen.decorators.IDecorator;
 import de.monticore.cdgen.decorators.matcher.ICLIMatcher;
 import de.monticore.cdgen.decorators.matcher.IStereoMatcher;
@@ -24,8 +24,7 @@ public class CDGenSetup {
   protected DecoratorData decoratorData = new DecoratorData();
   protected String[][] cliConfig = new String[][]{};
 
-  protected final List<IDecorator<?>> decorators = new ArrayList<>();
-
+  protected final Collection<IDecorator<?>> decorators = new ArrayList<>();
 
   public void withDecorator(IDecorator<?> decorator) {
     this.decorators.add(decorator);
@@ -37,6 +36,11 @@ public class CDGenSetup {
     return new ChainableGenSetup((Class<? extends IDecorator<?>>) newObj.getClass());
   }
 
+  /**
+   * This class is a chainable setup helper for the {@link #withDecorator(String)}
+   * It is used by the config templates
+   */
+  @SuppressWarnings("unused")
   public class ChainableGenSetup {
     Class<? extends IDecorator<?>> dec;
 
@@ -51,6 +55,11 @@ public class CDGenSetup {
 
     public ChainableGenSetup ignoreOnName(String name) {
       configIgnoreMatchName(this.dec, name);
+      return this;
+    }
+
+    public ChainableGenSetup rootDefault(MatchResult matchResult) {
+      configDefault(this.dec, matchResult);
       return this;
     }
   }
@@ -153,37 +162,46 @@ public class CDGenSetup {
 
 
   public ASTCDCompilationUnit decorate(ASTCDCompilationUnit root, Map<FieldSymbol, CDRoleSymbol> fieldToRoles, Optional<GlobalExtensionManagement> glexOpt) {
-
+    // Start by ordering the phases
     List<DecoratorPhase> phases = createPhases();
     // TODO: Proper reporting of phases
 
+    // Then create the target CD
     CopyCreator creator = new CopyCreator();
-
     var created = creator.createFrom(root);
 
-
+    // Create the parent-child tree relationship
     decoratorData.setupParents(created, cliConfig);
     decoratorData.fieldToRoles = fieldToRoles;
+
+    // Some safeguard: "hash" the original AST (by pretty printing it)
+    // We will then re-hash it after every phase to check if a phase has modified it
+    String initialAsString = CD4CodeMill.prettyPrint(root, true);
     for (DecoratorPhase phase : phases) {
-      System.err.println("Run phase " + phase.decorators);
       final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+      // Add all decorators of this phase to a (new) inheritance traverser
       phase.decorators.forEach(d -> d.addToTraverser(traverser));
+      // initialize the decorators
       phase.decorators.forEach(d -> d.init(decoratorData, glexOpt));
+      // and traverse the (original) CD
       root.accept(traverser);
+      // Post-checkup: Check that the pretty printed original CD has not changed
+      String afterAsString = CD4CodeMill.prettyPrint(root, true);
+      if (!initialAsString.equals(afterAsString)) {
+        Log.error("0xTODO: A Decorator of phase " + phase.decorators + " has modified the original CD instead of the decorated CD");
+      }
     }
 
     return created.getDecorated();
   }
 
-  class DecoratorPhase {
+  /**
+   * The decoration occurs in phases.
+   * During each phase the original AST is traversed and decorators
+   * get the chance to decorate the target CD
+   */
+  static class DecoratorPhase {
     final List<IDecorator<?>> decorators = new ArrayList<>();
-
-    public DecoratorPhase() {
-    }
-
-    protected boolean has(IDecorator<?> d) {
-      return this.decorators.contains(d);
-    }
   }
 
 }

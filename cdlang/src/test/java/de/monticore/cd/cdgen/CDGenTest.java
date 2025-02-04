@@ -15,6 +15,7 @@ import de.monticore.cdgen.decorators.*;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Test;
 
@@ -73,13 +74,13 @@ public class CDGenTest {
       " }\n"+
       "<<setter,getter,builder,observable>> public class OtherC { \n" +
       " public int myInt;\n" +
-//      " -> (manyB) B [*];\n" +
-//      " -> (optB) B [0..1] ;\n" +
+      " -> (manyB) B [*];\n" +
+      " -> (optB) B [0..1] ;\n" +
       " -> (oneB) B [1]; \n" +
       " }\n" +
       "<<setter>>public class B { " +
       "}\n " +
-      "association OtherC (binavC) <-> (binavB) B;" + // TODO: same without setter
+      "association OtherC (binavC) <-> (binavB) B;" +
       "}");
 
     // After parse Trafos
@@ -87,6 +88,8 @@ public class CDGenTest {
     afterParseTrafo.transform(opt.get());
 
     BasicSymbolsMill.initializePrimitives();
+    MCCollectionSymTypeRelations.init();
+
 
     // Create ST
     CD4CodeMill.scopesGenitorDelegator().createFromAST(opt.get());

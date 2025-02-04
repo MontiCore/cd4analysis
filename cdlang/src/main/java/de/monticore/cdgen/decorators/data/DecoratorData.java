@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators;
+package de.monticore.cdgen.decorators.data;
 
 import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
@@ -12,6 +12,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdgen.MatchResult;
 import de.monticore.cdgen.creators.CopyCreator;
+import de.monticore.cdgen.decorators.IDecorator;
 import de.monticore.cdgen.decorators.matcher.MatcherData;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ISymbol;

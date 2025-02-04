@@ -11,12 +11,14 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdgen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 
@@ -78,6 +80,7 @@ public class CDGenTool extends CDGeneratorTool {
       }
 
       BasicSymbolsMill.initializePrimitives();
+      MCCollectionSymTypeRelations.init();
 
       final boolean c2mc = cmd.hasOption("c2mc");
       if (c2mc) {
@@ -131,7 +134,7 @@ public class CDGenTool extends CDGeneratorTool {
         GeneratorSetup setup = new GeneratorSetup();
 
         // apply trafos needed for code generation
-//        asts = this.trafoBeforeCodegen(asts); TODO: Moved to justb efore generate
+//        asts = this.trafoBeforeCodegen(asts); TODO: Moved to just before generate
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
@@ -143,6 +146,7 @@ public class CDGenTool extends CDGeneratorTool {
 
         if (cmd.hasOption("hwc")) {
           setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
+          // TODO: Provide TOP Decorator
 //          TopDecorator topDecorator = new TopDecorator(setup.getHandcodedPath());
 //          asts.forEach(topDecorator::decorate);
         }
@@ -183,7 +187,6 @@ public class CDGenTool extends CDGeneratorTool {
         for (ASTCDCompilationUnit ast : asts) {
           // Prepare
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-
 
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
@@ -275,5 +278,13 @@ public class CDGenTool extends CDGeneratorTool {
     super.runCoCos(ast);
   }
 
-
+  @Override
+  public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
+    super.trafoBeforeSymtab(asts);
+    // TODO: Have this be done via the config-options
+    var t = CD4CodeMill.inheritanceTraverser();
+    t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
+    asts.forEach(ast -> ast.accept(t));
+    return asts;
+  }
 }

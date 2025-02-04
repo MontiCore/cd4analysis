@@ -9,6 +9,8 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdgen.decorators.data.AbstractDecorator;
+import de.monticore.cdgen.decorators.data.ForwardingTemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;

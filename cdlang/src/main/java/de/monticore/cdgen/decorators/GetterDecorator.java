@@ -10,14 +10,13 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdgen.decorators.data.AbstractDecorator;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
@@ -35,16 +34,19 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
 
   @Override
   public void visit(ASTCDAttribute attribute) {
+    // First, check if we should decorate the given object
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
-      var originalClazz = decoratorData.getParent(attribute);
-      var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz.get());
+      // Retrieve the parent of the attribute
+      var originalClazz = decoratorData.getParent(attribute).get();
+      //
+      var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz);
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
-      } else if (attribute.getMCType() instanceof ASTMCListType) {
+      } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         Log.warn("0xTODO List getter");
-      } else if (attribute.getMCType() instanceof ASTMCSetType) {
+      } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
         Log.warn("0xTODO Set getter");
-      } else if (attribute.getMCType() instanceof ASTMCOptionalType) {
+      } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
       } else {
         decorateMandatory(decClazz, attribute);

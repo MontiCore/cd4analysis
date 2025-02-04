@@ -6,6 +6,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdgen.decorators.data.AbstractDecorator;
 import de.monticore.types.MCTypeFacade;
 
 

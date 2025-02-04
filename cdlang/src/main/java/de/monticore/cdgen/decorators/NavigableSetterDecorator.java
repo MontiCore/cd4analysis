@@ -10,6 +10,7 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdgen.decorators.data.AbstractDecorator;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
@@ -19,11 +20,13 @@ import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
+/**
+ * Add special handling to the setters of bidirectional associations
+ */
 public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
   @Override

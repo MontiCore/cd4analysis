@@ -24,7 +24,6 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdgen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.class2mc.OOClass2MCResolver;
@@ -339,10 +338,6 @@ public class CDGeneratorTool extends CD4CodeTool {
   public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
     CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
     asts.forEach(ast -> ast.accept(trafo.getTraverser()));
-    // TODO: Have this be done via the config-options
-    var t = CD4CodeMill.inheritanceTraverser();
-    t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
-    asts.forEach(ast -> ast.accept(t));
     return asts;
   }
 
