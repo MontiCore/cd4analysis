@@ -49,7 +49,7 @@ public class CDGenerator {
       Path p =
           Paths.get(
               setup.getOutputDirectory().getAbsolutePath(),
-              packageName,
+              packageName.replace('.', '/'),
               compilationUnit.getCDDefinition().getName());
       p.toFile().mkdirs();
     }
