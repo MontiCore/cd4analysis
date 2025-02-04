@@ -25,20 +25,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project sources
-        uses: actions/checkout@v3
-      - name: Gradle build
-        uses: gradle/actions/setup-gradle@v3
+        uses: actions/checkout@v4
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{env.GRADLE_VERSION}}
-          arguments: build ${{env.GRADLE_CLI_OPTS}}
+      - name: Gradle build
+        run: gradle build ${{env.GRADLE_CLI_OPTS}}
       - name: Upload Test Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always() # always run even if the previous step fails
         with:
           name: junit-test-results
           path: '**/target/test-results/test/TEST-*.xml'
-          retention-days: 1
-  
+          retention-days: 1  
 
   # Run the MontiVerse pipeline (tests this change on a suite of projects)
   trigger-montiverse:
