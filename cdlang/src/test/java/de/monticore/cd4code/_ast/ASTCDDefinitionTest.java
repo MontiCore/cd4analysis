@@ -3,7 +3,11 @@ package de.monticore.cd4code._ast;
 
 import static org.junit.Assert.assertEquals;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -44,5 +48,22 @@ public final class ASTCDDefinitionTest extends CD4CodeTestBasis {
             .orElseThrow(NullPointerException::new);
 
     assertEquals(1, definition.getCDAssociationsListForType(student).size());
+  }
+
+  @Test
+  public void testCDClassMillDelegation() {
+    CD4CodeMill.init();
+    // All Mills should return a builder of the cd4code basis cdclass (overriding the cdbasis)
+    assertEquals(CD4CodeMill.cDClassBuilder().uncheckedBuild().getClass(),
+                 CD4CodeBasisMill.cDClassBuilder().uncheckedBuild().getClass());
+
+    // TODO: #4519
+//    assertEquals(CD4CodeMill.cDClassBuilder().uncheckedBuild().getClass(),
+//      CD4AnalysisMill.cDClassBuilder().uncheckedBuild().getClass());
+
+
+    // TODO: #4519
+//    assertEquals(CD4CodeMill.cDClassBuilder().uncheckedBuild().getClass(),
+//      CDBasisMill.cDClassBuilder().uncheckedBuild().getClass());
   }
 }
