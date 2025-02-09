@@ -22,6 +22,7 @@ import de.monticore.tagging.tags.TagsMill;
 import de.monticore.tagging.tags._ast.ASTTagUnit;
 import de.monticore.umlstereotype._ast.ASTStereoValue;
 import de.monticore.visitor.IVisitor;
+import de.se_rwth.commons.logging.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
@@ -123,7 +124,9 @@ public class DecoratorData {
     } else if (node instanceof ASTCDCompilationUnit) {
       System.err.println("TODO ASTCDCompilationUnit ");
     } else {
-      throw new IllegalStateException("Unhandled TODO " + node.getClass().getName());
+      Log.error("0xTODO: Unable add to parent of unknown type " + node.getClass().getName(),
+                node.get_SourcePositionStart());
+      throw new IllegalStateException("Unable add to parent of unknown type " + node.getClass().getName());
     }
 
     if (result != MatchResult.DEFAULT) return result;

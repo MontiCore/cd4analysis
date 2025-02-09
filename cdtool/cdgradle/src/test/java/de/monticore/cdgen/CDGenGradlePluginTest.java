@@ -61,12 +61,12 @@ public class CDGenGradlePluginTest {
     String buildFileContent = "plugins {" +
       "    id 'de.rwth.se.cdgen' " +
       "}\n " +
-      "repositories {\n " +
+      "repositories {\n" +
       " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
       " mavenCentral()\n" +
       "}\n" +
       // We have to inject the cdlang jar for this project (as it is not yet published)
-      "dependencies {" +
+      "dependencies {\n" +
       " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\") + "')\n" +
       // Along with the transitive dependencies
       " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n " +

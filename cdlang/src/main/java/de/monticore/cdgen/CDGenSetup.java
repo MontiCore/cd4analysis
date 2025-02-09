@@ -62,6 +62,14 @@ public class CDGenSetup {
       configDefault(this.dec, matchResult);
       return this;
     }
+
+    public ChainableGenSetup rootDefaultApply() {
+      return this.rootDefault(MatchResult.APPLY);
+    }
+
+    public ChainableGenSetup rootDefaultIgnore() {
+      return this.rootDefault(MatchResult.IGNORE);
+    }
   }
 
   public void configStereo(Class<? extends IDecorator<?>> dec, IStereoMatcher stereoMatcher) {
@@ -164,7 +172,6 @@ public class CDGenSetup {
   public ASTCDCompilationUnit decorate(ASTCDCompilationUnit root, Map<FieldSymbol, CDRoleSymbol> fieldToRoles, Optional<GlobalExtensionManagement> glexOpt) {
     // Start by ordering the phases
     List<DecoratorPhase> phases = createPhases();
-    // TODO: Proper reporting of phases
 
     // Then create the target CD
     CopyCreator creator = new CopyCreator();
