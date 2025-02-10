@@ -17,6 +17,7 @@ import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -35,6 +36,7 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();
+  List<ASTCDMethod> decoratedBuildBuildMethods = new ArrayList<>();
   Stack<ASTCDMethod> decoratedBuildMethods = new Stack<>();
   Stack<Boolean> enabled = new Stack<>();
 
@@ -55,10 +57,19 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       // Add the builder class to the decorated CD
       addElementToParent(decParent, builderClass);
 
+      // Add the unsafeBuild() method to the builder class
+      ASTCDMethod unsafeBuildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "unsafeBuild");
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod, new TemplateHookPoint("methods.builder.build", node.getName())));
+      addToClass(builderClass, unsafeBuildMethod);
+      decoratedBuildBuildMethods.add(unsafeBuildMethod);
+      decoratedBuildMethods.add(unsafeBuildMethod);
+
       // Add a build() method to the builder class
       ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint("methods.builder.build", node.getName())));
       addToClass(builderClass, buildMethod);
+      decoratedBuildBuildMethods.add(buildMethod);
+      decoratedBuildMethods.add(buildMethod);
 
       // Add Setter methods for all attributes to the builder class
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
@@ -71,7 +82,6 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
 
       // Add the builder class & build method to the stack
       decoratedBuilderClasses.add(builderClass);
-      decoratedBuildMethods.add(buildMethod);
       enabled.push(true);
     } else
       enabled.push(false);
@@ -100,22 +110,57 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
     }
 
     var decClazz = this.decoratedBuilderClasses.peek();
-    var decMethod = this.decoratedBuildMethods.peek();
+
     // Add an attribute to the builder class
     decClazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
 
+    // as the unsafeBuild method is added first, it is at index 0
+    var decMethodUnsafeBuild = decoratedBuildBuildMethods.get(0);
+    var decMethodSafeBuild = decoratedBuildBuildMethods.get(1);
+
     // Use the template hook-point to add a call to the setter to the build() method
     if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n")));
     } else {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethod, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     }
+
+    // Use the template hook-point to add a call to the setter to the build() method
+    if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
+                                                                                                                                                                  "  v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
+                                                                                                                                                                  "}else{\n" +
+                                                                                                                                                                  "  v.set" + StringTransformations.capitalize(attribute.getName()+"Absent") +"(); \n" +
+                                                                                                                                                                  "}\n")));
+    } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+"!=null){\n " +
+                                                                                                                                                                  "  v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
+                                                                                                                                                                  "}")));
+
+    } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+"!=null){\n " +
+                                                                                                                                                                  "  v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
+                                                                                                                                                                  "}")));
+    } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
+                                                                                                                                                                  "  if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n" +
+                                                                                                                                                                  "}else{\n" +
+                                                                                                                                                                  "  v.set" + StringTransformations.capitalize(attribute.getName()+"Absent") +"(); \n" +
+                                                                                                                                                                  "}\n")));
+    } else {
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
+                                                                                                                                                                  "  v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
+                                                                                                                                                                  "}else{\n" +
+                                                                                                                                                                  "  v.set" + StringTransformations.capitalize(attribute.getName()+"Absent") +"(); \n" +
+                                                                                                                                                                  "}\n")));
+    }
+
 
     // TODO: Create chainable(?) methods
   }
