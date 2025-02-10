@@ -60,6 +60,15 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint("methods.builder.build", node.getName())));
       addToClass(builderClass, buildMethod);
 
+      // Add Setter methods for all attributes to the builder class
+      for(ASTCDAttribute attribute : node.getCDAttributeList()) {
+        ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName()+"Builder", "set" + StringTransformations.capitalize(attribute.getName()));
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod, new TemplateHookPoint("methods.builder.set", attribute)));
+        addToClass(builderClass, setMethod);
+        //Add the setter method to the build method
+        decoratedBuildMethods.add(setMethod);
+      }
+
       // Add the builder class & build method to the stack
       decoratedBuilderClasses.add(builderClass);
       decoratedBuildMethods.add(buildMethod);
