@@ -66,8 +66,9 @@ public class SymTabDefinitionTool extends SymTabDefinitionToolTOP {
 
   @Override
   public void run(String[] args) {
+    Log.ensureInitialization();
     SymTabDefinitionMill.globalScope().clear();
-    init();
+    SymTabDefinitionMill.init();
     Options options = initOptions();
     try {
       CommandLine cmd = new DefaultParser().parse(options, args);
