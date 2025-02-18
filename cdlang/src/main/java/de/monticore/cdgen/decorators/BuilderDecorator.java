@@ -2,7 +2,6 @@
 package de.monticore.cdgen.decorators;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -20,7 +19,6 @@ import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -87,7 +85,7 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         addToClass(builderClass, setMethod);
       }
 
-      // Add the builder class & build method to the stack
+      // Add the builder class to the stack
       decoratedBuilderClasses.add(builderClass);
       enabled.push(true);
     } else
@@ -162,6 +160,11 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
     // TODO: Create chainable(?) methods
   }
 
+  /**
+   * Create a method to set the attribute absent for Lists Sets and Optionals
+   * @param attribute the attribute for which the absent method should be created
+   * @return the created method signature
+   */
   public ASTCDMethod createAbsentMethod(ASTCDAttribute attribute){
     ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), "set"+StringTransformations.capitalize(attribute.getName())+"Absent");
     decoratedBuilderClasses.peek().addCDMember(setAbsentMethod);
