@@ -8,6 +8,7 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDClassBuilder;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdgen.decorators.data.AbstractDecorator;
 import de.monticore.generating.templateengine.StringHookPoint;
@@ -36,8 +37,9 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();
-  List<ASTCDMethod> decoratedBuildBuildMethods = new ArrayList<>();
-  Stack<ASTCDMethod> decoratedBuildMethods = new Stack<>();
+  Stack<ASTCDMethod> decoratorBuildMethod = new Stack<>();
+  Stack<ASTCDMethod> decoratorUnsafeBuildMethod = new Stack<>();
+  Stack<ASTCDMethod> decoratorIsValidMethod = new Stack<>();
   Stack<Boolean> enabled = new Stack<>();
 
   @Override
@@ -50,10 +52,10 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       var decParent = this.decoratorData.getAsDecorated(origParent);
 
       // Create a new class with the "Builder" suffix
-      var builderClassB = CD4CodeMill.cDClassBuilder();
+      ASTCDClassBuilder builderClassB = CD4CodeMill.cDClassBuilder();
       builderClassB.setName(node.getName() + "Builder");
       builderClassB.setModifier(node.getModifier().deepClone());
-      var builderClass = builderClassB.build();
+      ASTCDClass builderClass = builderClassB.build();
       // Add the builder class to the decorated CD
       addElementToParent(decParent, builderClass);
 
@@ -61,23 +63,24 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       ASTCDMethod unsafeBuildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "unsafeBuild");
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod, new TemplateHookPoint("methods.builder.build", node.getName())));
       addToClass(builderClass, unsafeBuildMethod);
-      decoratedBuildBuildMethods.add(unsafeBuildMethod);
-      decoratedBuildMethods.add(unsafeBuildMethod);
+      decoratorUnsafeBuildMethod.push(unsafeBuildMethod);
 
       // Add a build() method to the builder class
       ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint("methods.builder.build", node.getName())));
       addToClass(builderClass, buildMethod);
-      decoratedBuildBuildMethods.add(buildMethod);
-      decoratedBuildMethods.add(buildMethod);
+      decoratorBuildMethod.push(buildMethod);
+
+      // Add a isValid() method to the builder class
+      ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PRIVATE().build(),"isValid",new ArrayList<>());
+      addToClass(builderClass,isValidMethod);
+      decoratorIsValidMethod.push(isValidMethod);
 
       // Add Setter methods for all attributes to the builder class
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
         ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName()+"Builder", "set" + StringTransformations.capitalize(attribute.getName()));
         glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod, new TemplateHookPoint("methods.builder.set", attribute)));
         addToClass(builderClass, setMethod);
-        //Add the setter method to the build method
-        decoratedBuildMethods.add(setMethod);
       }
 
       // Add the builder class & build method to the stack
@@ -91,7 +94,9 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   public void endVisit(ASTCDClass node) {
     if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
       decoratedBuilderClasses.pop();
-      decoratedBuildMethods.pop();
+      decoratorBuildMethod.pop();
+      decoratorUnsafeBuildMethod.pop();
+      decoratorIsValidMethod.pop();
     }
     enabled.pop();
   }
@@ -115,46 +120,44 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
     decClazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
 
     // as the unsafeBuild method is added first, it is at index 0
-    var decMethodUnsafeBuild = decoratedBuildBuildMethods.get(0);
-    var decMethodSafeBuild = decoratedBuildBuildMethods.get(1);
 
     // Use the template hook-point to add a call to the setter to the build() method
     if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorUnsafeBuildMethod.peek(), new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorUnsafeBuildMethod.peek(), new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorUnsafeBuildMethod.peek(), new StringHookPoint("v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorUnsafeBuildMethod.peek(), new StringHookPoint("if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n")));
     } else {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodUnsafeBuild, new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorUnsafeBuildMethod.peek(), new StringHookPoint("v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n")));
     }
 
     // Use the template hook-point to add a call to the setter to the build() method
     if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorBuildMethod.peek(), new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
                                                                                                                                                                   "  v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
                                                                                                                                                                   "}else{\n" +
                                                                                                                                                                   "  v.set" + StringTransformations.capitalize(attribute.getName()+"Absent") +"(); \n" +
                                                                                                                                                                   "}\n")));
     } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+"!=null){\n " +
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorBuildMethod.peek(), new StringHookPoint("if(this."+attribute.getName()+"!=null){\n " +
                                                                                                                                                                   "  v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
                                                                                                                                                                   "}")));
 
     } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+"!=null){\n " +
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorBuildMethod.peek(), new StringHookPoint("if(this."+attribute.getName()+"!=null){\n " +
                                                                                                                                                                   "  v.add" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
                                                                                                                                                                   "}")));
     } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorBuildMethod.peek(), new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
                                                                                                                                                                   "  if(this." + StringTransformations.capitalize(attribute.getName()) + ".isPresent())v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ".get());\n" +
                                                                                                                                                                   "}else{\n" +
                                                                                                                                                                   "  v.set" + StringTransformations.capitalize(attribute.getName()+"Absent") +"(); \n" +
                                                                                                                                                                   "}\n")));
     } else {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decMethodSafeBuild, new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", decoratorBuildMethod.peek(), new StringHookPoint("if(this."+attribute.getName()+".isPresent()){\n " +
                                                                                                                                                                   "  v.set" + StringTransformations.capitalize(attribute.getName()) + "(this." + attribute.getName() + ");\n" +
                                                                                                                                                                   "}else{\n" +
                                                                                                                                                                   "  v.set" + StringTransformations.capitalize(attribute.getName()+"Absent") +"(); \n" +
