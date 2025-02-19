@@ -166,6 +166,8 @@ public class CDAssociationSymbolTableCompleter
     if (!spannedScope.getCDRoleSymbols().containsKey(symbol.getName())) {
       // add the symbol to the type; add to all relevant lists
       spannedScope.add(symbol);
+    } else {
+      Log.warn("0xCDCE5: Ignored duplicate role symbol (" + symbol.getName()+") for reference Type "+otherType.getFullName(), symbol.getSourcePosition());
     }
   }
 
