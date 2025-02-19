@@ -281,7 +281,7 @@ public class CDGenTool extends CDGeneratorTool {
   @Override
   public Collection<ASTCDCompilationUnit> trafoBeforeSymtab(Collection<ASTCDCompilationUnit> asts) {
     super.trafoBeforeSymtab(asts);
-    // TODO: Have this be done via the config-options
+    // TODO: Have this be done via the config-options (#4310)
     var t = CD4CodeMill.inheritanceTraverser();
     t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
     asts.forEach(ast -> ast.accept(t));

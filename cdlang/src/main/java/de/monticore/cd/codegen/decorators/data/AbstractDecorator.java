@@ -35,7 +35,7 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
   }
 
   protected void addToClass(ASTCDClass clazz, ASTCDMember member) {
-    // TODO: Only add iff not yet present
+    // TODO: Only add iff not yet present (#4310)
     clazz.addCDMember(member);
   }
 

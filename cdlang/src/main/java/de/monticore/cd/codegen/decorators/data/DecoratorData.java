@@ -56,7 +56,7 @@ public class DecoratorData {
   }
 
   protected Iterable<ASTTagUnit> _getTaggingUnits() {
-    // TODO: Limit tags?
+    // As a note: It might be interesting to limit to a subset of the loaded tags?
     return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository.getLoadedTagUnits());
   }
 
