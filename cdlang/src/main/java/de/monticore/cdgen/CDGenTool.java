@@ -185,8 +185,6 @@ public class CDGenTool extends CDGeneratorTool {
 
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
-          System.err.println(CD4CodeMill.prettyPrint(decorated, true));
-
           // Post-Decorate: apply trafos needed for code generation
           CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
           t.add4CDBasis(new CDBasisDefaultPackageTrafo());

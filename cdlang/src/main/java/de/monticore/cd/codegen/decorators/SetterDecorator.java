@@ -93,12 +93,10 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
   }
 
   protected void updateModifier(ASTCDAttribute attribute) {
-    System.err.println("updateModifier " + CD4CodeMill.prettyPrint(attribute, true));
     var decoratedModifier = decoratorData.getAsDecorated(attribute).getModifier();
     decoratedModifier.setProtected(true);
     decoratedModifier.setPublic(false);
     decoratedModifier.setPrivate(false);
-    System.err.println(" => " + CD4CodeMill.prettyPrint(decoratedModifier, true));
   }
 
 
