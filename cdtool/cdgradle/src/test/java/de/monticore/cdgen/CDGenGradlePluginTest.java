@@ -104,9 +104,10 @@ public class CDGenGradlePluginTest {
   }
 
   /**
-   *
-   * @param version
-   * @throws IOException
+   * Test the CDGenPlugin with a decorator written in a custom sourceSet and
+   * a custom config template
+   * @param version gradle version
+   * @throws IOException in case of errors
    */
   void testCDGenOwnDecorator(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
