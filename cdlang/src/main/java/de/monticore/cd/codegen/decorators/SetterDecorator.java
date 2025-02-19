@@ -16,6 +16,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
@@ -40,11 +41,11 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
 
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
-      } else if (attribute.getMCType() instanceof ASTMCListType) {
+      } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         Log.warn("0xTODO: WIP List Setter", attribute.get_SourcePositionStart());
-      } else if (attribute.getMCType() instanceof ASTMCSetType) {
+      } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
         Log.warn("0xTODO: WIP Set Setter", attribute.get_SourcePositionStart());
-      } else if (attribute.getMCType() instanceof ASTMCOptionalType) {
+      } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
       } else {
         decorateMandatory(decClazz, attribute);
