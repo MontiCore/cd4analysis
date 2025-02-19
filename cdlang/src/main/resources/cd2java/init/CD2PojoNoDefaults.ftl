@@ -5,14 +5,14 @@
   Call it using the CLI: .. -ct cd2java.CD2Java
 
 -->
-${tc.signature("glex", "setup")}
+${tc.signature("glex", "deConf")}
 <#-- @ftlvariable name="glex" type="de.monticore.generating.templateengine.GlobalExtensionManagement" -->
-<#-- @ftlvariable name="setup" type="de.monticore.cdgen.CDGenSetup" -->
+<#-- @ftlvariable name="deConf" type="de.monticore.cd.codegen.DecoratorConfig" -->
 <#-- @ftlvariable name="tc" type="de.monticore.generating.templateengine.TemplateController" -->
 
-${setup.withDecorator("de.monticore.cdgen.decorators.GetterDecorator").applyOnName("getter").ignoreOnName("noGetter")}
-${setup.withDecorator("de.monticore.cdgen.decorators.SetterDecorator").applyOnName("setter").ignoreOnName("noSetter")}
-${setup.withDecorator("de.monticore.cdgen.decorators.NavigableSetterDecorator").applyOnName("setter").ignoreOnName("noSetter")}
-${setup.withDecorator("de.monticore.cdgen.decorators.BuilderDecorator").applyOnName("builder").ignoreOnName("noBuilder")}
-${setup.withDecorator("de.monticore.cdgen.decorators.ObserverDecorator").applyOnName("observable").ignoreOnName("notObservable")}
+${deConf.withGetters().applyOnName("getter").ignoreOnName("noGetter")}
+${deConf.withSetters().applyOnName("setter").ignoreOnName("noSetter")}
+${deConf.withNavigableSetters().applyOnName("setter").ignoreOnName("noSetter")}
+${deConf.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}
+${deConf.withObservers().applyOnName("observable").ignoreOnName("notObservable")}
 
