@@ -4,6 +4,7 @@ package de.monticore.cdgen;
 import de.monticore.CDGeneratorTool;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -11,7 +12,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdgen.trafo.DefaultVisibilityPublicTrafo;
+import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -28,6 +29,11 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * This class is a further development of the {@link CDGeneratorTool}
+ * and meant as a replacement.
+ * It provides configurable decorator functionality in addition to generation
+ */
 public class CDGenTool extends CDGeneratorTool {
 
   /**
@@ -133,12 +139,9 @@ public class CDGenTool extends CDGeneratorTool {
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
 
-        // apply trafos needed for code generation
-//        asts = this.trafoBeforeCodegen(asts); TODO: Moved to just before generate
-
-        if (cmd.hasOption("tp")) {
+        if (cmd.hasOption("fp")) {
           setup.setAdditionalTemplatePaths(
-              Arrays.stream(cmd.getOptionValues("tp"))
+              Arrays.stream(cmd.getOptionValues("fp"))
                   .map(Paths::get)
                   .map(Path::toFile)
                   .collect(Collectors.toList()));
@@ -146,9 +149,6 @@ public class CDGenTool extends CDGeneratorTool {
 
         if (cmd.hasOption("hwc")) {
           setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
-          // TODO: Provide TOP Decorator
-//          TopDecorator topDecorator = new TopDecorator(setup.getHandcodedPath());
-//          asts.forEach(topDecorator::decorate);
         }
 
         String outputPath =
@@ -162,7 +162,7 @@ public class CDGenTool extends CDGeneratorTool {
         TemplateController tc = setup.getNewTemplateController(configTemplate);
         TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
 
-        CDGenSetup decSetup = new CDGenSetup();
+        DecoratorConfig decSetup = new DecoratorConfig();
 
         // Setup CLI config overrides
         if (cmd.hasOption("cliconfig")) {
@@ -177,11 +177,6 @@ public class CDGenTool extends CDGeneratorTool {
 
         List<Object> configTemplateArgs = Arrays.asList(glex, decSetup);
 
-//        asts.forEach(this::mapCD4CImports);
-//
-//        asts.forEach(ast -> addGettersAndSetters(ast, glex));
-//        asts.forEach(this::makeMethodsInInterfacesAbstract);
-
         hpp.processValue(tc, configTemplateArgs);
 
         for (ASTCDCompilationUnit ast : asts) {
@@ -192,10 +187,15 @@ public class CDGenTool extends CDGeneratorTool {
 
           System.err.println(CD4CodeMill.prettyPrint(decorated, true));
 
-          // Post-Decorate
+          // Post-Decorate: apply trafos needed for code generation
           CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
           t.add4CDBasis(new CDBasisDefaultPackageTrafo());
           decorated.accept(t);
+          // Post-Decorate: make methods in interfaces abstract
+          this.makeMethodsInInterfacesAbstract(decorated);
+
+          // Post-Decorate: TOP Decorator
+          // TODO: #4310
 
           generator.generate(decorated);
         }
@@ -238,7 +238,7 @@ public class CDGenTool extends CDGeneratorTool {
             .build());
 
     options.addOption(
-        Option.builder("tp")
+        Option.builder("fp")
             .longOpt("template")
             .hasArg()
             .argName("path")
