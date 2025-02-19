@@ -3,6 +3,7 @@ package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -10,8 +11,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdgen.CDGenSetup;
-import de.monticore.cdgen.decorators.*;
+import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -28,7 +28,7 @@ public class CDGenTest {
   @Test
   public void doTest() throws Exception {
     LogStub.initPlusLog();
-    CDGenSetup setup = new CDGenSetup();
+    DecoratorConfig setup = new DecoratorConfig();
 
     String[] options = new String[]{
       "MyCD.CliC:noGetter",

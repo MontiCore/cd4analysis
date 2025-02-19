@@ -2,7 +2,7 @@
 package de.monticore.cd.cdgen;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdgen.decorators.GetterDecorator;
+import de.monticore.cd.codegen.decorators.GetterDecorator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

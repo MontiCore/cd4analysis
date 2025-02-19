@@ -25,6 +25,8 @@ public class CDGenGradlePluginTest {
   File buildFile;
   File cdsDir;
 
+  File resourceMainDir;
+
   @Before
   public void setup() throws IOException {
     testProjectDir = temporaryFolder.newFolder();
@@ -33,6 +35,8 @@ public class CDGenGradlePluginTest {
     propertiesFile = new File(testProjectDir, "gradle.properties");
     cdsDir = new File(testProjectDir, "src/main/cds");
     cdsDir.mkdirs();
+    resourceMainDir = new File(testProjectDir, "src/main/resources");
+    resourceMainDir.mkdirs();
   }
 
   @Test
@@ -82,6 +86,83 @@ public class CDGenGradlePluginTest {
       .build();
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
+  }
+
+  @Test
+  public void testCDGenOwnDecorator_v7_4_2() throws IOException {
+    this.testCDGenOwnDecorator("7.4.2");
+  }
+
+  @Test
+  public void testCDGenOwnDecorator_v8_0_1() throws IOException {
+    this.testCDGenOwnDecorator("8.0.1");
+  }
+
+  @Test
+  public void testCDGenOwnDecorator_v8_7() throws IOException {
+    this.testCDGenOwnDecorator("8.7");
+  }
+
+  /**
+   *
+   * @param version
+   * @throws IOException
+   */
+  void testCDGenOwnDecorator(String version) throws IOException {
+    writeFile(settingsFile, "rootProject.name = 'hello-world'");
+    File libs = new File("../../cdlang/target/libs");
+
+    String projVersion = loadProperties().getProperty("version");
+    File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
+
+    Assert.assertTrue(libs.exists());
+    String buildFileContent = "plugins {" +
+      "    id 'de.rwth.se.cdgen' " +
+      "}\n " +
+      "repositories {\n" +
+      " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
+      " mavenCentral()\n" +
+      "}\n" +
+      // Define a sourceset in which we write our own decorator
+      "sourceSets{\n" +
+      "  decorators {\n" +
+      "   java.srcDir('src/dec/java') \n" +
+      " }" +
+      "}\n" +
+      // We have to inject the cdlang jar for this project (as it is not yet published)
+      "dependencies {\n" +
+      " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\") + "')\n" +
+      // Along with the transitive dependencies
+      " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n " +
+      "}\n" +
+      // the decorator sourceset requires the same dependencies as cdTool
+      "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n" +
+      "generateClassDiagrams {\n" +
+      "  configTemplate='CD2OwnDecorator' \n " +
+      "  tmplDir=file('src/main/resources') \n " +
+      "  getExtraClasspathElements().from(sourceSets.decorators.output) \n " +
+      "}\n" +
+      "\n";
+    writeFile(buildFile, buildFileContent);
+    Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd").toPath());
+    File srcSet = new File(testProjectDir, "src/dec/java/mc");
+    srcSet.mkdirs();
+    Files.copy(new File("src/test/resources/MyOwnDecorator.java").toPath(), new File(srcSet, "MyOwnDecorator.java").toPath());
+    Files.copy(new File("src/test/resources/CD2OwnDecorator.ftl").toPath(), new File(resourceMainDir, "CD2OwnDecorator.ftl").toPath());
+
+    BuildResult result = GradleRunner.create()
+      .withPluginClasspath()
+      .withGradleVersion(version)
+      .withProjectDir(testProjectDir)
+      .withArguments("build", "--info", "--stacktrace")
+      .build();
+    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
+    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
+
+    if (!result.getOutput().contains("I am decorating")) {
+      System.err.println(result.getOutput());
+      Assert.fail("Failed to find \"I am decorating\" in output");
+    }
   }
 
   void writeFile(File destination, String content) throws IOException {
