@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators.data;
+package de.monticore.cd.codegen.decorators.data;
 
 import com.google.common.collect.Lists;
 import de.monticore.ast.ASTNode;

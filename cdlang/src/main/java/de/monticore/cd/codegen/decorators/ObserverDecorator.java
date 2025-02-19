@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators;
+package de.monticore.cd.codegen.decorators;
 
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.cdgen.decorators.data.AbstractDecorator;
+import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.types.MCTypeFacade;
 
 

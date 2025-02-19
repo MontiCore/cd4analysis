@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.trafo;
+package de.monticore.cd.codegen.trafo;
 
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._visitor.UMLModifierVisitor2;

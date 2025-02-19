@@ -1,7 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators.matcher;
-
-import de.monticore.cdgen.MatchResult;
+package de.monticore.cd.codegen.decorators.matcher;
 
 import java.util.ArrayList;
 import java.util.List;

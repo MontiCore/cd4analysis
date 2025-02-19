@@ -1,16 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen;
+package de.monticore.cd.codegen;
 
+import de.monticore.cd.codegen.creators.CopyCreator;
+import de.monticore.cd.codegen.decorators.*;
+import de.monticore.cd.codegen.decorators.data.DecoratorData;
+import de.monticore.cd.codegen.decorators.matcher.ICLIMatcher;
+import de.monticore.cd.codegen.decorators.matcher.IStereoMatcher;
+import de.monticore.cd.codegen.decorators.matcher.ITagMatcher;
+import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdgen.creators.CopyCreator;
-import de.monticore.cdgen.decorators.data.DecoratorData;
-import de.monticore.cdgen.decorators.IDecorator;
-import de.monticore.cdgen.decorators.matcher.ICLIMatcher;
-import de.monticore.cdgen.decorators.matcher.IStereoMatcher;
-import de.monticore.cdgen.decorators.matcher.ITagMatcher;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.ObjectFactory;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -19,17 +20,44 @@ import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class CDGenSetup {
+/**
+ * This class configures a set of {@link IDecorator} with their
+ * matchers and order of execution
+ */
+public class DecoratorConfig {
 
   protected DecoratorData decoratorData = new DecoratorData();
   protected String[][] cliConfig = new String[][]{};
 
   protected final Collection<IDecorator<?>> decorators = new ArrayList<>();
 
-  public void withDecorator(IDecorator<?> decorator) {
+  @SuppressWarnings("unchecked")
+  public ChainableGenSetup withDecorator(IDecorator<?> decorator) {
     this.decorators.add(decorator);
+    return new ChainableGenSetup((Class<? extends IDecorator<?>>) decorator.getClass());
   }
 
+  public ChainableGenSetup withGetters() {
+    return this.withDecorator(new GetterDecorator());
+  }
+
+  public ChainableGenSetup withSetters() {
+    return this.withDecorator(new SetterDecorator());
+  }
+
+  public ChainableGenSetup withNavigableSetters() {
+    return this.withDecorator(new NavigableSetterDecorator());
+  }
+
+  public ChainableGenSetup withBuilders() {
+    return this.withDecorator(new BuilderDecorator());
+  }
+
+  public ChainableGenSetup withObservers() {
+    return this.withDecorator(new ObserverDecorator());
+  }
+
+  @SuppressWarnings("unchecked")
   public ChainableGenSetup withDecorator(String className) {
     IDecorator<?> newObj = (IDecorator<?>) ObjectFactory.createObject(className);
     this.withDecorator(newObj);
@@ -58,17 +86,17 @@ public class CDGenSetup {
       return this;
     }
 
-    public ChainableGenSetup rootDefault(MatchResult matchResult) {
+    public ChainableGenSetup doDefault(MatchResult matchResult) {
       configDefault(this.dec, matchResult);
       return this;
     }
 
-    public ChainableGenSetup rootDefaultApply() {
-      return this.rootDefault(MatchResult.APPLY);
+    public ChainableGenSetup defaultApply() {
+      return this.doDefault(MatchResult.APPLY);
     }
 
-    public ChainableGenSetup rootDefaultIgnore() {
-      return this.rootDefault(MatchResult.IGNORE);
+    public ChainableGenSetup defaultIgnore() {
+      return this.doDefault(MatchResult.IGNORE);
     }
   }
 
@@ -110,7 +138,6 @@ public class CDGenSetup {
       var m = pattern.matcher(o);
       if (m.matches()) {
         r.add(new String[]{m.group(1), m.group(2), m.group(3)});
-        System.err.println("with " + o);
       } else {
         Log.error("CLI Option " + o + " failed to setup");
       }
@@ -123,7 +150,7 @@ public class CDGenSetup {
     Map<IDecorator<?>, Integer> inDegrees = new HashMap<>();
     Map<IDecorator<?>, List<IDecorator<?>>> graph = new HashMap<>();
 
-    // 1: Initialize DAG nodes
+    // Initialize DAG nodes
     for (IDecorator<?> node : this.decorators) {
       inDegrees.put(node, 0);
       graph.putIfAbsent(node, new ArrayList<>());
@@ -148,7 +175,6 @@ public class CDGenSetup {
     }
 
     List<DecoratorPhase> phases = new ArrayList<>();
-
     while (!queue.isEmpty()) {
       DecoratorPhase phase = new DecoratorPhase();
       int size = queue.size();

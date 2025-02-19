@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators;
+package de.monticore.cd.codegen.decorators;
 
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cdgen.decorators.data.AbstractDecorator;
-import de.monticore.cdgen.decorators.data.DecoratorData;
+import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
+import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.visitor.IVisitor;
 

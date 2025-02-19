@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators.matcher;
+package de.monticore.cd.codegen.decorators.matcher;
 
-import de.monticore.cdgen.MatchResult;
 import de.monticore.tagging.tags._ast.ASTSimpleTag;
 import de.monticore.tagging.tags._ast.ASTTag;
 

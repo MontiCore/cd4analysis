@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators.data;
+package de.monticore.cd.codegen.decorators.data;
 
 import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
@@ -10,10 +10,10 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdgen.MatchResult;
-import de.monticore.cdgen.creators.CopyCreator;
-import de.monticore.cdgen.decorators.IDecorator;
-import de.monticore.cdgen.decorators.matcher.MatcherData;
+import de.monticore.cd.codegen.decorators.matcher.MatchResult;
+import de.monticore.cd.codegen.creators.CopyCreator;
+import de.monticore.cd.codegen.decorators.IDecorator;
+import de.monticore.cd.codegen.decorators.matcher.MatcherData;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.tagging.SimpleSymbolTagger;
@@ -120,9 +120,9 @@ public class DecoratorData {
     } else if (node instanceof ASTCDAttribute) {
       result = matchCDAttribute((ASTCDAttribute) node, matcherData);
     } else if (node instanceof ASTCDDefinition) {
-      System.err.println("TODO ASTCDDefinition ");
+      result = matchCDDef((ASTCDDefinition) node, matcherData);
     } else if (node instanceof ASTCDCompilationUnit) {
-      System.err.println("TODO ASTCDCompilationUnit ");
+      result = matchCDCU((ASTCDCompilationUnit) node, matcherData);
     } else {
       Log.error("0xTODO: Unable add to parent of unknown type " + node.getClass().getName(),
                 node.get_SourcePositionStart());
@@ -156,7 +156,6 @@ public class DecoratorData {
       if (r != MatchResult.DEFAULT) return r;
     }
 
-    // TODO: more
     return MatchResult.DEFAULT;
   }
 
@@ -175,7 +174,28 @@ public class DecoratorData {
       if (r != MatchResult.DEFAULT) return r;
     }
 
-    // TODO: more
+    return MatchResult.DEFAULT;
+  }
+
+  protected MatchResult matchCDDef(ASTCDDefinition node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT) return r;
+      }
+    }
+
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT) return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT) return r;
+    }
+
+    return MatchResult.DEFAULT;
+  }
+
+  protected MatchResult matchCDCU(ASTCDCompilationUnit node, MatcherData matcherData) {
     return MatchResult.DEFAULT;
   }
 

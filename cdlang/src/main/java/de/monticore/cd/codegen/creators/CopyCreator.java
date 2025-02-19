@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.creators;
+package de.monticore.cd.codegen.creators;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.CD4CodeMill;

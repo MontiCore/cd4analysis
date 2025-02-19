@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdgen.decorators.data;
+package de.monticore.cd.codegen.decorators.data;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdgen.decorators.IDecorator;
+import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 
 import java.util.Optional;
