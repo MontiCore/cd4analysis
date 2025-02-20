@@ -38,6 +38,7 @@ public class CDAssociationCreateFieldsFromAllRoles
   protected List<ASTMCImportStatement> imports;
   protected ASTMCQualifiedName packageDeclaration;
   protected Map<FieldSymbol, SourcePosition> createdFields = new HashMap<>();
+  protected Map<FieldSymbol, CDRoleSymbol> fieldToRoles = new HashMap<>();
 
   @Override
   public CDAssociationTraverser getTraverser() {
@@ -120,6 +121,7 @@ public class CDAssociationCreateFieldsFromAllRoles
     fieldSymbol.setType(calculateSymType(symbol));
 
     createdFields.put(fieldSymbol, node.get_SourcePositionStart());
+    fieldToRoles.put(fieldSymbol, symbol);
 
     // add field to ast
     if (enclosingScope.isPresentSpanningSymbol()
@@ -187,6 +189,10 @@ public class CDAssociationCreateFieldsFromAllRoles
     init(compilationUnit);
 
     compilationUnit.accept(getTraverser());
+  }
+
+  public Map<FieldSymbol, CDRoleSymbol> getFieldToRoles() {
+    return fieldToRoles;
   }
 
   public void init(ASTCDCompilationUnit compilationUnit) {
