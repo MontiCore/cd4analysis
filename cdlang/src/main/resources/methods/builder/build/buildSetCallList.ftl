@@ -1,14 +1,14 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("attribute", "withCheck", "capitalizedAttributeName")}
+${tc.signature("attribute", "withCheck")}
 
 <#if withCheck>
 
 if(this.${attribute.getName()}!=null){
-  v.add${capitalizedAttributeName}(this.${attribute.getName()})
+  v.add${attribute.getName()?cap_first}(this.${attribute.getName()})
 }
 
 <#else>
 
-v.add${capitalizedAttributeName}(this.${attribute.getName()});
+v.add${attribute.getName()?cap_first}(this.${attribute.getName()});
 
 </#if>

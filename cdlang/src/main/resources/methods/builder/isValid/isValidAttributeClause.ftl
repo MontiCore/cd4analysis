@@ -1,6 +1,7 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${signature("attribute")}
+${tc.signature("attribute", "errorCode")}
 
-if(this.${attribute.getName()}==null){
+if (this.${attribute.getName()} == null) {
+  Log.error("${errorCode}");
   return false;
 }

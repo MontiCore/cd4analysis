@@ -13,8 +13,10 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDClassBuilder;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdgen.decorators.data.AbstractDecorator;
+import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
@@ -58,6 +60,21 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       ASTCDClass builderClass = builderClassB.build();
       // Add the builder class to the decorated CD
       addElementToParent(decParent, builderClass);
+
+      //Imports
+      //TODO missing imports for attribute classes
+      // als AST oder einfach nur als String?
+      for(ASTCDAttribute attribute : node.getCDAttributeList()) {
+        //ASTCDTargetImportStatementBuilder importStatementB = CD4CodeMill.cDTargetImportStatementBuilder();
+        //ASTCDTargetImportStatement importStatement = importStatementB.setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(attribute.getMCType().printType()))
+        //  .setStar(true)
+        //  .build();
+        //builderClass.addCDMember(importStatement);
+      }
+
+      // Add Log import to the builder class
+      //TODO: This should be done in a more general way
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("ClassContent:Imports", builderClass, new StringHookPoint("import de.se_rwth.commons.logging.Log;")));
 
       // Add a build() method to the builder class
       ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
@@ -124,38 +141,33 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
     // Use the template hook-point to add a call to the setter to the build() methods
     String errorMessage = getCDGenService().getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType()) + " " + attribute.getName() + " of type " + attribute.getMCType().printType() + " must not be null";
     if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(),new TemplateHookPoint("methods.builder.build.buildSetCallBoolean",attribute,true,StringTransformations.capitalize(attribute.getName()))));
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(),new TemplateHookPoint("methods.builder.buildSetCallBoolean",attribute,false,StringTransformations.capitalize(attribute.getName()))));
-      //add isValid clause in the build method for attributes with cardinality 1
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:InnerIsValidClause", decoratorBuildMethod.peek(),new TemplateHookPoint("methods.builder.build.buildIsValidClause",attribute,errorMessage)));
-      //add attribute clause in the isValid method
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.isValid.isValid:Inner", decoratorIsValidMethod.peek(),new TemplateHookPoint("methods.builder.isValid.isValidAttributeClause",attribute)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(),new TemplateHookPoint("methods.builder.build.buildSetCallBoolean",attribute,true)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(),new TemplateHookPoint("methods.builder.buildSetCallBoolean",attribute,false)));
     } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallList",attribute,true,StringTransformations.capitalize(attribute.getName()))));
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallList",attribute,false,StringTransformations.capitalize(attribute.getName()))));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallList",attribute,true)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallList",attribute,false)));
       //create Absent method for List
       ASTCDMethod absentMethod = createAbsentMethod(attribute);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, absentMethod, new TemplateHookPoint("methods.builder.isAbsent.isAbsentList",attribute)));
     } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute,true,StringTransformations.capitalize(attribute.getName()))));
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute,false,StringTransformations.capitalize(attribute.getName()))));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute,true)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute)));
       //create Absent method for Set
       ASTCDMethod absentMethod = createAbsentMethod(attribute);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, absentMethod, new TemplateHookPoint("methods.builder.isAbsent.isAbsentSet",attribute)));
     } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallOptional",attribute,true,StringTransformations.capitalize(attribute.getName()))));
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallOptional",attribute,false,StringTransformations.capitalize(attribute.getName()))));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallOptional",attribute,true)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallOptional",attribute,false)));
       //create Absent method for Optional
       ASTCDMethod absentMethod = createAbsentMethod(attribute);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, absentMethod, new TemplateHookPoint("methods.builder.isAbsent.isAbsentOptional",attribute)));
     } else {
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCall",attribute,true,StringTransformations.capitalize(attribute.getName()))));
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCall",attribute,false,StringTransformations.capitalize(attribute.getName()))));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCall",attribute,true)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCall",attribute,false)));
       //add isValid clause in the build method for attributes with cardinality 1
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:InnerIsValidClause", decoratorBuildMethod.peek(),new TemplateHookPoint("methods.builder.build.buildIsValidClause",attribute,errorMessage)));
-      //add attribute clause in the isValid method
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.isValid.isValid:Inner", decoratorIsValidMethod.peek(),new TemplateHookPoint("methods.builder.isValid.isValidAttributeClause",attribute)));
-    }
+      if(!(attribute.getMCType() instanceof ASTMCPrimitiveType)) {
+        glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.isValid.isValid:Inner", decoratorIsValidMethod.peek(),new TemplateHookPoint("methods.builder.isValid.isValidAttributeClause",attribute,errorMessage)));
+      }    }
 
     // TODO: Create chainable(?) methods
   }

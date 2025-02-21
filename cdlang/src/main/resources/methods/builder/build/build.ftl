@@ -3,8 +3,6 @@ ${tc.signature("clazz", "withCheck")}
 
 <#if withCheck>
 if(!isValid()){
-  ${defineHookPoint("methods.builder.build.build:InnerIsValidClause")}
-
   throw new IllegalStateException();
 }
 </#if>
