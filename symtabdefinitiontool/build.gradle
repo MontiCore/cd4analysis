@@ -24,13 +24,12 @@ dependencies {
 
 task toolJar(type: Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
-  archiveClassifier = "tool"
 }
 
 apply plugin: "com.github.johnrengelman.shadow"
   shadowJar {
     manifest {
-      attributes "Main-Class": "de.monticore.SymTabDefinitionTool"
+      attributes "Main-Class": "de.monticore.symtabdefinition.SymTabDefinitionTool"
     }
     archiveFileName = "MCSTD.jar"
     archiveClassifier = "std-tool"
@@ -38,3 +37,37 @@ apply plugin: "com.github.johnrengelman.shadow"
 assemble.dependsOn(shadowJar)
 
 jar.dependsOn(shadowJar)
+
+// tool test
+
+sourceSets {
+  tooltest
+}
+
+dependencies {
+  tooltestImplementation platform('org.junit:junit-bom:5.9.1')
+  tooltestImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.register('toolTest', Test) {
+  description = 'Runs tool integration tests.'
+  group = 'verification'
+
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath = sourceSets.tooltest.runtimeClasspath
+  shouldRunAfter test
+  dependsOn shadowJar
+
+  useJUnitPlatform()
+
+  testLogging {
+    events "passed"
+  }
+
+  // Pass path to the tool jar to the test
+  systemProperty "toolJarFile",  tasks.shadowJar.outputs.files.singleFile
+  // Pass mc_version to the test
+  systemProperty "mc_version",  mc_version
+}
+
+check.dependsOn toolTest
