@@ -24,6 +24,7 @@ public class CDGenGradlePluginTest {
   File propertiesFile;
   File buildFile;
   File cdsDir;
+  File javaMainDir;
 
   File resourceMainDir;
 
@@ -37,6 +38,8 @@ public class CDGenGradlePluginTest {
     cdsDir.mkdirs();
     resourceMainDir = new File(testProjectDir, "src/main/resources");
     resourceMainDir.mkdirs();
+    javaMainDir = new File(testProjectDir, "src/main/java");
+    javaMainDir.mkdirs();
   }
 
   @Test
@@ -77,6 +80,9 @@ public class CDGenGradlePluginTest {
       "}";
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd").toPath());
+    var myCDJava = new File(javaMainDir, "MyCD");
+    myCDJava.mkdirs();
+    Files.copy(new File("src/test/resources/IncompleteA.java").toPath(), new File(myCDJava, "IncompleteA.java").toPath());
 
     BuildResult result = GradleRunner.create()
       .withPluginClasspath()
@@ -150,6 +156,10 @@ public class CDGenGradlePluginTest {
     srcSet.mkdirs();
     Files.copy(new File("src/test/resources/MyOwnDecorator.java").toPath(), new File(srcSet, "MyOwnDecorator.java").toPath());
     Files.copy(new File("src/test/resources/CD2OwnDecorator.ftl").toPath(), new File(resourceMainDir, "CD2OwnDecorator.ftl").toPath());
+
+    var myCDJava = new File(javaMainDir, "MyCD");
+    myCDJava.mkdirs();
+    Files.copy(new File("src/test/resources/IncompleteA.java").toPath(), new File(myCDJava, "IncompleteA.java").toPath());
 
     BuildResult result = GradleRunner.create()
       .withPluginClasspath()

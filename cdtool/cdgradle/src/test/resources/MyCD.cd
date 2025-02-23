@@ -35,4 +35,9 @@ classdiagram MyCD {
     boolean doStuff();
     public boolean doStuffInPublic();
   }
+
+   <<needsTOP="TOP required: %s">>
+    public class IncompleteA {
+      public String name;
+    }
 }
