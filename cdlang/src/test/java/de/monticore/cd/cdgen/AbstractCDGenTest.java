@@ -11,7 +11,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdgen.CDGenSetup;
+import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -25,14 +25,14 @@ import java.util.Optional;
 public class AbstractCDGenTest {
 
 
-  protected CDGenSetup setup;
+  protected DecoratorConfig setup;
   protected File outputDir;;
   @BeforeEach
   public void init() {
     LogStub.initPlusLog();
     CD4CodeMill.reset();
     CD4CodeMill.init();
-    this.setup = new CDGenSetup();
+    this.setup = new DecoratorConfig();
     this.outputDir = new File("target/cdGenOutTest/" + getClass().getSimpleName());
   }
 

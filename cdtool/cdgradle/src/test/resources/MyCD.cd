@@ -28,4 +28,11 @@ classdiagram MyCD {
     // The build.gradle options
     public int x;
   }
+
+  interface MyEmptyInterface { }
+
+  interface MyInterface {
+    boolean doStuff();
+    public boolean doStuffInPublic();
+  }
 }
