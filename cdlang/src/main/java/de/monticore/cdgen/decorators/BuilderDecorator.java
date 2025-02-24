@@ -4,6 +4,7 @@ package de.monticore.cdgen.decorators;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
+import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -13,17 +14,14 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDClassBuilder;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdgen.decorators.data.AbstractDecorator;
-import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.Stack;
-
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 /**
@@ -61,20 +59,8 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       // Add the builder class to the decorated CD
       addElementToParent(decParent, builderClass);
 
-      //Imports
-      //TODO missing imports for attribute classes
-      // als AST oder einfach nur als String?
-      for(ASTCDAttribute attribute : node.getCDAttributeList()) {
-        //ASTCDTargetImportStatementBuilder importStatementB = CD4CodeMill.cDTargetImportStatementBuilder();
-        //ASTCDTargetImportStatement importStatement = importStatementB.setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(attribute.getMCType().printType()))
-        //  .setStar(true)
-        //  .build();
-        //builderClass.addCDMember(importStatement);
-      }
-
       // Add Log import to the builder class
-      //TODO: This should be done in a more general way
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("ClassContent:Imports", builderClass, new StringHookPoint("import de.se_rwth.commons.logging.Log;")));
+      CD4C.getInstance().addImport(builderClass, "de.se_rwth.commons.logging.Log");
 
       // Add a build() method to the builder class
       ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
@@ -97,7 +83,7 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       // Add Setter methods for all attributes to the builder class
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
         ASTCDParameter param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(attribute.getMCType()).build();
-        ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), "set" + StringTransformations.capitalize(attribute.getName()), param);
+        ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),builderClass.getName(), "set" + StringTransformations.capitalize(attribute.getName()), param);
         glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod, new TemplateHookPoint("methods.builder.set", attribute)));
         addToClass(builderClass, setMethod);
       }
@@ -127,19 +113,19 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
 
     // We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
     // TODO: In a perfect world, we would extract the name from the symbol or SetterDecorator data
-    var methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
+    List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
     if (methods == null || methods.isEmpty()) {
       Log.warn("Skipping builder pattern of " + attribute.getName() + " due to missing Setter methods", attribute.get_SourcePositionStart());
       return;
     }
 
-    var decClazz = this.decoratedBuilderClasses.peek();
+    ASTCDClass decClazz = this.decoratedBuilderClasses.peek();
 
     // Add an attribute to the builder class
     decClazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
 
     // Use the template hook-point to add a call to the setter to the build() methods
-    String errorMessage = getCDGenService().getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType()) + " " + attribute.getName() + " of type " + attribute.getMCType().printType() + " must not be null";
+    String errorMessage = "0x16725" + getCDGenService().getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType()) + " " + attribute.getName() + " of type " + attribute.getMCType().printType() + " must not be null";
     if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(),new TemplateHookPoint("methods.builder.build.buildSetCallBoolean",attribute,true)));
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(),new TemplateHookPoint("methods.builder.buildSetCallBoolean",attribute,false)));
