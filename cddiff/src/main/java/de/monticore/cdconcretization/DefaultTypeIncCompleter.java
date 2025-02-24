@@ -142,15 +142,7 @@ public class DefaultTypeIncCompleter implements IIncarnationCompleter<ASTCDType>
             .collect(Collectors.toSet());
 
     for (ASTCDAttribute rAttribute : rAttributeSet) {
-      if (typeInCCD.getCDAttributeList().stream()
-          .noneMatch(
-              cAttribute ->
-                  cAttribute
-                      .getSymbol()
-                      .getFullName()
-                      .equals(rAttribute.getSymbol().getFullName()))) {
-        buildAttributeIncarnation(rAttribute, typeInCCD);
-      }
+      buildAttributeIncarnation(rAttribute, typeInCCD);
     }
   }
 

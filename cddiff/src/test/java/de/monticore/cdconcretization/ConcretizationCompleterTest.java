@@ -124,6 +124,39 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  public void testTwoMissingAttributes() throws CompletionException {
+    testConcretizedEqualsRef(
+      "attributes/valid/ConcTwoAttributesMissing.cd",
+      "attributes/valid/RefTwoAttributesMissing.cd");
+  }
+
+  @Test
+  public void testTwoMissingAttributesOneMatch() throws CompletionException {
+    testConcretizedEqualsRef(
+      "attributes/valid/ConcTwoAttributesMissingOneMatch.cd",
+      "attributes/valid/RefTwoAttributesMissingOneMatch.cd");
+  }
+
+  /***
+   * Parses the two models and checks if the concretized CD equals the reference CD.
+   * <br>
+   * Use this to test if basic completion of model elements works, without any application of
+   * explicit incarnation mappings.
+   *
+   * @param conc the path to the concrete CD
+   * @param ref the path to the reference CD
+   * @throws CompletionException
+   */
+  private void testConcretizedEqualsRef(String conc, String ref) throws CompletionException {
+    parseModels(conc, ref);
+    DefaultTypeIncCompleter incarnationCompleter = new DefaultTypeIncCompleter(conCD, refCD, "ref");
+    incarnationCompleter.completeIncarnations();
+    // to use deep equals, both CDs need to have the same name
+    conCD.getCDDefinition().setName(refCD.getCDDefinition().getName());
+    assertTrue(conCD.deepEquals(refCD, false));
+  }
+
+  @Test
   public void testMissingEnumMember() throws CompletionException {
     parseModels("types/enums/ConcEnumMemberMissing.cd", "types/enums/RefEnumMemberMissing.cd");
     DefaultTypeIncCompleter incarnationCompleter =
