@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
@@ -15,6 +16,7 @@ import de.monticore.cdgen.decorators.*;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Test;
@@ -22,6 +24,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
+
+import static org.junit.Assert.assertTrue;
 
 public class CDGenTest {
 
@@ -107,6 +111,10 @@ public class CDGenTest {
     // Prepare
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
+    glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
+    glex.setGlobalValue("cdGenService", new CDGenService());
+
     GeneratorSetup generatorSetup = new GeneratorSetup();
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/outtest"));

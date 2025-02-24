@@ -2,6 +2,7 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -11,6 +12,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdgen.decorators.BuilderDecorator;
 import de.monticore.cdgen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -18,6 +20,7 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
@@ -131,6 +134,9 @@ public class CDGenTool extends CDGeneratorTool {
       if (cmd.hasOption("o")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+        glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
+        glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
+        glex.setGlobalValue("cdGenService", new CDGenService());
         GeneratorSetup setup = new GeneratorSetup();
 
         // apply trafos needed for code generation
