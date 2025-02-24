@@ -17,7 +17,7 @@ env:
   GRADLE_BUILD_ACTION_CACHE_KEY_JOB: "test-cache-${{ github.head_ref }}.${{ github.sha }}"
 
 permissions:
-  contents: read 
+  contents: read
 
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
         with:
           name: junit-test-results
           path: '**/target/test-results/test/TEST-*.xml'
-          retention-days: 1  
+          retention-days: 1
 
   # Run the MontiVerse pipeline (tests this change on a suite of projects)
   trigger-montiverse:
@@ -46,5 +46,7 @@ jobs:
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
       project: "CD4A"
+    permissions: # allow this action to give feedback on its checks
+      pull-requests: write
     secrets: inherit
 
