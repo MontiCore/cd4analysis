@@ -88,7 +88,7 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         addToClass(builderClass, setMethod);
       }
 
-      // Add the builder class to the stack
+      // Add the builder class to the stack c
       decoratedBuilderClasses.add(builderClass);
       enabled.push(true);
     } else
@@ -110,7 +110,11 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   public void visit(ASTCDAttribute attribute) {
     // Only do work if we are in a builder-enabled class
     if (!enabled.peek()) return;
-    
+
+    // Add an attribute to the builder class
+    ASTCDClass decClazz = this.decoratedBuilderClasses.peek();
+    decClazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
+
     // We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
     // TODO: In a perfect world, we would extract the name from the symbol or SetterDecorator data
     List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
@@ -118,11 +122,6 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       Log.warn("Skipping builder pattern of " + attribute.getName() + " due to missing Setter methods", attribute.get_SourcePositionStart());
       return;
     }
-
-    ASTCDClass decClazz = this.decoratedBuilderClasses.peek();
-
-    // Add an attribute to the builder class
-    decClazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(), attribute.getMCType(), attribute.getName()));
 
     // Use the template hook-point to add a call to the setter to the build() methods
     String errorMessage = "0x16725" + getCDGenService().getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType()) + " " + attribute.getName() + " of type " + attribute.getMCType().printType() + " must not be null";
