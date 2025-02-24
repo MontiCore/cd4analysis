@@ -110,7 +110,7 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   public void visit(ASTCDAttribute attribute) {
     // Only do work if we are in a builder-enabled class
     if (!enabled.peek()) return;
-
+    
     // We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
     // TODO: In a perfect world, we would extract the name from the symbol or SetterDecorator data
     List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
@@ -137,7 +137,7 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, absentMethod, new TemplateHookPoint("methods.builder.isAbsent.isAbsentList",attribute)));
     } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
       glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute,true)));
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute)));
+      glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build.build:Inner", decoratorUnsafeBuildMethod.peek(), new TemplateHookPoint("methods.builder.build.buildSetCallSet",attribute,false)));
       //create Absent method for Set
       ASTCDMethod absentMethod = createAbsentMethod(attribute);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, absentMethod, new TemplateHookPoint("methods.builder.isAbsent.isAbsentSet",attribute)));

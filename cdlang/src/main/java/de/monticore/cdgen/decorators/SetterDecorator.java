@@ -41,8 +41,10 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
       } else if (attribute.getMCType() instanceof ASTMCListType) {
+        decorateList(decClazz, attribute);
         Log.warn("0xTODO: WIP List Setter", attribute.get_SourcePositionStart());
       } else if (attribute.getMCType() instanceof ASTMCSetType) {
+        decorateSet(decClazz, attribute);
         Log.warn("0xTODO: WIP Set Setter", attribute.get_SourcePositionStart());
       } else if (attribute.getMCType() instanceof ASTMCOptionalType) {
         decorateOptional(decClazz, attribute);
@@ -51,6 +53,40 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       }
 
     }
+  }
+
+  protected void decorateList(ASTCDClass clazz, ASTCDAttribute attribute) {
+    String name =
+      "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute.getName()));
+    ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), name,
+      CDParameterFacade.getInstance().createParameter(type, attribute.getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new ForwardingTemplateHookPoint("methods.Set", glex, attribute)));
+
+    addToClass(clazz, method);
+
+
+    updateModifier(attribute);
+
+    // Also track this data
+    getData().addMethod(attribute, method);
+  }
+
+  protected void decorateSet(ASTCDClass decClazz, ASTCDAttribute attribute){
+    String name =
+      "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute.getName()));
+    ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), name,
+      CDParameterFacade.getInstance().createParameter(type, attribute.getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new ForwardingTemplateHookPoint("methods.Set", glex, attribute)));
+
+    addToClass(decClazz, method);
+
+
+    updateModifier(attribute);
+
+    // Also track this data
+    getData().addMethod(attribute, method);
   }
 
   protected void decorateMandatory(ASTCDClass clazz, ASTCDAttribute attribute) {
