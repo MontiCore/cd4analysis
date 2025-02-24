@@ -5,21 +5,21 @@ ${tc.signature("attributes","staticErrorCode")}
 <#assign errorCode = staticErrorCode + cdGenService.getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType()) + " " + attribute.getName() + " of type " + attribute.getMCType().printType() + " must not be null">
 <#assign MCCollectionSymTypeRelations = glex.getGlobalVar("mcCollectionSymTypeRelations")>
 
-<#-- Check if the attribute is not a collection or optional as they have isAbsent methods-->
+<#-- Check if the attribute is not a list, set or optional as they have isAbsent methods-->
 <#if (!(MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType()) ||
      MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType()) ||
      MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())))>
 
 <#-- Primitive types no way to get them better yet -->
 <#-- PLEASE FIX THIS ASAP -->
-<#if (MCCollectionSymTypeRelations.isBoolean(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isByte(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isShort(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isInt(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isLong(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isFloat(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isDouble(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isChar(attribute.getSymbol().getType()))>
+<#-- this is copied from the isPrimitiveType method of CDHelper which is no dependency here: Question: What is with char? -->
+<#if (!(attribute.getMCType().printType() == "Boolean" ||
+     attribute.getMCType().printType() == "boolean" ||
+     attribute.getMCType().printType() == "Integer" ||
+     attribute.getMCType().printType() == "int" ||
+     attribute.getMCType().printType() == "Double" ||
+     attribute.getMCType().printType() == "double" ||
+     attribute.getMCType().printType() == "String"))>
 
 if (this.${attribute.getName()} == null) {
   Log.error("${errorCode}");
