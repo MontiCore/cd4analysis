@@ -370,6 +370,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   @Override
   public void init() {
     super.init();
+    CD4CodeMill.globalScope().clear();
     Log.initWARN();
   }
 
