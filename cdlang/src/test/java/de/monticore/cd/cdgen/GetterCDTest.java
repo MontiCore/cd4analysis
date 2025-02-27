@@ -21,11 +21,15 @@ public class GetterCDTest extends AbstractCDGenTest {
 
 
     var opt = CD4CodeMill.parser().parse_String("classdiagram TestGetter {\n" +
-                                                  " <<getter>> public class TestGetter { \n" +
+                                                  " <<getter>> public class TestGetterC { \n" +
                                                   " boolean myBool;" +
                                                   " public int myInt;" +
                                                   " <<noGetter>> public int pubX;" +
-                                                  " }" +
+                                                  " }\n" +
+                                                  " public association TestGetterC -> (roleB) Other [*];\n" +
+                                                  " public association TestGetterC -> (orderedRole) Other [*] {ordered};\n" +
+                                                  " <<getter>> public class Other { \n" +
+                                                  "}\n" +
                                                   "}");
 
     Assertions.assertTrue(opt.isPresent());
