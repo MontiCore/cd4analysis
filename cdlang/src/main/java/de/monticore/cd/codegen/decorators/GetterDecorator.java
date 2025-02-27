@@ -1,16 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
+import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.prettyprint.IndentPrinter;
@@ -21,13 +23,17 @@ import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 /**
  * Add get methods to all attributes
+ * <a href="https://mbse.se-rwth.de/book2/index.php?c=chapter5-1">methodic</a>
  */
 public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
@@ -43,9 +49,11 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
       } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-        Log.warn("0xTODO List getter");
+        decorateList(decClazz, attribute);
+        decorateWithAssocFunctions(decClazz, attribute, true);
       } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-        Log.warn("0xTODO Set getter");
+        decorateSet(decClazz, attribute);
+        decorateWithAssocFunctions(decClazz, attribute, false);
       } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
       } else {
@@ -65,7 +73,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
 
     addToClass(decoratedClazz, method);
 
-   this.updateModifier(attribute);
+    this.updateModifier(attribute);
   }
 
   protected void decorateOptional(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
@@ -75,7 +83,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     String generatedErrorCode =
       getCDGenService().getGeneratedErrorCode(attribute.getName() + attribute.getMCType().printType());
     ASTCDMethod getMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), type, name);
-    String nativeAttributeName = StringUtils.capitalize(getCDGenService().getNativeAttributeName(attribute.getName()));;
+    String nativeAttributeName = StringUtils.capitalize(getCDGenService().getNativeAttributeName(attribute.getName()));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getMethod, new TemplateHookPoint("methods.opt.Get4Opt", attribute, nativeAttributeName, generatedErrorCode)));
     getMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     CD4C.getInstance().addImport(decoratedClazz, Log.class.getName());
@@ -90,13 +98,50 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     this.updateModifier(attribute);
   }
 
-  protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
-    String name = "get"  + StringTransformations.capitalize(attribute.getName()) + "List";
+  protected void decorateSet(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+    String name = "get" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
 
-    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), type, name);
+    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), MCTypeFacade.getInstance().createSetTypeOf(type), name);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint("methods.Get", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
+    addToClass(decoratedClazz, getListMethod);
+
+    this.updateModifier(attribute);
+
+
+    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
+      // Note: we only handle EMPTY_BODY here and MIGHT have to add the instantiation to other constructors as well?
+      // Idea 1: Default constructor template with hookpoints?
+      // Setting the initial value of the attribute fails, as "new"/CreatorExpression is not part of CD4C
+      glex.addAfterTemplate(EMPTY_BODY, c,
+        new TemplateHookPoint("methods.Instantiation", attribute.getName(), HashSet.class.getName()))
+    ));
+  }
+
+  protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+    String name = "get" + StringTransformations.capitalize(attribute.getName());
+    ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
+
+    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), MCTypeFacade.getInstance().createListTypeOf(type), name);
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint("methods.Get", attribute)));
+    getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
+    addToClass(decoratedClazz, getListMethod);
+
+    this.updateModifier(attribute);
+
+    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
+      // Note: we only handle EMPTY_BODY here and MIGHT have to add the instantiation to other constructors as well?
+      // Idea 1: Default constructor template with hookpoints?
+      // Setting the initial value of the attribute fails, as "new"/CreatorExpression is not part of CD4C
+      glex.addAfterTemplate(EMPTY_BODY, c,
+        new TemplateHookPoint("methods.Instantiation", attribute.getName(), ArrayList.class.getName()))
+    ));
+  }
+
+
+  protected void decorateWithAssocFunctions(ASTCDClass decoratedClazz, ASTCDAttribute attribute, boolean isList) {
+    ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
 
     String attributeType = type.printType();
 
@@ -108,9 +153,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     } else {
       capitalizedAttributeNameWithOutS = capitalizedAttributeNameWithS;
     }
-
-    addToClass(decoratedClazz, getListMethod);
-
 
     if (!attribute.getModifier().isDerived()) {
       for (String signature : Arrays.asList(
@@ -124,24 +166,28 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
         String.format(SPLITERATOR, attributeType, capitalizedAttributeNameWithS),
         String.format(STREAM, attributeType, capitalizedAttributeNameWithS),
         String.format(PARALLEL_STREAM, attributeType, capitalizedAttributeNameWithS),
-        String.format(GET, attributeType, capitalizedAttributeNameWithOutS),
-        String.format(INDEX_OF, capitalizedAttributeNameWithOutS),
-        String.format(LAST_INDEX_OF, capitalizedAttributeNameWithOutS),
         String.format(EQUALS, capitalizedAttributeNameWithS),
-        String.format(HASHCODE, capitalizedAttributeNameWithS),
-        String.format(LIST_ITERATOR, attributeType, capitalizedAttributeNameWithS),
-        String.format(LIST_ITERATOR_, attributeType, capitalizedAttributeNameWithS),
-        String.format(SUBLIST, attributeType, capitalizedAttributeNameWithS))) {
-
+        String.format(HASHCODE, capitalizedAttributeNameWithS))) {
         ASTCDMethod method = CDMethodFacade.getInstance().createMethodByDefinition(signature);
-
-
+        addToClass(decoratedClazz, method);
         this.glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, createListImplementation(method, capitalizedAttributeNameWithOutS)));
-
+      }
+      if (isList) {
+        for (String signature : Arrays.asList(
+          String.format(GET, attributeType, capitalizedAttributeNameWithOutS),
+          String.format(INDEX_OF, capitalizedAttributeNameWithOutS),
+          String.format(LAST_INDEX_OF, capitalizedAttributeNameWithOutS),
+          String.format(LIST_ITERATOR, attributeType, capitalizedAttributeNameWithS),
+          String.format(LIST_ITERATOR_, attributeType, capitalizedAttributeNameWithS),
+          String.format(SUBLIST, attributeType, capitalizedAttributeNameWithS)
+        )) {
+          ASTCDMethod method = CDMethodFacade.getInstance().createMethodByDefinition(signature);
+          method.setModifier(attribute.getModifier().deepClone());
+          addToClass(decoratedClazz, method);
+          this.glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, createListImplementation(method, capitalizedAttributeNameWithOutS)));
+        }
       }
     }
-
-    this.updateModifier(attribute);
   }
 
   protected HookPoint createListImplementation(final ASTCDMethod method, String capitalizedAttributeNameWithOutS) {
@@ -156,7 +202,7 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
       (new CD4CodeFullPrettyPrinter(new IndentPrinter())).prettyprint(method.getMCReturnType());
 
     return new TemplateHookPoint(
-      "methods.MethodDelegate", attributeName, methodName, parameterCall, returnType);
+      "methods.AnyMethodDelegate", attributeName, methodName, parameterCall, returnType);
   }
 
 
@@ -189,6 +235,15 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     decoratedModifier.setPrivate(false);
   }
 
+  protected List<ASTCDConstructor> getOrCreateDecConstructors(ASTCDClass decoratedClazz) {
+    List<ASTCDConstructor> constructors = new ArrayList<>(decoratedClazz.getCDConstructorList());
+    if (constructors.isEmpty()) {
+      var c = CDConstructorFacade.getInstance().createDefaultConstructor(decoratedClazz.getModifier(), decoratedClazz);
+      addToClass(decoratedClazz, c);
+      constructors.add(c);
+    }
+    return constructors;
+  }
 
 
   @Override

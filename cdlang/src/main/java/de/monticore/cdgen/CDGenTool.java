@@ -13,6 +13,7 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
+import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -193,7 +194,11 @@ public class CDGenTool extends CDGeneratorTool {
           this.makeMethodsInInterfacesAbstract(decorated);
 
           // Post-Decorate: TOP Decorator
-          // TODO: #4310
+          // TODO: #4310 - make this TOP decorator/transformation configurable via the config template
+          TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
+          t = CD4CodeMill.inheritanceTraverser();
+          topTransformer.addToTraverser(t);
+          decorated.accept(t);
 
           generator.generate(decorated);
         }
