@@ -7,6 +7,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.CDConformanceChecker;
@@ -78,6 +79,56 @@ public class ConcretizationCompleterTest {
     testConcretizedEqualsRef(
       "attributes/valid/ConcTwoAttributesMissingOneMatch.cd",
       "attributes/valid/RefTwoAttributesMissingOneMatch.cd");
+  }
+
+  /**
+   * The attributes expected by the reference class are already present in the direct superclass of
+   * 'Employee'. The concretization should not add them again.
+   */
+  @Test
+  public void testAttributeExistsInConcreteSuperclass() {
+    testConcretizedConformsToRef(
+      "attributes/valid/ConcAttributeInSuperClass.cd",
+      "attributes/valid/RefAttributeInSuperClass.cd");
+
+    // The conformance check is not enough here. The tool must not add attributes to the concrete class if they
+    // are already inherited from a superclass.
+    List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
+
+    ASTCDClass employeeClass = conCD.getCDDefinition().getCDClassesList().stream()
+      .filter(cdClass -> cdClass.getName().equals("Employee"))
+      .findFirst().orElseThrow();
+    employeeClass.getCDAttributeList().stream()
+      .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
+      .findAny().ifPresent(cdAttribute -> {
+        fail("Attribute " + cdAttribute + " should not be added to the concrete class 'Employee' as it is already " +
+          "inherited from the superclass 'Person'");
+    });
+  }
+
+  /**
+   * The attributes expected by the reference class are already present "deep" in the class hierarchy of
+   * 'Employee'. The concretization should not add them again.
+   */
+  @Test
+  public void testAttributeExistsInConcreteDeepSuperclass() {
+    testConcretizedConformsToRef(
+      "attributes/valid/ConcAttributeInDeepSuperClass.cd",
+      "attributes/valid/RefAttributeInDeepSuperClass.cd");
+
+    // The conformance check is not enough here. The tool must not add attributes to the concrete class if they
+    // are already inherited from a superclass.
+    List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
+
+    ASTCDClass employeeClass = conCD.getCDDefinition().getCDClassesList().stream()
+      .filter(cdClass -> cdClass.getName().equals("Employee"))
+      .findFirst().orElseThrow();
+    employeeClass.getCDAttributeList().stream()
+      .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
+      .findAny().ifPresent(cdAttribute -> {
+        fail("Attribute " + cdAttribute + " should not be added to the concrete class 'Employee' as it is already " +
+          "inherited from the superclass 'Person'");
+      });
   }
 
   @Test

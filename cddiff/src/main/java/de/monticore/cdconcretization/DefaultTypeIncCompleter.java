@@ -1,5 +1,6 @@
 package de.monticore.cdconcretization;
 
+import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -127,18 +128,19 @@ public class DefaultTypeIncCompleter implements IIncarnationCompleter<ASTCDType>
     enumInCCD.setCDEnumConstantList(processed);
   }
 
-  public void identifyAndAddMissingAttributeIncarnations(
-      ASTCDType typeInCCD, ASTCDType referenceType) {
+  public void identifyAndAddMissingAttributeIncarnations(ASTCDType typeInCCD, ASTCDType referenceType) {
     CompAttributeChecker compAttributeChecker = initAttributeChecker(typeInCCD, referenceType);
+    List<ASTCDAttribute> allConcreteAttributesInHierarchy = CDSymbolTables.getAttributesInHierarchy(typeInCCD);
+
     // Set of all the reference type attributes that have no match with the attributes of the
-    // concrete type
+    // concrete type or any of its superclasses
     Set<ASTCDAttribute> rAttributeSet =
         referenceType.getCDAttributeList().stream()
             .filter(
                 rAttribute ->
-                    typeInCCD.getCDAttributeList().stream()
-                        .noneMatch(
-                            cAttribute -> compAttributeChecker.isMatched(cAttribute, rAttribute)))
+                  allConcreteAttributesInHierarchy.stream()
+                    .noneMatch(
+                      cAttribute -> compAttributeChecker.isMatched(cAttribute, rAttribute)))
             .collect(Collectors.toSet());
 
     for (ASTCDAttribute rAttribute : rAttributeSet) {
