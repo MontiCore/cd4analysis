@@ -48,7 +48,7 @@ if(this.${attributeList[i].getName()}!=null){
 if(this.${attributeList[i].getName()}.isPresent()){
   v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());
 }else{
-  v.set${attribute.getName()?cap_first}Absent();
+  v.set${attributeList[i].getName()?cap_first}Absent();
 }
         <#else>
 if(this.${attributeList[i].getName()}.isPresent()){

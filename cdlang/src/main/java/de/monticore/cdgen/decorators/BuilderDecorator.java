@@ -94,13 +94,15 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         }
       }
 
-      // it is required to check if a setter method exists
-      // if not the values are set directly in the build and unsafeBuild methods without the use of a setter method
+      // it is required to check if a setter method exists by checking the methods of the SetterDecorator for
+      // an exact match of "set" + attribute.getName()
+      // if this method does not exist,
+      // the values are set directly in the build and unsafeBuild methods without the use of a setter method
       List<Boolean> hasSetterMethod = new ArrayList<>();
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
-        //TODO in a perfect world we would for setter methods in a different way
+        //We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
         List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
-        if (methods == null || methods.isEmpty()) {
+        if (methods == null || methods.isEmpty() || methods.stream().noneMatch(m ->m.getName().equals("set" + StringTransformations.capitalize(attribute.getName())))) {
           hasSetterMethod.add(false);
         } else {
           hasSetterMethod.add(true);
