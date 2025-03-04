@@ -1,5 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("originalClazzName", "attributes")}
+${tc.signature("originalClazzName", "attributeList","hasSetterList")}
 
 <#assign MCTypeFacade = glex.getGlobalVar("mcTypeFacade")>
 <#assign MCCollectionSymTypeRelations = glex.getGlobalVar("mcCollectionSymTypeRelations")>
@@ -10,32 +10,60 @@ if(!isValid()){
 
 var v = new ${originalClazzName}();
 
-<#list attributes as attribute>
-<#if MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())>
-v.set${attribute.getName()?cap_first}(this.${attribute.getName()});
+<#list 0..attributeList?size-1 as i>
+<#if MCTypeFacade.getInstance().isBooleanType(attributeList[i].getMCType())>
+  <#if hasSetterList[i]>
+v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
+  <#else>
+v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
+  </#if>
 <#------------------------------------>
 <#else>
-  <#if MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())>
-if(this.${attribute.getName()}!=null){
-  v.add${attribute.getName()?cap_first}(this.${attribute.getName()})
+  <#if MCCollectionSymTypeRelations.isList(attributeList[i].getSymbol().getType())>
+    <#if hasSetterList[i]>
+if(this.${attributeList[i].getName()}!=null){
+  v.add${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()})
 }
+    <#else>
+if(this.${attributeList[i].getName()}!=null){
+  v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
+}
+    </#if>
 <#------------------------------------>
   <#else>
-    <#if MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())>
-if(this.${attribute.getName()}!=null){
-  v.add${attribute.getName()?cap_first}(this.${attribute.getName()})
+    <#if MCCollectionSymTypeRelations.isSet(attributeList[i].getSymbol().getType())>
+      <#if hasSetterList[i]>
+if(this.${attributeList[i].getName()}!=null){
+  v.add${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()})
 }
+      <#else>
+if(this.${attributeList[i].getName()}!=null){
+  v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
+}
+      </#if>
 <#------------------------------------>
     <#else>
-      <#if MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())>
-if(this.${attribute.getName()}.isPresent()){
-   v.set${attribute.getName()?cap_first}(this.${attribute.getName()}.get());
+      <#if MCCollectionSymTypeRelations.isOptional(attributeList[i].getSymbol().getType())>
+        <#if hasSetterList[i]>
+if(this.${attributeList[i].getName()}.isPresent()){
+  v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());
 }else{
   v.set${attribute.getName()?cap_first}Absent();
 }
+        <#else>
+if(this.${attributeList[i].getName()}.isPresent()){
+  v.${attributeList[i].getName()} = this.${attributeList[i].getName()}.get();
+}else{
+  v.${attributeList[i].getName()} = Optional.empty();
+}
+        </#if>
 <#------------------------------------>
       <#else>
-v.set${attribute.getName()?cap_first}(this.${attribute.getName()});
+        <#if hasSetterList[i]>
+v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
+        <#else>
+v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
+        </#if>
 <#------------------------------------>
       </#if>
     </#if>

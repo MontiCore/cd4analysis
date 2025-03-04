@@ -5,8 +5,6 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
-import de.monticore.cd.methodtemplates.CD4CTemplateHelper;
-import de.monticore.cd4analysis._parser.CD4AnalysisAntlrParser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -70,18 +68,6 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         attribute.getSymbol().getType();
       }
 
-      // Add a build() method to the builder class
-      ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint("methods.builder.build", node.getName(), new ArrayList<>(node.getCDAttributeList()))));
-      addToClass(builderClass, buildMethod);
-      decoratorBuildMethod.push(buildMethod);
-
-      // Add the unsafeBuild() method to the builder class
-      ASTCDMethod unsafeBuildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "unsafeBuild");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod, new TemplateHookPoint("methods.builder.unsafeBuild", node.getName(), new ArrayList<>(node.getCDAttributeList()))));
-      addToClass(builderClass, unsafeBuildMethod);
-      decoratorUnsafeBuildMethod.push(unsafeBuildMethod);
-
       // Add a isValid() method to the builder class
       String staticErrorCode = "0x16725";
       ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PRIVATE().build(), MCTypeFacade.getInstance().createBooleanType(), "isValid");
@@ -102,12 +88,36 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         if(MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType()) ||
           MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())||
           MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-          ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), "set" + StringTransformations.capitalize(attribute.getName()) + "Absent");
+          ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),builderClass.getName(), "set" + StringTransformations.capitalize(attribute.getName()) + "Absent");
           glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setAbsentMethod, new TemplateHookPoint("methods.builder.setAbsent", attribute)));
           addToClass(builderClass, setAbsentMethod);
         }
       }
 
+      // it is required to check if a setter method exists
+      // if not the values are set directly in the build and unsafeBuild methods without the use of a setter method
+      List<Boolean> hasSetterMethod = new ArrayList<>();
+      for(ASTCDAttribute attribute : node.getCDAttributeList()) {
+        //TODO in a perfect world we would for setter methods in a different way
+        List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
+        if (methods == null || methods.isEmpty()) {
+          hasSetterMethod.add(false);
+        } else {
+          hasSetterMethod.add(true);
+        }
+      }
+
+      // Add a build() method to the builder class
+      ASTCDMethod buildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "build");
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, buildMethod, new TemplateHookPoint("methods.builder.build", node.getName(), new ArrayList<>(node.getCDAttributeList()), new ArrayList<>(hasSetterMethod))));
+      addToClass(builderClass, buildMethod);
+      decoratorBuildMethod.push(buildMethod);
+
+      // Add the unsafeBuild() method to the builder class
+      ASTCDMethod unsafeBuildMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), node.getName(), "unsafeBuild");
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod, new TemplateHookPoint("methods.builder.unsafeBuild", node.getName(), new ArrayList<>(node.getCDAttributeList()), new ArrayList<>(hasSetterMethod))));
+      addToClass(builderClass, unsafeBuildMethod);
+      decoratorUnsafeBuildMethod.push(unsafeBuildMethod);
 
       // Add the builder class to the stack c
       decoratedBuilderClasses.add(builderClass);
@@ -131,4 +141,5 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
+
 }
