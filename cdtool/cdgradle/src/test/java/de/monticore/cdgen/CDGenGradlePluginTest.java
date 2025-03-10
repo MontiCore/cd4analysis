@@ -73,6 +73,9 @@ public class CDGenGradlePluginTest {
       "    id 'de.rwth.se.cdgen' " +
       "}\n " +
       "repositories {\n" +
+      " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n " +
+      "  mavenLocal()\n" +
+      " }\n" +
       " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
       " mavenCentral()\n" +
       "}\n" +
@@ -131,6 +134,9 @@ public class CDGenGradlePluginTest {
       "    id 'de.rwth.se.cdgen' " +
       "}\n " +
       "repositories {\n" +
+      " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n " +
+      "  mavenLocal()\n" +
+      " }\n" +
       " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
       " mavenCentral()\n" +
       "}\n" +
@@ -205,7 +211,7 @@ public class CDGenGradlePluginTest {
     @Nullable
     String mavenRepo = System.getProperty("maven.repo.local");
     if (mavenRepo != null && !mavenRepo.isEmpty()) {
-      ret.add("-Dmaven.repo.local='" + mavenRepo + "'");
+      ret.add("-Dmaven.repo.local=" + mavenRepo + "");
     }
     @Nullable
     String useLocalRepo = System.getProperty("useLocalRepo");
