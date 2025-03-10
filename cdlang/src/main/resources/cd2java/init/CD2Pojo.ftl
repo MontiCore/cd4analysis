@@ -19,6 +19,8 @@ ${tc.signature("glex", "deConf")}
  -->
 <#-- By default (defaultApply) the GetterDecorator is applied, unless an element or its parents are marked with noGetter -->
 ${deConf.withGetters().ignoreOnName("noGetter").defaultApply()}
+<#--  Similar configuration for a decorator setting the initial value of associations -->
+${deConf.withDefaultsForCardinalityAttrs().ignoreOnName("noDefaultCardinality").defaultApply()}
 <#-- Similar configuration for the Setter Decorator -->
 ${deConf.withSetters().ignoreOnName("noSetter").defaultApply()}
 <#-- And the NavigableSetters (for bidirectional assocs). -->

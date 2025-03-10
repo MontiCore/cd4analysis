@@ -67,6 +67,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
       decorateMandatoryLocal(otherClassDec, role.getOtherSide());
       // Call ${role}.set${otherRole}Local when updating
       methods.forEach(m -> glexOpt.ifPresent(g -> g.addAfterTemplate("methods.Set", m, new TemplateHookPoint("methods.CallLocal", role.getOtherSide().getName()))));
+      // TODO: Unset old?
     }
   }
 

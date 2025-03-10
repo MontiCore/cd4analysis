@@ -108,15 +108,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     addToClass(decoratedClazz, getListMethod);
 
     this.updateModifier(attribute);
-
-
-    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
-      // Note: we only handle EMPTY_BODY here and MIGHT have to add the instantiation to other constructors as well?
-      // Idea 1: Default constructor template with hookpoints?
-      // Setting the initial value of the attribute fails, as "new"/CreatorExpression is not part of CD4C
-      glex.addAfterTemplate(EMPTY_BODY, c,
-        new TemplateHookPoint("methods.Instantiation", attribute.getName(), HashSet.class.getName()))
-    ));
   }
 
   protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
@@ -129,14 +120,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     addToClass(decoratedClazz, getListMethod);
 
     this.updateModifier(attribute);
-
-    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
-      // Note: we only handle EMPTY_BODY here and MIGHT have to add the instantiation to other constructors as well?
-      // Idea 1: Default constructor template with hookpoints?
-      // Setting the initial value of the attribute fails, as "new"/CreatorExpression is not part of CD4C
-      glex.addAfterTemplate(EMPTY_BODY, c,
-        new TemplateHookPoint("methods.Instantiation", attribute.getName(), ArrayList.class.getName()))
-    ));
   }
 
 
@@ -235,15 +218,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     decoratedModifier.setPrivate(false);
   }
 
-  protected List<ASTCDConstructor> getOrCreateDecConstructors(ASTCDClass decoratedClazz) {
-    List<ASTCDConstructor> constructors = new ArrayList<>(decoratedClazz.getCDConstructorList());
-    if (constructors.isEmpty()) {
-      var c = CDConstructorFacade.getInstance().createDefaultConstructor(decoratedClazz.getModifier(), decoratedClazz);
-      addToClass(decoratedClazz, c);
-      constructors.add(c);
-    }
-    return constructors;
-  }
 
 
   @Override
