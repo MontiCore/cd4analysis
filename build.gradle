@@ -30,6 +30,9 @@ ext {
 }
 
 repositories {
+  if (("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
   mavenCentral()
 }
 
