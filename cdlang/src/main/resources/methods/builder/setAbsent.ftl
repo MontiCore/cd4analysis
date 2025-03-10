@@ -14,6 +14,6 @@ this.${attribute.name} = Optional.empty();
     </#if>
   </#if>
 </#if>
-return this;
+return this.realBuilder;
 
 

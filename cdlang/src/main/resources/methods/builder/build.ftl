@@ -18,23 +18,11 @@ v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()})
 v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
   </#if>
 <#------------------------------------>
-<#else>
-  <#if MCCollectionSymTypeRelations.isList(attributeList[i].getSymbol().getType())>
-    <#if hasSetterList[i]>
-if(this.${attributeList[i].getName()}!=null){
-  v.add${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()})
-}
-    <#else>
-if(this.${attributeList[i].getName()}!=null){
-  v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
-}
-    </#if>
-<#------------------------------------>
   <#else>
-    <#if MCCollectionSymTypeRelations.isSet(attributeList[i].getSymbol().getType())>
+    <#if MCCollectionSymTypeRelations.isSet(attributeList[i].getSymbol().getType()) || MCCollectionSymTypeRelations.isList(attributeList[i].getSymbol().getType())>
       <#if hasSetterList[i]>
 if(this.${attributeList[i].getName()}!=null){
-  v.add${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()})
+  v.add${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
 }
       <#else>
 if(this.${attributeList[i].getName()}!=null){
@@ -48,24 +36,23 @@ if(this.${attributeList[i].getName()}!=null){
 if(this.${attributeList[i].getName()}.isPresent()){
   v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());
 }else{
-  v.set${attributeList[i].getName()?cap_first}Absent();
+  v.set${attributeList[i].getName()?cap_first}(null);
 }
-        <#else>
+      <#else>
 if(this.${attributeList[i].getName()}.isPresent()){
-  v.${attributeList[i].getName()} = this.${attributeList[i].getName()}.get();
+  v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
 }else{
   v.${attributeList[i].getName()} = Optional.empty();
 }
-        </#if>
-<#------------------------------------>
-      <#else>
-        <#if hasSetterList[i]>
-v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
-        <#else>
-v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
-        </#if>
-<#------------------------------------>
       </#if>
+<#------------------------------------>
+    <#else>
+      <#if hasSetterList[i]>
+v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
+      <#else>
+v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
+      </#if>
+<#------------------------------------>
     </#if>
   </#if>
 </#if>

@@ -3,10 +3,12 @@ package de.monticore.cdgen.decorators;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.CDAttributeFacade;
+import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -14,6 +16,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDClassBuilder;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdgen.decorators.data.AbstractDecorator;
+import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -68,6 +71,15 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         attribute.getSymbol().getType();
       }
 
+      // Add builder attribute for TOP safety
+      builderClass.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().PROTECTED().build(),builderClass.getName() , "realBuilder"));
+
+      // Add a constructor to the builder class
+      ASTCDConstructor constructor = CDConstructorFacade.getInstance().createConstructor(CD4CodeMill.modifierBuilder().PUBLIC().build(), builderClass.getName());
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, constructor, new StringHookPoint("this.realBuilder = ("+builderClass.getName()+") this;")));
+      addToClass(builderClass, constructor);
+
+
       // Add a isValid() method to the builder class
       String staticErrorCode = "0x16725";
       ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PRIVATE().build(), MCTypeFacade.getInstance().createBooleanType(), "isValid");
@@ -101,7 +113,9 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
       List<Boolean> hasSetterMethod = new ArrayList<>();
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
         //We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
-        List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
+        List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class) != null
+          ? decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute)
+          : null;
         if (methods == null || methods.isEmpty() || methods.stream().noneMatch(m ->m.getName().equals("set" + StringTransformations.capitalize(attribute.getName())))) {
           hasSetterMethod.add(false);
         } else {
