@@ -2,12 +2,10 @@
 package de.monticore.cd.codegen.decorators;
 
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
-import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -23,10 +21,7 @@ import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;

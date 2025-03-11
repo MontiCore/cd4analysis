@@ -10,10 +10,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class CDGenGradlePluginTest {
@@ -69,6 +73,9 @@ public class CDGenGradlePluginTest {
       "    id 'de.rwth.se.cdgen' " +
       "}\n " +
       "repositories {\n" +
+      " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n " +
+      "  mavenLocal()\n" +
+      " }\n" +
       " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
       " mavenCentral()\n" +
       "}\n" +
@@ -88,7 +95,7 @@ public class CDGenGradlePluginTest {
       .withPluginClasspath()
       .withGradleVersion(version)
       .withProjectDir(testProjectDir)
-      .withArguments("build", "--info", "--stacktrace")
+      .withArguments(withProperties("build", "--info", "--stacktrace"))
       .build();
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
@@ -127,6 +134,9 @@ public class CDGenGradlePluginTest {
       "    id 'de.rwth.se.cdgen' " +
       "}\n " +
       "repositories {\n" +
+      " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n " +
+      "  mavenLocal()\n" +
+      " }\n" +
       " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
       " mavenCentral()\n" +
       "}\n" +
@@ -165,7 +175,7 @@ public class CDGenGradlePluginTest {
       .withPluginClasspath()
       .withGradleVersion(version)
       .withProjectDir(testProjectDir)
-      .withArguments("build", "--info", "--stacktrace")
+      .withArguments(withProperties("build", "--info", "--stacktrace"))
       .build();
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
@@ -190,6 +200,25 @@ public class CDGenGradlePluginTest {
       throw new RuntimeException(e);
     }
     return properties;
+  }
+
+  List<String> withProperties(String... args) {
+    return withProperties(Arrays.asList(args));
+  }
+
+  List<String> withProperties(List<String> runnerArgs) {
+    List<String> ret = new ArrayList<>(runnerArgs);
+    @Nullable
+    String mavenRepo = System.getProperty("maven.repo.local");
+    if (mavenRepo != null && !mavenRepo.isEmpty()) {
+      ret.add("-Dmaven.repo.local=" + mavenRepo + "");
+    }
+    @Nullable
+    String useLocalRepo = System.getProperty("useLocalRepo");
+    if (useLocalRepo != null && !useLocalRepo.isEmpty()) {
+      ret.add("-PuseLocalRepo=" + useLocalRepo);
+    }
+    return ret;
   }
 
 }
