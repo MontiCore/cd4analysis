@@ -37,6 +37,10 @@ public class DecoratorConfig {
     return new ChainableGenSetup((Class<? extends IDecorator<?>>) decorator.getClass());
   }
 
+  public ChainableGenSetup withDefaultsForCardinalityAttrs() {
+    return this.withDecorator(new CardinalityDefaultDecorator());
+  }
+
   public ChainableGenSetup withGetters() {
     return this.withDecorator(new GetterDecorator());
   }

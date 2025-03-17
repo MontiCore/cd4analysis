@@ -2,12 +2,10 @@
 package de.monticore.cd.codegen.decorators;
 
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
-import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -23,10 +21,7 @@ import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
@@ -108,15 +103,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     addToClass(decoratedClazz, getListMethod);
 
     this.updateModifier(attribute);
-
-
-    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
-      // Note: we only handle EMPTY_BODY here and MIGHT have to add the instantiation to other constructors as well?
-      // Idea 1: Default constructor template with hookpoints?
-      // Setting the initial value of the attribute fails, as "new"/CreatorExpression is not part of CD4C
-      glex.addAfterTemplate(EMPTY_BODY, c,
-        new TemplateHookPoint("methods.Instantiation", attribute.getName(), HashSet.class.getName()))
-    ));
   }
 
   protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
@@ -129,14 +115,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     addToClass(decoratedClazz, getListMethod);
 
     this.updateModifier(attribute);
-
-    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
-      // Note: we only handle EMPTY_BODY here and MIGHT have to add the instantiation to other constructors as well?
-      // Idea 1: Default constructor template with hookpoints?
-      // Setting the initial value of the attribute fails, as "new"/CreatorExpression is not part of CD4C
-      glex.addAfterTemplate(EMPTY_BODY, c,
-        new TemplateHookPoint("methods.Instantiation", attribute.getName(), ArrayList.class.getName()))
-    ));
   }
 
 
@@ -235,15 +213,6 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     decoratedModifier.setPrivate(false);
   }
 
-  protected List<ASTCDConstructor> getOrCreateDecConstructors(ASTCDClass decoratedClazz) {
-    List<ASTCDConstructor> constructors = new ArrayList<>(decoratedClazz.getCDConstructorList());
-    if (constructors.isEmpty()) {
-      var c = CDConstructorFacade.getInstance().createDefaultConstructor(decoratedClazz.getModifier(), decoratedClazz);
-      addToClass(decoratedClazz, c);
-      constructors.add(c);
-    }
-    return constructors;
-  }
 
 
   @Override

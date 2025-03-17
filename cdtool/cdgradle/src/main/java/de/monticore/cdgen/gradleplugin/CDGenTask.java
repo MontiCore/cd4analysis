@@ -2,7 +2,7 @@
 package de.monticore.cdgen.gradleplugin;
 
 import de.monticore.gradle.common.AToolAction;
-import de.monticore.gradle.common.MCSingleFileTask;
+import de.monticore.gradle.common.MCAllFilesTask;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class CDGenTask extends MCSingleFileTask {
+/**
+ * Gradle Task of the {@link de.monticore.cdgen.CDGenTool}
+ * It is an all-files task, as -i A.cd -i B.cd is allowed
+ */
+public abstract class CDGenTask extends MCAllFilesTask {
   public CDGenTask() {
     super("CDGenTask", null);
   }
@@ -27,8 +31,8 @@ public abstract class CDGenTask extends MCSingleFileTask {
   abstract Property<Boolean> getClass2MC();
 
   @Override
-  protected List<String> createArgList(Path filePath, Function<Path, String> handlePath) {
-    var list = super.createArgList(filePath, handlePath);
+  protected List<String> createArgList(Function<Path, String> handlePath) {
+    var list = super.createArgList(handlePath);
     if (getOptions().isPresent() && !getOptions().get().isEmpty()) {
       list.add("-cliconfig");
       list.addAll(getOptions().get());
@@ -37,6 +41,13 @@ public abstract class CDGenTask extends MCSingleFileTask {
       list.add("--class2mc");
     }
     return list;
+  }
+
+  @Override
+  public void startGeneration(List<String> args, String progressName) {
+    // Do not run for no inputs
+    if (this.getInput().getAsFileTree().getFiles().isEmpty()) return;
+    super.startGeneration(args, progressName);
   }
 
   @Override

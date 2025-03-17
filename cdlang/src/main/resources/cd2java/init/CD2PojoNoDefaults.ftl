@@ -11,6 +11,7 @@ ${tc.signature("glex", "deConf")}
 <#-- @ftlvariable name="tc" type="de.monticore.generating.templateengine.TemplateController" -->
 
 ${deConf.withGetters().applyOnName("getter").ignoreOnName("noGetter")}
+${deConf.withDefaultsForCardinalityAttrs().applyOnName("defaultCardinality").ignoreOnName("noDefaultCardinality")}
 ${deConf.withSetters().applyOnName("setter").ignoreOnName("noSetter")}
 ${deConf.withNavigableSetters().applyOnName("setter").ignoreOnName("noSetter")}
 ${deConf.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}

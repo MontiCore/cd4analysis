@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.decorators.CardinalityDefaultDecorator;
+import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd.codegen.decorators.GetterDecorator;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +21,8 @@ public class GetterCDTest extends AbstractCDGenTest {
     setup.configApplyMatchName(GetterDecorator.class, "getter");
     setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
 
+    setup.withDecorator(new CardinalityDefaultDecorator());
+    setup.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
 
     var opt = CD4CodeMill.parser().parse_String("classdiagram TestGetter {\n" +
                                                   " <<getter>> public class TestGetterC { \n" +

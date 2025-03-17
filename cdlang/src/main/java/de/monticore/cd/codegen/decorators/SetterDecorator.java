@@ -11,6 +11,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.ForwardingTemplateHookPoint;
+import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
@@ -42,8 +43,10 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
       } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
+        decorateList(decClazz, attribute);
         Log.warn("0xTODO: WIP List Setter", attribute.get_SourcePositionStart());
       } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+        decorateSet(decClazz, attribute);
         Log.warn("0xTODO: WIP Set Setter", attribute.get_SourcePositionStart());
       } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
@@ -86,6 +89,36 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
 
     // Also track this data
     getData().addMethod(attribute, method);
+  }
+
+  protected void decorateSet(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+    String name = "set" + StringTransformations.capitalize(attribute.getName());
+    ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
+
+    ASTCDMethod setListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), name,
+      CDParameterFacade.getInstance().createParameter(MCTypeFacade.getInstance().createSetTypeOf(type), attribute.getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setListMethod, new TemplateHookPoint("methods.Set", attribute)));
+    setListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
+    addToClass(decoratedClazz, setListMethod);
+
+    getData().addMethod(attribute, setListMethod);
+
+    this.updateModifier(attribute);
+  }
+
+  protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
+    String name = "set" + StringTransformations.capitalize(attribute.getName());
+    ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
+
+    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier().deepClone(), name,
+      CDParameterFacade.getInstance().createParameter(MCTypeFacade.getInstance().createListTypeOf(type), attribute.getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint("methods.Set", attribute)));
+    getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
+    addToClass(decoratedClazz, getListMethod);
+
+    getData().addMethod(attribute, getListMethod);
+
+    this.updateModifier(attribute);
   }
 
 
