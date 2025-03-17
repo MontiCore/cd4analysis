@@ -27,10 +27,14 @@ v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
        <#if hasSetterList[i]>
 if(this.${attributeList[i].getName()}.isPresent()){
   v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());
+}else{
+  v.set${attributeList[i].getName()?cap_first}(null);
 }
       <#else>
 if(this.${attributeList[i].getName()}.isPresent()){
   v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
+}else{
+  v.${attributeList[i].getName()} = Optional.empty();
 }
       </#if>
 <#------------------------------------>

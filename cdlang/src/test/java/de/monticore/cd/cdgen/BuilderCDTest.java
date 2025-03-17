@@ -178,7 +178,6 @@ public class BuilderCDTest {
 
     // optional attribute with cardinality 0..1
     // with setters
-    //TODO check if we check for the presence of the optional value in the unsafeBuild method
     Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("if(this.optB.isPresent()){"));
     Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("v.setOptB(this.optB.get());"));
     Assert.assertFalse(unsafeBuildBodiesWithSetters.contains("}else{"));
