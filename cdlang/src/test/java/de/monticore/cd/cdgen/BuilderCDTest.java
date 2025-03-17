@@ -180,13 +180,13 @@ public class BuilderCDTest {
     // with setters
     Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("if(this.optB.isPresent()){"));
     Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("v.setOptB(this.optB.get());"));
-    Assert.assertFalse(unsafeBuildBodiesWithSetters.contains("}else{"));
-    Assert.assertFalse(unsafeBuildBodiesWithSetters.contains("v.setOptB(null);"));
+    Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("}else{"));
+    Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("v.setOptB(null);"));
     // without setters
     Assert.assertTrue(unsafeBuildBodiesWithoutSetters.contains("if(this.optB.isPresent()){"));
     Assert.assertTrue(unsafeBuildBodiesWithoutSetters.contains("v.optB = this.optB;"));
-    Assert.assertFalse(unsafeBuildBodiesWithoutSetters.contains("}else{"));
-    Assert.assertFalse(unsafeBuildBodiesWithoutSetters.contains("v.optB = Optional.empty();"));
+    Assert.assertTrue(unsafeBuildBodiesWithoutSetters.contains("}else{"));
+    Assert.assertTrue(unsafeBuildBodiesWithoutSetters.contains("v.optB = Optional.empty();"));
 
 
     // class attribute with cardinality 1
