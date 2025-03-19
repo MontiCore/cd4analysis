@@ -4,9 +4,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 
-public class MatchCDTypesToSuperTypes extends MatchCDTypeInHierarchy {
+public class MatchCDTypesToSubTypes extends MatchCDTypeInHierarchy {
 
-  public MatchCDTypesToSuperTypes(
+  public MatchCDTypesToSubTypes(
       MatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
@@ -14,14 +14,14 @@ public class MatchCDTypesToSuperTypes extends MatchCDTypeInHierarchy {
   }
 
   /**
-   * A boolean method which checks if a supertype of srcElem matches to tgtCD
+   * A boolean method which checks if a subtype of srcElem matches to tgtCD
    *
    * @param tgtElem element from tgtCD
-   * @return true if a supertype of srcElem matches to tgtCD
+   * @return true if a subtype of srcElem matches to tgtCD
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    return CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
+    return CDDiffUtil.getAllStrictSubTypes(srcElem, srcCD.getCDDefinition()).stream()
         .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
   }
 }

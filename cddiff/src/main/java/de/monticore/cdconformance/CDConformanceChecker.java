@@ -6,6 +6,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.cdconformance.conf.association.DeepAssocConfStrategy;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
@@ -22,6 +23,7 @@ import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -90,11 +92,35 @@ public class CDConformanceChecker {
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
-      assocInc.addIncStrategy(new RolePrefixInNavDirIncStrategy(typeInc, concreteCD, referenceCD));
-      assocInc.addIncStrategy(new RolePrefixIfPresentIncStrategy(typeInc, concreteCD, referenceCD));
+
+      if (params.contains(INHERITANCE)) {
+        CompTypeIncStrategy subTypeInc = new CompTypeIncStrategy(referenceCD, mapping);
+        subTypeInc.addIncStrategy(typeInc);
+        subTypeInc.addIncStrategy(new MatchCDTypesToSubTypes(typeInc, concreteCD, referenceCD));
+
+        assocInc.addIncStrategy(
+            new RolePrefixInNavDirIncStrategy(subTypeInc, concreteCD, referenceCD));
+        assocInc.addIncStrategy(
+            new RolePrefixIfPresentIncStrategy(subTypeInc, concreteCD, referenceCD));
+      } else {
+        assocInc.addIncStrategy(
+            new RolePrefixInNavDirIncStrategy(typeInc, concreteCD, referenceCD));
+        assocInc.addIncStrategy(
+            new RolePrefixIfPresentIncStrategy(typeInc, concreteCD, referenceCD));
+      }
     }
 
-    // init conformance Checker
+    // init Conformance Checker
+    ConformanceStrategy<ASTCDCompilationUnit> cdChecker = getBasicCDConfStrategy(concreteCD, referenceCD);
+
+    // check conformance
+    boolean multiInc = !params.contains(NO_MULTI_INC);
+    return cdChecker.checkConformance(concreteCD)
+        && checkIncarnationMap(concreteCD, referenceCD, multiInc);
+  }
+
+  protected BasicCDConfStrategy getBasicCDConfStrategy(
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD) {
     BasicTypeConfStrategy typeChecker;
     BasicAssocConfStrategy assocChecker;
     boolean cardRestriction = params.contains(ALLOW_CARD_RESTRICTION);
@@ -111,13 +137,7 @@ public class CDConformanceChecker {
           new BasicTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
     }
 
-    BasicCDConfStrategy cdChecker =
-        new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
-
-    // check conformance
-    boolean muliInc = !params.contains(NO_MULTI_INC);
-    return cdChecker.checkConformance(concreteCD)
-        && checkIncarnationMap(concreteCD, referenceCD, muliInc);
+    return new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
   }
 
   private boolean checkIncarnationMap(
