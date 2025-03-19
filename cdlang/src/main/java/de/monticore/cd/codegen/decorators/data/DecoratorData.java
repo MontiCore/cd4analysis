@@ -4,16 +4,16 @@ package de.monticore.cd.codegen.decorators.data;
 import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
+import de.monticore.cd.codegen.creators.CopyCreator;
+import de.monticore.cd.codegen.decorators.IDecorator;
+import de.monticore.cd.codegen.decorators.matcher.MatchResult;
+import de.monticore.cd.codegen.decorators.matcher.MatcherData;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cd.codegen.decorators.matcher.MatchResult;
-import de.monticore.cd.codegen.creators.CopyCreator;
-import de.monticore.cd.codegen.decorators.IDecorator;
-import de.monticore.cd.codegen.decorators.matcher.MatcherData;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.tagging.SimpleSymbolTagger;
@@ -23,7 +23,6 @@ import de.monticore.tagging.tags._ast.ASTTagUnit;
 import de.monticore.umlstereotype._ast.ASTStereoValue;
 import de.monticore.visitor.IVisitor;
 import de.se_rwth.commons.logging.Log;
-
 import java.lang.ref.WeakReference;
 import java.util.*;
 
@@ -37,15 +36,12 @@ public class DecoratorData {
 
   protected CDGenService cdGenService = new CDGenService();
 
-  /**
-   * We keep a map of child -> parent relations for when we look-up the state of
-   */
+  /** We keep a map of child -> parent relations for when we look-up the state of */
   protected WeakHashMap<ASTNode, WeakReference<ASTNode>> parents = new WeakHashMap<>();
 
-  /**
-   * A Cache (AST, Decorator) -> MatchResult
-   */
-  protected WeakHashMap<ASTNode, IdentityHashMap<MatcherData, MatchResult>> cache = new WeakHashMap<>();
+  /** A Cache (AST, Decorator) -> MatchResult */
+  protected WeakHashMap<ASTNode, IdentityHashMap<MatcherData, MatchResult>> cache =
+      new WeakHashMap<>();
 
   protected SimpleSymbolTagger tagger = new SimpleSymbolTagger(this::_getTaggingUnits);
   protected ASTTagUnit internalTagUnit;
@@ -57,7 +53,8 @@ public class DecoratorData {
 
   protected Iterable<ASTTagUnit> _getTaggingUnits() {
     // As a note: It might be interesting to limit to a subset of the loaded tags?
-    return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository.getLoadedTagUnits());
+    return Iterables.concat(
+        Collections.singleton(internalTagUnit), TagRepository.getLoadedTagUnits());
   }
 
   public void simpleTag(ISymbol symbol, String name) {
@@ -77,27 +74,29 @@ public class DecoratorData {
     cache.clear();
     this.cliConfig = cliConfig;
     var t = CD4CodeMill.inheritanceTraverser();
-    t.add4IVisitor(new IVisitor() {
-      final Stack<ASTNode> nodeStack = new Stack<>();
+    t.add4IVisitor(
+        new IVisitor() {
+          final Stack<ASTNode> nodeStack = new Stack<>();
 
-      @Override
-      public void visit(ASTNode node) {
-        if (!nodeStack.isEmpty())
-          parents.put(node, new WeakReference<>(nodeStack.peek()));
-        nodeStack.push(node);
-      }
+          @Override
+          public void visit(ASTNode node) {
+            if (!nodeStack.isEmpty()) parents.put(node, new WeakReference<>(nodeStack.peek()));
+            nodeStack.push(node);
+          }
 
-      @Override
-      public void endVisit(ASTNode node) {
-        nodeStack.pop();
-      }
-    });
+          @Override
+          public void endVisit(ASTNode node) {
+            nodeStack.pop();
+          }
+        });
     created.getOriginal().accept(t);
     this.created = created;
   }
 
   public Optional<ASTNode> getParent(ASTNode p) {
-    return this.parents.containsKey(p) ? Optional.ofNullable(parents.get(p).get()) : Optional.empty();
+    return this.parents.containsKey(p)
+        ? Optional.ofNullable(parents.get(p).get())
+        : Optional.empty();
   }
 
   public boolean shouldDecorate(Class<? extends IDecorator> decorator, ASTNode node) {
@@ -109,9 +108,11 @@ public class DecoratorData {
   }
 
   protected MatchResult shouldDecorate(MatcherData matcherData, ASTNode node) {
-    return this.cache.computeIfAbsent(node, (astNode) -> new IdentityHashMap<>()).computeIfAbsent(matcherData, (matcherData1) -> shouldDecorateCacheMiss(matcherData1, node));
+    return this.cache
+        .computeIfAbsent(node, (astNode) -> new IdentityHashMap<>())
+        .computeIfAbsent(
+            matcherData, (matcherData1) -> shouldDecorateCacheMiss(matcherData1, node));
   }
-
 
   protected MatchResult shouldDecorateCacheMiss(MatcherData matcherData, ASTNode node) {
     MatchResult result = MatchResult.DEFAULT;
@@ -124,9 +125,11 @@ public class DecoratorData {
     } else if (node instanceof ASTCDCompilationUnit) {
       result = matchCDCU((ASTCDCompilationUnit) node, matcherData);
     } else {
-      Log.error("0xTODO: Unable add to parent of unknown type " + node.getClass().getName(),
-                node.get_SourcePositionStart());
-      throw new IllegalStateException("Unable add to parent of unknown type " + node.getClass().getName());
+      Log.error(
+          "0xTODO: Unable add to parent of unknown type " + node.getClass().getName(),
+          node.get_SourcePositionStart());
+      throw new IllegalStateException(
+          "Unable add to parent of unknown type " + node.getClass().getName());
     }
 
     if (result != MatchResult.DEFAULT) return result;
@@ -139,7 +142,6 @@ public class DecoratorData {
 
     return matcherData.getGlobalDefault();
   }
-
 
   protected MatchResult matchClass(ASTCDClass node, MatcherData matcherData) {
     if (node.getModifier().isPresentStereotype()) {

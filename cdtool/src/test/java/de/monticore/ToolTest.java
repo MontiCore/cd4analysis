@@ -64,7 +64,8 @@ public class ToolTest extends OutTestBasis {
   }
 
   @Test
-  @Ignore // todo test has always(?) been broken and not correctly tested to far... -> requires rework
+  @Ignore // todo test has always(?) been broken and not correctly tested to far... -> requires
+          // rework
   public void testToolNoBuiltInTypes() throws IOException, ParseException {
     final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
@@ -149,14 +150,19 @@ public class ToolTest extends OutTestBasis {
   @Before
   public void setUpFailOnExitHook() {
     // This will(should) result in an indefinitely blocked process,
-    // s. https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runtime.html#exit(int)
+    // s.
+    // https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Runtime.html#exit(int)
     // This is not ideal (It would be ideal to fail the test),
     // without properly initialized Log, this will not happen.
     // This one ensures that, even if the log has not been initialized correctly,
     // an issue will be noticed.
     // This is only an additional failsafe (as the case has happened),
     // and should not actually occur.
-    failOnExitHook = new Thread(() -> {System.exit(3);});
+    failOnExitHook =
+        new Thread(
+            () -> {
+              System.exit(3);
+            });
     Runtime.getRuntime().addShutdownHook(failOnExitHook);
   }
 
@@ -164,5 +170,4 @@ public class ToolTest extends OutTestBasis {
   public void removeFailOnExitHook() {
     Runtime.getRuntime().removeShutdownHook(failOnExitHook);
   }
-
 }

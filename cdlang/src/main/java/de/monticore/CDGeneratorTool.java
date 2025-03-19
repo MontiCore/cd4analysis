@@ -59,8 +59,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * This class is scheduled for removal/replacement by the decorating
- * {@link de.monticore.cdgen.CDGenTool}
+ * This class is scheduled for removal/replacement by the decorating {@link
+ * de.monticore.cdgen.CDGenTool}
  */
 @Deprecated
 public class CDGeneratorTool extends CD4CodeTool {

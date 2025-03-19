@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.trafo;
 
+import static de.monticore.generating.GeneratorEngine.existsHandwrittenClass;
+import static de.se_rwth.commons.Names.constructQualifiedName;
+
 import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -16,26 +19,20 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 
-import static de.monticore.generating.GeneratorEngine.existsHandwrittenClass;
-import static de.se_rwth.commons.Names.constructQualifiedName;
-
-
 /**
- * Adds the suffix TOP to generated AST elements IFF a handwritten equivalent exists.
- * Part of the TOP-mechanism.
- * Attention! does not actually create a new CD object, because then the glex has the wrong objects referenced
+ * Adds the suffix TOP to generated AST elements IFF a handwritten equivalent exists. Part of the
+ * TOP-mechanism. Attention! does not actually create a new CD object, because then the glex has the
+ * wrong objects referenced
  */
-public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2,
-  CDInterfaceAndEnumVisitor2 {
+public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData>
+    implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
 
   public static final String TOP_SUFFIX = "TOP";
   public static final String NEEDS_TOP_IDENTIFIER = "needs" + TOP_SUFFIX;
-
 
   protected Stack<String> packageName = new Stack<>();
   protected ASTCDCompilationUnit compilationUnit = null;
@@ -48,7 +45,7 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
   @Override
   public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
     throw new IllegalStateException(
-      "The TOPTrafo MUST be run as a Post-Decorate action (which is currently not configurable)");
+        "The TOPTrafo MUST be run as a Post-Decorate action (which is currently not configurable)");
   }
 
   @Override
@@ -92,9 +89,7 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
     this.packageName.pop();
   }
 
-  /**
-   * Should the TOP mechanism be applied to a class
-   */
+  /** Should the TOP mechanism be applied to a class */
   protected boolean shouldApplyTOPToClass(ASTCDClass cdClass, ASTCDCompilationUnit compUnit) {
     String qualifiedName = determineQualifiedName(cdClass, compUnit);
     boolean existsHw = existsHandwrittenClass(hwPath, qualifiedName);
@@ -103,18 +98,13 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
     return existsHw;
   }
 
-  /**
-   * Should the TOP mechanism be applied to an interface
-   */
+  /** Should the TOP mechanism be applied to an interface */
   protected boolean shouldApplyTOPToInterface(
-    ASTCDInterface cdInterface, ASTCDCompilationUnit compUnit) {
+      ASTCDInterface cdInterface, ASTCDCompilationUnit compUnit) {
     return existsHandwrittenClass(hwPath, determineQualifiedName(cdInterface, compUnit));
   }
 
-
-  /**
-   * Should the TOP mechanism be applied to an enum
-   */
+  /** Should the TOP mechanism be applied to an enum */
   protected boolean shouldApplyTOPToEnum(ASTCDEnum cdEnum, ASTCDCompilationUnit compUnit) {
     return existsHandwrittenClass(hwPath, determineQualifiedName(cdEnum, compUnit));
   }
@@ -124,26 +114,29 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
    * value of the stereo with the qualifiedName, and append it to the error message
    */
   protected void checkNeedsHandwrittenClass(
-    boolean existsHw, ASTCDClass cdClass, String qualifiedName) {
+      boolean existsHw, ASTCDClass cdClass, String qualifiedName) {
 
     // check for stereotype
     getStereotype(cdClass)
-      .flatMap(
-        stereo ->
-          stereo.getValuesList().stream()
-            .filter(stereoValue -> stereoValue.getName().equals(NEEDS_TOP_IDENTIFIER))
-            .findFirst())
-      .ifPresent(
-        needsTopStereo -> {
-          if (!existsHw) {
-            String errorMsg = String.format("0xC0FFEE00: %s", needsTopStereo.getValue());
-            // an %s in the stereo is substituted with the qualified name of the missing class
-            Log.error(String.format(errorMsg, qualifiedName), needsTopStereo.get_SourcePositionStart());
-          }
-        });
+        .flatMap(
+            stereo ->
+                stereo.getValuesList().stream()
+                    .filter(stereoValue -> stereoValue.getName().equals(NEEDS_TOP_IDENTIFIER))
+                    .findFirst())
+        .ifPresent(
+            needsTopStereo -> {
+              if (!existsHw) {
+                String errorMsg = String.format("0xC0FFEE00: %s", needsTopStereo.getValue());
+                // an %s in the stereo is substituted with the qualified name of the missing class
+                Log.error(
+                    String.format(errorMsg, qualifiedName),
+                    needsTopStereo.get_SourcePositionStart());
+              }
+            });
   }
 
-  protected String determineQualifiedName(ASTCDType astcdtype, ASTCDCompilationUnit astcdCompilationUnit) {
+  protected String determineQualifiedName(
+      ASTCDType astcdtype, ASTCDCompilationUnit astcdCompilationUnit) {
     if (this.packageName.isEmpty()) {
       return constructQualifiedName(astcdCompilationUnit.getCDPackageList(), astcdtype.getName());
     }
@@ -158,16 +151,14 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData> implem
     return Optional.empty();
   }
 
-  /**
-   * Rename the (now abstract) class and its constructors
-   */
+  /** Rename the (now abstract) class and its constructors */
   protected void applyTopMechanism(ASTCDClass cdClass) {
     makeAbstract(cdClass);
     cdClass.setName(cdClass.getName() + TOP_SUFFIX);
 
     cdClass
-      .getCDConstructorList()
-      .forEach(constructor -> constructor.setName(constructor.getName() + TOP_SUFFIX));
+        .getCDConstructorList()
+        .forEach(constructor -> constructor.setName(constructor.getName() + TOP_SUFFIX));
   }
 
   protected void makeAbstract(ASTCDType type) {

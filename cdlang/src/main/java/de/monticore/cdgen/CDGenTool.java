@@ -5,6 +5,8 @@ import de.monticore.CDGeneratorTool;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
+import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -12,8 +14,6 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
-import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -22,18 +22,16 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.cli.*;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.commons.cli.*;
 
 /**
- * This class is a further development of the {@link CDGeneratorTool}
- * and meant as a replacement.
- * It provides configurable decorator functionality in addition to generation
+ * This class is a further development of the {@link CDGeneratorTool} and meant as a replacement. It
+ * provides configurable decorator functionality in addition to generation
  */
 public class CDGenTool extends CDGeneratorTool {
 
@@ -46,7 +44,6 @@ public class CDGenTool extends CDGeneratorTool {
     CDGenTool tool = new CDGenTool();
     tool.run(args);
   }
-
 
   /**
    * main method of the CDGenTool
@@ -127,8 +124,6 @@ public class CDGenTool extends CDGeneratorTool {
         Log.enableFailQuick(true);
       }
 
-
-
       if (cmd.hasOption("s")) {
         for (ICD4CodeArtifactScope scope : scopes) {
           this.storeSymTab(scope, cmd.getOptionValue("s"));
@@ -170,7 +165,8 @@ public class CDGenTool extends CDGeneratorTool {
           decSetup.withCLIConfig(Arrays.asList(cmd.getOptionValues("cliconfig")));
         }
 
-        CDAssociationCreateFieldsFromAllRoles roleTrafo = new CDAssociationCreateFieldsFromNavigableRoles();
+        CDAssociationCreateFieldsFromAllRoles roleTrafo =
+            new CDAssociationCreateFieldsFromNavigableRoles();
         final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
         traverser.add4CDAssociation(roleTrafo);
         traverser.setCDAssociationHandler(roleTrafo);
@@ -194,7 +190,8 @@ public class CDGenTool extends CDGeneratorTool {
           this.makeMethodsInInterfacesAbstract(decorated);
 
           // Post-Decorate: TOP Decorator
-          // TODO: #4310 - make this TOP decorator/transformation configurable via the config template
+          // TODO: #4310 - make this TOP decorator/transformation configurable via the config
+          // template
           TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
           t = CD4CodeMill.inheritanceTraverser();
           topTransformer.addToTraverser(t);

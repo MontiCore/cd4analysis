@@ -1,6 +1,11 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.symtabdefinitiontool.gradleplugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collections;
+import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -11,16 +16,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collections;
-import java.util.Properties;
-
 public class SymTabDefinitionGradlePluginTest {
 
-  @Rule
-  public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
   File testProjectDir;
   File settingsFile;
   File propertiesFile;
@@ -61,35 +59,41 @@ public class SymTabDefinitionGradlePluginTest {
     Assert.assertTrue(cdlangLibs.exists());
 
     File stdeftoolLibs = new File("../target/libs");
-    File stdeftoolJarFile = new File(stdeftoolLibs, "cd4analysis-" + projVersion + "-symtabdefinitiontool.jar");
+    File stdeftoolJarFile =
+        new File(stdeftoolLibs, "cd4analysis-" + projVersion + "-symtabdefinitiontool.jar");
     Assert.assertTrue(stdeftoolLibs.exists());
 
-    String buildFileContent = "plugins {\n" +
-      "  id 'de.rwth.se.symtabdefinition'\n" +
-      "}\n " +
-      "repositories {\n" +
-      " maven{ url 'https://nexus.se.rwth-aachen.de/content/groups/public' }\n" +
-      " mavenCentral()\n" +
-      "}\n" +
-      // We have to inject the cdlang jar for this project (as it is not yet published)
-      "dependencies {\n" +
-      "  stdefTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\") + "')\n" +
-      // Along with the transitive dependencies
-      " stdefTool \"de.monticore:monticore-grammar:" + projVersion + "\"\n" +
-      "}";
+    String buildFileContent =
+        "plugins {\n"
+            + "  id 'de.rwth.se.symtabdefinition'\n"
+            + "}\n "
+            + "repositories {\n"
+            + " maven{ url 'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
+            + " mavenCentral()\n"
+            + "}\n"
+            +
+            // We have to inject the cdlang jar for this project (as it is not yet published)
+            "dependencies {\n"
+            + "  stdefTool files('"
+            + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
+            + "')\n"
+            +
+            // Along with the transitive dependencies
+            " stdefTool \"de.monticore:monticore-grammar:"
+            + projVersion
+            + "\"\n"
+            + "}";
     writeFile(buildFile, buildFileContent);
-    FileUtils.copyDirectory(
-      new File("src/test/resources/symtabdefinition"),
-      modelDir
-    );
+    FileUtils.copyDirectory(new File("src/test/resources/symtabdefinition"), modelDir);
 
-    BuildResult result = GradleRunner.create()
-      //.withDebug(true) // add to debug
-      .withPluginClasspath()
-      .withGradleVersion(version)
-      .withProjectDir(testProjectDir)
-      .withArguments("build", "--info", "--stacktrace")
-      .build();
+    BuildResult result =
+        GradleRunner.create()
+            // .withDebug(true) // add to debug
+            .withPluginClasspath()
+            .withGradleVersion(version)
+            .withProjectDir(testProjectDir)
+            .withArguments("build", "--info", "--stacktrace")
+            .build();
     Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateSymbolTables").getOutcome());
   }
 
@@ -103,11 +107,9 @@ public class SymTabDefinitionGradlePluginTest {
     Properties properties = new Properties();
     try {
       properties.load(this.getClass().getClassLoader().getResourceAsStream("buildInfo.properties"));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException(e);
     }
     return properties;
   }
-
 }

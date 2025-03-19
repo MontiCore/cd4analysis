@@ -5,20 +5,16 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.visitor.IVisitor;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-/**
- * Create the initial target CD as a copy of the original
- */
+/** Create the initial target CD as a copy of the original */
 public class CopyCreator {
 
-
   /**
-   * Initialized the decorated CD with a deep-copy of the original CD.
-   * The Original->Decorated Map will be created on the fly
+   * Initialized the decorated CD with a deep-copy of the original CD. The Original->Decorated Map
+   * will be created on the fly
    *
    * @param originalCD the initial, original CD which will be copied
    * @return the data

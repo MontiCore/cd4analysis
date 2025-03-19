@@ -1,19 +1,18 @@
 package de.monticore.symtabdefinition;
 
-import org.junit.jupiter.api.Assertions;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.junit.jupiter.api.Assertions;
 
 /**
- * Better Option: copied from cdtool
- * -> a common place to store helper classes for tests would be useful
+ * Better Option: copied from cdtool -> a common place to store helper classes for tests would be
+ * useful
  *
- * Test that the shadowed tool jar conforms to a certain format
+ * <p>Test that the shadowed tool jar conforms to a certain format
  *
  * <p>The property "toolJarFile" MUST contain the path to the CLI-jar
  */

@@ -8,10 +8,10 @@ public interface ICLIMatcher {
   MatchResult match(String name, @Nullable String value);
 
   static ICLIMatcher applyName(String name) {
-    return (n,v) -> name.equals(n) ? MatchResult.APPLY : MatchResult.DEFAULT;
+    return (n, v) -> name.equals(n) ? MatchResult.APPLY : MatchResult.DEFAULT;
   }
 
   static ICLIMatcher ignoreName(String name) {
-    return (n,v) -> name.equals(n) ? MatchResult.IGNORE : MatchResult.DEFAULT;
+    return (n, v) -> name.equals(n) ? MatchResult.IGNORE : MatchResult.DEFAULT;
   }
 }

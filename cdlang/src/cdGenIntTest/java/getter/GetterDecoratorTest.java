@@ -2,18 +2,17 @@
 package getter;
 
 import TestGetter.Other;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
- * Test the result of the Getter Decorator.
- * When we arrive in this test, the output compiles correctly
+ * Test the result of the Getter Decorator. When we arrive in this test, the output compiles
+ * correctly
  */
 public class GetterDecoratorTest {
 
@@ -38,8 +37,9 @@ public class GetterDecoratorTest {
 
     // Ensure no getPubX() method exists
     //noinspection JavaReflectionMemberAccess
-    Assertions.assertThrows(java.lang.NoSuchMethodException.class,
-                            () -> TestGetter.TestGetterC.class.getDeclaredMethod("getPubX"));
+    Assertions.assertThrows(
+        java.lang.NoSuchMethodException.class,
+        () -> TestGetter.TestGetterC.class.getDeclaredMethod("getPubX"));
 
     // Test the initial size of lists/sets
     Assertions.assertEquals(0, obj.__getRoleB().size());

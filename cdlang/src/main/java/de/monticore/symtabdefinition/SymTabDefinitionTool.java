@@ -16,15 +16,6 @@ import de.monticore.symtabdefinition.cocos.SymTabDefinitionCoCos;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.cli.AmbiguousOptionException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.MissingArgumentException;
-import org.apache.commons.cli.MissingOptionException;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.UnrecognizedOptionException;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +24,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.cli.AmbiguousOptionException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.MissingOptionException;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.UnrecognizedOptionException;
 
 public class SymTabDefinitionTool extends SymTabDefinitionToolTOP {
 
@@ -194,7 +193,7 @@ public class SymTabDefinitionTool extends SymTabDefinitionToolTOP {
         }
         Log.enableFailQuick(true);
         if (cmd.hasOption(OPTION_COCOS)) {
-           Log.info("All CoCo checks passed.", LOG_NAME);
+          Log.info("All CoCo checks passed.", LOG_NAME);
         }
 
         // store symbols
@@ -304,8 +303,7 @@ public class SymTabDefinitionTool extends SymTabDefinitionToolTOP {
   }
 
   @Override
-  public Options addAdditionalOptions(
-      Options options) {
+  public Options addAdditionalOptions(Options options) {
 
     options.addOption(
         Option.builder(OPTION_CLASS2MC)

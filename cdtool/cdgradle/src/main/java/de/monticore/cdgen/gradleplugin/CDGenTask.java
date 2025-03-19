@@ -3,19 +3,18 @@ package de.monticore.cdgen.gradleplugin;
 
 import de.monticore.gradle.common.AToolAction;
 import de.monticore.gradle.common.MCAllFilesTask;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 
-import java.nio.file.Path;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 /**
- * Gradle Task of the {@link de.monticore.cdgen.CDGenTool}
- * It is an all-files task, as -i A.cd -i B.cd is allowed
+ * Gradle Task of the {@link de.monticore.cdgen.CDGenTool} It is an all-files task, as -i A.cd -i
+ * B.cd is allowed
  */
 public abstract class CDGenTask extends MCAllFilesTask {
   public CDGenTask() {

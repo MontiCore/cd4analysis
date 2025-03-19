@@ -16,18 +16,14 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.ObjectFactory;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 import java.util.regex.Pattern;
 
-/**
- * This class configures a set of {@link IDecorator} with their
- * matchers and order of execution
- */
+/** This class configures a set of {@link IDecorator} with their matchers and order of execution */
 public class DecoratorConfig {
 
   protected DecoratorData decoratorData = new DecoratorData();
-  protected String[][] cliConfig = new String[][]{};
+  protected String[][] cliConfig = new String[][] {};
 
   protected final Collection<IDecorator<?>> decorators = new ArrayList<>();
 
@@ -69,8 +65,8 @@ public class DecoratorConfig {
   }
 
   /**
-   * This class is a chainable setup helper for the {@link #withDecorator(String)}
-   * It is used by the config templates
+   * This class is a chainable setup helper for the {@link #withDecorator(String)} It is used by the
+   * config templates
    */
   @SuppressWarnings("unused")
   public class ChainableGenSetup {
@@ -105,18 +101,15 @@ public class DecoratorConfig {
   }
 
   public void configStereo(Class<? extends IDecorator<?>> dec, IStereoMatcher stereoMatcher) {
-    this.decoratorData.getOrCreateMatcherData(dec).getStereoMatchers()
-      .add(stereoMatcher);
+    this.decoratorData.getOrCreateMatcherData(dec).getStereoMatchers().add(stereoMatcher);
   }
 
   public void configTag(Class<? extends IDecorator<?>> dec, ITagMatcher tagMatcher) {
-    this.decoratorData.getOrCreateMatcherData(dec).getTagMatchers()
-      .add(tagMatcher);
+    this.decoratorData.getOrCreateMatcherData(dec).getTagMatchers().add(tagMatcher);
   }
 
   public void configCLI(Class<? extends IDecorator<?>> dec, ICLIMatcher cliMatcher) {
-    this.decoratorData.getOrCreateMatcherData(dec).getCLIMatchers()
-      .add(cliMatcher);
+    this.decoratorData.getOrCreateMatcherData(dec).getCLIMatchers().add(cliMatcher);
   }
 
   public void configDefault(Class<? extends IDecorator<?>> dec, MatchResult def) {
@@ -141,7 +134,7 @@ public class DecoratorConfig {
     for (String o : options) {
       var m = pattern.matcher(o);
       if (m.matches()) {
-        r.add(new String[]{m.group(1), m.group(2), m.group(3)});
+        r.add(new String[] {m.group(1), m.group(2), m.group(3)});
       } else {
         Log.error("CLI Option " + o + " failed to setup");
       }
@@ -198,8 +191,10 @@ public class DecoratorConfig {
     return phases;
   }
 
-
-  public ASTCDCompilationUnit decorate(ASTCDCompilationUnit root, Map<FieldSymbol, CDRoleSymbol> fieldToRoles, Optional<GlobalExtensionManagement> glexOpt) {
+  public ASTCDCompilationUnit decorate(
+      ASTCDCompilationUnit root,
+      Map<FieldSymbol, CDRoleSymbol> fieldToRoles,
+      Optional<GlobalExtensionManagement> glexOpt) {
     // Start by ordering the phases
     List<DecoratorPhase> phases = createPhases();
 
@@ -225,7 +220,10 @@ public class DecoratorConfig {
       // Post-checkup: Check that the pretty printed original CD has not changed
       String afterAsString = CD4CodeMill.prettyPrint(root, true);
       if (!initialAsString.equals(afterAsString)) {
-        Log.error("0xTODO: A Decorator of phase " + phase.decorators + " has modified the original CD instead of the decorated CD");
+        Log.error(
+            "0xTODO: A Decorator of phase "
+                + phase.decorators
+                + " has modified the original CD instead of the decorated CD");
       }
     }
 
@@ -233,12 +231,10 @@ public class DecoratorConfig {
   }
 
   /**
-   * The decoration occurs in phases.
-   * During each phase the original AST is traversed and decorators
+   * The decoration occurs in phases. During each phase the original AST is traversed and decorators
    * get the chance to decorate the target CD
    */
   static class DecoratorPhase {
     final List<IDecorator<?>> decorators = new ArrayList<>();
   }
-
 }

@@ -7,22 +7,22 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-
 import java.util.List;
 
 /**
  * A {@link TemplateHookPoint} which respects template forwarding
+ *
  * @deprecated Use hook-points instead
  */
 @Deprecated
 public class ForwardingTemplateHookPoint extends TemplateHookPoint {
   protected final GlobalExtensionManagement glex;
 
-  public ForwardingTemplateHookPoint(String templateName, GlobalExtensionManagement glex, Object... templateArguments) {
+  public ForwardingTemplateHookPoint(
+      String templateName, GlobalExtensionManagement glex, Object... templateArguments) {
     super(templateName, templateArguments);
     this.glex = glex;
   }
-
 
   @Override
   public String processValue(TemplateController controller, ASTNode ast) {
@@ -44,7 +44,6 @@ public class ForwardingTemplateHookPoint extends TemplateHookPoint {
     return ret.toString();
   }
 
-
   @Override
   public String processValue(TemplateController controller, ASTNode ast, List<Object> args) {
     StringBuilder ret = new StringBuilder();
@@ -55,7 +54,6 @@ public class ForwardingTemplateHookPoint extends TemplateHookPoint {
     return ret.toString();
   }
 
-
   protected List<Object> joinArgs(List<Object> args) {
     List<Object> joinedArgs = Lists.newArrayList(args);
     joinedArgs.addAll(this.templateArguments);
@@ -64,7 +62,8 @@ public class ForwardingTemplateHookPoint extends TemplateHookPoint {
 
   protected List<HookPoint> getTemplateForwardings(String templateName, ASTNode ast) {
     try {
-      var m = glex.getClass().getDeclaredMethod("getTemplateForwardings", String.class, ASTNode.class);
+      var m =
+          glex.getClass().getDeclaredMethod("getTemplateForwardings", String.class, ASTNode.class);
       m.setAccessible(true);
       return (List<HookPoint>) m.invoke(glex, templateName, ast);
     } catch (ReflectiveOperationException e) {

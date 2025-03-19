@@ -10,7 +10,6 @@ import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -225,22 +224,24 @@ public class ConcretizationHelper {
 
   public static void reorderElements(ASTCDDefinition cdDefinition) {
     List<ASTCDElement> elements = new ArrayList<>(cdDefinition.getCDElementList());
-    elements.sort(Comparator.comparingInt((element) -> {
-      if (element instanceof ASTCDClass) {
-        return 0;
-      } else if (element instanceof ASTCDInterface) {
-        return 1;
-      } else if (element instanceof ASTCDEnum) {
-        return 2;
-      } else if (element instanceof ASTCDAssociation) {
-        return 3;
-      } else if (element instanceof ASTCDPackage) {
-        return 4;
-      } else {
-        // all other elements at the end
-        return 5;
-      }
-    }));
+    elements.sort(
+        Comparator.comparingInt(
+            (element) -> {
+              if (element instanceof ASTCDClass) {
+                return 0;
+              } else if (element instanceof ASTCDInterface) {
+                return 1;
+              } else if (element instanceof ASTCDEnum) {
+                return 2;
+              } else if (element instanceof ASTCDAssociation) {
+                return 3;
+              } else if (element instanceof ASTCDPackage) {
+                return 4;
+              } else {
+                // all other elements at the end
+                return 5;
+              }
+            }));
     cdDefinition.setCDElementList(elements);
   }
 }

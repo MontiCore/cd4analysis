@@ -3,15 +3,14 @@ package de.monticore.cd.codegen.decorators.data;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
-import de.monticore.cdbasis._ast.*;
 import de.monticore.cd.codegen.decorators.IDecorator;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-
 import java.util.Optional;
 
 /**
- * Abstract decorator class, which handles access to shared data structures
- * and provides some utilities
+ * Abstract decorator class, which handles access to shared data structures and provides some
+ * utilities
  *
  * @param <D>
  */
@@ -31,7 +30,8 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
     else if (decoratedParent instanceof ASTCDPackage)
       ((ASTCDPackage) decoratedParent).addCDElement(newElem);
     else
-      throw new IllegalStateException("Unhandled addElementToParent " + decoratedParent.getClass().getName());
+      throw new IllegalStateException(
+          "Unhandled addElementToParent " + decoratedParent.getClass().getName());
   }
 
   protected void addToClass(ASTCDClass clazz, ASTCDMember member) {
@@ -43,9 +43,6 @@ public abstract class AbstractDecorator<D> implements IDecorator<D> {
     return decoratorData.cdGenService;
   }
 
-  /**
-   * For Decorators not specifying any additional data
-   */
-  public static class NoData {
-  }
+  /** For Decorators not specifying any additional data */
+  public static class NoData {}
 }

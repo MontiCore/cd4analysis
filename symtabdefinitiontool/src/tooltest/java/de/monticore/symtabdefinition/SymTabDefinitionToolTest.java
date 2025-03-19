@@ -16,7 +16,8 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
     String version = System.getProperty("mc_version");
 
     assertContains(
-      out, "SymTabDefinitionTool, version " + version + ", based on MontiCore version " + version);
+        out,
+        "SymTabDefinitionTool, version " + version + ", based on MontiCore version " + version);
     Assertions.assertEquals("", err, "The error stream was not empty");
     assertNoStacktrace(out);
     assertNoStacktrace(err);
@@ -42,9 +43,12 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
 
   @Test
   public void testCompleteAsInput() throws Exception {
-    var pb = runToolProcess("-c2mc", "-c", "-i",
-      "src/tooltest/resources/de/monticore/stdefinition/Complete.symtabdefinition"
-    );
+    var pb =
+        runToolProcess(
+            "-c2mc",
+            "-c",
+            "-i",
+            "src/tooltest/resources/de/monticore/stdefinition/Complete.symtabdefinition");
     Process process = pb.start();
     String out = new String(process.getInputStream().readAllBytes());
     String err = new String(process.getErrorStream().readAllBytes());
@@ -73,5 +77,4 @@ public class SymTabDefinitionToolTest extends AbstractToolTest {
     Assertions.assertEquals(255, process.exitValue() & 0xFF, "Exit code of: " + out);
     // & 0xFF due to unsigned exit values (one some OSes)
   }
-
 }

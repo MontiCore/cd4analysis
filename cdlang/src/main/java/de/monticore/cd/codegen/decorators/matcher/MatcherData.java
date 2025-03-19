@@ -11,8 +11,7 @@ public class MatcherData {
 
   protected MatchResult globalDefault = MatchResult.IGNORE;
 
-  public MatcherData() {
-  }
+  public MatcherData() {}
 
   public List<IStereoMatcher> getStereoMatchers() {
     return stereoMatchers;

@@ -7,9 +7,8 @@ import de.monticore.umlmodifier._visitor.UMLModifierVisitor2;
 public class DefaultVisibilityPublicTrafo implements UMLModifierVisitor2 {
   @Override
   public void visit(ASTModifier node) {
-     if (!node.isPublic() && !node.isPrivate() && !node.isProtected()) {
-       node.setPublic(true);
-     }
+    if (!node.isPublic() && !node.isPrivate() && !node.isProtected()) {
+      node.setPublic(true);
+    }
   }
-
 }

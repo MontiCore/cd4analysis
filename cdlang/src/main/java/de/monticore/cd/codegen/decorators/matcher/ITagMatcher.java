@@ -9,10 +9,16 @@ public interface ITagMatcher {
   MatchResult match(ASTTag tag);
 
   static ITagMatcher applyName(String name) {
-    return tag -> tag instanceof ASTSimpleTag && name.equals(((ASTSimpleTag) tag).getName()) ? MatchResult.APPLY : MatchResult.DEFAULT;
+    return tag ->
+        tag instanceof ASTSimpleTag && name.equals(((ASTSimpleTag) tag).getName())
+            ? MatchResult.APPLY
+            : MatchResult.DEFAULT;
   }
 
   static ITagMatcher ignoreName(String name) {
-    return tag -> tag instanceof ASTSimpleTag && name.equals(((ASTSimpleTag) tag).getName()) ? MatchResult.IGNORE : MatchResult.DEFAULT;
+    return tag ->
+        tag instanceof ASTSimpleTag && name.equals(((ASTSimpleTag) tag).getName())
+            ? MatchResult.IGNORE
+            : MatchResult.DEFAULT;
   }
 }

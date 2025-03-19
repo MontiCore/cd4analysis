@@ -3,17 +3,16 @@ package de.monticore.symtabdefinition.gradleplugin;
 
 import de.monticore.gradle.common.AToolAction;
 import de.monticore.gradle.common.MCAllFilesTask;
-import org.gradle.api.provider.ListProperty;
-import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.Optional;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Optional;
 
 public abstract class SymTabDefinitionTask extends MCAllFilesTask {
 
@@ -37,26 +36,23 @@ public abstract class SymTabDefinitionTask extends MCAllFilesTask {
     if (getInput().isEmpty()) {
       result.add("-" + getInputOptionString());
       result.add(
-        handlePath.apply(getProject().getProjectDir().toPath())
-          + "/src/main/symtabdefinition"
-      );
-    }
-    else {
+          handlePath.apply(getProject().getProjectDir().toPath()) + "/src/main/symtabdefinition");
+    } else {
       getInputFilesAsStream()
-        .forEach(f -> {
-          result.add("-" + getInputOptionString());
-          result.add(handlePath.apply(f.toPath()));
-        });
+          .forEach(
+              f -> {
+                result.add("-" + getInputOptionString());
+                result.add(handlePath.apply(f.toPath()));
+              });
     }
     // import symbols
-    if (getSymbolPath().getElements().isPresent() &&
-      !getSymbolPath().getElements().get().isEmpty()) {
+    if (getSymbolPath().getElements().isPresent()
+        && !getSymbolPath().getElements().get().isEmpty()) {
       result.add("-path");
       result.add(
-        getSymbolPath().getFiles().stream()
-          .map(f -> " " + handlePath.apply(f.toPath()))
-          .collect(Collectors.joining())
-      );
+          getSymbolPath().getFiles().stream()
+              .map(f -> " " + handlePath.apply(f.toPath()))
+              .collect(Collectors.joining()));
     }
     if (getClass2MC().isPresent() && getClass2MC().get()) {
       result.add("--class2mc");
