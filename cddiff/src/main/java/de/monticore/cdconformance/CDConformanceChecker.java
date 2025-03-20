@@ -111,7 +111,8 @@ public class CDConformanceChecker {
     }
 
     // init Conformance Checker
-    ConformanceStrategy<ASTCDCompilationUnit> cdChecker = getBasicCDConfStrategy(concreteCD, referenceCD);
+    ConformanceStrategy<ASTCDCompilationUnit> cdChecker =
+        getBasicCDConfStrategy(concreteCD, referenceCD);
 
     // check conformance
     boolean multiInc = !params.contains(NO_MULTI_INC);
