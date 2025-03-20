@@ -190,4 +190,44 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AssocInSuperType.cd", "FalseDirectionButAbstract.cd"})
+  public void testAssocMatchBySourceTypeAndTargetRoleConformanceValid(String concrete) {
+    parseModels(
+        "associations/match_by_source_type_and_target_role/valid/" + concrete,
+        "associations/match_by_source_type_and_target_role/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"FalseDirection.cd"})
+  public void testAssocMatchBySourceTypeAndTargetRoleConformanceInvalid(String concrete) {
+    parseModels(
+        "associations/match_by_source_type_and_target_role/invalid/" + concrete,
+        "associations/match_by_source_type_and_target_role/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AssocInSuperType.cd", "FalseDirectionButAbstract.cd"})
+  public void testAssocMatchBySourceAndTargetTypeConformanceValid(String concrete) {
+    parseModels(
+        "associations/match_by_source_and_target_type/valid/" + concrete,
+        "associations/match_by_source_and_target_type/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"FalseDirection.cd"})
+  public void testAssocMatchBySourceAndTargetTypeConformanceInvalid(String concrete) {
+    parseModels(
+        "associations/match_by_source_and_target_type/invalid/" + concrete,
+        "associations/match_by_source_and_target_type/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
+  }
 }
