@@ -21,6 +21,7 @@ ${tc.include("cd2java.Annotations")}
 ${defineHookPoint("InterfaceContent:Annotations")}
 
 ${cdPrinter.printSimpleModifier(ast.getModifier())} interface ${ast.getName()} <#rt><#lt>
+<#if ast.isPresentTypeParameters()>${cdPrinter.printTypeParameters(ast.getTypeParameters())}</#if> <#rt><#lt>
 <#if ast.isPresentCDExtendUsage()>extends ${cdPrinter.printObjectTypeList(ast.getCDExtendUsage().getSuperclassList())} </#if> { <#rt><#lt>
 
 <#-- Elements HOOK -->

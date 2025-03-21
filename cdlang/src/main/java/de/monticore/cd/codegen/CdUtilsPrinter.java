@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
@@ -13,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.*;
+import de.monticore.types.typeparameters._ast.ASTTypeParameters;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.Collection;
 import java.util.List;
@@ -29,8 +31,7 @@ public class CdUtilsPrinter {
    * @return a string, e.g. abstract private final static
    */
   public String printModifier(ASTModifier modifier) {
-    CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-    return printer.prettyprint(modifier);
+    return CD4CodeMill.prettyPrint(modifier, false);
   }
 
   public String printSimpleModifier(ASTModifier modifier) {
@@ -53,6 +54,10 @@ public class CdUtilsPrinter {
     }
 
     return modifierStr.toString();
+  }
+
+  public String printTypeParameters(ASTTypeParameters ast) {
+    return CD4CodeMill.prettyPrint(ast, false);
   }
 
   /**
