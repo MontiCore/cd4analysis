@@ -1,0 +1,9 @@
+classdiagram InterfaceMIConc {
+
+  <<ref="IEmployee">> interface IEmployee1;
+
+  <<ref="IEmployee">> interface IEmployee2;
+
+  class Employee implements IEmployee1, IEmployee2;
+
+}
