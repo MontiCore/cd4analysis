@@ -196,6 +196,15 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  @Disabled("disabled until issue 9 is clarified")
+  public void testAttributeTypeMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/AttributeTypeMIConc.cd",
+        "multipleIncarnation/AttributeTypeMIRef.cd",
+        "multipleIncarnation/AttributeTypeMIOut.cd");
+  }
+
+  @Test
   @Disabled
   // todo: this test but later
   void testMultipleMappingIncarnation() {}
