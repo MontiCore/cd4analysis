@@ -308,7 +308,7 @@ tasks.generateTestMCGrammars.dependsOn(tasks.grammarsForVariantJar)
 // CD-Dec-Gen Tests
 test {
   // Register the output of the AbstractCDGenTests with gradle
-  outputs.file(project.layout.buildDirectory.dir("cdGenOutTest"))
+  outputs.dir(project.layout.buildDirectory.dir("cdGenOutTest"))
 }
 sourceSets {
   cdGenIntTest {
