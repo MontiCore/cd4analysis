@@ -167,6 +167,17 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  public void testMIUnequalCardinalities() {
+    try {
+      parseAndConcretize(
+          "multipleIncarnation/ConUnequalCard.cd", "multipleIncarnation/RefUnequalCard.cd");
+      fail("Expected CompletionException");
+    } catch (CompletionException e) {
+      System.out.println("Completion failed as expected: " + e.getMessage());
+    }
+  }
+
+  @Test
   @Disabled
   // todo: this test but later
   public void testMultipleMappingIncarnation() {}
