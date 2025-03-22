@@ -1,5 +1,6 @@
 import java.lang.String;
-classdiagram RefEvaluation {
+
+classdiagram EvaluationRef {
   class Person {
     String name;
     int age;

@@ -1,4 +1,4 @@
-classdiagram RefAttributesMissing {
+classdiagram AttributesMissingRef {
   class Employee {
     int number;
     int salary;

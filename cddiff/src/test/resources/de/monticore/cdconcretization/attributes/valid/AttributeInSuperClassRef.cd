@@ -1,6 +1,6 @@
 import java.lang.String;
 
-classdiagram RefAttributesMissing {
+classdiagram AttributeInSuperClassRef {
   class Employee {
     String firstName;
     String lastName;

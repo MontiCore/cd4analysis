@@ -1,4 +1,4 @@
-classdiagram ConcAttributetypeIncarnation {
+classdiagram AttributeTypeMismatchConc {
   class Teacher  {
     double number;
   }

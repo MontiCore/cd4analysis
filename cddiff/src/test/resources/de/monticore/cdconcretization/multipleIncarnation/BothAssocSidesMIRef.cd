@@ -1,4 +1,4 @@
-classdiagram RefMIBothsides {
+classdiagram BothAssocSidesMIRef {
 
   class SuperTeacher {
   }
