@@ -1,4 +1,4 @@
-classdiagram RefTwoAttributesMissingOneMatch {
+classdiagram TwoAttributesMissingOneMatchRef {
   class Employee {
     int number;
     int anotherNumber;

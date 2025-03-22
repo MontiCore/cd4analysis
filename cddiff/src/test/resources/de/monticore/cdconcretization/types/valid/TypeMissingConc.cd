@@ -1,5 +1,5 @@
 import java.lang.String;
-classdiagram ConcTypeMissing {
+classdiagram TypeMissingConc {
 
   class Course {
   }

@@ -1,6 +1,6 @@
 import java.lang.String;
 
-classdiagram ConcAttributeInSuperClass {
+classdiagram AttributeInSuperClassConc {
   class Person {
     String firstName;
     String lastName;

@@ -1,4 +1,4 @@
-classdiagram RefTest {
+classdiagram UnequalCardCon {
   class Company {
   }
 

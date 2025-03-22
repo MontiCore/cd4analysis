@@ -1,4 +1,4 @@
-classdiagram ConcEvaluation {
+classdiagram EvaluationConc {
   class Project {
   }
   class Staff {

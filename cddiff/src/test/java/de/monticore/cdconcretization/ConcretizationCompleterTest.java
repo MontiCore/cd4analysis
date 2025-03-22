@@ -37,7 +37,8 @@ public class ConcretizationCompleterTest {
 
   @Test
   void testEvaluation() {
-    testConcretizedConformsToRef("ConcEvaluation.cd", "RefEvaluation.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "EvaluationConc.cd", "EvaluationRef.cd", "EvaluationOut.cd");
   }
 
   /**
@@ -45,16 +46,18 @@ public class ConcretizationCompleterTest {
    * added based on predefined CDs.
    */
   @Test
-  @Disabled
   void testTypeMissing() {
-    testConcretizedConformsToRef("types/valid/ConcTypeMissing.cd", "types/valid/RefTypeMissing.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "types/valid/TypeMissingConc.cd",
+        "types/valid/TypeMissingRef.cd",
+        "types/valid/TypeMissingOut.cd");
   }
 
   /** Test that checks if completeInheritance works correctly (after adding the types) */
   @Test
   void testTypeMissingInheritance() {
     testConcretizedEqualsRef(
-        "inheritance/ConcMissingInheritance.cd", "inheritance/RefMissingInheritance.cd");
+        "inheritance/MissingInheritanceConc.cd", "inheritance/MissingInheritanceRef.cd");
   }
 
   /**
@@ -64,21 +67,21 @@ public class ConcretizationCompleterTest {
   @Test
   void testMissingAttributes() {
     testConcretizedEqualsRef(
-        "attributes/valid/ConcAttributesMissing.cd", "attributes/valid/RefAttributesMissing.cd");
+        "attributes/valid/AttributesMissingConc.cd", "attributes/valid/AttributesMissingRef.cd");
   }
 
   @Test
   void testTwoMissingAttributes() {
     testConcretizedEqualsRef(
-        "attributes/valid/ConcTwoAttributesMissing.cd",
-        "attributes/valid/RefTwoAttributesMissing.cd");
+        "attributes/valid/TwoAttributesMissingConc.cd",
+        "attributes/valid/TwoAttributesMissingRef.cd");
   }
 
   @Test
   void testTwoMissingAttributesOneMatch() {
     testConcretizedEqualsRef(
-        "attributes/valid/ConcTwoAttributesMissingOneMatch.cd",
-        "attributes/valid/RefTwoAttributesMissingOneMatch.cd");
+        "attributes/valid/TwoAttributesMissingOneMatchConc.cd",
+        "attributes/valid/TwoAttributesMissingOneMatchRef.cd");
   }
 
   /**
@@ -87,9 +90,10 @@ public class ConcretizationCompleterTest {
    */
   @Test
   void testAttributeExistsInConcreteSuperclass() {
-    testConcretizedConformsToRef(
-        "attributes/valid/ConcAttributeInSuperClass.cd",
-        "attributes/valid/RefAttributeInSuperClass.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "attributes/valid/AttributeInSuperClassConc.cd",
+        "attributes/valid/AttributeInSuperClassRef.cd",
+        "attributes/valid/AttributeInSuperClassOut.cd");
 
     // The conformance check is not enough here. The tool must not add attributes to the concrete
     // class if they
@@ -120,9 +124,10 @@ public class ConcretizationCompleterTest {
    */
   @Test
   void testAttributeExistsInConcreteDeepSuperclass() {
-    testConcretizedConformsToRef(
-        "attributes/valid/ConcAttributeInDeepSuperClass.cd",
-        "attributes/valid/RefAttributeInDeepSuperClass.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "attributes/valid/AttributeInDeepSuperClassConc.cd",
+        "attributes/valid/AttributeInDeepSuperClassRef.cd",
+        "attributes/valid/AttributeInDeepSuperClassOut.cd");
 
     // The conformance check is not enough here. The tool must not add attributes to the concrete
     // class if they
@@ -149,28 +154,33 @@ public class ConcretizationCompleterTest {
 
   @Test
   void testMissingEnumMember() {
-    testConcretizedConformsToRef(
-        "types/enums/ConcEnumMemberMissing.cd", "types/enums/RefEnumMemberMissing.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "types/enums/EnumMemberMissingConc.cd",
+        "types/enums/EnumMemberMissingRef.cd",
+        "types/enums/EnumMemberMissingOut.cd");
   }
 
   @Test
   void testMultipleIncarnation() {
-    testConcretizedConformsToRef(
-        "multipleIncarnation/ConcMultipleIncarnation.cd",
-        "multipleIncarnation/RefMultipleIncarnation.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/ClassMIConc.cd",
+        "multipleIncarnation/ClassMIRef.cd",
+        "multipleIncarnation/ClassMIOut.cd");
   }
 
   @Test
-  void testMIBothSides() {
-    testConcretizedConformsToRef(
-        "multipleIncarnation/ConcMIBothSides.cd", "multipleIncarnation/RefMIBothSides.cd");
+  void testAssocBothSidesMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/BothAssocSidesMIConc.cd",
+        "multipleIncarnation/BothAssocSidesMIRef.cd",
+        "multipleIncarnation/BothAssocSidesMIOut.cd");
   }
 
   @Test
   void testMIUnequalCardinalities() {
     try {
       parseAndConcretize(
-          "multipleIncarnation/ConUnequalCard.cd", "multipleIncarnation/RefUnequalCard.cd");
+          "multipleIncarnation/UnequalCardCon.cd", "multipleIncarnation/UnequalCardRef.cd");
       fail("Expected CompletionException");
     } catch (CompletionException e) {
       System.out.println("Completion failed as expected: " + e.getMessage());
@@ -193,16 +203,22 @@ public class ConcretizationCompleterTest {
   /** Test that checks if attributes are inherited in the correct way with a valid example. */
   @Test
   void testInheritanceValid() {
-    testConcretizedConformsToRef(
-        "inheritance/ConcAttributeInheritance.cd", "inheritance/RefAttributeInheritance.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "inheritance/AttributeInheritanceConc.cd",
+        "inheritance/AttributeInheritanceRef.cd",
+        "inheritance/AttributeInheritanceOut.cd");
   }
 
   @Test
   @Disabled
-  void testAttributetypeIncarnation() {
-    parseModels(
-        "inheritance/ConcAttributetypeIncarnation.cd",
-        "inheritance/RefAttributetypeIncarnation.cd");
+  void testAttributeTypeMismatchWithSuperclass() {
+    try {
+      parseAndConcretize(
+          "inheritance/AttributeTypeMismatchConc.cd", "inheritance/AttributeTypeMismatchRef.cd");
+      fail("Expected CompletionException");
+    } catch (CompletionException e) {
+      System.out.println("Completion failed as expected: " + e.getMessage());
+    }
     // todo: look at cds -> teacher inherites int number and also has attribute double number
   }
 

@@ -1,4 +1,4 @@
-classdiagram RefAttributetypeIncarnation {
+classdiagram AttributeTypeMismatchRef {
   class Person {
     int number;
   }

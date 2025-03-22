@@ -1,4 +1,4 @@
-classdiagram RefAttributeInheritance {
+classdiagram AttributeInheritanceRef {
   class Person {
     int number;
   }

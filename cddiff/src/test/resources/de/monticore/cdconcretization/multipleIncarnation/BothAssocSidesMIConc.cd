@@ -1,4 +1,4 @@
-classdiagram ConcMIBothsides {
+classdiagram BothAssocSidesMIConc {
 
   <<ref="SuperTeacher">> class SuperTeacher1 {
   }
