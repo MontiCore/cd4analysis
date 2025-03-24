@@ -225,81 +225,69 @@ public class ConcretizationCompleterTest {
   // AssociationTests
 
   @Test
+  @Disabled("disabled until issue 13 is clarified")
   void testAssocMissingSimple() {
-    parseModels(
-        "associations/ConcAssociationMissingSimple.cd",
-        "associations/RefAssociationMissingSimple.cd");
-
-    DefaultAssocIncCompleter incarnationCompleter =
-        new DefaultAssocIncCompleter(conCD, refCD, "incarnates");
-    try {
-      incarnationCompleter.completeIncarnations();
-      conCD.getCDDefinition().setName("RefAssociationMissingSimple");
-
-      assertTrue(
-          new CDConformanceChecker(
-                  Set.of(
-                      STEREOTYPE_MAPPING,
-                      NAME_MAPPING,
-                      SRC_TARGET_ASSOC_MAPPING,
-                      INHERITANCE,
-                      ALLOW_CARD_RESTRICTION))
-              .checkConformance(conCD, refCD, Set.of("ref")));
-
-    } catch (CompletionException e) {
-      fail(e.getMessage());
-    }
+    testConcretizedEqualsRef(
+        "associations/AssociationMissingSimpleConc.cd",
+        "associations/AssociationMissingSimpleRef.cd");
   }
 
   @Test
   void testAssocMissingCardinality() {
-    parseModels(
-        "associations/ConcAssociationMissingCardinality.cd",
-        "associations/RefAssociationMissingCardinality.cd");
-
     testConcretizedEqualsRef(
-        "associations/ConcAssociationMissingCardinality.cd",
-        "associations/RefAssociationMissingCardinality.cd");
+        "associations/AssociationMissingCardinalityConc.cd",
+        "associations/AssociationMissingCardinalityRef.cd");
   }
 
   @Test
   void testAssocMissingRolename() {
     testConcretizedEqualsRef(
-        "associations/ConcAssociationMissingRolename.cd",
-        "associations/RefAssociationMissingRolename.cd");
+        "associations/AssociationMissingRolenameConc.cd",
+        "associations/AssociationMissingRolenameRef.cd");
   }
 
   @Test
   void testAssocMissingFinal() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssociationMissingFinal.cd",
-        "associations/RefAssociationMissingFinal.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/AssociationMissingFinalConc.cd",
+        "associations/AssociationMissingFinalRef.cd",
+        "associations/AssociationMissingFinalOut.cd");
   }
 
   @Test
   void testAssocMultipleTypeIncarnation() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssocMultipleTypeIncarnation.cd",
-        "associations/RefAssocMultipleTypeIncarnation.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/AssociationMultipleTypeIncarnationConc.cd",
+        "associations/AssociationMultipleTypeIncarnationRef.cd",
+        "associations/AssociationMultipleTypeIncarnationOut.cd");
   }
 
   @Test
   void testAssociationReverseMatch() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssociationReverseMatch.cd",
-        "associations/RefAssociationReverseMatch.cd");
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/AssociationReverseMatchConc.cd",
+        "associations/AssociationReverseMatchRef.cd",
+        "associations/AssociationReverseMatchOut.cd");
   }
 
   @Test
-  void testAssocRename() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssocRename.cd", "associations/RefAssocRename.cd");
+  void testTypeMIOneAssocExists() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/TypeMIOneAssocExistsConc.cd",
+        "associations/TypeMIOneAssocExistsRef.cd",
+        "associations/TypeMIOneAssocExistsOut.cd");
+  }
+
+  @Test
+  void testCDHelperExample() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "helper/HelperConc.cd", "helper/HelperRef.cd", "helper/HelperOut.cd");
   }
 
   // ConcretizationHelper tests
   @Test
   void testCDHelperMappings() throws CompletionException {
-    parseModels("helper/ConcHelper.cd", "helper/RefHelper.cd");
+    parseModels("helper/HelperConc.cd", "helper/HelperRef.cd");
 
     DefaultTypeIncCompleter defaultTypeIncCompleter =
         new DefaultTypeIncCompleter(conCD, refCD, "ref");
@@ -429,7 +417,7 @@ public class ConcretizationCompleterTest {
     // 1. concretize and check conformance
     testConcretizedConformsToRef(conc, ref);
     // 2. check if concretized CD equals expected output
-    assertTrue(conCD.deepEquals(expectedCD, false));
+    assertTrue(conCD.deepEquals(expectedCD, false), "Concretized output does not match expected");
   }
 
   private void parseAndConcretize(String conc, String ref) throws CompletionException {

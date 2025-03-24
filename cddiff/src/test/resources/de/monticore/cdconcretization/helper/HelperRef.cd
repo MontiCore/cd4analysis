@@ -1,4 +1,4 @@
-classdiagram RefHelper {
+classdiagram HelperRef {
   class A {
   }
   class B {

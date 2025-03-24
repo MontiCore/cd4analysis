@@ -1,4 +1,4 @@
-classdiagram RefAssociationMissingCardinality {
+classdiagram AssociationMissingCardinalityRef {
   class Employee {
   }
   class Department {

@@ -1,4 +1,4 @@
-classdiagram ConcAssociationReverseMatch {
+classdiagram AssociationReverseMatchConc {
   class A {
   }
   class B {

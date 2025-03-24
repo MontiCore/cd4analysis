@@ -1,4 +1,4 @@
-classdiagram RefAssociationMissingSimple {
+classdiagram AssociationMissingSimpleRef {
   class Employee {
   }
   class Department {
