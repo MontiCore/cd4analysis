@@ -1,4 +1,4 @@
-classdiagram ConcAssocMultipleTypeIncarnation {
+classdiagram AssocMultipleTypeIncarnationConc {
   class Teacher {
   }
   <<ref="Department">> class MathDept {

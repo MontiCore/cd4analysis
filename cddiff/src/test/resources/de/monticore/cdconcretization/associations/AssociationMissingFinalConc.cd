@@ -1,4 +1,4 @@
-classdiagram ConcAssociationMissingFinal {
+classdiagram AssociationMissingFinalConc {
   class Employee {
   }
   class Department {

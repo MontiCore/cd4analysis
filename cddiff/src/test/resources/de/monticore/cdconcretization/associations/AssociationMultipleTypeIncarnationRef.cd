@@ -1,4 +1,4 @@
-classdiagram RefAssocMultipleTypeIncarnation {
+classdiagram AssocMultipleTypeIncarnationRef {
   class Teacher {
   }
   class Department {

@@ -1,4 +1,4 @@
-classdiagram ConcHelper {
+classdiagram HelperConc {
 
   class A {
   }
