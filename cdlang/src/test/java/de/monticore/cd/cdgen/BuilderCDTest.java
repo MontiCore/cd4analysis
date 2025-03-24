@@ -1,5 +1,6 @@
 package de.monticore.cd.cdgen;
 
+import de.monticore.CDGeneratorTool;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -25,7 +26,6 @@ import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BuilderCDTest {
 
@@ -59,6 +61,20 @@ public class BuilderCDTest {
 
     generateWithOutSetters();
     generateWithSetters();
+  }
+
+  @Test
+  public void testTemplateExistence() {
+    //test existence of the templates
+    List<Path> templatePaths= new ArrayList<>();
+    templatePaths.add(Paths.get("src/main/resources/methods/builder/unsafeBuild.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/builder/build.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/builder/isValid.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/builder/set.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/builder/setAbsent.ftl"));
+    for (Path temPath: templatePaths) {
+      Assert.assertTrue(Files.exists(temPath));
+    }
   }
 
   @Test
@@ -279,6 +295,26 @@ public class BuilderCDTest {
     });
 
 
+  }
+
+  @Test
+  public void testTopDeclarator(){
+    CD4CodeMill.globalScope().clear();
+    CD4CodeMill.reset();
+    BasicSymbolsMill.reset();
+    LogStub.init();
+    CDGeneratorTool.main(
+      new String[] {
+        "-i", "src/test/resources/de/monticore/cd/codegen/TOPMechanismTest.cd",
+        "-c2mc",
+        "-o",
+        "target/generated/example/hwc",
+        "-hwc",
+        "src/test/resources/de/monticore/cd/codegen/hwc"
+      });
+
+    //TODO assert that the generated file exists
+    //TODO assert the correct functionality of the TOP mechanism
   }
 
   private static Optional<ASTCDCompilationUnit> parseStringToCompilationUnitWithSetters() throws IOException {

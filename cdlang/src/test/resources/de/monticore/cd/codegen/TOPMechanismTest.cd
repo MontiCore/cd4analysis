@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram MyCD {
+
+  <<getter,builder>> public class TOPMechanismTest {
+     public int myInt;
+     public boolean myBool;
+     -> (manyB) B [*];
+     -> (optB) B [0..1] ;
+     -> (oneB) B [1];
+  }
+
+  <<setter>>public class B {
+  }
+
+}
