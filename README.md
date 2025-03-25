@@ -176,7 +176,12 @@ The possible options are:
  
 As alternative to a download, 
 it is possible to build an executable JAR of the tool from the source files
-located in GitHub. In order to build an executable Jar of the tool with
+located in GitHub.
+Make sure you have installed the following dependencies:
+* Java 11 or 17 (check it with java -version)
+* Gradle 7.6.4 (check it with gradle --version)
+
+In order to build an executable Jar of the tool with
 Bash from the source files available in GitHub, execute the following commands.
 
 First, clone the repository:
