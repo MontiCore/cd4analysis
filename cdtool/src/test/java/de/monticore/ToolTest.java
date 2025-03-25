@@ -65,7 +65,7 @@ public class ToolTest extends OutTestBasis {
 
   @Test
   @Ignore // todo test has always(?) been broken and not correctly tested to far... -> requires
-          // rework
+  // rework
   public void testToolNoBuiltInTypes() throws IOException, ParseException {
     final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());

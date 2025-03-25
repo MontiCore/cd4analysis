@@ -383,18 +383,20 @@ public class CD4CTest extends CD4CodeTestBasis {
   public void testTypeParamsClass() {
     // Build class for testing
     ASTCDClass clazz =
-      CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorldWithTypeParams")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .setTypeParameters(CD4CodeMill.typeParametersBuilder().addTypeParameter(
-          CD4CodeMill.typeParameterBuilder().setName("C").build()
-        ).build())
-        .build();
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithTypeParams")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .setTypeParameters(
+                CD4CodeMill.typeParametersBuilder()
+                    .addTypeParameter(CD4CodeMill.typeParameterBuilder().setName("C").build())
+                    .build())
+            .build();
 
     // Add a method with type params
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.TypeParamMethod");
     // and a constructor with refining type params
-    CD4C.getInstance().addConstructor(clazz, "de.monticore.cd.methodtemplates.TypeParamConstructor");
+    CD4C.getInstance()
+        .addConstructor(clazz, "de.monticore.cd.methodtemplates.TypeParamConstructor");
 
     CD4C.getInstance().addAttribute(clazz, "List<String> stringList;");
     CD4C.getInstance().addAttribute(clazz, "List<C> genericList;");
@@ -411,13 +413,14 @@ public class CD4CTest extends CD4CodeTestBasis {
   public void testTypeParamsInterface() {
     // Build interface for testing
     ASTCDInterface interfaze =
-      CD4CodeMill.cDInterfaceBuilder()
-        .setName("IHelloWorldWithTypeParams")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .setTypeParameters(CD4CodeMill.typeParametersBuilder().addTypeParameter(
-          CD4CodeMill.typeParameterBuilder().setName("I").build()
-        ).build())
-        .build();
+        CD4CodeMill.cDInterfaceBuilder()
+            .setName("IHelloWorldWithTypeParams")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .setTypeParameters(
+                CD4CodeMill.typeParametersBuilder()
+                    .addTypeParameter(CD4CodeMill.typeParameterBuilder().setName("I").build())
+                    .build())
+            .build();
 
     // add a method with type params and a default implementation
     CD4C.getInstance().addMethod(interfaze, "de.monticore.cd.methodtemplates.TypeParamMethod");
