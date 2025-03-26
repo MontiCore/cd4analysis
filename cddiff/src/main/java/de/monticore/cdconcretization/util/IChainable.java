@@ -1,6 +1,6 @@
 package de.monticore.cdconcretization.util;
 
-public interface Chainable<T extends Chainable<T>> {
+public interface IChainable<T extends IChainable<T>> {
 
   /**
    * Sets the next element in the chain, i.e., the element that should be called after this one.

@@ -1,12 +1,11 @@
 package de.monticore.cdconcretization;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.type.ITypeCompleter;
-import de.monticore.cdconcretization.type.ITypeDetailsCompleter;
+import de.monticore.cdconcretization.typedetails.ITypeDetailsCompleter;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -20,13 +19,13 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
  * the overall algorithm for CD concretization, but delegates the actual work to specialized
  * completer classes.
  */
-public class BaseCDCompleter implements ICompletionStrategy {
+public class BaseCDCompleter implements ICDCompleter {
 
   private final MatchingStrategy<ASTCDType> typeIncStrategy;
   private final ITypeCompleter typeCompleter;
   private final ITypeDetailsCompleter typeDetailsCompleter;
 
-  private final IInheritanceCompleter inheritanceCompleter;
+  private final ICDCompleter inheritanceCompleter;
 
   private final IIncarnationCompleter<ASTAssociation> associationCompleter;
 
@@ -34,7 +33,7 @@ public class BaseCDCompleter implements ICompletionStrategy {
       MatchingStrategy<ASTCDType> typeIncStrategy,
       ITypeCompleter typeCompleter,
       ITypeDetailsCompleter typeDetailsCompleter,
-      IInheritanceCompleter inheritanceCompleter,
+      ICDCompleter inheritanceCompleter,
       IIncarnationCompleter<ASTAssociation> associationCompleter) {
     this.typeIncStrategy = typeIncStrategy;
     this.typeCompleter = typeCompleter;
@@ -44,18 +43,17 @@ public class BaseCDCompleter implements ICompletionStrategy {
   }
 
   @Override
-  public ASTCDCompilationUnit complete(ASTCDCompilationUnit referenceCD, ASTCDCompilationUnit concreteCD)
+  public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
       throws CompletionException {
     // 0. imports
-    completeImportStatements(referenceCD, concreteCD);
+    completeImportStatements(concreteCD, referenceCD);
 
     // 1. add missing types
-    completeMissingTypes(referenceCD.getCDDefinition(), concreteCD.getCDDefinition());
+    completeMissingTypes(concreteCD.getCDDefinition(), referenceCD.getCDDefinition());
 
     // 2. inheritance:
     // Inheritance must be completed before adding missing member incarnations
-    inheritanceCompleter.setTypeMatcher(typeIncStrategy);
-    inheritanceCompleter.completeInheritance(referenceCD, concreteCD);
+    inheritanceCompleter.complete(concreteCD, referenceCD);
 
     // 3. type details
     completeTypeDetails(concreteCD.getCDDefinition(), typeIncStrategy);
@@ -71,10 +69,9 @@ public class BaseCDCompleter implements ICompletionStrategy {
 
     // 5.2 reorder so we have a consistent output
     ConcretizationHelper.reorderElements(concreteCD.getCDDefinition());
-    return concreteCD;
   }
 
-  private void completeMissingTypes(ASTCDDefinition referenceCD, ASTCDDefinition concreteCD) {
+  private void completeMissingTypes(ASTCDDefinition concreteCD, ASTCDDefinition referenceCD) {
     for (ASTCDClass referenceClass : referenceCD.getCDClassesList()) {
       typeCompleter.completeType(concreteCD, referenceClass);
     }
@@ -107,7 +104,7 @@ public class BaseCDCompleter implements ICompletionStrategy {
     }
   }
 
-  private void completeImportStatements(ASTCDCompilationUnit rcd, ASTCDCompilationUnit ccd) {
+  private void completeImportStatements(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd) {
     for (ASTMCImportStatement importStatement : rcd.getMCImportStatementList()) {
       boolean alreadyExists = false;
       for (ASTMCImportStatement existingImport : ccd.getMCImportStatementList()) {

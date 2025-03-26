@@ -1,4 +1,4 @@
-package de.monticore.cdconcretization.type;
+package de.monticore.cdconcretization.typedetails;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdconcretization.CompletionException;

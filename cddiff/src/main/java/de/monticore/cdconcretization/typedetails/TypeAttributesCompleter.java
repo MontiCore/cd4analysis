@@ -1,4 +1,4 @@
-package de.monticore.cdconcretization.type;
+package de.monticore.cdconcretization.typedetails;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -7,6 +7,7 @@ import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.attribute.AbstractAttributeCompleter;
 import de.monticore.cdconcretization.attribute.BaseAttributeCompleter;
 import de.monticore.cdconcretization.attribute.IAttributeCompleter;
+import de.monticore.cdconcretization.typedetails.AbstractTypeDetailsCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
 import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
@@ -15,11 +16,11 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 // TODO Do we really want to decompose the logic THAT much or directly call attribute/method
 // completion from the BaseCDCompleter??
-public class DelegatingTypeAttributeCompleter extends AbstractTypeDetailsCompleter {
+public class TypeAttributesCompleter extends AbstractTypeDetailsCompleter {
 
   private final String mapping;
 
-  public DelegatingTypeAttributeCompleter(String mapping) {
+  public TypeAttributesCompleter(String mapping) {
     this.mapping = mapping;
   }
 
