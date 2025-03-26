@@ -11,6 +11,10 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.CDConformanceChecker;
+import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.*;
@@ -296,24 +300,29 @@ public class ConcretizationCompleterTest {
   // ConcretizationHelper tests
   @Test
   void testCDHelperMappings() throws CompletionException {
-    parseModels("helper/HelperConc.cd", "helper/HelperRef.cd");
-
-    DefaultTypeIncCompleter defaultTypeIncCompleter =
-        new DefaultTypeIncCompleter(conCD, refCD, "ref");
-    DefaultAssocIncCompleter defaultAssocIncCompleter =
-        new DefaultAssocIncCompleter(conCD, refCD, "ref");
-
-    defaultTypeIncCompleter.completeIncarnations();
-    defaultAssocIncCompleter.completeIncarnations();
+    String mapping = "ref";
+    parseAndConcretize("helper/HelperConc.cd", "helper/HelperRef.cd");
 
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+
+    CompTypeIncStrategy typeIncStrategy = new CompTypeIncStrategy(refCD, mapping);
+    typeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
+    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
+
+    CompAssocIncStrategy assocIncStrategy = new CompAssocIncStrategy(refCD, mapping);
+    assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
+    assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
+    assocIncStrategy.addIncStrategy(
+            new RolePrefixInNavDirIncStrategy(typeIncStrategy, conCD, refCD));
+    assocIncStrategy.addIncStrategy(
+            new RolePrefixIfPresentIncStrategy(typeIncStrategy, conCD, refCD));
 
     ConcretizationHelper helper =
         new ConcretizationHelper(
             conCD,
             refCD,
-            defaultTypeIncCompleter.getTypeStrategy(),
-            defaultAssocIncCompleter.getCompAssocIncStrategy());
+            typeIncStrategy,
+            assocIncStrategy);
 
     helper.mapReferenceToConcreteRoles();
 
@@ -431,6 +440,7 @@ public class ConcretizationCompleterTest {
 
   private void parseAndConcretize(String conc, String ref) throws CompletionException {
     parseModels(conc, ref);
+    // ConcretizationCompleter completer = new ConcretizationCompleter("ref");
     ConcretizationCompleter completer = new ConcretizationCompleter("ref");
     completer.complete(refCD, conCD);
     System.out.println("Concretized CD:");

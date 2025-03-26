@@ -5,6 +5,9 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.MatchingStrategy;
 
 public interface IInheritanceCompleter {
+
+  // TODO review this interface definition
+
   void completeInheritance(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD);
 
   void setTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher);
