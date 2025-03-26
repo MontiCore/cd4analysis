@@ -1,6 +1,10 @@
 package de.monticore.cdconcretization.util;
 
-public class ChainBuilder<T extends Chainable<T>> {
+/**
+ * A builder for chains of elements that implement the {@link IChainable} interface.
+ * @param <T> the type of the elements in the chain
+ */
+public class ChainBuilder<T extends IChainable<T>> {
 
   private T head;
   private T tail;
@@ -25,7 +29,7 @@ public class ChainBuilder<T extends Chainable<T>> {
    * Returns the head of the chain, i.e. the element that can be passed to client code to call the
    * whole chain.
    *
-   * @return
+   * @return the head of the chain
    */
   public T build() {
     return head;

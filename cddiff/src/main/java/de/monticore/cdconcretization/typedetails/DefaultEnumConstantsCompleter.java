@@ -1,4 +1,4 @@
-package de.monticore.cdconcretization.type;
+package de.monticore.cdconcretization.typedetails;
 
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class EnumValuesCompleter extends AbstractTypeDetailsCompleter {
+public class DefaultEnumConstantsCompleter extends AbstractTypeDetailsCompleter {
   @Override
   public void completeEnumDetails(ASTCDEnum concreteEnum, ASTCDEnum referenceEnum)
       throws CompletionException {

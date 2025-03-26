@@ -1,6 +1,6 @@
 package de.monticore.cdconcretization.util;
 
-public abstract class AbstractChainable<T extends AbstractChainable<T>> implements Chainable<T> {
+public abstract class AbstractChainable<T extends AbstractChainable<T>> implements IChainable<T> {
   protected T next;
 
   @Override

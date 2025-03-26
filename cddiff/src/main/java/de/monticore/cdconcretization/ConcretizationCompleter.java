@@ -2,12 +2,13 @@ package de.monticore.cdconcretization;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.type.*;
+import de.monticore.cdconcretization.typedetails.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 
-public class ConcretizationCompleter implements ICompletionStrategy {
+public class ConcretizationCompleter implements ICDCompleter {
 
   private final String mapping;
 
@@ -16,7 +17,7 @@ public class ConcretizationCompleter implements ICompletionStrategy {
   }
 
   @Override
-  public ASTCDCompilationUnit complete(ASTCDCompilationUnit refCD, ASTCDCompilationUnit concCD)
+  public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
       throws CompletionException {
 
     /*
@@ -24,9 +25,9 @@ public class ConcretizationCompleter implements ICompletionStrategy {
      * that are responsible for completing the different aspects of the CD. These completers are then used
      * by the BaseCDCompleter to perform the actual concretization.
      */
-    CompTypeIncStrategy typeIncStrategy = new CompTypeIncStrategy(refCD, mapping);
-    typeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
-    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
+    CompTypeIncStrategy typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
+    typeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
+    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
 
     ITypeCompleter typeCompleter =
         new ChainBuilder<AbstractTypeCompleter>()
@@ -38,16 +39,16 @@ public class ConcretizationCompleter implements ICompletionStrategy {
     ITypeDetailsCompleter typeDetailsCompleter =
         new ChainBuilder<AbstractTypeDetailsCompleter>()
             .add(new ClassModifierCompleter())
-            .add(new DelegatingTypeAttributeCompleter(mapping))
+            .add(new TypeAttributesCompleter(mapping))
             // TODO add method completer here
-            .add(new EnumValuesCompleter())
+            .add(new DefaultEnumConstantsCompleter())
             .build();
 
-    IInheritanceCompleter inheritanceCompleter = new DefaultInheritanceCompleter();
+    DefaultInheritanceCompleter inheritanceCompleter = new DefaultInheritanceCompleter(typeIncStrategy);
 
     // TODO refactor towards new architecture
     DefaultAssocIncCompleter assocIncCompleter =
-        new DefaultAssocIncCompleter(concCD, refCD, mapping);
+        new DefaultAssocIncCompleter(concreteCD, referenceCD, mapping);
 
     BaseCDCompleter cdCompleter =
         new BaseCDCompleter(
@@ -57,8 +58,6 @@ public class ConcretizationCompleter implements ICompletionStrategy {
             inheritanceCompleter,
             assocIncCompleter);
     // perform the actual concretization
-    cdCompleter.complete(refCD, concCD);
-
-    return concCD;
+    cdCompleter.complete(concreteCD, referenceCD);
   }
 }
