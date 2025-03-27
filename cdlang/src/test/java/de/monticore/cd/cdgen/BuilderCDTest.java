@@ -1,6 +1,5 @@
 package de.monticore.cd.cdgen;
 
-import de.monticore.CDGeneratorTool;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -17,6 +16,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdgen.CDGenTool;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -24,7 +24,6 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -314,11 +314,19 @@ public class BuilderCDTest {
 
   @Test
   public void testTopDeclarator(){
+    //clear the out directory so we don't confirm old results
+    File outDir = new File("target/generated/example/hwc/TOPMechanismTest");
+    if(outDir.exists()){
+      for(File file: Objects.requireNonNull(outDir.listFiles())){
+        file.delete();
+      }
+    }
+
     CD4CodeMill.globalScope().clear();
     CD4CodeMill.reset();
     BasicSymbolsMill.reset();
     LogStub.init();
-    de.monticore.cdgen.CDGenTool.main(
+    CDGenTool.main(
       new String[] {
         "-i", "src/test/resources/de/monticore/cd/codegen/TOPMechanismTest.cd",
         "-c2mc",
@@ -328,8 +336,12 @@ public class BuilderCDTest {
         "src/test/resources/de/monticore/cd/codegen/hwc"
       });
 
-    //TODO assert that the generated file exists
+    Path filePath = Paths.get("target/generated/example/hwc/TOPMechanismTest/TOPMechanismTestBuilderTOP.java");
+    Assert.assertTrue(Files.exists(filePath));
+
     //TODO assert the correct functionality of the TOP mechanism
+    //check correctness of the generated classes
+
   }
 
   private static Optional<ASTCDCompilationUnit> parseStringToCompilationUnitWithSetters() throws IOException {

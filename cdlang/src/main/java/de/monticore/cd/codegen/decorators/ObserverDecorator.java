@@ -35,21 +35,21 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
 
       // add an import statement for the Observer interface
       CD4C.getInstance().addImport(decClazz, pathToObserverPatternInterfaces +".Observer");
+      CD4C.getInstance().addImport(decClazz, pathToObserverPatternInterfaces +".Observable");
 
       //add the observable interfaces methods to the class
       ASTCDParameter observerParameter = CD4CodeMill.cDParameterBuilder().setName("observer").setMCType(observerInterface).build();
-      // addObserver
+        // addObserver
       ASTCDMethod addObserver = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),"addObserver",observerParameter);
       addToClass(decClazz, addObserver);
-      // removeObserver
+        // removeObserver
       ASTCDMethod removeObserver = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),"removeObserver",observerParameter);
       addToClass(decClazz, removeObserver);
-      // notifyObservers
+        // notifyObservers
       ASTCDMethod notifyObservers = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), "notifyObservers");
       addToClass(decClazz, notifyObservers);
-
       //TODO check if needed
-      // getUpdatedData
+        // getUpdatedData
       ASTCDMethod getUpdatedData = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), MCTypeFacade.getInstance().createQualifiedType("java.lang.Object"),"getUpdatedDate");
       addToClass(decClazz, getUpdatedData);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getUpdatedData, new StringHookPoint("return null;")));
