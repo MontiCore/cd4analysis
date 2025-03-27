@@ -2,6 +2,7 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
@@ -20,6 +21,7 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -133,6 +135,9 @@ public class CDGenTool extends CDGeneratorTool {
       if (cmd.hasOption("o")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+        glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
+        glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
+        glex.setGlobalValue("cdGenService", new CDGenService());
         GeneratorSetup setup = new GeneratorSetup();
 
         if (cmd.hasOption("fp")) {

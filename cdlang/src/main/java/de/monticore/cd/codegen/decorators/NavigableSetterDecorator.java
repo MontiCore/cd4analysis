@@ -38,6 +38,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
         || attribute.getModifier().isFinal()) return;
 
     // For every attribute, for which the SetterDecorator has created methods:
+    if(decoratorData.getDecoratorData(SetterDecorator.class) == null) return;
     var methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
     if (methods == null || methods.isEmpty()) return;
 

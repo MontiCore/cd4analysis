@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram MyCD {
+classdiagram TOPMechanismTest {
 
   <<getter,builder>> public class TOPMechanismTest {
      public int myInt;

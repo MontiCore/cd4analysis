@@ -2,7 +2,7 @@
 ${tc.signature("attributes","staticErrorCode")}
 
 <#list attributes as attribute>
-<#assign errorCode = staticErrorCode + cdGenService.getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType()) + " " + attribute.getName() + " of type " + attribute.getMCType().printType() + " must not be null">
+<#assign errorCode = staticErrorCode + cdGenService.getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType())>
 <#assign MCCollectionSymTypeRelations = glex.getGlobalVar("mcCollectionSymTypeRelations")>
 
 <#-- Check if the attribute is not a list, set or optional as they have isAbsent methods-->

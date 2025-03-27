@@ -2,6 +2,8 @@ package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -14,15 +16,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDInterfaceUsage;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdgen.CDGenSetup;
-import de.monticore.cdgen.decorators.BuilderDecorator;
-import de.monticore.cdgen.decorators.ObserverDecorator;
-import de.monticore.cdgen.decorators.SetterDecorator;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.MCTypeFacade;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
@@ -38,7 +35,8 @@ public class ObserverCDTest {
   static ASTCDClass pojoClass;
   static ASTCDCompilationUnit pojoCompilationUnit;
 
-  //TODO: path
+  //TODO add the interfaces Observer and Observable to the CD runtime
+  //TODO: replace path with the correct path to the CD runtime
   String pathToObserverPatternInterfaces = "test";
 
   @BeforeClass
@@ -52,20 +50,28 @@ public class ObserverCDTest {
     MCCollectionSymTypeRelations.init();
     LogStub.initPlusLog();
 
-    CDGenSetup setup = new CDGenSetup();
+    DecoratorConfig setup = new DecoratorConfig();
 
     // the execution of the BuilderDecorator depends on the SetterDecorator executed previously
+    setup.withDecorator(new GetterDecorator());
+    setup.configApplyMatchName(GetterDecorator.class, "getter");
+    setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
+
     setup.withDecorator(new SetterDecorator());
     setup.configApplyMatchName(SetterDecorator.class, ("setter"));
     setup.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));
+
+    setup.withDecorator(new NavigableSetterDecorator());
+    setup.configApplyMatchName(NavigableSetterDecorator.class, "setter");
+    setup.configIgnoreMatchName(NavigableSetterDecorator.class, "noSetter");
 
     setup.withDecorator(new BuilderDecorator());
     setup.configApplyMatchName(BuilderDecorator.class, "builder");
     setup.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
 
     setup.withDecorator(new ObserverDecorator());
-    setup.configApplyMatchName(ObserverDecorator.class, "observer");
-    setup.configIgnoreMatchName(ObserverDecorator.class, "noObserver");
+    setup.configApplyMatchName(ObserverDecorator.class, "observable");
+    setup.configIgnoreMatchName(ObserverDecorator.class, "notObservable");
 
     Optional<ASTCDCompilationUnit> opt = parseStringToCompilationUnit();
 

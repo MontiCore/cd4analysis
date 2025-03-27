@@ -4,6 +4,8 @@ import de.monticore.CDGeneratorTool;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -15,8 +17,6 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cdgen.CDGenSetup;
-import de.monticore.cdgen.decorators.*;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -37,8 +37,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class BuilderCDTest {
 
   private static ASTCDClass builderClassWithSetters;
@@ -47,24 +45,30 @@ public class BuilderCDTest {
   private static ASTCDClass pojoClassWithoutSetters;
   private static String builderFileContentWithSetters;
   private static String builderFileContentWithoutSetters;
+  private static boolean hasInit = false;
 
-  @BeforeClass
   public static void init() throws IOException {
-    LogStub.initPlusLog();
-    CD4CodeMill.reset();
-    CD4CodeMill.init();
-    CD4C.reset();
-    CD4C.init(new GeneratorSetup());
-    BasicSymbolsMill.initializePrimitives();
-    MCCollectionSymTypeRelations.init();
-    LogStub.initPlusLog();
+    //only execute once
+    if(!hasInit) {
+      hasInit = true;
 
-    generateWithOutSetters();
-    generateWithSetters();
+      LogStub.initPlusLog();
+      CD4CodeMill.reset();
+      CD4CodeMill.init();
+      CD4C.reset();
+      CD4C.init(new GeneratorSetup());
+      BasicSymbolsMill.initializePrimitives();
+      MCCollectionSymTypeRelations.init();
+      LogStub.initPlusLog();
+
+      generateWithOutSetters();
+      generateWithSetters();
+    }
   }
 
   @Test
-  public void testTemplateExistence() {
+  public void testTemplateExistence() throws IOException {
+    init();
     //test existence of the templates
     List<Path> templatePaths= new ArrayList<>();
     templatePaths.add(Paths.get("src/main/resources/methods/builder/unsafeBuild.ftl"));
@@ -78,7 +82,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testConstructorSignatureOfBuilderClass() {
+  public void testConstructorSignatureOfBuilderClass() throws IOException {
+    init();
     // The Builder should have a constructor with the original class as parameter
     Assert.assertEquals(1, builderClassWithSetters.getCDConstructorList().size());
     Assert.assertTrue(builderClassWithSetters.getCDConstructorList().get(0).getModifier().isPublic());
@@ -87,7 +92,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testConstructorBodyOfBuilderClass() {
+  public void testConstructorBodyOfBuilderClass() throws IOException {
+    init();
     // The constructor should set the realBuilder attribute to this
     List<String> constructorBodies = extractConstructorBodies(builderFileContentWithSetters, "OtherCBuilder");
     Assert.assertEquals(1, constructorBodies.size());
@@ -95,7 +101,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testBuildSignatureOfBuilderClass() {
+  public void testBuildSignatureOfBuilderClass() throws IOException {
+    init();
     // The Builder should have a build method which generates the original class
     Assert.assertTrue(builderClassWithoutSetters.getCDMethodList().get(8).getModifier().isPublic());
     Assert.assertEquals("build", builderClassWithoutSetters.getCDMethodList().get(8).getName());
@@ -104,7 +111,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testBuildBodyOfBuilderClass() {
+  public void testBuildBodyOfBuilderClass() throws IOException {
+    init();
     String buildBodiesWithSetters = extractMethodBySignature(builderFileContentWithSetters, "public\\s+OtherC\\s+build");
     String buildBodiesWithoutSetters = extractMethodBySignature(builderFileContentWithoutSetters, "public\\s+OtherC\\s+build");
 
@@ -158,7 +166,9 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testUnsafeBuildBodyOfBuilderClass() {
+  public void testUnsafeBuildBodyOfBuilderClass() throws IOException {
+    init();
+
     String unsafeBuildBodiesWithSetters = extractMethodBySignature(builderFileContentWithSetters, "public\\s+OtherC\\s+unsafeBuild");
     String unsafeBuildBodiesWithoutSetters = extractMethodBySignature(builderFileContentWithoutSetters, "public\\s+OtherC\\s+unsafeBuild");
 
@@ -213,7 +223,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testUnsafeBuildOSignatureOfBuilderClass() {
+  public void testUnsafeBuildOSignatureOfBuilderClass() throws IOException {
+    init();
     // The Builder should have an unsafeBuild method which generates the original class without checking the validity
     Assert.assertTrue(builderClassWithoutSetters.getCDMethodList().get(9).getModifier().isPublic());
     Assert.assertEquals("unsafeBuild", builderClassWithoutSetters.getCDMethodList().get(9).getName());
@@ -222,9 +233,9 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testIsValidSignatureOfBuilderClass() {
+  public void testIsValidSignatureOfBuilderClass() throws IOException {
+    init();
     //isValid method has no parameters and returns a boolean
-    //TODO: check if this is correct or if isValid should be public
     Assert.assertTrue(builderClassWithoutSetters.getCDMethodList().get(0).getModifier().isPrivate());
     Assert.assertEquals("isValid", builderClassWithoutSetters.getCDMethodList().get(0).getName());
     Assert.assertEquals("boolean", builderClassWithoutSetters.getCDMethodList().get(0).getMCReturnType().printType());
@@ -232,7 +243,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testIsValidBodyOfBuilderClass() {
+  public void testIsValidBodyOfBuilderClass() throws IOException {
+    init();
     //isValid method should return true
     String isValidBody = extractMethodBySignature(builderFileContentWithoutSetters, "private\\s+boolean\\s+isValid");
     Assert.assertNotNull(isValidBody);
@@ -245,7 +257,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testAttributesOfBuilderClass() {
+  public void testAttributesOfBuilderClass() throws IOException {
+    init();
     //compare the attributes of the original class with the attributes of the builder class
     for(int i =0; i< pojoClassWithSetters.getCDAttributeList().size(); i++){
       Assert.assertEquals(pojoClassWithSetters.getCDAttributeList().get(i).getName(), pojoClassWithSetters.getCDAttributeList().get(i).getName());
@@ -269,7 +282,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testSetterSignatureOfBuilderClass() {
+  public void testSetterSignatureOfBuilderClass() throws IOException {
+    init();
     //Setter for every attribute of the original class not to be confused with the setter for the pojo setters
     Assert.assertEquals(10, builderClassWithSetters.getCDMethodList().size());
     Assert.assertEquals("setMyInt", builderClassWithoutSetters.getCDMethodList().get(1).getName());
@@ -284,7 +298,8 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testSetterBodyOfBuilderClass() {
+  public void testSetterBodyOfBuilderClass() throws IOException {
+    init();
     List<String> setterMethods = extractAllSetterMethods(builderFileContentWithSetters);
     List.of("this.optB = Optional.ofNullable(optB);\nreturn this.realBuilder;",
             "this.oneB = oneB;\nreturn this.realBuilder;",
@@ -303,7 +318,7 @@ public class BuilderCDTest {
     CD4CodeMill.reset();
     BasicSymbolsMill.reset();
     LogStub.init();
-    CDGeneratorTool.main(
+    de.monticore.cdgen.CDGenTool.main(
       new String[] {
         "-i", "src/test/resources/de/monticore/cd/codegen/TOPMechanismTest.cd",
         "-c2mc",
@@ -318,6 +333,8 @@ public class BuilderCDTest {
   }
 
   private static Optional<ASTCDCompilationUnit> parseStringToCompilationUnitWithSetters() throws IOException {
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
     return CD4CodeMill.parser().parse_String("classdiagram MyCD {\n" +
       " <<setter,getter,builder>> public class OtherC { \n" +
       " public int myInt;\n" +
@@ -332,6 +349,8 @@ public class BuilderCDTest {
   }
 
   private static Optional<ASTCDCompilationUnit> parseStringToCompilationUnitWithoutSetters() throws IOException {
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
     return CD4CodeMill.parser().parse_String("classdiagram MyCD {\n" +
       " <<getter,builder>> public class OtherC { \n" +
       " public int myInt;\n" +
@@ -346,22 +365,37 @@ public class BuilderCDTest {
   }
 
   private static void generateWithOutSetters() throws IOException {
-    CDGenSetup setup = new CDGenSetup();
+    LogStub.initPlusLog();
+    DecoratorConfig setup = new DecoratorConfig();
 
-    // the execution of the BuilderDecorator depends on the SetterDecorator executed previously
+    setup.withDecorator(new GetterDecorator());
+    setup.configApplyMatchName(GetterDecorator.class, "getter");
+    setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
+
     setup.withDecorator(new SetterDecorator());
     setup.configApplyMatchName(SetterDecorator.class, ("setter"));
     setup.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));
 
+    setup.withDecorator(new NavigableSetterDecorator());
+    setup.configApplyMatchName(NavigableSetterDecorator.class, "setter");
+    setup.configIgnoreMatchName(NavigableSetterDecorator.class, "noSetter");
+
     setup.withDecorator(new BuilderDecorator());
     setup.configApplyMatchName(BuilderDecorator.class, "builder");
-    setup.configIgnoreMatchName(BuilderDecorator.class,"noBuilder");
+    setup.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
+
+    setup.withDecorator(new ObserverDecorator());
+    setup.configApplyMatchName(ObserverDecorator.class, "observable");
+    setup.configIgnoreMatchName(ObserverDecorator.class, "notObservable");
 
     Optional<ASTCDCompilationUnit> opt = parseStringToCompilationUnitWithoutSetters();
 
     // After parse Trafos
-    CD4AnalysisAfterParseTrafo afterParseTrafo = new CD4AnalysisAfterParseTrafo();
+    var afterParseTrafo = new CD4AnalysisAfterParseTrafo();
     afterParseTrafo.transform(opt.get());
+
+    BasicSymbolsMill.initializePrimitives();
+    MCCollectionSymTypeRelations.init();
 
     // Create ST
     CD4CodeMill.scopesGenitorDelegator().createFromAST(opt.get());
@@ -370,7 +404,8 @@ public class BuilderCDTest {
     opt.get().accept(new CD4CodeSymbolTableCompleter(opt.get()).getTraverser());
 
     // Transform with ST
-    CDAssociationCreateFieldsFromAllRoles roleTrafo = new CDAssociationCreateFieldsFromNavigableRoles();
+    CDAssociationCreateFieldsFromAllRoles roleTrafo =
+      new CDAssociationCreateFieldsFromNavigableRoles();
     final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
     traverser.add4CDAssociation(roleTrafo);
     traverser.setCDAssociationHandler(roleTrafo);
@@ -382,24 +417,28 @@ public class BuilderCDTest {
     glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
     glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
     glex.setGlobalValue("cdGenService", new CDGenService());
+    GeneratorSetup generatorSetup = new GeneratorSetup();
+    generatorSetup.setGlex(glex);
+    generatorSetup.setOutputDirectory(new File("target/outtest"));
 
-    ASTCDCompilationUnit decorated = setup.decorate(opt.get(), roleTrafo.getFieldToRoles(), Optional.of(glex));
+    generatorSetup.getOutputDirectory().mkdirs();
+
+    CDGenerator generator = new CDGenerator(generatorSetup);
+
+    var decorated = setup.decorate(opt.get(), roleTrafo.getFieldToRoles(), Optional.of(glex));
 
     // Post-Decorate
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
     decorated.accept(t);
 
+    System.err.println(CD4CodeMill.prettyPrint(decorated, true));
+
     ASTCDPackage cdPackage = decorated.getCDDefinition().getCDPackagesList().get(0);
     builderClassWithoutSetters = (ASTCDClass) cdPackage.getCDElement(5);
     pojoClassWithoutSetters = (ASTCDClass) cdPackage.getCDElement(0);
 
     // only used when analyzing the body's of methods/constructors
-    GeneratorSetup generatorSetup = new GeneratorSetup();
-    generatorSetup.setGlex(glex);
-    generatorSetup.setOutputDirectory(new File("target/outtest"));
-    generatorSetup.getOutputDirectory().mkdirs();
-    CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(decorated);
 
     try {
@@ -422,16 +461,28 @@ public class BuilderCDTest {
   }
 
   private static void generateWithSetters() throws IOException {
-    CDGenSetup setup = new CDGenSetup();
+    DecoratorConfig setup = new DecoratorConfig();
 
     // the execution of the BuilderDecorator depends on the SetterDecorator executed previously
+    setup.withDecorator(new GetterDecorator());
+    setup.configApplyMatchName(GetterDecorator.class, "getter");
+    setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
+
     setup.withDecorator(new SetterDecorator());
     setup.configApplyMatchName(SetterDecorator.class, ("setter"));
     setup.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));
 
+    setup.withDecorator(new NavigableSetterDecorator());
+    setup.configApplyMatchName(NavigableSetterDecorator.class, "setter");
+    setup.configIgnoreMatchName(NavigableSetterDecorator.class, "noSetter");
+
     setup.withDecorator(new BuilderDecorator());
     setup.configApplyMatchName(BuilderDecorator.class, "builder");
-    setup.configIgnoreMatchName(BuilderDecorator.class,"noBuilder");
+    setup.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
+
+    setup.withDecorator(new ObserverDecorator());
+    setup.configApplyMatchName(ObserverDecorator.class, "observable");
+    setup.configIgnoreMatchName(ObserverDecorator.class, "notObservable");
 
     Optional<ASTCDCompilationUnit> opt = parseStringToCompilationUnitWithSetters();
 
