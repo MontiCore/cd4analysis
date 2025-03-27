@@ -1,0 +1,6 @@
+classdiagram AssociationSuperMatchingRef {
+  class A;
+  class B;
+
+  association A -> B [*];
+}
