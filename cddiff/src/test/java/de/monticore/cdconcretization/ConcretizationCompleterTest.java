@@ -276,6 +276,37 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  void testAssocInSuperType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/AssociationInSuperTypeConc.cd",
+        "associations/AssociationInSuperTypeRef.cd",
+        "associations/AssociationInSuperTypeOut.cd");
+  }
+
+  @Test
+  void testAssocSuperMatchingTest() {
+    testConcretizedConformsToRef(
+        "associations/AssociationSuperMatchingConc.cd",
+        "associations/AssociationSuperMatchingRef.cd");
+  }
+
+  @Test
+  void testAssocSuperMatchingConformanceTest() {
+    parseModels(
+        "associations/AssociationSuperMatchingOut.cd",
+        "associations/AssociationSuperMatchingRef.cd");
+    assertTrue(
+            new CDConformanceChecker(
+                    Set.of(
+                            STEREOTYPE_MAPPING,
+                            NAME_MAPPING,
+                            SRC_TARGET_ASSOC_MAPPING,
+                            INHERITANCE,
+                            ALLOW_CARD_RESTRICTION))
+                    .checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
   void testAssociationReverseMatch() {
     testConcretizedConformsToRefAndExpectedOut(
         "associations/AssociationReverseMatchConc.cd",
