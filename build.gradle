@@ -30,6 +30,9 @@ ext {
 }
 
 repositories {
+  if (("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
   mavenCentral()
 }
 
@@ -165,6 +168,8 @@ publishing {
     }
 
     publ.artifact(project(":cdtool").tasks.shadowJar)
+    publ.artifact(project(":symtabdefinitiontool").tasks.shadowJar)
+    publ.artifact(project(":symtabdefinitiontool:stdefgradle").tasks.jar)
 
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {

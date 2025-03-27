@@ -1,0 +1,6 @@
+classdiagram RefTwoAttributesMissing {
+  class Employee {
+    int number;
+    int salary;
+  }
+}

@@ -24,6 +24,7 @@ if(!hasProperty('bootstrap')) {
   include(':cdmerge')
   include(':cdtool')
   include(':symtabdefinitiontool')
+  include(':symtabdefinitiontool:stdefgradle')
   include(':language-server')
   if("true".equals(getProperty('genTR'))){
     include(":trafo-library")

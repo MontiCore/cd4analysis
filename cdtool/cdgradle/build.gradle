@@ -60,9 +60,15 @@ tasks.register('generateResources') {
 }
 processResources {
   from files(generateResources)
+  dependsOn generateResources
 }
 
 tasks.withType(Test) {
   useJUnitPlatform()
   dependsOn project.tasks.getByPath(":cdlang:jar")
+  dependsOn generateResources
+
+  // For the MontiVerse
+  systemProperty "maven.repo.local", System.getProperty("maven.repo.local")
+  systemProperty "useLocalRepo", findProperty("useLocalRepo")
 }

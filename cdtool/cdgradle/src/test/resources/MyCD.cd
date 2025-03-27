@@ -28,4 +28,16 @@ classdiagram MyCD {
     // The build.gradle options
     public int x;
   }
+
+  interface MyEmptyInterface { }
+
+  interface MyInterface {
+    boolean doStuff();
+    public boolean doStuffInPublic();
+  }
+
+   <<needsTOP="TOP required: %s">>
+    public class IncompleteA {
+      public String name;
+    }
 }

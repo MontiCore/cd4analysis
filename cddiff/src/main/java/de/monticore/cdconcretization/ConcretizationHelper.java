@@ -3,14 +3,13 @@ package de.monticore.cdconcretization;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.inc.association.CompAssocIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -224,10 +223,25 @@ public class ConcretizationHelper {
   }
 
   public static void reorderElements(ASTCDDefinition cdDefinition) {
-    List<ASTCDClass> classList = new ArrayList<>(cdDefinition.getCDClassesList());
-    List<ASTCDAssociation> assocList = new ArrayList<>(cdDefinition.getCDAssociationsList());
-    cdDefinition.getCDElementList().clear();
-    cdDefinition.addAllCDElements(classList);
-    cdDefinition.addAllCDElements(assocList);
+    List<ASTCDElement> elements = new ArrayList<>(cdDefinition.getCDElementList());
+    elements.sort(
+        Comparator.comparingInt(
+            (element) -> {
+              if (element instanceof ASTCDClass) {
+                return 0;
+              } else if (element instanceof ASTCDInterface) {
+                return 1;
+              } else if (element instanceof ASTCDEnum) {
+                return 2;
+              } else if (element instanceof ASTCDAssociation) {
+                return 3;
+              } else if (element instanceof ASTCDPackage) {
+                return 4;
+              } else {
+                // all other elements at the end
+                return 5;
+              }
+            }));
+    cdDefinition.setCDElementList(elements);
   }
 }

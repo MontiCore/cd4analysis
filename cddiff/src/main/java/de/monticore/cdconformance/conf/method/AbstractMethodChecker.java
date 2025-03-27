@@ -7,6 +7,8 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import java.util.Optional;
 
 public abstract class AbstractMethodChecker implements ICDMethodChecker {
   protected String mapping;
@@ -26,18 +28,9 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected boolean checkParameterConformance(ASTCDParameter conPar, ASTCDParameter refPar) {
     if (conPar.getName().equals(refPar.getName())) {
-      if (conPar.getMCType().getDefiningSymbol().isPresent()
-          && conPar.getMCType().getDefiningSymbol().get() instanceof CDTypeSymbol) {
-        CDTypeSymbol conParType = (CDTypeSymbol) conPar.getMCType().getDefiningSymbol().get();
-        if (conParType.isPresentAstNode()) {
-          return typeMatcher.getMatchedElements(conParType.getAstNode()).stream()
-              .anyMatch(
-                  refType ->
-                      refType
-                          .getSymbol()
-                          .getInternalQualifiedName()
-                          .contains(refPar.getMCType().printType()));
-        }
+      Optional<Boolean> conParType = checkTypeIncarnation(refPar.getMCType(), conPar.getMCType());
+      if (conParType.isPresent()) {
+        return conParType.get();
       }
       return conPar.getMCType().deepEquals(refPar.getMCType());
     }
@@ -49,20 +42,26 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
     if (refReturn.printType().equals("void")) {
       return true;
     }
-    if (conReturn.getMCType().getDefiningSymbol().isPresent()
-        && conReturn.getMCType().getDefiningSymbol().get() instanceof CDTypeSymbol) {
-      CDTypeSymbol conParType = (CDTypeSymbol) conReturn.getMCType().getDefiningSymbol().get();
-      if (conParType.isPresentAstNode()) {
-        return typeMatcher.getMatchedElements(conParType.getAstNode()).stream()
-            .anyMatch(
-                refType ->
-                    refType
-                        .getSymbol()
-                        .getInternalQualifiedName()
-                        .contains(refReturn.getMCType().printType()));
+    Optional<Boolean> conReturnType =
+        checkTypeIncarnation(refReturn.getMCType(), conReturn.getMCType());
+    if (conReturnType.isPresent()) {
+      return conReturnType.get();
+    }
+    return conReturn.getMCType().deepEquals(refReturn.getMCType());
+  }
+
+  protected Optional<Boolean> checkTypeIncarnation(ASTMCType refType, ASTMCType conType) {
+    if (conType.getDefiningSymbol().isPresent()
+        && conType.getDefiningSymbol().get() instanceof CDTypeSymbol) {
+      CDTypeSymbol conCDType = (CDTypeSymbol) conType.getDefiningSymbol().get();
+      if (conCDType.isPresentAstNode()) {
+        return Optional.of(
+            typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
+                .anyMatch(
+                    r -> r.getSymbol().getInternalQualifiedName().contains(refType.printType())));
       }
     }
-    return conReturn.deepEquals(refReturn);
+    return Optional.empty();
   }
 
   @Override
