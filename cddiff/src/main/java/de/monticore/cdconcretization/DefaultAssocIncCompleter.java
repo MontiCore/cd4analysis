@@ -467,14 +467,13 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
   }
 
   /**
-   * GUESS: Process the type incarnations to find and handle matching associations.
+   * Process the type incarnations to find and handle matching associations.
    *    -> so we still try to find more matches than we found in the step before.
    *
    * @param rTypeIncarnation all incarnation of the one side of the association
    * @param rOppositeTypeIncarnations all incarnation of the other side of the association
    * @param typeInc2Process Subset of 'rTypeIncarnation' (?) that still needs an incarnation of the reference association (??)
    * @param assocIncarnations "normal" matches from the association matching strategy -> NOTE: these were processed before in step 4 by handleAssociation(...)
-   *                          Although handleAssociations can abort the processing, so we could match them again ??
    * @param assocGreedyMatches greedy matches for the reference association to process
    * @param cd the CONCRETE class diagram
    * @param rAssoc the reference association to process
@@ -497,7 +496,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
 
       // First, attempt to find a match among the specific association incarnations
       Optional<ASTCDAssociation> match =
-          processAssociations(superTypes, rOppositeTypeIncarnations, assocIncarnations, cd);
+          findAssociationToAnyOppositeTypeInc(superTypes, rOppositeTypeIncarnations, assocIncarnations, cd);
 
       // If a match is found, remove the current type incarnation from the set to be processed and
       // continue
@@ -512,7 +511,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
 
       if (greedyMatcherEnabled) {
         // If no match is found in specific incarnations, try matching against the greedy matches
-        match = processAssociations(superTypes, rOppositeTypeIncarnations, assocGreedyMatches, cd);
+        match = findAssociationToAnyOppositeTypeInc(superTypes, rOppositeTypeIncarnations, assocGreedyMatches, cd);
 
         // If a match is found among the greedy matches, remove the current type incarnation from the
         // set to be processed
@@ -530,31 +529,32 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
   }
 
   /**
-   * GUESS: Finds any association in the given set that "associates" one of the superTypes with
-   *        one if the "oppositeTypeIncarnations".
+   * Finds any association in the given set that "associates" one of the superTypes with one if the
+   * "oppositeTypeIncarnations".
    *
    * @param superTypes all concrete super types of the "one side" of the association
    * @param oppositeTypeIncarnations all incarnations of the type on the "other side" of the association
    * @param associations the set of concrete associations to check for a match
    * @param cd the concrete CD
-   * @return
+   * @return an association from the given set that connect one of the superTypes with one of the
+   * oppositeTypeIncarnations.
    * @throws CompletionException
    */
-  // TODO name change proposal: findMatchingConcreteAssociationInSuperTypes
-  private Optional<ASTCDAssociation> processAssociations(
+  private Optional<ASTCDAssociation> findAssociationToAnyOppositeTypeInc(
       Set<ASTCDType> superTypes,
       Set<ASTCDType> oppositeTypeIncarnations,
       Set<ASTCDAssociation> associations,
       ASTCDDefinition cd)
       throws CompletionException {
+
+    // For each type in the oppositeTypeIncarnations set we also check the super types
+    Set<ASTCDType> oppositeTypeIncarnationSuperTypes = oppositeTypeIncarnations.stream()
+            .flatMap(oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream())
+            .collect(Collectors.toSet());
+
     for (ASTCDAssociation assoc : associations) {
-      // Check if there is a match with the left side of the association
-      // TODO NOTE: (??? doesn't the method check both sides??)
-      /*
-       * MY description would be:
-       * check if the association "assoc" relates any of the superTypes with any of the oppositeTypeIncarnations (or its super types) (??)
-       */
-      if (checkAssociationMatch(superTypes, oppositeTypeIncarnations, assoc, cd)) {
+      // Check if the association "assoc" relates any of the superTypes with any of the oppositeTypeIncarnations (or its super types) (??)
+      if (checkAssociationMatchesTypes(superTypes, oppositeTypeIncarnationSuperTypes, assoc)) {
         return Optional.of(assoc); // Match found, return the association
       }
     }
@@ -562,7 +562,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
   }
 
   /**
-   * Creates incarnations if a reference association for the given sets of left and right type
+   * Creates incarnations of a reference association for the given sets of left and right type
    * incarnations.
    * For each pair of left and right type incarnations, a new association is created.
    *
@@ -621,25 +621,24 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
   }
 
   /**
-   * Checks if the association "assoc" relates any of the superTypes with any of the oppositeTypeIncarnations (or its super types)
+   * Checks if the given concrete association relates any of the types from set A with any of the
+   * types from set B.
    *
-   * @param superTypes
-   * @param oppositeTypeIncarnations
+   * @param typesSideA the set (A) of types to check for on one side of the association
+   * @param typesSideB the set (B) of types to check for on the other side of the association
    * @param assoc the CONCRETE association to check for a match
-   * @param cd the concrete CD
-   * @return
+   * @return true if the association relates any of the types from set A with any of the types from
    * @throws CompletionException
    */
-  private boolean checkAssociationMatch(
-      Set<ASTCDType> superTypes,
-      Set<ASTCDType> oppositeTypeIncarnations,
-      ASTCDAssociation assoc,
-      ASTCDDefinition cd)
+  private boolean checkAssociationMatchesTypes(
+      Set<ASTCDType> typesSideA,
+      Set<ASTCDType> typesSideB,
+      ASTCDAssociation assoc)
       throws CompletionException {
 
     boolean fail = false;
 
-    if (superTypes.stream()
+    if (typesSideA.stream()
         .anyMatch(
             superType ->
                 // Compare the qualified name of the supertype with the qualified name of the
@@ -651,9 +650,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     // additionally, check if any supertype of the opposite types matches the right side of
     // the association
     ) {
-      if (oppositeTypeIncarnations.stream()
-          // For each type in the oppositeTypeIncarnations set, get all its supertypes
-          .flatMap(oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream())
+      if (typesSideB.stream()
           .anyMatch(
               oSuperType ->
                   // Compare the qualified name of the supertype with the qualified name of the
@@ -667,7 +664,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       fail = true; // TODO analyze what this fail means!
     }
     // Same logic, but this time we check from right to left
-    if (superTypes.stream()
+    if (typesSideA.stream()
         .anyMatch(
             superType ->
                 // Compare the qualified name of the supertype with the qualified name of the
@@ -679,9 +676,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     // Additionally, check if any supertype of the opposite types matches the left side of the
     // association
     ) {
-      if (oppositeTypeIncarnations.stream()
-          // For each type in the oppositeTypeIncarnations set, get all its supertypes
-          .flatMap(oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream())
+      if (typesSideB.stream()
           .anyMatch(
               oSuperType ->
                   // Compare the qualified name of the supertype with the qualified name of the
