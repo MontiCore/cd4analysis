@@ -367,6 +367,12 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
+  /**
+   * Adds missing associations to the concrete class diagram based on the associations in the
+   * reference class diagram.
+   *
+   * @throws CompletionException
+   */
   public void identifyAndAddMissingAssociations() throws CompletionException {
     Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);
@@ -455,11 +461,26 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       processTypeInc2Process(leftTypeInc2Process, rRightTypeIncarnations, rAssoc, true);
 
       // Process the remaining right-type incarnations against left-type incarnations
+      // TODO Can't we just pass right and left lists in the same order and get rid of the boolean?
       processTypeInc2Process(rightTypeInc2Process, rLeftTypeIncarnations, rAssoc, false);
       Log.debug("=== DONE processing assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
     }
   }
 
+  /**
+   * GUESS: Process the type incarnations to find and handle matching associations.
+   *    -> so we still try to find more matches than we found in the step before.
+   *
+   * @param rTypeIncarnation all incarnation of the one side of the association
+   * @param rOppositeTypeIncarnations all incarnation of the other side of the association
+   * @param typeInc2Process Subset of 'rTypeIncarnation' (?) that still needs an incarnation of the reference association (??)
+   * @param assocIncarnations "normal" matches from the association matching strategy -> NOTE: these were processed before in step 4 by handleAssociation(...)
+   *                          Although handleAssociations can abort the processing, so we could match them again ??
+   * @param assocGreedyMatches greedy matches for the reference association to process
+   * @param cd the CONCRETE class diagram
+   * @param rAssoc the reference association to process
+   * @throws CompletionException
+   */
   private void processTypeIncarnations(
       Set<ASTCDType> rTypeIncarnation,
       Set<ASTCDType> rOppositeTypeIncarnations,
@@ -483,6 +504,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       // continue
       if (match.isPresent()) {
         typeInc2Process.remove(typeInc);
+        // NOTE: we do not call "handleAssociation" here, because we already processed the match in the step before
         Log.debug("Found normal match for type inc: " + typeInc.getName(), LOG_NAME);
         Log.debug("reference assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
         Log.debug("concrete assoc: " + CD4CodeMill.prettyPrint(match.get(), false), LOG_NAME);
@@ -508,6 +530,18 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
+  /**
+   * GUESS: Finds any association in the given set that "associates" one of the superTypes with
+   *        one if the "oppositeTypeIncarnations".
+   *
+   * @param superTypes all concrete super types of the "one side" of the association
+   * @param oppositeTypeIncarnations all incarnations of the type on the "other side" of the association
+   * @param associations the set of concrete associations to check for a match
+   * @param cd the concrete CD
+   * @return
+   * @throws CompletionException
+   */
+  // TODO name change proposal: findMatchingConcreteAssociationInSuperTypes
   private Optional<ASTCDAssociation> processAssociations(
       Set<ASTCDType> superTypes,
       Set<ASTCDType> oppositeTypeIncarnations,
@@ -516,12 +550,30 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       throws CompletionException {
     for (ASTCDAssociation assoc : associations) {
       // Check if there is a match with the left side of the association
+      // TODO NOTE: (??? doesn't the method check both sides??)
+      /*
+       * MY description would be:
+       * check if the association "assoc" relates any of the superTypes with any of the oppositeTypeIncarnations (or its super types) (??)
+       */
       if (checkAssociationMatch(superTypes, oppositeTypeIncarnations, assoc, cd)) {
         return Optional.of(assoc); // Match found, return the association
       }
     }
     return Optional.empty(); // No match found, return empty
   }
+
+  /**
+   * Creates missing incarnations for the given type incarnations and the reference association.
+   * For each pair of typeInc2Process and otherTypeIncs, a new association is created based on the
+   * reference association.
+   *
+   * @param typeInc2Process the type incarnations for which we want to create missing incarnations
+   * @param otherTypeIncs the types to which we want to create missing incarnations
+   * @param rAssoc the reference association for which we want to create missing incarnations
+   * @param isLeftToRight If true, the left type of the new association is the type from
+   *                      'typeInc2Process' and the right type is from otherTypeIncs. If false, it is
+   *                      the other way around.
+   */
 
   private void processTypeInc2Process(
       Set<ASTCDType> typeInc2Process,
@@ -616,6 +668,16 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
+  /**
+   * Checks if the association "assoc" relates any of the superTypes with any of the oppositeTypeIncarnations (or its super types)
+   *
+   * @param superTypes
+   * @param oppositeTypeIncarnations
+   * @param assoc the CONCRETE association to check for a match
+   * @param cd the concrete CD
+   * @return
+   * @throws CompletionException
+   */
   private boolean checkAssociationMatch(
       Set<ASTCDType> superTypes,
       Set<ASTCDType> oppositeTypeIncarnations,
@@ -633,7 +695,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
                 superType
                     .getSymbol()
                     .getInternalQualifiedName()
-                    .contains(assoc.getLeftQualifiedName().getQName()))
+                    .contains(assoc.getLeftQualifiedName().getQName())) // TODO why contains?? - if because CD names can differ -> remove first part
     // additionally, check if any supertype of the opposite types matches the right side of
     // the association
     ) {
@@ -647,10 +709,10 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
                   oSuperType
                       .getSymbol()
                       .getInternalQualifiedName()
-                      .contains(assoc.getRightQualifiedName().getQName()))) {
+                      .contains(assoc.getRightQualifiedName().getQName()))) { // TODO why contains?? - if because CD names can differ -> remove first part
         return true;
       }
-      fail = true;
+      fail = true; // TODO analyze what this fail means!
     }
     // Same logic, but this time we check from right to left
     if (superTypes.stream()
@@ -685,17 +747,5 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
           "Something went wrong when identifying missing association incarnations.");
     }
     return false;
-  }
-
-  protected void setIntersectCardinality(Boolean b) {
-    this.intersectCardinality = b;
-  }
-
-  protected Boolean getIntersectCardinality() {
-    return intersectCardinality;
-  }
-
-  public CompAssocIncStrategy getCompAssocIncStrategy() {
-    return this.compAssocIncStrategy;
   }
 }
