@@ -710,6 +710,10 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     return Optional.empty();
   }
 
+  public CompAssocIncStrategy getCompAssocIncStrategy() {
+    return compAssocIncStrategy;
+  }
+
   enum AssocMatchDirection {
     /**
      * The association matches in the same direction as the reference association.
