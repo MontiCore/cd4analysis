@@ -458,11 +458,10 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
 
       // Finally, process any remaining type incarnations that still need to be handled
       // Process the remaining left-type incarnations against right-type incarnations
-      processTypeInc2Process(leftTypeInc2Process, rRightTypeIncarnations, rAssoc, true);
+      addAssociationIncarnations(leftTypeInc2Process, rRightTypeIncarnations, rAssoc);
 
       // Process the remaining right-type incarnations against left-type incarnations
-      // TODO Can't we just pass right and left lists in the same order and get rid of the boolean?
-      processTypeInc2Process(rightTypeInc2Process, rLeftTypeIncarnations, rAssoc, false);
+      addAssociationIncarnations(rLeftTypeIncarnations, rightTypeInc2Process, rAssoc);
       Log.debug("=== DONE processing assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
     }
   }
@@ -563,103 +562,56 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
   }
 
   /**
-   * Creates missing incarnations for the given type incarnations and the reference association.
-   * For each pair of typeInc2Process and otherTypeIncs, a new association is created based on the
-   * reference association.
+   * Creates incarnations if a reference association for the given sets of left and right type
+   * incarnations.
+   * For each pair of left and right type incarnations, a new association is created.
    *
-   * @param typeInc2Process the type incarnations for which we want to create missing incarnations
-   * @param otherTypeIncs the types to which we want to create missing incarnations
-   * @param rAssoc the reference association for which we want to create missing incarnations
-   * @param isLeftToRight If true, the left type of the new association is the type from
-   *                      'typeInc2Process' and the right type is from otherTypeIncs. If false, it is
-   *                      the other way around.
+   * @param leftTypesIncs the left type incarnations missing an association
+   * @param rightTypeIncs the right type incarnations missing an association
+   * @param referenceAssociation the reference association for which we want to create missing incarnations
    */
+  private void addAssociationIncarnations(
+      Set<ASTCDType> leftTypesIncs,
+      Set<ASTCDType> rightTypeIncs,
+      ASTCDAssociation referenceAssociation) {
 
-  private void processTypeInc2Process(
-      Set<ASTCDType> typeInc2Process,
-      Set<ASTCDType> otherTypeIncs,
-      ASTCDAssociation rAssoc,
-      boolean isLeftToRight) {
+    for (ASTCDType leftTypeInc : leftTypesIncs) {
+      for (ASTCDType rightTypeInc : rightTypeIncs) {
+        ASTCDAssociation association = referenceAssociation.deepClone();
 
-    // Iterate over each type incarnation in typeInc2Process
-    for (ASTCDType typeInc : typeInc2Process) {
-      // For each type incarnation in typeInc2Process, iterate over each type incarnation in
-      // otherTypeIncs
-      for (ASTCDType otherTypeInc : otherTypeIncs) {
-        ASTCDAssociation association = rAssoc.deepClone();
+        // Set the left and right types of the association based on the type incarnations
+        association.getLeft().setMCQualifiedType(
+                CD4CodeMill.mCQualifiedTypeBuilder()
+                        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
+                                leftTypeInc.getSymbol().getInternalQualifiedName()))
+                        .build());
+        association.getRight().setMCQualifiedType(
+                CD4CodeMill.mCQualifiedTypeBuilder()
+                        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
+                                rightTypeInc.getSymbol().getInternalQualifiedName()))
+                        .build());
 
-        // Set the qualified names for the association's left and right types based on the direction
-        if (isLeftToRight) {
-          // Set the left type to the current type incarnation and the right type to the other type
-          // incarnation
+        // If the right type does not have a role name, it is implicitly the type incarnation's
+        // name (first character lowercase) anyway.
+        if (association.getRight().isPresentCDRole()) {
+          // If a role name is already present, append the type incarnation's name to it
           association
-              .getLeft()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              typeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
+                  .getRight()
+                  .getCDRole()
+                  .setName(
+                          association.getRight().getCDRole().getName() + "_" + rightTypeInc.getName());
+        }
+        if (association.getLeft().isPresentCDRole()) {
           association
-              .getRight()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              otherTypeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
-
-          // If the right type does not have a role name, set it to the type incarnation's name
-          if (association.getRight().isPresentCDRole()) {
-            // If a role name is already present, append the type incarnation's name to it
-            association
-                .getRight()
-                .getCDRole()
-                .setName(
-                    association.getRight().getCDRole().getName() + "_" + otherTypeInc.getName());
-          }
-          if (association.getLeft().isPresentCDRole()) {
-            association
-                .getLeft()
-                .getCDRole()
-                .setName(association.getLeft().getCDRole().getName() + "_" + typeInc.getName());
-          }
-
-        } else {
-          // Set the left type to the other type incarnation and the right type to the current type
-          // incarnation
-          association
-              .getLeft()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              otherTypeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
-          association
-              .getRight()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              typeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
-
-          if (association.getLeft().isPresentCDRole()) {
-            association
-                .getLeft()
-                .getCDRole()
-                .setName(
-                    association.getLeft().getCDRole().getName() + "_" + otherTypeInc.getName());
-          }
-          if (association.getRight().isPresentCDRole()) {
-            association
-                .getRight()
-                .getCDRole()
-                .setName(association.getRight().getCDRole().getName() + "_" + typeInc.getName());
-          }
+                  .getLeft()
+                  .getCDRole()
+                  .setName(association.getLeft().getCDRole().getName() + "_" + leftTypeInc.getName());
         }
 
+        // Only add it if it is not already present. This can happen if the same type incarnation
+        // occurs in the "leftType2Process" set while processing "left types" missing an association
+        // and after that in the "allLeftTypeIncs" set while processing the "right types" missing
+        // an association.
         if (ccd.getCDDefinition().getCDAssociationsList().stream()
             .noneMatch(a -> a.deepEquals(association))) {
           ccd.getCDDefinition().addCDElement(association);
