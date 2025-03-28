@@ -6,7 +6,7 @@ classdiagram AssociationSuperMatchingConc {
   class ASuper2 extends ASuperSuper2;
   class ASuper3;
 
-  <<ref="A">> class A1 extends ASuper1, ASuper2;
+  <<ref="A">> class A1 extends ASuper1;
   <<ref="A">> class A2 extends ASuper2;
   <<ref="A">> class A3 extends ASuper3; // this one is missing associations
 
