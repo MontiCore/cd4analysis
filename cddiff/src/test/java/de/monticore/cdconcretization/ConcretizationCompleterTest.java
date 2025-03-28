@@ -181,6 +181,18 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  void testAssocBothSidesMIOneAssocExistsPerTypeIncarnation() {
+    /*
+     * The tool only adds associations between each pair of type incarnations if the concrete CD
+     * does not already contain an association for each SINGLE type incarnation!
+     */
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/BothAssocSidesMIOneAssocExistsConc.cd",
+        "multipleIncarnation/BothAssocSidesMIRef.cd",
+            "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
+  }
+
+  @Test
   void testMIUnequalCardinalities() {
     try {
       parseAndConcretize(
@@ -285,9 +297,10 @@ public class ConcretizationCompleterTest {
 
   @Test
   void testAssocSuperMatchingTest() {
-    testConcretizedConformsToRef(
+    testConcretizedConformsToRefAndExpectedOut(
         "associations/AssociationSuperMatchingConc.cd",
-        "associations/AssociationSuperMatchingRef.cd");
+        "associations/AssociationSuperMatchingRef.cd",
+        "associations/AssociationSuperMatchingOut.cd");
   }
 
   @Test
@@ -317,9 +330,9 @@ public class ConcretizationCompleterTest {
   @Test
   void testTypeMIOneAssocExists() {
     testConcretizedConformsToRefAndExpectedOut(
-        "associations/TypeMIOneAssocExistsConc.cd",
-        "associations/TypeMIOneAssocExistsRef.cd",
-        "associations/TypeMIOneAssocExistsOut.cd");
+            "associations/TypeMIOneAssocExistsConc.cd",
+            "associations/TypeMIOneAssocExistsRef.cd",
+            "associations/TypeMIOneAssocExistsOut.cd");
   }
 
   @Test
