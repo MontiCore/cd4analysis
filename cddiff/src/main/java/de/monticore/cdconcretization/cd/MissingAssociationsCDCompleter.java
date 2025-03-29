@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.AbstractCDCompleter;
+import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.association.AssocMatchDirection;
@@ -29,28 +30,17 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
 
   private static final String LOG_NAME = MissingAssociationsCDCompleter.class.getName();
 
-  private final MatchingStrategy<ASTCDAssociation> assocIncStrategy;
-
-  private final MatchingStrategy<ASTCDType> typeIncStrategy;
-  private final MatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes;
-
   private final IAssociationDetailsCompleter assocDetailsCompleter;
 
   private boolean greedyMatcherEnabled = true; // TODO remove! only for testing
 
-  public MissingAssociationsCDCompleter(
-      MatchingStrategy<ASTCDAssociation> assocIncStrategy,
-      MatchingStrategy<ASTCDType> typeIncStrategy,
-      MatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes,
-      IAssociationDetailsCompleter assocDetailsCompleter) {
-    this.assocIncStrategy = assocIncStrategy;
-    this.typeIncStrategy = typeIncStrategy;
-    this.typeIncStrategyMatchingSubTypes = typeIncStrategyMatchingSubTypes;
+  public MissingAssociationsCDCompleter(IAssociationDetailsCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
 
   @Override
-  public void complete(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd)
+  public void complete(
+      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CompletionContext context)
       throws CompletionException {
     Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);
@@ -60,12 +50,12 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       Log.debug("Finding matches for assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
 
       MatchingStrategy<ASTCDAssociation> greedyMatching =
-          new MatchCDAssocsGreedy(typeIncStrategyMatchingSubTypes, ccd, rcd);
+          new MatchCDAssocsGreedy(context.getTypeIncStrategyMatchingSubTypes(), ccd, rcd);
 
       // Find all associations in the concrete class diagram that match the reference association
       Set<ASTCDAssociation> assocIncarnations =
           ccd.getCDDefinition().getCDAssociationsList().stream()
-              .filter(cAssoc -> assocIncStrategy.isMatched(cAssoc, rAssoc))
+              .filter(cAssoc -> context.getAssociationIncStrategy().isMatched(cAssoc, rAssoc))
               .collect(Collectors.toSet());
 
       Log.debug(
@@ -101,12 +91,12 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       // types
       Set<ASTCDType> rLeftTypeIncarnations =
           ConcretizationHelper.getCDTypes(ccd).stream()
-              .filter(type -> typeIncStrategy.isMatched(type, rLeftType))
+              .filter(type -> context.getTypeIncStrategy().isMatched(type, rLeftType))
               .collect(Collectors.toSet());
 
       Set<ASTCDType> rRightTypeIncarnations =
           ConcretizationHelper.getCDTypes(ccd).stream()
-              .filter(type -> typeIncStrategy.isMatched(type, rRightType))
+              .filter(type -> context.getTypeIncStrategy().isMatched(type, rRightType))
               .collect(Collectors.toSet());
 
       // Initialize sets to track which type incarnations still need processing
@@ -157,7 +147,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       addAssociationIncarnations(ccd, rLeftTypeIncarnations, rightTypeInc2Process, rAssoc);
       Log.debug("=== DONE processing assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
     }
-    super.complete(ccd, rcd);
+    super.complete(ccd, rcd, context);
   }
 
   /**
@@ -383,7 +373,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
                         assoc
                             .getLeftQualifiedName()
                             .getQName())) // TODO why contains?? - if because CD names can differ ->
-                                          // remove first part
+    // remove first part
     // additionally, check if any supertype of the opposite types matches the right side of
     // the association
     ) {
@@ -399,7 +389,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
                           assoc
                               .getRightQualifiedName()
                               .getQName()))) { // TODO why contains?? - if because CD names can
-                                               // differ -> remove first part
+        // differ -> remove first part
         return Optional.of(
             leftToRight
                 ? AssocMatchDirection.SAME_DIRECTION

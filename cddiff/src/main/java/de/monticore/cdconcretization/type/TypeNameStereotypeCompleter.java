@@ -2,6 +2,7 @@ package de.monticore.cdconcretization.type;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.Optional;
 
@@ -11,15 +12,16 @@ public class TypeNameStereotypeCompleter extends AbstractTypeCompleter {
   public static final String NAME_STEREOTYPE = "name";
 
   @Override
-  public void completeType(ASTCDDefinition concreteCD, ASTCDType referenceType) {
+  public void completeType(
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CompletionContext context) {
     // only process type if the stereotype is present
     Optional<String> stereotypeValue = getNameStereotypeValue(referenceType);
     if (stereotypeValue.isPresent()) {
       String name = computeNameFromTemplate(stereotypeValue.get());
       ASTCDType renamedType = renameType(referenceType, name);
-      next(concreteCD, renamedType);
+      next(concreteCD, renamedType, context);
     } else {
-      next(concreteCD, referenceType);
+      next(concreteCD, referenceType, context);
     }
   }
 

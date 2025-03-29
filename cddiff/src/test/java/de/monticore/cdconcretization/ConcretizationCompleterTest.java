@@ -482,7 +482,7 @@ public class ConcretizationCompleterTest {
     parseModels(conc, ref);
     // ConcretizationCompleter completer = new ConcretizationCompleter("ref");
     ConcretizationCompleter completer = new ConcretizationCompleter("ref");
-    completer.complete(conCD, refCD);
+    completer.completeCD(conCD, refCD);
     System.out.println("Concretized CD:");
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
   }

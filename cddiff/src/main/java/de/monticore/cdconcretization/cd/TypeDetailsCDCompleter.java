@@ -4,6 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.AbstractCDCompleter;
+import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.typedetails.ITypeDetailsCompleter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -12,18 +13,17 @@ import de.monticore.cdmatcher.MatchingStrategy;
 
 public class TypeDetailsCDCompleter extends AbstractCDCompleter {
 
-  private final MatchingStrategy<ASTCDType> typeIncStrategy;
   private final ITypeDetailsCompleter typeDetailsCompleter;
 
-  public TypeDetailsCDCompleter(
-      MatchingStrategy<ASTCDType> typeIncStrategy, ITypeDetailsCompleter typeDetailsCompleter) {
-    this.typeIncStrategy = typeIncStrategy;
+  public TypeDetailsCDCompleter(ITypeDetailsCompleter typeDetailsCompleter) {
     this.typeDetailsCompleter = typeDetailsCompleter;
   }
 
   @Override
-  public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
+  public void complete(
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CompletionContext context)
       throws CompletionException {
+    MatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
     // complete member incarnations
     for (ASTCDClass cClass : concreteCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
@@ -40,6 +40,6 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
         typeDetailsCompleter.completeTypeDetails(cEnum, rType);
       }
     }
-    super.complete(concreteCD, referenceCD);
+    super.complete(concreteCD, referenceCD, context);
   }
 }

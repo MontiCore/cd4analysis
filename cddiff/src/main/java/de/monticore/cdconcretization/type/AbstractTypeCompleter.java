@@ -3,6 +3,7 @@ package de.monticore.cdconcretization.type;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.util.AbstractChainable;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -11,28 +12,32 @@ public abstract class AbstractTypeCompleter extends AbstractChainable<AbstractTy
     implements ITypeCompleter {
 
   @Override
-  public void completeType(ASTCDDefinition concreteCD, ASTCDType referenceType) {
+  public void completeType(
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CompletionContext context) {
     if (referenceType instanceof ASTCDClass) {
-      completeType(concreteCD, (ASTCDClass) referenceType);
+      completeType(concreteCD, (ASTCDClass) referenceType, context);
     } else if (referenceType instanceof ASTCDInterface) {
-      completeType(concreteCD, (ASTCDInterface) referenceType);
+      completeType(concreteCD, (ASTCDInterface) referenceType, context);
     } else if (referenceType instanceof ASTCDEnum) {
-      completeType(concreteCD, (ASTCDEnum) referenceType);
+      completeType(concreteCD, (ASTCDEnum) referenceType, context);
     } else {
-      next(concreteCD, referenceType);
+      next(concreteCD, referenceType, context);
     }
   }
 
-  protected void completeType(ASTCDDefinition concreteCD, ASTCDClass referenceType) {
-    next(concreteCD, referenceType);
+  protected void completeType(
+      ASTCDDefinition concreteCD, ASTCDClass referenceType, CompletionContext context) {
+    next(concreteCD, referenceType, context);
   }
 
-  protected void completeType(ASTCDDefinition concreteCD, ASTCDInterface referenceType) {
-    next(concreteCD, referenceType);
+  protected void completeType(
+      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CompletionContext context) {
+    next(concreteCD, referenceType, context);
   }
 
-  protected void completeType(ASTCDDefinition concreteCD, ASTCDEnum referenceType) {
-    next(concreteCD, referenceType);
+  protected void completeType(
+      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CompletionContext context) {
+    next(concreteCD, referenceType, context);
   }
 
   /**
@@ -41,9 +46,10 @@ public abstract class AbstractTypeCompleter extends AbstractChainable<AbstractTy
    * @param concreteCD
    * @param referenceType
    */
-  protected void next(ASTCDDefinition concreteCD, ASTCDType referenceType) {
+  protected void next(
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CompletionContext context) {
     if (hasNext()) {
-      next.completeType(concreteCD, referenceType);
+      next.completeType(concreteCD, referenceType, context);
     }
   }
 }

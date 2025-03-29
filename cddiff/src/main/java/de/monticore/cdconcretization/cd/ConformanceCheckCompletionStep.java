@@ -4,6 +4,7 @@ import static de.monticore.cdconformance.CDConfParameter.*;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.AbstractCDCompleter;
+import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconformance.CDConformanceChecker;
 import java.util.Set;
@@ -34,12 +35,13 @@ public class ConformanceCheckCompletionStep extends AbstractCDCompleter {
   }
 
   @Override
-  public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
+  public void complete(
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CompletionContext context)
       throws CompletionException {
     if (!conformanceChecker.checkConformance(concreteCD, referenceCD, mapping)) {
       // The association completion result is not conform
       throw new CompletionException(errorMessage);
     }
-    super.complete(concreteCD, referenceCD);
+    super.complete(concreteCD, referenceCD, context);
   }
 }

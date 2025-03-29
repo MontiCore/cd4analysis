@@ -5,6 +5,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.AbstractCDCompleter;
+import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.association.AssocMatchDirection;
@@ -18,29 +19,15 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
 
   private static final String LOG_NAME = ExistingAssociationsCDCompleter.class.getName();
 
-  private final MatchingStrategy<ASTCDAssociation> assocIncStrategy;
   private final IAssociationDetailsCompleter assocDetailsCompleter;
 
-  private final MatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes;
-
-  private final ASTCDCompilationUnit rcd;
-  private final ASTCDCompilationUnit ccd;
-
-  public ExistingAssociationsCDCompleter(
-      ASTCDCompilationUnit conCD,
-      ASTCDCompilationUnit refCD,
-      MatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes,
-      MatchingStrategy<ASTCDAssociation> assocIncStrategy,
-      IAssociationDetailsCompleter assocDetailsCompleter) {
-    this.ccd = conCD;
-    this.rcd = refCD;
-    this.assocIncStrategy = assocIncStrategy;
-    this.typeIncStrategyMatchingSubTypes = typeIncStrategyMatchingSubTypes;
+  public ExistingAssociationsCDCompleter(IAssociationDetailsCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
 
   @Override
-  public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
+  public void complete(
+      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CompletionContext context)
       throws CompletionException {
     // First: complete the incarnations, so add stuff to the underspecified incarnation
     // or do nothing to the over-specified incarnation
@@ -50,18 +37,22 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     for (ASTCDAssociation cAssoc : ccd.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation rAssoc : rcd.getCDDefinition().getCDAssociationsList()) {
         // Check if the concrete association is an incarnation of the reference association
-        if (assocIncStrategy.isMatched(cAssoc, rAssoc)) {
+        if (context.getAssociationIncStrategy().isMatched(cAssoc, rAssoc)) {
           Log.debug("Found match for assoc: " + CD4CodeMill.prettyPrint(cAssoc, false), LOG_NAME);
-          handleExistingAssociationMatch(cAssoc, rAssoc);
+          handleExistingAssociationMatch(cAssoc, rAssoc, context);
         }
       }
     }
     Log.debug("=== DONE completing existing associations ===", LOG_NAME);
-    super.complete(concreteCD, referenceCD);
+    super.complete(ccd, rcd, context);
   }
 
-  private void handleExistingAssociationMatch(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc)
+  private void handleExistingAssociationMatch(
+      ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, CompletionContext context)
       throws CompletionException {
+    ASTCDCompilationUnit ccd = context.getConcreteCD();
+    ASTCDCompilationUnit rcd = context.getReferenceCD();
+
     // Extract the left and right types of the concrete association
     ASTCDType cLeftType = ConcretizationHelper.getAssocLeftType(ccd, cAssoc);
     ASTCDType cRightType = ConcretizationHelper.getAssocRightType(ccd, cAssoc);
@@ -75,6 +66,8 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     Set<ASTCDType> cRightSuperTypes =
         CDDiffUtil.getAllSuperTypes(rRightType, ccd.getCDDefinition());
 
+    MatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes =
+        context.getTypeIncStrategyMatchingSubTypes();
     // Determine if the concrete association matches the reference association in the standard
     // direction.
     // A match occurs if the left types match and the right types match, considering supertypes as
