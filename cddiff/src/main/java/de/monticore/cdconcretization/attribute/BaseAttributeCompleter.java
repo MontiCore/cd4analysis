@@ -3,7 +3,6 @@ package de.monticore.cdconcretization.attribute;
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,20 +11,17 @@ import java.util.stream.Collectors;
  */
 public class BaseAttributeCompleter extends AbstractAttributeCompleter {
 
-  private final MatchingStrategy<ASTCDAttribute> attributeIncStrategy;
-
-  public BaseAttributeCompleter(MatchingStrategy<ASTCDAttribute> attributeIncStrategy) {
-    this.attributeIncStrategy = attributeIncStrategy;
-  }
-
   @Override
-  public void completeAttribute(ASTCDType concreteType, ASTCDAttribute referenceAttribute) {
+  public void completeAttribute(
+      ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
     // 1. check if the concrete type already has a matching attribute (also in superclasses)
     List<ASTCDAttribute> allConcreteAttributesInHierarchy =
         CDSymbolTables.getAttributesInHierarchy(concreteType);
     List<ASTCDAttribute> incarnations =
         allConcreteAttributesInHierarchy.stream()
-            .filter(cAttribute -> attributeIncStrategy.isMatched(cAttribute, referenceAttribute))
+            .filter(
+                cAttribute ->
+                    context.getAttributeIncStrategy().isMatched(cAttribute, referenceAttribute))
             .collect(Collectors.toList());
     if (incarnations.isEmpty()) {
       // 2. add the attribute

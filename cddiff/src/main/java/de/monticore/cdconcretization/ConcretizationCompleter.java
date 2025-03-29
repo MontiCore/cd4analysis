@@ -6,24 +6,46 @@ import de.monticore.cdconcretization.association.DefaultAssocDetailsCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationDetailsCompleter;
+import de.monticore.cdconcretization.attribute.AbstractAttributeCompleter;
+import de.monticore.cdconcretization.attribute.BaseAttributeCompleter;
+import de.monticore.cdconcretization.attribute.IAttributeCompleter;
 import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.typedetails.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
+import java.util.Set;
 
 public class ConcretizationCompleter {
 
   private final String mapping;
 
-  public ConcretizationCompleter(String mapping) {
+  /**
+   * If true, the conformance checker is used to check the conformance of the concretization result.
+   */
+  private boolean checkConformance = true;
+
+  /**
+   * If true, redundant attributes are removed from the concretization result, even if they were
+   * part of the concrete CD input.
+   */
+  private boolean removeRedundantAttributes = true;
+
+  /** If true, the elements in the concretization result are reordered for consistent results. */
+  private boolean reorderElements = true;
+
+  protected Set<CDConfParameter> conformanceParams;
+
+  public ConcretizationCompleter(String mapping, Set<CDConfParameter> conformanceParams) {
     this.mapping = mapping;
+    this.conformanceParams = conformanceParams;
   }
 
   public void completeCD(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
@@ -34,7 +56,8 @@ public class ConcretizationCompleter {
      * that are responsible for completing the different aspects of the CD. These completers are then used
      * to perform the actual concretization.
      */
-    CompletionContext context = new DefaultCompletionContext(concreteCD, referenceCD, mapping);
+    CompletionContext context =
+        new DefaultCompletionContext(concreteCD, referenceCD, mapping, conformanceParams);
 
     ITypeCompleter typeCompleter =
         new ChainBuilder<AbstractTypeCompleter>()
@@ -43,10 +66,17 @@ public class ConcretizationCompleter {
             // TODO add forEach support here
             .build();
 
+    IAttributeCompleter attributeCompleter =
+        new ChainBuilder<AbstractAttributeCompleter>()
+            .add(new BaseAttributeCompleter())
+            // TODO add name stereotype support here
+            // TODO add forEach stereotype support here
+            .build();
+
     ITypeDetailsCompleter typeDetailsCompleter =
         new ChainBuilder<AbstractTypeDetailsCompleter>()
             .add(new ClassModifierCompleter())
-            .add(new TypeAttributesCompleter(mapping))
+            .add(new TypeAttributesCompleter(attributeCompleter))
             // TODO add method completer here
             .add(new DefaultEnumConstantsCompleter())
             .build();
@@ -55,10 +85,7 @@ public class ConcretizationCompleter {
     IAssociationDetailsCompleter assocDetailsCompleter =
         new DefaultAssocDetailsCompleter(concreteCD, assocSideCompleter);
 
-    // TODO decide for one of the two implementations
-    // ALTERNATIVE IMPLEMENTATION
-
-    ICDCompleter completerChain =
+    ChainBuilder<AbstractCDCompleter> completerChainBuilder =
         new ChainBuilder<AbstractCDCompleter>()
             .add(new ImportsCompleter())
             .add(new MissingTypesCDCompleter(typeCompleter))
@@ -68,14 +95,22 @@ public class ConcretizationCompleter {
             .add(new MissingAssociationsCDCompleter(assocDetailsCompleter))
             .add(
                 new ConformanceCheckCompletionStep(
-                    mapping, "The association completion result is not conform"))
-            .add(new RemoveRedundantAttributesStep())
-            .add(new ReorderElementsCompletionStep())
-            .add(new ConformanceCheckCompletionStep(mapping, "Final conformance check failed."))
-            .build();
+                    mapping, "The association completion result is not conform"));
+
+    // add configurable,optional steps
+    if (removeRedundantAttributes) {
+      completerChainBuilder.add(new RemoveRedundantAttributesStep());
+    }
+    if (reorderElements) {
+      completerChainBuilder.add(new ReorderElementsCompletionStep());
+    }
+    if (checkConformance) {
+      completerChainBuilder.add(
+          new ConformanceCheckCompletionStep(mapping, "Final conformance check failed."));
+    }
 
     // perform the actual concretization
-    completerChain.complete(concreteCD, referenceCD, context);
+    completerChainBuilder.build().complete(concreteCD, referenceCD, context);
   }
 
   /***
@@ -85,36 +120,59 @@ public class ConcretizationCompleter {
     private final ASTCDCompilationUnit concreteCD;
     private final ASTCDCompilationUnit referenceCD;
     private final String mapping;
+    private final Set<CDConfParameter> conformanceParams;
     private final CompTypeIncStrategy typeIncStrategy;
     private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
     private final CompAssocIncStrategy assocIncStrategy;
 
     public DefaultCompletionContext(
-        ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
+        ASTCDCompilationUnit concreteCD,
+        ASTCDCompilationUnit referenceCD,
+        String mapping,
+        Set<CDConfParameter> conformanceParams) {
       this.concreteCD = concreteCD;
       this.referenceCD = referenceCD;
       this.mapping = mapping;
+      this.conformanceParams = conformanceParams;
 
       typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
-      typeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
-      typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
+      assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
 
-      // TODO use same config params as for conformance checker, e.g. decide if we want match assocs
-      // in super types
+      /*
+       * We configure the matching strategies depending on the conformance checker parameter as we
+       * want to have the same matching behavior during concretization as the conformance checker.
+       */
+      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
+        typeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
+        assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
+      }
+      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
+        typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
+        assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
+      }
+
       typeIncStrategyMatchingSubTypes = new CompTypeIncStrategy(referenceCD, mapping);
       typeIncStrategyMatchingSubTypes.addIncStrategy(typeIncStrategy);
-      typeIncStrategyMatchingSubTypes.addIncStrategy(
-          new MatchCDTypesToSubTypes(typeIncStrategy, concreteCD, referenceCD));
+      if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
+        typeIncStrategyMatchingSubTypes.addIncStrategy(
+            new MatchCDTypesToSubTypes(typeIncStrategy, concreteCD, referenceCD));
+      }
 
-      assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
-      assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
-      assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
-      assocIncStrategy.addIncStrategy(
-          new RolePrefixInNavDirIncStrategy(
-              typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
-      assocIncStrategy.addIncStrategy(
-          new RolePrefixIfPresentIncStrategy(
-              typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
+      if (conformanceParams.contains(CDConfParameter.SRC_TARGET_ASSOC_MAPPING)) {
+        if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
+          assocIncStrategy.addIncStrategy(
+              new RolePrefixInNavDirIncStrategy(
+                  typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
+          assocIncStrategy.addIncStrategy(
+              new RolePrefixIfPresentIncStrategy(
+                  typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
+        } else {
+          assocIncStrategy.addIncStrategy(
+              new RolePrefixInNavDirIncStrategy(typeIncStrategy, concreteCD, referenceCD));
+          assocIncStrategy.addIncStrategy(
+              new RolePrefixIfPresentIncStrategy(typeIncStrategy, concreteCD, referenceCD));
+        }
+      }
     }
 
     @Override
@@ -130,6 +188,11 @@ public class ConcretizationCompleter {
     @Override
     public String getMappingName() {
       return mapping;
+    }
+
+    @Override
+    public Set<CDConfParameter> getConformanceParams() {
+      return conformanceParams;
     }
 
     @Override

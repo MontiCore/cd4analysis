@@ -15,5 +15,6 @@ public interface IAttributeCompleter {
    * @param concreteType
    * @param referenceAttribute
    */
-  void completeAttribute(ASTCDType concreteType, ASTCDAttribute referenceAttribute);
+  void completeAttribute(
+      ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context);
 }

@@ -3,6 +3,7 @@ package de.monticore.cdconcretization.typedetails;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
+import de.monticore.cdconcretization.attribute.TypeCompletionContext;
 import de.monticore.cdconcretization.util.AbstractChainable;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -11,47 +12,52 @@ public abstract class AbstractTypeDetailsCompleter
     extends AbstractChainable<AbstractTypeDetailsCompleter> implements ITypeDetailsCompleter {
 
   @Override
-  public void completeTypeDetails(ASTCDType concreteType, ASTCDType referenceType)
+  public void completeTypeDetails(
+      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context)
       throws CompletionException {
     if (concreteType instanceof ASTCDClass) {
       if (referenceType instanceof ASTCDClass) {
-        completeClassDetails((ASTCDClass) concreteType, (ASTCDClass) referenceType);
+        completeClassDetails((ASTCDClass) concreteType, (ASTCDClass) referenceType, context);
       } else {
         // TODO better error message
         throw new CompletionException("A class got matched to a different type.");
       }
     } else if (concreteType instanceof ASTCDInterface) {
       if (referenceType instanceof ASTCDInterface) {
-        completeInterfaceDetails((ASTCDInterface) concreteType, (ASTCDInterface) referenceType);
+        completeInterfaceDetails(
+            (ASTCDInterface) concreteType, (ASTCDInterface) referenceType, context);
       } else {
         // TODO better error message
         throw new CompletionException("An interface got matched to a different type.");
       }
     } else if (concreteType instanceof ASTCDEnum) {
       if (referenceType instanceof ASTCDEnum) {
-        completeEnumDetails((ASTCDEnum) concreteType, (ASTCDEnum) referenceType);
+        completeEnumDetails((ASTCDEnum) concreteType, (ASTCDEnum) referenceType, context);
       } else {
         // TODO better error message
         throw new CompletionException("An enum got matched to a different type.");
       }
     } else {
-      next(concreteType, referenceType);
+      next(concreteType, referenceType, context);
     }
   }
 
-  protected void completeClassDetails(ASTCDClass concreteType, ASTCDClass referenceType)
+  protected void completeClassDetails(
+      ASTCDClass concreteType, ASTCDClass referenceType, TypeCompletionContext context)
       throws CompletionException {
-    next(concreteType, referenceType);
+    next(concreteType, referenceType, context);
   }
 
-  protected void completeInterfaceDetails(ASTCDInterface concreteType, ASTCDInterface referenceType)
+  protected void completeInterfaceDetails(
+      ASTCDInterface concreteType, ASTCDInterface referenceType, TypeCompletionContext context)
       throws CompletionException {
-    next(concreteType, referenceType);
+    next(concreteType, referenceType, context);
   }
 
-  protected void completeEnumDetails(ASTCDEnum concreteType, ASTCDEnum referenceType)
+  protected void completeEnumDetails(
+      ASTCDEnum concreteType, ASTCDEnum referenceType, TypeCompletionContext context)
       throws CompletionException {
-    next(concreteType, referenceType);
+    next(concreteType, referenceType, context);
   }
 
   /**
@@ -60,9 +66,11 @@ public abstract class AbstractTypeDetailsCompleter
    * @param concreteType
    * @param referenceType
    */
-  protected void next(ASTCDType concreteType, ASTCDType referenceType) throws CompletionException {
+  protected void next(
+      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context)
+      throws CompletionException {
     if (hasNext()) {
-      next.completeTypeDetails(concreteType, referenceType);
+      next.completeTypeDetails(concreteType, referenceType, context);
     }
   }
 }

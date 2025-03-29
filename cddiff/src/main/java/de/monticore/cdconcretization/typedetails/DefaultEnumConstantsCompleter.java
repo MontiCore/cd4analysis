@@ -1,6 +1,7 @@
 package de.monticore.cdconcretization.typedetails;
 
 import de.monticore.cdconcretization.CompletionException;
+import de.monticore.cdconcretization.attribute.TypeCompletionContext;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import java.util.ArrayList;
@@ -9,7 +10,8 @@ import java.util.Optional;
 
 public class DefaultEnumConstantsCompleter extends AbstractTypeDetailsCompleter {
   @Override
-  public void completeEnumDetails(ASTCDEnum concreteEnum, ASTCDEnum referenceEnum)
+  public void completeEnumDetails(
+      ASTCDEnum concreteEnum, ASTCDEnum referenceEnum, TypeCompletionContext context)
       throws CompletionException {
     List<ASTCDEnumConstant> processed = new ArrayList<>();
     List<ASTCDEnumConstant> toProcess = new ArrayList<>(concreteEnum.getCDEnumConstantList());
@@ -38,6 +40,6 @@ public class DefaultEnumConstantsCompleter extends AbstractTypeDetailsCompleter 
     concreteEnum.setCDEnumConstantList(processed);
 
     // continue chain
-    next(concreteEnum, referenceEnum);
+    next(concreteEnum, referenceEnum, context);
   }
 }

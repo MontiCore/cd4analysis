@@ -8,8 +8,9 @@ public abstract class AbstractAttributeCompleter
     extends AbstractChainable<AbstractAttributeCompleter> implements IAttributeCompleter {
 
   @Override
-  public void completeAttribute(ASTCDType concreteType, ASTCDAttribute referenceAttribute) {
-    next(concreteType, referenceAttribute);
+  public void completeAttribute(
+      ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
+    next(concreteType, referenceAttribute, context);
   }
 
   /**
@@ -18,9 +19,10 @@ public abstract class AbstractAttributeCompleter
    * @param concreteType
    * @param referenceAttribute
    */
-  protected void next(ASTCDType concreteType, ASTCDAttribute referenceAttribute) {
+  protected void next(
+      ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
     if (hasNext()) {
-      next.completeAttribute(concreteType, referenceAttribute);
+      next.completeAttribute(concreteType, referenceAttribute, context);
     }
   }
 }

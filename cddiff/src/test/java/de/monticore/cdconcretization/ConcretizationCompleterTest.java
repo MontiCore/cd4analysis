@@ -10,6 +10,7 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
@@ -25,6 +26,17 @@ import org.junit.jupiter.api.Test;
 
 public class ConcretizationCompleterTest {
   public static final String dir = "src/test/resources/de/monticore/cdconcretization/";
+
+  /**
+   * The default conformance parameters that are used for each test case if not specified otherwise.
+   */
+  private static final Set<CDConfParameter> DEFAULT_CONFORMANCE_PARAMS =
+      Set.of(
+          STEREOTYPE_MAPPING,
+          NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING,
+          INHERITANCE,
+          ALLOW_CARD_RESTRICTION);
 
   protected ASTCDCompilationUnit refCD;
 
@@ -460,13 +472,7 @@ public class ConcretizationCompleterTest {
       fail("CompletionException", e);
     }
     assertTrue(
-        new CDConformanceChecker(
-                Set.of(
-                    STEREOTYPE_MAPPING,
-                    NAME_MAPPING,
-                    SRC_TARGET_ASSOC_MAPPING,
-                    INHERITANCE,
-                    ALLOW_CARD_RESTRICTION))
+        new CDConformanceChecker(DEFAULT_CONFORMANCE_PARAMS)
             .checkConformance(conCD, refCD, Set.of("ref")));
   }
 
@@ -480,8 +486,8 @@ public class ConcretizationCompleterTest {
 
   private void parseAndConcretize(String conc, String ref) throws CompletionException {
     parseModels(conc, ref);
-    // ConcretizationCompleter completer = new ConcretizationCompleter("ref");
-    ConcretizationCompleter completer = new ConcretizationCompleter("ref");
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     completer.completeCD(conCD, refCD);
     System.out.println("Concretized CD:");
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
