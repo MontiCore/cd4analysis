@@ -7,9 +7,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.MatchingStrategy;
 
-/**
- * Completes the types of a CD by adding missing types from the reference CD.
- */
+/** Completes the types of a CD by adding missing types from the reference CD. */
 public class BaseTypeCompleter extends AbstractTypeCompleter {
 
   private final MatchingStrategy<ASTCDType> typeIncStrategy;

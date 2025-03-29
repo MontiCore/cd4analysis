@@ -7,7 +7,6 @@ import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.attribute.AbstractAttributeCompleter;
 import de.monticore.cdconcretization.attribute.BaseAttributeCompleter;
 import de.monticore.cdconcretization.attribute.IAttributeCompleter;
-import de.monticore.cdconcretization.typedetails.AbstractTypeDetailsCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
 import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;

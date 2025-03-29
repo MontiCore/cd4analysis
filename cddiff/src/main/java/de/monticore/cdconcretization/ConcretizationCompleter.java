@@ -1,12 +1,20 @@
 package de.monticore.cdconcretization;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdconcretization.association.DefaultAssocDetailsCompleter;
+import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
+import de.monticore.cdconcretization.association.IAssocSideCompleter;
+import de.monticore.cdconcretization.association.IAssociationDetailsCompleter;
+import de.monticore.cdconcretization.cd.*;
+import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.typedetails.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
+import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 
 public class ConcretizationCompleter implements ICDCompleter {
 
@@ -29,6 +37,25 @@ public class ConcretizationCompleter implements ICDCompleter {
     typeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
     typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
 
+    // TODO use same config params as for conformance checker, e.g. decide if we want match assocs
+    // in super types
+
+    CompTypeIncStrategy typeIncStrategyMatchingSubTypes =
+        new CompTypeIncStrategy(referenceCD, mapping);
+    typeIncStrategyMatchingSubTypes.addIncStrategy(typeIncStrategy);
+    typeIncStrategyMatchingSubTypes.addIncStrategy(
+        new MatchCDTypesToSubTypes(typeIncStrategy, concreteCD, referenceCD));
+
+    CompAssocIncStrategy assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
+    assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
+    assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
+    assocIncStrategy.addIncStrategy(
+        new RolePrefixInNavDirIncStrategy(
+            typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
+    assocIncStrategy.addIncStrategy(
+        new RolePrefixIfPresentIncStrategy(
+            typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
+
     ITypeCompleter typeCompleter =
         new ChainBuilder<AbstractTypeCompleter>()
             .add(new BaseTypeCompleter(typeIncStrategy))
@@ -44,20 +71,40 @@ public class ConcretizationCompleter implements ICDCompleter {
             .add(new DefaultEnumConstantsCompleter())
             .build();
 
-    DefaultInheritanceCompleter inheritanceCompleter = new DefaultInheritanceCompleter(typeIncStrategy);
+    IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
+    IAssociationDetailsCompleter assocDetailsCompleter =
+        new DefaultAssocDetailsCompleter(concreteCD, assocSideCompleter);
 
-    // TODO refactor towards new architecture
-    DefaultAssocIncCompleter assocIncCompleter =
-        new DefaultAssocIncCompleter(concreteCD, referenceCD, mapping);
+    // TODO decide for one of the two implementations
+    // ALTERNATIVE IMPLEMENTATION
 
-    BaseCDCompleter cdCompleter =
-        new BaseCDCompleter(
-            typeIncStrategy,
-            typeCompleter,
-            typeDetailsCompleter,
-            inheritanceCompleter,
-            assocIncCompleter);
+    ICDCompleter completerChain =
+        new ChainBuilder<AbstractCDCompleter>()
+            .add(new ImportsCompleter())
+            .add(new MissingTypesCDCompleter(typeCompleter))
+            .add(new DefaultInheritanceCompleter(typeIncStrategy))
+            .add(new TypeDetailsCDCompleter(typeIncStrategy, typeDetailsCompleter))
+            .add(
+                new ExistingAssociationsCDCompleter(
+                    concreteCD,
+                    referenceCD,
+                    typeIncStrategyMatchingSubTypes,
+                    assocIncStrategy,
+                    assocDetailsCompleter))
+            .add(
+                new MissingAssociationsCDCompleter(
+                    assocIncStrategy,
+                    typeIncStrategy,
+                    typeIncStrategyMatchingSubTypes,
+                    assocDetailsCompleter))
+            .add(
+                new ConformanceCheckCompletionStep(
+                    mapping, "The association completion result is not conform"))
+            .add(new RemoveRedundantAttributesStep())
+            .add(new ConformanceCheckCompletionStep(mapping, "Final conformance check failed."))
+            .build();
+
     // perform the actual concretization
-    cdCompleter.complete(concreteCD, referenceCD);
+    completerChain.complete(concreteCD, referenceCD);
   }
 }

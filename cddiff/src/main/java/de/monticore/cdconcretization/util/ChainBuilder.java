@@ -2,6 +2,7 @@ package de.monticore.cdconcretization.util;
 
 /**
  * A builder for chains of elements that implement the {@link IChainable} interface.
+ *
  * @param <T> the type of the elements in the chain
  */
 public class ChainBuilder<T extends IChainable<T>> {

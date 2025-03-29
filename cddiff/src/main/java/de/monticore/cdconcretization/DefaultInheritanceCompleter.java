@@ -14,7 +14,7 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultInheritanceCompleter implements ICDCompleter {
+public class DefaultInheritanceCompleter extends AbstractCDCompleter {
 
   private final MatchingStrategy<ASTCDType> typeMatcher;
 
@@ -23,7 +23,8 @@ public class DefaultInheritanceCompleter implements ICDCompleter {
   }
 
   @Override
-  public void complete(ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD) {
+  public void complete(ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD)
+      throws CompletionException {
     CDDiffUtil.refreshSymbolTable(srcCD);
     CDDiffUtil.refreshSymbolTable(tgtCD);
     ICD4CodeArtifactScope srcCDScope = (ICD4CodeArtifactScope) srcCD.getEnclosingScope();
@@ -120,5 +121,7 @@ public class DefaultInheritanceCompleter implements ICDCompleter {
     }
     CDDiffUtil.refreshSymbolTable(tgtCD);
     ReductionTrafo.removeRedundantAttributes(tgtCD);
+
+    next(tgtCD, srcCD);
   }
 }

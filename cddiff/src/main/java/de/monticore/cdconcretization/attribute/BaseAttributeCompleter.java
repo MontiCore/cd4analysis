@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Completes a concrete type by adding the given reference attribute if it is not
- * already present.
+ * Completes a concrete type by adding the given reference attribute if it is not already present.
  */
 public class BaseAttributeCompleter extends AbstractAttributeCompleter {
 

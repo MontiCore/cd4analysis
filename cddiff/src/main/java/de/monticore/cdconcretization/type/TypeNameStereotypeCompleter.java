@@ -3,7 +3,6 @@ package de.monticore.cdconcretization.type;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.umlstereotype._ast.ASTStereotype;
-
 import java.util.Optional;
 
 // TODO WIP: Just for demonstration of new architecture

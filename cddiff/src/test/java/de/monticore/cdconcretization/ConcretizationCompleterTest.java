@@ -189,7 +189,7 @@ public class ConcretizationCompleterTest {
     testConcretizedConformsToRefAndExpectedOut(
         "multipleIncarnation/BothAssocSidesMIOneAssocExistsConc.cd",
         "multipleIncarnation/BothAssocSidesMIRef.cd",
-            "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
+        "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
   }
 
   @Test
@@ -309,14 +309,14 @@ public class ConcretizationCompleterTest {
         "associations/AssociationSuperMatchingOut.cd",
         "associations/AssociationSuperMatchingRef.cd");
     assertTrue(
-            new CDConformanceChecker(
-                    Set.of(
-                            STEREOTYPE_MAPPING,
-                            NAME_MAPPING,
-                            SRC_TARGET_ASSOC_MAPPING,
-                            INHERITANCE,
-                            ALLOW_CARD_RESTRICTION))
-                    .checkConformance(conCD, refCD, Set.of("ref")));
+        new CDConformanceChecker(
+                Set.of(
+                    STEREOTYPE_MAPPING,
+                    NAME_MAPPING,
+                    SRC_TARGET_ASSOC_MAPPING,
+                    INHERITANCE,
+                    ALLOW_CARD_RESTRICTION))
+            .checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   @Test
@@ -330,9 +330,9 @@ public class ConcretizationCompleterTest {
   @Test
   void testTypeMIOneAssocExists() {
     testConcretizedConformsToRefAndExpectedOut(
-            "associations/TypeMIOneAssocExistsConc.cd",
-            "associations/TypeMIOneAssocExistsRef.cd",
-            "associations/TypeMIOneAssocExistsOut.cd");
+        "associations/TypeMIOneAssocExistsConc.cd",
+        "associations/TypeMIOneAssocExistsRef.cd",
+        "associations/TypeMIOneAssocExistsOut.cd");
   }
 
   @Test
@@ -357,16 +357,12 @@ public class ConcretizationCompleterTest {
     assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
     assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
     assocIncStrategy.addIncStrategy(
-            new RolePrefixInNavDirIncStrategy(typeIncStrategy, conCD, refCD));
+        new RolePrefixInNavDirIncStrategy(typeIncStrategy, conCD, refCD));
     assocIncStrategy.addIncStrategy(
-            new RolePrefixIfPresentIncStrategy(typeIncStrategy, conCD, refCD));
+        new RolePrefixIfPresentIncStrategy(typeIncStrategy, conCD, refCD));
 
     ConcretizationHelper helper =
-        new ConcretizationHelper(
-            conCD,
-            refCD,
-            typeIncStrategy,
-            assocIncStrategy);
+        new ConcretizationHelper(conCD, refCD, typeIncStrategy, assocIncStrategy);
 
     helper.mapReferenceToConcreteRoles();
 
