@@ -17,7 +17,7 @@ v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
 <#else>
   <#if MCCollectionSymTypeRelations.isList(attributeList[i].getSymbol().getType()) || MCCollectionSymTypeRelations.isSet(attributeList[i].getSymbol().getType())>
     <#if hasSetterList[i]>
-v.add${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
+v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
       <#else>
 v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
     </#if>

@@ -19,6 +19,8 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
@@ -89,6 +91,11 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       // Add Setter methods for all attributes to the builder class
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
         ASTCDParameter param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(attribute.getMCType()).build();
+        if(MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())){
+          //set of optional with type directly and not with optional<type>
+          ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
+          param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(type).build();
+        }
         ASTCDMethod setMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),builderClass.getName(), "set" + StringTransformations.capitalize(attribute.getName()), param);
         glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod, new TemplateHookPoint("methods.builder.set", attribute)));
         addToClass(builderClass, setMethod);

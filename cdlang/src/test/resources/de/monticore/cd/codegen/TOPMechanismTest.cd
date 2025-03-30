@@ -2,15 +2,11 @@
 
 classdiagram TOPMechanismTest {
 
-  <<getter,builder>> public class TOPMechanismTest {
+  <<getter,setter,builder>> public class TOPMechanismTest {
      public int myInt;
      public boolean myBool;
-     -> (manyB) B [*];
-     -> (optB) B [0..1] ;
-     -> (oneB) B [1];
+     -> (manyB) Integer [*];
+     -> (optB) Integer [0..1] ;
+     -> (oneB) Integer [1];
   }
-
-  <<setter>>public class B {
-  }
-
 }

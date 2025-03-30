@@ -25,6 +25,9 @@ import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Assert;
 import org.junit.Test;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -141,7 +144,7 @@ public class BuilderCDTest {
     // set attributes with cardinality != 1
     // with setters
     Assert.assertTrue(buildBodiesWithSetters.contains("if(this.manyB!=null){"));
-    Assert.assertTrue(buildBodiesWithSetters.contains("v.addManyB(this.manyB)"));
+    Assert.assertTrue(buildBodiesWithSetters.contains("v.setManyB(this.manyB)"));
     // without setters
     Assert.assertTrue(buildBodiesWithoutSetters.contains("if(this.manyB!=null){"));
     Assert.assertTrue(buildBodiesWithoutSetters.contains("v.manyB = this.manyB;"));
@@ -197,7 +200,7 @@ public class BuilderCDTest {
     // set attributes with cardinality != 1
     // with setters
     Assert.assertFalse(unsafeBuildBodiesWithSetters.contains("if(this.manyB!=null){"));
-    Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("v.addManyB(this.manyB)"));
+    Assert.assertTrue(unsafeBuildBodiesWithSetters.contains("v.setManyB(this.manyB)"));
     // without setters
     Assert.assertFalse(unsafeBuildBodiesWithoutSetters.contains("if(this.manyB!=null){"));
     Assert.assertTrue(unsafeBuildBodiesWithoutSetters.contains("v.manyB = this.manyB;"));
@@ -313,7 +316,7 @@ public class BuilderCDTest {
   }
 
   @Test
-  public void testTopDeclarator(){
+  public void testTopDeclarator() throws IOException {
     //clear the out directory so we don't confirm old results
     File outDir = new File("target/generated/example/hwc/TOPMechanismTest");
     if(outDir.exists()){
@@ -339,9 +342,20 @@ public class BuilderCDTest {
     Path filePath = Paths.get("target/generated/example/hwc/TOPMechanismTest/TOPMechanismTestBuilderTOP.java");
     Assert.assertTrue(Files.exists(filePath));
 
-    //TODO assert the correct functionality of the TOP mechanism
-    //check correctness of the generated classes
+    File projectDir = new File("target/generated/example/hwc/TOPMechanismTest/");
+    File hwcDir = new File("src/test/resources/de/monticore/cd/codegen/hwc/TOPMechanismTest/");
+    List<String> javaFiles = new ArrayList<>();
+    collectJavaFiles(projectDir, javaFiles);
+    collectJavaFiles(hwcDir,javaFiles);
 
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    int compilationResult = compiler.run(null, null, null, javaFiles.toArray(new String[0]));
+
+    Assert.assertEquals(0, compilationResult);
+
+    //clean up directories
+    deleteClassFiles(projectDir);
+    deleteClassFiles(hwcDir);
   }
 
   private static Optional<ASTCDCompilationUnit> parseStringToCompilationUnitWithSetters() throws IOException {
@@ -618,5 +632,31 @@ public class BuilderCDTest {
     }
 
     return setterMethods;
+  }
+
+  private static void collectJavaFiles(File dir, List<String> javaFiles) {
+    for (File file : dir.listFiles()) {
+      if (file.isDirectory()) {
+        collectJavaFiles(file, javaFiles);
+      } else if (file.getName().endsWith(".java")) {
+        javaFiles.add(file.getPath());
+      }
+    }
+  }
+
+  private static void deleteClassFiles(File dir) {
+    if (dir.isDirectory()) {
+      for (File file : Objects.requireNonNull(dir.listFiles())) {
+        if (file.isDirectory()) {
+          deleteClassFiles(file);
+        } else if (file.getName().endsWith(".class")) {
+          if (file.delete()) {
+            System.out.println("Deleted: " + file.getPath());
+          } else {
+            System.out.println("Failed to delete: " + file.getPath());
+          }
+        }
+      }
+    }
   }
 }
