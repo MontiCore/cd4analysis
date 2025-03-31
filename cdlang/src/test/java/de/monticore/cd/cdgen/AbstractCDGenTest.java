@@ -1,23 +1,31 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -61,6 +69,9 @@ public class AbstractCDGenTest {
     // Prepare
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
+    glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
+    glex.setGlobalValue("cdGenService", new CDGenService());
     GeneratorSetup generatorSetup = new GeneratorSetup();
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(this.outputDir);
@@ -78,8 +89,28 @@ public class AbstractCDGenTest {
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
     decorated.accept(t);
 
+    // Post-Decorate: make methods in interfaces abstract
+    this.makeMethodsInInterfacesAbstract(decorated);
+
+    // Post-Decorate: TOP Decorator
+    // TODO: #4310 - make this TOP decorator/transformation configurable via the config
+    // template
+    MCPath path = new MCPath("src/test/resources/de/monticore/cd/codegen/hwc/");
+    TOPTrafo topTransformer = new TOPTrafo(path);
+    t = CD4CodeMill.inheritanceTraverser();
+    topTransformer.addToTraverser(t);
+    decorated.accept(t);
+
     generator.generate(decorated);
     System.out.println(
         "Wrote CDGenTest results to " + generatorSetup.getOutputDirectory().getAbsolutePath());
+  }
+
+  public void makeMethodsInInterfacesAbstract(ASTCDCompilationUnit ast) {
+    for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTCDMethod method : cdInterface.getCDMethodList()) {
+        method.getModifier().setAbstract(true);
+      }
+    }
   }
 }
