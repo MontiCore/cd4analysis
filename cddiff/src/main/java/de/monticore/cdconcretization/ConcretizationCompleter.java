@@ -89,37 +89,33 @@ public class ConcretizationCompleter {
         new DefaultAssocCompleter(concreteCD, assocSideCompleter);
 
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
-
         new ChainBuilder<AbstractCDCompleter>()
             .add(new ImportsCompleter())
             .add(new MissingTypesCDCompleter(typeInCDCompleter))
             .add(new InheritanceCompleter())
             .add(new TypeDetailsCDCompleter( typeCompleter))
-            .add(
-                new ExistingAssociationsCDCompleter(
+            .add(new ExistingAssociationsCDCompleter(assocCompleter))
+            .add(new MissingAssociationsCDCompleter(assocCompleter))
+            .add(new ConformanceCheckCompletionStep(mapping, "The association completion result is not conform"));
 
-                    assocCompleter))
-            .add(
-                new MissingAssociationsCDCompleter(
-
-                    assocCompleter))
-            .add(
-                new ConformanceCheckCompletionStep(
-                    mapping, "The association completion result is not conform"));
-            // add configurable,optional steps
+    // add configurable,optional steps
     if (removeRedundancies) {
       completerChainBuilder.add(new RemoveRedundanciesCompletionStep());
     }
-            if (reorderElements) {
+    if (reorderElements) {
       completerChainBuilder.add(new ReorderElementsCompletionStep());
     }
     if (checkConformance) {
       completerChainBuilder.add(
-          new ConformanceCheckCompletionStep(mapping, "Final conformance check failed."));
-            }
+          new ConformanceCheckCompletionStep(mapping, "Completion result is not conform"));
+    }
 
     // perform the actual concretization
     completerChainBuilder.build().complete(concreteCD, referenceCD, context);
+  }
+
+  public void setCheckConformance(boolean checkConformance) {
+    this.checkConformance = checkConformance;
   }
 
   /***

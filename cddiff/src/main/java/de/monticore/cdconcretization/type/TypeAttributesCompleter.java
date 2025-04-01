@@ -42,7 +42,8 @@ public class TypeAttributesCompleter extends AbstractTypeCompleter {
   }
 
   protected void completeAttributes(
-      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context) {
+      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context)
+      throws CompletionException {
     for (ASTCDAttribute rAttribute : referenceType.getCDAttributeList()) {
       attributeCompleter.completeAttributeInType(concreteType, rAttribute, context);
     }

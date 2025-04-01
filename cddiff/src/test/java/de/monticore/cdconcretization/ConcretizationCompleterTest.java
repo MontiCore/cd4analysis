@@ -224,9 +224,14 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
-  @Disabled("disabled until issue 9 is clarified")
-  public void testAttributeTypeMI() {
-    testConcretizedConformsToRefAndExpectedOut(
+  void testAttributeTypeMI() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance! Currently not possible because conformance checker only checks for
+    // equal MCType (see #15)
+    completer.setCheckConformance(false);
+    testConcretizedEqualsExpectedOut(
+        completer,
         "multipleIncarnation/AttributeTypeMIConc.cd",
         "multipleIncarnation/AttributeTypeMIRef.cd",
         "multipleIncarnation/AttributeTypeMIOut.cd");
@@ -484,10 +489,26 @@ public class ConcretizationCompleterTest {
     assertTrue(conCD.deepEquals(expectedCD, false), "Concretized output does not match expected");
   }
 
+  private void testConcretizedEqualsExpectedOut(
+      ConcretizationCompleter completer, String conc, String ref, String out) {
+    ASTCDCompilationUnit expectedCD = parseCD(out);
+    // 1. concretize and check conformance
+    try {
+      parseAndConcretize(completer, conc, ref);
+    } catch (CompletionException e) {
+      fail("CompletionException", e);
+    }
+    // 2. check if concretized CD equals expected output
+    assertTrue(conCD.deepEquals(expectedCD, false), "Concretized output does not match expected");
+  }
+
   private void parseAndConcretize(String conc, String ref) throws CompletionException {
+    parseAndConcretize(new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS), conc, ref);
+  }
+
+  private void parseAndConcretize(ConcretizationCompleter completer, String conc, String ref)
+      throws CompletionException {
     parseModels(conc, ref);
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     completer.completeCD(conCD, refCD);
     System.out.println("Concretized CD:");
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
