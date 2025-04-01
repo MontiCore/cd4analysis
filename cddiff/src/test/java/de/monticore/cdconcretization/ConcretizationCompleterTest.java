@@ -1,8 +1,5 @@
 package de.monticore.cdconcretization;
 
-import static de.monticore.cdconformance.CDConfParameter.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -17,12 +14,16 @@ import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static de.monticore.cdconformance.CDConfParameter.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConcretizationCompleterTest {
   public static final String dir = "src/test/resources/de/monticore/cdconcretization/";
@@ -49,6 +50,7 @@ public class ConcretizationCompleterTest {
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    UnderspecifiedPlaceholderType.addPlaceholderType(CD4CodeMill.globalScope());
   }
 
   @Test
@@ -166,6 +168,42 @@ public class ConcretizationCompleterTest {
                       + " should not be added to the concrete class 'Employee' as it is already "
                       + "inherited from the superclass 'Person'");
             });
+  }
+
+  /**
+   * An underspecified attribute (type: any) needs to be incarnated at least once. Otherwise, we
+   * would have to add an attribute of type 'any' to the concrete CD which is not allowed.
+   */
+  @Test
+  void testAttributeTypeUnderspecifiedNoIncarnationError() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    try {
+      parseAndConcretize(
+              completer,
+              "attributes/underspecified/AttributeTypeUnderspecifiedNoIncConc.cd",
+              "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd");
+      fail("Expected CompletionException. But the concretization was successful.");
+    } catch (CompletionException e) {
+      System.out.println("Completion failed as expected: " + e.getMessage());
+    }
+  }
+
+  @Test
+  void testAttributeTypeUnderspecifiedDifferentIncarnationTypes() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesConc.cd",
+            "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd",
+            "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesOut.cd");
   }
 
   @Test

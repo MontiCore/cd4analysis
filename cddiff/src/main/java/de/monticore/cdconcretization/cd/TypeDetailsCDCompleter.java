@@ -102,6 +102,11 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
 
     @Override
+    public String getUnderspecifiedPlaceholderTypeName() {
+      return parentContext.getUnderspecifiedPlaceholderTypeName();
+    }
+
+    @Override
     public Set<CDConfParameter> getConformanceParams() {
       return parentContext.getConformanceParams();
     }

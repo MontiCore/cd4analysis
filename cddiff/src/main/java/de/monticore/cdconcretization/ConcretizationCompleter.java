@@ -6,16 +6,15 @@ import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
-import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
-import de.monticore.cdconcretization.type.attribute.BaseTypeAttributeCompleter;
-import de.monticore.cdconcretization.type.attribute.ITypeAttributeCompleter;
 import de.monticore.cdconcretization.cd.*;
-import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.cd.type.AbstractCDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.BaseCDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.ICDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.NameStereotypeCDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
+import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.BaseTypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.ITypeAttributeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.association.*;
@@ -24,6 +23,7 @@ import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
+
 import java.util.Set;
 
 public class ConcretizationCompleter {
@@ -43,6 +43,12 @@ public class ConcretizationCompleter {
 
   /** If true, the elements in the concretization result are reordered for consistent results. */
   private boolean reorderElements = true;
+
+  /**
+   * Name of the placeholder type that is used to mark underspecified types in the reference CD.
+   * See {@link UnderspecifiedPlaceholderType}.
+   */
+  private String underspecifiedPlaceholderTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
 
   protected Set<CDConfParameter> conformanceParams;
 
@@ -117,10 +123,21 @@ public class ConcretizationCompleter {
     this.checkConformance = checkConformance;
   }
 
+  /**
+   * Changes the default name of the placeholder type, which is
+   * {@link UnderspecifiedPlaceholderType#DEFAULT_TYPE_NAME}.<br>
+   * This MUST be called if you want to use a different name for the placeholder type.
+   *
+   * @param underspecifiedPlaceholderTypeName the new name of the placeholder type
+   */
+  public void setUnderspecifiedPlaceholderTypeName(String underspecifiedPlaceholderTypeName) {
+    this.underspecifiedPlaceholderTypeName = underspecifiedPlaceholderTypeName;
+  }
+
   /***
    * Provides default configurations for the matching strategies used in the concretization process.
    */
-  static class DefaultCompletionContext implements CDCompletionContext {
+  class DefaultCompletionContext implements CDCompletionContext {
     private final ASTCDCompilationUnit concreteCD;
     private final ASTCDCompilationUnit referenceCD;
     private final String mapping;
@@ -212,6 +229,11 @@ public class ConcretizationCompleter {
     @Override
     public String getMappingName() {
       return mapping;
+    }
+
+    @Override
+    public String getUnderspecifiedPlaceholderTypeName() {
+      return underspecifiedPlaceholderTypeName;
     }
 
     @Override
