@@ -14,13 +14,13 @@ import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.nio.file.Paths;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CDBasisTestBasis extends TestBasis {
   protected TestCDBasisParser p;
   protected TestCDBasisCoCoChecker coCoChecker;
 
-  @Before
+  @BeforeEach
   public void initObjects() {
     // reset the log
     LogStub.init();

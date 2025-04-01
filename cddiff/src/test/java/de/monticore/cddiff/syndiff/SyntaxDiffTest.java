@@ -7,8 +7,10 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
 
@@ -27,8 +29,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(compilationUnitNew, compilationUnitOld, List.of());
-    Assert.assertEquals(4, synDiff.getAddedClasses().size());
-    Assert.assertEquals(2, synDiff.getAddedAssocs().size());
+    assertEquals(4, synDiff.getAddedClasses().size());
+    assertEquals(2, synDiff.getAddedAssocs().size());
   }
 
   @Test
@@ -81,11 +83,11 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
         this.tgt = tgt.get();
         this.src = src.get();
       } else {
-        Assert.fail("Could not parse CDs.");
+        fail("Could not parse CDs.");
       }
 
     } catch (IOException e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 }

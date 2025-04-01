@@ -7,8 +7,9 @@ import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {
@@ -25,6 +26,6 @@ public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
         p.parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
-    Assert.assertTrue(astcdCompilationUnit.get().deepEquals(astcdCompilationUnitReParsed.get()));
+    assertTrue(astcdCompilationUnit.get().deepEquals(astcdCompilationUnitReParsed.get()));
   }
 }

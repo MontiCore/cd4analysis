@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
@@ -15,8 +15,8 @@ import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
 
@@ -65,7 +65,6 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
     ast.accept(c.getTraverser());
   }
 
-  @After
-  @Override
+  @AfterEach  @Override
   public void after() {}
 }

@@ -17,9 +17,10 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AttrInheritanceTest extends CD2SMTAbstractTest {
   protected CD2SMTGenerator cd2SMTGenerator;
@@ -46,7 +47,7 @@ public class AttrInheritanceTest extends CD2SMTAbstractTest {
   public void checkAttribute(ASTCDClass Class, String attrname, Expr<? extends Sort> obj) {
     Optional<Expr<? extends Sort>> attribute =
         Optional.ofNullable(cd2SMTGenerator.getAttribute(Class, attrname, obj));
-    Assertions.assertTrue(attribute.isPresent());
+    assertTrue(attribute.isPresent());
   }
 
   @Test

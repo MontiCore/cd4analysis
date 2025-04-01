@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import java.util.Optional;
 import org.antlr.v4.runtime.RecognitionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CD4CodeParserTest extends CD4CodeTestBasis {
 

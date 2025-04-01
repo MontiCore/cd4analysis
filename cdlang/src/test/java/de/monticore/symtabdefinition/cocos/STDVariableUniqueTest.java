@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinition.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symtabdefinition.SymTabDefinitionTestBasis;

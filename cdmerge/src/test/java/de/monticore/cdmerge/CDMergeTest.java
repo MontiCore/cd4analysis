@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge;
 
-import static org.junit.Assert.fail;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.MergeParameter;
@@ -12,8 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CDMergeTest extends BaseTest {
   @Test
@@ -31,7 +30,7 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new HashSet<>());
 
-    Assert.assertNotNull(mergedCD);
+    assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
 
@@ -53,7 +52,7 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
 
-    Assert.assertNotNull(mergedCD);
+    assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
 
@@ -77,9 +76,9 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MergeDriveAndEmployment", params);
 
-    Assert.assertNotNull(mergedCD);
+    assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
-    Assert.assertTrue(mergedCD.deepEquals(expected, false));
+    assertTrue(mergedCD.deepEquals(expected, false));
   }
 
   @Test
@@ -111,7 +110,7 @@ public class CDMergeTest extends BaseTest {
 
       ASTCDCompilationUnit mergedCD = CDMerge.merge(permutation, "CarRental", params);
 
-      Assert.assertNotNull(mergedCD);
+      assertNotNull(mergedCD);
     }
   }
 
@@ -164,13 +163,13 @@ public class CDMergeTest extends BaseTest {
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
 
-    Assert.assertNotNull(mergedCD);
+    assertNotNull(mergedCD);
   }
 
   @Test
   public void testParseMrgConfig() {
     final String file = "src/test/resources/json/mrg-config.json";
-    Assert.assertTrue(
+    assertTrue(
         CDMerge.parseMrgConfig(file)
             .containsAll(
                 Set.of(

@@ -13,14 +13,14 @@ import javax.annotation.Nullable;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CDGenGradlePluginTest {
-  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
+  @TempDir
   File testProjectDir;
   File settingsFile;
   File propertiesFile;
@@ -30,9 +30,8 @@ public class CDGenGradlePluginTest {
 
   File resourceMainDir;
 
-  @Before
+  @BeforeEach
   public void setup() throws IOException {
-    testProjectDir = temporaryFolder.newFolder();
     settingsFile = new File(testProjectDir, "settings.gradle");
     buildFile = new File(testProjectDir, "build.gradle");
     propertiesFile = new File(testProjectDir, "gradle.properties");
@@ -66,7 +65,7 @@ public class CDGenGradlePluginTest {
     String projVersion = loadProperties().getProperty("version");
     File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
 
-    Assert.assertTrue(libs.exists());
+    assertTrue(libs.exists());
     String buildFileContent =
         "plugins {"
             + "    id 'de.rwth.se.cdgen' "
@@ -106,8 +105,8 @@ public class CDGenGradlePluginTest {
             .withProjectDir(testProjectDir)
             .withArguments(withProperties("build", "--info", "--stacktrace"))
             .build();
-    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
-    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
+    assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
   }
 
   @Test
@@ -139,7 +138,7 @@ public class CDGenGradlePluginTest {
     String projVersion = loadProperties().getProperty("version");
     File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
 
-    Assert.assertTrue(libs.exists());
+    assertTrue(libs.exists());
     String buildFileContent =
         "plugins {"
             + "    id 'de.rwth.se.cdgen' "
@@ -204,12 +203,12 @@ public class CDGenGradlePluginTest {
             .withProjectDir(testProjectDir)
             .withArguments(withProperties("build", "--info", "--stacktrace"))
             .build();
-    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
-    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
+    assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
 
     if (!result.getOutput().contains("I am decorating")) {
       System.err.println(result.getOutput());
-      Assert.fail("Failed to find \"I am decorating\" in output");
+      fail("Failed to find \"I am decorating\" in output");
     }
   }
 

@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactoringTests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -14,8 +15,8 @@ import de.monticore.generating.templateengine.reporting.commons.ReportManager;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test remove Attribute
@@ -24,7 +25,7 @@ import org.junit.Test;
  */
 public class RemoveAttributeTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
@@ -60,12 +61,12 @@ public class RemoveAttributeTest {
     ASTCDAttribute attributeFirst = classA.getCDAttributeList().get(0);
     assertEquals("a", attributeFirst.getName());
     assertEquals("int", attributeFirst.getMCType().printType());
-    assertEquals(true, attributeFirst.getModifier().isPublic());
+    assertTrue(attributeFirst.getModifier().isPublic());
 
     ASTCDAttribute attributeSecond = classA.getCDAttributeList().get(1);
     assertEquals("b", attributeSecond.getName());
     assertEquals("String", attributeSecond.getMCType().printType());
-    assertEquals(true, attributeSecond.getModifier().isPrivate());
+    assertTrue(attributeSecond.getModifier().isPrivate());
 
     ASTCDAttribute attributeThird = classA.getCDAttributeList().get(2);
     assertEquals("c", attributeThird.getName());
@@ -80,7 +81,7 @@ public class RemoveAttributeTest {
     attributeFirst = classA.getCDAttributeList().get(0);
     assertEquals("a", attributeFirst.getName());
     assertEquals("int", attributeFirst.getMCType().printType());
-    assertEquals(true, attributeFirst.getModifier().isPublic());
+    assertTrue(attributeFirst.getModifier().isPublic());
 
     attributeSecond = classA.getCDAttributeList().get(1);
     assertEquals("c", attributeThird.getName());

@@ -20,7 +20,7 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CDGenTest {
 

@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.utilityTests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdlib.utilities.FileUtility;
@@ -13,8 +14,8 @@ import de.monticore.generating.templateengine.reporting.reporter.TransformationR
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class FileUtility
@@ -25,7 +26,7 @@ import org.junit.Test;
  */
 public class FileUtilityTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
@@ -55,8 +56,8 @@ public class FileUtilityTest {
     // Create Utility object
     String inputFile = "cdlib/A";
     FileUtility utility = new FileUtility(inputFile);
-
-    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getName().equals("A"));
+    
+    assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
   }
 
   // Test writing an ast of a classdiagram to a file

@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.cocos;
 
-import static org.junit.Assert.assertNotNull;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -10,7 +8,9 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeCoCoTest extends CD4CodeTestBasis {

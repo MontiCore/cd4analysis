@@ -7,8 +7,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import org.antlr.v4.runtime.RecognitionException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
 
@@ -36,13 +37,10 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
       "target/generated/auctionTP"
     };
     de.monticore.CD4CodeTool.main(input);
-
-    Assert.assertTrue(
-        "Did not find via templatepath provided template content ",
-        Files.readLines(
-                new File("target/generated/auctionTP/Auction/auction/Auction.java"),
-                Charset.defaultCharset())
-            .contains("// empty body provided by the templatePath arg"));
+    
+    assertTrue(Files.readLines(new File("target/generated/auctionTP/Auction/auction/Auction.java"),
+            Charset.defaultCharset()).contains("// empty body provided by the templatePath arg"),
+        "Did not find via templatepath provided template content ");
   }
 
   @Test
@@ -93,12 +91,11 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     CD4CodeTool.main(input);
 
     // Test if the config template was loaded from the additional template path
-    Assert.assertTrue(
-        "Did not find via templatepath provided template content ",
-        Files.readLines(
-                new File("target/generated/auctionTPDCT/Auction/auction/Auction.java"),
+    assertTrue(
+        Files.readLines(new File("target/generated/auctionTPDCT/Auction/auction/Auction.java"),
                 Charset.defaultCharset())
-            .contains("// empty body provided and configured by the config template"));
+            .contains("// empty body provided and configured by the config template"),
+        "Did not find via templatepath provided template content ");
   }
 
   @Test
@@ -119,12 +116,11 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     CD4CodeTool.main(input);
 
     // Test if the config template was loaded from the additional template path
-    Assert.assertTrue(
-        "Did not find via templatepath provided template content ",
-        Files.readLines(
-                new File("target/generated/auctionTPCT/Auction/auction/Auction.java"),
+    assertTrue(
+        Files.readLines(new File("target/generated/auctionTPCT/Auction/auction/Auction.java"),
                 Charset.defaultCharset())
-            .contains("// empty body provided and configured by the config template"));
+            .contains("// empty body provided and configured by the config template"),
+        "Did not find via templatepath provided template content ");
   }
 
   @Test
@@ -146,11 +142,10 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     CD4CodeTool.main(input);
 
     // Test if the config template was loaded from the additional template path
-    Assert.assertTrue(
-        "Did not find via templatepath provided template content ",
-        Files.readLines(
-                new File("target/generated/auctionTPCTSep/Auction/auction/Auction.java"),
+    assertTrue(
+        Files.readLines(new File("target/generated/auctionTPCTSep/Auction/auction/Auction.java"),
                 Charset.defaultCharset())
-            .contains("// empty body provided and configured by the config template"));
+            .contains("// empty body provided and configured by the config template"),
+        "Did not find via templatepath provided template content ");
   }
 }

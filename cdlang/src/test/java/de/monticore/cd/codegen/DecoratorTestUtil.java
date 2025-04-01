@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -25,9 +25,9 @@ public final class DecoratorTestUtil {
             .filter(c -> name.equals(c.getName()))
             .collect(Collectors.toList());
     assertEquals(
-        String.format("Expected to find 1 class, but found '%s'", filtered.size()),
         1,
-        filtered.size());
+        filtered.size(),
+        String.format("Expected to find 1 class, but found '%s'", filtered.size()));
     return filtered.get(0);
   }
 
@@ -37,9 +37,9 @@ public final class DecoratorTestUtil {
             .filter(c -> name.equals(c.getName()))
             .collect(Collectors.toList());
     assertEquals(
-        String.format("Expected to find 1 interface, but found '%s'", filtered.size()),
         1,
-        filtered.size());
+        filtered.size(),
+        String.format("Expected to find 1 interface, but found '%s'", filtered.size()));
     return filtered.get(0);
   }
 
@@ -49,9 +49,9 @@ public final class DecoratorTestUtil {
             .filter(c -> name.equals(c.getName()))
             .collect(Collectors.toList());
     assertEquals(
-        String.format("Expected to find 1 enum, but found '%s'", filtered.size()),
         1,
-        filtered.size());
+        filtered.size(),
+        String.format("Expected to find 1 enum, but found '%s'", filtered.size()));
     return filtered.get(0);
   }
 
@@ -115,9 +115,9 @@ public final class DecoratorTestUtil {
       List<ASTCDMethod> methods, List<Predicate<ASTCDMethod>> predicates) {
     List<ASTCDMethod> filtered = filterMethods(methods, predicates);
     assertEquals(
-        String.format("Expected find 1 method, but found '%s'", filtered.size()),
         1,
-        filtered.size());
+        filtered.size(),
+        String.format("Expected find 1 method, but found '%s'", filtered.size()));
     return filtered.get(0);
   }
 
@@ -134,9 +134,9 @@ public final class DecoratorTestUtil {
             .filter(attribute -> name.equals(attribute.getName()))
             .collect(Collectors.toList());
     assertEquals(
-        String.format("Expected find 1 attribute, but found '%s'", filtered.size()),
         1,
-        filtered.size());
+        filtered.size(),
+        String.format("Expected find 1 attribute, but found '%s'", filtered.size()));
     return filtered.get(0);
   }
 
@@ -146,9 +146,9 @@ public final class DecoratorTestUtil {
             .filter(attribute -> name.equals(attribute.getName()))
             .collect(Collectors.toList());
     assertEquals(
-        String.format("Expected find 1 attribute, but found '%s'", filtered.size()),
         1,
-        filtered.size());
+        filtered.size(),
+        String.format("Expected find 1 attribute, but found '%s'", filtered.size()));
     return filtered.get(0);
   }
 }

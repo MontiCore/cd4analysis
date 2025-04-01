@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
@@ -22,13 +22,13 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeClass() throws Exception {
     CD4CodeMill.reset();
     CD4CodeMill.init();

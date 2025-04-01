@@ -6,8 +6,10 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
@@ -52,11 +54,11 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, prettyASTOpt);
 
     if (!ast.deepEquals(prettyASTOpt.get())) {
-      Assert.assertEquals(
-          "Did not deep-equal: " + filePath,
+      assertEquals(
           pretty,
-          CD4CodeMill.prettyPrint(prettyASTOpt.get(), true));
-      Assert.fail("Did not deep-equal: " + filePath);
+          CD4CodeMill.prettyPrint(prettyASTOpt.get(), true),
+          "Did not deep-equal: " + filePath);
+      fail("Did not deep-equal: " + filePath);
     }
   }
 }

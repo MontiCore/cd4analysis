@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.matching.strategies;
 
-import static org.junit.Assert.*;
-
 import com.google.common.collect.ImmutableList;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -18,7 +16,9 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** A Unit Test for the default association matcher */
 public class DefaultAssociationMatcherTest extends BaseTest {
@@ -52,7 +52,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
     if (named) {
       assertTrue(association1.isPresentName());
       assertTrue(association2.isPresentName());
-      assertTrue(association1.getName().equals(association2.getName()));
+      assertEquals(association1.getName(), association2.getName());
     }
   }
 
@@ -100,7 +100,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         for (Match<ASTCDAssociation, ASTCDDefinition> match : matchNode.getMatches()) {
 
           // The associations should lie in different class diagrams
-          assertFalse(match.getNode1().getParent().equals(match.getNode2().getParent()));
+          assertNotEquals(match.getNode1().getParent(), match.getNode2().getParent());
 
           // Check if the associations match
           ASTCDAssociation association1 = match.getNode1().getElement();
@@ -109,7 +109,7 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         }
       }
       // Check if the size is set correctly
-      assertTrue(associations.size() == astcdDefinition.getCDAssociationsList().size());
+      assertEquals(associations.size(), astcdDefinition.getCDAssociationsList().size());
     }
   }
 

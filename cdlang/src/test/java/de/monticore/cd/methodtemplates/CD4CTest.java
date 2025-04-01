@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.methodtemplates;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.facade.CDAttributeFacade;
@@ -32,8 +29,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests for parameterized calls of the {@link TemplateController} */
 public class CD4CTest extends CD4CodeTestBasis {
@@ -41,7 +40,7 @@ public class CD4CTest extends CD4CodeTestBasis {
   private GeneratorSetup config;
   private ASTCDCompilationUnit node;
 
-  @Before
+  @BeforeEach
   public void init() throws IOException {
     LogStub.init();
     Log.enableFailQuick(false);
@@ -86,7 +85,7 @@ public class CD4CTest extends CD4CodeTestBasis {
         CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertTrue(methSignature.isPresent());
-    assertTrue(methSignature.get() instanceof ASTCDMethod);
+    assertInstanceOf(ASTCDMethod.class, methSignature.get());
     ASTCDMethod meth = (ASTCDMethod) methSignature.get();
     assertEquals("print", meth.getName());
 
@@ -109,7 +108,7 @@ public class CD4CTest extends CD4CodeTestBasis {
         CD4C.getInstance().createMethod(ast, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertTrue(methSignature.isPresent());
-    assertTrue(methSignature.get() instanceof ASTCDMethod);
+    assertInstanceOf(ASTCDMethod.class, methSignature.get());
     ASTCDMethod meth = (ASTCDMethod) methSignature.get();
     assertEquals("print", meth.getName());
 

@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloycddiff;
 
-import static org.junit.Assert.*;
-
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
@@ -15,7 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Test classes to test the generation of different alloy modules for cddiff */
 public class AssociationChainTest extends CDDiffTestBasis {
@@ -88,7 +88,7 @@ public class AssociationChainTest extends CDDiffTestBasis {
                 + astV2.getCDDefinition().getName());
 
     // Assertion that no difference should be found in this scope
-    assertTrue(optS1.isPresent() && optS1.get().generateODs().size() == 0);
+    assertTrue(optS1.isPresent() && optS1.get().generateODs().isEmpty());
     // Generate outputs
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
@@ -125,7 +125,7 @@ public class AssociationChainTest extends CDDiffTestBasis {
                 + "_"
                 + astV1.getCDDefinition().getName());
     // Assertion that no difference should be found in this scope
-    assertTrue(optS2.isPresent() && optS2.get().generateODs().size() == 0);
+    assertTrue(optS2.isPresent() && optS2.get().generateODs().isEmpty());
     // Generate outputs
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
   }

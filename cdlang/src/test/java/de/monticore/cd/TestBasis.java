@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd;
 
-import static org.junit.Assert.*;
-
 import com.google.common.base.Joiner;
 import de.monticore.antlr4.MCConcreteParser;
 import de.monticore.ast.ASTNode;
@@ -20,10 +18,12 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** The base class for the tests, to provide common functionality */
 public class TestBasis {
@@ -31,16 +31,17 @@ public class TestBasis {
   public static final String PATH = "src/test/resources/de/monticore/";
 
   /** have a temporary folder for the tests */
-  @Rule public TemporaryFolder folder = new TemporaryFolder();
+  @TempDir
+  Path folderPath;
 
-  @Before
+  @BeforeEach
   public void setup() {
     LogStub.init();
     Log.enableFailQuick(false);
   }
 
   public String getTmpAbsolutePath() {
-    return folder.getRoot().getAbsolutePath();
+    return folderPath.toAbsolutePath().toString();
   }
 
   public String getTmpFilePath(String fileName) {
@@ -66,8 +67,8 @@ public class TestBasis {
     final String joinedErrors = getJoinedErrors();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);
-    assertFalse(joinedErrors, hasErrors);
-    assertNotNull("The node should not be null", node);
+    assertFalse(hasErrors, joinedErrors);
+    assertNotNull(node, "The node should not be null");
     assertTrue(node.isPresent());
     checkLogError();
   }
@@ -88,23 +89,21 @@ public class TestBasis {
         fail("exptected " + i + " errors, but none were present");
       }
     }
-
-    assertEquals(
-        "exptected to get exaclty " + i + " errors, the errors where:\n" + getJoinedErrors(),
-        Log.getErrorCount(),
-        i);
+    
+    assertEquals(Log.getErrorCount(), i,
+        "exptected to get exaclty " + i + " errors, the errors where:\n" + getJoinedErrors());
     final List<Finding> findings = Log.getFindings();
     IntStream.range(0, i)
         .forEach(c -> assertEquals(listOfErrors.get(c), findings.get(c).toString()));
     Log.getFindings().clear();
   }
 
-  @Before
+  @BeforeEach
   public void before() {
     Log.getFindings().clear();
   }
 
-  @After
+  @AfterEach
   public void after() {
     checkLogError();
   }

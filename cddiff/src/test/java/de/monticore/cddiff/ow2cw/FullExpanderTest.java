@@ -15,8 +15,9 @@ import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FullExpanderTest extends CDDiffTestBasis {
 
@@ -44,7 +45,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     machines = parseModel("src/test/resources/de/monticore/cddiff/Machines/Machines3.cd");
     machines.getCDDefinition().setName("Machines2");
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(machines, false));
   }
 
   @Test
@@ -82,7 +83,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     machines.getCDDefinition().setName("Machines1");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(machines, false));
   }
 
   @Test
@@ -110,7 +111,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     machines5.getCDDefinition().setName("Machines4");
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines5, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(machines5, false));
   }
 
   @Test
@@ -136,7 +137,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     machines4.getCDDefinition().setName("Machines3");
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(machines4, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(machines4, false));
   }
 
   @Test
@@ -161,7 +162,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     lecture4.getCDDefinition().setName("Lecture5");
     CDDiffUtil.refreshSymbolTable(lecture4);
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(lecture4, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(lecture4, false));
   }
 
   @Test
@@ -184,7 +185,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     enumComp2.getCDDefinition().setName("enumCompV1");
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(enumComp2, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(enumComp2, false));
   }
 
   @Test
@@ -212,7 +213,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     lecture = parseModel("src/test/resources/de/monticore/cddiff/Lecture/Lecture3.cd");
     lecture.getCDDefinition().setName("Lecture2");
 
-    Assert.assertEquals(result, CD4CodeMill.prettyPrint(lecture, false));
+    assertEquals(result, CD4CodeMill.prettyPrint(lecture, false));
   }
 
   @Test
@@ -226,7 +227,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
         .resolveCDTypeDown("ins.Employee")
         .ifPresent(
             type ->
-                Assert.assertEquals("ins", fullExpander.determinePackageName(type.getAstNode())));
+                assertEquals("ins", fullExpander.determinePackageName(type.getAstNode())));
   }
 
   @Test
@@ -242,15 +243,15 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     fullExpander.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList());
 
-    Assert.assertTrue(
+    assertTrue(
         lecture2.getCDDefinition().getCDAssociationsList().stream()
             .anyMatch(assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
 
-    Assert.assertTrue(
+    assertTrue(
         lecture2.getCDDefinition().getCDAssociationsList().stream()
             .allMatch(assoc2 -> assoc2.getCDAssocDir().isDefinitiveNavigableRight()));
 
-    Assert.assertFalse(
+    assertFalse(
         lecture2.getCDDefinition().getCDAssociationsList().stream()
             .allMatch(assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
   }
@@ -268,15 +269,15 @@ public class FullExpanderTest extends CDDiffTestBasis {
 
     fullExpander.updateDir4Diff(lecture1.getCDDefinition().getCDAssociationsList());
 
-    Assert.assertTrue(
+    assertTrue(
         lecture2.getCDDefinition().getCDAssociationsList().stream()
             .anyMatch(assoc -> assoc.getCDAssocDir().isDefinitiveNavigableLeft()));
 
-    Assert.assertTrue(
+    assertTrue(
         lecture2.getCDDefinition().getCDAssociationsList().stream()
             .noneMatch(assoc -> assoc.getCDAssocDir().isBidirectional()));
 
-    Assert.assertTrue(
+    assertTrue(
         lecture2.getCDDefinition().getCDAssociationsList().stream()
             .allMatch(
                 assoc ->
@@ -305,12 +306,12 @@ public class FullExpanderTest extends CDDiffTestBasis {
             .filter(assoc -> assoc.getCDAssocDir().isDefinitiveNavigableLeft())
             .count();
 
-    Assert.assertEquals(left2right + right2left, assocList.size());
+    assertEquals(left2right + right2left, assocList.size());
 
     for (ASTCDAssociation assoc : assocList) {
       String node = CD4CodeMill.prettyPrint(assoc, false);
-      Assert.assertTrue(node.contains("->"));
-      Assert.assertTrue(node.contains("Object;"));
+      assertTrue(node.contains("->"));
+      assertTrue(node.contains("Object;"));
     }
   }
 
@@ -326,6 +327,6 @@ public class FullExpanderTest extends CDDiffTestBasis {
     FullExpander fullExpander = new FullExpander(new BasicExpander(conflictCD));
     fullExpander.addAssociationsWithoutConflicts(assocList);
 
-    Assert.assertEquals(assocList, conflictCD.getCDDefinition().getCDAssociationsList());
+    assertEquals(assocList, conflictCD.getCDDefinition().getCDAssociationsList());
   }
 }

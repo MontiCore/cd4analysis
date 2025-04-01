@@ -9,7 +9,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCDInterfaceAndEnumParserTest extends CDInterfaceAndEnumTestBasis {
 

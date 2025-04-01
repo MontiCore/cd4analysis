@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import com.google.common.base.Preconditions;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.MergeTool;
@@ -16,7 +13,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TypesNameConflictNonHeteorogenous extends BaseTest {
 

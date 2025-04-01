@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._symboltable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -24,8 +24,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
@@ -107,7 +107,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     assertTrue(right.isIsDefinitiveNavigable());
   }
 
-  @Ignore("no inner classes are allowed")
+  @Disabled("no inner classes are allowed")
   @Test
   public void innerClass() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit =

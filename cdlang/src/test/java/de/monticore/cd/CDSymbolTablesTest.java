@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd4code.CD4CodeMill;
@@ -20,7 +20,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CDSymbolTablesTest extends CD4CodeTestBasis {
 

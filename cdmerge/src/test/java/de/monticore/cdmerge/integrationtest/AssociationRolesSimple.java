@@ -14,18 +14,19 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AssociationRolesSimple extends BaseTest {
+  
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Association";
+  
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/rolesSimple/A.cd";
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Association/rolesSimple/A.cd";
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/rolesSimple/B.cd";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Association/rolesSimple/B.cd";
-
-  private static final String EXPECTED =
-      "src/test/resources/class_diagrams/Association" + "/rolesSimple/mergedCD.cd";
+  private static final String EXPECTED = INPUT_MODEL_DIR + "/rolesSimple/mergedCD.cd";
 
   @Test
   public void testAssociationRolesSimple() throws IOException, MergingException {
@@ -36,7 +37,7 @@ public class AssociationRolesSimple extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

@@ -1,11 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import de.monticore.cd.OutTestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -28,17 +23,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExampleCommandTest extends OutTestBasis {
 
   static final String outputPath = "target/generated/example-commands/";
 
-  @Before
+  @BeforeEach
   public void resetMill() {
     CD4CodeMill.reset();
   }
@@ -70,7 +65,7 @@ public class ExampleCommandTest extends OutTestBasis {
     CD4CodeMill.globalScope().clear();
     fileName = "src/test/resources/doc/MyLife.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "--path", outputPath + "symbols", "-pp"});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /** Step1: Getting started for command: java -jar MCCD.jar -i src/MyExample.cd */
@@ -78,7 +73,7 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testGettingStartedExample() {
     String fileName = "src/test/resources/doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /** Step2: Pretty printing for command: java -jar MCCD.jar -i src/MyExample.cd -pp */
@@ -86,7 +81,7 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testPrettyPrintingExample1() {
     String fileName = "src/test/resources/doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-pp"});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -101,7 +96,7 @@ public class ExampleCommandTest extends OutTestBasis {
     assertTrue(
         loadAndCheckCD("src/test/resources/doc/MyExample.cd")
             .deepEquals(loadAndCheckCD(outputPath + "MyExample.cd"), false));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /** Step3: storing symbols for command: java -jar MCCD.jar -i src/MyExample.cd -s */
@@ -118,7 +113,7 @@ public class ExampleCommandTest extends OutTestBasis {
 
     // test if the result exists and no errors occur
     assertTrue(Files.exists(Paths.get(outputPath + "MyExample.cdsym")));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -134,7 +129,7 @@ public class ExampleCommandTest extends OutTestBasis {
 
     // test if the result exists and no errors occur
     assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -149,7 +144,7 @@ public class ExampleCommandTest extends OutTestBasis {
           "-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym", "--fieldfromrole", "all"
         });
     assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -169,7 +164,7 @@ public class ExampleCommandTest extends OutTestBasis {
           "navigable"
         });
     assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -195,9 +190,9 @@ public class ExampleCommandTest extends OutTestBasis {
     tool.run(new String[] {"-i", fileName});
 
     // Then
-    Assertions.assertEquals(
+    assertEquals(
         3, Log.getFindingsCount(), "Actual findings: " + Log.getFindings().toString());
-    Assert.assertEquals("0xA0324 Cannot find symbol Address", Log.getFindings().get(0).getMsg());
+    assertEquals("0xA0324 Cannot find symbol Address", Log.getFindings().get(0).getMsg());
     Log.clearFindings();
   }
 
@@ -210,12 +205,12 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testStoringSymbolsPerPathsExample2() {
     String fileName = "src/test/resources/doc/MyAddress.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
     CD4CodeMill.globalScope().clear();
     fileName = "src/test/resources/doc/MyLife.cd";
     CD4CodeTool.main(
         new String[] {"-i", fileName, "--defaultpackage", "--path", outputPath + "symbols"});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -234,7 +229,7 @@ public class ExampleCommandTest extends OutTestBasis {
                     Files.exists(
                         Paths.get(
                             outputPath + "out/" + retrieveRelativeGenPath(c, cd) + ".java"))));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -258,7 +253,7 @@ public class ExampleCommandTest extends OutTestBasis {
                     Files.exists(
                         Paths.get(
                             outputPath + "out/" + retrieveRelativeGenPath(c, cd) + ".java"))));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -296,7 +291,7 @@ public class ExampleCommandTest extends OutTestBasis {
 
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
-          Assert.assertTrue(
+          assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
                       CDSemantics.SIMPLE_CLOSED_WORLD,
@@ -320,7 +315,7 @@ public class ExampleCommandTest extends OutTestBasis {
     final String fileName = "src/test/resources/doc/Teaching.cd";
     CD4CodeTool.main(
         new String[] {"-i", fileName, "--merge", "src/test/resources/doc/Management.cd", "-pp"});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   /**
@@ -342,7 +337,7 @@ public class ExampleCommandTest extends OutTestBasis {
           "UniversitySystem.cd"
         });
     assertTrue(Files.exists(Paths.get(outputPath + "out/UniversitySystem.cd")));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   protected void resetGlobalScope() {

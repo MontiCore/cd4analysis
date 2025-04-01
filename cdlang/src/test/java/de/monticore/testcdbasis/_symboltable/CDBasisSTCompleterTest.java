@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -28,8 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CDBasisSTCompleterTest {
 
@@ -37,7 +36,7 @@ public class CDBasisSTCompleterTest {
   TestCDBasisParser parser;
   TestCDBasisSymbols2Json symbols2Json;
 
-  @Before
+  @BeforeEach
   public void setup() {
     // reset the GlobalScope
     TestCDBasisMill.reset();

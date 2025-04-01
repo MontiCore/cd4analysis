@@ -1,7 +1,7 @@
 package de.monticore.testcdassociation.symboltable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.ICDAssociationArtifactScope;
@@ -13,7 +13,7 @@ import de.monticore.testcdassociation.TestCDAssociationMill;
 import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactScope;
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CDAssociationSymbolTest extends CDAssociationTestBasis {
 

@@ -1,10 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.trafo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
@@ -19,8 +15,11 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
   @Test
@@ -108,7 +107,7 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
   }
 
   @Test
-  @Ignore // TODO: See #3940
+  @Disabled // TODO: See #3940
   public void testWithCircularAssocsNavigable() throws IOException {
     this.testWithCircularAssocs(new CDAssociationCreateFieldsFromNavigableRoles());
   }
@@ -124,10 +123,8 @@ public class CDAssociationTrafoTest extends CD4AnalysisTestBasis {
     cdAssociationCreateFieldsTrafo.transform(compUnit);
 
     for (ASTCDClass clazz : compUnit.getCDDefinition().getCDClassesList()) {
-      assertNotEquals(
-          clazz.getName() + " did not generate with its attribute",
-          0,
-          clazz.getCDAttributeList().size());
+      assertNotEquals(0, clazz.getCDAttributeList().size(),
+          clazz.getName() + " did not generate with its attribute");
     }
   }
 }

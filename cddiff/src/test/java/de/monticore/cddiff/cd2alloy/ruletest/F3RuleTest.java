@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.ruletest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -11,8 +11,8 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for the U1 rule for the generation of common class names */
 public class F3RuleTest extends CDDiffTestBasis {
@@ -26,7 +26,7 @@ public class F3RuleTest extends CDDiffTestBasis {
   protected ASTCDCompilationUnit m2Ast =
       parseModel("src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
-  @Before
+  @BeforeEach
   public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);

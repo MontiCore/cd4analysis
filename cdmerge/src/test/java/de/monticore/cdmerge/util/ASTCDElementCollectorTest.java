@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ASTCDElementCollectorTest extends BaseTest {
 

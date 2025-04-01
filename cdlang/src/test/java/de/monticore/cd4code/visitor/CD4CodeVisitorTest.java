@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.visitor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.antlr.v4.runtime.RecognitionException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CD4CodeVisitorTest extends CD4CodeTestBasis {
 

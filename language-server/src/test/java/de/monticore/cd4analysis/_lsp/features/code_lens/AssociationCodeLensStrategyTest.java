@@ -35,10 +35,10 @@ class AssociationCodeLensStrategyTest extends AbstractCodeLensTest {
     Range firstLine = new Range(new Position(1, 8), new Position(1, 9));
     Range secondLine = new Range(new Position(2, 8), new Position(2, 9));
 
-    assertEquals(codeLenses.get(0).getRange(), firstLine);
-    assertEquals(codeLenses.get(0).getCommand().getTitle(), TITLE);
-    assertEquals(codeLenses.get(1).getRange(), secondLine);
-    assertEquals(codeLenses.get(1).getCommand().getTitle(), TITLE);
+    assertEquals(firstLine, codeLenses.get(0).getRange());
+    assertEquals(TITLE, codeLenses.get(0).getCommand().getTitle());
+    assertEquals(secondLine, codeLenses.get(1).getRange());
+    assertEquals(TITLE, codeLenses.get(1).getCommand().getTitle());
   }
 
   @Test
@@ -60,12 +60,12 @@ class AssociationCodeLensStrategyTest extends AbstractCodeLensTest {
     Range secondLine = new Range(new Position(2, 8), new Position(2, 9));
     Range thirdLine = new Range(new Position(3, 8), new Position(3, 9));
 
-    assertEquals(codeLenses.get(0).getRange(), firstLine);
-    assertEquals(codeLenses.get(0).getCommand().getTitle(), TITLE);
-    assertEquals(codeLenses.get(1).getRange(), secondLine);
-    assertEquals(codeLenses.get(1).getCommand().getTitle(), TITLE);
-    assertEquals(codeLenses.get(2).getRange(), thirdLine);
-    assertEquals(codeLenses.get(2).getCommand().getTitle(), TITLE);
+    assertEquals(firstLine, codeLenses.get(0).getRange());
+    assertEquals(TITLE, codeLenses.get(0).getCommand().getTitle());
+    assertEquals(secondLine, codeLenses.get(1).getRange());
+    assertEquals(TITLE, codeLenses.get(1).getCommand().getTitle());
+    assertEquals(thirdLine, codeLenses.get(2).getRange());
+    assertEquals(TITLE, codeLenses.get(2).getCommand().getTitle());
   }
 
   @Test
@@ -81,7 +81,7 @@ class AssociationCodeLensStrategyTest extends AbstractCodeLensTest {
 
     Range firstLine = new Range(new Position(3, 8), new Position(3, 9));
 
-    assertEquals(codeLenses.get(0).getRange(), firstLine);
-    assertEquals(codeLenses.get(0).getCommand().getTitle(), TITLE);
+    assertEquals(firstLine, codeLenses.get(0).getRange());
+    assertEquals(TITLE, codeLenses.get(0).getCommand().getTitle());
   }
 }

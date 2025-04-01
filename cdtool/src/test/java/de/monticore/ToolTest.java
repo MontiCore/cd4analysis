@@ -1,23 +1,19 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd.OutTestBasis;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.cli.ParseException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 
 public class ToolTest extends OutTestBasis {
   @SuppressWarnings("deprecation")
-  @Rule
-  public ExpectedException thrown = ExpectedException.none();
 
   protected static final String TOOL_PATH = "src/test/resources/de/monticore/";
 
@@ -28,7 +24,7 @@ public class ToolTest extends OutTestBasis {
     CD4CodeTool.main(new String[] {"-i", cd1, "--merge", cd2});
 
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   @Test
@@ -38,7 +34,7 @@ public class ToolTest extends OutTestBasis {
     final String cd3 = TOOL_PATH + "cdmerge/Person/C.cd";
     final String out = "target/generated/multi-merge";
     CD4CodeTool.main(new String[] {"-i", cd1, "--merge", cd2, cd3, "-o", out, "-pp", "Merge.cd"});
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   @Test
@@ -49,7 +45,7 @@ public class ToolTest extends OutTestBasis {
     CD4CodeTool.main(new String[] {"-i", fileName, "-f", "false"});
 
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   @Test
@@ -60,11 +56,11 @@ public class ToolTest extends OutTestBasis {
     CD4CodeTool.main(new String[] {"-i", fileName, "-h", "-f", "false"});
 
     // assertTrue(getOut(), getOut().startsWith("usage: cd-"));
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   @Test
-  @Ignore // todo test has always(?) been broken and not correctly tested to far... -> requires
+  @Disabled // todo test has always(?) been broken and not correctly tested to far... -> requires
   // rework
   public void testToolNoBuiltInTypes() throws IOException, ParseException {
     final File file = new File(TOOL_PATH + "cd/Complete.cd");
@@ -74,7 +70,7 @@ public class ToolTest extends OutTestBasis {
     CD4CodeTool.main(new String[] {"-i", fileName, "-nt", "-f", "false"});
 
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   @Test
@@ -86,11 +82,11 @@ public class ToolTest extends OutTestBasis {
     CD4CodeTool.main(new String[] {"-i", fileName, "-f", "false"});
 
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
-    assertTrue(getErr(), getErr().isEmpty());
+    assertTrue(getErr().isEmpty(), getErr());
   }
 
   @Test
-  @Ignore // TODO MB
+  @Disabled // TODO MB
   public void testToolPlantUML() throws IOException, ParseException {
     final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
@@ -106,7 +102,7 @@ public class ToolTest extends OutTestBasis {
   }
 
   @Test
-  @Ignore // TODO MB
+  @Disabled // TODO MB
   public void testToolPlantUML2() throws IOException, ParseException {
     final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
@@ -129,7 +125,7 @@ public class ToolTest extends OutTestBasis {
   }
 
   @Test
-  @Ignore // TODO MB
+  @Disabled // TODO MB
   public void testToolPlantUML3() throws IOException, ParseException {
     final File file = new File(TOOL_PATH + "cd/Complete.cd");
     assertTrue(file.exists());
@@ -147,7 +143,7 @@ public class ToolTest extends OutTestBasis {
   // if Log.error is called resulting in a System.exit()
   Thread failOnExitHook;
 
-  @Before
+  @BeforeEach
   public void setUpFailOnExitHook() {
     // This will(should) result in an indefinitely blocked process,
     // s.
@@ -166,8 +162,7 @@ public class ToolTest extends OutTestBasis {
     Runtime.getRuntime().addShutdownHook(failOnExitHook);
   }
 
-  @After
-  public void removeFailOnExitHook() {
+  @AfterEach  public void removeFailOnExitHook() {
     Runtime.getRuntime().removeShutdownHook(failOnExitHook);
   }
 }

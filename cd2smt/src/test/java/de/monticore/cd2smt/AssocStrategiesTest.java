@@ -14,9 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AssocStrategiesTest extends CD2SMTAbstractTest {
 
@@ -62,6 +63,6 @@ public class AssocStrategiesTest extends CD2SMTAbstractTest {
     Solver solver =
         cd2SMTGenerator.makeSolver(
             List.of(IdentifiableBoolExpr.buildIdentifiable(two, null, Optional.of("Two_Motor"))));
-    Assertions.assertEquals(Status.UNSATISFIABLE, solver.check());
+    assertEquals(Status.UNSATISFIABLE, solver.check());
   }
 }
