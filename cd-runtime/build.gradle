@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+plugins {
+  id "jacoco"
+}
+
+
+dependencies {
+  api 'de.se_rwth.commons:se-commons-logging:' + mc_version
+  api "org.antlr:antlr4-runtime:$antlr_version"
+  api "commons-cli:commons-cli:$commons_cli_version"
+  api "com.google.guava:guava:$guava_version"
+
+  implementation 'de.se_rwth.commons:se-commons-utilities:' + mc_version
+  implementation "org.freemarker:freemarker:$freemarker_version"
+  implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+}
+
+description = 'CD: Runtime'
+
+java {
+
+}
+
