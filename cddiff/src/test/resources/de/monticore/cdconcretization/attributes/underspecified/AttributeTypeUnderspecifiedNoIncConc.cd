@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram AttributeTypeUnderspecifiedNoIncConc {
+  <<ref="DataClass">> class Employee {
+    // NOTE: the attribute is not annotated with <<ref="attribute">>!
+    String firstName;
+    String lastName;
+  }
+}

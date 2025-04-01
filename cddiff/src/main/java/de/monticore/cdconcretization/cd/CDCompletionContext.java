@@ -5,6 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdmatcher.MatchingStrategy;
+
 import java.util.Set;
 
 /**
@@ -19,6 +20,8 @@ public interface CDCompletionContext {
   ASTCDCompilationUnit getReferenceCD();
 
   String getMappingName(); // TODO maybe even have additional config object for this
+
+  String getUnderspecifiedPlaceholderTypeName();
 
   /** Parameters for the conformance checker, that also influence the completion behavior. */
   Set<CDConfParameter> getConformanceParams();

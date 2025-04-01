@@ -67,6 +67,19 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
     SymTypeExpression attributeSymType =
         new FullSynthesizeFromCD4Code().synthesizeType(referenceAttribute.getMCType()).getResult();
 
+    // make sure we do not add the 'any' type to the concrete CD
+    if (attributeSymType
+            .getTypeInfo()
+            .getFullName()
+            .equals(context.getUnderspecifiedPlaceholderTypeName())) {
+      throw new CompletionException(
+              "Underspecified placeholder type without incarnations found in attribute '"
+                      + referenceAttribute.getName()
+                      + "' in reference type '"
+                      + context.getReferenceType().getName()
+                      + "'");
+    }
+
     Optional<ASTType> rAttributeTypeOpt =
         attributeSymType.hasTypeInfo() && attributeSymType.getTypeInfo().isPresentAstNode()
             ? Optional.ofNullable(attributeSymType.getTypeInfo().getAstNode())
