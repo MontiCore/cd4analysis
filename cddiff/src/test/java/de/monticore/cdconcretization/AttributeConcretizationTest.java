@@ -1,0 +1,224 @@
+package de.monticore.cdconcretization;
+
+import de.monticore.cdbasis._ast.ASTCDClass;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
+class AttributeConcretizationTest extends AbstractCDConcretizationTest {
+
+  /**
+   * Test that checks if all the attributes in the reference CD that are missing in the concrete CD
+   * are added based on predefined CDs.
+   */
+  @Test
+  void testMissingAttributes() {
+    testConcretizedEqualsRef(
+            "attributes/valid/AttributesMissingConc.cd", "attributes/valid/AttributesMissingRef.cd");
+  }
+
+  @Test
+  void testTwoMissingAttributes() {
+    testConcretizedEqualsRef(
+            "attributes/valid/TwoAttributesMissingConc.cd",
+            "attributes/valid/TwoAttributesMissingRef.cd");
+  }
+
+  @Test
+  void testTwoMissingAttributesOneMatch() {
+    testConcretizedEqualsRef(
+            "attributes/valid/TwoAttributesMissingOneMatchConc.cd",
+            "attributes/valid/TwoAttributesMissingOneMatchRef.cd");
+  }
+
+  /**
+   * The attributes expected by the reference class are already present in the direct superclass of
+   * 'Employee'. The concretization should not add them again.
+   */
+  @Test
+  void testAttributeExistsInConcreteSuperclass() {
+    testConcretizedConformsToRefAndExpectedOut(
+            "attributes/valid/AttributeInSuperClassConc.cd",
+            "attributes/valid/AttributeInSuperClassRef.cd",
+            "attributes/valid/AttributeInSuperClassOut.cd");
+
+    // The conformance check is not enough here. The tool must not add attributes to the concrete
+    // class if they
+    // are already inherited from a superclass.
+    List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
+
+    ASTCDClass employeeClass =
+            conCD.getCDDefinition().getCDClassesList().stream()
+                    .filter(cdClass -> cdClass.getName().equals("Employee"))
+                    .findFirst()
+                    .orElseThrow();
+    employeeClass.getCDAttributeList().stream()
+            .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
+            .findAny()
+            .ifPresent(
+                    cdAttribute -> {
+                      fail(
+                              "Attribute "
+                                      + cdAttribute
+                                      + " should not be added to the concrete class 'Employee' as it is already "
+                                      + "inherited from the superclass 'Person'");
+                    });
+  }
+
+  /**
+   * The attributes expected by the reference class are already present "deep" in the class
+   * hierarchy of 'Employee'. The concretization should not add them again.
+   */
+  @Test
+  void testAttributeExistsInConcreteDeepSuperclass() {
+    testConcretizedConformsToRefAndExpectedOut(
+            "attributes/valid/AttributeInDeepSuperClassConc.cd",
+            "attributes/valid/AttributeInDeepSuperClassRef.cd",
+            "attributes/valid/AttributeInDeepSuperClassOut.cd");
+
+    // The conformance check is not enough here. The tool must not add attributes to the concrete
+    // class if they
+    // are already inherited from a superclass.
+    List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
+
+    ASTCDClass employeeClass =
+            conCD.getCDDefinition().getCDClassesList().stream()
+                    .filter(cdClass -> cdClass.getName().equals("Employee"))
+                    .findFirst()
+                    .orElseThrow();
+    employeeClass.getCDAttributeList().stream()
+            .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
+            .findAny()
+            .ifPresent(
+                    cdAttribute -> {
+                      fail(
+                              "Attribute "
+                                      + cdAttribute
+                                      + " should not be added to the concrete class 'Employee' as it is already "
+                                      + "inherited from the superclass 'Person'");
+                    });
+  }
+
+  @Test
+  void testAttributeForEachAttribute() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeConc.cd",
+            "attributes/forEach/ForEachAttributeRef.cd",
+            "attributes/forEach/ForEachAttributeOut.cd");
+  }
+
+  @Test
+  void testAttributeForEachAttributeDifferentName() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+  }
+
+  @Test
+  void testAttributeForEachAttributeDifferentType() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeDifferentTypeConc.cd",
+            "attributes/forEach/ForEachAttributeDifferentTypeRef.cd",
+            "attributes/forEach/ForEachAttributeDifferentTypeOut.cd");
+  }
+
+  /**
+   * We have different names of the 'forEach' annotated attribute and the reference target
+   * attribute. Also, we have multiple incarnations of the class with the target attribute.
+   * Therefore, the attributes in Builder class get two suffixes, one for the type incarnation and
+   * one for the target attribute incarnation name. TODO If we want to have one Builder incarnation
+   * per type incarnation, we need to add an additional <<forEach="DataClass">> to the reference
+   * Builder class
+   */
+  @Test
+  void testAttributeForEachAttributeDifferentNameClassMI() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+  }
+
+  /**
+   * We have a 'forEach' annotated attribute in the reference CD. But the concrete CD has no
+   * incarnations of the referenced target attribute!
+   */
+  @Disabled("does not work until we have 'matchStructure' or 'optional stereotype")
+  @Test
+  void testAttributeForEachAttributeNoTargetIncarnations() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeNoTargetIncConc.cd",
+            "attributes/forEach/ForEachAttributeNoTargetIncRef.cd",
+            "attributes/forEach/ForEachAttributeNoTargetIncOut.cd");
+  }
+
+  /**
+   * An underspecified attribute (type: any) needs to be incarnated at least once. Otherwise, we
+   * would have to add an attribute of type 'any' to the concrete CD which is not allowed.
+   */
+  @Test
+  void testAttributeTypeUnderspecifiedNoIncarnationError() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    try {
+      parseAndConcretize(
+              completer,
+              "attributes/underspecified/AttributeTypeUnderspecifiedNoIncConc.cd",
+              "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd");
+      fail("Expected CompletionException. But the concretization was successful.");
+    } catch (CompletionException e) {
+      System.out.println("Completion failed as expected: " + e.getMessage());
+    }
+  }
+
+  @Test
+  void testAttributeTypeUnderspecifiedDifferentIncarnationTypes() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesConc.cd",
+            "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd",
+            "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesOut.cd");
+  }
+}
