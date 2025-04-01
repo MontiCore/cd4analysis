@@ -20,6 +20,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
   private final ITypeCompleter typeDetailsCompleter;
 
   public TypeDetailsCDCompleter(
+
       ITypeCompleter typeDetailsCompleter) {
     this.typeDetailsCompleter = typeDetailsCompleter;
   }

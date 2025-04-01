@@ -8,7 +8,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 public abstract class AbstractTypeCompleter implements ITypeCompleter,
-        IChainable<AbstractTypeCompleter>  {
+        IChainable<AbstractTypeCompleter> {
 
   private AbstractTypeCompleter next;
 

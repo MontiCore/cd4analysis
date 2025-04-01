@@ -3,6 +3,7 @@ package de.monticore.cdconcretization.cd.type;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
 import de.monticore.cdconcretization.util.IChainable;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -15,7 +16,8 @@ public abstract class AbstractCDTypeCompleter implements ICDTypeCompleter,
 
   @Override
   public void completeCDForType(
-      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
+      throws CompletionException {
     if (referenceType instanceof ASTCDClass) {
       completeType(concreteCD, (ASTCDClass) referenceType, context);
     } else if (referenceType instanceof ASTCDInterface) {
@@ -28,17 +30,20 @@ public abstract class AbstractCDTypeCompleter implements ICDTypeCompleter,
   }
 
   protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDClass referenceType, CDCompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDClass referenceType, CDCompletionContext context)
+      throws CompletionException {
     next(concreteCD, referenceType, context);
   }
 
   protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CDCompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CDCompletionContext context)
+      throws CompletionException {
     next(concreteCD, referenceType, context);
   }
 
   protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CDCompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CDCompletionContext context)
+      throws CompletionException {
     next(concreteCD, referenceType, context);
   }
 
@@ -49,7 +54,8 @@ public abstract class AbstractCDTypeCompleter implements ICDTypeCompleter,
    * @param referenceType
    */
   protected void next(
-      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
+      throws CompletionException {
     if (hasNext()) {
       next.completeCDForType(concreteCD, referenceType, context);
     }

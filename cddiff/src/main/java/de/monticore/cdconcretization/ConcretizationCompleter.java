@@ -12,7 +12,6 @@ import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.type.AbstractCDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.BaseCDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.ICDTypeCompleter;
-import de.monticore.cdconcretization.cd.type.NameStereotypeCDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
 import de.monticore.cdconcretization.type.attribute.BaseTypeAttributeCompleter;
@@ -29,7 +28,6 @@ import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
-
 import java.util.Set;
 
 public class ConcretizationCompleter {
@@ -51,10 +49,11 @@ public class ConcretizationCompleter {
   private boolean reorderElements = true;
 
   /**
-   * Name of the placeholder type that is used to mark underspecified types in the reference CD.
-   * See {@link UnderspecifiedPlaceholderType}.
+   * Name of the placeholder type that is used to mark underspecified types in the reference CD. See
+   * {@link UnderspecifiedPlaceholderType}.
    */
-  private String underspecifiedPlaceholderTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
+  private String underspecifiedPlaceholderTypeName =
+      UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
 
   protected Set<CDConfParameter> conformanceParams;
 
@@ -76,7 +75,6 @@ public class ConcretizationCompleter {
 
     ICDTypeCompleter typeCompleter =
         new ChainBuilder<AbstractCDTypeCompleter>()
-            .add(new NameStereotypeCDTypeCompleter())
             // TODO add forEach support here
             .add(new BaseCDTypeCompleter())
             .build();
@@ -101,21 +99,28 @@ public class ConcretizationCompleter {
         new DefaultAssocCompleter(concreteCD, assocSideCompleter);
 
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
+
         new ChainBuilder<AbstractCDCompleter>()
             .add(new ImportsCompleter())
             .add(new MissingTypesCDCompleter(typeCompleter))
             .add(new InheritanceCompleter())
-            .add(new TypeDetailsCDCompleter(typeDetailsCompleter))
-            .add(new ExistingAssociationsCDCompleter(assocDetailsCompleter))
-            .add(new MissingAssociationsCDCompleter(assocDetailsCompleter));
+            .add(new TypeDetailsCDCompleter( typeDetailsCompleter))
+            .add(
+                new ExistingAssociationsCDCompleter(
 
-    // add configurable,optional steps
+                    assocDetailsCompleter))
+            .add(
+                new MissingAssociationsCDCompleter(
+
+                    assocDetailsCompleter));
+            // add configurable,optional steps
     if (removeRedundantAttributes) {
-      completerChainBuilder.add(new RemoveRedundantAttributesCDCompleter());
+      completerChainBuilder.add(
+                new RemoveRedundantAttributesCDCompleter());
     }
     if (reorderElements) {
-      completerChainBuilder.add(new ReorderElementsCompletionCDCompleter());
-    }
+            completerChainBuilder.add(new ReorderElementsCompletionCDCompleter());
+            }
     if (checkConformance) {
       completerChainBuilder.add(
           new ConformanceCheckCompletionStep(mapping, "Completion result is not conform"));
@@ -130,8 +135,8 @@ public class ConcretizationCompleter {
   }
 
   /**
-   * Changes the default name of the placeholder type, which is
-   * {@link UnderspecifiedPlaceholderType#DEFAULT_TYPE_NAME}.<br>
+   * Changes the default name of the placeholder type, which is {@link
+   * UnderspecifiedPlaceholderType#DEFAULT_TYPE_NAME}.<br>
    * This MUST be called if you want to use a different name for the placeholder type.
    *
    * @param underspecifiedPlaceholderTypeName the new name of the placeholder type
@@ -264,7 +269,7 @@ public class ConcretizationCompleter {
 
     @Override
     public MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy(
-            ASTCDType concreteType, ASTCDType referenceType) {
+        ASTCDType concreteType, ASTCDType referenceType) {
       CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(mapping);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
         attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(mapping));

@@ -7,8 +7,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 public class ImportsCompleter extends AbstractCDCompleter {
 
   @Override
-  public void complete(
-      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
+  public void complete(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
       throws CompletionException {
     for (ASTMCImportStatement importStatement : rcd.getMCImportStatementList()) {
       boolean alreadyExists = false;
