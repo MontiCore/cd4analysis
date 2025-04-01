@@ -67,9 +67,8 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
       if (field instanceof ASTCDAttribute) {
         ASTCDAttribute rTargetAttribute = (ASTCDAttribute) field;
         ASTCDType rTargetAttributeDeclaringType =
-            (ASTCDType) fieldSymbol.get().getEnclosingScope().getAstNode();
-        completeAttributeUsingAttribute(
-            referenceAttribute, rTargetAttribute, rTargetAttributeDeclaringType, context);
+                (ASTCDType) fieldSymbol.get().getEnclosingScope().getAstNode();
+        completeAttributeUsingAttribute(referenceAttribute, rTargetAttribute, rTargetAttributeDeclaringType, context);
         return true;
       } else {
         throw new CompletionException(
@@ -136,24 +135,23 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
       // with _)
       // TODO even then we can have name conflicts if we really want to provoke them
       String declaringTypeSuffix =
-          declaringTypeIncarnations.size() > 1 ? "_" + cAttributeDeclaringType.getName() : "";
+              declaringTypeIncarnations.size() > 1 ? "_" + cAttributeDeclaringType.getName() : "";
 
       Set<ASTCDAttribute> attributeIncarnations =
-          cAttributeDeclaringType.getCDAttributeList().stream()
-              .filter(
-                  attributeIncarnation ->
-                      context
-                          .getAttributeIncStrategy(
-                              cAttributeDeclaringType, rTargetAttributeDeclaringType)
-                          .isMatched(attributeIncarnation, rTargetAttribute))
-              .collect(Collectors.toSet());
+              cAttributeDeclaringType.getCDAttributeList().stream()
+                      .filter(
+                              attributeIncarnation ->
+                                      context
+                                              .getAttributeIncStrategy(cAttributeDeclaringType, rTargetAttributeDeclaringType)
+                                              .isMatched(attributeIncarnation, rTargetAttribute))
+                      .collect(Collectors.toSet());
       System.out.println(
-          "Found attribute incarnations for "
-              + rTargetAttribute.getName()
-              + ": "
-              + attributeIncarnations.stream()
-                  .map(a -> CD4CodeMill.prettyPrint(a, false))
-                  .collect(Collectors.toList()));
+              "Found attribute incarnations for "
+                      + rTargetAttribute.getName()
+                      + ": "
+                      + attributeIncarnations.stream()
+                      .map(a -> CD4CodeMill.prettyPrint(a, false))
+                      .collect(Collectors.toList()));
 
       for (ASTCDAttribute cAttribute : attributeIncarnations) {
         // now we have a specific incarnation of the reference attribute in the concrete CD.
@@ -173,7 +171,7 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
         } else {
           // Default: add the REFERENCED attribute incarnation name as suffix
           attributeIncarnation.setName(
-              referenceAttribute.getName() + declaringTypeSuffix + attributeSuffix);
+                  referenceAttribute.getName() + declaringTypeSuffix + attributeSuffix);
         }
 
         // 2. decide type of the new attribute

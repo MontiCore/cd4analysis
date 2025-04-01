@@ -8,9 +8,9 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 /**
  * Utility class to add an underspecified placeholder type to the global scope.<br>
  * This type can be used to mark attribute types, method return types, or parameter types as
- * underspecified in the reference CD. The placeholder type can be cast to any other
- * type. It must only be used in the reference CD and only in context of templating, e.g. using
- * the 'forEach' stereotype.
+ * underspecified in the reference CD. The placeholder type can be cast to any other type. It must
+ * only be used in the reference CD and only in context of templating, e.g. using the 'forEach'
+ * stereotype.
  */
 public class UnderspecifiedPlaceholderType {
 
@@ -20,8 +20,7 @@ public class UnderspecifiedPlaceholderType {
    */
   public static final String DEFAULT_TYPE_NAME = "any";
 
-  private UnderspecifiedPlaceholderType() {
-  }
+  private UnderspecifiedPlaceholderType() {}
 
   /**
    * Adds the placeholder type to the global scope that can be used to mark attribute types, method
@@ -41,19 +40,19 @@ public class UnderspecifiedPlaceholderType {
 
   /**
    * Creates a type symbol for an underspecified placeholder type.<br>
-   * Prefer using {@link #addPlaceholderType(IOOSymbolsGlobalScope)} to add the type to
-   * the global scope.
+   * Prefer using {@link #addPlaceholderType(IOOSymbolsGlobalScope)} to add the type to the global
+   * scope.
    *
    * @param name the name of the type
    * @return the type symbol
    */
   private static TypeSymbol createPlaceholderTypeSymbol(String name) {
     return CD4CodeMill.typeSymbolBuilder()
-            .setName(name)
-            .setEnclosingScope(CD4CodeMill.globalScope())
-            .setFullName(name)
-            .setSpannedScope(CD4CodeMill.scope())
-            .setAccessModifier(AccessModifier.ALL_INCLUSION)
-            .build();
+        .setName(name)
+        .setEnclosingScope(CD4CodeMill.globalScope())
+        .setFullName(name)
+        .setSpannedScope(CD4CodeMill.scope())
+        .setAccessModifier(AccessModifier.ALL_INCLUSION)
+        .build();
   }
 }

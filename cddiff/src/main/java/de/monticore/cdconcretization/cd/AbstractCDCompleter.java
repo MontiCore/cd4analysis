@@ -10,7 +10,9 @@ public abstract class AbstractCDCompleter implements ICDCompleter, IChainable<Ab
 
   @Override
   public void complete(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CDCompletionContext context)
+      ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD,
+      CDCompletionContext context)
       throws CompletionException {
     if (hasNext()) {
       next.complete(concreteCD, referenceCD, context);

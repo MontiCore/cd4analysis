@@ -1,5 +1,9 @@
 package de.monticore.cdconcretization;
 
+import static de.monticore.cdconformance.CDConfParameter.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -7,14 +11,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.io.IOException;
 import java.util.Set;
-
-import static de.monticore.cdconformance.CDConfParameter.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractCDConcretizationTest {
 
@@ -24,12 +23,12 @@ public abstract class AbstractCDConcretizationTest {
    * The default conformance parameters that are used for each test case if not specified otherwise.
    */
   protected static final Set<CDConfParameter> DEFAULT_CONFORMANCE_PARAMS =
-          Set.of(
-                  STEREOTYPE_MAPPING,
-                  NAME_MAPPING,
-                  SRC_TARGET_ASSOC_MAPPING,
-                  INHERITANCE,
-                  ALLOW_CARD_RESTRICTION);
+      Set.of(
+          STEREOTYPE_MAPPING,
+          NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING,
+          INHERITANCE,
+          ALLOW_CARD_RESTRICTION);
 
   protected ASTCDCompilationUnit refCD;
 
@@ -81,8 +80,8 @@ public abstract class AbstractCDConcretizationTest {
       fail("CompletionException", e);
     }
     assertTrue(
-            new CDConformanceChecker(DEFAULT_CONFORMANCE_PARAMS)
-                    .checkConformance(conCD, refCD, Set.of("ref")));
+        new CDConformanceChecker(DEFAULT_CONFORMANCE_PARAMS)
+            .checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   protected void testConcretizedConformsToRefAndExpectedOut(String conc, String ref, String out) {
@@ -94,7 +93,7 @@ public abstract class AbstractCDConcretizationTest {
   }
 
   protected void testConcretizedEqualsExpectedOut(
-          ConcretizationCompleter completer, String conc, String ref, String out) {
+      ConcretizationCompleter completer, String conc, String ref, String out) {
     ASTCDCompilationUnit expectedCD = parseCD(out);
     // 1. concretize and check conformance
     try {
@@ -111,7 +110,7 @@ public abstract class AbstractCDConcretizationTest {
   }
 
   protected void parseAndConcretize(ConcretizationCompleter completer, String conc, String ref)
-          throws CompletionException {
+      throws CompletionException {
     parseModels(conc, ref);
     completer.completeCD(conCD, refCD);
     System.out.println("Concretized CD:");
@@ -127,9 +126,9 @@ public abstract class AbstractCDConcretizationTest {
     ASTCDCompilationUnit cd;
     try {
       cd =
-              CD4CodeMill.parser()
-                      .parseCDCompilationUnit(TEST_RES_DIR + filePath)
-                      .orElseThrow(() -> new RuntimeException("Could not parse CD: " + filePath));
+          CD4CodeMill.parser()
+              .parseCDCompilationUnit(TEST_RES_DIR + filePath)
+              .orElseThrow(() -> new RuntimeException("Could not parse CD: " + filePath));
     } catch (IOException e) {
       throw new RuntimeException("Failed to load CD: " + filePath, e);
     }

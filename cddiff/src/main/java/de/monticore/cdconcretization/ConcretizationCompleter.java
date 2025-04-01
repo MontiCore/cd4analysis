@@ -17,7 +17,6 @@ import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ITypeInCDCompleter;
-import de.monticore.cdconcretization.cd.type.NameStereotypeCDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.CDConfParameter;
@@ -30,7 +29,6 @@ import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
-
 import java.util.Set;
 
 public class ConcretizationCompleter {
@@ -52,10 +50,11 @@ public class ConcretizationCompleter {
   private boolean reorderElements = true;
 
   /**
-   * Name of the placeholder type that is used to mark underspecified types in the reference CD.
-   * See {@link UnderspecifiedPlaceholderType}.
+   * Name of the placeholder type that is used to mark underspecified types in the reference CD. See
+   * {@link UnderspecifiedPlaceholderType}.
    */
-  private String underspecifiedPlaceholderTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
+  private String underspecifiedPlaceholderTypeName =
+      UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
 
   protected Set<CDConfParameter> conformanceParams;
 
@@ -77,7 +76,6 @@ public class ConcretizationCompleter {
 
     ITypeInCDCompleter typeInCDCompleter =
         new ChainBuilder<AbstractTypeInCDCompleter>()
-            .add(new NameStereotypeCDTypeCompleter())
             // TODO add forEach support here
             .add(new BaseTypeInCDCompleter())
             .build();
@@ -131,8 +129,8 @@ public class ConcretizationCompleter {
   }
 
   /**
-   * Changes the default name of the placeholder type, which is
-   * {@link UnderspecifiedPlaceholderType#DEFAULT_TYPE_NAME}.<br>
+   * Changes the default name of the placeholder type, which is {@link
+   * UnderspecifiedPlaceholderType#DEFAULT_TYPE_NAME}.<br>
    * This MUST be called if you want to use a different name for the placeholder type.
    *
    * @param underspecifiedPlaceholderTypeName the new name of the placeholder type
@@ -265,7 +263,7 @@ public class ConcretizationCompleter {
 
     @Override
     public MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy(
-            ASTCDType concreteType, ASTCDType referenceType) {
+        ASTCDType concreteType, ASTCDType referenceType) {
       CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(mapping);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
         attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(mapping));

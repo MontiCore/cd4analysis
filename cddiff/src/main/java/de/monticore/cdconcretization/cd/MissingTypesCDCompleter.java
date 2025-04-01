@@ -17,7 +17,9 @@ public class MissingTypesCDCompleter extends AbstractCDCompleter {
 
   @Override
   public void complete(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CDCompletionContext context)
+      ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD,
+      CDCompletionContext context)
       throws CompletionException {
     for (ASTCDClass referenceClass : referenceCD.getCDDefinition().getCDClassesList()) {
       typeCompleter.completeTypeInCD(concreteCD.getCDDefinition(), referenceClass, context);

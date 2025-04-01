@@ -57,13 +57,6 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
   private void createAttributeIncarnations(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context)
       throws CompletionException {
-    // find incarnations of attribute type and create one attribute incarnation for each type
-
-    // TODO TypeCheck3 not initialized error -> Can we even use TypeCheck3 in CD4A?
-    // SymTypeExpression attributeSymType =
-    // TypeCheck3.symTypeFromAST(referenceAttribute.getMCType());
-
-    // TODO if we cannot use TypeCheck3 not, how do we correctly use the old type check?
     SymTypeExpression attributeSymType =
         new FullSynthesizeFromCD4Code().synthesizeType(referenceAttribute.getMCType()).getResult();
 

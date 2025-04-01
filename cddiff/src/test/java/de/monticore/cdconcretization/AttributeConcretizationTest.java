@@ -1,13 +1,12 @@
 package de.monticore.cdconcretization;
 
-import de.monticore.cdbasis._ast.ASTCDClass;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import de.monticore.cdbasis._ast.ASTCDClass;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 class AttributeConcretizationTest extends AbstractCDConcretizationTest {
 
@@ -18,21 +17,21 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testMissingAttributes() {
     testConcretizedEqualsRef(
-            "attributes/valid/AttributesMissingConc.cd", "attributes/valid/AttributesMissingRef.cd");
+        "attributes/valid/AttributesMissingConc.cd", "attributes/valid/AttributesMissingRef.cd");
   }
 
   @Test
   void testTwoMissingAttributes() {
     testConcretizedEqualsRef(
-            "attributes/valid/TwoAttributesMissingConc.cd",
-            "attributes/valid/TwoAttributesMissingRef.cd");
+        "attributes/valid/TwoAttributesMissingConc.cd",
+        "attributes/valid/TwoAttributesMissingRef.cd");
   }
 
   @Test
   void testTwoMissingAttributesOneMatch() {
     testConcretizedEqualsRef(
-            "attributes/valid/TwoAttributesMissingOneMatchConc.cd",
-            "attributes/valid/TwoAttributesMissingOneMatchRef.cd");
+        "attributes/valid/TwoAttributesMissingOneMatchConc.cd",
+        "attributes/valid/TwoAttributesMissingOneMatchRef.cd");
   }
 
   /**
@@ -42,9 +41,9 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testAttributeExistsInConcreteSuperclass() {
     testConcretizedConformsToRefAndExpectedOut(
-            "attributes/valid/AttributeInSuperClassConc.cd",
-            "attributes/valid/AttributeInSuperClassRef.cd",
-            "attributes/valid/AttributeInSuperClassOut.cd");
+        "attributes/valid/AttributeInSuperClassConc.cd",
+        "attributes/valid/AttributeInSuperClassRef.cd",
+        "attributes/valid/AttributeInSuperClassOut.cd");
 
     // The conformance check is not enough here. The tool must not add attributes to the concrete
     // class if they
@@ -52,21 +51,21 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
     List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
 
     ASTCDClass employeeClass =
-            conCD.getCDDefinition().getCDClassesList().stream()
-                    .filter(cdClass -> cdClass.getName().equals("Employee"))
-                    .findFirst()
-                    .orElseThrow();
+        conCD.getCDDefinition().getCDClassesList().stream()
+            .filter(cdClass -> cdClass.getName().equals("Employee"))
+            .findFirst()
+            .orElseThrow();
     employeeClass.getCDAttributeList().stream()
-            .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
-            .findAny()
-            .ifPresent(
-                    cdAttribute -> {
-                      fail(
-                              "Attribute "
-                                      + cdAttribute
-                                      + " should not be added to the concrete class 'Employee' as it is already "
-                                      + "inherited from the superclass 'Person'");
-                    });
+        .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
+        .findAny()
+        .ifPresent(
+            cdAttribute -> {
+              fail(
+                  "Attribute "
+                      + cdAttribute
+                      + " should not be added to the concrete class 'Employee' as it is already "
+                      + "inherited from the superclass 'Person'");
+            });
   }
 
   /**
@@ -76,9 +75,9 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testAttributeExistsInConcreteDeepSuperclass() {
     testConcretizedConformsToRefAndExpectedOut(
-            "attributes/valid/AttributeInDeepSuperClassConc.cd",
-            "attributes/valid/AttributeInDeepSuperClassRef.cd",
-            "attributes/valid/AttributeInDeepSuperClassOut.cd");
+        "attributes/valid/AttributeInDeepSuperClassConc.cd",
+        "attributes/valid/AttributeInDeepSuperClassRef.cd",
+        "attributes/valid/AttributeInDeepSuperClassOut.cd");
 
     // The conformance check is not enough here. The tool must not add attributes to the concrete
     // class if they
@@ -86,63 +85,63 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
     List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
 
     ASTCDClass employeeClass =
-            conCD.getCDDefinition().getCDClassesList().stream()
-                    .filter(cdClass -> cdClass.getName().equals("Employee"))
-                    .findFirst()
-                    .orElseThrow();
+        conCD.getCDDefinition().getCDClassesList().stream()
+            .filter(cdClass -> cdClass.getName().equals("Employee"))
+            .findFirst()
+            .orElseThrow();
     employeeClass.getCDAttributeList().stream()
-            .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
-            .findAny()
-            .ifPresent(
-                    cdAttribute -> {
-                      fail(
-                              "Attribute "
-                                      + cdAttribute
-                                      + " should not be added to the concrete class 'Employee' as it is already "
-                                      + "inherited from the superclass 'Person'");
-                    });
+        .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
+        .findAny()
+        .ifPresent(
+            cdAttribute -> {
+              fail(
+                  "Attribute "
+                      + cdAttribute
+                      + " should not be added to the concrete class 'Employee' as it is already "
+                      + "inherited from the superclass 'Person'");
+            });
   }
 
   @Test
   void testAttributeForEachAttribute() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     testConcretizedEqualsExpectedOut(
-            completer,
-            "attributes/forEach/ForEachAttributeConc.cd",
-            "attributes/forEach/ForEachAttributeRef.cd",
-            "attributes/forEach/ForEachAttributeOut.cd");
+        completer,
+        "attributes/forEach/ForEachAttributeConc.cd",
+        "attributes/forEach/ForEachAttributeRef.cd",
+        "attributes/forEach/ForEachAttributeOut.cd");
   }
 
   @Test
   void testAttributeForEachAttributeDifferentName() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     testConcretizedEqualsExpectedOut(
-            completer,
-            "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
-            "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
-            "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+        completer,
+        "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+        "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
+        "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
   }
 
   @Test
   void testAttributeForEachAttributeDifferentType() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     testConcretizedEqualsExpectedOut(
-            completer,
-            "attributes/forEach/ForEachAttributeDifferentTypeConc.cd",
-            "attributes/forEach/ForEachAttributeDifferentTypeRef.cd",
-            "attributes/forEach/ForEachAttributeDifferentTypeOut.cd");
+        completer,
+        "attributes/forEach/ForEachAttributeDifferentTypeConc.cd",
+        "attributes/forEach/ForEachAttributeDifferentTypeRef.cd",
+        "attributes/forEach/ForEachAttributeDifferentTypeOut.cd");
   }
 
   /**
@@ -156,15 +155,15 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testAttributeForEachAttributeDifferentNameClassMI() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     testConcretizedEqualsExpectedOut(
-            completer,
-            "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
-            "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
-            "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+        completer,
+        "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+        "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
+        "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
   }
 
   /**
@@ -175,15 +174,15 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testAttributeForEachAttributeNoTargetIncarnations() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     testConcretizedEqualsExpectedOut(
-            completer,
-            "attributes/forEach/ForEachAttributeNoTargetIncConc.cd",
-            "attributes/forEach/ForEachAttributeNoTargetIncRef.cd",
-            "attributes/forEach/ForEachAttributeNoTargetIncOut.cd");
+        completer,
+        "attributes/forEach/ForEachAttributeNoTargetIncConc.cd",
+        "attributes/forEach/ForEachAttributeNoTargetIncRef.cd",
+        "attributes/forEach/ForEachAttributeNoTargetIncOut.cd");
   }
 
   /**
@@ -193,15 +192,15 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testAttributeTypeUnderspecifiedNoIncarnationError() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     try {
       parseAndConcretize(
-              completer,
-              "attributes/underspecified/AttributeTypeUnderspecifiedNoIncConc.cd",
-              "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd");
+          completer,
+          "attributes/underspecified/AttributeTypeUnderspecifiedNoIncConc.cd",
+          "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd");
       fail("Expected CompletionException. But the concretization was successful.");
     } catch (CompletionException e) {
       System.out.println("Completion failed as expected: " + e.getMessage());
@@ -211,14 +210,14 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testAttributeTypeUnderspecifiedDifferentIncarnationTypes() {
     ConcretizationCompleter completer =
-            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     // TODO check conformance. Currently not possible because of any type
     completer.setCheckConformance(false);
 
     testConcretizedEqualsExpectedOut(
-            completer,
-            "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesConc.cd",
-            "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd",
-            "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesOut.cd");
+        completer,
+        "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesConc.cd",
+        "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd",
+        "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesOut.cd");
   }
 }

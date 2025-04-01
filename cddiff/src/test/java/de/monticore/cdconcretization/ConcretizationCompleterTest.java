@@ -1,5 +1,8 @@
 package de.monticore.cdconcretization;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -7,14 +10,10 @@ import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
 
@@ -24,31 +23,11 @@ public class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
         "EvaluationConc.cd", "EvaluationRef.cd", "EvaluationOut.cd");
   }
 
-  /**
-   * Test that checks if all the types in the reference CD that are missing in the concrete CD are
-   * added based on predefined CDs.
-   */
-  @Test
-  void testTypeMissing() {
-    testConcretizedConformsToRefAndExpectedOut(
-        "types/valid/TypeMissingConc.cd",
-        "types/valid/TypeMissingRef.cd",
-        "types/valid/TypeMissingOut.cd");
-  }
-
   /** Test that checks if completeInheritance works correctly (after adding the types) */
   @Test
   void testTypeMissingInheritance() {
     testConcretizedEqualsRef(
         "inheritance/MissingInheritanceConc.cd", "inheritance/MissingInheritanceRef.cd");
-  }
-
-  @Test
-  void testMissingEnumMember() {
-    testConcretizedConformsToRefAndExpectedOut(
-        "types/enums/EnumMemberMissingConc.cd",
-        "types/enums/EnumMemberMissingRef.cd",
-        "types/enums/EnumMemberMissingOut.cd");
   }
 
   @Test

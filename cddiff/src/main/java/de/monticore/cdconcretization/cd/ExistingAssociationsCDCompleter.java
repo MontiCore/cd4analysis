@@ -137,5 +137,6 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     }
 
     return match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
+
   }
 }

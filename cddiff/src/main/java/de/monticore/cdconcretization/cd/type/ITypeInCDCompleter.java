@@ -2,6 +2,7 @@ package de.monticore.cdconcretization.cd.type;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
 
 /**
@@ -17,5 +18,7 @@ public interface ITypeInCDCompleter {
    * @param concreteCD
    * @param referenceType
    */
-  void completeTypeInCD(ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context);
+  void completeTypeInCD(
+          ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
+          throws CompletionException;
 }

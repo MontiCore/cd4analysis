@@ -16,8 +16,7 @@ public class DefaultAssocCompleter implements IAssociationCompleter {
 
   private final IAssocSideCompleter assocSideCompleter;
 
-  public DefaultAssocCompleter(
-      ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter) {
+  public DefaultAssocCompleter(ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter) {
     this.ccd = ccd;
     this.assocSideCompleter = assocSideCompleter;
   }
