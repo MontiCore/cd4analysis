@@ -47,6 +47,10 @@ publishing {
   }
 }
 
+// The CDGenGradlePluginTest uses the output of the jar task
+test.dependsOn(project(":cdlang").tasks.jar)
+test.inputs.files(project(":cdlang").tasks.jar)
+
 // Write the version to the jar
 tasks.register('generateResources') {
   ext {

@@ -17,6 +17,9 @@ ${tc.signature("glex", "deConf")}
   Decorators visit the original read-only CD and add/modify elements to/of a decorated CD.
   Dependencies between decorators and their order are resolved via a DAG.
  -->
+
+<#--Apply the default creator: Copy the original CD and use it as the base-->
+${deConf.withCopyCreator().defaultApply()}
 <#-- By default (defaultApply) the GetterDecorator is applied, unless an element or its parents are marked with noGetter -->
 ${deConf.withGetters().ignoreOnName("noGetter").defaultApply()}
 <#--  Similar configuration for a decorator setting the initial value of associations -->

@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class CDGenTest {
 
@@ -114,16 +115,18 @@ public class CDGenTest {
 
     CDGenerator generator = new CDGenerator(generatorSetup);
 
-    var decorated = setup.decorate(opt.get(), roleTrafo.getFieldToRoles(), Optional.of(glex));
+    var decoratedOpt = setup.decorate(opt.get(), roleTrafo.getFieldToRoles(), Optional.of(glex));
 
-    System.err.println(CD4CodeMill.prettyPrint(decorated, true));
+    Assertions.assertTrue(decoratedOpt.isPresent());
+
+    System.err.println(CD4CodeMill.prettyPrint(decoratedOpt.get(), true));
 
     // Post-Decorate
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-    decorated.accept(t);
+    decoratedOpt.get().accept(t);
 
-    generator.generate(decorated);
+    generator.generate(decoratedOpt.get());
     System.err.println(generatorSetup.getOutputDirectory().getAbsolutePath());
   }
 }

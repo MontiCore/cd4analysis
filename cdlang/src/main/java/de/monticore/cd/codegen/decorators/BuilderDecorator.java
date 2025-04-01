@@ -3,6 +3,7 @@ package de.monticore.cd.codegen.decorators;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
+import com.google.common.collect.Iterables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
@@ -18,7 +19,8 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-import java.util.List;
+
+import java.util.Collections;
 import java.util.Stack;
 
 /** Applies the Builder-Pattern to the CD */
@@ -26,10 +28,11 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
     implements CDBasisVisitor2 {
 
   @Override
-  public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
+  @SuppressWarnings("rawtypes")
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     // We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    return List.of(SetterDecorator.class);
+    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();
