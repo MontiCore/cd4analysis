@@ -1,0 +1,11 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeNoTargetIncConc {
+  <<ref="DataClass">> class Employee {
+    String firstName;
+    String lastName;
+  }
+
+  class Builder {
+  }
+}

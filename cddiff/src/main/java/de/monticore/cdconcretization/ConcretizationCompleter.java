@@ -1,7 +1,9 @@
 package de.monticore.cdconcretization;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
@@ -14,9 +16,13 @@ import de.monticore.cdconcretization.cd.type.NameStereotypeCDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
 import de.monticore.cdconcretization.type.attribute.BaseTypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.ForEachTypeAttributeCompleter;
 import de.monticore.cdconcretization.type.attribute.ITypeAttributeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
+import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
+import de.monticore.cdconformance.conf.attribute.STNamedAttributeChecker;
 import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
@@ -70,16 +76,16 @@ public class ConcretizationCompleter {
 
     ICDTypeCompleter typeCompleter =
         new ChainBuilder<AbstractCDTypeCompleter>()
-            .add(new BaseCDTypeCompleter())
             .add(new NameStereotypeCDTypeCompleter())
             // TODO add forEach support here
+            .add(new BaseCDTypeCompleter())
             .build();
 
     ITypeAttributeCompleter attributeCompleter =
         new ChainBuilder<AbstractTypeAttributeCompleter>()
-            .add(new BaseTypeAttributeCompleter())
             // TODO add name stereotype support here
-            // TODO add forEach stereotype support here
+            .add(new ForEachTypeAttributeCompleter())
+            .add(new BaseTypeAttributeCompleter())
             .build();
 
     ITypeCompleter typeDetailsCompleter =
@@ -254,6 +260,21 @@ public class ConcretizationCompleter {
     @Override
     public MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
       return assocIncStrategy;
+    }
+
+    @Override
+    public MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy(
+            ASTCDType concreteType, ASTCDType referenceType) {
+      CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(mapping);
+      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
+        attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(mapping));
+      }
+      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
+        attributeIncStrategy.addIncStrategy(new EqNameAttributeChecker(mapping));
+      }
+      attributeIncStrategy.setConcreteType(concreteType);
+      attributeIncStrategy.setReferenceType(referenceType);
+      return attributeIncStrategy;
     }
   }
 }
