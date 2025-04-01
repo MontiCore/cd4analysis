@@ -579,7 +579,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
               typeName =
                   CDMergeUtils.getTypeName((ASTCDAttribute) attributeSymbol.get().getAstNode());
             }
-            if (typeName != ""
+            if (!typeName.isEmpty()
                 && typeName.equals(CDMergeUtils.getTypeName(qualifier2.getByType()))) {
               matchTypeName = true;
             } else {
@@ -629,7 +629,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
               typeName =
                   CDMergeUtils.getTypeName((ASTCDAttribute) attributeSymbol.get().getAstNode());
             }
-            if (typeName != ""
+            if (!typeName.isEmpty()
                 && typeName.equals(CDMergeUtils.getTypeName(qualifier1.getByType()))) {
               matchTypeName = true;
             } else {
