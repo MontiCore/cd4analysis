@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationValidRoleSymbolInScope {
+
+  class Person {
+    public String fullName;
+    int age;
+  }
+
+  association marriage [1] Person (partnerOpposite) <-> (partner) Person [1];
+}

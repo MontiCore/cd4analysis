@@ -37,6 +37,7 @@ public class CDAssociationValidRoleSymbolsInScope implements CDBasisASTCDDefinit
   
   @Override
   public void check(ASTCDDefinition definition) {
+    // maps class to all contained role names
     Map<String, List<String>> knownRoleNames = new HashMap<>();
     for (ASTCDAssociation assoc : definition.getCDAssociationsList()) {
       // left side
