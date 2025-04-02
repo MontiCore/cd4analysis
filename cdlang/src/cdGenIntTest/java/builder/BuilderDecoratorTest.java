@@ -75,7 +75,6 @@ public class BuilderDecoratorTest {
       .setMyBool(true)
       .setMyInt(1)
       .unsafeBuild());
-    System.err.println("Expected exceptions thrown");
 
     //constructor methods
     Constructor<TestBuilderWithSetterBuilder> constructorWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredConstructor();
@@ -217,5 +216,4 @@ public class BuilderDecoratorTest {
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyBoolAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
   }
-
 }

@@ -67,7 +67,6 @@ class BuilderCDTest extends AbstractCDGenTest{
 
   @Test
   public void testTemplateExistence() {
-    init();
     //test existence of the templates
     List<Path> templatePaths= new ArrayList<>();
     templatePaths.add(Paths.get("src/main/resources/methods/builder/unsafeBuild.ftl"));
