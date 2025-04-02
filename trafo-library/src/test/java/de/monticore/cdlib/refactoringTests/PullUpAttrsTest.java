@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactoringTests;
 
-import static org.junit.Assert.*;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdlib.Refactoring.*;
@@ -13,8 +11,10 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class PullUp
@@ -25,7 +25,7 @@ import org.junit.Test;
  */
 public class PullUpAttrsTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();

@@ -2,7 +2,7 @@
 package de.monticore.cdmerge.matching.matchresult;
 
 import de.monticore.cdmerge.BaseTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit tests for the functionality of the MergeNode Class. */
 public class MatchNodeTest extends BaseTest {

@@ -11,7 +11,7 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import java.util.Arrays;
 import java.util.Collection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests for the detection of illegal symbols */
 public class IllegalSymbolsTest extends CDDiffTestBasis {

@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactoringTests;
 
-import static org.junit.Assert.*;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdlib.refactorings.ReplaceDelegationByAttribute;
 import de.monticore.cdlib.utilities.FileUtility;
@@ -13,8 +11,10 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class ReplaceDelegationByAttribute
@@ -25,7 +25,7 @@ import org.junit.Test;
  */
 public class ReplaceDelegationByAttributeTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
@@ -57,9 +57,8 @@ public class ReplaceDelegationByAttributeTest {
     // Check input
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("B", utility.getAst().getCDDefinition().getCDClassesList().get(1).getName());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList().isEmpty()
-            ^ true);
+    assertTrue(
+        utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList().isEmpty());
     assertEquals(
         "B",
         utility

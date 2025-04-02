@@ -8,14 +8,14 @@ import de.monticore.testcd4codebasis._cocos.TestCD4CodeBasisCoCoChecker;
 import de.monticore.testcd4codebasis._parser.TestCD4CodeBasisParser;
 import de.monticore.testcd4codebasis._symboltable.ITestCD4CodeBasisGlobalScope;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CD4CodeBasisTestBasis extends TestBasis {
   protected TestCD4CodeBasisParser p;
   protected CD4CodeBasisCoCos cdCD4CodeBasisCoCos;
   protected TestCD4CodeBasisCoCoChecker coCoChecker;
 
-  @Before
+  @BeforeEach
   public void initObjects() {
     LogStub.init();
     LogStub.enableFailQuick(false);

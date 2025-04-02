@@ -127,9 +127,7 @@ public class SymTabDefinitionTool extends SymTabDefinitionToolTOP {
           for (ASTCDCompilationUnit compilationUnit : inputASTs) {
             prettyPrintInFolder(compilationUnit, cmd.getOptionValue(OPTION_PRETTYPRINT));
           }
-        } else if (cmd.getOptionValues(OPTION_PRETTYPRINT).length == inputASTs.size()
-            && cmd.getOptionValues(OPTION_PRETTYPRINT).length
-                == cmd.getOptionValues(OPTION_PRETTYPRINT).length) {
+        } else if (cmd.getOptionValues(OPTION_PRETTYPRINT).length == inputASTs.size()) {
           for (int i = 0; i < inputASTs.size(); i++) {
             prettyPrint(inputASTs.get(i), cmd.getOptionValues(OPTION_PRETTYPRINT)[i]);
           }

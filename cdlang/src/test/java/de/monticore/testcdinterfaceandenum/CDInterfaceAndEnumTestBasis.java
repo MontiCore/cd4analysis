@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -18,13 +18,13 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {
   protected TestCDInterfaceAndEnumParser p;
   protected CDInterfaceAndEnumCoCoChecker coCoChecker;
 
-  @Before
+  @BeforeEach
   public void initObjects() {
     TestCDInterfaceAndEnumMill.reset();
     TestCDInterfaceAndEnumMill.init();

@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis.prettyprint;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCD4CodeBasisPretterPrinterTest extends CD4CodeBasisTestBasis {

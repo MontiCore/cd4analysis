@@ -1,16 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * The corresponding coco is superfluous, as this case is already dealt with in the construction
@@ -40,11 +40,10 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CDAssociation
     Log.getFindings().clear();
     createSymTab(ast);
     completeSymTab(ast);
-    assertEquals(Log.getFindings().toString(), 1, Log.getFindings().size());
+    assertEquals(1, Log.getFindings().size(), Log.getFindings().toString());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 
-  @After
-  @Override
+  @AfterEach  @Override
   public void after() {}
 }

@@ -8,9 +8,11 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelLoaderTest {
 
@@ -24,7 +26,7 @@ public class ModelLoaderTest {
 
   ModelLoader loader;
 
-  @Before
+  @BeforeEach
   public void reloadModels() {
 
     LogStub.init();
@@ -41,10 +43,10 @@ public class ModelLoaderTest {
     try {
 
       Optional<ASTCDCompilationUnit> cd = loader.loadCDModel(cdModel1);
-      Assert.assertTrue(cd.isPresent());
+      assertTrue(cd.isPresent());
 
     } catch (FileNotFoundException e) {
-      Assert.fail("File could not be found.");
+      fail("File could not be found.");
     }
   }
 
@@ -53,10 +55,10 @@ public class ModelLoaderTest {
     try {
 
       Optional<ASTODArtifact> od = loader.loadODModel(odModel1);
-      Assert.assertTrue(od.isPresent());
+      assertTrue(od.isPresent());
 
     } catch (FileNotFoundException e) {
-      Assert.fail("File could not be found.");
+      fail("File could not be found.");
     }
   }
 }

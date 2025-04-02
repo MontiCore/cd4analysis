@@ -13,9 +13,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AssociationsMatcherTest {
 
@@ -37,7 +38,7 @@ public class AssociationsMatcherTest {
 
   AssociationsMatcher matcher;
 
-  @Before
+  @BeforeEach
   public void before() {
 
     LogStub.init();
@@ -80,6 +81,6 @@ public class AssociationsMatcherTest {
     assert (true);
 
     loadModels("/Cardinality.od", "/Cardinality.cd");
-    Assert.assertTrue(matcher.checkAssociations(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
+    assertTrue(matcher.checkAssociations(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
   }
 }

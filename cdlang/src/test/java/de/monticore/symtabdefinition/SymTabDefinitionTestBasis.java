@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinition;
 
-import static org.junit.Assert.fail;
-
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -22,6 +20,8 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 public class SymTabDefinitionTestBasis extends TestBasis {
@@ -53,7 +53,7 @@ public class SymTabDefinitionTestBasis extends TestBasis {
     try {
       astcdCompilationUnit = parser.parse(getFilePath(filePath));
     } catch (IOException e) {
-      fail("Exception during parsing: " + e);
+      Assertions.fail("Exception during parsing: " + e);
     }
     checkNullAndPresence(parser, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();

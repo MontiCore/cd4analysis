@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,18 +17,17 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InheritanceInheritanceAttributePullup2 extends BaseTest {
+  
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
+  
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/inheritanceAttributePullup2/A.cd";
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup2/A.cd";
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/inheritanceAttributePullup2/B.cd";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup2/B.cd";
-
-  private static final String EXPECTED =
-      "src/test/resources/class_diagrams/Inheritance" + "/inheritanceAttributePullup2/mergedCD.cd";
+  private static final String EXPECTED = INPUT_MODEL_DIR + "/inheritanceAttributePullup2/mergedCD.cd";
 
   @Test
   public void testInheritanceInheritanceAttributePullup2() throws IOException {
@@ -45,7 +45,7 @@ public class InheritanceInheritanceAttributePullup2 extends BaseTest {
       fail("Unexpected Exception " + e.getMessage());
     }
     processResult(results);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

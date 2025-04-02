@@ -3,7 +3,7 @@ package de.monticore.cd.codegen;
 
 import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
 import static de.monticore.cd.facade.CDModifier.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -22,8 +22,8 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import de.se_rwth.commons.logging.MCFatalError;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -36,7 +36,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
   private ASTCDCompilationUnit topCD;
 
-  @Before
+  @BeforeEach
   public void setup() {
     LogStub.init();
     this.targetPath = Mockito.mock(MCPath.class);
@@ -67,10 +67,10 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
     // Check Logs
     List<Finding> findings = Log.getFindings();
-    assertTrue("Log messages empty", findings.size() > 0);
+    assertFalse(findings.isEmpty(), "Log messages empty");
     Finding lastMsg = findings.get(findings.size() - 1);
-    assertTrue("Last Message was not an error", lastMsg.isError());
-    assertTrue("Reason not found in last message", lastMsg.getMsg().contains(reasonString));
+    assertTrue(lastMsg.isError(),"Last Message was not an error");
+    assertTrue(lastMsg.getMsg().contains(reasonString), "Reason not found in last message");
   }
 
   @Test
@@ -92,7 +92,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
 
     // CheckLogs
     List<Finding> findings = Log.getFindings();
-    assertFalse("Log messages not empty", findings.size() > 0);
+    assertTrue(findings.isEmpty(), "Log messages not empty");
   }
 
   @Test

@@ -8,8 +8,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class MemberDiffTest extends CDDiffTestBasis {
 
@@ -49,11 +50,11 @@ public class MemberDiffTest extends CDDiffTestBasis {
         this.tgt = tgt.get();
         this.src = src.get();
       } else {
-        Assert.fail("Could not parse CDs.");
+        fail("Could not parse CDs.");
       }
 
     } catch (IOException e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 }
