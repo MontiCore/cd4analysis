@@ -8,10 +8,10 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
+import de.monticore.cdconcretization.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -69,15 +69,15 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
 
     // make sure we do not add the 'any' type to the concrete CD
     if (attributeSymType
-            .getTypeInfo()
-            .getFullName()
-            .equals(context.getUnderspecifiedPlaceholderTypeName())) {
+        .getTypeInfo()
+        .getFullName()
+        .equals(context.getUnderspecifiedPlaceholderTypeName())) {
       throw new CompletionException(
-              "Underspecified placeholder type without incarnations found in attribute '"
-                      + referenceAttribute.getName()
-                      + "' in reference type '"
-                      + context.getReferenceType().getName()
-                      + "'");
+          "Underspecified placeholder type without incarnations found in attribute '"
+              + referenceAttribute.getName()
+              + "' in reference type '"
+              + context.getReferenceType().getName()
+              + "'");
     }
 
     Optional<ASTType> rAttributeTypeOpt =
@@ -115,21 +115,11 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
                       cAttributeType.getSymbol().getFullName()))
               .build());
 
-      ASTStereotype stereotype;
-      if (attributeIncarnation.getModifier().isPresentStereotype()) {
-        stereotype = attributeIncarnation.getModifier().getStereotype();
-      } else {
-        stereotype = CD4CodeMill.stereotypeBuilder().build();
-        attributeIncarnation.getModifier().setStereotype(stereotype);
-      }
-      stereotype.addValues(
-          CD4CodeMill.stereoValueBuilder()
-              .setName(context.getMappingName())
-              .setContent(
-                  referenceAttribute
-                      .getSymbol()
-                      .getFullName()) // TODO maybe cut off the CD name from FQName?
-              .build());
+      // TODO maybe cut off the CD name from FQName?
+      StereotypeUtil.addStereotype(
+          attributeIncarnation.getModifier(),
+          context.getMappingName(),
+          referenceAttribute.getSymbol().getFullName());
 
       concreteType.addCDMember(attributeIncarnation);
     }

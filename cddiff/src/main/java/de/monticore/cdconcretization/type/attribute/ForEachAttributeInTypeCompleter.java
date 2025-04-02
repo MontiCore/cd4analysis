@@ -5,11 +5,10 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
+import de.monticore.cdconcretization.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.symbols.oosymbols._ast.ASTField;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.umlstereotype._ast.ASTStereotype;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,19 +19,22 @@ import java.util.stream.Collectors;
  * is resolved and for each incarnation of the target element one attribute incarnation is created
  * parameterized by the target incarnation.<br>
  * Currently supported target references are:
+ *
  * <ul>
  *   <li>attributes (e.g., 'Foo.attr')
  * </ul>
  */
 public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeCompleter {
 
-  private static final String FOR_EACH_STEREOTYPE = "forEach";
-
   @Override
   public void completeAttributeInType(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context)
       throws CompletionException {
-    Optional<String> stereotypeValue = getStereotypeValue(referenceAttribute);
+    Optional<String> stereotypeValue =
+        StereotypeUtil.getForEachStereotypeValue(
+            referenceAttribute.getModifier(),
+            "Stereotype value must not be empty for stereotype 'forEach. '"
+                + referenceAttribute.get_SourcePositionStart());
     if (stereotypeValue.isPresent()) {
       boolean processed =
           processAsAttributeReference(referenceAttribute, context, stereotypeValue.get());
@@ -65,8 +67,9 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
       if (field instanceof ASTCDAttribute) {
         ASTCDAttribute rTargetAttribute = (ASTCDAttribute) field;
         ASTCDType rTargetAttributeDeclaringType =
-                (ASTCDType) fieldSymbol.get().getEnclosingScope().getAstNode();
-        completeAttributeUsingAttribute(referenceAttribute, rTargetAttribute, rTargetAttributeDeclaringType, context);
+            (ASTCDType) fieldSymbol.get().getEnclosingScope().getAstNode();
+        completeAttributeUsingAttribute(
+            referenceAttribute, rTargetAttribute, rTargetAttributeDeclaringType, context);
         return true;
       } else {
         throw new CompletionException(
@@ -81,20 +84,25 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
   }
 
   /**
-   * Creates a new attribute for each incarnation of the target attribute. If the declaring type
-   * of the target attribute has multiple incarnations, the new attributes will additionally be
+   * Creates a new attribute for each incarnation of the target attribute. If the declaring type of
+   * the target attribute has multiple incarnations, the new attributes will additionally be
    * parameterized by the declaring type incarnation.<br>
    * <br>
    * Rules for the new attribute incarnations:
+   *
    * <ul>
-   *   <li>If the reference and target attribute names match, the attribute incarnation has the name of the target incarnation</li>
-   *   <li>Otherwise, each attribute incarnation has the name of the reference attribute with a suffix of the target attribute name</li>
-   *   <li>If the reference and target attribute types match, the attribute incarnation has the type of the target attribute</li>
-   *   <li>Otherwise, each attribute incarnation has the type of the reference attribute</li>
+   *   <li>If the reference and target attribute names match, the attribute incarnation has the name
+   *       of the target incarnation
+   *   <li>Otherwise, each attribute incarnation has the name of the reference attribute with a
+   *       suffix of the target attribute name
+   *   <li>If the reference and target attribute types match, the attribute incarnation has the type
+   *       of the target attribute
+   *   <li>Otherwise, each attribute incarnation has the type of the reference attribute
    * </ul>
    *
    * @param referenceAttribute the original reference attribute
-   * @param rTargetAttribute the target of the expression used in the forEach stereotype. The attribute by which this construction is parameterized.
+   * @param rTargetAttribute the target of the expression used in the forEach stereotype. The
+   *     attribute by which this construction is parameterized.
    * @param rTargetAttributeDeclaringType the type in which the target attribute is declared
    * @param context the completion context
    */
@@ -105,24 +113,22 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
       TypeCompletionContext context)
       throws CompletionException {
 
-    Set<ASTCDType> declaringTypeIncarnations =
-            ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
-                    .filter(type -> context.getTypeIncStrategy().isMatched(type, rTargetAttributeDeclaringType))
-                    .collect(Collectors.toSet());
-    System.out.println(
-            "Found type icnarnations for "
-                    + rTargetAttributeDeclaringType.getName()
-                    + ": "
-                    + declaringTypeIncarnations);
     // TODO we likely need another abstraction for this. The type itself could also be annotated
     // with a forEach which already produced mutliple incarnations?
     // do we really want to execute the matching strategies again and again?
-    if (declaringTypeIncarnations.isEmpty()) {
-      // TODO then we should use the reference type - it should match here anyway if we use the
-      // match by name strategy!?
-      throw new CompletionException("Not (yet) supported scenario");
-    }
+    Set<ASTCDType> declaringTypeIncarnations =
+        ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
+            .filter(
+                type -> context.getTypeIncStrategy().isMatched(type, rTargetAttributeDeclaringType))
+            .collect(Collectors.toSet());
+    System.out.println(
+        "Found type icnarnations for "
+            + rTargetAttributeDeclaringType.getName()
+            + ": "
+            + declaringTypeIncarnations);
+
     // now, we can get all the attribute incarnations for each declaring type incarnation
+    // if there is no incarnation of the declaring type, we do not need to create any new attributes
     for (ASTCDType cAttributeDeclaringType : declaringTypeIncarnations) {
       // if we have more than one declaring type incarnation, we need to add a suffix to the new
       // attributes
@@ -130,23 +136,24 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
       // with _)
       // TODO even then we can have name conflicts if we really want to provoke them
       String declaringTypeSuffix =
-              declaringTypeIncarnations.size() > 1 ? "_" + cAttributeDeclaringType.getName() : "";
+          declaringTypeIncarnations.size() > 1 ? "_" + cAttributeDeclaringType.getName() : "";
 
       Set<ASTCDAttribute> attributeIncarnations =
-              cAttributeDeclaringType.getCDAttributeList().stream()
-                      .filter(
-                              attributeIncarnation ->
-                                      context
-                                              .getAttributeIncStrategy(cAttributeDeclaringType, rTargetAttributeDeclaringType)
-                                              .isMatched(attributeIncarnation, rTargetAttribute))
-                      .collect(Collectors.toSet());
+          cAttributeDeclaringType.getCDAttributeList().stream()
+              .filter(
+                  attributeIncarnation ->
+                      context
+                          .getAttributeIncStrategy(
+                              cAttributeDeclaringType, rTargetAttributeDeclaringType)
+                          .isMatched(attributeIncarnation, rTargetAttribute))
+              .collect(Collectors.toSet());
       System.out.println(
-              "Found attribute incarnations for "
-                      + rTargetAttribute.getName()
-                      + ": "
-                      + attributeIncarnations.stream()
-                      .map(a -> CD4CodeMill.prettyPrint(a, false))
-                      .collect(Collectors.toList()));
+          "Found attribute incarnations for "
+              + rTargetAttribute.getName()
+              + ": "
+              + attributeIncarnations.stream()
+                  .map(a -> CD4CodeMill.prettyPrint(a, false))
+                  .collect(Collectors.toList()));
 
       for (ASTCDAttribute cAttribute : attributeIncarnations) {
         // now we have a specific incarnation of the reference attribute in the concrete CD.
@@ -154,11 +161,8 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
 
         // if we have more than one attribute type incarnation, we need to add a suffix to the
         // new attributes
-        String attributeSuffix =
-                attributeIncarnations.size() > 1 ? "_" + cAttribute.getName() : "";
+        String attributeSuffix = attributeIncarnations.size() > 1 ? "_" + cAttribute.getName() : "";
 
-        // TODO: we never defined how this should work: but this seems like a reasonable
-        // approach
         ASTCDAttribute attributeIncarnation = referenceAttribute.deepClone();
 
         // 1. decide name of the new attribute
@@ -169,7 +173,7 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
         } else {
           // Default: add the REFERENCED attribute incarnation name as suffix
           attributeIncarnation.setName(
-                  referenceAttribute.getName() + declaringTypeSuffix + attributeSuffix);
+              referenceAttribute.getName() + declaringTypeSuffix + attributeSuffix);
         }
 
         // 2. decide type of the new attribute
@@ -189,37 +193,18 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
 
         // 3. remove forEach stereotype from concrete attribute but add a reference to the
         // original attribute
+        StereotypeUtil.removeForEachStereotype(attributeIncarnation.getModifier());
         // TODO Once we allow a single concrete element to be an incarnation of multiple
         // reference elements, we need to merge them here
-        ASTStereotype stereotype = attributeIncarnation.getModifier().getStereotype();
-        stereotype.removeIfValues(value -> value.getName().equals(FOR_EACH_STEREOTYPE));
-        stereotype.addValues(
-                CD4CodeMill.stereoValueBuilder()
-                        .setName(context.getMappingName())
-                        .setContent(
-                                referenceAttribute
-                                        .getSymbol()
-                                        .getFullName()) // TODO maybe cut off the CD name from FQName?
-                        .build());
+        // TODO maybe cut off the CD name from FQName?
+        StereotypeUtil.addStereotype(
+            attributeIncarnation.getModifier(),
+            context.getMappingName(),
+            referenceAttribute.getSymbol().getFullName());
 
         // 4. pass the new attribute to the next completer
         super.completeAttributeInType(context.getConcreteType(), attributeIncarnation, context);
       }
     }
-  }
-
-  private Optional<String> getStereotypeValue(ASTCDAttribute attribute) {
-    if (attribute.getModifier().isPresentStereotype()) {
-      ASTStereotype stereotype = attribute.getModifier().getStereotype();
-      if (stereotype.contains(FOR_EACH_STEREOTYPE)) {
-        String value = stereotype.getValue(FOR_EACH_STEREOTYPE);
-        if (value == null || value.isEmpty()) {
-          // TODO Log warning: stereotype value must not be empty for stereotype "forEach"
-          return Optional.empty();
-        }
-        return Optional.of(value);
-      }
-    }
-    return Optional.empty();
   }
 }
