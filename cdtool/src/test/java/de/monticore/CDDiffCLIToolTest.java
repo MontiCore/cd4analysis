@@ -33,11 +33,11 @@ public class CDDiffCLIToolTest {
 
   @Test
   public void testChain() {
-    final String cd1 = TOOL_PATH + "cddiff/Employees/Employees2.cd";
-    final String cd2 = TOOL_PATH + "cddiff/Employees/Employees1.cd";
+    final String cd1 = TOOL_PATH + "cddiff/Employees/Employees10.cd";
+    final String cd2 = TOOL_PATH + "cddiff/Employees/Employees9.cd";
     final String output = "./target/generated/chain";
     String[] args = {
-      "-i", cd1, "--merge", cd2, "--semdiff", cd2, "-o", output, "-pp", "Employees12.cd"
+      "-i", cd1, "--merge", cd2, "--semdiff", cd2, "-o", output, "-pp", "Employees910.cd"
     };
     CD4CodeTool.main(args);
 

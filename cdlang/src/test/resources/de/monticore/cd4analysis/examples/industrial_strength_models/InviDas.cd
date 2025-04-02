@@ -111,7 +111,7 @@ classdiagram InviDas {
     String name;
   }
 
-  association DataEntry -> DataEntry [*];
+  association DataEntry -> (linked) DataEntry [*];
   association DataEntry -> DataCategory [*];
 
   /*************************************************************************************************

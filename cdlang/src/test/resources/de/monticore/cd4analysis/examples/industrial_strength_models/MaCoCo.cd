@@ -24,8 +24,8 @@ classdiagram MaCoCo {
   }
 
   association [1] Konto (konto) <-> (gesamtBudget) Budget [0..1];
-  association [1] Konto -> (kommentare) Freitext [*];
-  association [1] Konto -> (notiz) Freitext [0..1];
+  association [1] Konto (kommentiert) -> (kommentare) Freitext [*];
+  association [1] Konto (annotiert) -> (notiz) Freitext [0..1];
   association [1] Konto <-> MailAlert [*];
   association [1] Konto -> (abgleichsKonto) ExternKonto [0..1];
 
