@@ -14,10 +14,13 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDAttributeInInterfaceInitialized;
 import de.monticore.expressions.uglyexpressions._ast.ASTCreatorExpressionBuilder;
+import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.*;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+import static de.monticore.cd.codegen.CD2JavaTemplates.VALUE;
+
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
@@ -62,9 +65,10 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
                 .setName("observerList")
                 .setMCType(MCTypeFacade.getInstance().createListTypeOf(observerInterfaceQualifiedType))
                 .setModifier(CD4CodeMill.modifierBuilder().PROTECTED().build())
-                .setInitial()
                 .build();
         decClazz.addCDMember(observerList);
+
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(VALUE, observerList ,new StringHookPoint(" = new ArrayList<>()")));
       }
 
       //create own interface Observe and Observer for every class
@@ -137,28 +141,30 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
+
+  class AttributeSpecificMethodStash {
+    private final ASTCDMethod methodObserver;
+    private final ASTCDMethod methodObserve;
+    private final String attributeName;
+
+    public AttributeSpecificMethodStash(ASTCDMethod methodObserver, ASTCDMethod methodObserve, String attributeName) {
+      this.methodObserver = methodObserver;
+      this.methodObserve = methodObserve;
+      this.attributeName = attributeName;
+    }
+
+    public ASTCDMethod getMethodObserver() {
+      return methodObserver;
+    }
+
+    public ASTCDMethod getMethodObserve() {
+      return methodObserve;
+    }
+
+    public String getAttributeName() {
+      return attributeName;
+    }
+  }
+
 }
 
-class AttributeSpecificMethodStash {
-  private final ASTCDMethod methodObserver;
-  private final ASTCDMethod methodObserve;
-  private final String attributeName;
-
-  public AttributeSpecificMethodStash(ASTCDMethod methodObserver, ASTCDMethod methodObserve, String attributeName) {
-    this.methodObserver = methodObserver;
-    this.methodObserve = methodObserve;
-    this.attributeName = attributeName;
-  }
-
-  public ASTCDMethod getMethodObserver() {
-    return methodObserver;
-  }
-
-  public ASTCDMethod getMethodObserve() {
-    return methodObserve;
-  }
-
-  public String getAttributeName() {
-    return attributeName;
-  }
-}

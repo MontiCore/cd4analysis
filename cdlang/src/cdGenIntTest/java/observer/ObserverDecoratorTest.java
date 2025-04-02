@@ -7,15 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import TestObserver.*;
-import java.math.BigInteger;
-import TestGetter.Other;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigInteger;
-import java.util.*;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.util.*;
 
 /**
  * Test the result of the Getter Decorator. When we arrive in this test, the output compiles
@@ -26,7 +19,7 @@ public class ObserverDecoratorTest {
   @Test
   public void test() throws Exception {
     //TODO if variables exists with name a and A we have a conflict
-    checkMethodExistance();
+    checkMethodExistence();
 
     TestObserver.Observer observer = new TestObserver.Observer();
     TestObserver.Observer observer2 = new TestObserver.Observer();
@@ -46,9 +39,10 @@ public class ObserverDecoratorTest {
 
 
 
+
   }
 
-  private void checkMethodExistance() throws Exception {
+  private void checkMethodExistence() throws Exception {
     //check for the existence of the interfaces
     Class<?> interfaceObserve = Class.forName("TestObserver.IOtherCObserve");
     Assertions.assertTrue(Modifier.isPublic(interfaceObserve.getModifiers()));
