@@ -1,0 +1,9 @@
+classdiagram ForEachTypeRef {
+  class DataClass {
+
+  }
+
+  <<forEach="DataClass">> class Builder {
+
+  }
+}

@@ -9,6 +9,7 @@ import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.type.ITypeCompleter;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.MatchingStrategy;

@@ -76,7 +76,7 @@ public class ConcretizationCompleter {
 
     ITypeInCDCompleter typeInCDCompleter =
         new ChainBuilder<AbstractTypeInCDCompleter>()
-            // TODO add forEach support here
+            .add(new ForEachCDTypeCompleter())
             .add(new BaseTypeInCDCompleter())
             .build();
 
