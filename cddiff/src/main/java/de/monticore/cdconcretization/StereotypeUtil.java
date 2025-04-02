@@ -10,6 +10,18 @@ public class StereotypeUtil {
 
   public static final String FOR_EACH_STEREOTYPE = "forEach";
 
+  /**
+   * Stereotype for binding a reference to a concrete type. This is used to inform other tools
+   * about the specific type incarnation to use in a certain scope of the model.<br>
+   * <br>
+   * <b>Example:</b> Assuming we have a reference model defining a 'DataClass' and a 'Builder' class
+   * where the 'Builder' class is annotated with <code>forEach="DataClass"</code>. This means that
+   * within the scope of a specific 'Builder' class incarnation, the reference to 'DataClass' is
+   * bound to a specific incarnation as well. This is useful for tools that need to know the
+   * specific type to use in a certain context, e.g., OCL or reference code adaptation.
+   */
+  public static final String BIND_STEREOTYPE = "bind";
+
   private StereotypeUtil() {}
 
   public static void addForEachStereotype(ASTModifier modifier, String content) {
@@ -23,6 +35,11 @@ public class StereotypeUtil {
   public static Optional<String> getForEachStereotypeValue(
       ASTModifier modifier, String valueEmptyWarning) {
     return getStereotypeValue(modifier, FOR_EACH_STEREOTYPE, valueEmptyWarning);
+  }
+
+  public static void addIncarnationBindingStereotype(
+      ASTModifier modifier, String referenceType, String concreteType) {
+    addStereotype(modifier, BIND_STEREOTYPE, referenceType + "=" + concreteType);
   }
 
   /**

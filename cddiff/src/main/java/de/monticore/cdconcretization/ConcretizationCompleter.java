@@ -11,6 +11,7 @@ import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.type.AbstractCDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.BaseCDTypeCompleter;
+import de.monticore.cdconcretization.cd.type.ForEachCDTypeCompleter;
 import de.monticore.cdconcretization.cd.type.ICDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
@@ -75,7 +76,7 @@ public class ConcretizationCompleter {
 
     ICDTypeCompleter typeCompleter =
         new ChainBuilder<AbstractCDTypeCompleter>()
-            // TODO add forEach support here
+            .add(new ForEachCDTypeCompleter())
             .add(new BaseCDTypeCompleter())
             .build();
 

@@ -4,6 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.cd.type.ICDTypeCompleter;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
@@ -23,12 +24,15 @@ public class MissingTypesCDCompleter extends AbstractCDCompleter {
       throws CompletionException {
     for (ASTCDClass referenceClass : referenceCD.getCDDefinition().getCDClassesList()) {
       typeCompleter.completeCDForType(concreteCD.getCDDefinition(), referenceClass, context);
+      CDDiffUtil.refreshSymbolTable(concreteCD);
     }
     for (ASTCDInterface referenceInterface : referenceCD.getCDDefinition().getCDInterfacesList()) {
       typeCompleter.completeCDForType(concreteCD.getCDDefinition(), referenceInterface, context);
+      CDDiffUtil.refreshSymbolTable(concreteCD);
     }
     for (ASTCDEnum referenceEnum : referenceCD.getCDDefinition().getCDEnumsList()) {
       typeCompleter.completeCDForType(concreteCD.getCDDefinition(), referenceEnum, context);
+      CDDiffUtil.refreshSymbolTable(concreteCD);
     }
     super.complete(concreteCD, referenceCD, context);
   }
