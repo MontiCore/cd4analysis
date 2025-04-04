@@ -1,18 +1,19 @@
-package de.monticore.cdconcretization;
+package de.monticore.cdconcretization.stereotype;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
+import java.util.Set;
 
 public class StereotypeUtil {
 
   public static final String FOR_EACH_STEREOTYPE = "forEach";
 
   /**
-   * Stereotype for binding a reference to a concrete type. This is used to inform other tools
-   * about the specific type incarnation to use in a certain scope of the model.<br>
+   * Stereotype for binding a reference to a concrete type. This is used to inform other tools about
+   * the specific type incarnation to use in a certain scope of the model.<br>
    * <br>
    * <b>Example:</b> Assuming we have a reference model defining a 'DataClass' and a 'Builder' class
    * where the 'Builder' class is annotated with <code>forEach="DataClass"</code>. This means that
@@ -38,8 +39,17 @@ public class StereotypeUtil {
   }
 
   public static void addIncarnationBindingStereotype(
-      ASTModifier modifier, String referenceType, String concreteType) {
-    addStereotype(modifier, BIND_STEREOTYPE, referenceType + "=" + concreteType);
+      ASTModifier modifier, String referenceElement, String concreteElement) {
+    addStereotype(
+        modifier,
+        BIND_STEREOTYPE,
+        new IncarnationBinding(referenceElement, Set.of(concreteElement)).print());
+  }
+
+  public static Optional<IncarnationBinding> getIncarnationBindingStereotypeValue(
+      ASTModifier modifier, String valueEmptyWarning) {
+    return getStereotypeValue(modifier, BIND_STEREOTYPE, valueEmptyWarning)
+        .map(IncarnationBinding::parseFromString);
   }
 
   /**

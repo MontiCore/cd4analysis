@@ -4,8 +4,10 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.ScopedIncarnationBindings;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.symboltable.IScope;
 import java.util.Set;
 
 /**
@@ -34,4 +36,14 @@ public interface CDCompletionContext {
 
   MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy(
       ASTCDType concreteType, ASTCDType referenceType);
+
+  ScopedIncarnationBindings getScopedIncarnationBindings();
+
+  Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType);
+
+  Set<ASTCDType> getTypeIncarnations(IScope scope, ASTCDType referenceType);
+
+  Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute);
+
+  Set<ASTCDAttribute> getAttributeIncarnations(IScope scope, ASTCDAttribute referenceAttribute);
 }

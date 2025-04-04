@@ -10,7 +10,6 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
-import de.se_rwth.commons.logging.IErrorHook;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Set;
@@ -38,10 +37,11 @@ public abstract class AbstractCDConcretizationTest {
   @BeforeEach
   public void setup() {
     Log.init();
-    Log.setErrorHook(() -> {
-      // fail test with a useful stack trace instead of just terminating the whole JVM...
-      throw new RuntimeException("Log error hook terminated the test");
-    });
+    Log.setErrorHook(
+        () -> {
+          // fail test with a useful stack trace instead of just terminating the whole JVM...
+          throw new RuntimeException("Log error hook terminated the test");
+        });
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();

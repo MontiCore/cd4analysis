@@ -161,9 +161,9 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
 
     testConcretizedEqualsExpectedOut(
         completer,
-        "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+        "attributes/forEach/ForEachAttributeDifferentNameClassMIConc.cd",
         "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
-        "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+        "attributes/forEach/ForEachAttributeDifferentNameClassMIOut.cd");
   }
 
   /**

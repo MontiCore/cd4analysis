@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
-import de.monticore.cdconcretization.StereotypeUtil;
+import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
@@ -108,7 +108,6 @@ public class BaseTypeAttributeCompleter extends AbstractTypeAttributeCompleter {
                       cAttributeType.getSymbol().getFullName()))
               .build());
 
-      // TODO maybe cut off the CD name from FQName?
       StereotypeUtil.addStereotype(
           attributeIncarnation.getModifier(),
           context.getMappingName(),
