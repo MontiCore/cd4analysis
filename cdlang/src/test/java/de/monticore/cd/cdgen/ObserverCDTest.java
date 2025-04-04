@@ -43,9 +43,9 @@ class ObserverCDTest extends AbstractCDGenTest {
         " <<setter,observer>> public class OtherC { \n" +
         " public int myInt;\n" +
         " public boolean myBool;\n" +
-        " -> (manyB) B [*];\n" +
-        " -> (optB) B [0..1] ;\n" +
-        " -> (oneB) B [1]; \n" +
+        " -> (manyB) B [*] public;\n" +
+        " -> (optB) B [0..1] public;\n" +
+        " -> (oneB) B [1] public;\n" +
         " }\n" +
         "<<setter>>public class B { " +
         "}\n " +

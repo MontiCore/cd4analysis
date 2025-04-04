@@ -12,14 +12,16 @@ ${tc.signature("attributes","staticErrorCode")}
 
 <#-- Primitive types no way to get them better yet -->
 <#-- PLEASE FIX THIS ASAP -->
-<#-- this is copied from the isPrimitiveType method of CDHelper which is no dependency here: Question: What is with char? -->
-<#if (!(attribute.getMCType().printType() == "Boolean" ||
-     attribute.getMCType().printType() == "boolean" ||
-     attribute.getMCType().printType() == "Integer" ||
+<#-- as primitive types cannot be check for == null we need either ignore them or build attributes -->
+<#-- to check whether they have been set -->
+
+<#if (!(attribute.getMCType().printType() == "boolean" ||
+     attribute.getMCType().printType() == "short" ||
      attribute.getMCType().printType() == "int" ||
-     attribute.getMCType().printType() == "Double" ||
+     attribute.getMCType().printType() == "long" ||
+     attribute.getMCType().printType() == "float" ||
      attribute.getMCType().printType() == "double" ||
-     attribute.getMCType().printType() == "String"))>
+     attribute.getMCType().printType() == "byte"))>
 
 if (this.${attribute.getName()} == null) {
   Log.error("${errorCode}");

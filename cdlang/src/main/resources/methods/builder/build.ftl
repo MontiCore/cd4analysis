@@ -29,7 +29,7 @@ if(this.${attributeList[i].getName()}!=null){
     <#else>
       <#if MCCollectionSymTypeRelations.isOptional(attributeList[i].getSymbol().getType())>
         <#if hasSetterList[i]>
-if(this.${attributeList[i].getName()}.isPresent()){
+if(this.${attributeList[i].getName()} != null && this.${attributeList[i].getName()}.isPresent()){
   v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());
 }else{
   v.set${attributeList[i].getName()?cap_first}(null);

@@ -82,7 +82,8 @@ public class CDGenGradlePluginTest {
             // We have to inject the cdlang jar for this project (as it is not yet published)
             "dependencies {\n"
             + " cdTool files('"
-            + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
+            + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")+"\n"
+            + "implementation \"de.monticore:monticore-runtime:$commons_version\""
             + "')\n"
             +
             // Along with the transitive dependencies

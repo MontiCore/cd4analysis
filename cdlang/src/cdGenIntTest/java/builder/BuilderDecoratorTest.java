@@ -2,6 +2,7 @@
 package builder;
 
 import TestBuilder.*;
+import TestGetter.Other;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -22,48 +25,91 @@ public class BuilderDecoratorTest {
   @Test
   public void test() throws Exception {
     //
-    Set<B> set = Set.of(new B(), new B());
-    Set<B> emptySet = new HashSet<>();
+    Set<B> manyBTest = Set.of(new B(), new B());
+    Set<B> manyBEmptySet = new HashSet<>();
+    B optBTest = new B();
+    B oneBTest = new B();
 
     TestBuilderWithoutSetter objWithoutPojoSetters = new TestBuilderWithoutSetterBuilder()
-      .setManyB(set)
+      .setManyB(manyBTest)
+      .setOneB(oneBTest)
+      .setOptB(optBTest)
       .setMyBool(true)
-      .setOneB(new B())
       .setMyInt(1)
-      .setOptB(new B())
       .build();
 
-    Assertions.assertEquals(1, objWithoutPojoSetters.getMyInt());
+    Assertions.assertSame(objWithoutPojoSetters.getManyB(), manyBTest);
+    Assertions.assertSame(objWithoutPojoSetters.getOneB(), oneBTest);
+    Assertions.assertSame(objWithoutPojoSetters.getOptB(), optBTest);
     Assertions.assertTrue(objWithoutPojoSetters.isMyBool());
-    Assertions.assertFalse(objWithoutPojoSetters.isEmptyManyB());
-    Assertions.assertTrue(objWithoutPojoSetters.containsAllManyB(set));
-    Assertions.assertEquals(2, objWithoutPojoSetters.toArrayManyB().length);
+    Assertions.assertEquals(1, objWithoutPojoSetters.getMyInt());
+
 
     TestBuilderWithSetter objWithPojoSetters = new TestBuilderWithSetterBuilder()
-      .setManyB(set)
-      .setMyBool(true)
-      .setOneB(new B())
+      .setManyB(manyBEmptySet)
+      .setOneB(oneBTest)
+      .setOptB(null)
+      .setMyBool(false)
       .setMyInt(1)
-      .setOptB(new B())
       .build();
 
+    Assertions.assertSame(objWithPojoSetters.getManyB(),manyBEmptySet);
+    Assertions.assertSame(objWithPojoSetters.getOneB(),oneBTest);
+    // does not work as it will throw an IllegalStateException and Log.error
+    // Assertions.assertNull(objWithPojoSetters.getOptB());
     Assertions.assertEquals(1, objWithPojoSetters.getMyInt());
-    Assertions.assertTrue(objWithPojoSetters.isMyBool());
-    Assertions.assertFalse(objWithPojoSetters.isEmptyManyB());
-    Assertions.assertTrue(objWithPojoSetters.containsAllManyB(set));
-    Assertions.assertEquals(2, objWithPojoSetters.toArrayManyB().length);
+    Assertions.assertFalse(objWithPojoSetters.isMyBool());
+
+    //sollte gut gehen
+    objWithPojoSetters =  new TestBuilderWithSetterBuilder()
+      .setManyB(manyBEmptySet)
+      .setOneB(oneBTest)
+      .setOptB(null)
+      .setMyBool(false)
+      .setMyInt(1)
+      .unsafeBuild();
+
+    objWithPojoSetters= new TestBuilderWithSetterBuilder()
+      .setManyB(manyBEmptySet)
+      .setOneB(oneBTest)
+      .setMyBool(false)
+      .setMyInt(1)
+      .build();
+
+
+
+    TestBuilderWithSetter objPojoWithSetter = new TestBuilderWithSetterBuilder()
+      // setManyB(manyBTest)
+      // setOptB(optBTest)
+      .setOneB(oneBTest)
+       //.setMyBool(false)
+      // .setMyInt(1)
+      .build();
+
+    Assertions.assertTrue(objPojoWithSetter.getManyB().isEmpty());
+    Assertions.assertSame(objPojoWithSetter.getOneB(), oneBTest);
+    // does not work as it will throw an IllegalStateException and Log.error
+    // Assertions.assertNull(objWithPojoSetters.getOptB());
+    Assertions.assertFalse(objPojoWithSetter.isMyBool()); // default value
+    Assertions.assertEquals(0, objPojoWithSetter.getMyInt()); // default value
+
+
 
     //TODO gradle skips here because of Log.error I DO NOT CALL Log.enableFailQuick(true) after
     var failQuickEnabled = Log.isFailQuickEnabled();
     de.se_rwth.commons.logging.Log.enableFailQuick(false);
 
     Assertions.assertThrows(IllegalStateException.class, () -> new TestBuilderWithSetterBuilder()
-      .setManyB(emptySet)
+      .setManyB(manyBEmptySet)
+      //setOptB(optBTest)
+      //setOneB is not set
       .setMyBool(true)
       .setMyInt(1)
       .build());
     Assertions.assertThrows(IllegalStateException.class, () -> new TestBuilderWithoutSetterBuilder()
-      .setManyB(emptySet)
+      .setManyB(manyBEmptySet)
+      .setOptB(optBTest)
+      //setOneB is not set
       .setMyBool(true)
       .setMyInt(1)
       .build());
