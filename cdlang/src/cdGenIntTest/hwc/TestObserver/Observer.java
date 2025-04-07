@@ -5,16 +5,17 @@ import java.util.Set;
 
 public class Observer implements TestObserver.IOtherCObserver {
 
-  int countUpdate = 0;
+  int countUpdateObserver = 0;
   int countUpdateObserverMyInt = 0;
   int countUpdateObserverMyBool = 0;
   int countUpdateObserverManyB = 0;
   int countUpdateObserverOptB = 0;
   int countUpdateObserverOneB = 0;
+  int countUpdateObserverOv = 0;
 
   @Override
   public void update(OtherC clazz) {
-    countUpdate++;
+    countUpdateObserver++;
   }
 
   @Override
@@ -44,11 +45,11 @@ public class Observer implements TestObserver.IOtherCObserver {
 
   @Override
   public void updateObserverOv(OtherC clazz, int ov) {
-    countUpdate++;
+    countUpdateObserverOv++;
   }
 
-  public int getCountUpdate() {
-    return countUpdate;
+  public int getCountUpdateObserver() {
+    return countUpdateObserver;
   }
 
   public int getCountUpdateObserverMyInt() {

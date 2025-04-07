@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import TestObserver.*;
 
+import java.sql.Array;
 import java.util.*;
 
 /**
@@ -22,22 +23,83 @@ public class ObserverDecoratorTest {
     TestObserver.Observer observer = new TestObserver.Observer();
     TestObserver.Observer observer2 = new TestObserver.Observer();
 
-    OtherC otherC = new OtherC();
-    otherC.addObserver(observer);
-    otherC.addObserver(observer2);
-
+    OtherC pojo = new OtherC();
+    pojo.addObserver(observer);
+    pojo.addObserver(observer2);
 
     B b = new B();
     Set<B> set = new HashSet<>(Set.of(b));
-    otherC.notifyObserverManyB(otherC,set);
 
+    //check if notify methods are implemented correctly
+    Assertions.assertEquals(0, observer.getCountUpdateObserver());
+    Assertions.assertEquals(0, observer2.getCountUpdateObserver());
+    pojo.notifyObserverMyBool(pojo, true);
+    Assertions.assertEquals(1, observer.getCountUpdateObserverMyBool());
+    Assertions.assertEquals(1, observer2.getCountUpdateObserverMyBool());
+
+    Assertions.assertEquals(0, observer.getCountUpdateObserverMyInt());
+    Assertions.assertEquals(0, observer2.getCountUpdateObserverMyInt());
+    pojo.notifyObserverMyInt(pojo, 42);
+    Assertions.assertEquals(1, observer.getCountUpdateObserverMyInt());
+    Assertions.assertEquals(1, observer2.getCountUpdateObserverMyInt());
+
+    Assertions.assertEquals(0, observer.getCountUpdateObserverManyB());
+    Assertions.assertEquals(0, observer2.getCountUpdateObserverManyB());
+    pojo.notifyObserverManyB(pojo,set);
     Assertions.assertEquals(1, observer.getCountUpdateObserverManyB());
     Assertions.assertEquals(1, observer2.getCountUpdateObserverManyB());
 
+    Assertions.assertEquals(0, observer.getCountUpdateObserverOptB());
+    Assertions.assertEquals(0, observer2.getCountUpdateObserverOptB());
+    pojo.notifyObserverOptB(pojo, Optional.of(b));
+    Assertions.assertEquals(1, observer.getCountUpdateObserverOptB());
+    Assertions.assertEquals(1, observer2.getCountUpdateObserverOptB());
 
+    Assertions.assertEquals(0, observer.getCountUpdateObserverOneB());
+    Assertions.assertEquals(0, observer2.getCountUpdateObserverOneB());
+    pojo.notifyObserverOneB(pojo, b);
+    Assertions.assertEquals(1, observer.getCountUpdateObserverOneB());
+    Assertions.assertEquals(1, observer2.getCountUpdateObserverOneB());
 
+    Assertions.assertEquals(0, observer.getCountUpdateObserver());
+    Assertions.assertEquals(0, observer2.getCountUpdateObserver());
+    pojo.notifyObservers(pojo);
+    Assertions.assertEquals(1, observer.getCountUpdateObserver());
+    Assertions.assertEquals(1, observer2.getCountUpdateObserver());
 
+    //check if setters are implemented correctly
+    pojo.setMyInt(42);
+    Assertions.assertEquals(2, observer.getCountUpdateObserverMyInt());
+    Assertions.assertEquals(2, observer2.getCountUpdateObserverMyInt());
 
+    pojo.setMyBool(true);
+    Assertions.assertEquals(2, observer.getCountUpdateObserverMyBool());
+    Assertions.assertEquals(2, observer2.getCountUpdateObserverMyBool());
+
+    pojo.setManyB(new HashSet<>());
+    Assertions.assertEquals(2, observer.getCountUpdateObserverManyB());
+    Assertions.assertEquals(2, observer2.getCountUpdateObserverManyB());
+
+    pojo.setOptB(null);
+    Assertions.assertEquals(2, observer.getCountUpdateObserverOptB());
+    Assertions.assertEquals(2, observer2.getCountUpdateObserverOptB());
+
+    pojo.setOneB(null);
+    Assertions.assertEquals(2, observer.getCountUpdateObserverOneB());
+    Assertions.assertEquals(2, observer2.getCountUpdateObserverOneB());
+
+    //check if removeObserver works
+    pojo.removeObserver(observer);
+
+    pojo.setMyBool(false);
+    Assertions.assertEquals(2, observer.getCountUpdateObserverMyBool());
+    Assertions.assertEquals(3, observer2.getCountUpdateObserverMyBool());
+
+    pojo.removeObserver(observer2);
+
+    pojo.setMyBool(false);
+    Assertions.assertEquals(2, observer.getCountUpdateObserverMyBool());
+    Assertions.assertEquals(3, observer2.getCountUpdateObserverMyBool());
   }
 
   private void checkMethodExistence() throws Exception {
@@ -54,9 +116,11 @@ public class ObserverDecoratorTest {
     Assertions.assertTrue(Modifier.isPublic(clazz.getModifiers()));
     Assertions.assertFalse(clazz.isInterface());
 
+
     //check for the methods in the interface Observe
     Method[] methods = interfaceObservable.getDeclaredMethods();
     Assertions.assertEquals(9, methods.length);
+
 
     //check methods of the pojo
     Method addObserver = IOtherCObservable.class.getDeclaredMethod("addObserver", TestObserver.IOtherCObserver.class);
@@ -108,6 +172,7 @@ public class ObserverDecoratorTest {
 
     Method notifyPojoNotifyObserverB = OtherC.class.getDeclaredMethod("notifyObserverOneB", OtherC.class, B.class);
     Assertions.assertTrue(Modifier.isPublic(notifyPojoNotifyObserverB.getModifiers()));
+
 
     //check for the methods in the interface Observer
     Method update = IOtherCObserver.class.getDeclaredMethod("update", OtherC.class);

@@ -12,23 +12,22 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.cdinterfaceandenum.cocos.ebnf.CDAttributeInInterfaceInitialized;
-import de.monticore.expressions.uglyexpressions._ast.ASTCreatorExpressionBuilder;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.*;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 import static de.monticore.cd.codegen.CD2JavaTemplates.VALUE;
-
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Applies the Observer-Pattern to the CD
+ */
 public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
   @Override
@@ -73,7 +72,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
         glexOpt.ifPresent(glex -> glex.replaceTemplate(VALUE, observerList ,new StringHookPoint(" = new ArrayList<>()")));
       }
 
-      //create own interface Observableand Observer for every class
+      //create own interface Observable and Observer for every class
       ASTCDInterface interfaceObservableArtifact = CD4CodeMill.cDInterfaceBuilder()
               .setName("I" + decClazz.getName() + "Observable")
               .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build())
@@ -134,7 +133,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       CD4C.getInstance().addImport(decClazz, observableInterfaceName);
       CD4C.getInstance().addImport(decClazz, observerInterfaceName);
 
-      //To call a generated method whenever an attribute is changed in the pojo class we need to transform the setters
+      //To call a generated method whenever an attribute is changed in the pojo class, we need to transform the setters
       // into additionally calling the attribute specific notifyObserver${attributeName} method
       for(ASTCDAttribute attribute : clazz.getCDAttributeList()) {
         //We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
@@ -142,14 +141,14 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
           ? decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute)
           : null;
         if (!(methods == null || methods.isEmpty())){
-          // Assuming `methods` is a list of ASTCDMethod and `attribute` is an ASTCDAttribute
           List<ASTCDMethod> setMethods = methods.stream()
             .filter(m -> m.getName().equals("set" + StringTransformations.capitalize(attribute.getName())))
             .collect(Collectors.toList());
 
           for(ASTCDMethod setMethod: setMethods){
-            //when we have a attribute with the same name as the helper attribute we need to create,
+            //when we have an attribute with the same name as the helper attribute we need to create,
             // we need to rename the new attribute to avoid conflicts
+            // (we only need to test it against the name of the parameter in the method signature which is the attribute.getName())
             String oldValueName;
             if(attribute.getName().equals("ov")){
               oldValueName = "_ov";
@@ -158,7 +157,6 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
             }
             glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod ,new TemplateHookPoint("methods.observer.setWithObservableMethodCall",attribute,oldValueName)));
           }
-
         }
       }
     }

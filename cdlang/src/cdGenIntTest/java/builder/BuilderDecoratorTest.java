@@ -55,7 +55,7 @@ public class BuilderDecoratorTest {
     Assertions.assertEquals(1, objWithPojoSetters.getMyInt());
     Assertions.assertFalse(objWithPojoSetters.isMyBool());
 
-    //sollte gut gehen
+    //should work fine
     objWithPojoSetters =  new TestBuilderWithSetterBuilder()
       .setManyB(manyBEmptySet)
       .setOneB(oneBTest)
@@ -71,8 +71,6 @@ public class BuilderDecoratorTest {
       .setMyInt(1)
       .build();
 
-
-
     TestBuilderWithSetter objPojoWithSetter = new TestBuilderWithSetterBuilder()
       // setManyB(manyBTest)
       // setOptB(optBTest)
@@ -83,11 +81,10 @@ public class BuilderDecoratorTest {
 
     Assertions.assertTrue(objPojoWithSetter.getManyB().isEmpty());
     Assertions.assertSame(objPojoWithSetter.getOneB(), oneBTest);
-    // does not work as it will throw an IllegalStateException and Log.error
+    // does not work as it will throw an IllegalStateException and Log.error because of the getOptB implementation
     // Assertions.assertNull(objWithPojoSetters.getOptB());
     Assertions.assertFalse(objPojoWithSetter.isMyBool()); // default value
     Assertions.assertEquals(0, objPojoWithSetter.getMyInt()); // default value
-
 
 
     //we need to disable the fail quick mode, otherwise the test will be skipped
@@ -125,14 +122,14 @@ public class BuilderDecoratorTest {
       .setMyBool(true)
       .setMyInt(1)
       .unsafeBuild();
-    //unsafeBuild should does not log errors
+    //unsafeBuild should not log errors
     Assertions.assertEquals(0,Log.getFindings().size());
 
    new TestBuilderWithoutSetterBuilder()
       .setMyBool(true)
       .setMyInt(1)
       .unsafeBuild();
-    //unsafeBuild should does not log errors
+    //unsafeBuild should not log errors
     Assertions.assertEquals(0,Log.getFindings().size());
 
     //constructor methods

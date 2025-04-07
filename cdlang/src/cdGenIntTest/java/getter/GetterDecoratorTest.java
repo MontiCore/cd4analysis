@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import TestGetter.Other;
-
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +24,7 @@ public class GetterDecoratorTest {
     obj.__setMyInt(42);
     Assertions.assertEquals(42, obj.getMyInt());
 
-    // Check if the boolean is prefixed with is & has the package default visibility
+    // Check if the boolean is prefixed with is and has the package default visibility
     Method isMyBool = TestGetter.TestGetterC.class.getDeclaredMethod("isMyBool");
     var modifier = BigInteger.valueOf(isMyBool.getModifiers());
     Assertions.assertFalse(modifier.testBit(Modifier.PUBLIC));
