@@ -35,7 +35,7 @@ if(this.${attributeList[i].getName()} != null && this.${attributeList[i].getName
   v.set${attributeList[i].getName()?cap_first}(null);
 }
       <#else>
-if(this.${attributeList[i].getName()}.isPresent()){
+if(this.${attributeList[i].getName()} != null && this.${attributeList[i].getName()}.isPresent()){
   v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
 }else{
   v.${attributeList[i].getName()} = Optional.empty();

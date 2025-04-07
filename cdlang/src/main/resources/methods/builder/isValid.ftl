@@ -1,5 +1,5 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("attributes","staticErrorCode")}
+${tc.signature("attributes","staticErrorCode","cD4AnalysisTypeDispatcher")}
 
 <#list attributes as attribute>
 <#assign errorCode = staticErrorCode + cdGenService.getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType())>
@@ -15,13 +15,7 @@ ${tc.signature("attributes","staticErrorCode")}
 <#-- as primitive types cannot be check for == null we need either ignore them or build attributes -->
 <#-- to check whether they have been set -->
 
-<#if (!(attribute.getMCType().printType() == "boolean" ||
-     attribute.getMCType().printType() == "short" ||
-     attribute.getMCType().printType() == "int" ||
-     attribute.getMCType().printType() == "long" ||
-     attribute.getMCType().printType() == "float" ||
-     attribute.getMCType().printType() == "double" ||
-     attribute.getMCType().printType() == "byte"))>
+<#if (!(cD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>
 
 if (this.${attribute.getName()} == null) {
   Log.error("${errorCode}");

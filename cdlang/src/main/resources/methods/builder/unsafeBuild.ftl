@@ -25,13 +25,13 @@ v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
   <#else>
     <#if MCCollectionSymTypeRelations.isOptional(attributeList[i].getSymbol().getType())>
        <#if hasSetterList[i]>
-if(this.${attributeList[i].getName()}.isPresent()){
+if(this.${attributeList[i].getName()} != null && this.${attributeList[i].getName()}.isPresent()){
   v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());
 }else{
   v.set${attributeList[i].getName()?cap_first}(null);
 }
       <#else>
-if(this.${attributeList[i].getName()}.isPresent()){
+if(this.${attributeList[i].getName()} != null && this.${attributeList[i].getName()}.isPresent()){
   v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
 }else{
   v.${attributeList[i].getName()} = Optional.empty();

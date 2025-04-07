@@ -7,6 +7,7 @@ import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
@@ -19,6 +20,7 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -84,7 +86,7 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       // Add a isValid() method to the builder class
       String staticErrorCode = "0x16725";
       ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PRIVATE().build(), MCTypeFacade.getInstance().createBooleanType(), "isValid");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isValidMethod, new TemplateHookPoint("methods.builder.isValid", new ArrayList<>(node.getCDAttributeList()),staticErrorCode)));
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isValidMethod, new TemplateHookPoint("methods.builder.isValid", new ArrayList<>(node.getCDAttributeList()),staticErrorCode,new CD4AnalysisTypeDispatcher())));
       addToClass(builderClass,isValidMethod);
       decoratorIsValidMethod.push(isValidMethod);
 

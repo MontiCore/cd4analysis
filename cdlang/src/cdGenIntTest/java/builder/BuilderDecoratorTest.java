@@ -95,9 +95,10 @@ public class BuilderDecoratorTest {
 
 
 
-    //TODO gradle skips here because of Log.error I DO NOT CALL Log.enableFailQuick(true) after
-    var failQuickEnabled = Log.isFailQuickEnabled();
-    de.se_rwth.commons.logging.Log.enableFailQuick(false);
+    //we need to disable the fail quick mode, otherwise the test will be skipped
+    // Afterward we will test for error messages
+    Log.enableFailQuick(false);
+    Log.clearFindings();
 
     Assertions.assertThrows(IllegalStateException.class, () -> new TestBuilderWithSetterBuilder()
       .setManyB(manyBEmptySet)
@@ -106,6 +107,10 @@ public class BuilderDecoratorTest {
       .setMyBool(true)
       .setMyInt(1)
       .build());
+    Assertions.assertEquals(1, Log.getFindings().size());
+    Assertions.assertEquals("0x16725x33453",Log.getFindings().get(0).getMsg());
+    Log.clearFindings();
+
     Assertions.assertThrows(IllegalStateException.class, () -> new TestBuilderWithoutSetterBuilder()
       .setManyB(manyBEmptySet)
       .setOptB(optBTest)
@@ -113,14 +118,23 @@ public class BuilderDecoratorTest {
       .setMyBool(true)
       .setMyInt(1)
       .build());
+    Assertions.assertEquals(1, Log.getFindings().size());
+    Assertions.assertEquals("0x16725x33448",Log.getFindings().get(0).getMsg());
+    Log.clearFindings();
+
     Assertions.assertThrows(NullPointerException.class, () -> new TestBuilderWithSetterBuilder()
       .setMyBool(true)
       .setMyInt(1)
       .unsafeBuild());
+    //unsafeBuild should does not log errors
+    Assertions.assertEquals(0,Log.getFindings().size());
+
     Assertions.assertThrows(NullPointerException.class, () -> new TestBuilderWithoutSetterBuilder()
       .setMyBool(true)
       .setMyInt(1)
       .unsafeBuild());
+    //unsafeBuild should does not log errors
+    Assertions.assertEquals(0,Log.getFindings().size());
 
     //constructor methods
     Constructor<TestBuilderWithSetterBuilder> constructorWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredConstructor();
@@ -176,7 +190,6 @@ public class BuilderDecoratorTest {
 
     Method setOneBWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setOneB", B.class);
     Assertions.assertEquals(Modifier.PUBLIC, setOneBWithoutSetter.getModifiers());
-
 
     Method setMyIntWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyInt", int.class);
     Assertions.assertEquals(Modifier.PUBLIC, setMyIntWithSetter.getModifiers());
