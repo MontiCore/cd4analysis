@@ -43,9 +43,9 @@ public class ObserverDecoratorTest {
 
   private void checkMethodExistence() throws Exception {
     //check for the existence of the interfaces
-    Class<?> interfaceObserve = Class.forName("TestObserver.IOtherCObserve");
-    Assertions.assertTrue(Modifier.isPublic(interfaceObserve.getModifiers()));
-    Assertions.assertTrue(interfaceObserve.isInterface());
+    Class<?> interfaceObservable = Class.forName("TestObserver.IOtherCObservable");
+    Assertions.assertTrue(Modifier.isPublic(interfaceObservable.getModifiers()));
+    Assertions.assertTrue(interfaceObservable.isInterface());
 
     Class<?> interfaceObserver = Class.forName("TestObserver.IOtherCObserver");
     Assertions.assertTrue(Modifier.isPublic(interfaceObserver.getModifiers()));
@@ -56,32 +56,32 @@ public class ObserverDecoratorTest {
     Assertions.assertFalse(clazz.isInterface());
 
     //check for the methods in the interface Observe
-    Method[] methods = interfaceObserve.getDeclaredMethods();
+    Method[] methods = interfaceObservable.getDeclaredMethods();
     Assertions.assertEquals(8, methods.length);
 
     //check methods of the pojo
-    Method addObserver = IOtherCObserve.class.getDeclaredMethod("addObserver", TestObserver.IOtherCObserver.class);
+    Method addObserver = IOtherCObservable.class.getDeclaredMethod("addObserver", TestObserver.IOtherCObserver.class);
     Assertions.assertTrue(Modifier.isPublic(addObserver.getModifiers()));
 
-    Method removeObserver = IOtherCObserve.class.getDeclaredMethod("removeObserver", TestObserver.IOtherCObserver.class);
+    Method removeObserver = IOtherCObservable.class.getDeclaredMethod("removeObserver", TestObserver.IOtherCObserver.class);
     Assertions.assertTrue(Modifier.isPublic(removeObserver.getModifiers()));
 
-    Method notifyObservers = IOtherCObserve.class.getDeclaredMethod("notifyObservers", OtherC.class);
+    Method notifyObservers = IOtherCObservable.class.getDeclaredMethod("notifyObservers", OtherC.class);
     Assertions.assertTrue(Modifier.isPublic(notifyObservers.getModifiers()));
 
-    Method notifyObserverInt = IOtherCObserve.class.getDeclaredMethod("notifyObserverMyInt", OtherC.class, int.class);
+    Method notifyObserverInt = IOtherCObservable.class.getDeclaredMethod("notifyObserverMyInt", OtherC.class, int.class);
     Assertions.assertTrue(Modifier.isPublic(notifyObserverInt.getModifiers()));
 
-    Method notifyObserverBoolean = IOtherCObserve.class.getDeclaredMethod("notifyObserverMyBool", OtherC.class, boolean.class);
+    Method notifyObserverBoolean = IOtherCObservable.class.getDeclaredMethod("notifyObserverMyBool", OtherC.class, boolean.class);
     Assertions.assertTrue(Modifier.isPublic(notifyObserverBoolean.getModifiers()));
 
-    Method notifyObserverSet = IOtherCObserve.class.getDeclaredMethod("notifyObserverManyB", OtherC.class, Set.class);
+    Method notifyObserverSet = IOtherCObservable.class.getDeclaredMethod("notifyObserverManyB", OtherC.class, Set.class);
     Assertions.assertTrue(Modifier.isPublic(notifyObserverSet.getModifiers()));
 
-    Method notifyObserverOptional = IOtherCObserve.class.getDeclaredMethod("notifyObserverOptB", OtherC.class, Optional.class);
+    Method notifyObserverOptional = IOtherCObservable.class.getDeclaredMethod("notifyObserverOptB", OtherC.class, Optional.class);
     Assertions.assertTrue(Modifier.isPublic(notifyObserverOptional.getModifiers()));
 
-    Method notifyObserverB = IOtherCObserve.class.getDeclaredMethod("notifyObserverOneB", OtherC.class, B.class);
+    Method notifyObserverB = IOtherCObservable.class.getDeclaredMethod("notifyObserverOneB", OtherC.class, B.class);
     Assertions.assertTrue(Modifier.isPublic(notifyObserverB.getModifiers()));
 
 

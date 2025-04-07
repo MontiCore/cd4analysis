@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.nio.file.Files;
 import org.junit.Assert;
 import java.util.List;
-import java.nio.file.StandardCopyOption;
 
 class BuilderCDTest extends AbstractCDGenTest{
 

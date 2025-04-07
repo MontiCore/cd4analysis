@@ -47,11 +47,11 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       String packageName = clazz.getSymbol().getPackageName();
 
       String observerInterfaceName = packageName.isEmpty()? "I" + clazz.getName() + "Observer": packageName+".I" + clazz.getName() + "Observer";
-      String observeInterfaceName = packageName.isEmpty()? "I" + clazz.getName() + "Observe": packageName+".I" + clazz.getName() + "Observe";
+      String observableInterfaceName = packageName.isEmpty()? "I" + clazz.getName() + "Observable": packageName+".I" + clazz.getName() + "Observable";
       ASTMCQualifiedType observerInterfaceQualifiedType = MCTypeFacade.getInstance().createQualifiedType(observerInterfaceName);
-      ASTMCQualifiedType observeInterfaceQualifiedType = MCTypeFacade.getInstance().createQualifiedType(observeInterfaceName);
+      ASTMCQualifiedType observableInterfaceQualifiedType = MCTypeFacade.getInstance().createQualifiedType(observableInterfaceName);
       ASTCDParameter observerParameter = CD4CodeMill.cDParameterBuilder().setName("observer").setMCType(observerInterfaceQualifiedType).build();
-      ASTCDParameter observeParameter = CD4CodeMill.cDParameterBuilder().setName("observe").setMCType(observeInterfaceQualifiedType).build();
+      ASTCDParameter observeParameter = CD4CodeMill.cDParameterBuilder().setName("observable").setMCType(observableInterfaceQualifiedType).build();
       //create a type of the class
       ASTMCType classType = MCTypeFacade.getInstance().createQualifiedType(clazz.getName());
       ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("clazz").setMCType(classType).build();
@@ -71,9 +71,9 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
         glexOpt.ifPresent(glex -> glex.replaceTemplate(VALUE, observerList ,new StringHookPoint(" = new ArrayList<>()")));
       }
 
-      //create own interface Observe and Observer for every class
-      ASTCDInterface interfaceObserveArtifact = CD4CodeMill.cDInterfaceBuilder()
-              .setName("I" + decClazz.getName() + "Observe")
+      //create own interface Observableand Observer for every class
+      ASTCDInterface interfaceObservableArtifact = CD4CodeMill.cDInterfaceBuilder()
+              .setName("I" + decClazz.getName() + "Observable")
               .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build())
               .build();
       ASTCDInterface interfaceObserverArtifact = CD4CodeMill.cDInterfaceBuilder()
@@ -82,7 +82,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
         .build();
 
       //add the interfaces to the package
-      addElementToParent(decParent, interfaceObserveArtifact);
+      addElementToParent(decParent, interfaceObservableArtifact);
       addElementToParent(decParent, interfaceObserverArtifact);
 
       //build the methods
@@ -93,17 +93,17 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       List<AttributeSpecificMethodStash> attributeSpecificMethodStashes = new ArrayList<>();
       clazz.getCDAttributeList().forEach(attribute ->
         attributeSpecificMethodStashes.add(new AttributeSpecificMethodStash(
-          CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),"updateObserver" + StringUtils.capitalize(attribute.getName()), List.of(classParameter,CD4CodeMill.cDParameterBuilder().setName("ov").setMCType(attribute.getMCType()).build())),
-          CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),"notifyObserver" + StringUtils.capitalize(attribute.getName()), List.of(classParameter,CD4CodeMill.cDParameterBuilder().setName("ov").setMCType(attribute.getMCType()).build())),
+          CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), "updateObserver" + StringUtils.capitalize(attribute.getName()), List.of(classParameter, CD4CodeMill.cDParameterBuilder().setName("ov").setMCType(attribute.getMCType()).build())),
+          CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), "notifyObserver" + StringUtils.capitalize(attribute.getName()), List.of(classParameter, CD4CodeMill.cDParameterBuilder().setName("ov").setMCType(attribute.getMCType()).build())),
           attribute.getName())
         )
       );
 
-      //add the methods to the interface Observe
-      interfaceObserveArtifact.addCDMember(addObserver.deepClone());
-      interfaceObserveArtifact.addCDMember(removeObserver.deepClone());
-      interfaceObserveArtifact.addCDMember(notifyObservers.deepClone());
-      attributeSpecificMethodStashes.forEach(stash -> interfaceObserveArtifact.addCDMember(stash.getMethodObserve().deepClone()));
+      //add the methods to the interface Observable
+      interfaceObservableArtifact.addCDMember(addObserver.deepClone());
+      interfaceObservableArtifact.addCDMember(removeObserver.deepClone());
+      interfaceObservableArtifact.addCDMember(notifyObservers.deepClone());
+      attributeSpecificMethodStashes.forEach(stash -> interfaceObservableArtifact.addCDMember(stash.getMethodObservable().deepClone()));
 
       // add the methods to the interface Observer
       interfaceObserverArtifact.addCDMember(update.deepClone());
@@ -117,8 +117,8 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       addToClass(decClazz, notifyObservers);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, notifyObservers ,new TemplateHookPoint("methods.observer.notifyObserver", "observerList", observerParameter.getMCType().printType())));
       attributeSpecificMethodStashes.forEach(stash -> {
-        addToClass(decClazz, stash.getMethodObserve());
-        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, stash.getMethodObserve() ,new TemplateHookPoint("methods.observer.notifyObserverAttributeSpecific", "observerList", observerParameter.getMCType().printType(), stash.getAttributeName())));
+        addToClass(decClazz, stash.getMethodObservable());
+        glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, stash.getMethodObservable() ,new TemplateHookPoint("methods.observer.notifyObserverAttributeSpecific", "observerList", observerParameter.getMCType().printType(), stash.getAttributeName())));
       });
 
 
@@ -128,11 +128,11 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       if(!decClazz.isPresentCDInterfaceUsage()){
         decClazz.setCDInterfaceUsage(CD4CodeMill.cDInterfaceUsageBuilder().build());
       }
-      //add the Observe interfaces to the class
-      decClazz.getCDInterfaceUsage().addInterface(observeInterfaceQualifiedType);
+      //add the Observable interfaces to the class
+      decClazz.getCDInterfaceUsage().addInterface(observableInterfaceQualifiedType);
 
       // add an import statement for the Observer interface
-      CD4C.getInstance().addImport(decClazz, observeInterfaceName);
+      CD4C.getInstance().addImport(decClazz, observableInterfaceName);
       CD4C.getInstance().addImport(decClazz, observerInterfaceName);
     }
   }
@@ -142,14 +142,14 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
     traverser.add4CDBasis(this);
   }
 
-  class AttributeSpecificMethodStash {
+  static class AttributeSpecificMethodStash {
     private final ASTCDMethod methodObserver;
-    private final ASTCDMethod methodObserve;
+    private final ASTCDMethod methodObservable;
     private final String attributeName;
 
-    public AttributeSpecificMethodStash(ASTCDMethod methodObserver, ASTCDMethod methodObserve, String attributeName) {
+    public AttributeSpecificMethodStash(ASTCDMethod methodObserver, ASTCDMethod methodObservable, String attributeName) {
       this.methodObserver = methodObserver;
-      this.methodObserve = methodObserve;
+      this.methodObservable= methodObservable;
       this.attributeName = attributeName;
     }
 
@@ -157,8 +157,8 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       return methodObserver;
     }
 
-    public ASTCDMethod getMethodObserve() {
-      return methodObserve;
+    public ASTCDMethod getMethodObservable() {
+      return methodObservable;
     }
 
     public String getAttributeName() {
