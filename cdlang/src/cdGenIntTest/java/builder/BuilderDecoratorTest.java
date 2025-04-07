@@ -122,17 +122,21 @@ public class BuilderDecoratorTest {
     Assertions.assertEquals("0x16725x33448",Log.getFindings().get(0).getMsg());
     Log.clearFindings();
 
-    Assertions.assertThrows(NullPointerException.class, () -> new TestBuilderWithSetterBuilder()
+    //no error since ManyB is Null and the created Object just has ManyB = null
+    // manyB=null
+    // v.setOptB(null);
+    // v.setOneB(null);
+    new TestBuilderWithSetterBuilder()
       .setMyBool(true)
       .setMyInt(1)
-      .unsafeBuild());
+      .unsafeBuild();
     //unsafeBuild should does not log errors
     Assertions.assertEquals(0,Log.getFindings().size());
 
-    Assertions.assertThrows(NullPointerException.class, () -> new TestBuilderWithoutSetterBuilder()
+   new TestBuilderWithoutSetterBuilder()
       .setMyBool(true)
       .setMyInt(1)
-      .unsafeBuild());
+      .unsafeBuild();
     //unsafeBuild should does not log errors
     Assertions.assertEquals(0,Log.getFindings().size());
 
