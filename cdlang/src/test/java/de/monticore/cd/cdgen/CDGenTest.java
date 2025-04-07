@@ -35,6 +35,8 @@ public class CDGenTest {
           "MyCD.CliC:noGetter", "MyCD.CliC.f:getter", "MyCD.CliC:attributesFromRoles=all",
         };
 
+    setup.withCopyCreator().defaultApply();
+
     setup.withDecorator(new GetterDecorator());
     setup.configApplyMatchName(GetterDecorator.class, "getter");
     setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");

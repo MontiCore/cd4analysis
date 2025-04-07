@@ -164,12 +164,8 @@ public class DecoratorConfig {
       for (@SuppressWarnings("rawtypes") Class<? extends IDecorator> depOn : node.getMustRunAfter()) {
         for (IDecorator<?> depNodeCandidate : this.decorators) {
           if (node != depNodeCandidate && depOn.isAssignableFrom(depNodeCandidate.getClass())) {
-            System.err.println(node.getClass().getName() + " must run after " + depOn.getName() + "/" + depNodeCandidate.getClass().getName());
             graph.get(depNodeCandidate).add(node);
             inDegrees.put(node, inDegrees.getOrDefault(node, 0) + 1);
-          }else {
-            System.err.println(node.getClass().getName() + " shall not run after " + depOn.getName() + "/" + depNodeCandidate.getClass().getName());
-
           }
         }
       }
@@ -198,9 +194,6 @@ public class DecoratorConfig {
       }
       phases.add(phase);
     }
-
-    System.err.println("PHASEs");
-    System.err.println(phases);
 
     if (!phases.isEmpty() && phases.get(0).decorators.stream().noneMatch(d->d instanceof ICreator)) {
       Log.error("0xTODO: Missing creating decorator (such as withCopyCreator())");
