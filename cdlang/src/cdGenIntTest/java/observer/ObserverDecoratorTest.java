@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import TestObserver.*;
 
 import java.util.*;
 
@@ -16,7 +17,6 @@ public class ObserverDecoratorTest {
 
   @Test
   public void test() throws Exception {
-    //TODO if variables exists with name a and A we have a conflict
     checkMethodExistence();
 
     TestObserver.Observer observer = new TestObserver.Observer();
