@@ -11,7 +11,7 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import java.util.Collection;
 import java.util.Collections;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Tests to detect currently not supported modifiers. */
 public class IllegalAttributeModifierTest extends CDDiffTestBasis {

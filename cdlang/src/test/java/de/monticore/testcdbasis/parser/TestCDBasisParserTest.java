@@ -5,7 +5,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.testcdbasis.CDBasisTestBasis;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCDBasisParserTest extends CDBasisTestBasis {
 

@@ -14,18 +14,19 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class InheritanceInheritanceAttributePullup1 extends BaseTest {
+  
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
+  
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/inheritanceAttributePullup1/A.cd";
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup1/A.cd";
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/inheritanceAttributePullup1/B.cd";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup1/B.cd";
-
-  private static final String EXPECTED =
-      "src/test/resources/class_diagrams/Inheritance" + "/inheritanceAttributePullup1/mergedCD.cd";
+  private static final String EXPECTED = INPUT_MODEL_DIR + "/inheritanceAttributePullup1/mergedCD.cd";
 
   @Test
   public void testInheritanceInheritanceAttributePullup1() throws IOException, MergingException {
@@ -36,7 +37,7 @@ public class InheritanceInheritanceAttributePullup1 extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

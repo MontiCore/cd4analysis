@@ -6,8 +6,8 @@ import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
 import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
 import static de.monticore.cd.facade.CDModifier.PROTECTED;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd.codegen.DecoratorTestCase;
 import de.monticore.cd.codegen.methods.accessor.OptionalAccessorDecorator;
@@ -20,9 +20,8 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.LogStub;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
 
@@ -30,7 +29,7 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
 
   private List<ASTCDMethod> methods;
 
-  @Before
+  @BeforeEach
   public void setup() {
     LogStub.init();
 
@@ -53,7 +52,7 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
   public void testGetMethod() {
     ASTCDMethod method = getMethodBy("getA", this.methods);
     assertTrue(method.getCDParameterList().isEmpty());
-    Assert.assertTrue(method.getMCReturnType().isPresentMCType());
+    assertTrue(method.getMCReturnType().isPresentMCType());
     assertDeepEquals(String.class, method.getMCReturnType().getMCType());
     assertDeepEquals(PUBLIC, method.getModifier());
   }
@@ -61,7 +60,7 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
   @Test
   public void testIsPresentMethod() {
     ASTCDMethod method = getMethodBy("isPresentA", this.methods);
-    Assert.assertTrue(method.getMCReturnType().isPresentMCType());
+    assertTrue(method.getMCReturnType().isPresentMCType());
     assertBoolean(method.getMCReturnType().getMCType());
     assertDeepEquals(PUBLIC, method.getModifier());
     assertTrue(method.getCDParameterList().isEmpty());

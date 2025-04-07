@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.designPatternTests;
 
-import static org.junit.Assert.*;
-
 import com.google.common.collect.Lists;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
@@ -19,9 +17,11 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class Visitor
@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class VisitorTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
@@ -56,7 +56,7 @@ public class VisitorTest {
 
   /** Test method introduceVisitorPattern */
   @Test
-  @Ignore // Also in master 1a795a08b0d34e976f41c303a1314cdc2e479d38
+  @Disabled // Also in master 1a795a08b0d34e976f41c303a1314cdc2e479d38
   public void testDesignPatternVisitor() throws IOException {
 
     FileUtility utility = new FileUtility("cdlib/Node");

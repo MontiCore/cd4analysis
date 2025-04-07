@@ -1,6 +1,7 @@
 package de.monticore.odvalidity;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -8,8 +9,7 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ExampleDiffTest extends CDDiffTestBasis {
   @Test
@@ -24,7 +24,7 @@ public class ExampleDiffTest extends CDDiffTestBasis {
 
     try {
       for (int i = 1; i <= 5; i++) {
-        Assert.assertTrue(
+        assertTrue(
             new OD2CDMatcher()
                 .checkIfDiffWitness(
                     CDSemantics.SIMPLE_CLOSED_WORLD,

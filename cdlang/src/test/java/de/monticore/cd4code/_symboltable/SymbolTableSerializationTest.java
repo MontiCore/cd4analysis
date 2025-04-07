@@ -15,13 +15,14 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SymbolTableSerializationTest {
 
-  @Before
+  @BeforeEach
   public void before() {
     CD4CodeMill.reset();
     CD4CodeMill.init();
@@ -171,7 +172,7 @@ public class SymbolTableSerializationTest {
     return scope;
   }
 
-  @After
+  @AfterEach
   public void after() {
     assertTrue(Log.getFindings().isEmpty());
   }

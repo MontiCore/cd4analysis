@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -14,13 +14,13 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class DecoratorTestCase {
 
   private static final String MODEL_PATH = "src/test/resources/";
 
-  @Before
+  @BeforeEach
   public void setUpDecoratorTestCase() {
     Log.init();
     Log.enableFailQuick(false);
@@ -35,7 +35,7 @@ public abstract class DecoratorTestCase {
     String qualifiedName = String.join("/", names);
 
     CD4CodeParser parser = CD4CodeMill.parser();
-    Optional<ASTCDCompilationUnit> ast = null;
+    Optional<ASTCDCompilationUnit> ast = Optional.empty();
     try {
       ast = parser.parse(MODEL_PATH + qualifiedName + ".cd");
     } catch (IOException e) {

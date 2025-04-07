@@ -1,15 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import java.io.IOException;
 import java.nio.file.Paths;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ASTCDHelperTest extends BaseTest {
 
@@ -17,7 +16,7 @@ public class ASTCDHelperTest extends BaseTest {
 
   public ASTCDHelper testant;
 
-  @Before
+  @BeforeEach
   public void initHelper() throws IOException {
     ASTCDCompilationUnit cd = loadModel(Paths.get(MODEL_PATH, INPUT_MODEL_FILE).toString());
     this.testant = new ASTCDHelper(cd);
@@ -34,33 +33,33 @@ public class ASTCDHelperTest extends BaseTest {
   @Test
   public void testGetInterface() {
     assertTrue(testant.getInterface("Human").isPresent());
-    assertTrue(!testant.getInterface("noInterface").isPresent());
+    assertFalse(testant.getInterface("noInterface").isPresent());
   }
 
   @Test
   public void testGetClass() {
     assertTrue(testant.getClass("Employee").isPresent());
     assertTrue(testant.getClass("Room").isPresent());
-    assertTrue(!testant.getClass("noclass").isPresent());
+    assertFalse(testant.getClass("noclass").isPresent());
   }
 
   @Test
   public void testGetEnum() {
     assertTrue(testant.getEnum("StaffFunction").isPresent());
-    assertTrue(!testant.getClass("noenum").isPresent());
+    assertFalse(testant.getClass("noenum").isPresent());
   }
 
   @Test
   public void testGetAttributesForClass() {
     assertTrue(testant.getAttributeFromClass("emplNumber", "Employee").isPresent());
     assertTrue(testant.getAttributeFromClass("email", "Employee").isPresent());
-    assertTrue(!testant.getAttributeFromClass("noAttribute", "Employee").isPresent());
+    assertFalse(testant.getAttributeFromClass("noAttribute", "Employee").isPresent());
   }
 
   @Test
   public void testGetNamedAssociation() {
     assertTrue(testant.getNamedAssociations("employment").isPresent());
-    assertTrue(!testant.getNamedAssociations("novalidassocname").isPresent());
+    assertFalse(testant.getNamedAssociations("novalidassocname").isPresent());
   }
 
   @Test

@@ -1,9 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
@@ -19,12 +16,15 @@ import de.se_rwth.commons.logging.LogStub;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /** Provides some helpers for tests. */
 public abstract class CDDiffTestBasis {
 
-  @Before
+  @BeforeEach
   public void setup() {
     LogStub.init();
     Log.enableFailQuick(false);

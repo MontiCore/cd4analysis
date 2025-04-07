@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.symboltable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
@@ -15,8 +15,9 @@ import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactSco
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Ignore;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
 
@@ -43,7 +44,7 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     checkLogError();
   }
 
-  @Ignore // TODO: resolven mit Paketen checken
+  @Disabled // TODO: resolven mit Paketen checken
   @Test
   public void genitorTestWithPkg() {
     ICDBasisArtifactScope artifactScope = processModel("cdassociation/parser/SimpleWithPkg.cd");

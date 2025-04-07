@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._ast;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
@@ -11,7 +11,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class ASTCDDefinitionTest extends CD4CodeTestBasis {
 

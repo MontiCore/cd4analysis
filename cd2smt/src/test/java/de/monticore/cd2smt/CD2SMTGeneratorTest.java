@@ -20,10 +20,12 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CD2SMTGeneratorTest {
   protected final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/cd2smt";
@@ -31,7 +33,7 @@ public class CD2SMTGeneratorTest {
   CD2SMTGenerator cd2SMTGenerator;
   Context context;
 
-  @Before
+  @BeforeEach
   public void init() {
     Log.init();
     Log.enableFailQuick(false);
@@ -50,11 +52,11 @@ public class CD2SMTGeneratorTest {
     try {
       Optional<ASTCDCompilationUnit> optCD =
           CD4CodeMill.parser().parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
-      Assert.assertTrue(optCD.isPresent());
+      assertTrue(optCD.isPresent());
       astCD = optCD.get();
       (new CD4CodeAfterParseTrafo()).transform(astCD);
     } catch (IOException e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
     CD2SMTMill.initDefault();
     cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
@@ -65,7 +67,7 @@ public class CD2SMTGeneratorTest {
   public void testDeclare_empty_class() {
     setup("car1.cd");
     Sort sort = cd2SMTGenerator.getSort(astCD.getCDDefinition().getCDClassesList().get(0));
-    Assert.assertNotNull(sort);
+    assertNotNull(sort);
   }
 
   @Test
@@ -75,19 +77,19 @@ public class CD2SMTGeneratorTest {
     Expr<? extends Sort> obj = context.mkConst("myObj", cd2SMTGenerator.getSort(Class));
     for (ASTCDAttribute attribute : Class.getCDAttributeList()) {
       Expr<? extends Sort> attr = cd2SMTGenerator.getAttribute(Class, attribute.getName(), obj);
-      Assert.assertNotNull(attr);
+      assertNotNull(attr);
       switch (attribute.getName()) {
         case "price":
-          Assert.assertEquals(attr.getSort(), context.mkFPSortDouble());
+          assertEquals(attr.getSort(), context.mkFPSortDouble());
           break;
         case "manufacturer":
-          Assert.assertEquals(attr.getSort(), context.mkStringSort());
+          assertEquals(attr.getSort(), context.mkStringSort());
           break;
         case "numberOfWheel":
-          Assert.assertEquals(attr.getSort(), context.mkIntSort());
+          assertEquals(attr.getSort(), context.mkIntSort());
           break;
         case "isExpensive":
-          Assert.assertEquals(attr.getSort(), context.mkBoolSort());
+          assertEquals(attr.getSort(), context.mkBoolSort());
           break;
       }
     }
@@ -97,13 +99,13 @@ public class CD2SMTGeneratorTest {
   public void EnumerationTest() {
     setup("car21.cd");
     ASTCDEnum astcdEnum = (ASTCDEnum) CDHelper.getASTCDType("Color", astCD.getCDDefinition());
-    Assert.assertNotNull(astcdEnum);
+    assertNotNull(astcdEnum);
     Expr<? extends Sort> enumConstant =
         cd2SMTGenerator.getEnumConstant(astcdEnum, astcdEnum.getCDEnumConstant(0));
-    Assert.assertEquals("RED", enumConstant.toString());
+    assertEquals("RED", enumConstant.toString());
   }
 
-  @After
+  @AfterEach
   public void cleanUp() {
     if (context != null) {
       context.close();

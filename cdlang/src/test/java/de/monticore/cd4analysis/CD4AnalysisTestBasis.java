@@ -21,7 +21,7 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CD4AnalysisTestBasis extends TestBasis {
   protected CD4AnalysisCoCoChecker coCoChecker;
@@ -29,7 +29,7 @@ public class CD4AnalysisTestBasis extends TestBasis {
   protected CD4AnalysisFullPrettyPrinter printer;
   protected CD4AnalysisSymbols2Json symbols2Json;
 
-  @Before
+  @BeforeEach
   public void initObjects() {
     LogStub.init();
     Log.enableFailQuick(false);

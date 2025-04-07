@@ -5,8 +5,8 @@ import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
 import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
 import static de.monticore.cd.facade.CDModifier.PROTECTED;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd.codegen.methods.mutator.MandatoryMutatorDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
@@ -16,8 +16,8 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.se_rwth.commons.logging.LogStub;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MandatoryMutatorDecoratorTest {
 
@@ -25,7 +25,7 @@ public class MandatoryMutatorDecoratorTest {
 
   private List<ASTCDMethod> methods;
 
-  @Before
+  @BeforeEach
   public void setup() {
     LogStub.init();
     ASTCDAttribute attribute =

@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloy2od;
 
-import static org.junit.Assert.*;
-
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -10,9 +8,12 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /** Test if diff-witnesses match first class diagram and not second */
 public class WitnessTest extends CDDiffTestBasis {

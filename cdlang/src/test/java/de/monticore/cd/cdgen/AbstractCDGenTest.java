@@ -25,8 +25,7 @@ public class AbstractCDGenTest {
 
   protected DecoratorConfig setup;
   protected File outputDir;
-  ;
-
+  
   @BeforeEach
   public void init() {
     LogStub.initPlusLog();

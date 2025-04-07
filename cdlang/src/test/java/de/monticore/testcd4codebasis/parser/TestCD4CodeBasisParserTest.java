@@ -10,7 +10,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCD4CodeBasisParserTest extends CD4CodeBasisTestBasis {
 

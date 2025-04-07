@@ -6,10 +6,12 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CDHelperTest extends CD2SMTAbstractTest {
   @BeforeEach
@@ -35,16 +37,16 @@ public class CDHelperTest extends CD2SMTAbstractTest {
     ASTCDCompilationUnit ast = parseModel("car3.cd");
 
     ASTCDType astcdType = CDHelper.getASTCDType(type, ast.getCDDefinition());
-    Assertions.assertNotNull(astcdType);
+    assertNotNull(astcdType);
     Set<ASTCDType> superTypeList = CDHelper.getSuperTypeAllDeep(astcdType, ast.getCDDefinition());
-    Assertions.assertEquals(superTypeList.size(), number);
+    assertEquals(superTypeList.size(), number);
   }
 
   public void checkSubTypes(String type, int number) {
     ASTCDCompilationUnit ast = parseModel("car3.cd");
     ASTCDType astcdType = CDHelper.getASTCDType(type, ast.getCDDefinition());
-    Assertions.assertNotNull(astcdType);
+    assertNotNull(astcdType);
     Set<ASTCDType> subTypeAllDeep = CDHelper.getSubTypeAllDeep(astcdType, ast);
-    Assertions.assertEquals(subTypeAllDeep.size(), number);
+    assertEquals(subTypeAllDeep.size(), number);
   }
 }

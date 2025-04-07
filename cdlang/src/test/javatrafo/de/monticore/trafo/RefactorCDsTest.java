@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -10,8 +10,8 @@ import de.monticore.tf.AddMethodToEnum;
 import de.monticore.tf.RefactorCDs;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by
@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class RefactorCDsTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void init() {
     CD4CodeMill.init();
   }

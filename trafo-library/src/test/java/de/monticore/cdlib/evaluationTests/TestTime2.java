@@ -12,8 +12,8 @@ import de.monticore.generating.templateengine.reporting.reporter.TransformationR
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Date;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Check Executiontime for Testcase 2
@@ -24,7 +24,7 @@ import org.junit.Test;
  */
 public class TestTime2 {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();

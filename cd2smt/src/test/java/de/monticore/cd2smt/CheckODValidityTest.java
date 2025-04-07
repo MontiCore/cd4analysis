@@ -1,6 +1,8 @@
 package de.monticore.cd2smt;
 
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.microsoft.z3.*;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -23,7 +25,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -242,14 +243,14 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
 
     Solver solver = cd2SMTGenerator.makeSolver(constraints);
 
-    Assertions.assertEquals(Status.SATISFIABLE, solver.check());
+    assertEquals(Status.SATISFIABLE, solver.check());
 
     Model model = solver.getModel();
     Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(model, false, odName);
-    Assertions.assertTrue(optOd.isPresent());
+    assertTrue(optOd.isPresent());
 
     printOD(optOd.get(), targetName);
-    Assertions.assertTrue(
+    assertTrue(
         matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
   }
 

@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
@@ -13,8 +13,8 @@ import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
 
@@ -54,6 +54,5 @@ public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
     return as;
   }
 
-  @After
-  public void after() {}
+  @AfterEach  public void after() {}
 }

@@ -7,7 +7,7 @@ import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDAssociationPrettyPrinterTest extends CDAssociationTestBasis {

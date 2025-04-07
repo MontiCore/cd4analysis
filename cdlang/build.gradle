@@ -322,6 +322,8 @@ dependencies {
   // Runtime dependencies
   cdGenIntTestImplementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   cdGenIntTestImplementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
+  cdGenIntTestImplementation project(":cd-runtime")
+
 }
 tasks.compileCdGenIntTestJava.dependsOn(test)
 tasks.register('cdGenIntegrationTest', Test) {

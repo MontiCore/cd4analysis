@@ -14,8 +14,8 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CDGeneratorTest extends CD4CodeTestBasis {
 
@@ -25,7 +25,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
 
   private ASTCDCompilationUnit compUnit;
 
-  @Before
+  @BeforeEach
   @Override
   public void initObjects() {
     super.initObjects();

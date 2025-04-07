@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis._symboltable;
 
-import static org.junit.Assert.*;
-
 import com.google.common.collect.Lists;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -18,7 +16,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CD4CodeBasisDeSerTest extends CD4CodeBasisTestBasis {
 
