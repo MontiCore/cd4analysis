@@ -1,12 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
-package observer;
+package TestObserver;
 
 import TestBuilder.TestBuilderWithSetterBuilderTOP;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import TestObserver.*;
 
 import java.util.*;
 

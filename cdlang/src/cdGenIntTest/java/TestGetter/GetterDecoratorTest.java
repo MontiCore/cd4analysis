@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package getter;
+package TestGetter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,13 +7,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import TestGetter.Other;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigInteger;
+
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 /**
  * Test the result of the Getter Decorator. When we arrive in this test, the output compiles

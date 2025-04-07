@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
-package builder;
+package TestBuilder;
 
-import TestBuilder.*;
 import TestGetter.Other;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
@@ -12,8 +11,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 /**

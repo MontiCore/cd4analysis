@@ -57,12 +57,6 @@ class BuilderCDTest extends AbstractCDGenTest{
     Assertions.assertTrue(opt.isPresent());
 
     super.doTest(opt.get());
-
-    //copy the hwc to the target directory to ensure the test can be run
-    Path source = Paths.get("src/test/resources/de/monticore/cd/codegen/hwc/TestBuilder/TestBuilderWithSetterBuilder.java");
-    Path destination = Paths.get("target/cdGenOutTest/BuilderCDTest/TestBuilder/TestBuilderWithSetterBuilder.java");
-    Files.createDirectories(destination.getParent());
-    Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
   }
 
   @Test
