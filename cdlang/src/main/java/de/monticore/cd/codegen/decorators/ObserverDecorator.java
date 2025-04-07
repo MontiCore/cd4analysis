@@ -21,11 +21,13 @@ import de.monticore.types.mcbasictypes._ast.*;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 import static de.monticore.cd.codegen.CD2JavaTemplates.VALUE;
 
+import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
@@ -121,9 +123,6 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
         glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, stash.getMethodObservable() ,new TemplateHookPoint("methods.observer.notifyObserverAttributeSpecific", "observerList", observerParameter.getMCType().printType(), stash.getAttributeName())));
       });
 
-
-
-
       //add an interface list if not present in the clazz
       if(!decClazz.isPresentCDInterfaceUsage()){
         decClazz.setCDInterfaceUsage(CD4CodeMill.cDInterfaceUsageBuilder().build());
@@ -134,6 +133,34 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       // add an import statement for the Observer interface
       CD4C.getInstance().addImport(decClazz, observableInterfaceName);
       CD4C.getInstance().addImport(decClazz, observerInterfaceName);
+
+      //To call a generated method whenever an attribute is changed in the pojo class we need to transform the setters
+      // into additionally calling the attribute specific notifyObserver${attributeName} method
+      for(ASTCDAttribute attribute : clazz.getCDAttributeList()) {
+        //We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
+        List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class) != null
+          ? decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute)
+          : null;
+        if (!(methods == null || methods.isEmpty())){
+          // Assuming `methods` is a list of ASTCDMethod and `attribute` is an ASTCDAttribute
+          List<ASTCDMethod> setMethods = methods.stream()
+            .filter(m -> m.getName().equals("set" + StringTransformations.capitalize(attribute.getName())))
+            .collect(Collectors.toList());
+
+          for(ASTCDMethod setMethod: setMethods){
+            //when we have a attribute with the same name as the helper attribute we need to create,
+            // we need to rename the new attribute to avoid conflicts
+            String oldValueName;
+            if(attribute.getName().equals("ov")){
+              oldValueName = "_ov";
+            } else {
+              oldValueName = "ov";
+            }
+            glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setMethod ,new TemplateHookPoint("methods.observer.setWithObservableMethodCall",attribute,oldValueName)));
+          }
+
+        }
+      }
     }
   }
 

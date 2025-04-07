@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
-package TestObserver;
+package observer;
 
-import TestBuilder.TestBuilderWithSetterBuilderTOP;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
@@ -57,7 +56,7 @@ public class ObserverDecoratorTest {
 
     //check for the methods in the interface Observe
     Method[] methods = interfaceObservable.getDeclaredMethods();
-    Assertions.assertEquals(8, methods.length);
+    Assertions.assertEquals(9, methods.length);
 
     //check methods of the pojo
     Method addObserver = IOtherCObservable.class.getDeclaredMethod("addObserver", TestObserver.IOtherCObserver.class);

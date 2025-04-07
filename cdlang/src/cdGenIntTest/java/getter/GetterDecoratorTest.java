@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package TestGetter;
+package getter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -42,6 +42,11 @@ public class Observer implements TestObserver.IOtherCObserver {
     countUpdateObserverOneB++;
   }
 
+  @Override
+  public void updateObserverOv(OtherC clazz, int ov) {
+    countUpdate++;
+  }
+
   public int getCountUpdate() {
     return countUpdate;
   }

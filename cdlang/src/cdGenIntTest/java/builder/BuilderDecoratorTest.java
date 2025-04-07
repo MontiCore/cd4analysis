@@ -1,11 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
-package TestBuilder;
+package builder;
 
-import TestGetter.Other;
+import TestBuilder.*;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -21,7 +20,6 @@ public class BuilderDecoratorTest {
 
   @Test
   public void test() throws Exception {
-    //
     Set<B> manyBTest = Set.of(new B(), new B());
     Set<B> manyBEmptySet = new HashSet<>();
     B optBTest = new B();

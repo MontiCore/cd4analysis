@@ -6,11 +6,9 @@ import de.monticore.cd4code.CD4CodeMill;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +44,7 @@ class ObserverCDTest extends AbstractCDGenTest {
         " -> (manyB) B [*] public;\n" +
         " -> (optB) B [0..1] public;\n" +
         " -> (oneB) B [1] public;\n" +
+        " public int ov;\n" +
         " }\n" +
         "<<setter>>public class B { " +
         "}\n " +
