@@ -37,7 +37,7 @@ public class AssociationCodeLensStrategy implements CodeLensStrategy {
   @Override
   public boolean matches(MatchedToken matchedToken) {
     return CD4AnalysisParserInfo.stateDefinesName(matchedToken.parserState)
-        && matchedToken.tokenPathMatches(".*.cDType.cDClass");
+        && matchedToken.tokenPathMatches(".*.cDClass.cDClass");
   }
 
   @Override
