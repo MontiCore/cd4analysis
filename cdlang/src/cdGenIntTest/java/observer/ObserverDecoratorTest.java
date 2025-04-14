@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import TestObserver.*;
-
-import java.sql.Array;
 import java.util.*;
 
 /**
@@ -18,7 +16,7 @@ public class ObserverDecoratorTest {
 
   @Test
   public void test() throws Exception {
-    checkMethodExistence();
+    checkClassAndMethodExistence();
 
     TestObserver.Observer observer = new TestObserver.Observer();
     TestObserver.Observer observer2 = new TestObserver.Observer();
@@ -102,7 +100,16 @@ public class ObserverDecoratorTest {
     Assertions.assertEquals(3, observer2.getCountUpdateObserverMyBool());
   }
 
-  private void checkMethodExistence() throws Exception {
+  /**
+   * Check for the existence of the interfaces and the methods in the interfaces as well as in the pojo
+   * We check for the following:
+   * Class: TestObserver.IOtherCObservable with methods notify and notify${attributeName} and addObserver and removeObserver
+   * Class: TestObserver.OtherC            with methods notify and notify${attributeName} and addObserver and removeObserver
+   * Class: TestObserver.IOtherCObserver   with methods update and update${attributeName}
+   * Method: TestObserver.IOtherCObservable
+   * @throws Exception when the class or method does not exist
+   */
+  private void checkClassAndMethodExistence() throws Exception {
     //check for the existence of the interfaces
     Class<?> interfaceObservable = Class.forName("TestObserver.IOtherCObservable");
     Assertions.assertTrue(Modifier.isPublic(interfaceObservable.getModifiers()));
