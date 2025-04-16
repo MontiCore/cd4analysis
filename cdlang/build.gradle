@@ -103,7 +103,7 @@ dependencies {
   //dependencies for tagging
   if (withTagGen) {
     taggingGrammar "de.monticore:monticore-grammar:$mc_version" // Tagging Grammars are packed with the main grammar dependency
-    implementation "de.monticore:monticore-grammar-tagging:$mc_version"
+    taggingImplementation "de.monticore:monticore-grammar-tagging:$mc_version"
 
     testImplementation(sourceSets.tagging.output.classesDirs)
     testImplementation "de.monticore:monticore-grammar-tagging:$mc_version"
