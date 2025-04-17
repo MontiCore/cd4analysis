@@ -10,18 +10,13 @@ ${tc.signature("attributes","staticErrorCode","cD4AnalysisTypeDispatcher")}
      MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType()) ||
      MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())))>
 
-<#-- Primitive types no way to get them better yet -->
-<#-- PLEASE FIX THIS ASAP -->
-<#-- as primitive types cannot be check for == null we need either ignore them or build attributes -->
-<#-- to check whether they have been set -->
-
-<#if (!(cD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>
-
+  <#-- as primitive types cannot be check for == null we need to ignore them -->
+  <#if (!(cD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>
 if (this.${attribute.getName()} == null) {
   Log.error("${errorCode}");
   return false;
 }
-</#if>
+  </#if>
 </#if>
 </#list>
 
