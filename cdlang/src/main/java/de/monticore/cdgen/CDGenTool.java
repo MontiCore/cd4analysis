@@ -188,6 +188,8 @@ public class CDGenTool extends CDGeneratorTool {
           decorated.accept(t);
           // Post-Decorate: make methods in interfaces abstract
           this.makeMethodsInInterfacesAbstract(decorated);
+          // Post-Decorate: map import statements to classes
+          this.mapCD4CImports(ast);
 
           // Post-Decorate: TOP Decorator
           // TODO: #4310 - make this TOP decorator/transformation configurable via the config
