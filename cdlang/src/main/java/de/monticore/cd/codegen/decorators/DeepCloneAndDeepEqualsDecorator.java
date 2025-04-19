@@ -149,9 +149,8 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     if(!attributeList.isEmpty()) {
 
-      //TemplateHookPoint tp = new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClassQualifiedType, attributeList.get(0), classesFromClassdiagramAsString, "this", "o", "visitedObjects");
-      //for(ASTCDAttribute attr: attributeList) {
-
+//      for(ASTCDAttribute attr: attributeList) {
+//
 //      glexOpt.ifPresent(glex -> glex.replaceTemplate(
 //        EMPTY_BODY,
 //        deepEquals3Method,
