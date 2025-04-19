@@ -34,7 +34,9 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
   public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
     //We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    return List.of(SetterDecorator.class);
+    //We also check that the DeepCloneAndDeepEqualsDecorator has run before, as we generate classes
+    // which should not have the generated deepCopy and deepEquals methods
+    return List.of(SetterDecorator.class, DeepCloneAndDeepEqualsDecorator.class);
   }
 
   @Override

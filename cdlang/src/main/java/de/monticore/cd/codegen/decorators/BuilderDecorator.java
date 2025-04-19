@@ -20,12 +20,9 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
-import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
@@ -40,7 +37,9 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
   public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
     //We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    return List.of(SetterDecorator.class);
+    //We also check that the DeepCloneAndDeepEqualsDecorator has run before, as we generate classes
+    // which should not have the generated deepCopy and deepEquals methods
+    return List.of(SetterDecorator.class, DeepCloneAndDeepEqualsDecorator.class);
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();
@@ -86,7 +85,7 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       // Add a isValid() method to the builder class
       String staticErrorCode = "0x16725";
       ASTCDMethod isValidMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PRIVATE().build(), MCTypeFacade.getInstance().createBooleanType(), "isValid");
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isValidMethod, new TemplateHookPoint("methods.builder.isValid", new ArrayList<>(node.getCDAttributeList()),staticErrorCode,new CD4AnalysisTypeDispatcher())));
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, isValidMethod, new TemplateHookPoint("methods.builder.isValid", new ArrayList<>(node.getCDAttributeList()),staticErrorCode)));
       addToClass(builderClass,isValidMethod);
       decoratorIsValidMethod.push(isValidMethod);
 
