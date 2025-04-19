@@ -18,8 +18,7 @@ if(!(o instanceof ${originalClazzType.printType()})){
 boolean ${resultBooleanName} = true;
 <#assign firstObjectName = "this">
 <#assign secondObjectName = "o">
-<#assign matchFoundName = "matchFoundName">
-      ${tc.include("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr, PojoClazzesAsStringList, firstObjectName, secondObjectName, matchFoundName)};
+      ${tc.include("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr, PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
 if(! ${resultBooleanName}){
   return false;
 }
