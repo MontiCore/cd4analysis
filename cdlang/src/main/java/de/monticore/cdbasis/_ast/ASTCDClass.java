@@ -1,11 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
+import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.monticore.cd._visitor.CDMemberVisitor.Options.*;
 
 public class ASTCDClass extends ASTCDClassTOP {
 
@@ -56,5 +63,48 @@ public class ASTCDClass extends ASTCDClassTOP {
     return getCDInterfaceUsage().getInterfaceList().stream()
         .map(ASTMCObjectType::printType)
         .collect(Collectors.joining(","));
+  }
+
+  /**
+   * Since the CD Generator calls this method a lot, a handwritten, much faster version is implemented, which does not
+   * use the generated visitors.
+   */
+  @Override
+  public <T extends ASTCDMember> List<T> getCDMemberList(CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
+    List<CDMemberVisitor.Options> allOptions = new ArrayList<>();
+    allOptions.add(option);
+    allOptions.addAll(Arrays.asList(options));
+
+    Set<T> res = new LinkedHashSet<>();
+
+    if(allOptions.contains(ALL)){
+      res.addAll((Collection<? extends T>) getCDMemberList());
+    }
+
+    if(allOptions.contains(FIELDS)){
+      streamCDMembers().filter(m -> (m instanceof ASTCDAttribute) || (m instanceof ASTCDRole)).forEach(m -> res.add((T) m));
+    }
+
+    if(allOptions.contains(ATTRIBUTES)){
+      streamCDMembers().filter(m -> m instanceof ASTCDAttribute).forEach(m -> res.add((T) m));
+    }
+
+    if(allOptions.contains(ROLES)){
+      streamCDMembers().filter(m -> m instanceof ASTCDRole).forEach(m -> res.add((T) m));
+    }
+
+    if(allOptions.contains(METHOD_SIGNATURES)){
+      streamCDMembers().filter(m -> m instanceof ASTCDMethodSignature).forEach(m -> res.add((T) m));
+    }
+
+    if(allOptions.contains(CONSTRUCTORS)){
+      streamCDMembers().filter(m -> m instanceof ASTCDConstructor).forEach(m -> res.add((T) m));
+    }
+
+    if(allOptions.contains(METHODS)){
+      streamCDMembers().filter(m -> m instanceof ASTCDMethod).forEach(m -> res.add((T) m));
+    }
+
+    return new ArrayList<>(res);
   }
 }
