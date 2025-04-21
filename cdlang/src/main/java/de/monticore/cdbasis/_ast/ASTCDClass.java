@@ -3,10 +3,6 @@ package de.monticore.cdbasis._ast;
 
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4codebasis._ast.ASTCDConstructor;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
-import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
 import java.util.*;
@@ -82,27 +78,51 @@ public class ASTCDClass extends ASTCDClassTOP {
     }
 
     if(allOptions.contains(FIELDS)){
-      streamCDMembers().filter(m -> (m instanceof ASTCDAttribute) || (m instanceof ASTCDRole)).forEach(m -> res.add((T) m));
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isField()) {
+          res.add((T) m);
+        }
+      }
     }
 
     if(allOptions.contains(ATTRIBUTES)){
-      streamCDMembers().filter(m -> m instanceof ASTCDAttribute).forEach(m -> res.add((T) m));
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isAttribute()) {
+          res.add((T) m);
+        }
+      }
     }
 
     if(allOptions.contains(ROLES)){
-      streamCDMembers().filter(m -> m instanceof ASTCDRole).forEach(m -> res.add((T) m));
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isRole()) {
+          res.add((T) m);
+        }
+      }
     }
 
     if(allOptions.contains(METHOD_SIGNATURES)){
-      streamCDMembers().filter(m -> m instanceof ASTCDMethodSignature).forEach(m -> res.add((T) m));
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isMethodSignature()) {
+          res.add((T) m);
+        }
+      }
     }
 
     if(allOptions.contains(CONSTRUCTORS)){
-      streamCDMembers().filter(m -> m instanceof ASTCDConstructor).forEach(m -> res.add((T) m));
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isConstructor()) {
+          res.add((T) m);
+        }
+      }
     }
 
     if(allOptions.contains(METHODS)){
-      streamCDMembers().filter(m -> m instanceof ASTCDMethod).forEach(m -> res.add((T) m));
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isMethod()) {
+          res.add((T) m);
+        }
+      }
     }
 
     return new ArrayList<>(res);

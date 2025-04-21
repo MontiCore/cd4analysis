@@ -21,4 +21,9 @@ public class ASTCDAttribute extends ASTCDAttributeTOP {
   public String printType() {
     return getMCType().printType();
   }
+
+  @Override
+  public boolean isAttribute() {
+    return true;
+  }
 }
