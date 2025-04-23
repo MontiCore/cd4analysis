@@ -1,0 +1,8 @@
+classdiagram ClassMIConc {
+  <<ref="Department">> class Operations {
+    int supervisorID;
+  }
+  <<ref="Department">> class Administration {
+    int managerID;
+  }
+}

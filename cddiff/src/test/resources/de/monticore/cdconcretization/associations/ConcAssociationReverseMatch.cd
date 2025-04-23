@@ -1,7 +1,0 @@
-classdiagram ConcAssociationReverseMatch {
-  class A {
-  }
-  class B {
-  }
-  association B <- A;
-}

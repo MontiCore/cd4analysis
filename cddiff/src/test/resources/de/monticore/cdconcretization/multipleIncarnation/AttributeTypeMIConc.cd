@@ -1,0 +1,6 @@
+classdiagram AttributeTypeMIConc {
+
+  <<ref="SomeValueType">> class Salery;
+
+  <<ref="SomeValueType">> class CompanyIdentifier;
+}

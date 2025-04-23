@@ -1,7 +1,0 @@
-classdiagram RefAssociationMissingFinal {
-  class Employee {
-  }
-  class Department {
-  }
-  association [1] Department (workplace) -> Employee [1..*];
-}

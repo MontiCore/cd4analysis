@@ -1,0 +1,31 @@
+import java.lang.String;
+
+classdiagram EvaluationConc { 
+  class Project;
+
+  class Staff { 
+    int staffID;
+  }
+
+  <<ref="Department">>class Administration { 
+    String name;
+  }
+
+  <<ref="Intern">>class Trainee extends Person { 
+    int supervisorID;
+  }
+
+  class Employee extends Person { 
+    <<ref="id">>int employeeID;
+  }
+
+  class Person { 
+    String name;
+    int age;
+  }
+
+  association staffEmployment Staff(partOf)<->(member)Employee [1..*];
+  association Staff--Project;
+  <<ref="internshipProgram">>association traineeProgram Administration(hostAdm)<-(trainee)Trainee[0..*];
+  association departmentAssignment [1]Staff<->Administration [1];
+} 

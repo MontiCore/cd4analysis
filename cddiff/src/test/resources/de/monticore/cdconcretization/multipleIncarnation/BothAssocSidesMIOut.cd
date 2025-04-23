@@ -1,0 +1,15 @@
+classdiagram BothAssocSidesMIConc {
+  <<ref="SuperTeacher">> class SuperTeacher1;
+  <<ref="SuperTeacher">> class SuperTeacher2;
+
+  <<ref="Teacher">> class Teacher1 extends SuperTeacher2, SuperTeacher1;
+  <<ref="Teacher">> class Teacher2 extends SuperTeacher2, SuperTeacher1;
+
+  <<ref="Department">> class Department1;
+  <<ref="Department">> class Department2;
+
+  association Teacher1 (hasTeacher_Teacher1) -- (teachesIn_Department1) Department1;
+  association Teacher1 (hasTeacher_Teacher1) -- (teachesIn_Department2) Department2;
+  association Teacher2 (hasTeacher_Teacher2) -- (teachesIn_Department1) Department1;
+  association Teacher2 (hasTeacher_Teacher2) -- (teachesIn_Department2) Department2;
+}
