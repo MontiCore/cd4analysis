@@ -3,12 +3,14 @@ package de.monticore.cdconcretization.type;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
-import de.monticore.cdconcretization.util.AbstractChainable;
+import de.monticore.cdconcretization.util.IChainable;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
-public abstract class AbstractTypeCompleter
-    extends AbstractChainable<AbstractTypeCompleter> implements ITypeCompleter {
+public abstract class AbstractTypeCompleter implements ITypeCompleter,
+        IChainable<AbstractTypeCompleter>  {
+
+  private AbstractTypeCompleter next;
 
   @Override
   public void completeType(
@@ -71,5 +73,15 @@ public abstract class AbstractTypeCompleter
     if (hasNext()) {
       next.completeType(concreteType, referenceType, context);
     }
+  }
+
+  @Override
+  public void setNext(AbstractTypeCompleter next) {
+    this.next = next;
+  }
+
+  @Override
+  public boolean hasNext() {
+    return next != null;
   }
 }

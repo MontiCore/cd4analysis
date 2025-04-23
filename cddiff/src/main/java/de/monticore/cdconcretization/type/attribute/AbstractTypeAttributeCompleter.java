@@ -3,10 +3,12 @@ package de.monticore.cdconcretization.type.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
-import de.monticore.cdconcretization.util.AbstractChainable;
+import de.monticore.cdconcretization.util.IChainable;
 
-public abstract class AbstractTypeAttributeCompleter
-    extends AbstractChainable<AbstractTypeAttributeCompleter> implements ITypeAttributeCompleter {
+public abstract class AbstractTypeAttributeCompleter implements ITypeAttributeCompleter,
+        IChainable<AbstractTypeAttributeCompleter> {
+
+  private AbstractTypeAttributeCompleter next;
 
   @Override
   public void completeTypeForAttribute(
@@ -25,5 +27,15 @@ public abstract class AbstractTypeAttributeCompleter
     if (hasNext()) {
       next.completeTypeForAttribute(concreteType, referenceAttribute, context);
     }
+  }
+
+  @Override
+  public void setNext(AbstractTypeAttributeCompleter next) {
+    this.next = next;
+  }
+
+  @Override
+  public boolean hasNext() {
+    return next != null;
   }
 }

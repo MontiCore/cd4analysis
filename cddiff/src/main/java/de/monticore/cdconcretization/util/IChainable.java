@@ -8,4 +8,9 @@ public interface IChainable<T extends IChainable<T>> {
    * @param next the next element in the chain
    */
   void setNext(T next);
+
+  /**
+   * @return true if there is a next element in the chain, false otherwise
+   */
+  boolean hasNext();
 }
