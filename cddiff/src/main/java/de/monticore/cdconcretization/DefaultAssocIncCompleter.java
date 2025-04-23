@@ -54,6 +54,26 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     compTypeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
     compTypeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
 
+    // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference type
+    // themselves or have a subclass which is an incarnation of the reference type.
+    // This strategy is only used when matching associations. If we want to allow the concrete CD to
+    // define associations in superclasses of the actual type incarnation, we have to pass this type
+    // matching strategy to the association matching strategies. This allows supertypes to 'act' as
+    // incarnation of the reference type in context of a specific association.
+    // For example in the following concrete CD, A is a valid incarnation of A in the reference CD
+    // because A is a subclass of X, which has an association towards B.
+    //
+    // classdiagram Concrete {
+    //   class X;
+    //   class A extends X;
+    //   X -> B;
+    // }
+    //
+    // classdiagram Reference {
+    //   class A;
+    //   class B;
+    //   A -> B;
+    // }
     typeIncStrategyMatchingSubTypes = new CompTypeIncStrategy(refCD, mapping);
     typeIncStrategyMatchingSubTypes.addIncStrategy(compTypeIncStrategy);
     typeIncStrategyMatchingSubTypes.addIncStrategy(new MatchCDTypesToSubTypes(compTypeIncStrategy, conCD, refCD));
@@ -81,7 +101,8 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
         // Check if the concrete association is an incarnation of the reference association
         if (compAssocIncStrategy.isMatched(cAssoc, rAssoc)) {
           Log.debug("Found match for assoc: " + CD4CodeMill.prettyPrint(cAssoc, false), LOG_NAME);
-          handleAssociation(cAssoc, rAssoc);
+          AssocMatchDirection matchDirection = determineMatchDirection(cAssoc, rAssoc);
+          completeAssociation(cAssoc, rAssoc, matchDirection);
         }
       }
     }
@@ -105,7 +126,16 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
-  private void handleAssociation(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc)
+  /**
+   * Checks in what direction the concrete association matches the reference association.
+   * If the direction cannot be determined, an exception is thrown.
+   *
+   * @param cAssoc the concrete association
+   * @param rAssoc the reference association
+   * @return
+   * @throws CompletionException if the match direction cannot be determined.
+   */
+  private AssocMatchDirection determineMatchDirection(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc)
       throws CompletionException {
 
     // Extract the left and right types of the concrete association
@@ -172,7 +202,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       }
     }
 
-    completeAssociation(cAssoc, rAssoc, match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION);
+    return match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
   }
 
   /***
@@ -714,6 +744,19 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     return compAssocIncStrategy;
   }
 
+  /**
+   * A matching direction indicates whether two association match in the same direction or in the
+   * reverse direction.
+   * This is required as associations in CD4A are defined in a textual syntax where the same
+   * association between two classes 'A' and 'B' can be defined in two different ways:
+   * <ul>
+   *   <li>either: <code>A -> B</code></li>
+   *   <li>or: <code>B <- A</code></li>
+   * </ul>
+   * Although, both have the same semantic meaning, they are represented in different ways in the AST.
+   * In the first case, 'A' is on the left side and 'B' is on the right side of the association. In
+   * the second case, 'B' is on the left side and 'A' is on the right side of the association.
+   */
   enum AssocMatchDirection {
     /**
      * The association matches in the same direction as the reference association.
@@ -728,8 +771,17 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     REVERSE_DIRECTION;
   }
 
+  /**
+   * Represents an association that matches another association in a certain direction.
+   * This is useful when we want to keep the information about the direction of the match for later
+   * processing.
+   */
   static class AssociationMatch {
+
+    /** The matching association. */
     private final ASTCDAssociation association;
+
+    /** The direction of the match. */
     private final AssocMatchDirection matchDirection;
 
     public AssociationMatch(ASTCDAssociation association, AssocMatchDirection matchDirection) {
