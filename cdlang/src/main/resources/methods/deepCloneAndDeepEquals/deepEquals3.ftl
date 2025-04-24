@@ -12,13 +12,14 @@ visitedObjects.add(this);
 if(!(o instanceof ${originalClazzType.printType()})){
   return false;
 }
+${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
 <#if attributeList??>
 <#list attributeList as attr>
 <#assign resultBooleanName = "result" + attr.getName()?cap_first + attr.getMCType().printType()?cap_first?replace(".","")?replace("<","")?replace(">","")>
 boolean ${resultBooleanName} = true;
 <#assign firstObjectName = "this">
-<#assign secondObjectName = "o">
-      ${tc.include("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr, PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
+<#assign secondObjectName = "castO">
+  ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr, PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
 if(! ${resultBooleanName}){
   return false;
 }

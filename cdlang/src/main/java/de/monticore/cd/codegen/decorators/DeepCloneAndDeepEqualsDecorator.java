@@ -129,43 +129,21 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(objectType).setName("o").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(CD4CodeMill.mCPrimitiveTypeBuilder().setPrimitive(1).build()).setName("forceSameOrder").build();
     ASTCDParameter parameter3 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("visitedObjects").build();
-    ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PRIVATE().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
+    ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
 
     decoratedClass.addCDMember(deepEquals3Method);
 
+    //TODO fix find all classes before
     List<String> classesFromClassdiagramAsString = new ArrayList<>();
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-
-
-    List<ASTCDAttribute> attributeList = originalClass.getCDAttributeList();
-    ASTCDAttribute attribute = CD4CodeMill.cDAttributeBuilder().setModifier(new ASTModifierBuilder().PRIVATE().build()).setName("myInt").setMCType(CD4CodeMill.mCPrimitiveTypeBuilder().setPrimitive(1).build()).build();
-
-
     classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.OtherC");
     classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.B");
+    //TODO until here
 
-
-    if(!attributeList.isEmpty()) {
-
-//      for(ASTCDAttribute attr: attributeList) {
-//
-//      glexOpt.ifPresent(glex -> glex.replaceTemplate(
-//        EMPTY_BODY,
-//        deepEquals3Method,
-//        new TemplateHookPoint(
-//          "methods.deepCloneAndDeepEquals.deepEqualsInner",
-//          originalClassQualifiedType,
-//          attr,
-//          classesFromClassdiagramAsString,
-//          "this",
-//          "o",
-//          "visitedObjects"
-//        )));
-//      }
-
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, attributeList,classesFromClassdiagramAsString)));
+    if(!originalClass.getCDAttributeList().isEmpty()) {
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
     }
   }
 

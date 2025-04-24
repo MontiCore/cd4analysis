@@ -74,11 +74,11 @@ if(${firstObjectName}.${attribute.getName()}.isPresent() != ${secondObjectName}.
 }
 <#-- primitive types -->
 <#elseif attribute??>
-<#if (!(CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>
-${firstObjectName}.${attribute.getName()} == ${secondObjectName}.${attribute.getName()};
+<#if (CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType()))>
+${resultBooleanName} = ${firstObjectName}.${attribute.getName()} == ${secondObjectName}.${attribute.getName()};
 <#-- pojo class types -->
 <#elseif (PojoClazzesAsStringList?seq_contains(attribute.getSymbol().getFullName()))>
-${firstObjectName}.attribute.getName().deepEquals(${secondObjectName}.${attribute.getName()}, forceSameOrder, visitedObjects);
+${resultBooleanName} = ${firstObjectName}.attribute.getName().deepEquals(${secondObjectName}.${attribute.getName()}, forceSameOrder, visitedObjects);
 <#-- all other types -->
 <#else>
   ${resultBooleanName} = Object.equals(${secondObjectName}.${attribute.getName()}, ${firstObjectName}.${attribute.getName()});
