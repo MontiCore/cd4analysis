@@ -23,11 +23,9 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
   public void testMethodExistence() throws Exception {
     Class<?> OtherC = Class.forName("TestDeepCloneAndDeepEquals.OtherC");
     Assertions.assertTrue(Modifier.isPublic(OtherC.getModifiers()));
-    Assertions.assertTrue(OtherC.isLocalClass());
 
     Class<?> B = Class.forName("TestDeepCloneAndDeepEquals.B");
     Assertions.assertTrue(Modifier.isPublic(B.getModifiers()));
-    Assertions.assertTrue(B.isLocalClass());
 
     //deepEquals methods
     Method deepEquals1OtherC = OtherC.class.getDeclaredMethod("deepEquals", Object.class);

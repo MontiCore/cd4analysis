@@ -6,9 +6,9 @@ ${tc.signature("attributes","staticErrorCode")}
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 
 <#-- Check if the attribute is not a list, set or optional as they have isAbsent methods-->
-<#if (!(CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute) ||
-     CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute) ||
-     CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute)))>
+<#if (!(CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType()) ||
+     CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute.getMCType()) ||
+     CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())))>
 
   <#-- as primitive types cannot be check for == null we need to ignore them -->
   <#if (!(CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>

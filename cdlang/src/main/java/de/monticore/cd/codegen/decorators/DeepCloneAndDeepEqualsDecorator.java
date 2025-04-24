@@ -69,6 +69,8 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     decoratedClass.addCDMember(deepCloneMethod);
 
     //TODO implement deep clone method
+    // for now we return null
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepCloneMethod, new StringHookPoint("return null;")));
   }
 
   /**
