@@ -177,6 +177,18 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  void testAssocBothSidesMIOneAssocExistsPerTypeIncarnation() {
+    /*
+     * The tool only adds associations between each pair of type incarnations if the concrete CD
+     * does not already contain an association for each SINGLE type incarnation!
+     */
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/BothAssocSidesMIOneAssocExistsConc.cd",
+        "multipleIncarnation/BothAssocSidesMIRef.cd",
+            "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
+  }
+
+  @Test
   void testMIUnequalCardinalities() {
     try {
       parseAndConcretize(
@@ -272,6 +284,38 @@ public class ConcretizationCompleterTest {
   }
 
   @Test
+  void testAssocInSuperType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/AssociationInSuperTypeConc.cd",
+        "associations/AssociationInSuperTypeRef.cd",
+        "associations/AssociationInSuperTypeOut.cd");
+  }
+
+  @Test
+  void testAssocSuperMatchingTest() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "associations/AssociationSuperMatchingConc.cd",
+        "associations/AssociationSuperMatchingRef.cd",
+        "associations/AssociationSuperMatchingOut.cd");
+  }
+
+  @Test
+  void testAssocSuperMatchingConformanceTest() {
+    parseModels(
+        "associations/AssociationSuperMatchingOut.cd",
+        "associations/AssociationSuperMatchingRef.cd");
+    assertTrue(
+            new CDConformanceChecker(
+                    Set.of(
+                            STEREOTYPE_MAPPING,
+                            NAME_MAPPING,
+                            SRC_TARGET_ASSOC_MAPPING,
+                            INHERITANCE,
+                            ALLOW_CARD_RESTRICTION))
+                    .checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @Test
   void testAssociationReverseMatch() {
     testConcretizedConformsToRefAndExpectedOut(
         "associations/AssociationReverseMatchConc.cd",
@@ -282,9 +326,9 @@ public class ConcretizationCompleterTest {
   @Test
   void testTypeMIOneAssocExists() {
     testConcretizedConformsToRefAndExpectedOut(
-        "associations/TypeMIOneAssocExistsConc.cd",
-        "associations/TypeMIOneAssocExistsRef.cd",
-        "associations/TypeMIOneAssocExistsOut.cd");
+            "associations/TypeMIOneAssocExistsConc.cd",
+            "associations/TypeMIOneAssocExistsRef.cd",
+            "associations/TypeMIOneAssocExistsOut.cd");
   }
 
   @Test

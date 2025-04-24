@@ -16,8 +16,11 @@ import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
+import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.tf.odrulegeneration._ast.ASTAssociation;
+import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -25,14 +28,19 @@ import java.util.stream.Collectors;
 
 public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssociation> {
 
+  private static final String LOG_NAME = DefaultAssocIncCompleter.class.getName();
+
   protected ASTCDCompilationUnit rcd;
   protected ASTCDCompilationUnit ccd;
 
   protected String mapping;
   protected CompAssocIncStrategy compAssocIncStrategy;
   protected CompTypeIncStrategy compTypeIncStrategy;
+  protected CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
   protected ConcretizationHelper helper;
   protected boolean intersectCardinality = false;
+
+  private boolean greedyMatcherEnabled = true; // TODO remove! only for testing
 
   public DefaultAssocIncCompleter(
       ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD, String mapping) {
@@ -40,17 +48,43 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     this.ccd = conCD;
     this.mapping = mapping;
 
+    // TODO use same config params as for conformance checker
+
     compTypeIncStrategy = new CompTypeIncStrategy(refCD, mapping);
     compTypeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
     compTypeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
+
+    // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference type
+    // themselves or have a subclass which is an incarnation of the reference type.
+    // This strategy is only used when matching associations. If we want to allow the concrete CD to
+    // define associations in superclasses of the actual type incarnation, we have to pass this type
+    // matching strategy to the association matching strategies. This allows supertypes to 'act' as
+    // incarnation of the reference type in context of a specific association.
+    // For example in the following concrete CD, A is a valid incarnation of A in the reference CD
+    // because A is a subclass of X, which has an association towards B.
+    //
+    // classdiagram Concrete {
+    //   class X;
+    //   class A extends X;
+    //   X -> B;
+    // }
+    //
+    // classdiagram Reference {
+    //   class A;
+    //   class B;
+    //   A -> B;
+    // }
+    typeIncStrategyMatchingSubTypes = new CompTypeIncStrategy(refCD, mapping);
+    typeIncStrategyMatchingSubTypes.addIncStrategy(compTypeIncStrategy);
+    typeIncStrategyMatchingSubTypes.addIncStrategy(new MatchCDTypesToSubTypes(compTypeIncStrategy, conCD, refCD));
 
     compAssocIncStrategy = new CompAssocIncStrategy(refCD, mapping);
     compAssocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
     compAssocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
     compAssocIncStrategy.addIncStrategy(
-        new RolePrefixInNavDirIncStrategy(compTypeIncStrategy, conCD, refCD));
+        new RolePrefixInNavDirIncStrategy(typeIncStrategyMatchingSubTypes, conCD, refCD));
     compAssocIncStrategy.addIncStrategy(
-        new RolePrefixIfPresentIncStrategy(compTypeIncStrategy, conCD, refCD));
+        new RolePrefixIfPresentIncStrategy(typeIncStrategyMatchingSubTypes, conCD, refCD));
 
     this.helper = new ConcretizationHelper(ccd, rcd, compTypeIncStrategy, compAssocIncStrategy);
   }
@@ -60,15 +94,19 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     // First: complete the incarnations, so add stuff to the underspecified incarnation
     // or do nothing to the over-specified incarnation
 
+    Log.debug("=== START completing existing associations ===", LOG_NAME);
     // Iterate through all concrete associations
     for (ASTCDAssociation cAssoc : ccd.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation rAssoc : rcd.getCDDefinition().getCDAssociationsList()) {
         // Check if the concrete association is an incarnation of the reference association
         if (compAssocIncStrategy.isMatched(cAssoc, rAssoc)) {
-          handleAssociation(cAssoc, rAssoc);
+          Log.debug("Found match for assoc: " + CD4CodeMill.prettyPrint(cAssoc, false), LOG_NAME);
+          AssocMatchDirection matchDirection = determineMatchDirection(cAssoc, rAssoc);
+          completeAssociation(cAssoc, rAssoc, matchDirection);
         }
       }
     }
+    Log.debug("=== DONE completing existing associations ===", LOG_NAME);
 
     // Second:
     identifyAndAddMissingAssociations();
@@ -88,7 +126,16 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
-  private void handleAssociation(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc)
+  /**
+   * Checks in what direction the concrete association matches the reference association.
+   * If the direction cannot be determined, an exception is thrown.
+   *
+   * @param cAssoc the concrete association
+   * @param rAssoc the reference association
+   * @return
+   * @throws CompletionException if the match direction cannot be determined.
+   */
+  private AssocMatchDirection determineMatchDirection(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc)
       throws CompletionException {
 
     // Extract the left and right types of the concrete association
@@ -109,29 +156,26 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     // A match occurs if the left types match and the right types match, considering supertypes as
     // well.
     boolean match =
-        (compTypeIncStrategy.isMatched(cLeftType, rLeftType)
+        (typeIncStrategyMatchingSubTypes.isMatched(cLeftType, rLeftType)
                 || cLeftSuperTypes.stream()
-                    .anyMatch(sLeftType -> compTypeIncStrategy.isMatched(sLeftType, rLeftType)))
-            && (compTypeIncStrategy.isMatched(cRightType, rRightType)
+                    .anyMatch(sLeftType -> typeIncStrategyMatchingSubTypes.isMatched(sLeftType, rLeftType)))
+            && (typeIncStrategyMatchingSubTypes.isMatched(cRightType, rRightType)
                 || cRightSuperTypes.stream()
-                    .anyMatch(sRightType -> compTypeIncStrategy.isMatched(sRightType, rRightType)));
+                    .anyMatch(sRightType -> typeIncStrategyMatchingSubTypes.isMatched(sRightType, rRightType)));
 
     // Determine if the concrete association matches the reference association in the reverse
     // direction.
     // A match in reverse occurs if the left type of the concrete association matches the right type
     // of the reference, and vice versa.
     boolean matchInReverse =
-        (compTypeIncStrategy.isMatched(cLeftType, rRightType)
+        (typeIncStrategyMatchingSubTypes.isMatched(cLeftType, rRightType)
                 || cLeftSuperTypes.stream()
-                    .anyMatch(sLeftType -> compTypeIncStrategy.isMatched(sLeftType, rRightType)))
-            && (compTypeIncStrategy.isMatched(cRightType, rLeftType)
+                    .anyMatch(sLeftType -> typeIncStrategyMatchingSubTypes.isMatched(sLeftType, rRightType)))
+            && (typeIncStrategyMatchingSubTypes.isMatched(cRightType, rLeftType)
                 || cRightSuperTypes.stream()
-                    .anyMatch(sRightType -> compTypeIncStrategy.isMatched(sRightType, rLeftType)));
+                    .anyMatch(sRightType -> typeIncStrategyMatchingSubTypes.isMatched(sRightType, rLeftType)));
 
-    // If a match is found in either direction, proceed to complete the association names.
-    if (match || matchInReverse) {
-      completeAssociationNames(cAssoc, rAssoc);
-    } else {
+    if (!match && !matchInReverse) {
       // If no match is found, throw an exception as the associations could not be completed.
       throw new CompletionException("Associations could not be completed.");
     }
@@ -158,24 +202,40 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       }
     }
 
-    // If the match is still valid, complete the association properties for the same sides.
-    if (match) {
-      // Complete association
-      completeAssocNavigability(cAssoc, rAssoc);
-      completeAssocCardinality(cAssoc.getLeft(), rAssoc.getLeft());
-      completeAssocCardinality(cAssoc.getRight(), rAssoc.getRight());
-      completeAssociationRoleNames(cAssoc.getLeft(), rAssoc.getLeft());
-      completeAssociationRoleNames(cAssoc.getRight(), rAssoc.getRight());
-    } else {
-      // If the match is in reverse, complete the association properties for alternating sides.
-      completeAssocNavigabilityReverse(cAssoc, rAssoc);
-      completeAssocCardinality(cAssoc.getLeft(), rAssoc.getRight());
-      completeAssocCardinality(cAssoc.getRight(), rAssoc.getLeft());
-      completeAssociationRoleNames(cAssoc.getLeft(), rAssoc.getRight());
-      completeAssociationRoleNames(cAssoc.getRight(), rAssoc.getLeft());
+    return match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
+  }
+
+  /***
+   * Completes the properties of the concrete association based on the reference association.
+   *
+   * @param cAssoc The concrete association to complete
+   * @param rAssoc The reference association to use for completion
+   * @param matchDirection indicating whether the associations match in the same direction
+   *                       (left-left, right-right) or reverse (left-right, right-left).
+   * @throws CompletionException
+   */
+  private void completeAssociation(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, AssocMatchDirection matchDirection) throws CompletionException {
+    completeAssociationName(cAssoc, rAssoc);
+
+    switch (matchDirection) {
+      case SAME_DIRECTION:
+        completeAssocNavigability(cAssoc, rAssoc);
+        completeAssocCardinality(cAssoc.getLeft(), rAssoc.getLeft());
+        completeAssocCardinality(cAssoc.getRight(), rAssoc.getRight());
+        completeAssociationRoleNames(cAssoc.getLeft(), rAssoc.getLeft());
+        completeAssociationRoleNames(cAssoc.getRight(), rAssoc.getRight());
+        break;
+      case REVERSE_DIRECTION:
+        // If the match is in reverse, complete the association properties for alternating sides.
+        completeAssocNavigabilityReverse(cAssoc, rAssoc);
+        completeAssocCardinality(cAssoc.getLeft(), rAssoc.getRight());
+        completeAssocCardinality(cAssoc.getRight(), rAssoc.getLeft());
+        completeAssociationRoleNames(cAssoc.getLeft(), rAssoc.getRight());
+        completeAssociationRoleNames(cAssoc.getRight(), rAssoc.getLeft());
+        break;
     }
 
-    // Handle potential role name conflicts in a post-processing step.
+    // Handle potential role name conflicts in a post-processing step
     renameRoleIfConflicting(cAssoc);
   }
 
@@ -328,7 +388,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
-  private void completeAssociationNames(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc) {
+  private void completeAssociationName(ASTCDAssociation cAssoc, ASTCDAssociation rAssoc) {
     // Check and complete association name
     if (!cAssoc.isPresentName() && rAssoc.isPresentName()) {
       if (ccd.getCDDefinition().getCDAssociationsList().stream()
@@ -339,19 +399,32 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
+  /**
+   * Adds missing associations to the concrete class diagram based on the associations in the
+   * reference class diagram.
+   *
+   * @throws CompletionException
+   */
   public void identifyAndAddMissingAssociations() throws CompletionException {
+    Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);
 
     // Iterate over all associations in the reference class diagram
     for (ASTCDAssociation rAssoc : rcd.getCDDefinition().getCDAssociationsList()) {
+      Log.debug("Finding matches for assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
+
       MatchingStrategy<ASTCDAssociation> greedyMatching =
-          new MatchCDAssocsGreedy(compTypeIncStrategy, ccd, rcd);
+          new MatchCDAssocsGreedy(typeIncStrategyMatchingSubTypes, ccd, rcd);
 
       // Find all associations in the concrete class diagram that match the reference association
       Set<ASTCDAssociation> assocIncarnations =
           ccd.getCDDefinition().getCDAssociationsList().stream()
               .filter(cAssoc -> compAssocIncStrategy.isMatched(cAssoc, rAssoc))
               .collect(Collectors.toSet());
+
+      Log.debug("Found normal matches: " + assocIncarnations.stream()
+              .map(a -> CD4CodeMill.prettyPrint(a, false))
+              .collect(Collectors.toList()), LOG_NAME);
 
       // Find associations that match greedily , but ensure that they don't match more than one
       // element
@@ -362,6 +435,10 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
                       greedyMatching.isMatched(cAssoc, rAssoc)
                           && greedyMatching.getMatchedElements(cAssoc).size() < 2)
               .collect(Collectors.toSet());
+
+      Log.debug("Found greedy matches: " + assocGreedyMatches.stream()
+              .map(a -> CD4CodeMill.prettyPrint(a, false))
+              .collect(Collectors.toList()), LOG_NAME);
 
       // Resolve the left and right types of the reference association in the reference class
       // diagram
@@ -393,7 +470,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
           assocIncarnations,
           assocGreedyMatches,
           ccd.getCDDefinition(),
-          rAssoc);
+          rAssoc, true);
 
       // Then, process right-type incarnations against left-type incarnations
       processTypeIncarnations(
@@ -403,19 +480,39 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
           assocIncarnations,
           assocGreedyMatches,
           ccd.getCDDefinition(),
-          rAssoc);
+          rAssoc, false);
 
       CDDiffUtil.refreshSymbolTable(ccd);
 
+      Log.debug("DONE finding matches for assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
+      Log.debug("remaining left type incarnations: " + leftTypeInc2Process.stream().map(ASTCDType::getName).collect(Collectors.toList()), LOG_NAME);
+      Log.debug("remaining right type incarnations: " + rightTypeInc2Process.stream().map(ASTCDType::getName).collect(Collectors.toList()), LOG_NAME);
+
       // Finally, process any remaining type incarnations that still need to be handled
       // Process the remaining left-type incarnations against right-type incarnations
-      processTypeInc2Process(leftTypeInc2Process, rRightTypeIncarnations, rAssoc, true);
+      addAssociationIncarnations(leftTypeInc2Process, rRightTypeIncarnations, rAssoc);
 
       // Process the remaining right-type incarnations against left-type incarnations
-      processTypeInc2Process(rightTypeInc2Process, rLeftTypeIncarnations, rAssoc, false);
+      addAssociationIncarnations(rLeftTypeIncarnations, rightTypeInc2Process, rAssoc);
+      Log.debug("=== DONE processing assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
     }
   }
 
+  /**
+   * Process the type incarnations to find and handle matching associations.
+   *    -> so we still try to find more matches than we found in the step before.
+   *
+   * @param rTypeIncarnation all incarnation of the one side of the association
+   * @param rOppositeTypeIncarnations all incarnation of the other side of the association
+   * @param typeInc2Process Subset of 'rTypeIncarnation' (?) that still needs an incarnation of the reference association (??)
+   * @param assocIncarnations "normal" matches from the association matching strategy -> NOTE: these were processed before in step 4 by handleAssociation(...)
+   * @param assocGreedyMatches greedy matches for the reference association to process
+   * @param cd the CONCRETE class diagram
+   * @param rAssoc the reference association to process
+   * @param leftToRight indicates if we process left types against right types (true) or vice versa (false).
+   *                    This indicates whether the 'typeInc2Process' set contains left or right type incarnations.
+   * @throws CompletionException
+   */
   private void processTypeIncarnations(
       Set<ASTCDType> rTypeIncarnation,
       Set<ASTCDType> rOppositeTypeIncarnations,
@@ -423,7 +520,8 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       Set<ASTCDAssociation> assocIncarnations,
       Set<ASTCDAssociation> assocGreedyMatches,
       ASTCDDefinition cd,
-      ASTCDAssociation rAssoc)
+      ASTCDAssociation rAssoc,
+      boolean leftToRight)
       throws CompletionException {
 
     // Iterate over each type incarnation in rTypeIncarnation
@@ -432,129 +530,129 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(typeInc, cd);
 
       // First, attempt to find a match among the specific association incarnations
-      Optional<ASTCDAssociation> match =
-          processAssociations(superTypes, rOppositeTypeIncarnations, assocIncarnations, cd);
+      Optional<AssociationMatch> match =
+          findAssociationToAnyOppositeTypeInc(superTypes, rOppositeTypeIncarnations, assocIncarnations, cd, leftToRight);
 
       // If a match is found, remove the current type incarnation from the set to be processed and
       // continue
       if (match.isPresent()) {
         typeInc2Process.remove(typeInc);
+        // NOTE: we do not call "handleAssociation" here, because we already processed the match in the step before
+        Log.debug("Found normal match for type inc: " + typeInc.getName(), LOG_NAME);
+        Log.debug("reference assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
+        Log.debug("concrete assoc: " + CD4CodeMill.prettyPrint(match.get().getAssociation(), false), LOG_NAME);
         continue;
       }
 
-      // If no match is found in specific incarnations, try matching against the greedy matches
-      match = processAssociations(superTypes, rOppositeTypeIncarnations, assocGreedyMatches, cd);
+      if (greedyMatcherEnabled) {
+        // If no match is found in specific incarnations, try matching against the greedy matches
+        match = findAssociationToAnyOppositeTypeInc(superTypes, rOppositeTypeIncarnations, assocGreedyMatches, cd, leftToRight);
 
-      // If a match is found among the greedy matches, remove the current type incarnation from the
-      // set to be processed
-      // and handle the association accordingly
-      if (match.isPresent()) {
-        typeInc2Process.remove(typeInc);
-        handleAssociation(match.get(), rAssoc);
+        // If a match is found among the greedy matches, remove the current type incarnation from the
+        // set to be processed
+        // and handle the association accordingly
+        if (match.isPresent()) {
+          typeInc2Process.remove(typeInc);
+          Log.debug("Found GREEDY match for type inc: " + typeInc.getName(), LOG_NAME);
+          Log.debug("reference assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
+          Log.debug("concrete assoc: " + CD4CodeMill.prettyPrint(match.get().getAssociation(), false), LOG_NAME);
+          Log.debug("completing greedy match", LOG_NAME);
+          // instead of handleAssociation(...) we call completeAssociation(...) here because we already
+          // know in what direction the match is
+          completeAssociation(match.get().getAssociation(), rAssoc, match.get().getMatchDirection());
+        }
       }
     }
   }
 
-  private Optional<ASTCDAssociation> processAssociations(
+  /**
+   * Finds any association in the given set that "associates" one of the superTypes with one if the
+   * "oppositeTypeIncarnations".
+   *
+   * @param superTypes all concrete super types of the "one side" of the association
+   * @param oppositeTypeIncarnations all incarnations of the type on the "other side" of the association
+   * @param associations the set of concrete associations to check for a match
+   * @param cd the concrete CD
+   * @param leftToRight indicates if we process left types against right types (true) or vice versa (false).
+   * @return an association from the given set that connect one of the superTypes with one of the
+   * oppositeTypeIncarnations.
+   * @throws CompletionException
+   */
+  private Optional<AssociationMatch> findAssociationToAnyOppositeTypeInc(
       Set<ASTCDType> superTypes,
       Set<ASTCDType> oppositeTypeIncarnations,
       Set<ASTCDAssociation> associations,
-      ASTCDDefinition cd)
+      ASTCDDefinition cd,
+      boolean leftToRight)
       throws CompletionException {
+
+    // For each type in the oppositeTypeIncarnations set we also check the super types
+    Set<ASTCDType> oppositeTypeIncarnationSuperTypes = oppositeTypeIncarnations.stream()
+            .flatMap(oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream())
+            .collect(Collectors.toSet());
+
     for (ASTCDAssociation assoc : associations) {
-      // Check if there is a match with the left side of the association
-      if (checkAssociationMatch(superTypes, oppositeTypeIncarnations, assoc, cd)) {
-        return Optional.of(assoc); // Match found, return the association
+      // Check if the association "assoc" relates any of the superTypes with any of the oppositeTypeIncarnations (or its super types) (??)
+      Optional<AssocMatchDirection> matchDirection = checkAssociationMatchesTypes(superTypes, oppositeTypeIncarnationSuperTypes, assoc, leftToRight);
+      if (matchDirection.isPresent()) {
+        // Match found, return the association
+        return Optional.of(new AssociationMatch(assoc, matchDirection.get()));
       }
     }
     return Optional.empty(); // No match found, return empty
   }
 
-  private void processTypeInc2Process(
-      Set<ASTCDType> typeInc2Process,
-      Set<ASTCDType> otherTypeIncs,
-      ASTCDAssociation rAssoc,
-      boolean isLeftToRight) {
+  /**
+   * Creates incarnations of a reference association for the given sets of left and right type
+   * incarnations.
+   * For each pair of left and right type incarnations, a new association is created.
+   *
+   * @param leftTypesIncs the left type incarnations missing an association
+   * @param rightTypeIncs the right type incarnations missing an association
+   * @param referenceAssociation the reference association for which we want to create missing incarnations
+   */
+  private void addAssociationIncarnations(
+      Set<ASTCDType> leftTypesIncs,
+      Set<ASTCDType> rightTypeIncs,
+      ASTCDAssociation referenceAssociation) {
 
-    // Iterate over each type incarnation in typeInc2Process
-    for (ASTCDType typeInc : typeInc2Process) {
-      // For each type incarnation in typeInc2Process, iterate over each type incarnation in
-      // otherTypeIncs
-      for (ASTCDType otherTypeInc : otherTypeIncs) {
-        ASTCDAssociation association = rAssoc.deepClone();
+    for (ASTCDType leftTypeInc : leftTypesIncs) {
+      for (ASTCDType rightTypeInc : rightTypeIncs) {
+        ASTCDAssociation association = referenceAssociation.deepClone();
 
-        // Set the qualified names for the association's left and right types based on the direction
-        if (isLeftToRight) {
-          // Set the left type to the current type incarnation and the right type to the other type
-          // incarnation
+        // Set the left and right types of the association based on the type incarnations
+        association.getLeft().setMCQualifiedType(
+                CD4CodeMill.mCQualifiedTypeBuilder()
+                        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
+                                leftTypeInc.getSymbol().getInternalQualifiedName()))
+                        .build());
+        association.getRight().setMCQualifiedType(
+                CD4CodeMill.mCQualifiedTypeBuilder()
+                        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
+                                rightTypeInc.getSymbol().getInternalQualifiedName()))
+                        .build());
+
+        // If the right type does not have a role name, it is implicitly the type incarnation's
+        // name (first character lowercase) anyway.
+        if (association.getRight().isPresentCDRole()) {
+          // If a role name is already present, append the type incarnation's name to it
           association
-              .getLeft()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              typeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
+                  .getRight()
+                  .getCDRole()
+                  .setName(
+                          association.getRight().getCDRole().getName() + "_" + rightTypeInc.getName());
+        }
+        if (association.getLeft().isPresentCDRole()) {
           association
-              .getRight()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              otherTypeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
-
-          // If the right type does not have a role name, set it to the type incarnation's name
-          if (association.getRight().isPresentCDRole()) {
-            // If a role name is already present, append the type incarnation's name to it
-            association
-                .getRight()
-                .getCDRole()
-                .setName(
-                    association.getRight().getCDRole().getName() + "_" + otherTypeInc.getName());
-          }
-          if (association.getLeft().isPresentCDRole()) {
-            association
-                .getLeft()
-                .getCDRole()
-                .setName(association.getLeft().getCDRole().getName() + "_" + typeInc.getName());
-          }
-
-        } else {
-          // Set the left type to the other type incarnation and the right type to the current type
-          // incarnation
-          association
-              .getLeft()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              otherTypeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
-          association
-              .getRight()
-              .setMCQualifiedType(
-                  CD4CodeMill.mCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          MCQualifiedNameFacade.createQualifiedName(
-                              typeInc.getSymbol().getInternalQualifiedName()))
-                      .build());
-
-          if (association.getLeft().isPresentCDRole()) {
-            association
-                .getLeft()
-                .getCDRole()
-                .setName(
-                    association.getLeft().getCDRole().getName() + "_" + otherTypeInc.getName());
-          }
-          if (association.getRight().isPresentCDRole()) {
-            association
-                .getRight()
-                .getCDRole()
-                .setName(association.getRight().getCDRole().getName() + "_" + typeInc.getName());
-          }
+                  .getLeft()
+                  .getCDRole()
+                  .setName(association.getLeft().getCDRole().getName() + "_" + leftTypeInc.getName());
         }
 
+        // Only add it if it is not already present. This can happen if the same type incarnation
+        // occurs in the "leftType2Process" set while processing "left types" missing an association
+        // and after that in the "allLeftTypeIncs" set while processing the "right types" missing
+        // an association.
         if (ccd.getCDDefinition().getCDAssociationsList().stream()
             .noneMatch(a -> a.deepEquals(association))) {
           ccd.getCDDefinition().addCDElement(association);
@@ -563,16 +661,28 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     }
   }
 
-  private boolean checkAssociationMatch(
-      Set<ASTCDType> superTypes,
-      Set<ASTCDType> oppositeTypeIncarnations,
+  /**
+   * Checks if the given concrete association relates any of the types from set A with any of the
+   * types from set B.
+   *
+   * @param typesSideA the set (A) of types to check for on one side of the association
+   * @param typesSideB the set (B) of types to check for on the other side of the association
+   * @param assoc the CONCRETE association to check for a match
+   * @param leftToRight indicates if we process left types against right types (true) or vice versa (false).
+   * @return if the association relates any of the types from set A with any of the types from set
+   *     B, return the direction of the match (same or reverse), otherwise return empty.
+   * @throws CompletionException
+   */
+  private Optional<AssocMatchDirection> checkAssociationMatchesTypes(
+      Set<ASTCDType> typesSideA,
+      Set<ASTCDType> typesSideB,
       ASTCDAssociation assoc,
-      ASTCDDefinition cd)
+      boolean leftToRight)
       throws CompletionException {
 
     boolean fail = false;
 
-    if (superTypes.stream()
+    if (typesSideA.stream()
         .anyMatch(
             superType ->
                 // Compare the qualified name of the supertype with the qualified name of the
@@ -580,13 +690,11 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
                 superType
                     .getSymbol()
                     .getInternalQualifiedName()
-                    .contains(assoc.getLeftQualifiedName().getQName()))
+                    .contains(assoc.getLeftQualifiedName().getQName())) // TODO why contains?? - if because CD names can differ -> remove first part
     // additionally, check if any supertype of the opposite types matches the right side of
     // the association
     ) {
-      if (oppositeTypeIncarnations.stream()
-          // For each type in the oppositeTypeIncarnations set, get all its supertypes
-          .flatMap(oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream())
+      if (typesSideB.stream()
           .anyMatch(
               oSuperType ->
                   // Compare the qualified name of the supertype with the qualified name of the
@@ -594,13 +702,13 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
                   oSuperType
                       .getSymbol()
                       .getInternalQualifiedName()
-                      .contains(assoc.getRightQualifiedName().getQName()))) {
-        return true;
+                      .contains(assoc.getRightQualifiedName().getQName()))) { // TODO why contains?? - if because CD names can differ -> remove first part
+        return Optional.of(leftToRight ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION);
       }
-      fail = true;
+      fail = true; // TODO analyze what this fail means!
     }
     // Same logic, but this time we check from right to left
-    if (superTypes.stream()
+    if (typesSideA.stream()
         .anyMatch(
             superType ->
                 // Compare the qualified name of the supertype with the qualified name of the
@@ -612,9 +720,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
     // Additionally, check if any supertype of the opposite types matches the left side of the
     // association
     ) {
-      if (oppositeTypeIncarnations.stream()
-          // For each type in the oppositeTypeIncarnations set, get all its supertypes
-          .flatMap(oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream())
+      if (typesSideB.stream()
           .anyMatch(
               oSuperType ->
                   // Compare the qualified name of the supertype with the qualified name of the
@@ -623,7 +729,7 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
                       .getSymbol()
                       .getInternalQualifiedName()
                       .contains(assoc.getLeftQualifiedName().getQName()))) {
-        return true;
+        return Optional.of(leftToRight ? AssocMatchDirection.REVERSE_DIRECTION : AssocMatchDirection.SAME_DIRECTION);
       }
       fail = true;
     }
@@ -631,18 +737,64 @@ public class DefaultAssocIncCompleter implements IIncarnationCompleter<ASTAssoci
       throw new CompletionException(
           "Something went wrong when identifying missing association incarnations.");
     }
-    return false;
-  }
-
-  protected void setIntersectCardinality(Boolean b) {
-    this.intersectCardinality = b;
-  }
-
-  protected Boolean getIntersectCardinality() {
-    return intersectCardinality;
+    return Optional.empty();
   }
 
   public CompAssocIncStrategy getCompAssocIncStrategy() {
-    return this.compAssocIncStrategy;
+    return compAssocIncStrategy;
+  }
+
+  /**
+   * A matching direction indicates whether two association match in the same direction or in the
+   * reverse direction.
+   * This is required as associations in CD4A are defined in a textual syntax where the same
+   * association between two classes 'A' and 'B' can be defined in two different ways:
+   * <ul>
+   *   <li>either: <code>A -> B</code></li>
+   *   <li>or: <code>B <- A</code></li>
+   * </ul>
+   * Although, both have the same semantic meaning, they are represented in different ways in the AST.
+   * In the first case, 'A' is on the left side and 'B' is on the right side of the association. In
+   * the second case, 'B' is on the left side and 'A' is on the right side of the association.
+   */
+  enum AssocMatchDirection {
+    /**
+     * The association matches in the same direction as the reference association.
+     * i.e. left-left, right-right
+     */
+    SAME_DIRECTION,
+
+    /**
+     * The association matches in the reverse direction as the reference association.
+     * i.e. left-right, right-left
+     */
+    REVERSE_DIRECTION;
+  }
+
+  /**
+   * Represents an association that matches another association in a certain direction.
+   * This is useful when we want to keep the information about the direction of the match for later
+   * processing.
+   */
+  static class AssociationMatch {
+
+    /** The matching association. */
+    private final ASTCDAssociation association;
+
+    /** The direction of the match. */
+    private final AssocMatchDirection matchDirection;
+
+    public AssociationMatch(ASTCDAssociation association, AssocMatchDirection matchDirection) {
+      this.association = association;
+      this.matchDirection = matchDirection;
+    }
+
+    public ASTCDAssociation getAssociation() {
+      return association;
+    }
+
+    public AssocMatchDirection getMatchDirection() {
+      return matchDirection;
+    }
   }
 }
