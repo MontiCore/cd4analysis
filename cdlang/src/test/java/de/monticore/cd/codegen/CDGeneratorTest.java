@@ -38,6 +38,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   @Test
   public void testOutput() {
     compUnit = parse("cd/codegen/GenAuction.cd");
+    prepareST(compUnit);
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
     this.glex.bindHookPoint(
@@ -52,6 +53,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   @Test
   public void testOutput_WithMethods() {
     compUnit = parse("cd/codegen/GenAuction.cd");
+    prepareST(compUnit);
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
     this.glex.bindHookPoint(
@@ -94,6 +96,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   @Test
   public void testEnum() {
     compUnit = parse("cd/codegen/GenAuction_WithEnum.cd");
+    prepareST(compUnit);
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
 

@@ -1,2 +1,4 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-// empty body
+<#if ast.isPresentSymbol() && !ast.getSymbol().getType().isVoidType()>
+  throw new UnsupportedOperationException();
+</#if>
