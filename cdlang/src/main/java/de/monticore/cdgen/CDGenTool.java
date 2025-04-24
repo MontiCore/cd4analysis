@@ -187,7 +187,6 @@ public class CDGenTool extends CDGeneratorTool {
           // Prepare
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
           glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
-          glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
           glex.setGlobalValue("cdGenService", new CDGenService());
           glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
 

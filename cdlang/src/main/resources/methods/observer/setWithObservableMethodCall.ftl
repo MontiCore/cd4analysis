@@ -1,9 +1,8 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("attribute","oldValueName")}
-<#assign MCCollectionSymTypeRelations = glex.getGlobalVar("mcCollectionSymTypeRelations")>
-
+<#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 ${attribute.getMCType().printType()} ${oldValueName} = this.${attribute.getName()};
-<#if MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())>
+<#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())>
 this.${attribute.getName()} = Optional.ofNullable(${attribute.getName()});
 <#else>
 this.${attribute.getName()} = ${attribute.getName()};

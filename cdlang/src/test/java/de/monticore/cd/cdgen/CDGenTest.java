@@ -6,6 +6,7 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.*;
+import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -109,8 +110,8 @@ public class CDGenTest {
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
-    glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
     glex.setGlobalValue("cdGenService", new CDGenService());
+    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
     GeneratorSetup generatorSetup = new GeneratorSetup();
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/outtest"));

@@ -2,7 +2,7 @@
 ${tc.signature("originalClazzName", "attributeList","hasSetterList")}
 
 <#assign MCTypeFacade = glex.getGlobalVar("mcTypeFacade")>
-<#assign MCCollectionSymTypeRelations = glex.getGlobalVar("mcCollectionSymTypeRelations")>
+<#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 
 var v = new ${originalClazzName}();
 
@@ -15,7 +15,7 @@ v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
   </#if>
 <#------------------------------------>
 <#else>
-  <#if MCCollectionSymTypeRelations.isList(attributeList[i].getSymbol().getType()) || MCCollectionSymTypeRelations.isSet(attributeList[i].getSymbol().getType())>
+  <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attributeList[i].getMCType()) || CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attributeList[i].getMCType())>
     <#if hasSetterList[i]>
 v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()});
       <#else>
@@ -23,7 +23,7 @@ v.${attributeList[i].getName()} = this.${attributeList[i].getName()};
     </#if>
 <#------------------------------------>
   <#else>
-    <#if MCCollectionSymTypeRelations.isOptional(attributeList[i].getSymbol().getType())>
+    <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attributeList[i].getMCType())>
        <#if hasSetterList[i]>
 if(this.${attributeList[i].getName()} != null && this.${attributeList[i].getName()}.isPresent()){
   v.set${attributeList[i].getName()?cap_first}(this.${attributeList[i].getName()}.get());

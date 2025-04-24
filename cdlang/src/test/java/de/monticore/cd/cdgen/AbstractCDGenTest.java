@@ -71,7 +71,6 @@ public class AbstractCDGenTest {
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
-    glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
     glex.setGlobalValue("cdGenService", new CDGenService());
     glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
     GeneratorSetup generatorSetup = new GeneratorSetup();

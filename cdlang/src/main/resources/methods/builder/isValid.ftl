@@ -3,13 +3,12 @@ ${tc.signature("attributes","staticErrorCode")}
 
 <#list attributes as attribute>
 <#assign errorCode = staticErrorCode + cdGenService.getGeneratedErrorCode(attribute.getName()+attribute.getMCType().printType())>
-<#assign MCCollectionSymTypeRelations = glex.getGlobalVar("mcCollectionSymTypeRelations")>
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 
 <#-- Check if the attribute is not a list, set or optional as they have isAbsent methods-->
-<#if (!(MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType()) ||
-     MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())))>
+<#if (!(CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute) ||
+     CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute) ||
+     CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute)))>
 
   <#-- as primitive types cannot be check for == null we need to ignore them -->
   <#if (!(CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>
