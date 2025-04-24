@@ -17,7 +17,9 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 
 import java.util.*;
@@ -142,9 +144,29 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.B");
     //TODO until here
 
-    if(!originalClass.getCDAttributeList().isEmpty()) {
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
+    for(ASTCDAttribute attribute: originalClass.getCDAttributeList()){
+      if(attribute.getMCType() instanceof ASTMCSetType){
+          ASTMCSetType setType = (ASTMCSetType) attribute.getMCType();
+          setType.getMCTypeArgument().printType();
+        ((ASTMCSetType) attribute.getMCType()).getMCTypeArgument();
+
+
+
+        CD4AnalysisTypeDispatcher CD4AnalysisTypeDispatcher = new CD4AnalysisTypeDispatcher();
+
+        CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType());
+        CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType());
+        CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute.getMCType());
+        String s = setType.printType();
+
+
+
+      }
     }
+
+
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
+
   }
 
 

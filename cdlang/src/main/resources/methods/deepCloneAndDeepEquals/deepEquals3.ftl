@@ -17,9 +17,9 @@ ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
 <#list attributeList as attr>
 <#assign resultBooleanName = "result" + attr.getName()?cap_first + attr.getMCType().printType()?cap_first?replace(".","")?replace("<","")?replace(">","")>
 boolean ${resultBooleanName} = true;
-<#assign firstObjectName = "this">
-<#assign secondObjectName = "castO">
-  ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr, PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
+<#assign firstObjectName = "this." + attr.getName()>
+<#assign secondObjectName = "castO." + attr.getName()>
+  ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr.getMCType(),attr.getName(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
 if(! ${resultBooleanName}){
   return false;
 }
