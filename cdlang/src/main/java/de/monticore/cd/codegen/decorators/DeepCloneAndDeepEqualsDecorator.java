@@ -137,14 +137,12 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     decoratedClass.addCDMember(deepEquals3Method);
 
-    //TODO fix find all classes before
+    //collect all classes from the class diagram
     List<String> classesFromClassdiagramAsString = new ArrayList<>();
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-    classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.OtherC");
-    classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.B");
-    //TODO until here
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }
 

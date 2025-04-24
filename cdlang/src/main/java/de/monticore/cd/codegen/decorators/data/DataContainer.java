@@ -15,7 +15,7 @@ import java.util.Set;
  * A Singleton class that acts as a container to collect and hold data.
  * It ensures that only one instance of this class exists globally.
  */
-public class DataContainer {
+public class DataContainer implements CDBasisVisitor2 {
   private final Set<ASTCDClass> classes = new HashSet<>();
   private final Set<ASTCDInterface> interfaces = new HashSet<>();
   private final Set<ASTCDEnum> enums = new HashSet<>();

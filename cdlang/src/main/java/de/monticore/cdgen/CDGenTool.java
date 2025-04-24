@@ -192,8 +192,9 @@ public class CDGenTool extends CDGeneratorTool {
 
           // Pre-Decorate: collect information about the model
           DataContainer.getInstance().init(ast);
-
-
+          CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
+          t2.add4CDBasis(DataContainer.getInstance());
+          ast.accept(t2);
 
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
