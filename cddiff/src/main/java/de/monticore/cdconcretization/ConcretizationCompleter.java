@@ -2,17 +2,20 @@ package de.monticore.cdconcretization;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdconcretization.association.DefaultAssocDetailsCompleter;
+import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
-import de.monticore.cdconcretization.association.IAssociationDetailsCompleter;
-import de.monticore.cdconcretization.attribute.AbstractAttributeCompleter;
-import de.monticore.cdconcretization.attribute.BaseAttributeCompleter;
-import de.monticore.cdconcretization.attribute.IAttributeCompleter;
+import de.monticore.cdconcretization.association.IAssociationCompleter;
+import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.BaseTypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.ITypeAttributeCompleter;
 import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
+import de.monticore.cdconcretization.cd.type.AbstractCDTypeCompleter;
+import de.monticore.cdconcretization.cd.type.BaseCDTypeCompleter;
+import de.monticore.cdconcretization.cd.type.ICDTypeCompleter;
+import de.monticore.cdconcretization.cd.type.NameStereotypeCDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
-import de.monticore.cdconcretization.typedetails.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.association.*;
@@ -56,25 +59,25 @@ public class ConcretizationCompleter {
      * that are responsible for completing the different aspects of the CD. These completers are then used
      * to perform the actual concretization.
      */
-    CompletionContext context =
+    CDCompletionContext context =
         new DefaultCompletionContext(concreteCD, referenceCD, mapping, conformanceParams);
 
-    ITypeCompleter typeCompleter =
-        new ChainBuilder<AbstractTypeCompleter>()
-            .add(new BaseTypeCompleter())
-            .add(new TypeNameStereotypeCompleter())
+    ICDTypeCompleter typeCompleter =
+        new ChainBuilder<AbstractCDTypeCompleter>()
+            .add(new BaseCDTypeCompleter())
+            .add(new NameStereotypeCDTypeCompleter())
             // TODO add forEach support here
             .build();
 
-    IAttributeCompleter attributeCompleter =
-        new ChainBuilder<AbstractAttributeCompleter>()
-            .add(new BaseAttributeCompleter())
+    ITypeAttributeCompleter attributeCompleter =
+        new ChainBuilder<AbstractTypeAttributeCompleter>()
+            .add(new BaseTypeAttributeCompleter())
             // TODO add name stereotype support here
             // TODO add forEach stereotype support here
             .build();
 
-    ITypeDetailsCompleter typeDetailsCompleter =
-        new ChainBuilder<AbstractTypeDetailsCompleter>()
+    ITypeCompleter typeDetailsCompleter =
+        new ChainBuilder<AbstractTypeCompleter>()
             .add(new ClassModifierCompleter())
             .add(new TypeAttributesCompleter(attributeCompleter))
             // TODO add method completer here
@@ -82,32 +85,38 @@ public class ConcretizationCompleter {
             .build();
 
     IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
-    IAssociationDetailsCompleter assocDetailsCompleter =
-        new DefaultAssocDetailsCompleter(concreteCD, assocSideCompleter);
+    IAssociationCompleter assocDetailsCompleter =
+        new DefaultAssocCompleter(concreteCD, assocSideCompleter);
 
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
+
         new ChainBuilder<AbstractCDCompleter>()
             .add(new ImportsCompleter())
             .add(new MissingTypesCDCompleter(typeCompleter))
             .add(new InheritanceCompleter())
-            .add(new TypeDetailsCDCompleter(typeDetailsCompleter))
-            .add(new ExistingAssociationsCDCompleter(assocDetailsCompleter))
-            .add(new MissingAssociationsCDCompleter(assocDetailsCompleter))
+            .add(new TypeDetailsCDCompleter( typeDetailsCompleter))
+            .add(
+                new ExistingAssociationsCDCompleter(
+
+                    assocDetailsCompleter))
+            .add(
+                new MissingAssociationsCDCompleter(
+
+                    assocDetailsCompleter))
             .add(
                 new ConformanceCheckCompletionStep(
                     mapping, "The association completion result is not conform"));
-
-    // add configurable,optional steps
+            // add configurable,optional steps
     if (removeRedundantAttributes) {
-      completerChainBuilder.add(new RemoveRedundantAttributesStep());
+      completerChainBuilder.add(new RemoveRedundantAttributesCDCompleter());
     }
-    if (reorderElements) {
-      completerChainBuilder.add(new ReorderElementsCompletionStep());
+            if (reorderElements) {
+      completerChainBuilder.add(new ReorderElementsCompletionCDCompleter());
     }
     if (checkConformance) {
       completerChainBuilder.add(
           new ConformanceCheckCompletionStep(mapping, "Final conformance check failed."));
-    }
+            }
 
     // perform the actual concretization
     completerChainBuilder.build().complete(concreteCD, referenceCD, context);
@@ -116,7 +125,7 @@ public class ConcretizationCompleter {
   /***
    * Provides default configurations for the matching strategies used in the concretization process.
    */
-  static class DefaultCompletionContext implements CompletionContext {
+  static class DefaultCompletionContext implements CDCompletionContext {
     private final ASTCDCompilationUnit concreteCD;
     private final ASTCDCompilationUnit referenceCD;
     private final String mapping;
@@ -151,6 +160,26 @@ public class ConcretizationCompleter {
         assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       }
 
+      // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference type
+      // themselves or have a subclass which is an incarnation of the reference type.
+      // This strategy is only used when matching associations. If we want to allow the concrete CD to
+      // define associations in superclasses of the actual type incarnation, we have to pass this type
+      // matching strategy to the association matching strategies. This allows supertypes to 'act' as
+      // incarnation of the reference type in context of a specific association.
+      // For example in the following concrete CD, A is a valid incarnation of A in the reference CD
+      // because A is a subclass of X, which has an association towards B.
+      //
+      // classdiagram Concrete {
+      //   class X;
+      //   class A extends X;
+      //   X -> B;
+      // }
+      //
+      // classdiagram Reference {
+      //   class A;
+      //   class B;
+      //   A -> B;
+      // }
       typeIncStrategyMatchingSubTypes = new CompTypeIncStrategy(referenceCD, mapping);
       typeIncStrategyMatchingSubTypes.addIncStrategy(typeIncStrategy);
       if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {

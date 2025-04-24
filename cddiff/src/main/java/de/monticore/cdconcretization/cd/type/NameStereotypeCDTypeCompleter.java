@@ -1,19 +1,19 @@
-package de.monticore.cdconcretization.type;
+package de.monticore.cdconcretization.cd.type;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.CompletionContext;
+import de.monticore.cdconcretization.cd.CDCompletionContext;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.Optional;
 
 // TODO WIP: Just for demonstration of new architecture
-public class TypeNameStereotypeCompleter extends AbstractTypeCompleter {
+public class NameStereotypeCDTypeCompleter extends AbstractCDTypeCompleter {
 
   public static final String NAME_STEREOTYPE = "name";
 
   @Override
-  public void completeType(
-      ASTCDDefinition concreteCD, ASTCDType referenceType, CompletionContext context) {
+  public void completeCDForType(
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context) {
     // only process type if the stereotype is present
     Optional<String> stereotypeValue = getNameStereotypeValue(referenceType);
     if (stereotypeValue.isPresent()) {

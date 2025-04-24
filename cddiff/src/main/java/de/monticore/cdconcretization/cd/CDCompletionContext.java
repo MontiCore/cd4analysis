@@ -1,4 +1,4 @@
-package de.monticore.cdconcretization;
+package de.monticore.cdconcretization.cd;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -12,7 +12,7 @@ import java.util.Set;
  * concrete and reference CD, the mapping name and the matching strategies for the incarnation
  * mapping.
  */
-public interface CompletionContext {
+public interface CDCompletionContext {
 
   ASTCDCompilationUnit getConcreteCD();
 

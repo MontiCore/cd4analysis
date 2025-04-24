@@ -1,55 +1,75 @@
 package de.monticore.cdconcretization.type;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.CompletionContext;
+import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.util.AbstractChainable;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
-public abstract class AbstractTypeCompleter extends AbstractChainable<AbstractTypeCompleter>
-    implements ITypeCompleter {
+public abstract class AbstractTypeCompleter
+    extends AbstractChainable<AbstractTypeCompleter> implements ITypeCompleter {
 
   @Override
   public void completeType(
-      ASTCDDefinition concreteCD, ASTCDType referenceType, CompletionContext context) {
-    if (referenceType instanceof ASTCDClass) {
-      completeType(concreteCD, (ASTCDClass) referenceType, context);
-    } else if (referenceType instanceof ASTCDInterface) {
-      completeType(concreteCD, (ASTCDInterface) referenceType, context);
-    } else if (referenceType instanceof ASTCDEnum) {
-      completeType(concreteCD, (ASTCDEnum) referenceType, context);
+      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context)
+      throws CompletionException {
+    if (concreteType instanceof ASTCDClass) {
+      if (referenceType instanceof ASTCDClass) {
+        completeClassDetails((ASTCDClass) concreteType, (ASTCDClass) referenceType, context);
+      } else {
+        // TODO better error message
+        throw new CompletionException("A class got matched to a different type.");
+      }
+    } else if (concreteType instanceof ASTCDInterface) {
+      if (referenceType instanceof ASTCDInterface) {
+        completeInterfaceDetails(
+            (ASTCDInterface) concreteType, (ASTCDInterface) referenceType, context);
+      } else {
+        // TODO better error message
+        throw new CompletionException("An interface got matched to a different type.");
+      }
+    } else if (concreteType instanceof ASTCDEnum) {
+      if (referenceType instanceof ASTCDEnum) {
+        completeEnumDetails((ASTCDEnum) concreteType, (ASTCDEnum) referenceType, context);
+      } else {
+        // TODO better error message
+        throw new CompletionException("An enum got matched to a different type.");
+      }
     } else {
-      next(concreteCD, referenceType, context);
+      next(concreteType, referenceType, context);
     }
   }
 
-  protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDClass referenceType, CompletionContext context) {
-    next(concreteCD, referenceType, context);
+  protected void completeClassDetails(
+      ASTCDClass concreteType, ASTCDClass referenceType, TypeCompletionContext context)
+      throws CompletionException {
+    next(concreteType, referenceType, context);
   }
 
-  protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CompletionContext context) {
-    next(concreteCD, referenceType, context);
+  protected void completeInterfaceDetails(
+      ASTCDInterface concreteType, ASTCDInterface referenceType, TypeCompletionContext context)
+      throws CompletionException {
+    next(concreteType, referenceType, context);
   }
 
-  protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CompletionContext context) {
-    next(concreteCD, referenceType, context);
+  protected void completeEnumDetails(
+      ASTCDEnum concreteType, ASTCDEnum referenceType, TypeCompletionContext context)
+      throws CompletionException {
+    next(concreteType, referenceType, context);
   }
 
   /**
    * Calls the next completer in the chain if it is present.
    *
-   * @param concreteCD
+   * @param concreteType
    * @param referenceType
    */
   protected void next(
-      ASTCDDefinition concreteCD, ASTCDType referenceType, CompletionContext context) {
+      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context)
+      throws CompletionException {
     if (hasNext()) {
-      next.completeType(concreteCD, referenceType, context);
+      next.completeType(concreteType, referenceType, context);
     }
   }
 }

@@ -1,17 +1,17 @@
-package de.monticore.cdconcretization.type;
+package de.monticore.cdconcretization.cd.type;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdconcretization.CompletionContext;
+import de.monticore.cdconcretization.cd.CDCompletionContext;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 /** Completes the types of a CD by adding missing types from the reference CD. */
-public class BaseTypeCompleter extends AbstractTypeCompleter {
+public class BaseCDTypeCompleter extends AbstractCDTypeCompleter {
 
   @Override
   protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDClass referenceType, CompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDClass referenceType, CDCompletionContext context) {
     if (concreteCD.getCDClassesList().stream()
         .noneMatch(cClass -> context.getTypeIncStrategy().isMatched(cClass, referenceType))) {
       addTypeIncarnation(concreteCD, referenceType);
@@ -21,7 +21,7 @@ public class BaseTypeCompleter extends AbstractTypeCompleter {
 
   @Override
   protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CDCompletionContext context) {
     if (concreteCD.getCDInterfacesList().stream()
         .noneMatch(
             cInterface -> context.getTypeIncStrategy().isMatched(cInterface, referenceType))) {
@@ -32,7 +32,7 @@ public class BaseTypeCompleter extends AbstractTypeCompleter {
 
   @Override
   protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CompletionContext context) {
+      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CDCompletionContext context) {
     if (concreteCD.getCDEnumsList().stream()
         .noneMatch(cEnum -> context.getTypeIncStrategy().isMatched(cEnum, referenceType))) {
       addTypeIncarnation(concreteCD, referenceType);

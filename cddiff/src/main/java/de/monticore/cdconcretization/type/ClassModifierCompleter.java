@@ -1,10 +1,9 @@
-package de.monticore.cdconcretization.typedetails;
+package de.monticore.cdconcretization.type;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdconcretization.CompletionException;
-import de.monticore.cdconcretization.attribute.TypeCompletionContext;
 
-public class ClassModifierCompleter extends AbstractTypeDetailsCompleter {
+public class ClassModifierCompleter extends AbstractTypeCompleter {
 
   @Override
   protected void completeClassDetails(

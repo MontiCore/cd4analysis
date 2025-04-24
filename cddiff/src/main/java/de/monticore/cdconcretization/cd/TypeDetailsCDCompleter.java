@@ -4,11 +4,9 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.AbstractCDCompleter;
-import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
-import de.monticore.cdconcretization.attribute.TypeCompletionContext;
-import de.monticore.cdconcretization.typedetails.ITypeDetailsCompleter;
+import de.monticore.cdconcretization.type.TypeCompletionContext;
+import de.monticore.cdconcretization.type.ITypeCompleter;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
 import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
@@ -18,39 +16,42 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.Set;
 
+/**
+ * Completes the details of types (attributes, methods, etc.) in a CD.
+ */
 public class TypeDetailsCDCompleter extends AbstractCDCompleter {
 
-  private final ITypeDetailsCompleter typeDetailsCompleter;
+  private final ITypeCompleter typeDetailsCompleter;
 
-  public TypeDetailsCDCompleter(ITypeDetailsCompleter typeDetailsCompleter) {
+  public TypeDetailsCDCompleter(
+      ITypeCompleter typeDetailsCompleter) {
     this.typeDetailsCompleter = typeDetailsCompleter;
   }
 
   @Override
   public void complete(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CompletionContext context)
-      throws CompletionException {
-    MatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CDCompletionContext context)
+      throws CompletionException {MatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
     // complete member incarnations
     for (ASTCDClass cClass : concreteCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
         TypeCompletionContext typeCompletionContext =
             new DefaultTypeCompletionContext(context, cClass, rType);
-        typeDetailsCompleter.completeTypeDetails(cClass, rType, typeCompletionContext);
+        typeDetailsCompleter.completeType(cClass, rType, typeCompletionContext);
       }
     }
     for (ASTCDInterface cInterface : concreteCD.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cInterface)) {
         TypeCompletionContext typeCompletionContext =
             new DefaultTypeCompletionContext(context, cInterface, rType);
-        typeDetailsCompleter.completeTypeDetails(cInterface, rType, typeCompletionContext);
+        typeDetailsCompleter.completeType(cInterface, rType, typeCompletionContext);
       }
     }
     for (ASTCDEnum cEnum : concreteCD.getCDDefinition().getCDEnumsList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cEnum)) {
         TypeCompletionContext typeCompletionContext =
             new DefaultTypeCompletionContext(context, cEnum, rType);
-        typeDetailsCompleter.completeTypeDetails(cEnum, rType, typeCompletionContext);
+        typeDetailsCompleter.completeType(cEnum, rType, typeCompletionContext);
       }
     }
     super.complete(concreteCD, referenceCD, context);
@@ -58,7 +59,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
 
   static class DefaultTypeCompletionContext implements TypeCompletionContext {
 
-    private final CompletionContext parentContext;
+    private final CDCompletionContext parentContext;
 
     private final ASTCDType concreteType;
 
@@ -67,7 +68,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     private final CompAttributeChecker attributeIncStrategy;
 
     DefaultTypeCompletionContext(
-        CompletionContext parentContext, ASTCDType concreteType, ASTCDType referenceType) {
+            CDCompletionContext parentContext, ASTCDType concreteType, ASTCDType referenceType) {
       this.parentContext = parentContext;
       this.concreteType = concreteType;
       this.referenceType = referenceType;

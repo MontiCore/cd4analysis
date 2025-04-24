@@ -10,20 +10,20 @@ import de.monticore.cddiff.CDDiffUtil;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DefaultAssocDetailsCompleter implements IAssociationDetailsCompleter {
+public class DefaultAssocCompleter implements IAssociationCompleter {
 
   private final ASTCDCompilationUnit ccd;
 
   private final IAssocSideCompleter assocSideCompleter;
 
-  public DefaultAssocDetailsCompleter(
+  public DefaultAssocCompleter(
       ASTCDCompilationUnit ccd, IAssocSideCompleter assocSideCompleter) {
     this.ccd = ccd;
     this.assocSideCompleter = assocSideCompleter;
   }
 
   @Override
-  public void completeAssociationDetails(
+  public void completeAssociation(
       ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, AssocMatchDirection matchDirection)
       throws CompletionException {
     completeAssociationName(cAssoc, rAssoc);

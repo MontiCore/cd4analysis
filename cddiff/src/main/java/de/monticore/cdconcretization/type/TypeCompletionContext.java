@@ -1,11 +1,11 @@
-package de.monticore.cdconcretization.attribute;
+package de.monticore.cdconcretization.type;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.CompletionContext;
+import de.monticore.cdconcretization.cd.CDCompletionContext;
 import de.monticore.cdmatcher.MatchingStrategy;
 
-public interface TypeCompletionContext extends CompletionContext {
+public interface TypeCompletionContext extends CDCompletionContext {
 
   ASTCDType getConcreteType();
 

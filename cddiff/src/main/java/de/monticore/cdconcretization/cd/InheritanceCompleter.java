@@ -4,8 +4,6 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.AbstractCDCompleter;
-import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
@@ -21,7 +19,7 @@ public class InheritanceCompleter extends AbstractCDCompleter {
 
   @Override
   public void complete(
-      ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD, CompletionContext context)
+      ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD, CDCompletionContext context)
       throws CompletionException {
     CDDiffUtil.refreshSymbolTable(srcCD);
     CDDiffUtil.refreshSymbolTable(tgtCD);

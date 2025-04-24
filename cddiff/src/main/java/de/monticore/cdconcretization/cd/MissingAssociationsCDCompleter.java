@@ -6,13 +6,11 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.AbstractCDCompleter;
-import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.association.AssocMatchDirection;
 import de.monticore.cdconcretization.association.AssociationMatch;
-import de.monticore.cdconcretization.association.IAssociationDetailsCompleter;
+import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
 import de.monticore.cdmatcher.MatchingStrategy;
@@ -30,17 +28,18 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
 
   private static final String LOG_NAME = MissingAssociationsCDCompleter.class.getName();
 
-  private final IAssociationDetailsCompleter assocDetailsCompleter;
+  private final IAssociationCompleter assocDetailsCompleter;
 
   private boolean greedyMatcherEnabled = true; // TODO remove! only for testing
 
-  public MissingAssociationsCDCompleter(IAssociationDetailsCompleter assocDetailsCompleter) {
+  public MissingAssociationsCDCompleter(
+      IAssociationCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
 
   @Override
   public void complete(
-      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CompletionContext context)
+      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
       throws CompletionException {
     Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);
@@ -224,7 +223,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
           // instead of handleAssociation(...) we call completeAssociation(...) here because we
           // already
           // know in what direction the match is
-          assocDetailsCompleter.completeAssociationDetails(
+          assocDetailsCompleter.completeAssociation(
               match.get().getAssociation(), rAssoc, match.get().getMatchDirection());
         }
       }
@@ -373,7 +372,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
                         assoc
                             .getLeftQualifiedName()
                             .getQName())) // TODO why contains?? - if because CD names can differ ->
-    // remove first part
+                                          // remove first part
     // additionally, check if any supertype of the opposite types matches the right side of
     // the association
     ) {
@@ -389,7 +388,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
                           assoc
                               .getRightQualifiedName()
                               .getQName()))) { // TODO why contains?? - if because CD names can
-        // differ -> remove first part
+                                               // differ -> remove first part
         return Optional.of(
             leftToRight
                 ? AssocMatchDirection.SAME_DIRECTION

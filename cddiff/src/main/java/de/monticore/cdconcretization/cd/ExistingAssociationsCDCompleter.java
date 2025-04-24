@@ -4,12 +4,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.AbstractCDCompleter;
-import de.monticore.cdconcretization.CompletionContext;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.association.AssocMatchDirection;
-import de.monticore.cdconcretization.association.IAssociationDetailsCompleter;
+import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
@@ -19,15 +17,18 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
 
   private static final String LOG_NAME = ExistingAssociationsCDCompleter.class.getName();
 
-  private final IAssociationDetailsCompleter assocDetailsCompleter;
+  private final IAssociationCompleter assocDetailsCompleter;
 
-  public ExistingAssociationsCDCompleter(IAssociationDetailsCompleter assocDetailsCompleter) {
+
+
+  public ExistingAssociationsCDCompleter(
+      IAssociationCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
 
   @Override
   public void complete(
-      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CompletionContext context)
+      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
       throws CompletionException {
     // First: complete the incarnations, so add stuff to the underspecified incarnation
     // or do nothing to the over-specified incarnation
@@ -39,7 +40,8 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
         // Check if the concrete association is an incarnation of the reference association
         if (context.getAssociationIncStrategy().isMatched(cAssoc, rAssoc)) {
           Log.debug("Found match for assoc: " + CD4CodeMill.prettyPrint(cAssoc, false), LOG_NAME);
-          handleExistingAssociationMatch(cAssoc, rAssoc, context);
+          AssocMatchDirection matchDirection = determineMatchDirection(cAssoc, rAssoc, context);
+          assocDetailsCompleter.completeAssociation(cAssoc, rAssoc, matchDirection);
         }
       }
     }
@@ -47,12 +49,19 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     super.complete(ccd, rcd, context);
   }
 
-  private void handleExistingAssociationMatch(
-      ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, CompletionContext context)
-      throws CompletionException {
-    ASTCDCompilationUnit ccd = context.getConcreteCD();
+  /**
+   * Checks in what direction the concrete association matches the reference association.
+   * If the direction cannot be determined, an exception is thrown.
+   *
+   * @param cAssoc the concrete association
+   * @param rAssoc the reference association
+   * @return
+   * @throws CompletionException if the match direction cannot be determined.
+   */
+  private AssocMatchDirection determineMatchDirection(
+          ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, CDCompletionContext context)
+      throws CompletionException {ASTCDCompilationUnit ccd = context.getConcreteCD();
     ASTCDCompilationUnit rcd = context.getReferenceCD();
-
     // Extract the left and right types of the concrete association
     ASTCDType cLeftType = ConcretizationHelper.getAssocLeftType(ccd, cAssoc);
     ASTCDType cRightType = ConcretizationHelper.getAssocRightType(ccd, cAssoc);
@@ -127,8 +136,6 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
       }
     }
 
-    AssocMatchDirection matchDirection =
-        match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
-    assocDetailsCompleter.completeAssociationDetails(cAssoc, rAssoc, matchDirection);
+    return match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
   }
 }

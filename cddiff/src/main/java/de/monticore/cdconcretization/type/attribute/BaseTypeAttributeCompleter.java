@@ -1,18 +1,20 @@
-package de.monticore.cdconcretization.attribute;
+package de.monticore.cdconcretization.type.attribute;
 
 import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.type.TypeCompletionContext;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Completes a concrete type by adding the given reference attribute if it is not already present.
  */
-public class BaseAttributeCompleter extends AbstractAttributeCompleter {
+public class BaseTypeAttributeCompleter extends AbstractTypeAttributeCompleter {
 
   @Override
-  public void completeAttribute(
+  public void completeTypeForAttribute(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
     // 1. check if the concrete type already has a matching attribute (also in superclasses)
     List<ASTCDAttribute> allConcreteAttributesInHierarchy =
