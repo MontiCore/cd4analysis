@@ -19,7 +19,7 @@ ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
 boolean ${resultBooleanName} = true;
 <#assign firstObjectName = "this." + attr.getName()>
 <#assign secondObjectName = "castO." + attr.getName()>
-  ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, attr.getMCType(),attr.getName(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
+  ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, attr.getMCType(),attr.getName(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
 if(! ${resultBooleanName}){
   return false;
 }

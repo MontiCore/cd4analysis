@@ -1,12 +1,10 @@
 package deepCopyAnddeepEquals;
 
 import TestDeepCloneAndDeepEquals.OtherC;
-import TestObserver.IOtherCObservable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.math.BigInteger;
 
 public class DeepCloneAndDeepEqualsDecoratorTest {
 
@@ -15,8 +13,6 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     testMethodExistence();
     Assertions.assertTrue(true);
     //TODO
-
-
   }
 
 

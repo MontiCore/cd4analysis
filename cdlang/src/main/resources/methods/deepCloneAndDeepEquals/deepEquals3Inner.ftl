@@ -22,7 +22,7 @@ if(${firstObjectName}.size() != ${secondObjectName}.size()){
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
     while(${secondIteratorName}.hasNext()){
       ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-      ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
       if(${matchFoundName}){
         break;
       }
@@ -49,7 +49,7 @@ if(forceSameOrder){
     ${innerType.printType()} ${it1NextName} = firstIteratorName.next();
     ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
     $boolean ${isEqual} = true;
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
     if(!${isEqual}){
       return false;
     }
@@ -67,7 +67,7 @@ if(forceSameOrder){
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
     while(${secondIteratorName}.hasNext()){
       ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-      ${includeArgs("methods.deepCloneAndDeepEquals.deepEqualsInner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
       if(${matchFoundName}){
         break;
       }
