@@ -143,30 +143,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.OtherC");
     classesFromClassdiagramAsString.add("TestDeepCloneAndDeepEquals.B");
     //TODO until here
-
-    for(ASTCDAttribute attribute: originalClass.getCDAttributeList()){
-      if(attribute.getMCType() instanceof ASTMCSetType){
-          ASTMCSetType setType = (ASTMCSetType) attribute.getMCType();
-          setType.getMCTypeArgument().printType();
-        ((ASTMCSetType) attribute.getMCType()).getMCTypeArgument();
-
-
-
-        CD4AnalysisTypeDispatcher CD4AnalysisTypeDispatcher = new CD4AnalysisTypeDispatcher();
-
-        CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType());
-        CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType());
-        CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute.getMCType());
-        String s = setType.printType();
-
-
-
-      }
-    }
-
-
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
-
   }
 
 

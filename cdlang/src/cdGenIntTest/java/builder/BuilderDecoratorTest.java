@@ -404,6 +404,7 @@ public class BuilderDecoratorTest {
     Assertions.assertFalse(unsafeBuildObjWithoutPojoSettersOptBNotSet.isMyBool());
     Assertions.assertEquals(1, unsafeBuildObjWithoutPojoSettersOptBNotSet.getMyInt());
   }
+
   public void checkClassAndMethodExistence() throws Exception {
     //constructor methods
     Constructor<TestBuilderWithSetterBuilder> constructorWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredConstructor();
