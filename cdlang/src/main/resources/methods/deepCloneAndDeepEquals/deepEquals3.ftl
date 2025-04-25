@@ -19,6 +19,7 @@ ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
 boolean ${resultBooleanName} = true;
 <#assign firstObjectName = "this." + attr.getName()>
 <#assign secondObjectName = "castO." + attr.getName()>
+  <#-- we call the deepEquals3Inner template here which can be called repulsively when the type is a List or a Set -->
   ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, attr.getMCType(),attr.getName(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
 if(! ${resultBooleanName}){
   return false;

@@ -5,6 +5,8 @@ import de.monticore.cd.codegen.decorators.data.DataContainer;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeArtifactScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -14,6 +16,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
@@ -118,11 +121,16 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     decoratedClass.addCDMember(deepEquals3Method);
 
+    //TODO check which method should be used
     //collect all classes from the class diagram
     List<String> classesFromClassdiagramAsString = new ArrayList<>();
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+
+    CD4CodeArtifactScope artifactScope = (CD4CodeArtifactScope) CD4CodeMill.globalScope().getSubScopes().get(0);
+    List<String> classesAsString = artifactScope.getCDTypeSymbols().entries().stream().map(Map.Entry::getValue).map(TypeSymbolTOP::getFullName).collect(Collectors.toList());
+
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }
