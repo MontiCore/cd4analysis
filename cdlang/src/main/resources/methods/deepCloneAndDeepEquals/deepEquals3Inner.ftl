@@ -10,11 +10,11 @@ ${tc.signature("originalClazzType","mCType","typeName", "PojoClazzesAsStringList
 if(${firstObjectName}.size() != ${secondObjectName}.size()){
   ${resultBooleanName} = false;
 } else {
-  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")>
-  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")>
-  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")>
-  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")>
-  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")>
+  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
   java.util.Iterator<${innerType.printType()}> firstIteratorName = ${firstObjectName}.iterator();
   while(firstIteratorName.hasNext()){
     ${innerType.printType()} ${it1NextName} = firstIteratorName.next();
@@ -38,11 +38,11 @@ if(${firstObjectName}.size() != ${secondObjectName}.size()){
   ${resultBooleanName} = false;
 } else {
 if(forceSameOrder){
-  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")>
-  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")>
-  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")>
-  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")>
-  <#assign isEqual = "isEqual" + mCType.hashCode()?replace(".","")>
+  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign isEqual = "isEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
   while(firstIteratorName.hasNext()){
     java.util.Iterator<${innerType.printType()}> firstIteratorName = ${firstObjectName}.iterator();
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
@@ -55,11 +55,11 @@ if(forceSameOrder){
     }
   }
 } else {
-  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")>
-  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")>
-  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")>
-  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")>
-  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")>
+  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
   java.util.Iterator<${innerType.printType()}> firstIteratorName = ${firstObjectName}.iterator();
   while(firstIteratorName.hasNext()){
     ${innerType.printType()} ${it1NextName} = firstIteratorName.next();

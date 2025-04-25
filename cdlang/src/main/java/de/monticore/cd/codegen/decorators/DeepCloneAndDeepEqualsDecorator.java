@@ -32,31 +32,14 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * Decorator that adds deepCopy and deepEquals methods to artifacts specified in the class diagram.
  */
 public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
-  boolean hasInitialized = false;
-  List<Class<? extends IDecorator<?>>> classesFromClassdiagram = new ArrayList<>();
-  List<String> classesFromClassdiagramAsString = new ArrayList<>();
 
   @Override
   public void visit(ASTCDClass node) {
-    if (!hasInitialized) {
-      init();
-    }
-    // As all classes need to for the recursive algorithm to functions
-    //if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
     ASTCDClass decClazz = decoratorData.getAsDecorated(node);
     addDeepCloneMethod(node, decClazz);
     addDeepEquals1Method(node, decClazz);
     addDeepEquals2Method(node, decClazz);
     addDeepEqualsMethod3(node, decClazz);
-
-  }
-
-  //TODO: remove this method
-  //this should probably be done in a previous step
-  private void init(){
-    hasInitialized = true;
-
-
   }
 
   private void addDeepCloneMethod(ASTCDClass originalClass, ASTCDClass decoratedClass) {
@@ -90,8 +73,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals1Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals1")));
   }
-
-
 
   /**
    * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean)
@@ -154,9 +135,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
   @Override
   public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
-    //TODO this decorator should run as the very first as it depends on no changed data
     return super.getMustRunAfter();
   }
-
-
 }
