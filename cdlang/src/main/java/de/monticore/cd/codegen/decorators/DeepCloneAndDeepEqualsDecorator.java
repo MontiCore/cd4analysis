@@ -21,7 +21,9 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 
@@ -130,6 +132,10 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     CD4CodeArtifactScope artifactScope = (CD4CodeArtifactScope) CD4CodeMill.globalScope().getSubScopes().get(0);
     List<String> classesAsString = artifactScope.getCDTypeSymbols().entries().stream().map(Map.Entry::getValue).map(TypeSymbolTOP::getFullName).collect(Collectors.toList());
+
+//    ASTMCListType t;
+//    ASTMCTypeArgument t2 = t.getMCTypeArgument();
+//    t2.getMCTypeOpt().get()
 
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));

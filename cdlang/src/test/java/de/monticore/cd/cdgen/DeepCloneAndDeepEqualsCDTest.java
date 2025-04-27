@@ -31,7 +31,8 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " public class OtherC { \n" +
           " public int myInt;\n" +
           " public boolean myBool;\n" +
-          " -> (manyB) B [*] public;\n" +
+          " public List<List<B>> my2dimList;\n" +
+          " -> (manyB)B [*] public;\n" +
           " -> (optB) B [0..1] public;\n" +
           " -> (oneB) B [1] public;\n" +
           " public Integer myInteger;\n" +

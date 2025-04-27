@@ -34,6 +34,7 @@ if(${firstObjectName}.size() != ${secondObjectName}.size()){
 }
 <#-- List types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(mCType))>
+<#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
 if(${firstObjectName}.size() != ${secondObjectName}.size()){
   ${resultBooleanName} = false;
 } else {
@@ -48,7 +49,7 @@ if(forceSameOrder){
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
     ${innerType.printType()} ${it1NextName} = firstIteratorName.next();
     ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-    $boolean ${isEqual} = true;
+    boolean ${isEqual} = true;
     ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,innerType.printType() PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
     if(!${isEqual}){
       return false;

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.*;
 
 public class DeepCloneAndDeepEqualsDecoratorTest {
 
@@ -13,6 +14,33 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     testMethodExistence();
     Assertions.assertTrue(true);
     //TODO
+    //create equal set and lists
+    List<Integer> listAbsent1 = new ArrayList<>();
+    List<Integer> listAbsent2 = new ArrayList<>();
+    List<Integer> listDescent1 = new ArrayList<>();
+    List<Integer> listUnequal = new ArrayList<>();
+    Set<Integer> set1 = new HashSet<>();
+    Set<Integer> set2 = new HashSet<>();
+    Set<Integer> setUnequal = new HashSet<>();
+    for(int i =0; i<= 10;i++){
+      Integer absent1 = i;
+      Integer absent2 = i;
+      Integer descent = 10-i;
+      Random rand = new Random();
+      Integer unequal = rand.nextInt();
+      listAbsent1.add(absent1);
+      listAbsent2.add(absent2);
+      listDescent1.add(descent);
+      listUnequal.add(unequal);
+      set1.add(absent1);
+      set2.add(absent1);
+      setUnequal.add(unequal);
+    }
+
+    Assertions.assertTrue();
+
+
+
   }
 
 
