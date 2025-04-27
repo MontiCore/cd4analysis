@@ -18,9 +18,10 @@ if(${firstObjectName}.size() != ${secondObjectName}.size()){
   java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
   while(${firstIteratorName}.hasNext()){
     ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
-    boolean ${matchFoundName} = false;
+    boolean ${matchFoundName} = true;
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
     while(${secondIteratorName}.hasNext()){
+      ${matchFoundName} = true;
       ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
       ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
       if(${matchFoundName}){
@@ -64,9 +65,10 @@ if(forceSameOrder){
   java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
   while(${firstIteratorName}.hasNext()){
     ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
-    boolean ${matchFoundName} = false;
+    boolean ${matchFoundName} = true;
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
     while(${secondIteratorName}.hasNext()){
+      ${matchFoundName} = true;
       ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
       ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
       if(${matchFoundName}){

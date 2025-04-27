@@ -28,7 +28,7 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
     var opt =
       CD4CodeMill.parser()
         .parse_String("classdiagram TestDeepCloneAndDeepEquals {\n" +
-          " public class OtherC { \n" +
+          " public class AllTogether { \n" +
           " public int myInt;\n" +
           " public boolean myBool;\n" +
           " -> (manyClassWith2DimList)ClassWith2DimList [*] public;\n" +
