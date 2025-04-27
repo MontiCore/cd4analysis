@@ -1,5 +1,6 @@
 package de.monticore.cd.codegen.decorators;
 
+import com.google.common.reflect.TypeResolver;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.DataContainer;
 import de.monticore.cd.facade.CDMethodFacade;
@@ -132,11 +133,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     CD4CodeArtifactScope artifactScope = (CD4CodeArtifactScope) CD4CodeMill.globalScope().getSubScopes().get(0);
     List<String> classesAsString = artifactScope.getCDTypeSymbols().entries().stream().map(Map.Entry::getValue).map(TypeSymbolTOP::getFullName).collect(Collectors.toList());
-
-//    ASTMCListType t;
-//    ASTMCTypeArgument t2 = t.getMCTypeArgument();
-//    t2.getMCTypeOpt().get()
-
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }

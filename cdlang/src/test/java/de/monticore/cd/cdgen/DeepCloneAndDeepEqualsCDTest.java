@@ -31,14 +31,31 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " public class OtherC { \n" +
           " public int myInt;\n" +
           " public boolean myBool;\n" +
-          " public List<List<B>> my2dimList;\n" +
-          " -> (manyB)B [*] public;\n" +
-          " -> (optB) B [0..1] public;\n" +
-          " -> (oneB) B [1] public;\n" +
-          " public Integer myInteger;\n" +
+          " -> (manyClassWith2DimList)ClassWith2DimList [*] public;\n" +
+          " -> (optClassWith2DimList)ClassWith2DimList [0..1] public;\n" +
+          " -> (oneClassWith2DimList)ClassWith2DimList [1] public;\n" +
           " }\n" +
-          "<<setter>>public class B { " +
+          " <<setter>>public class ClassWith2DimList { \n" +
+          " public List<List<Integer>> my2dimList;\n" +
+          " }\n" +
+          " <<setter>>public class ClassWith2DimSet { \n" +
+          " public Set<Set<Integer>> my2dimSet;\n" +
+          " }\n" +
+          "<<setter>>public class ClassWithOptional { " +
+          " public Optional<Integer> myOptionalInteger;\n" +
           "}\n " +
+          "<<setter>>public class ClassWithPojoClassType { " +
+          " public ClassWithPrimitiveType pojoType;\n" +
+          "}\n " +
+          "<<setter>>public class ClassWithPrimitiveType { " +
+          " public int myInt;\n" +
+          "}\n " +
+          "<<setter>>public class ClassWithSet { " +
+          " public Set<Integer> mySet;\n" +
+          "}\n " +
+          "<<setter>> public class ClassWithList { \n" +
+          " public List<Integer> myIntegerList;\n" +
+          "}  \n" +
           "}");
 
     Assertions.assertTrue(opt.isPresent());
@@ -53,7 +70,7 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
     templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepClone.ftl"));
     //TODO add more later
     for (Path temPath: templatePaths) {
-      Assert.assertTrue(Files.exists(temPath));
+      Assertions.assertTrue(Files.exists(temPath));
     }
   }
 }
