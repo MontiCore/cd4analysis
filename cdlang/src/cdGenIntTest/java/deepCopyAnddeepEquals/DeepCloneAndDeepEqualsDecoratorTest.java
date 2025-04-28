@@ -31,8 +31,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     testDeepEqualsAssociation();
     testDeepEqualsComposition();
     testDeepEqualsTogether();
-
-
+    
     //deepCopy
     //TODO
   }
@@ -79,6 +78,12 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     c1.myInt=2;
     c2.myInt=1;
     Assertions.assertFalse(c3.deepEquals(c4));
+    //null check
+    c1.myInt=2;
+    c2.myInt=1;
+    c3.pojoType = null;
+    c4.pojoType = null;
+    Assertions.assertTrue(c3.deepEquals(c4));
   }
 
   public void testDeepEqualsListType(){
@@ -102,6 +107,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(c5.deepEquals(c6));
     Assertions.assertTrue(c5.deepEquals(c6,true));
     Assertions.assertTrue(c5.deepEquals(c6,false));
+    //null check
+    c5.myIntegerList=null;
+    c6.myIntegerList=null;
+    Assertions.assertTrue(c5.deepEquals(c6));
 
     //Test 2D list types
     ClassWith2DimList c11 = new ClassWith2DimList();
@@ -145,6 +154,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(c7.deepEquals(c8));
     Assertions.assertTrue(c7.deepEquals(c8,false));
     Assertions.assertTrue(c7.deepEquals(c8,true));
+    //null check
+    c7.mySet = null;
+    c8.mySet = null;
+    Assertions.assertTrue(c7.deepEquals(c8));
 
     //Test 2D set types
     ClassWith2DimSet c13 = new ClassWith2DimSet();
@@ -179,6 +192,19 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertFalse(c9.deepEquals(c10));
     Assertions.assertFalse(c9.deepEquals(c10,false));
     Assertions.assertFalse(c9.deepEquals(c10,true));
+    c9.myOptionalInteger = Optional.empty();
+    c10.myOptionalInteger = Optional.empty();
+    Assertions.assertTrue(c9.deepEquals(c10));
+    c9.myOptionalInteger= Optional.of(1);
+    Assertions.assertFalse(c9.deepEquals(c10));
+    Assertions.assertFalse(c9.deepEquals(c10,false));
+    Assertions.assertFalse(c9.deepEquals(c10,true));
+    //null check
+    c9.myOptionalInteger = null;
+    c10.myOptionalInteger = null;
+    Assertions.assertTrue(c9.deepEquals(c10));
+    Assertions.assertTrue(c9.deepEquals(c10,false));
+    Assertions.assertTrue(c9.deepEquals(c10,true));
   }
 
   public void testDeepEqualsCircularRelations(){
