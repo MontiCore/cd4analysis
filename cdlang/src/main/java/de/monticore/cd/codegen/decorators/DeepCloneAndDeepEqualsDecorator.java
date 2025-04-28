@@ -141,19 +141,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
 
     decoratedClass.addCDMember(deepEquals3Method);
-
-    for(ASTCDAttribute attribute: originalClass.getCDAttributeList()){
-      if(attribute.getMCType() instanceof ASTMCSetType){
-        System.out.println("d");
-      }
-    }
-
-    //TODO check which method should be used
-    //collect all classes from the class diagram
-
-//    CD4CodeArtifactScope artifactScope = (CD4CodeArtifactScope) CD4CodeMill.globalScope().getSubScopes().get(0);
-//    List<String> classesAsString = artifactScope.getCDTypeSymbols().entries().stream().map(Map.Entry::getValue).map(TypeSymbolTOP::getFullName).collect(Collectors.toList());
-
+    
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }
 
