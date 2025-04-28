@@ -15,12 +15,13 @@ if(!(o instanceof ${originalClazzType.printType()})){
 ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
 <#if attributeList??>
 <#list attributeList as attr>
+<#-- we need to declare a boolean result, as in recursive list checks we cannot return false when we check while having the flag forceSameOrder set to false -->
 <#assign resultBooleanName = "result" + attr.getName()?cap_first + attr.getMCType().printType()?cap_first?replace(".","")?replace("<","")?replace(">","")>
 boolean ${resultBooleanName} = true;
 <#assign firstObjectName = "this." + attr.getName()>
 <#assign secondObjectName = "castO." + attr.getName()>
   <#-- we call the deepEquals3Inner template here which can be called repulsively when the type is a List or a Set -->
-  ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, attr.getMCType(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)};
+  ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, attr.getMCType(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)}
 if(! ${resultBooleanName}){
   return false;
 }

@@ -15,13 +15,13 @@ import java.util.Set;
  * A Singleton class that acts as a container to collect and hold data.
  * It ensures that only one instance of this class exists globally.
  */
-public class DataContainer implements CDBasisVisitor2 {
+public class CDTypeCollector implements CDBasisVisitor2 {
   private final Set<ASTCDClass> classes = new HashSet<>();
   private final Set<ASTCDInterface> interfaces = new HashSet<>();
   private final Set<ASTCDEnum> enums = new HashSet<>();
-  private static DataContainer INSTANCE;
+  private static CDTypeCollector INSTANCE;
 
-  private DataContainer() {}
+  private CDTypeCollector() {}
 
   public Set<ASTCDClass> getClasses() {
     return classes;
@@ -35,8 +35,8 @@ public class DataContainer implements CDBasisVisitor2 {
     return enums;
   }
 
-  public static void setINSTANCE(DataContainer INSTANCE) {
-    DataContainer.INSTANCE = INSTANCE;
+  public static void setINSTANCE(CDTypeCollector INSTANCE) {
+    CDTypeCollector.INSTANCE = INSTANCE;
   }
 
   public void init(ASTCDCompilationUnit ast) {
@@ -50,9 +50,9 @@ public class DataContainer implements CDBasisVisitor2 {
    * Provides the global point of access to the single DataContainer instance.
    * @return The single instance of DataContainer.
    */
-  public static DataContainer getInstance() {
+  public static CDTypeCollector getInstance() {
     if(INSTANCE==null){
-      INSTANCE = new DataContainer();
+      INSTANCE = new CDTypeCollector();
     }
     return INSTANCE;
   }

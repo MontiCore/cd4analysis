@@ -6,7 +6,7 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.*;
-import de.monticore.cd.codegen.decorators.data.DataContainer;
+import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -122,9 +122,9 @@ public class CDGenTest {
     CDGenerator generator = new CDGenerator(generatorSetup);
 
     // Pre-Decorate: collect information about the model
-    DataContainer.getInstance().init(opt.get());
+    CDTypeCollector.getInstance().init(opt.get());
     CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
-    t2.add4CDBasis(DataContainer.getInstance());
+    t2.add4CDBasis(CDTypeCollector.getInstance());
     opt.get().accept(t2);
 
 

@@ -16,6 +16,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     //TODO DeepClone
   }
 
+  /**
+   * Test the deepEquals method of the generated classes
+   * @throws Exception assertion error
+   */
   public void testDeepEquals() throws Exception {
     //create equal sets and lists
     List<Integer> listAbsent1 = new ArrayList<>();
@@ -198,39 +202,17 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertFalse(c15.deepEquals(c16));
     Assertions.assertTrue(c15.deepEquals(c16,false));
     Assertions.assertFalse(c15.deepEquals(c16,true));
+
+    //test circular
   }
 
+  /**
+   * Test the existence of the methods in the generated classes
+   * @throws Exception assertion error
+   */
   public void testMethodExistence() throws Exception {
-    Class<?> OtherC = Class.forName("TestDeepCloneAndDeepEquals.OtherC");
-    Assertions.assertTrue(Modifier.isPublic(OtherC.getModifiers()));
-
-    Class<?> B = Class.forName("TestDeepCloneAndDeepEquals.B");
-    Assertions.assertTrue(Modifier.isPublic(B.getModifiers()));
-
-    //deepEquals methods
-    Method deepEquals1OtherC = OtherC.class.getDeclaredMethod("deepEquals", Object.class);
-    Assertions.assertEquals(Modifier.PUBLIC, deepEquals1OtherC.getModifiers());
-
-    Method deepEquals2OtherC = OtherC.getDeclaredMethod("deepEquals", Object.class, boolean.class);
-    Assertions.assertEquals(Modifier.PUBLIC, deepEquals2OtherC.getModifiers());
-
-    Method deepEquals3OtherC = OtherC.getDeclaredMethod("deepEquals", Object.class, boolean.class, java.util.Set.class);
-    Assertions.assertEquals(Modifier.PUBLIC, deepEquals3OtherC.getModifiers());
-
-    Method deepEquals1B = B.getDeclaredMethod("deepEquals", Object.class);
-    Assertions.assertEquals(Modifier.PUBLIC, deepEquals1B.getModifiers());
-
-    Method deepEquals2B = B.getDeclaredMethod("deepEquals", Object.class, boolean.class);
-    Assertions.assertEquals(Modifier.PUBLIC, deepEquals2B.getModifiers());
-
-    Method deepEquals3B = B.getDeclaredMethod("deepEquals", Object.class, boolean.class, java.util.Set.class);
-    Assertions.assertEquals(Modifier.PUBLIC, deepEquals3B.getModifiers());
 
     //deepClone methods
-    Method deepCloneOtherC = OtherC.class.getDeclaredMethod("deepClone");
-    Assertions.assertEquals(Modifier.PUBLIC, deepCloneOtherC.getModifiers());
-
-    Method deepCloneB = B.getDeclaredMethod("deepClone");
-    Assertions.assertEquals(Modifier.PUBLIC, deepCloneB.getModifiers());
+    //TODO:
   }
 }

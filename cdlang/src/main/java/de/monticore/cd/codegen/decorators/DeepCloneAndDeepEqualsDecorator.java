@@ -1,32 +1,22 @@
 package de.monticore.cd.codegen.decorators;
 
-import com.google.common.reflect.TypeResolver;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
-import de.monticore.cd.codegen.decorators.data.DataContainer;
+import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
+import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.cd.facade.CDMethodFacade;
-import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolTOP;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
-import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +28,20 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * Decorator that adds deepCopy and deepEquals methods to artifacts specified in the class diagram.
  */
 public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
+
+  List<String> classesFromClassdiagramAsString = new ArrayList<>();
+
+  @Override
+  public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
+    super.init(util, glexOpt);
+    //TODO needed?
+
+
+    classesFromClassdiagramAsString.addAll(CDTypeCollector.getInstance().getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+    classesFromClassdiagramAsString.addAll(CDTypeCollector.getInstance().getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+    classesFromClassdiagramAsString.addAll(CDTypeCollector.getInstance().getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+
+  }
 
   @Override
   public void visit(ASTCDClass node) {
@@ -103,6 +107,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   /**
    * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Set<Object>)
    * We need 3 parameters in the deepEquals method:
+   * Because when iterating over lists and sets we need to declare a boolean for every type and check it afterward as return false would not work
    * 1. the object to compare with
    * 2. the forceSameOrder boolean
    * 3. a set of already visited objects as the classdiagram can be cyclic
@@ -126,13 +131,9 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     //TODO check which method should be used
     //collect all classes from the class diagram
-    List<String> classesFromClassdiagramAsString = new ArrayList<>();
-    classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-    classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-    classesFromClassdiagramAsString.addAll(DataContainer.getInstance().getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
 
-    CD4CodeArtifactScope artifactScope = (CD4CodeArtifactScope) CD4CodeMill.globalScope().getSubScopes().get(0);
-    List<String> classesAsString = artifactScope.getCDTypeSymbols().entries().stream().map(Map.Entry::getValue).map(TypeSymbolTOP::getFullName).collect(Collectors.toList());
+//    CD4CodeArtifactScope artifactScope = (CD4CodeArtifactScope) CD4CodeMill.globalScope().getSubScopes().get(0);
+//    List<String> classesAsString = artifactScope.getCDTypeSymbols().entries().stream().map(Map.Entry::getValue).map(TypeSymbolTOP::getFullName).collect(Collectors.toList());
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }

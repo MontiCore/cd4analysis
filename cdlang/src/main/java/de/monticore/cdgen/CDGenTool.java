@@ -6,7 +6,7 @@ import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
-import de.monticore.cd.codegen.decorators.data.DataContainer;
+import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
@@ -191,9 +191,9 @@ public class CDGenTool extends CDGeneratorTool {
           glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
 
           // Pre-Decorate: collect information about the model
-          DataContainer.getInstance().init(ast);
+          CDTypeCollector.getInstance().init(ast);
           CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
-          t2.add4CDBasis(DataContainer.getInstance());
+          t2.add4CDBasis(CDTypeCollector.getInstance());
           ast.accept(t2);
 
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));

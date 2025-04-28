@@ -5,7 +5,7 @@ import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
-import de.monticore.cd.codegen.decorators.data.DataContainer;
+import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
@@ -26,8 +26,6 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -83,9 +81,9 @@ public class AbstractCDGenTest {
     CDGenerator generator = new CDGenerator(generatorSetup);
 
     // Pre-Decorate: collect information about the model
-    DataContainer.getInstance().init(cd);
+    CDTypeCollector.getInstance().init(cd);
     CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
-    t2.add4CDBasis(DataContainer.getInstance());
+    t2.add4CDBasis(CDTypeCollector.getInstance());
     cd.accept(t2);
 
     var decorated = setup.decorate(cd, roleTrafo.getFieldToRoles(), Optional.of(glex));

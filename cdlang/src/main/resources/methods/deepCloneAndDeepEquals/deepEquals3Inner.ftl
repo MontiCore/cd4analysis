@@ -96,12 +96,8 @@ if(${firstObjectName}.isPresent() && ${secondObjectName}.isEmpty() ||
 ${resultBooleanName} = ${firstObjectName} == ${secondObjectName};
 <#-- pojo class types -->
 <#else>
+<#-- only when the type is present in the class diagram the getDefiningSymbol is present -->
  <#if mCType.getDefiningSymbol().isPresent()>
-     <#assign resolvedClassName = mCType.getDefiningSymbol().get().getFullName()>
- <#else>
-     <#assign resolvedClassName = mCType.getMCQualifiedName().getQName()>
- </#if>
-  <#if (PojoClazzesAsStringList?seq_contains(resolvedClassName))>
   ${resultBooleanName} = ${firstObjectName}.deepEquals(${secondObjectName}, forceSameOrder, visitedObjects);
 <#-- all other types -->
   <#else>
