@@ -56,16 +56,23 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           "<<setter>> public class ClassWithList { \n" +
           " public List<Integer> myIntegerList;\n" +
           "}  \n" +
-          " <<setter>> public class B { \n" +
-          " }\n" +
           " <<setter,getter>>public class ClassCircular1 { \n" +
           " public ClassCircular2 myClassCircular2;\n" +
           " }\n" +
           " <<setter,getter>>public class ClassCircular2 { \n" +
           " public ClassCircular1 myClassCircular1;\n" +
           " }\n" +
+          " <<setter,getter>>public class ClassWithAssociation { \n" +
+          "}\n" +
+          " <<setter,getter>>public class ClassWithComposition { \n" +
+          " -> (opt)B [0..1] public;\n" +
+          " -> (many)B [*] public;\n" +
+          " -> (one)B [1] public;\n" +
+          "}\n" +
+          " <<setter>> public class B { \n" +
+          " }\n" +
           " association [1] AllTogether (owner) <-> (owns) B [*]public; "+
-
+          " association [1] ClassWithAssociation (owner) <-> (owns) B [*]public; "+
           "}");
 
     Assertions.assertTrue(opt.isPresent());

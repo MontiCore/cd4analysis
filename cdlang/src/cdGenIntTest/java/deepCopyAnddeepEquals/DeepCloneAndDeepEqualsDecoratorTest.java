@@ -31,7 +31,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     testDeepEqualsAssociation();
     testDeepEqualsComposition();
     testDeepEqualsTogether();
-    
+
     //deepCopy
     //TODO
   }
@@ -227,11 +227,67 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
   }
 
   public void testDeepEqualsAssociation(){
-    //TODO
+    ClassWithAssociation c15 = new ClassWithAssociation();
+    ClassWithAssociation c16 = new ClassWithAssociation();
+    c15.owns = new HashSet<>();
+    c16.owns = new HashSet<>();
+    Assertions.assertTrue(c15.deepEquals(c16));
+    Assertions.assertTrue(c15.deepEquals(c16,false));
+    Assertions.assertTrue(c15.deepEquals(c16,true));
+    B b1 = new B();
+    c15.owns.add(b1);
+    Assertions.assertFalse(c15.deepEquals(c16));
+    Assertions.assertFalse(c15.deepEquals(c16,false));
+    Assertions.assertFalse(c15.deepEquals(c16,true));
+    c16.owns.add(b1);
+    Assertions.assertTrue(c15.deepEquals(c16));
+    Assertions.assertTrue(c15.deepEquals(c16,false));
+    Assertions.assertTrue(c15.deepEquals(c16,true));
+    //null check
+    c15.owns = null;
+    c16.owns = null;
+    Assertions.assertTrue(c15.deepEquals(c16));
+    Assertions.assertTrue(c15.deepEquals(c16,false));
+    Assertions.assertTrue(c15.deepEquals(c16,true));
   }
 
   public void testDeepEqualsComposition(){
-    //TODO
+    ClassWithComposition c17 = new ClassWithComposition();
+    ClassWithComposition c18 = new ClassWithComposition();
+    c17.many = null;
+    c18.many = null;
+    c17.one = null;
+    c18.one = null;
+    c17.opt = null;
+    c18.opt = null;
+    Assertions.assertTrue(c17.deepEquals(c18));
+    Assertions.assertTrue(c17.deepEquals(c18,false));
+    Assertions.assertTrue(c17.deepEquals(c18,true));
+    c17.many = new HashSet<>();
+    Assertions.assertFalse(c17.deepEquals(c18,false));
+    c17.many.add(new B());
+    Assertions.assertFalse(c17.deepEquals(c18,false));
+    c18.many=new HashSet<>();
+    c18.many.add(new B());
+    Assertions.assertTrue(c17.deepEquals(c18));
+    Assertions.assertTrue(c17.deepEquals(c18,false));
+    Assertions.assertTrue(c17.deepEquals(c18,true));
+    c17.one = new B();
+    Assertions.assertFalse(c17.deepEquals(c18));
+    c18.one = new B();
+    Assertions.assertTrue(c17.deepEquals(c18));
+    Assertions.assertTrue(c17.deepEquals(c18,false));
+    Assertions.assertTrue(c17.deepEquals(c18,true));
+    c17.opt = Optional.empty();
+    Assertions.assertFalse(c17.deepEquals(c18,false));
+    c18.opt = Optional.of(new B());
+    Assertions.assertFalse(c17.deepEquals(c18));
+    Assertions.assertFalse(c17.deepEquals(c18,false));
+    Assertions.assertFalse(c17.deepEquals(c18,true));
+    c17.opt = Optional.of(new B());
+    Assertions.assertTrue(c17.deepEquals(c18));
+    Assertions.assertTrue(c17.deepEquals(c18,false));
+    Assertions.assertTrue(c17.deepEquals(c18,true));
   }
 
   public void testDeepEqualsTogether(){
