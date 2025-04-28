@@ -37,6 +37,13 @@ import de.monticore.symboltable.IScope;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Tool for automatic completion of a concrete class diagram (CD) such that it conforms to a given
+ * reference CD. The completion process is implemented using multiple modular completer
+ * implementations for each element kind in a CD. This class is the facade with easy to use
+ * configuration parameters and a single method to perform the completion:
+ * {@link #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
+ */
 public class ConcretizationCompleter {
 
   private final String mapping;
@@ -69,6 +76,13 @@ public class ConcretizationCompleter {
     this.conformanceParams = conformanceParams;
   }
 
+  /**
+   * Completes the given concrete CD such that it conforms to a given reference CD.
+   *
+   * @param concreteCD the concrete CD to be completed
+   * @param referenceCD the reference CD to be used for completion
+   * @throws CompletionException if the concrete CD cannot be completed to conform to the reference.
+   */
   public void completeCD(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
       throws CompletionException {
 
@@ -130,6 +144,10 @@ public class ConcretizationCompleter {
     completerChainBuilder.build().complete(concreteCD, referenceCD, context);
   }
 
+  /**
+   * Configures if the conformance checker should be used to check the conformance of the
+   * concretization result.
+   */
   public void setCheckConformance(boolean checkConformance) {
     this.checkConformance = checkConformance;
   }
