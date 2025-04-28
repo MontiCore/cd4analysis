@@ -15,6 +15,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Processes reference types that are annotated with the stereotype 'forEach'. The value of the
+ * stereotype is expected to be a reference to another model element (hook element). For each
+ * incarnation of this hook element, one type incarnation is created parameterized by the hook
+ * element incarnation.<br>
+ * <br>
+ * Currently supported hook elements are:
+ *
+ * <ul>
+ *   <li>types (e.g., 'Foo')
+ * </ul>
+ */
 public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
 
   @Override
@@ -28,38 +40,45 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
                 + referenceType.get_SourcePositionStart());
     if (stereotypeValue.isPresent()) {
       CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
-      symbolHandler.setTypeHandler(rTargetType -> completeTypeParameterizedByType(referenceType, rTargetType, context));
-      // TODO Add support for other references
+      symbolHandler.setTypeHandler(hookType -> completeTypeParameterizedByType(referenceType, hookType, context));
+      // TODO Add support for other hook elements
       symbolHandler.resolveSymbol(context.getReferenceCD().getEnclosingScope(), stereotypeValue.get(), referenceType.get_SourcePositionStart());
     } else {
       super.completeTypeInCD(concreteCD, referenceType, context);
     }
   }
 
+  /**
+   * Creates a new type for each incarnation of the hook type.
+   *
+   * @param referenceType the original reference type
+   * @param hookType the type that is used to parameterize the new type
+   * @param context the completion context
+   */
   private void completeTypeParameterizedByType(
       ASTCDType referenceType,
-      ASTCDType rTargetType, // TODO maybe name paramType instead of 'target' ?
+      ASTCDType hookType,
       CDCompletionContext context)
       throws CompletionException {
 
-    Set<ASTCDType> targetTypeIncarnations =
+    Set<ASTCDType> hookTypeIncarnations =
         ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
-            .filter(type -> context.getTypeIncStrategy().isMatched(type, rTargetType))
+            .filter(type -> context.getTypeIncStrategy().isMatched(type, hookType))
             .collect(Collectors.toSet());
     System.out.println(
-        "Found type incarnations for " + rTargetType.getName() + ": " + targetTypeIncarnations);
+        "Found type incarnations for " + hookType.getName() + ": " + hookTypeIncarnations);
 
-    for (ASTCDType cTargetTypeInc : targetTypeIncarnations) {
+    for (ASTCDType hookTypeIncarnation : hookTypeIncarnations) {
       // if we have more than one type incarnation, we need to add a suffix to the new type
-      String cTargetTypeIncName = SymbolUtil.getFullNameWithoutCD(cTargetTypeInc.getSymbol());
-      String typeSuffix = targetTypeIncarnations.size() > 1
-              ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(cTargetTypeIncName)
+      String hookIncName = SymbolUtil.getFullNameWithoutCD(hookTypeIncarnation.getSymbol());
+      String typeSuffix = hookTypeIncarnations.size() > 1
+              ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(hookIncName)
               : "";
 
       ASTCDType newType = referenceType.deepClone();
 
-      // TODO maybe introduce convention for type names
-      // e.g., if the target name is a substring of the reference type name, we replace it
+      // TODO maybe introduce convention for type names (issue 33)
+      // e.g., if the hook type name is a substring of the reference type name, we replace it
       // otherwise we append it with a suffix
       newType.setName(referenceType.getName() + typeSuffix);
 
@@ -75,7 +94,7 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
       String newTypeFullName = Names.getQualifiedName(newTypeQualifier, newType.getName());
       context
           .getScopedIncarnationBindings()
-          .addTypeBinding(newTypeFullName, rTargetType.getSymbol(), cTargetTypeInc.getSymbol());
+          .addTypeBinding(newTypeFullName, hookType.getSymbol(), hookTypeIncarnation.getSymbol());
 
       // 4. pass the new attribute to the next completer
       super.completeTypeInCD(context.getConcreteCD().getCDDefinition(), newType, context);
