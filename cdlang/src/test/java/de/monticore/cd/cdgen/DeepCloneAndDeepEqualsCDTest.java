@@ -56,6 +56,9 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           "<<setter>> public class ClassWithList { \n" +
           " public List<Integer> myIntegerList;\n" +
           "}  \n" +
+          " <<setter>> public class B { \n" +
+          " }\n" +
+          " association [1] AllTogether (owner) <-> (owns) B [*]public; "+
           "}");
 
     Assertions.assertTrue(opt.isPresent());

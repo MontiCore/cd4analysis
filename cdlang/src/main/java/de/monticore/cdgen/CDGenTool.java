@@ -190,12 +190,6 @@ public class CDGenTool extends CDGeneratorTool {
           glex.setGlobalValue("cdGenService", new CDGenService());
           glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
 
-          // Pre-Decorate: collect information about the model
-          CDTypeCollector.getInstance().init(ast);
-          CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
-          t2.add4CDBasis(CDTypeCollector.getInstance());
-          ast.accept(t2);
-
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
           // Post-Decorate: apply trafos needed for code generation

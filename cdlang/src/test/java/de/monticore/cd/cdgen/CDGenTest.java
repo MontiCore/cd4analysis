@@ -121,13 +121,6 @@ public class CDGenTest {
 
     CDGenerator generator = new CDGenerator(generatorSetup);
 
-    // Pre-Decorate: collect information about the model
-    CDTypeCollector.getInstance().init(opt.get());
-    CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
-    t2.add4CDBasis(CDTypeCollector.getInstance());
-    opt.get().accept(t2);
-
-
     var decorated = setup.decorate(opt.get(), roleTrafo.getFieldToRoles(), Optional.of(glex));
 
     System.err.println(CD4CodeMill.prettyPrint(decorated, true));

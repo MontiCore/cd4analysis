@@ -171,6 +171,8 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     //Test multiple types and multiple dimensions at the same time
     AllTogether c15 = new AllTogether();
     AllTogether c16 = new AllTogether();
+    c15.owns= new HashSet<>();
+    c16.owns= new HashSet<>();
     c15.myBool = true;
     c16.myBool = true;
     c15.myInt = 1;
@@ -203,7 +205,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(c15.deepEquals(c16,false));
     Assertions.assertFalse(c15.deepEquals(c16,true));
 
-    //test circular
+    //test circular and association and composition in more detail
   }
 
   /**

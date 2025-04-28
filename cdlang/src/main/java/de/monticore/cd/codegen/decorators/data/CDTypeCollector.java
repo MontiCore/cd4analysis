@@ -15,13 +15,25 @@ import java.util.Set;
  * A Singleton class that acts as a container to collect and hold data.
  * It ensures that only one instance of this class exists globally.
  */
-public class CDTypeCollector implements CDBasisVisitor2 {
+public class CDTypeCollector implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
   private final Set<ASTCDClass> classes = new HashSet<>();
   private final Set<ASTCDInterface> interfaces = new HashSet<>();
   private final Set<ASTCDEnum> enums = new HashSet<>();
-  private static CDTypeCollector INSTANCE;
 
-  private CDTypeCollector() {}
+  @Override
+  public void visit(ASTCDClass node) {
+    classes.add(node);
+  }
+
+  @Override
+  public void visit(ASTCDInterface node) {
+    interfaces.add(node);
+  }
+
+  @Override
+  public void visit(ASTCDEnum node) {
+    enums.add(node);
+  }
 
   public Set<ASTCDClass> getClasses() {
     return classes;
@@ -34,44 +46,5 @@ public class CDTypeCollector implements CDBasisVisitor2 {
   public Set<ASTCDEnum> getEnums() {
     return enums;
   }
-
-  public static void setINSTANCE(CDTypeCollector INSTANCE) {
-    CDTypeCollector.INSTANCE = INSTANCE;
-  }
-
-  public void init(ASTCDCompilationUnit ast) {
-    CollectorVisitor visitor = new CollectorVisitor();
-    CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
-    t.add4CDBasis(visitor);
-    ast.accept(t);
-  }
-
-  /**
-   * Provides the global point of access to the single DataContainer instance.
-   * @return The single instance of DataContainer.
-   */
-  public static CDTypeCollector getInstance() {
-    if(INSTANCE==null){
-      INSTANCE = new CDTypeCollector();
-    }
-    return INSTANCE;
-  }
-
-  private class CollectorVisitor implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
-
-    @Override
-    public void visit(ASTCDClass node) {
-      classes.add(node);
-    }
-
-    @Override
-    public void visit(ASTCDInterface node) {
-      interfaces.add(node);
-    }
-
-    @Override
-    public void visit(ASTCDEnum node) {
-      enums.add(node);
-    }
-  }
 }
+

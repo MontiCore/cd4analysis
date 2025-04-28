@@ -1,5 +1,6 @@
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.codegen.decorators.data.DecoratorData;
@@ -8,7 +9,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
-import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.StringHookPoint;
@@ -32,20 +33,32 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   List<String> classesFromClassdiagramAsString = new ArrayList<>();
 
   @Override
-  public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
-    super.init(util, glexOpt);
-    //TODO needed?
-
-
-    classesFromClassdiagramAsString.addAll(CDTypeCollector.getInstance().getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-    classesFromClassdiagramAsString.addAll(CDTypeCollector.getInstance().getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-    classesFromClassdiagramAsString.addAll(CDTypeCollector.getInstance().getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-
-  }
-
-  @Override
   public void visit(ASTCDClass node) {
     ASTCDClass decClazz = decoratorData.getAsDecorated(node);
+
+    //region resolve all types from the class diagram
+    decoratorData.getParent(node);
+    ASTNode parent = decoratorData.getParent(node).get();
+    while(!(parent instanceof ASTCDDefinition)){
+      parent = decoratorData.getParent(parent).get();
+    }
+    ASTCDDefinition def = (ASTCDDefinition)parent;
+    ASTCDCompilationUnit compilationUnit = new ASTCDCompilationUnitBuilder()
+      .setCDDefinition(def)
+      .setMCPackageDeclarationAbsent()
+      .build();
+
+    //visior to get all classes from the class diagram
+    CDTypeCollector cdTypeCollector = new CDTypeCollector();
+    CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
+    t2.add4CDBasis(cdTypeCollector);
+    compilationUnit.accept(t2);
+
+    classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+    classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+    classesFromClassdiagramAsString.addAll(cdTypeCollector.getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
+    //endregion
+
     addDeepCloneMethod(node, decClazz);
     addDeepEquals1Method(node, decClazz);
     addDeepEquals2Method(node, decClazz);
@@ -128,6 +141,12 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
 
     decoratedClass.addCDMember(deepEquals3Method);
+
+    for(ASTCDAttribute attribute: originalClass.getCDAttributeList()){
+      if(attribute.getMCType() instanceof ASTMCSetType){
+        System.out.println("d");
+      }
+    }
 
     //TODO check which method should be used
     //collect all classes from the class diagram
