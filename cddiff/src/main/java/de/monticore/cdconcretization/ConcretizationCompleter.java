@@ -271,7 +271,7 @@ public class ConcretizationCompleter {
     }
 
     @Override
-    public MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy(
+    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
       CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(mapping);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
@@ -339,7 +339,7 @@ public class ConcretizationCompleter {
             .flatMap(
                 (cAttributeDeclaringType) -> {
                   MatchingStrategy<ASTCDAttribute> attributeIncStrategy =
-                      getAttributeIncStrategy(cAttributeDeclaringType, attributeDeclaringType);
+                      createAttributeIncStrategy(cAttributeDeclaringType, attributeDeclaringType);
                   return cAttributeDeclaringType.getCDAttributeList().stream()
                       .filter(
                           attributeIncarnation ->
