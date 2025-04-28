@@ -19,10 +19,11 @@ import java.util.stream.Collectors;
 
 /**
  * Processes reference attributes that are annotated with the stereotype 'forEach'. The value of the
- * stereotype is expected to be a reference to another model element. The reference element (target)
- * is resolved and for each incarnation of the target element one attribute incarnation is created
- * parameterized by the target incarnation.<br>
- * Currently supported target references are:
+ * stereotype is expected to be a reference to another model element (parameter element). For each
+ * incarnation of this parameter element, one attribute incarnation is created parameterized by the
+ * parameter element incarnation.<br>
+ * <br>
+ * Currently supported parameter elements are:
  *
  * <ul>
  *   <li>attributes (e.g., 'Foo.attr')
@@ -42,8 +43,8 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
     if (stereotypeValue.isPresent()) {
       CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
       symbolHandler.setAttributeHandler(
-          rTargetAttribute -> completeAttributeUsingAttribute(referenceAttribute, rTargetAttribute, context));
-      // TODO Add support for other references
+          paramAttribute -> completeAttributeUsingAttribute(referenceAttribute, paramAttribute, context));
+      // TODO Add support for other parameter elements
       symbolHandler.resolveSymbol(
           context.getReferenceCD().getEnclosingScope(),
           stereotypeValue.get(),
@@ -55,81 +56,81 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
   }
 
   /**
-   * Creates a new attribute for each incarnation of the target attribute. If the declaring type of
-   * the target attribute has multiple incarnations, the new attributes will additionally be
+   * Creates a new attribute for each incarnation of the parameter attribute. If the declaring type
+   * of the parameter attribute has multiple incarnations, the new attributes will additionally be
    * parameterized by the declaring type incarnation.<br>
    * <br>
    * Rules for the new attribute incarnations:
    *
    * <ul>
-   *   <li>If the reference and target attribute names match, the attribute incarnation has the name
-   *       of the target incarnation
+   *   <li>If the reference and parameter attribute names match, the attribute incarnation has the
+   *       name of the parameter incarnation
    *   <li>Otherwise, each attribute incarnation has the name of the reference attribute with a
-   *       suffix of the target attribute name
-   *   <li>If the reference and target attribute types match, the attribute incarnation has the type
-   *       of the target attribute
+   *       suffix of the parameter attribute name
+   *   <li>If the reference and parameter attribute types match, the attribute incarnation has the
+   *       type of the parameter attribute
    *   <li>Otherwise, each attribute incarnation has the type of the reference attribute
    * </ul>
    *
    * @param referenceAttribute the original reference attribute
-   * @param rTargetAttribute the target of the expression used in the forEach stereotype. The
+   * @param paramAttribute the attribute referenced in the forEach stereotype. The
    *     attribute by which this construction is parameterized.
    * @param context the completion context
    */
   private void completeAttributeUsingAttribute(
       ASTCDAttribute referenceAttribute,
-      ASTCDAttribute rTargetAttribute, // TODO maybe name paramAttribute instead of 'target' ?
+      ASTCDAttribute paramAttribute,
       TypeCompletionContext context)
       throws CompletionException {
 
     // group attribute incarnations by their declaring type
     Map<CDTypeSymbol, List<ASTCDAttribute>> attributesByDeclaringType =
-            context.getAttributeIncarnations(rTargetAttribute).stream()
-                    .collect(
-                            Collectors.groupingBy(
-                                    attr -> (CDTypeSymbol) attr.getEnclosingScope().getSpanningSymbol()));
+            context.getAttributeIncarnations(paramAttribute).stream()
+            .collect(
+                Collectors.groupingBy(
+                    attr -> (CDTypeSymbol) attr.getEnclosingScope().getSpanningSymbol()));
 
     // now, we can get all the attribute incarnations for each declaring type incarnation
     // if there is no incarnation of the declaring type, we do not need to create any new attributes
     for (Map.Entry<CDTypeSymbol, List<ASTCDAttribute>> entry :
-            attributesByDeclaringType.entrySet()) {
-      CDTypeSymbol cAttributeDeclaringType = entry.getKey();
-      List<ASTCDAttribute> attributeIncarnations = entry.getValue();
+        attributesByDeclaringType.entrySet()) {
+      CDTypeSymbol paramIncarnationDeclaringType = entry.getKey();
+      List<ASTCDAttribute> paramAttributeIncarnations = entry.getValue();
 
       // if we have more than one declaring type incarnation, we need to add a suffix to the new
       // attributes
-      String declaringTypeNameWithoutCDQualifier = SymbolUtil.getFullNameWithoutCD(cAttributeDeclaringType);
+      String declaringTypeNameWithoutCDQualifier = SymbolUtil.getFullNameWithoutCD(paramIncarnationDeclaringType);
       String declaringTypeSuffix =
               attributesByDeclaringType.size() > 1
                       ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(declaringTypeNameWithoutCDQualifier)
                       : "";
 
-      for (ASTCDAttribute cAttribute : attributeIncarnations) {
-        // now we have a specific incarnation of the reference attribute in the concrete CD.
+      for (ASTCDAttribute paramAttributeInc : paramAttributeIncarnations) {
+        // now we have a specific incarnation of the parameter attribute in the concrete CD.
         // we can now construct a new attribute based on this incarnation for the concrete type
 
-        // if we have more than one attribute type incarnation, we need to add a suffix to the
+        // if we have more than one declaring type incarnation, we need to add a suffix to the
         // new attributes
-        String attributeSuffix = attributeIncarnations.size() > 1 ? "_" + cAttribute.getName() : "";
+        String attributeSuffix = paramAttributeIncarnations.size() > 1 ? "_" + paramAttributeInc.getName() : "";
 
         ASTCDAttribute newAttribute = referenceAttribute.deepClone();
 
         // 1. decide name of the new attribute
-        if (referenceAttribute.getName().equals(rTargetAttribute.getName())) {
-          // Convention: If the REFERENCED attribute name matches the reference attribute name
-          // -> Use the REFERENCED name without a suffix (but still a type suffix)
-          newAttribute.setName(cAttribute.getName() + declaringTypeSuffix);
+        if (referenceAttribute.getName().equals(paramAttribute.getName())) {
+          // Convention: If the param attribute name matches the reference attribute name
+          // -> Use the param incarnation name without a suffix (but still a type suffix)
+          newAttribute.setName(paramAttributeInc.getName() + declaringTypeSuffix);
         } else {
-          // Default: add the REFERENCED attribute incarnation name as suffix
+          // Default: add the param incarnation name as suffix
           newAttribute.setName(
                   referenceAttribute.getName() + declaringTypeSuffix + attributeSuffix);
         }
 
         // 2. decide type of the new attribute
-        if (referenceAttribute.getMCType().deepEquals(rTargetAttribute.getMCType())) {
-          // Convention: If the REFERENCED attribute type matches the reference attribute type
-          // -> Use the REFERENCED type for every incarnation
-          newAttribute.setMCType(cAttribute.getMCType());
+        if (referenceAttribute.getMCType().deepEquals(paramAttribute.getMCType())) {
+          // Convention: If the param attribute type matches the reference attribute type
+          // -> Use the param incarnation type for every incarnation
+          newAttribute.setMCType(paramAttributeInc.getMCType());
         } else {
           // Default: keep the type of the reference attribute resp.
           /*
@@ -150,12 +151,12 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
                 context.getMappingName(),
                 referenceAttribute.getSymbol().getFullName());
 
-        String newAttrQualifier = cAttributeDeclaringType.getFullName();
+        String newAttrQualifier = paramIncarnationDeclaringType.getFullName();
         String newAttrFullName = Names.getQualifiedName(newAttrQualifier, newAttribute.getName());
         context.getScopedIncarnationBindings().addFieldBinding(
-                newAttrFullName,
-                rTargetAttribute.getSymbol(),
-                Set.of(cAttribute.getSymbol()));
+            newAttrFullName,
+            paramAttribute.getSymbol(),
+            Set.of(paramAttributeInc.getSymbol()));
 
         // 4. pass the new attribute to the next completer
         super.completeAttributeInType(context.getConcreteType(), newAttribute, context);

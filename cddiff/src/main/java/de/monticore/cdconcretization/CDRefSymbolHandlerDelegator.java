@@ -63,13 +63,13 @@ public class CDRefSymbolHandlerDelegator {
     if (typeSymbol.isPresent()) {
       ASTType type = typeSymbol.get().getAstNode();
       if (type instanceof ASTCDType) {
-        ASTCDType rTargetType = (ASTCDType) type;
-        Log.debug("Resolved CDType reference: " + rTargetType, LOG_NAME);
+        ASTCDType referencedType = (ASTCDType) type;
+        Log.debug("Resolved CDType reference: " + referencedType, LOG_NAME);
         if (typeHandler == null) {
           throw new CompletionException(
                   "A reference to a CDType is not supported @ " + sourcePosition);
         }
-        typeHandler.accept(rTargetType);
+        typeHandler.accept(referencedType);
         return true;
       } else {
         throw new CompletionException(
@@ -96,13 +96,13 @@ public class CDRefSymbolHandlerDelegator {
     if (fieldSymbol.isPresent()) {
       ASTField field = fieldSymbol.get().getAstNode();
       if (field instanceof ASTCDAttribute) {
-        ASTCDAttribute rTargetAttribute = (ASTCDAttribute) field;
-        Log.debug("Resolved CDAttribute reference: " + rTargetAttribute, LOG_NAME);
+        ASTCDAttribute referencedAttribute = (ASTCDAttribute) field;
+        Log.debug("Resolved CDAttribute reference: " + referencedAttribute, LOG_NAME);
         if (attributeHandler == null) {
           throw new CompletionException(
                   "A reference to a CDAttribute is not supported @ " + sourcePosition);
         }
-        attributeHandler.accept(rTargetAttribute);
+        attributeHandler.accept(referencedAttribute);
         return true;
       } else {
         throw new CompletionException(
