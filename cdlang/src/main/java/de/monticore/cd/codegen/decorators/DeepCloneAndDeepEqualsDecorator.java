@@ -3,7 +3,6 @@ package de.monticore.cd.codegen.decorators;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
-import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -11,14 +10,12 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +27,9 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  */
 public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
+  /**
+   * a collection of all classes from the class diagram as strings
+   */
   List<String> classesFromClassdiagramAsString = new ArrayList<>();
 
   @Override
@@ -48,7 +48,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
       .setMCPackageDeclarationAbsent()
       .build();
 
-    //visior to get all classes from the class diagram
+    //visitor to get all classes from the class diagram
     CDTypeCollector cdTypeCollector = new CDTypeCollector();
     CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
     t2.add4CDBasis(cdTypeCollector);
@@ -82,7 +82,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   /**
    * Adds a deepEquals method with the signature deepEquals(o: <Object>)
    * This method calls the deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean)
-   *
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
    */
@@ -124,7 +123,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    * 1. the object to compare with
    * 2. the forceSameOrder boolean
    * 3. a set of already visited objects as the classdiagram can be cyclic
-   *
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
    */
@@ -141,10 +139,9 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
 
     decoratedClass.addCDMember(deepEquals3Method);
-    
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3", originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }
-
 
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {

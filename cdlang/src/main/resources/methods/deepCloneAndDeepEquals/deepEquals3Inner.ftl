@@ -7,91 +7,105 @@ ${tc.signature("originalClazzType","mCType", "PojoClazzesAsStringList","firstObj
 <#-- Set types -->
 <#if (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
-if(${firstObjectName}.size() != ${secondObjectName}.size()){
-  ${resultBooleanName} = false;
-} else {
-  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
-  java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
-  while(${firstIteratorName}.hasNext()){
-    ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
-    boolean ${matchFoundName} = true;
-    java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
-    while(${secondIteratorName}.hasNext()){
-      ${matchFoundName} = true;
-      ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
-      if(${matchFoundName}){
-        break;
+if(${firstObjectName} == null && ${secondObjectName} == null){
+  ${resultBooleanName} = true;
+}else{
+  if((${firstObjectName} == null || ${secondObjectName} == null)||(${firstObjectName}.size() != ${secondObjectName}.size())){
+    ${resultBooleanName} = false;
+  } else {
+    <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
+    java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
+    while(${firstIteratorName}.hasNext()){
+      ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
+      boolean ${matchFoundName} = true;
+      java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
+      while(${secondIteratorName}.hasNext()){
+        ${matchFoundName} = true;
+        ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
+        if(${matchFoundName}){
+          break;
+        }
       }
-    }
-    if(!${matchFoundName}){
-      ${resultBooleanName} = false;
+      if(!${matchFoundName}){
+        ${resultBooleanName} = false;
+      }
     }
   }
 }
 <#-- List types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
-if(${firstObjectName}.size() != ${secondObjectName}.size()){
-  ${resultBooleanName} = false;
-} else {
-if(forceSameOrder){
-  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign isEqual = "isEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
-  java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
-  java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
-  while(${firstIteratorName}.hasNext()){
-    ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
-    ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-    boolean ${isEqual} = true;
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
-    if(!${isEqual}){
-      return false;
-    }
+if(${firstObjectName} == null && ${secondObjectName} == null){
+  ${resultBooleanName} = true;
+}else{
+  if((${firstObjectName} == null || ${secondObjectName} == null)||(${firstObjectName}.size() != ${secondObjectName}.size())){
+    ${resultBooleanName} = false;
   }
-} else {
-  <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
-  java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
-  while(${firstIteratorName}.hasNext()){
-    ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
-    boolean ${matchFoundName} = true;
+  if(forceSameOrder){
+    <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign isEqual = "isEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
+    java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
     java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
-    while(${secondIteratorName}.hasNext()){
-      ${matchFoundName} = true;
+    while(${firstIteratorName}.hasNext()){
+      ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
       ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
-      if(${matchFoundName}){
-        break;
+      boolean ${isEqual} = true;
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
+      if(!${isEqual}){
+        return false;
       }
     }
-    if(!${matchFoundName}){
-      ${resultBooleanName} = false;
+  } else {
+    <#assign firstIteratorName = "it1" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign secondIteratorName = "it2" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign it1NextName = "it1Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign it2NextName = "it2Next" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
+    java.util.Iterator<${innerType.printType()}> ${firstIteratorName} = ${firstObjectName}.iterator();
+    while(${firstIteratorName}.hasNext()){
+      ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
+      boolean ${matchFoundName} = true;
+      java.util.Iterator<${innerType.printType()}> ${secondIteratorName} = ${secondObjectName}.iterator();
+      while(${secondIteratorName}.hasNext()){
+        ${matchFoundName} = true;
+        ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
+        if(${matchFoundName}){
+          break;
+        }
+      }
+      if(!${matchFoundName}){
+        ${resultBooleanName} = false;
+      }
     }
-  }
   }
 }
 <#-- optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
 <#-- if the first object is not present and the second object is present, return false -->
-if(${firstObjectName}.isPresent() && ${secondObjectName}.isEmpty() ||
-  ${firstObjectName}.isEmpty() && ${secondObjectName}.isPresent()){
+if(${firstObjectName} == null && ${secondObjectName} == null){
+  ${resultBooleanName} = true;
+} else if(${firstObjectName} == null || ${secondObjectName} == null){
   ${resultBooleanName} = false;
-} else if(${firstObjectName}.isPresent() && ${secondObjectName}.isPresent()){
-  ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, firstObjectName + ".get()", secondObjectName + ".get()", resultBooleanName)};
+}else{
+  if(${firstObjectName}.isPresent() && ${secondObjectName}.isEmpty() ||
+    ${firstObjectName}.isEmpty() && ${secondObjectName}.isPresent()){
+    ${resultBooleanName} = false;
+  } else if(${firstObjectName}.isPresent() && ${secondObjectName}.isPresent()){
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, firstObjectName + ".get()", secondObjectName + ".get()", resultBooleanName)};
+  }
 }
 <#-- primitive types -->
+<#-- primitive types can not be null -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(mCType))>
 ${resultBooleanName} = ${firstObjectName} == ${secondObjectName};
 <#-- pojo class types -->
@@ -103,7 +117,13 @@ ${resultBooleanName} = ${firstObjectName} == ${secondObjectName};
      <#assign resolvedClassName = mCType.getMCQualifiedName().getQName()>
   </#if>
    <#if (PojoClazzesAsStringList?seq_contains(resolvedClassName))>
+if(${firstObjectName} == null && ${secondObjectName} == null){
+  ${resultBooleanName} = true;
+}else if(${firstObjectName} == null || ${secondObjectName} == null){
+  ${resultBooleanName} = false;
+}else{
   ${resultBooleanName} = ${firstObjectName}.deepEquals(${secondObjectName}, forceSameOrder, visitedObjects);
+}
 <#-- all other types -->
   <#else>
   ${resultBooleanName} = ${secondObjectName}.equals(${firstObjectName});

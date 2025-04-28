@@ -31,6 +31,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     testDeepEqualsAssociation();
     testDeepEqualsComposition();
     testDeepEqualsTogether();
+
+
+    //deepCopy
+    //TODO
   }
 
   public static void init() {
@@ -178,7 +182,22 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
   }
 
   public void testDeepEqualsCircularRelations(){
-    //TODO
+    //termination condition needs to be checked
+    ClassCircular1 c11 = new ClassCircular1();
+    ClassCircular1 c12 = new ClassCircular1();
+    ClassCircular2 c13 = new ClassCircular2();
+    ClassCircular2 c14 = new ClassCircular2();
+    c11.myClassCircular2 = c13;
+    c12.myClassCircular2 = c14;
+    c13.myClassCircular1 = c11;
+    c14.myClassCircular1 = c12;
+    Assertions.assertTrue(c11.deepEquals(c12));
+    Assertions.assertTrue(c11.deepEquals(c12,false));
+    Assertions.assertTrue(c11.deepEquals(c12,true));
+    c11.myClassCircular2 = null;
+    Assertions.assertFalse(c11.deepEquals(c12));
+    Assertions.assertFalse(c11.deepEquals(c12,false));
+    Assertions.assertFalse(c11.deepEquals(c12,true));
   }
 
   public void testDeepEqualsAssociation(){
