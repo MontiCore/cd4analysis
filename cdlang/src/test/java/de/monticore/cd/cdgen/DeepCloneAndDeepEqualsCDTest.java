@@ -1,5 +1,6 @@
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.decorators.BuilderDecorator;
 import de.monticore.cd.codegen.decorators.CardinalityDefaultDecorator;
 import de.monticore.cd.codegen.decorators.DeepCloneAndDeepEqualsDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
@@ -21,9 +22,12 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
     setup.withDecorator(new CardinalityDefaultDecorator());
     setup.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
 
-    //we do not need to add the Equals and Clone decorator, as it is automatically added
     setup.withDecorator(new DeepCloneAndDeepEqualsDecorator());
     setup.configDefault(DeepCloneAndDeepEqualsDecorator.class, MatchResult.APPLY);
+
+    //we need the decorator for the builder to be able to generate the deepClone method
+    setup.withDecorator(new BuilderDecorator());
+    setup.configDefault(BuilderDecorator.class, MatchResult.APPLY);
 
     var opt =
       CD4CodeMill.parser()
