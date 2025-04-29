@@ -52,13 +52,16 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected Optional<Boolean> checkTypeIncarnation(ASTMCType refType, ASTMCType conType) {
     if (conType.getDefiningSymbol().isPresent()
-        && conType.getDefiningSymbol().get() instanceof CDTypeSymbol) {
+        && conType.getDefiningSymbol().get() instanceof CDTypeSymbol
+        && refType.getDefiningSymbol().isPresent()
+        && refType.getDefiningSymbol().get() instanceof CDTypeSymbol) {
       CDTypeSymbol conCDType = (CDTypeSymbol) conType.getDefiningSymbol().get();
+      CDTypeSymbol refCDType = (CDTypeSymbol) refType.getDefiningSymbol().get();
       if (conCDType.isPresentAstNode()) {
         return Optional.of(
             typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
                 .anyMatch(
-                    r -> r.getSymbol().getInternalQualifiedName().contains(refType.printType())));
+                    r -> r.getSymbol().getFullName().equals(refCDType.getFullName())));
       }
     }
     return Optional.empty();
