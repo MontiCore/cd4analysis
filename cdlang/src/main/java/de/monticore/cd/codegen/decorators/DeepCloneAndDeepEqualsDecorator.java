@@ -31,11 +31,12 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    * a collection of all classes from the class diagram as strings
    */
   List<String> classesFromClassdiagramAsString = new ArrayList<>();
+  boolean isInitialized = false;
 
-  @Override
-  public void visit(ASTCDClass node) {
-    ASTCDClass decClazz = decoratorData.getAsDecorated(node);
-
+  private void initClassesFromClassDiagramAsString(ASTNode node) {
+    if(isInitialized) {
+      return;
+    }
     //region resolve all types from the class diagram
     decoratorData.getParent(node);
     ASTNode parent = decoratorData.getParent(node).get();
@@ -58,6 +59,13 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     //endregion
+    isInitialized = true;
+  }
+
+  @Override
+  public void visit(ASTCDClass node) {
+    initClassesFromClassDiagramAsString(node);
+    ASTCDClass decClazz = decoratorData.getAsDecorated(node);
 
     addDeepCloneMethod(node, decClazz);
     addDeepEquals1Method(node, decClazz);

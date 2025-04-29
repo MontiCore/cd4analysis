@@ -403,6 +403,10 @@ public class BuilderDecoratorTest {
     Log.clearFindings();
     Assertions.assertFalse(unsafeBuildObjWithoutPojoSettersOptBNotSet.isMyBool());
     Assertions.assertEquals(1, unsafeBuildObjWithoutPojoSettersOptBNotSet.getMyInt());
+
+    //unsafeBuild with no arguments
+    TestBuilderWithoutSetter unsafeBuildEmpty = new TestBuilderWithoutSetterBuilder().unsafeBuild();
+    Assertions.assertNull(unsafeBuildEmpty.getManyB());
   }
 
   public void checkClassAndMethodExistence() throws Exception {
