@@ -19,7 +19,7 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
     super.initGlobalScope(modelPath);
     syncAccessGlobalScope(
         gs -> {
-          BuiltInTypes.addBuiltInTypes(gs, false);
+          BuiltInTypes.addBuiltInTypes(gs);
           BasicSymbolsMill.initializeString();
         });
   }
