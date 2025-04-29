@@ -2,7 +2,7 @@
 <#-- inner method for deepEquals -->
 <#-- this method is used to compare the types of the current object with the types of the given object -->
 <#-- its primary purpose is to enable recursive which are need when resolving Lists and Sets -->
-${tc.signature("originalClazzType","mCType", "PojoClazzesAsStringList","firstObjectName", "secondObjectName","resultBooleanName")}
+${tc.signature("mCType", "PojoClazzesAsStringList","firstObjectName", "secondObjectName","resultBooleanName")}
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 <#-- Set types -->
 <#if (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
@@ -26,7 +26,7 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
       while(${secondIteratorName}.hasNext()){
         ${matchFoundName} = true;
         ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
         if(${matchFoundName}){
           break;
         }
@@ -58,7 +58,7 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
       ${innerType.printType()} ${it1NextName} = ${firstIteratorName}.next();
       ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
       boolean ${isEqual} = true;
-      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType,PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", innerType,PojoClazzesAsStringList, it1NextName, it2NextName, isEqual)};
       if(!${isEqual}){
         return false;
       }
@@ -77,7 +77,7 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
       while(${secondIteratorName}.hasNext()){
         ${matchFoundName} = true;
         ${innerType.printType()} ${it2NextName} = ${secondIteratorName}.next();
-        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", innerType, PojoClazzesAsStringList, it1NextName, it2NextName, matchFoundName)};
         if(${matchFoundName}){
           break;
         }
@@ -101,7 +101,7 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
     ${firstObjectName}.isEmpty() && ${secondObjectName}.isPresent()){
     ${resultBooleanName} = false;
   } else if(${firstObjectName}.isPresent() && ${secondObjectName}.isPresent()){
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", originalClazzType, innerType, PojoClazzesAsStringList, firstObjectName + ".get()", secondObjectName + ".get()", resultBooleanName)};
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", innerType, PojoClazzesAsStringList, firstObjectName + ".get()", secondObjectName + ".get()", resultBooleanName)};
   }
 }
 <#-- primitive types -->
