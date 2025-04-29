@@ -8,8 +8,7 @@ import java.util.stream.Collectors;
 
 public class EqNameMethodChecker extends AbstractMethodChecker {
   public EqNameMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
-    this.mapping = mapping;
-    this.typeMatcher = typeMatcher;
+    super(mapping, typeMatcher);
   }
 
   @Override

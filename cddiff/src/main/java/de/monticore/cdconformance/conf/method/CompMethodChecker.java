@@ -8,11 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompMethodChecker extends AbstractMethodChecker {
-  List<ICDMethodChecker> methodCheckers = new ArrayList<>();
+  private final List<ICDMethodChecker> methodCheckers = new ArrayList<>();
 
   public CompMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
-    this.mapping = mapping;
-    this.typeMatcher = typeMatcher;
+    super(mapping, typeMatcher);
   }
 
   public void addIncStrategy(ICDMethodChecker checker) {

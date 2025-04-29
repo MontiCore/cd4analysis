@@ -11,10 +11,16 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.Optional;
 
 public abstract class AbstractMethodChecker implements ICDMethodChecker {
-  protected String mapping;
+
+  protected final String mapping;
+  protected final MatchingStrategy<ASTCDType> typeMatcher;
   protected ASTCDType conType;
   protected ASTCDType refType;
-  protected MatchingStrategy<ASTCDType> typeMatcher;
+
+  protected AbstractMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
+    this.mapping = mapping;
+    this.typeMatcher = typeMatcher;
+  }
 
   @Override
   public boolean checkConformance(ASTCDMethod concrete, ASTCDMethod ref) {

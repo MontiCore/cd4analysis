@@ -160,6 +160,24 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
 
   @ParameterizedTest
+  @ValueSource(strings = {"Concrete.cd"})
+  public void testAttributeTypeIncarnationValid(String concrete) {
+    parseModels("attributes/typeIncarnation/valid/" + concrete,
+            "attributes/typeIncarnation/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"NotMarkedAsIncarnation.cd"})
+  public void testAttributeTypeIncarnationInvalid(String concrete) {
+    parseModels("attributes/typeIncarnation/invalid/" + concrete,
+            "attributes/typeIncarnation/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
   @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
   public void testDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
