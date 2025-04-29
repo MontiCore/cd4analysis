@@ -297,12 +297,12 @@ public class ConcretizationCompleter {
     @Override
     public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
-      CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(mapping);
+      CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(mapping, typeIncStrategy);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(mapping));
+        attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(mapping, typeIncStrategy));
       }
       if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new EqNameAttributeChecker(mapping));
+        attributeIncStrategy.addIncStrategy(new EqNameAttributeChecker(mapping, typeIncStrategy));
       }
       attributeIncStrategy.setConcreteType(concreteType);
       attributeIncStrategy.setReferenceType(referenceType);

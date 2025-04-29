@@ -2,17 +2,15 @@ package de.monticore.cdconformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.CDAttributeChecker;
+import de.monticore.cdmatcher.MatchingStrategy;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class STNamedAttributeChecker implements CDAttributeChecker {
-  protected String mapping;
-  protected ASTCDType refType;
-  protected ASTCDType conType;
+public class STNamedAttributeChecker extends AbstractAttributeChecker {
 
-  public STNamedAttributeChecker(String mapping) {
-    this.mapping = mapping;
+  public STNamedAttributeChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
+    super(mapping, typeMatcher);
   }
 
   @Override
@@ -31,25 +29,5 @@ public class STNamedAttributeChecker implements CDAttributeChecker {
       return ref.getName().equals(refName);
     }
     return false;
-  }
-
-  @Override
-  public ASTCDType getReferenceType() {
-    return this.refType;
-  }
-
-  @Override
-  public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
-  }
-
-  @Override
-  public ASTCDType getConcreteType() {
-    return conType;
-  }
-
-  @Override
-  public void setConcreteType(ASTCDType conType) {
-    this.conType = conType;
   }
 }

@@ -8,8 +8,7 @@ import java.util.stream.Collectors;
 
 public class STNamedMethodChecker extends AbstractMethodChecker {
   public STNamedMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
-    this.mapping = mapping;
-    this.typeMatcher = typeMatcher;
+    super(mapping, typeMatcher);
   }
 
   @Override

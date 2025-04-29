@@ -1,0 +1,13 @@
+classdiagram Concrete {
+
+  <<ref="Address">> class AddressInfo {
+    String streetName;
+    String houseNr;
+    String city;
+    String zipCode;
+  }
+
+  class Employee {
+    AddressInfo address;
+  }
+}

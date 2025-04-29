@@ -1,0 +1,13 @@
+classdiagram Reference {
+
+  class Address {
+    String streetName;
+    String houseNr;
+    String city;
+    String zipCode;
+  }
+
+  class Employee {
+    Address address;
+  }
+}
