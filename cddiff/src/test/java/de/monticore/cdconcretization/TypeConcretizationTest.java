@@ -47,13 +47,7 @@ public class TypeConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testTypeForEachTypeForEachAttribute() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "types/forEach/ForEachTypeForEachAttributeConc.cd",
         "types/forEach/ForEachTypeForEachAttributeRef.cd",
         "types/forEach/ForEachTypeForEachAttributeOut.cd");

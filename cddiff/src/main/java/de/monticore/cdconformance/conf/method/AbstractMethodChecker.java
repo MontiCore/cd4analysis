@@ -8,17 +8,22 @@ import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
 
 public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected final String mapping;
+  protected final String underspecifiedTypeName;
   protected final MatchingStrategy<ASTCDType> typeMatcher;
   protected ASTCDType conType;
   protected ASTCDType refType;
 
-  protected AbstractMethodChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
+  protected AbstractMethodChecker(String mapping, String underspecifiedTypeName,
+                                  MatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
+    this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
   }
 
@@ -34,6 +39,14 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected boolean checkParameterConformance(ASTCDParameter conPar, ASTCDParameter refPar) {
     if (conPar.getName().equals(refPar.getName())) {
+      if (refPar.getMCType().printType().equals(underspecifiedTypeName)) {
+        if (conPar.getMCType().printType().equals(underspecifiedTypeName)) {
+          Log.error("The underspecified placeholder type is not allowed as a concrete type.");
+          return false;
+        }
+        // every type is allowed if the reference type is underspecified
+        return true;
+      }
       Optional<Boolean> conParType = checkTypeIncarnation(refPar.getMCType(), conPar.getMCType());
       if (conParType.isPresent()) {
         return conParType.get();
@@ -45,7 +58,19 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected boolean checkReturnTypeConformance(
       ASTMCReturnType conReturn, ASTMCReturnType refReturn) {
+    if (refReturn.printType().equals(underspecifiedTypeName)) {
+      if (conReturn.printType().equals(underspecifiedTypeName)) {
+        Log.error("The underspecified placeholder type is not allowed as a concrete type.");
+        return false;
+      }
+      // every type is allowed if the reference type is underspecified
+      return true;
+    }
     if (refReturn.printType().equals("void")) {
+      if (conReturn.printType().equals(underspecifiedTypeName)) {
+        Log.error("The underspecified placeholder type is not allowed as a concrete type.");
+        return false;
+      }
       return true;
     }
     Optional<Boolean> conReturnType =

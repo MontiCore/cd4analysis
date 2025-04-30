@@ -104,13 +104,7 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testAttributeForEachAttribute() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "attributes/forEach/ForEachAttributeConc.cd",
         "attributes/forEach/ForEachAttributeRef.cd",
         "attributes/forEach/ForEachAttributeOut.cd");
@@ -118,13 +112,7 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testAttributeForEachAttributeDifferentName() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
         "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
         "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
@@ -132,13 +120,7 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testAttributeForEachAttributeDifferentType() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "attributes/forEach/ForEachAttributeDifferentTypeConc.cd",
         "attributes/forEach/ForEachAttributeDifferentTypeRef.cd",
         "attributes/forEach/ForEachAttributeDifferentTypeOut.cd");
@@ -148,19 +130,13 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
    * We have different names of the 'forEach' annotated attribute and the reference target
    * attribute. Also, we have multiple incarnations of the class with the target attribute.
    * Therefore, the attributes in Builder class get two suffixes, one for the type incarnation and
-   * one for the target attribute incarnation name. TODO If we want to have one Builder incarnation
+   * one for the target attribute incarnation name. If we want to have one Builder incarnation
    * per type incarnation, we need to add an additional <<forEach="DataClass">> to the reference
    * Builder class
    */
   @Test
   void testAttributeForEachAttributeDifferentNameClassMI() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "attributes/forEach/ForEachAttributeDifferentNameClassMIConc.cd",
         "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
         "attributes/forEach/ForEachAttributeDifferentNameClassMIOut.cd");
@@ -173,13 +149,7 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   @Disabled("does not work until we have 'matchStructure' or 'optional stereotype")
   @Test
   void testAttributeForEachAttributeNoTargetIncarnations() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "attributes/forEach/ForEachAttributeNoTargetIncConc.cd",
         "attributes/forEach/ForEachAttributeNoTargetIncRef.cd",
         "attributes/forEach/ForEachAttributeNoTargetIncOut.cd");
@@ -191,14 +161,8 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
    */
   @Test
   void testAttributeTypeUnderspecifiedNoIncarnationError() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
     try {
       parseAndConcretize(
-          completer,
           "attributes/underspecified/AttributeTypeUnderspecifiedNoIncConc.cd",
           "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd");
       fail("Expected CompletionException. But the concretization was successful.");
@@ -209,13 +173,7 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testAttributeTypeUnderspecifiedDifferentIncarnationTypes() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance. Currently not possible because of any type
-    completer.setCheckConformance(false);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesConc.cd",
         "attributes/underspecified/AttributeTypeUnderspecifiedRef.cd",
         "attributes/underspecified/AttributeTypeUnderspecifiedDifferentIncTypesOut.cd");
