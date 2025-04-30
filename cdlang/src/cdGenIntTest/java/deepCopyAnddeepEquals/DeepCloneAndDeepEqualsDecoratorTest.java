@@ -366,6 +366,12 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dc7,dc8);
     Assertions.assertNotSame(dc7.my2dimList,dc8.my2dimList);
     Assertions.assertTrue(dc7.deepEquals(dc8));
+    //check for deepClone with zwo equal references inside the first list
+    dc7.my2dimList = new ArrayList<>();
+    dc7.my2dimList.add(listAbsent1);
+    dc7.my2dimList.add(listAbsent1);
+    dc8 = dc7.deepClone();
+    Assertions.assertSame(dc8.my2dimList.get(0),dc8.my2dimList.get(1));
     //null check
     dc7.my2dimList = null;
     dc8 = dc7.deepClone();
@@ -501,14 +507,52 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc19.myClassCircular2 = dc20;
     dc20.myClassCircular1 = dc19;
     ClassCircular1 dc21 = dc19.deepClone();
-
-
-
-
-
-
-
+    Assertions.assertSame(dc21,dc21.myClassCircular2.myClassCircular1);
+    Assertions.assertSame(dc21.myClassCircular2,dc21.myClassCircular2.myClassCircular1.myClassCircular2);
+    Assertions.assertNotSame(dc19,dc21);
+    Assertions.assertNotSame(dc19.myClassCircular2,dc21.myClassCircular2);
+    //endregion
+    //region check creation of same references
+    ClassWith2DimList dc22 = new ClassWith2DimList();
+    dc22.my2dimList = new ArrayList<>();
+    dc22.my2dimList.add(listAbsent1);
+    dc22.my2dimList.add(listAbsent1);
+    ClassWith2DimList dc23 = dc22.deepClone();
+    Assertions.assertSame(dc23.my2dimList.get(0),dc23.my2dimList.get(1));
+    Assertions.assertNotSame(dc22,dc23);
+    Assertions.assertNotSame(dc22.my2dimList,dc23.my2dimList);
+    Assertions.assertTrue(dc22.my2dimList.get(0)==dc22.my2dimList.get(1) && dc23.my2dimList.get(0)==dc23.my2dimList.get(1));
+    //endregion
+    //region Test multiple types and multiple dimensions at the same time
+    AllTogether dc24 = new AllTogether();
+    dc24.owns = new HashSet<>();
+    dc24.manyClassWith2DimList = new HashSet<>();
+    dc24.myBool = true;
+    dc24.myInt = -12121;
+    dc24.optClassWith2DimList = Optional.empty();
+    dc24.oneClassWith2DimList = null;
+    AllTogether dc25 = dc24.deepClone();
+    Assertions.assertNotSame(dc24,dc25);
+    Assertions.assertTrue(dc24.deepEquals(dc25));
+    Assertions.assertNotSame(dc24.manyClassWith2DimList,dc25.manyClassWith2DimList);
+    Assertions.assertNotSame(dc24.owns,dc25.owns);
+    //are the same as they are null values
+    //Assertions.assertNotSame(dc24.oneClassWith2DimList,dc25.oneClassWith2DimList);
+    //Assertions.assertNotSame(dc24.optClassWith2DimList,dc25.optClassWith2DimList);
+    //Assertions.assertNotSame(dc24.manyClassWith2DimList,dc25.manyClassWith2DimList);
+    ClassWith2DimList dc26 = new ClassWith2DimList();
+    dc26.my2dimList = new ArrayList<>();
+    dc26.my2dimList.add(listAbsent1);
+    dc24.manyClassWith2DimList.add(dc26);
+    dc24.optClassWith2DimList= Optional.of(dc26);
+    dc24.oneClassWith2DimList = dc26;
+    dc25 = dc24.deepClone();
+    Assertions.assertNotSame(dc24.oneClassWith2DimList,dc25.oneClassWith2DimList);
+    Assertions.assertNotSame(dc24.optClassWith2DimList,dc25.optClassWith2DimList);
+    Assertions.assertNotSame(dc24.manyClassWith2DimList,dc25.manyClassWith2DimList);
+    Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0],dc25.optClassWith2DimList.get());
+    Assertions.assertSame(dc25.optClassWith2DimList.get(),dc25.oneClassWith2DimList);
+    //endregion
+    //endregion
   }
-
-
 }

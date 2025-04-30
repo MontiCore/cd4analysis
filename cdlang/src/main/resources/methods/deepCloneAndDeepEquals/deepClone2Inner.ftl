@@ -13,15 +13,19 @@ if(${thisObjectName} == null) {
 } else {
   <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
-  ${resultName} = new HashSet<>();
-  map.put(${thisObjectName}, new Object[] {${resultName}, false});
-  java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
-  while(${iteratorName}.hasNext()) {
-    <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
-    ${innerType.printType()} ${newResultName};
-    ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
-    ${resultName}.add(${newResultName});
+  if(map.get(${thisObjectName}) == null) {
+    ${resultName} = new HashSet<>();
+    map.put(${thisObjectName}, new Object[] {${resultName}, false});
+    java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
+    while(${iteratorName}.hasNext()) {
+      <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
+      ${innerType.printType()} ${newResultName};
+      ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+      ${resultName}.add(${newResultName});
+    }
+  }else{
+    ${resultName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
   }
   map.get(${thisObjectName})[1] = true;
 }
@@ -32,15 +36,19 @@ if(${thisObjectName} == null) {
 } else {
   <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
-  ${resultName} = new ArrayList<>();
-  map.put(${thisObjectName}, new Object[] {${resultName}, false});
-  java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
-  while(${iteratorName}.hasNext()) {
-    <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
-    ${innerType.printType()} ${newResultName};
-    ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
-    ${resultName}.add(${newResultName});
+  if(map.get(${thisObjectName}) == null) {
+    ${resultName} = new ArrayList<>();
+    map.put(${thisObjectName}, new Object[] {${resultName}, false});
+    java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
+    while(${iteratorName}.hasNext()) {
+      <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
+      ${innerType.printType()} ${newResultName};
+      ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+      ${resultName}.add(${newResultName});
+    }
+  }else{
+    ${resultName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
   }
   map.get(${thisObjectName})[1] = true;
 }
@@ -56,8 +64,12 @@ if(${thisObjectName} == null) {
     ${innerType.printType()} ${newInnerType} = ${thisObjectName}.get();
     ${mCType.printType()} ${optionalResultName} = Optional.empty();
     ${innerType.printType()} ${newResultName};
-    map.put(${thisObjectName}, new Object[] {${optionalResultName}, false});
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+    if(map.get(${thisObjectName}) == null) {
+      map.put(${thisObjectName}, new Object[] {${optionalResultName}, false});
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+    }else{
+      ${newResultName} = (${innerType.printType()}) map.get(${thisObjectName})[0];
+    }
     map.get(${thisObjectName})[1] = true;
     ${resultName} = Optional.of(${newInnerType});
   } else {
@@ -81,8 +93,12 @@ if(${thisObjectName} == null) {
   ${resultName} = null;
 } else {
   ${mCType.printType()} ${newResultName} = new ${mCType.printType()}Builder().unsafeBuild();
-  map.put(${thisObjectName}, new Object[] { ${newResultName}, false});
-  ${resultName} = ${thisObjectName}.deepClone(${newResultName}, map);
+  if(map.get(${thisObjectName}) == null) {
+    map.put(${thisObjectName}, new Object[] {${thisObjectName}, false});
+    ${resultName} = ${thisObjectName}.deepClone(${newResultName}, map);
+  }else{
+    ${resultName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+  }
   map.get(${thisObjectName})[1] = true;
 }
 <#-- all other types -->
@@ -91,6 +107,7 @@ if(${thisObjectName} == null) {
   ${resultName} = null;
 } else {
 <#-- we cannot do this correctly if we land here the user has to implement the deepClone method via the TOP-Mechanism -->
+<#-- adding to the map would not contribute, as we will copy the object anyway and multiple references will still be multiple references afterwards -->
   ${resultName} = ${thisObjectName};
 }
   </#if>
