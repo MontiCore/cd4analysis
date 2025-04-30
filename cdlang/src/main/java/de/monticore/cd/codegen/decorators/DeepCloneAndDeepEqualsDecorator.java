@@ -13,6 +13,9 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
+import de.monticore.types.mcarraytypes._ast.ASTMCArrayType;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
@@ -97,7 +100,9 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     String packageName = originalClass.getSymbol().getPackageName();
     String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();
     ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(originalClassFullQualifiedName);
-    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(originalClassQualifiedType, originalClassQualifiedType);
+    ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
+    ASTMCArrayType arrayType = MCTypeFacade.getInstance().createArrayType("Object",1);
+    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType, arrayType);
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(originalClassQualifiedType).setName("result").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("map").build();
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
@@ -105,7 +110,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
     decoratedClass.addCDMember(deepClone2Method);
 
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2", originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2",originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
   }
 
 

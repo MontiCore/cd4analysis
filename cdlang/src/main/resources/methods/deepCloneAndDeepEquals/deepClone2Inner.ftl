@@ -4,36 +4,47 @@
 <#-- its primary purpose is to enable recursive which are need when resolving Lists and Sets -->
 ${tc.signature("mCType", "PojoClazzesAsStringList","thisObjectName", "resultName")}
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
+<#-- create the result object at the very start and fill thisObject and the resultObjects in  the map -->
+<#assign newResultName = "newResult" + mCType.hashCode()?replace(".","")?replace(",","")>
 <#-- Set types -->
 <#if (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
 if(${thisObjectName} == null) {
   ${resultName} = null;
 } else {
-<#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
-<#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
-java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
-while(${iteratorName}.hasNext()) {
-  <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
-  ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, resultName)}
-}
-
+  <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
+  <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
+  ${resultName} = new HashSet<>();
+  map.put(${thisObjectName}, new Object[] {${resultName}, false});
+  java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
+  while(${iteratorName}.hasNext()) {
+    <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
+    ${innerType.printType()} ${newResultName};
+    ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+    ${resultName}.add(${newResultName});
+  }
+  map.get(${thisObjectName})[1] = true;
 }
 <#-- List types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(mCType))>
 if(${thisObjectName} == null) {
   ${resultName} = null;
 } else {
-<#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
-<#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
-java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
-while(${iteratorName}.hasNext()) {
-  <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
-  ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, resultName)}
+  <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
+  <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
+  ${resultName} = new ArrayList<>();
+  map.put(${thisObjectName}, new Object[] {${resultName}, false});
+  java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
+  while(${iteratorName}.hasNext()) {
+    <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
+    ${innerType.printType()} ${newResultName};
+    ${innerType.printType()} ${newInnerType} = ${iteratorName}.next();
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+    ${resultName}.add(${newResultName});
+  }
+  map.get(${thisObjectName})[1] = true;
 }
-
-} optional types -->
+<#-- Optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
 if(${thisObjectName} == null) {
   ${resultName} = null;
@@ -41,8 +52,14 @@ if(${thisObjectName} == null) {
   if(${thisObjectName}.isPresent()) {
     <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
     <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign optionalResultName = "optionalResult" + mCType.hashCode()?replace(".","")?replace(",","")>
     ${innerType.printType()} ${newInnerType} = ${thisObjectName}.get();
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, resultName)}
+    ${mCType.printType()} ${optionalResultName} = Optional.empty();
+    ${innerType.printType()} ${newResultName};
+    map.put(${thisObjectName}, new Object[] {${optionalResultName}, false});
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultName)}
+    map.get(${thisObjectName})[1] = true;
+    ${resultName} = Optional.of(${newInnerType});
   } else {
     ${resultName} = Optional.empty();
   }
@@ -63,15 +80,18 @@ ${resultName} = ${thisObjectName};
 if(${thisObjectName} == null) {
   ${resultName} = null;
 } else {
-  ${resultName} = ${thisObjectName}.deepClone(result, map);
-
+  ${mCType.printType()} ${newResultName} = new ${mCType.printType()}Builder().unsafeBuild();
+  map.put(${thisObjectName}, new Object[] { ${newResultName}, false});
+  ${resultName} = ${thisObjectName}.deepClone(${newResultName}, map);
+  map.get(${thisObjectName})[1] = true;
 }
 <#-- all other types -->
   <#else>
 if(${thisObjectName} == null) {
   ${resultName} = null;
 } else {
-
+<#-- we cannot do this correctly if we land here the user has to implement the deepClone method via the TOP-Mechanism -->
+  ${resultName} = ${thisObjectName};
 }
   </#if>
 </#if>

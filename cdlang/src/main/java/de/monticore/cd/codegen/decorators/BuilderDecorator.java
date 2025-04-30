@@ -21,7 +21,6 @@ import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 
 import java.util.*;
@@ -32,6 +31,8 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * Applies the Builder-Pattern to the CD
  */
 public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
+
+  CD4AnalysisTypeDispatcher dispatcher = new CD4AnalysisTypeDispatcher();
 
   @Override
   public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
@@ -92,7 +93,7 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       // Add Setter methods for all attributes to the builder class
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
         ASTCDParameter param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(attribute.getMCType()).build();
-        if(MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())){
+        if(dispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())){
           //set of optional with type directly and not with optional<type>
           ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
           param = CD4CodeMill.cDParameterBuilder().setName(attribute.getName()).setMCType(type).build();
@@ -104,9 +105,9 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
 
       // Add isAbsent methods for all attributes with cardinality != 1
       for(ASTCDAttribute attribute : node.getCDAttributeList()) {
-        if(MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType()) ||
-          MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())||
-          MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+        if(dispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType()) ||
+          dispatcher.isMCCollectionTypesASTMCOptionalType(attribute.getMCType())||
+          dispatcher.isMCCollectionTypesASTMCSetType(attribute.getMCType())) {
           ASTCDMethod setAbsentMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(),builderClass.getName(), "set" + StringTransformations.capitalize(attribute.getName()) + "Absent");
           glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setAbsentMethod, new TemplateHookPoint("methods.builder.setAbsent", attribute)));
           addToClass(builderClass, setAbsentMethod);

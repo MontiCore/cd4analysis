@@ -2,7 +2,7 @@
 ${tc.signature("attribute")}
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCListType(attribute.getMCType())>
-this.${attribute.name} = new ArrayList<>()
+this.${attribute.name} = new ArrayList<>();
   <#else>
   <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute)>
 this.${attribute.name} = new HashSet<>();
