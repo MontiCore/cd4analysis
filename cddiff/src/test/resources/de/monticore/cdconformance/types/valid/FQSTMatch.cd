@@ -1,0 +1,3 @@
+classdiagram FQSTMatch {
+  <<ref="Reference.Account">> class MyAccount;
+}

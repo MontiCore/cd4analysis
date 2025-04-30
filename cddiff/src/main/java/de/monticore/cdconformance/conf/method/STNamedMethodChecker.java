@@ -2,6 +2,7 @@ package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class STNamedMethodChecker extends AbstractMethodChecker {
     if (concrete.getModifier().isPresentStereotype()
         && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return ref.getName().equals(refName);
+      return refType.getSpannedScope().resolveMethodMany(refName).contains(ref.getSymbol());
     }
     return false;
   }

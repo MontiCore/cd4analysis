@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram Concrete {
+  class Account {
+    <<ref="Account.username">> String name;
+    <<ref="Reference.Account.password">> boolean passcode;
+  }
+
+}

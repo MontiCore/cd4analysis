@@ -79,13 +79,7 @@ public class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
 
   @Test
   void testAttributeTypeMI() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    // TODO check conformance! Currently not possible because conformance checker only checks for
-    // equal MCType (see #15)
-    completer.setCheckConformance(false);
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "multipleIncarnation/AttributeTypeMIConc.cd",
         "multipleIncarnation/AttributeTypeMIRef.cd",
         "multipleIncarnation/AttributeTypeMIOut.cd");
