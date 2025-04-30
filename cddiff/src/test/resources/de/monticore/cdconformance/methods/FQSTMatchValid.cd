@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.String;
+
+classdiagram FQSTMatchValid {
+
+  <<incarnates = "Operator">> class Exec {
+    <<incarnates = "Operator.operation">> boolean execute(String input, Config param);
+    <<incarnates = "ReferenceMethods.Operator.operation">> boolean execute2(String input, Config param);
+  }
+
+  <<incarnates = "Parameter">> class Config;
+
+}
