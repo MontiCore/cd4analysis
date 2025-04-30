@@ -12,14 +12,15 @@ import java.util.stream.Collectors;
 
 public class STNamedAttributeChecker extends AbstractAttributeChecker {
 
-  public STNamedAttributeChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
-    super(mapping, typeMatcher);
+  public STNamedAttributeChecker(String mapping, String underspecifiedTypeName,
+                                 MatchingStrategy<ASTCDType> typeMatcher) {
+    super(mapping, underspecifiedTypeName, typeMatcher);
   }
 
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
 
-    return refType.getCDAttributeList().stream()
+    return referenceType.getCDAttributeList().stream()
         .filter(ref -> isMatched(concrete, ref))
         .collect(Collectors.toList());
   }
@@ -29,7 +30,7 @@ public class STNamedAttributeChecker extends AbstractAttributeChecker {
     if (concrete.getModifier().isPresentStereotype()
         && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return refType.getSpannedScope().resolveFieldMany(refName).contains(ref.getSymbol());
+      return referenceType.getSpannedScope().resolveFieldMany(refName).contains(ref.getSymbol());
     }
     return false;
   }

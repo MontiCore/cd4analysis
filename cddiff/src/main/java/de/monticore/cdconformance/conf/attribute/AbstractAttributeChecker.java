@@ -6,18 +6,22 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.conf.CDAttributeChecker;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
 public abstract class AbstractAttributeChecker implements CDAttributeChecker {
 
   protected final String mapping;
+  protected final String underspecifiedTypeName;
   protected final MatchingStrategy<ASTCDType> typeMatcher;
-  protected ASTCDType conType;
-  protected ASTCDType refType;
+  protected ASTCDType concreteType;
+  protected ASTCDType referenceType;
 
-  protected AbstractAttributeChecker(String mapping, MatchingStrategy<ASTCDType> typeMatcher) {
+  protected AbstractAttributeChecker(String mapping, String underspecifiedTypeName,
+                                     MatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
+    this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
   }
 
@@ -27,10 +31,18 @@ public abstract class AbstractAttributeChecker implements CDAttributeChecker {
      * An attribute conforms to the reference attribute if one of the following holds:
      * - the concrete attribute has the exact same type as the reference attribute
      * - the concrete attribute type is an incarnation of the reference attribute type
-     * - TODO the reference attribute type is underspecified
+     * - the reference attribute type is underspecified
      */
     ASTMCType conType = concrete.getMCType();
     ASTMCType refType = ref.getMCType();
+    if (refType.printType().equals(underspecifiedTypeName)) {
+      if (conType.printType().equals(underspecifiedTypeName)) {
+        Log.error("The underspecified placeholder type is not allowed as a concrete type.");
+        return false;
+      }
+      // every type is allowed if the reference type is underspecified
+      return true;
+    }
     Optional<Boolean> conReturnType = checkTypeIncarnation(refType, conType);
     if (conReturnType.isPresent()) {
       return conReturnType.get();
@@ -57,21 +69,21 @@ public abstract class AbstractAttributeChecker implements CDAttributeChecker {
 
   @Override
   public ASTCDType getConcreteType() {
-    return conType;
+    return concreteType;
   }
 
   @Override
   public void setConcreteType(ASTCDType conType) {
-    this.conType = conType;
+    this.concreteType = conType;
   }
 
   @Override
   public ASTCDType getReferenceType() {
-    return refType;
+    return referenceType;
   }
 
   @Override
   public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
+    this.referenceType = refType;
   }
 }
