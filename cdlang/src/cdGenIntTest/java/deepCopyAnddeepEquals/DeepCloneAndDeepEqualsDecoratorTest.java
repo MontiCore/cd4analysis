@@ -355,6 +355,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     ClassWith2DimList dc7 = new ClassWith2DimList();
     dc7.my2dimList= new ArrayList<>();
     dc7.my2dimList.add(listAbsent1);
+    dc7.my2dimList.add(listAbsent1);
     dc7.my2dimList.add(new ArrayList<>());
     ClassWith2DimList dc8 = dc7.deepClone();
     Assertions.assertNotSame(dc7,dc8);
@@ -401,7 +402,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     ClassWith2DimSet dc11 = new ClassWith2DimSet();
     dc11.my2dimSet = new HashSet<>();
     dc11.my2dimSet.add(set1);
-    dc11.my2dimSet.add(new HashSet<>());
+    dc11.my2dimSet.add(set1);
     ClassWith2DimSet dc12 = dc11.deepClone();
     Assertions.assertNotSame(dc11,dc12);
     Assertions.assertNotSame(dc11.my2dimSet,dc12.my2dimSet);
@@ -412,6 +413,14 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dc11,dc12);
     Assertions.assertNotSame(dc11.my2dimSet,dc12.my2dimSet);
     Assertions.assertTrue(dc11.deepEquals(dc12));
+    //check for deepClone with zwo equal references inside the first set
+    //TODO this doesnt work as set will just compress the two elements
+    // we need to have a 3 dim set. new hashSet().add(new HashSet()).add(new HastSet()) and the add the set on the third level
+    dc11.my2dimSet = new HashSet<>();
+    dc11.my2dimSet.add(set1);
+    dc11.my2dimSet.add(set1);
+    dc12 = dc11.deepClone();
+    //Assertions.assertSame(dc12.my2dimSet.toArray()[0],dc12.my2dimSet.toArray()[1]);
     //null check
     dc11.my2dimSet = null;
     dc12 = dc11.deepClone();
@@ -541,15 +550,18 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     //Assertions.assertNotSame(dc24.optClassWith2DimList,dc25.optClassWith2DimList);
     //Assertions.assertNotSame(dc24.manyClassWith2DimList,dc25.manyClassWith2DimList);
     ClassWith2DimList dc26 = new ClassWith2DimList();
+
     dc26.my2dimList = new ArrayList<>();
     dc26.my2dimList.add(listAbsent1);
     dc24.manyClassWith2DimList.add(dc26);
     dc24.optClassWith2DimList= Optional.of(dc26);
     dc24.oneClassWith2DimList = dc26;
+    dc24.owns = null;
     dc25 = dc24.deepClone();
     Assertions.assertNotSame(dc24.oneClassWith2DimList,dc25.oneClassWith2DimList);
     Assertions.assertNotSame(dc24.optClassWith2DimList,dc25.optClassWith2DimList);
     Assertions.assertNotSame(dc24.manyClassWith2DimList,dc25.manyClassWith2DimList);
+    Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0], dc25.oneClassWith2DimList);
     Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0],dc25.optClassWith2DimList.get());
     Assertions.assertSame(dc25.optClassWith2DimList.get(),dc25.oneClassWith2DimList);
     //endregion
