@@ -179,6 +179,24 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(de13.deepEquals(de14));
     Assertions.assertTrue(de13.deepEquals(de14,false));
     Assertions.assertTrue(de13.deepEquals(de14,true));
+
+    //Test 2Dim Optional
+    ClassWith2DimOptional deO1 = new ClassWith2DimOptional();
+    ClassWith2DimOptional deO2 = new ClassWith2DimOptional();
+    deO1.my2DimOptional = Optional.of(Optional.of(new B()));
+    Assertions.assertFalse(deO1.deepEquals(deO2));
+    deO2.my2DimOptional= Optional.empty();
+    Assertions.assertFalse(deO1.deepEquals(deO2));
+    deO2.my2DimOptional= Optional.of(Optional.empty());
+    Assertions.assertFalse(deO1.deepEquals(deO2));
+    deO2.my2DimOptional= Optional.of(Optional.of(new B()));
+    Assertions.assertTrue(deO1.deepEquals(deO2));
+    //null check
+    deO1 .my2DimOptional=null;
+    deO2.my2DimOptional=null;
+    Assertions.assertTrue(deO1.deepEquals(deO2));
+    deO2 = null;
+    Assertions.assertFalse(deO1.deepEquals(deO2));
     //endregion
     //region deepEquals association types
     ClassWithAssociation de15 = new ClassWithAssociation();
@@ -463,6 +481,27 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc16 = dc15.deepClone();
     Assertions.assertTrue(dc15.deepEquals(dc16));
     Assertions.assertNull(dc16.owns);
+
+    //Test 2Dim Optional
+    ClassWith2DimOptional dcO1 = new ClassWith2DimOptional();
+    dcO1.my2DimOptional= null;
+    ClassWith2DimOptional dcO2 = dcO1.deepClone();
+    Assertions.assertNotSame(dcO1,dcO2);
+    Assertions.assertTrue(dcO1.deepEquals(dcO2));
+    dcO1.my2DimOptional=Optional.empty();
+    dcO2 = dcO1.deepClone();
+    Assertions.assertNotSame(dcO1,dcO2);
+    //Optional.empty is apparently equal
+    //Assertions.assertNotSame(dcO1.my2DimOptional,dcO2.my2DimOptional);
+    Assertions.assertTrue(dcO1.deepEquals(dcO2));
+    dcO1.my2DimOptional= Optional.of(Optional.empty());
+    dcO2 = dcO1.deepClone();
+    Assertions.assertTrue(dcO1.deepEquals(dcO2));
+    Assertions.assertNotSame(dcO1.my2DimOptional,dcO2.my2DimOptional);
+    dcO1.my2DimOptional= Optional.of(Optional.ofNullable(new B()));
+    dcO2 = dcO1.deepClone();
+    Assertions.assertTrue(dcO1.deepEquals(dcO2));
+    Assertions.assertNotSame(dcO1.my2DimOptional.get(),dcO2.my2DimOptional.get());
     //endregion
     //region deepClone composition types
     ClassWithComposition dc17 = new ClassWithComposition();

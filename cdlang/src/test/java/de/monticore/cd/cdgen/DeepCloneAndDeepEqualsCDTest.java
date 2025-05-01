@@ -48,6 +48,9 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           "<<setter>>public class ClassWithOptional { " +
           " public Optional<Integer> myOptionalInteger;\n" +
           "}\n " +
+          "<<setter>>public class ClassWith2DimOptional { " +
+          " public Optional<Optional<B>> my2DimOptional;\n" +
+          "}\n " +
           "<<setter>>public class ClassWithPojoClassType { " +
           " public ClassWithPrimitiveType pojoType;\n" +
           "}\n " +
