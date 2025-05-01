@@ -15,7 +15,7 @@ if(${thisObjectName} == null) {
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = new HashSet<>();
-    map.put(${thisObjectName}, new Object[] {${resultObjectName}, false});
+    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
     java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
     while(${iteratorName}.hasNext()) {
       <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
@@ -37,7 +37,7 @@ if(${thisObjectName} == null) {
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = new ArrayList<>();
-    map.put(${thisObjectName}, new Object[] {${resultObjectName}, false});
+    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
     java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
     while(${iteratorName}.hasNext()) {
       <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
@@ -64,7 +64,7 @@ if(${thisObjectName} == null) {
       ${innerType.printType()} ${newInnerType} = ${thisObjectName}.get();
       ${innerType.printType()} ${newResultObjectName};
       if(map.get(${newInnerType}) == null) {
-        map.put(${thisObjectName}, new Object[] {${optionalResultName}, false});
+        map.put(${thisObjectName}, new Object[] {${optionalResultName}, true});
         ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultObjectName)}
       }else{
         ${newResultObjectName} = (${innerType.printType()}) map.get(${newInnerType})[0];
@@ -72,7 +72,7 @@ if(${thisObjectName} == null) {
       ${resultObjectName} = Optional.of(${newResultObjectName});
     } else {
       ${resultObjectName} = Optional.empty();
-      map.put(${thisObjectName}, new Object[] {${optionalResultName}, false});
+      map.put(${thisObjectName}, new Object[] {${optionalResultName}, true});
     }
   }else{
     ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
