@@ -50,7 +50,15 @@ class BuilderCDTest extends AbstractCDGenTest{
             + " -> (oneB) B [1] public;\n"
             + " }\n"
             + " <<getter>> public class B { \n"
-            + "}\n"
+            + " }\n"
+            + " <<setter,getter,builder>> public class NoDefaultConstructor { \n "
+            + " public NoDefaultConstructor(int i);\n"
+            + " int i; \n"
+            + " } \n"
+            + " <<setter,getter,builder>> public class PrivateDefaultConstructor { \n "
+            + " private PrivateDefaultConstructor();\n"
+            + " int i; \n"
+            + " } \n"
             + "}");
 
     Assertions.assertTrue(opt.isPresent());

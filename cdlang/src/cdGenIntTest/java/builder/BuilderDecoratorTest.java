@@ -407,6 +407,10 @@ public class BuilderDecoratorTest {
     //unsafeBuild with no arguments
     TestBuilderWithoutSetter unsafeBuildEmpty = new TestBuilderWithoutSetterBuilder().unsafeBuild();
     Assertions.assertNull(unsafeBuildEmpty.getManyB());
+
+    //constructor modifications
+    PrivateDefaultConstructor privateDefaultConstructor = new PrivateDefaultConstructorBuilder().unsafeBuild();
+    NoDefaultConstructor noDefaultConstructorBuilder = new NoDefaultConstructorBuilder().unsafeBuild();
   }
 
   public void checkClassAndMethodExistence() throws Exception {
@@ -497,5 +501,7 @@ public class BuilderDecoratorTest {
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyIntAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyBoolAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
+
+
   }
 }

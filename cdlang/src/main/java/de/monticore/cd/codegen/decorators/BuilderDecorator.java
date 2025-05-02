@@ -21,6 +21,7 @@ import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.StringTransformations;
 
 import java.util.*;
@@ -57,6 +58,8 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       ASTNode origParent = this.decoratorData.getParent(node).get();
       // and the parent, but now the element of the target CD
       ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
+      // Get decorated pojo class
+      ASTCDClass pojoClass = this.decoratorData.getAsDecorated(node);
 
       // Create a new class with the "Builder" suffix
       ASTCDClassBuilder builderClassB = CD4CodeMill.cDClassBuilder();
@@ -142,6 +145,24 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, unsafeBuildMethod, new TemplateHookPoint("methods.builder.unsafeBuild", node.getName(), new ArrayList<>(node.getCDAttributeList()), new ArrayList<>(hasSetterMethod))));
       addToClass(builderClass, unsafeBuildMethod);
       decoratorUnsafeBuildMethod.push(unsafeBuildMethod);
+
+      //add a default package private constructor to the pojo class when no one exists. Needed inside the Builder
+      if(!pojoClass.getCDConstructorList().isEmpty()) {
+        boolean hasDefaultConstructor = false;
+        for (ASTCDConstructor constructorPojo : pojoClass.getCDConstructorList()) {
+          if (constructorPojo.getCDParameterList().isEmpty()) {
+            if (constructorPojo.getModifier().isPrivate()) {
+              //if we have a default constructor which is private, e need to set it to protected at least
+              constructorPojo.setModifier(CD4CodeMill.modifierBuilder().PROTECTED().build());
+            }
+            hasDefaultConstructor = true;
+          }
+        }
+        if (!hasDefaultConstructor) {
+          ASTCDConstructor constructor1 = CDConstructorFacade.getInstance().createDefaultConstructor(CD4CodeMill.modifierBuilder().PROTECTED().build(), node);
+          addToClass(pojoClass, constructor1);
+        }
+      }
 
       // Add the builder class to the stack c
       decoratedBuilderClasses.add(builderClass);
