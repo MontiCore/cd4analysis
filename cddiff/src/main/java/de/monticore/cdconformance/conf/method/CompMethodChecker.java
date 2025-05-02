@@ -3,16 +3,16 @@ package de.monticore.cdconformance.conf.method;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CompMethodChecker extends AbstractMethodChecker {
   private final List<ICDMethodChecker> methodCheckers = new ArrayList<>();
 
-  public CompMethodChecker(String mapping, String underspecifiedTypeName,
-                           MatchingStrategy<ASTCDType> typeMatcher) {
-    super(mapping, underspecifiedTypeName, typeMatcher);
+  public CompMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
+    super(mapping, typeHelper);
   }
 
   public void addIncStrategy(ICDMethodChecker checker) {

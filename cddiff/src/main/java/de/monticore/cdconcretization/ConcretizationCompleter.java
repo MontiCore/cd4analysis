@@ -29,6 +29,7 @@ import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -184,6 +185,7 @@ public class ConcretizationCompleter {
     private final CompTypeIncStrategy typeIncStrategy;
     private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
     private final CompAssocIncStrategy assocIncStrategy;
+    private final TypeIncarnationHelper typeIncarnationHelper;
 
     private final ScopedIncarnationBindings scopedIncarnationBindings =
         new ScopedIncarnationBindings();
@@ -200,6 +202,10 @@ public class ConcretizationCompleter {
 
       typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
       assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
+
+      // TODO better way to share this logic between conformance and concretization!
+      typeIncarnationHelper =
+          new TypeIncarnationHelper(underspecifiedPlaceholderTypeName, typeIncStrategy);
 
       /*
        * We configure the matching strategies depending on the conformance checker parameter as we
@@ -307,14 +313,14 @@ public class ConcretizationCompleter {
     public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
       CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(
-              mapping, underspecifiedPlaceholderTypeName, typeIncStrategy);
+              mapping, typeIncarnationHelper);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
         attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(
-                mapping, underspecifiedPlaceholderTypeName, typeIncStrategy));
+                mapping, typeIncarnationHelper));
       }
       if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
         attributeIncStrategy.addIncStrategy(new EqNameAttributeChecker(
-                mapping, underspecifiedPlaceholderTypeName, typeIncStrategy));
+                mapping, typeIncarnationHelper));
       }
       attributeIncStrategy.setConcreteType(concreteType);
       attributeIncStrategy.setReferenceType(referenceType);

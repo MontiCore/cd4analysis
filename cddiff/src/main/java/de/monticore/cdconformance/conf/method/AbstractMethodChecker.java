@@ -3,28 +3,20 @@ package de.monticore.cdconformance.conf.method;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.se_rwth.commons.logging.Log;
-
-import java.util.Optional;
 
 public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected final String mapping;
-  protected final String underspecifiedTypeName;
-  protected final MatchingStrategy<ASTCDType> typeMatcher;
+  protected final TypeIncarnationHelper typeHelper;
   protected ASTCDType conType;
   protected ASTCDType refType;
 
-  protected AbstractMethodChecker(String mapping, String underspecifiedTypeName,
-                                  MatchingStrategy<ASTCDType> typeMatcher) {
+  protected AbstractMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
     this.mapping = mapping;
-    this.underspecifiedTypeName = underspecifiedTypeName;
-    this.typeMatcher = typeMatcher;
+    this.typeHelper = typeHelper;
   }
 
   @Override
@@ -39,63 +31,25 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected boolean checkParameterConformance(ASTCDParameter conPar, ASTCDParameter refPar) {
     if (conPar.getName().equals(refPar.getName())) {
-      if (refPar.getMCType().printType().equals(underspecifiedTypeName)) {
-        if (conPar.getMCType().printType().equals(underspecifiedTypeName)) {
-          Log.error("The underspecified placeholder type is not allowed as a concrete type.");
-          return false;
-        }
-        // every type is allowed if the reference type is underspecified
-        return true;
-      }
-      Optional<Boolean> conParType = checkTypeIncarnation(refPar.getMCType(), conPar.getMCType());
-      if (conParType.isPresent()) {
-        return conParType.get();
-      }
-      return conPar.getMCType().deepEquals(refPar.getMCType());
+      return typeHelper.isMCTypeMatched(conPar.getMCType(), refPar.getMCType());
     }
     return false;
   }
 
   protected boolean checkReturnTypeConformance(
       ASTMCReturnType conReturn, ASTMCReturnType refReturn) {
-    if (refReturn.printType().equals(underspecifiedTypeName)) {
-      if (conReturn.printType().equals(underspecifiedTypeName)) {
-        Log.error("The underspecified placeholder type is not allowed as a concrete type.");
-        return false;
-      }
-      // every type is allowed if the reference type is underspecified
+    if (typeHelper.isVoidType(refReturn)) {
+      /*
+       * For methods, we treat 'void' as underspecification of the return type. Therefore, any
+       * concrete return type is allowed.
+       */
       return true;
     }
-    if (refReturn.printType().equals("void")) {
-      if (conReturn.printType().equals(underspecifiedTypeName)) {
-        Log.error("The underspecified placeholder type is not allowed as a concrete type.");
-        return false;
-      }
-      return true;
+    if (typeHelper.isVoidType(conReturn)) {
+      // a void return type is only allowed if the reference type is either void or underspecified
+      return typeHelper.isUnderspecified(refReturn);
     }
-    Optional<Boolean> conReturnType =
-        checkTypeIncarnation(refReturn.getMCType(), conReturn.getMCType());
-    if (conReturnType.isPresent()) {
-      return conReturnType.get();
-    }
-    return conReturn.getMCType().deepEquals(refReturn.getMCType());
-  }
-
-  protected Optional<Boolean> checkTypeIncarnation(ASTMCType refType, ASTMCType conType) {
-    if (conType.getDefiningSymbol().isPresent()
-        && conType.getDefiningSymbol().get() instanceof CDTypeSymbol
-        && refType.getDefiningSymbol().isPresent()
-        && refType.getDefiningSymbol().get() instanceof CDTypeSymbol) {
-      CDTypeSymbol conCDType = (CDTypeSymbol) conType.getDefiningSymbol().get();
-      CDTypeSymbol refCDType = (CDTypeSymbol) refType.getDefiningSymbol().get();
-      if (conCDType.isPresentAstNode()) {
-        return Optional.of(
-            typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
-                .anyMatch(
-                    r -> r.getSymbol().getFullName().equals(refCDType.getFullName())));
-      }
-    }
-    return Optional.empty();
+    return typeHelper.isMCTypeMatched(conReturn.getMCType(), refReturn.getMCType());
   }
 
   @Override

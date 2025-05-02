@@ -3,7 +3,7 @@ package de.monticore.cdconformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.CDAttributeChecker;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,8 @@ public class CompAttributeChecker extends AbstractAttributeChecker {
 
   private final List<CDAttributeChecker> attributeCheckers = new ArrayList<>();
 
-  public CompAttributeChecker(String mapping,
-                              String underspecifiedTypeName,
-                              MatchingStrategy<ASTCDType> typeMatcher) {
-    super(mapping, underspecifiedTypeName, typeMatcher);
+  public CompAttributeChecker(String mapping, TypeIncarnationHelper typeHelper) {
+    super(mapping, typeHelper);
   }
 
   public void addIncStrategy(CDAttributeChecker checker) {

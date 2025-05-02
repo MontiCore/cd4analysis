@@ -1,21 +1,18 @@
 package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.util.NameUtil;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class STNamedMethodChecker extends AbstractMethodChecker {
-  public STNamedMethodChecker(String mapping, String underspecifiedTypeName,
-                              MatchingStrategy<ASTCDType> typeMatcher) {
-    super(mapping, underspecifiedTypeName, typeMatcher);
+  public STNamedMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
+    super(mapping, typeHelper);
   }
 
   @Override
   public List<ASTCDMethod> getMatchedElements(ASTCDMethod concrete) {
-
     return refType.getCDMethodList().stream()
         .filter(ref -> isMatched(concrete, ref))
         .collect(Collectors.toList());

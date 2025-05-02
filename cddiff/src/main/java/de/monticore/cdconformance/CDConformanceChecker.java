@@ -23,6 +23,7 @@ import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.se_rwth.commons.logging.Log;
@@ -75,22 +76,25 @@ public class CDConformanceChecker {
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
     // init incarnation checker
     typeInc = new CompTypeIncStrategy(referenceCD, mapping);
+    TypeIncarnationHelper typeHelper =
+            new TypeIncarnationHelper(underspecifiedTypeName, typeInc);
+
     assocInc = new CompAssocIncStrategy(referenceCD, mapping);
-    attrInc = new CompAttributeChecker(mapping, underspecifiedTypeName, typeInc);
-    methInc = new CompMethodChecker(mapping, underspecifiedTypeName, typeInc);
+    attrInc = new CompAttributeChecker(mapping, typeHelper);
+    methInc = new CompMethodChecker(mapping, typeHelper);
 
     if (params.contains(STEREOTYPE_MAPPING)) {
       typeInc.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
-      attrInc.addIncStrategy(new STNamedAttributeChecker(mapping, underspecifiedTypeName, typeInc));
-      methInc.addIncStrategy(new STNamedMethodChecker(mapping, underspecifiedTypeName, typeInc));
+      attrInc.addIncStrategy(new STNamedAttributeChecker(mapping, typeHelper));
+      methInc.addIncStrategy(new STNamedMethodChecker(mapping, typeHelper));
     }
 
     if (params.contains(NAME_MAPPING)) {
       typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
-      attrInc.addIncStrategy(new EqNameAttributeChecker(mapping, underspecifiedTypeName, typeInc));
-      methInc.addIncStrategy(new EqNameMethodChecker(mapping, underspecifiedTypeName, typeInc));
+      attrInc.addIncStrategy(new EqNameAttributeChecker(mapping, typeHelper));
+      methInc.addIncStrategy(new EqNameMethodChecker(mapping, typeHelper));
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
