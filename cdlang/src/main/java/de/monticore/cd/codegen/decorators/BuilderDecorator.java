@@ -59,7 +59,7 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       // and the parent, but now the element of the target CD
       ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
       // Get decorated pojo class
-      ASTCDClass pojoClass = this.decoratorData.getAsDecorated(node);
+      ASTCDClass decClazz = this.decoratorData.getAsDecorated(node);
 
       // Create a new class with the "Builder" suffix
       ASTCDClassBuilder builderClassB = CD4CodeMill.cDClassBuilder();
@@ -147,9 +147,9 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
       decoratorUnsafeBuildMethod.push(unsafeBuildMethod);
 
       //add a default package private constructor to the pojo class when no one exists. Needed inside the Builder
-      if(!pojoClass.getCDConstructorList().isEmpty()) {
+      if(!decClazz.getCDConstructorList().isEmpty()) {
         boolean hasDefaultConstructor = false;
-        for (ASTCDConstructor constructorPojo : pojoClass.getCDConstructorList()) {
+        for (ASTCDConstructor constructorPojo : decClazz.getCDConstructorList()) {
           if (constructorPojo.getCDParameterList().isEmpty()) {
             if (constructorPojo.getModifier().isPrivate()) {
               //if we have a default constructor which is private, e need to set it to protected at least
@@ -160,7 +160,7 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
         }
         if (!hasDefaultConstructor) {
           ASTCDConstructor constructor1 = CDConstructorFacade.getInstance().createDefaultConstructor(CD4CodeMill.modifierBuilder().PROTECTED().build(), node);
-          addToClass(pojoClass, constructor1);
+          addToClass(decClazz, constructor1);
         }
       }
 

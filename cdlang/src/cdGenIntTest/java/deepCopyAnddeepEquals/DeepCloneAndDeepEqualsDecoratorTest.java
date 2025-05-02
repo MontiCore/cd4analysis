@@ -605,5 +605,9 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dc25.optClassWith2DimList.get(),dc25.oneClassWith2DimList);
     //endregion
     //endregion
+    //check construction of default constructor if not present
+    ClassWithNoDefaultConstructor classWithNoDefaultConstructor = new ClassWithNoDefaultConstructor(1);
+    ClassWithNoDefaultConstructor classWithNoDefaultConstructor2 = classWithNoDefaultConstructor.deepClone();
+    Assertions.assertTrue(classWithNoDefaultConstructor.deepEquals(classWithNoDefaultConstructor2));
   }
 }

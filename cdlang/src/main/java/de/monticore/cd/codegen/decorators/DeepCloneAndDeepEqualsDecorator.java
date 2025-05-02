@@ -3,9 +3,11 @@ package de.monticore.cd.codegen.decorators;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
+import de.monticore.cd.facade.CDConstructorFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
@@ -72,10 +74,20 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDClass decClazz = decoratorData.getAsDecorated(node);
 
     addDeepCloneMethod(node, decClazz);
+    addDeepCloneMethod1(node,decClazz);
     addDeepCloneMethod2(node, decClazz);
     addDeepEquals1Method(node, decClazz);
     addDeepEquals2Method(node, decClazz);
     addDeepEquals3Method(node, decClazz);
+
+    //add a private constructor to the pojo class when no one exists. Needed for deepClone
+    if(!decClazz.getCDConstructorList().isEmpty()) {
+      boolean hasDefaultConstructor = decClazz.getCDConstructorList().stream().anyMatch(c -> c.getCDParameterList().isEmpty());
+      if (!hasDefaultConstructor) {
+        ASTCDConstructor constructor1 = CDConstructorFacade.getInstance().createDefaultConstructor(CD4CodeMill.modifierBuilder().PRIVATE().build(), node);
+        addToClass(decClazz, constructor1);
+      }
+    }
   }
 
   private void addDeepCloneMethod(ASTCDClass originalClass, ASTCDClass decoratedClass) {
@@ -88,6 +100,30 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     decoratedClass.addCDMember(deepCloneMethod);
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepCloneMethod, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone", originalClassQualifiedType.printType())));
+  }
+
+  /**
+   * Method needed to create the new Result Object, add it to the map and then runs the real DeepClone method
+   * Needed to avoid using a Builder while still avoiding public constructors
+   * @param originalClass the original class
+   * @param decoratedClass the decorated class where the method is added
+   */
+  public void addDeepCloneMethod1(ASTCDClass originalClass, ASTCDClass decoratedClass) {
+    String packageName = originalClass.getSymbol().getPackageName();
+    String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();
+    ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(originalClassFullQualifiedName);
+    ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
+    ASTMCArrayType arrayType = MCTypeFacade.getInstance().createArrayType("Object",1);
+    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType, arrayType);
+    ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("map").build();
+    ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
+    ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",List.of(parameter2));
+
+    decoratedClass.addCDMember(deepClone2Method);
+
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone1",originalClassQualifiedType)));
+
+
   }
 
   /**

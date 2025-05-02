@@ -25,10 +25,6 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
     setup.withDecorator(new DeepCloneAndDeepEqualsDecorator());
     setup.configDefault(DeepCloneAndDeepEqualsDecorator.class, MatchResult.APPLY);
 
-    //we need the decorator for the builder to be able to generate the deepClone method
-    setup.withDecorator(new BuilderDecorator());
-    setup.configDefault(BuilderDecorator.class, MatchResult.APPLY);
-
     var opt =
       CD4CodeMill.parser()
         .parse_String("classdiagram TestDeepCloneAndDeepEquals {\n" +
@@ -39,47 +35,51 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " -> (optClassWith2DimList)ClassWith2DimList [0..1] public;\n" +
           " -> (oneClassWith2DimList)ClassWith2DimList [1] public;\n" +
           " }\n" +
-          " <<setter>>public class ClassWith2DimList { \n" +
+          " public class ClassWith2DimList { \n" +
           " public List<List<Integer>> my2dimList;\n" +
           " }\n" +
-          " <<setter>>public class ClassWith2DimSet { \n" +
+          " public class ClassWith2DimSet { \n" +
           " public Set<Set<Integer>> my2dimSet;\n" +
           " }\n" +
-          "<<setter>>public class ClassWithOptional { " +
+          "public class ClassWithOptional { " +
           " public Optional<Integer> myOptionalInteger;\n" +
           "}\n " +
-          "<<setter>>public class ClassWith2DimOptional { " +
+          "public class ClassWith2DimOptional { " +
           " public Optional<Optional<B>> my2DimOptional;\n" +
           "}\n " +
-          "<<setter>>public class ClassWithPojoClassType { " +
+          "public class ClassWithPojoClassType { " +
           " public ClassWithPrimitiveType pojoType;\n" +
           "}\n " +
-          "<<setter>>public class ClassWithPrimitiveType { " +
+          "public class ClassWithPrimitiveType { " +
           " public int myInt;\n" +
           "}\n " +
-          "<<setter>>public class ClassWithSet { " +
+          "public class ClassWithSet { " +
           " public Set<Integer> mySet;\n" +
           "}\n " +
-          "<<setter>> public class ClassWithList { \n" +
+          "public class ClassWithList { \n" +
           " public List<Integer> myIntegerList;\n" +
           "}  \n" +
-          " <<setter,getter>>public class ClassCircular1 { \n" +
-          " public ClassCircular2 myClassCircular2;\n" +
-          " }\n" +
-          " <<setter,getter>>public class ClassCircular2 { \n" +
-          " public ClassCircular1 myClassCircular1;\n" +
-          " }\n" +
-          " <<setter,getter>>public class ClassWithAssociation { \n" +
+          "public class ClassCircular1 { \n" +
+          "public ClassCircular2 myClassCircular2;\n" +
           "}\n" +
-          " <<setter,getter>>public class ClassWithComposition { \n" +
-          " -> (opt)B [0..1] public;\n" +
-          " -> (many)B [*] public;\n" +
-          " -> (one)B [1] public;\n" +
+          "public class ClassCircular2 { \n" +
+          "public ClassCircular1 myClassCircular1;\n" +
           "}\n" +
-          " <<setter>> public class B { \n" +
-          " }\n" +
-          " association [1] AllTogether (owner) <-> (owns) B [*]public; "+
-          " association [1] ClassWithAssociation (owner) <-> (owns) B [*]public; "+
+          "public class ClassWithAssociation { \n" +
+          "}\n" +
+          "public class ClassWithNoDefaultConstructor {\n" +
+          " public ClassWithNoDefaultConstructor(int i);\n" +
+          " int i; \n" +
+          "}\n" +
+          "public class ClassWithComposition { \n" +
+          "-> (opt)B [0..1] public;\n" +
+          "-> (many)B [*] public;\n" +
+          "-> (one)B [1] public;\n" +
+          "}\n" +
+          "public class B { \n" +
+          "}\n" +
+          "association [1] AllTogether (owner) <-> (owns) B [*]public; "+
+          "association [1] ClassWithAssociation (owner) <-> (owns) B [*]public; "+
           "}");
 
     Assertions.assertTrue(opt.isPresent());

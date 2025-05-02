@@ -95,9 +95,7 @@ if(${thisObjectName} == null) {
   ${resultObjectName} = null;
 } else {
   if(map.get(${thisObjectName}) == null) {
-    ${mCType.printType()} ${newResultObjectName} = new ${mCType.printType()}Builder().unsafeBuild();
-    map.put(${thisObjectName}, new Object[] {${newResultObjectName}, false});
-    ${resultObjectName} = ${thisObjectName}.deepClone(${newResultObjectName}, map);
+    ${resultObjectName} = ${thisObjectName}.deepClone(map);
   }else{
     ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
   }
