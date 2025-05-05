@@ -38,8 +38,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
   }
 
   @Override
-  public void complete(
-      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
+  public void complete(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
       throws CompletionException {
     Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);

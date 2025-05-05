@@ -6,6 +6,8 @@ import de.monticore.cdconcretization.CompletionException;
 /** Completes a concrete CD such that it conforms to a given reference CD. */
 public interface ICDCompleter {
   void complete(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CDCompletionContext context)
+      ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD,
+      CDCompletionContext context)
       throws CompletionException;
 }

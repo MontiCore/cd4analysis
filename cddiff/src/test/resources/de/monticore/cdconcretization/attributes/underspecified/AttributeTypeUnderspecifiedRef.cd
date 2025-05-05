@@ -1,0 +1,7 @@
+import java.lang.String;
+
+classdiagram AttributeTypeUnderspecifiedRef {
+  class DataClass {
+    any attribute;
+  }
+}

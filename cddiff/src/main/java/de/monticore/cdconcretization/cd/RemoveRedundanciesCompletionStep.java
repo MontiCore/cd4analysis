@@ -9,7 +9,9 @@ public class RemoveRedundanciesCompletionStep extends AbstractCDCompleter {
 
   @Override
   public void complete(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CDCompletionContext context)
+      ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD,
+      CDCompletionContext context)
       throws CompletionException {
     // 5.1 remove redundancies that may have been introduced by inheritance
     CDDiffUtil.refreshSymbolTable(concreteCD);

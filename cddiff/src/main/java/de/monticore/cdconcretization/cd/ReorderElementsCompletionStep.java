@@ -8,7 +8,9 @@ public class ReorderElementsCompletionStep extends AbstractCDCompleter {
 
   @Override
   public void complete(
-      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, CDCompletionContext context)
+      ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD,
+      CDCompletionContext context)
       throws CompletionException {
     // 5.2 reorder so we have a consistent output
     ConcretizationHelper.reorderElements(concreteCD.getCDDefinition());
