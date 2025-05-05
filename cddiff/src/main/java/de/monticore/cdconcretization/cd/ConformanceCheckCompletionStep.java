@@ -41,7 +41,7 @@ public class ConformanceCheckCompletionStep extends AbstractCDCompleter {
       CDCompletionContext context)
       throws CompletionException {
     if (!conformanceChecker.checkConformance(concreteCD, referenceCD, mapping)) {
-      Log.warn("The association completion result is not conform");
+      Log.warn("Conformance check failed");
       Log.warn("Concretized CD:");
       Log.warn(CD4CodeMill.prettyPrint(concreteCD, false));
       throw new CompletionException(errorMessage);

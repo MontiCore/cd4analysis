@@ -4,18 +4,21 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
-import de.monticore.cdconcretization.StereotypeUtil;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
+import de.monticore.cdconcretization.stereotype.StereotypeUtil;
+import de.monticore.cdconcretization.util.NameUtil;
+import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.se_rwth.commons.Names;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ForEachCDTypeCompleter extends AbstractCDTypeCompleter {
+public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
 
   @Override
-  public void completeCDForType(
+  public void completeTypeInCD(
       ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
       throws CompletionException {
     Optional<String> stereotypeValue =
@@ -31,7 +34,7 @@ public class ForEachCDTypeCompleter extends AbstractCDTypeCompleter {
             "Unsupported forEach reference expression" + stereotypeValue.get());
       }
     } else {
-      super.completeCDForType(concreteCD, referenceType, context);
+      super.completeTypeInCD(concreteCD, referenceType, context);
     }
   }
 
@@ -74,7 +77,10 @@ public class ForEachCDTypeCompleter extends AbstractCDTypeCompleter {
 
     for (ASTCDType cTargetTypeInc : targetTypeIncarnations) {
       // if we have more than one type incarnation, we need to add a suffix to the new type
-      String typeSuffix = targetTypeIncarnations.size() > 1 ? "_" + cTargetTypeInc.getName() : "";
+      String cTargetTypeIncName = SymbolUtil.getFullNameWithoutCD(cTargetTypeInc.getSymbol());
+      String typeSuffix = targetTypeIncarnations.size() > 1
+              ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(cTargetTypeIncName)
+              : "";
 
       ASTCDType newType = referenceType.deepClone();
 
@@ -87,17 +93,22 @@ public class ForEachCDTypeCompleter extends AbstractCDTypeCompleter {
       // original attribute
       StereotypeUtil.removeForEachStereotype(newType.getModifier());
       StereotypeUtil.addStereotype(
-          newType.getModifier(),
-          context.getMappingName(),
-          referenceType.getSymbol().getFullName());
+          newType.getModifier(), context.getMappingName(), referenceType.getSymbol().getFullName());
       StereotypeUtil.addIncarnationBindingStereotype(
           newType.getModifier(),
           rTargetType.getSymbol().getFullName(),
           cTargetTypeInc.getSymbol().getFullName());
+      // not only add the binding to the AST. We also need to remember this while processing
+      // this element further!
+      // TODO we do not support packages at the moment (see issue 29)
+      String newTypeQualifier = context.getConcreteCD().getCDDefinition().getSymbol().getFullName();
+      String newTypeFullName = Names.getQualifiedName(newTypeQualifier, newType.getName());
+      context
+          .getScopedIncarnationBindings()
+          .addTypeBinding(newTypeFullName, rTargetType.getSymbol(), cTargetTypeInc.getSymbol());
 
       // 4. pass the new attribute to the next completer
-      super.completeCDForType(
-          context.getConcreteCD().getCDDefinition(), newType, context);
+      super.completeTypeInCD(context.getConcreteCD().getCDDefinition(), newType, context);
     }
   }
 }

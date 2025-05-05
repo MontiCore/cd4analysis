@@ -8,6 +8,7 @@ import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
+import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
 import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompleter;
 import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
 import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter;
@@ -19,6 +20,7 @@ import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ITypeInCDCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
+import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
 import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
@@ -29,7 +31,11 @@ import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
-import java.util.Set;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symboltable.IScope;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ConcretizationCompleter {
 
@@ -76,7 +82,7 @@ public class ConcretizationCompleter {
 
     ITypeInCDCompleter typeInCDCompleter =
         new ChainBuilder<AbstractTypeInCDCompleter>()
-            .add(new ForEachCDTypeCompleter())
+            .add(new ForEachTypeInCDCompleter())
             .add(new BaseTypeInCDCompleter())
             .build();
 
@@ -150,6 +156,9 @@ public class ConcretizationCompleter {
     private final CompTypeIncStrategy typeIncStrategy;
     private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
     private final CompAssocIncStrategy assocIncStrategy;
+
+    private final ScopedIncarnationBindings scopedIncarnationBindings =
+        new ScopedIncarnationBindings();
 
     public DefaultCompletionContext(
         ASTCDCompilationUnit concreteCD,
@@ -274,6 +283,71 @@ public class ConcretizationCompleter {
       attributeIncStrategy.setConcreteType(concreteType);
       attributeIncStrategy.setReferenceType(referenceType);
       return attributeIncStrategy;
+    }
+
+    @Override
+    public ScopedIncarnationBindings getScopedIncarnationBindings() {
+      return scopedIncarnationBindings;
+    }
+
+    @Override
+    public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {
+      return getTypeIncarnations(concreteCD.getEnclosingScope(), referenceType);
+    }
+
+    @Override
+    public Set<ASTCDType> getTypeIncarnations(IScope scope, ASTCDType referenceType) {
+      // TODO improve readability...
+      // 1. check for scoped incarnation bindings
+      Optional<Collection<TypeSymbol>> typeIncarnationsOpt =
+          scopedIncarnationBindings.getScopedTypeIncarnations(scope, referenceType.getSymbol());
+      if (typeIncarnationsOpt.isPresent()) {
+        // map symbols back to AST nodes
+        return typeIncarnationsOpt.get().stream()
+            .map(SymbolUtil::cdTypeFromTypeSymbol)
+            .collect(Collectors.toSet());
+      } else {
+        // 2. Find all incarnations using the usual incarnation strategies
+        return ConcretizationHelper.getCDTypes(getConcreteCD()).stream()
+            .filter(type -> getTypeIncStrategy().isMatched(type, referenceType))
+            .collect(Collectors.toSet());
+      }
+    }
+
+    @Override
+    public Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute) {
+      return getAttributeIncarnations(concreteCD.getEnclosingScope(), referenceAttribute);
+    }
+
+    @Override
+    public Set<ASTCDAttribute> getAttributeIncarnations(
+        IScope scope, ASTCDAttribute referenceAttribute) {
+      Optional<Collection<FieldSymbol>> fieldIncarnationsOpt =
+          scopedIncarnationBindings.getScopedFieldIncarnations(
+              scope, referenceAttribute.getSymbol());
+      if (fieldIncarnationsOpt.isPresent()) {
+        // map symbols back to AST nodes
+        return fieldIncarnationsOpt.get().stream()
+            .map(SymbolUtil::cdAttributeFromFieldSymbol)
+            .collect(Collectors.toSet());
+      } else {
+        // 2. Find all incarnations using the usual incarnation strategies
+        ASTCDType attributeDeclaringType =
+            (ASTCDType) referenceAttribute.getSymbol().getEnclosingScope().getAstNode();
+
+        return getTypeIncarnations(scope, attributeDeclaringType).stream()
+            .flatMap(
+                (cAttributeDeclaringType) -> {
+                  MatchingStrategy<ASTCDAttribute> attributeIncStrategy =
+                      getAttributeIncStrategy(cAttributeDeclaringType, attributeDeclaringType);
+                  return cAttributeDeclaringType.getCDAttributeList().stream()
+                      .filter(
+                          attributeIncarnation ->
+                              attributeIncStrategy.isMatched(
+                                  attributeIncarnation, referenceAttribute));
+                })
+            .collect(Collectors.toSet());
+      }
     }
   }
 }
