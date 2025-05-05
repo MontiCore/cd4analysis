@@ -4,7 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 
-public class ReorderElementsCompletionCDCompleter extends AbstractCDCompleter {
+public class ReorderElementsCompletionStep extends AbstractCDCompleter {
 
   @Override
   public void complete(

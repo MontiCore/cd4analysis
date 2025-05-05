@@ -5,7 +5,7 @@ import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 
-public class RemoveRedundantAttributesCDCompleter extends AbstractCDCompleter {
+public class RemoveRedundanciesCompletionStep extends AbstractCDCompleter {
 
   @Override
   public void complete(

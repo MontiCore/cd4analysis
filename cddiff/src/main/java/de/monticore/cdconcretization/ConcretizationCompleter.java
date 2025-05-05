@@ -6,14 +6,14 @@ import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
-import de.monticore.cdconcretization.type.attribute.AbstractTypeAttributeCompleter;
-import de.monticore.cdconcretization.type.attribute.BaseTypeAttributeCompleter;
-import de.monticore.cdconcretization.type.attribute.ITypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
-import de.monticore.cdconcretization.cd.type.AbstractCDTypeCompleter;
-import de.monticore.cdconcretization.cd.type.BaseCDTypeCompleter;
-import de.monticore.cdconcretization.cd.type.ICDTypeCompleter;
+import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
+import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
+import de.monticore.cdconcretization.cd.type.ITypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.NameStereotypeCDTypeCompleter;
 import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
@@ -36,10 +36,10 @@ public class ConcretizationCompleter {
   private boolean checkConformance = true;
 
   /**
-   * If true, redundant attributes are removed from the concretization result, even if they were
-   * part of the concrete CD input.
+   * If true, redundant attributes, methods etc. introduced by the completer are removed from the
+   * concretization result, even if they were part of the concrete CD input.
    */
-  private boolean removeRedundantAttributes = true;
+  private boolean removeRedundancies = true;
 
   /** If true, the elements in the concretization result are reordered for consistent results. */
   private boolean reorderElements = true;
@@ -62,56 +62,56 @@ public class ConcretizationCompleter {
     CDCompletionContext context =
         new DefaultCompletionContext(concreteCD, referenceCD, mapping, conformanceParams);
 
-    ICDTypeCompleter typeCompleter =
-        new ChainBuilder<AbstractCDTypeCompleter>()
-            .add(new BaseCDTypeCompleter())
+    ITypeInCDCompleter typeInCDCompleter =
+        new ChainBuilder<AbstractTypeInCDCompleter>()
+            .add(new BaseTypeInCDCompleter())
             .add(new NameStereotypeCDTypeCompleter())
             // TODO add forEach support here
             .build();
 
-    ITypeAttributeCompleter attributeCompleter =
-        new ChainBuilder<AbstractTypeAttributeCompleter>()
-            .add(new BaseTypeAttributeCompleter())
+    IAttributeInTypeCompleter attributeInType =
+        new ChainBuilder<AbstractAttributeInTypeCompleter>()
+            .add(new BaseAttributeInTypeCompleter())
             // TODO add name stereotype support here
             // TODO add forEach stereotype support here
             .build();
 
-    ITypeCompleter typeDetailsCompleter =
+    ITypeCompleter typeCompleter =
         new ChainBuilder<AbstractTypeCompleter>()
             .add(new ClassModifierCompleter())
-            .add(new TypeAttributesCompleter(attributeCompleter))
+            .add(new TypeAttributesCompleter(attributeInType))
             // TODO add method completer here
             .add(new DefaultEnumConstantsCompleter())
             .build();
 
     IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
-    IAssociationCompleter assocDetailsCompleter =
+    IAssociationCompleter assocCompleter =
         new DefaultAssocCompleter(concreteCD, assocSideCompleter);
 
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
 
         new ChainBuilder<AbstractCDCompleter>()
             .add(new ImportsCompleter())
-            .add(new MissingTypesCDCompleter(typeCompleter))
+            .add(new MissingTypesCDCompleter(typeInCDCompleter))
             .add(new InheritanceCompleter())
-            .add(new TypeDetailsCDCompleter( typeDetailsCompleter))
+            .add(new TypeDetailsCDCompleter( typeCompleter))
             .add(
                 new ExistingAssociationsCDCompleter(
 
-                    assocDetailsCompleter))
+                    assocCompleter))
             .add(
                 new MissingAssociationsCDCompleter(
 
-                    assocDetailsCompleter))
+                    assocCompleter))
             .add(
                 new ConformanceCheckCompletionStep(
                     mapping, "The association completion result is not conform"));
             // add configurable,optional steps
-    if (removeRedundantAttributes) {
-      completerChainBuilder.add(new RemoveRedundantAttributesCDCompleter());
+    if (removeRedundancies) {
+      completerChainBuilder.add(new RemoveRedundanciesCompletionStep());
     }
             if (reorderElements) {
-      completerChainBuilder.add(new ReorderElementsCompletionCDCompleter());
+      completerChainBuilder.add(new ReorderElementsCompletionStep());
     }
     if (checkConformance) {
       completerChainBuilder.add(

@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 /**
  * Completes a concrete type by adding the given reference attribute if it is not already present.
  */
-public class BaseTypeAttributeCompleter extends AbstractTypeAttributeCompleter {
+public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeCompleter {
 
   @Override
-  public void completeTypeForAttribute(
+  public void completeAttributeInType(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
     // 1. check if the concrete type already has a matching attribute (also in superclasses)
     List<ASTCDAttribute> allConcreteAttributesInHierarchy =

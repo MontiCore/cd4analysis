@@ -4,7 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
-import de.monticore.cdconcretization.type.attribute.ITypeAttributeCompleter;
+import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 /**
@@ -19,9 +19,9 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
  */
 public class TypeAttributesCompleter extends AbstractTypeCompleter {
 
-  private final ITypeAttributeCompleter attributeCompleter;
+  private final IAttributeInTypeCompleter attributeCompleter;
 
-  public TypeAttributesCompleter(ITypeAttributeCompleter attributeCompleter) {
+  public TypeAttributesCompleter(IAttributeInTypeCompleter attributeCompleter) {
     this.attributeCompleter = attributeCompleter;
   }
 
@@ -44,7 +44,7 @@ public class TypeAttributesCompleter extends AbstractTypeCompleter {
   protected void completeAttributes(
       ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context) {
     for (ASTCDAttribute rAttribute : referenceType.getCDAttributeList()) {
-      attributeCompleter.completeTypeForAttribute(concreteType, rAttribute, context);
+      attributeCompleter.completeAttributeInType(concreteType, rAttribute, context);
     }
   }
 }

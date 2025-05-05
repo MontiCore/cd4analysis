@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
  * Completes a CD such that it conforms to the reference CD with respect to a given reference
  * association.
  */
-public interface ICDAssociationCompleter {
+public interface IAssocInCDCompleter {
 
-  void completeCDForAssociation(ASTCDDefinition concreteCD, ASTCDAssociation referenceAssoc);
+  void completeAssocInCD(ASTCDDefinition concreteCD, ASTCDAssociation referenceAssoc);
 }

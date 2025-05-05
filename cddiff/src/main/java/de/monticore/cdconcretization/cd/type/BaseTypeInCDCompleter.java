@@ -7,7 +7,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 /** Completes the types of a CD by adding missing types from the reference CD. */
-public class BaseCDTypeCompleter extends AbstractCDTypeCompleter {
+public class BaseTypeInCDCompleter extends AbstractTypeInCDCompleter {
 
   @Override
   protected void completeType(

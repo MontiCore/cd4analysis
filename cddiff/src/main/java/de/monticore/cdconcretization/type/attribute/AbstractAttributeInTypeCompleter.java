@@ -5,13 +5,13 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.IChainable;
 
-public abstract class AbstractTypeAttributeCompleter implements ITypeAttributeCompleter,
-        IChainable<AbstractTypeAttributeCompleter> {
+public abstract class AbstractAttributeInTypeCompleter implements IAttributeInTypeCompleter,
+        IChainable<AbstractAttributeInTypeCompleter> {
 
-  private AbstractTypeAttributeCompleter next;
+  private AbstractAttributeInTypeCompleter next;
 
   @Override
-  public void completeTypeForAttribute(
+  public void completeAttributeInType(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
     next(concreteType, referenceAttribute, context);
   }
@@ -25,12 +25,12 @@ public abstract class AbstractTypeAttributeCompleter implements ITypeAttributeCo
   protected void next(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context) {
     if (hasNext()) {
-      next.completeTypeForAttribute(concreteType, referenceAttribute, context);
+      next.completeAttributeInType(concreteType, referenceAttribute, context);
     }
   }
 
   @Override
-  public void setNext(AbstractTypeAttributeCompleter next) {
+  public void setNext(AbstractAttributeInTypeCompleter next) {
     this.next = next;
   }
 

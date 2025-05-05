@@ -8,7 +8,7 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
  * Completes a concrete type such that it conforms to the reference model with respect to the given
  * reference method.
  */
-public interface ITypeAttributeCompleter {
+public interface IAttributeInTypeCompleter {
 
   /**
    * Completes the given concrete type such that it conforms with respect to the reference attribute.
@@ -16,6 +16,6 @@ public interface ITypeAttributeCompleter {
    * @param concreteType
    * @param referenceAttribute
    */
-  void completeTypeForAttribute(
+  void completeAttributeInType(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context);
 }

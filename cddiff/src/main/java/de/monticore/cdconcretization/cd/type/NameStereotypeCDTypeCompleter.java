@@ -7,12 +7,12 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.Optional;
 
 // TODO WIP: Just for demonstration of new architecture
-public class NameStereotypeCDTypeCompleter extends AbstractCDTypeCompleter {
+public class NameStereotypeCDTypeCompleter extends AbstractTypeInCDCompleter {
 
   public static final String NAME_STEREOTYPE = "name";
 
   @Override
-  public void completeCDForType(
+  public void completeTypeInCD(
       ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context) {
     // only process type if the stereotype is present
     Optional<String> stereotypeValue = getNameStereotypeValue(referenceType);

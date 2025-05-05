@@ -8,13 +8,13 @@ import de.monticore.cdconcretization.util.IChainable;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
-public abstract class AbstractCDTypeCompleter implements ICDTypeCompleter,
-        IChainable<AbstractCDTypeCompleter> {
+public abstract class AbstractTypeInCDCompleter implements ITypeInCDCompleter,
+        IChainable<AbstractTypeInCDCompleter> {
 
-  private AbstractCDTypeCompleter next;
+  private AbstractTypeInCDCompleter next;
 
   @Override
-  public void completeCDForType(
+  public void completeTypeInCD(
       ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context) {
     if (referenceType instanceof ASTCDClass) {
       completeType(concreteCD, (ASTCDClass) referenceType, context);
@@ -51,12 +51,12 @@ public abstract class AbstractCDTypeCompleter implements ICDTypeCompleter,
   protected void next(
       ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context) {
     if (hasNext()) {
-      next.completeCDForType(concreteCD, referenceType, context);
+      next.completeTypeInCD(concreteCD, referenceType, context);
     }
   }
 
   @Override
-  public void setNext(AbstractCDTypeCompleter next) {
+  public void setNext(AbstractTypeInCDCompleter next) {
     this.next = next;
   }
 
