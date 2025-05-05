@@ -170,6 +170,89 @@ public class ConcretizationCompleterTest {
             });
   }
 
+  @Test
+  void testAttributeForEachAttribute() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeConc.cd",
+            "attributes/forEach/ForEachAttributeRef.cd",
+            "attributes/forEach/ForEachAttributeOut.cd");
+  }
+
+  @Test
+  void testAttributeForEachAttributeDifferentName() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+  }
+
+  @Test
+  void testAttributeForEachAttributeDifferentType() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeDifferentTypeConc.cd",
+            "attributes/forEach/ForEachAttributeDifferentTypeRef.cd",
+            "attributes/forEach/ForEachAttributeDifferentTypeOut.cd");
+  }
+
+  /**
+   * We have different names of the 'forEach' annotated attribute and the reference target
+   * attribute. Also, we have multiple incarnations of the class with the target attribute.
+   * Therefore, the attributes in Builder class get two suffixes, one for the type incarnation and
+   * one for the target attribute incarnation name. TODO If we want to have one Builder incarnation
+   * per type incarnation, we need to add an additional <<forEach="DataClass">> to the reference
+   * Builder class
+   */
+  @Test
+  void testAttributeForEachAttributeDifferentNameClassMI() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeDifferentNameConc.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
+            "attributes/forEach/ForEachAttributeDifferentNameOut.cd");
+  }
+
+  /**
+   * We have a 'forEach' annotated attribute in the reference CD. But the concrete CD has no
+   * incarnations of the referenced target attribute!
+   */
+  @Disabled("does not work until we have 'matchStructure' or 'optional stereotype")
+  @Test
+  void testAttributeForEachAttributeNoTargetIncarnations() {
+    ConcretizationCompleter completer =
+            new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "attributes/forEach/ForEachAttributeNoTargetIncConc.cd",
+            "attributes/forEach/ForEachAttributeNoTargetIncRef.cd",
+            "attributes/forEach/ForEachAttributeNoTargetIncOut.cd");
+  }
+
   /**
    * An underspecified attribute (type: any) needs to be incarnated at least once. Otherwise, we
    * would have to add an attribute of type 'any' to the concrete CD which is not allowed.

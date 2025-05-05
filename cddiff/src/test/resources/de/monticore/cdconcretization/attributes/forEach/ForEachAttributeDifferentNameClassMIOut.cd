@@ -1,0 +1,24 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeDifferentNameConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+
+  class Builder {
+    <<ref="ForEachAttributeDifferentNameRef.Builder.attrCopy">> String attrCopy_Employee_firstName;
+    <<ref="ForEachAttributeDifferentNameRef.Builder.attrCopy">> String attrCopy_Employee_lastName;
+    <<ref="ForEachAttributeDifferentNameRef.Builder.attrCopy">> int attrCopy_Employee_number;
+    <<ref="ForEachAttributeDifferentNameRef.Builder.attrCopy">> int attrCopy_Employee_salary;
+    <<ref="ForEachAttributeDifferentNameRef.Builder.attrCopy">> String attrCopy_Department_managerName;
+    <<ref="ForEachAttributeDifferentNameRef.Builder.attrCopy">> int attrCopy_Department_depId;
+  }
+}

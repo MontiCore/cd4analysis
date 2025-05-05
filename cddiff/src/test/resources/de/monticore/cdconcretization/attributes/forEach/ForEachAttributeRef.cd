@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeRef {
+  class DataClass {
+    any attribute;
+  }
+
+  class Builder {
+    // Incarnations will have the same name as the referenced attribute incarnations by convention
+    // because the referenced attribute has the same name as the annotated attribute!
+    <<forEach="DataClass.attribute">> any attribute;
+  }
+}
