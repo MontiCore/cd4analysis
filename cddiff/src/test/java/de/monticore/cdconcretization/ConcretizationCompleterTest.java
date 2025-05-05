@@ -10,7 +10,12 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
+import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.*;
@@ -21,6 +26,17 @@ import org.junit.jupiter.api.Test;
 
 public class ConcretizationCompleterTest {
   public static final String dir = "src/test/resources/de/monticore/cdconcretization/";
+
+  /**
+   * The default conformance parameters that are used for each test case if not specified otherwise.
+   */
+  private static final Set<CDConfParameter> DEFAULT_CONFORMANCE_PARAMS =
+      Set.of(
+          STEREOTYPE_MAPPING,
+          NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING,
+          INHERITANCE,
+          ALLOW_CARD_RESTRICTION);
 
   protected ASTCDCompilationUnit refCD;
 
@@ -185,7 +201,7 @@ public class ConcretizationCompleterTest {
     testConcretizedConformsToRefAndExpectedOut(
         "multipleIncarnation/BothAssocSidesMIOneAssocExistsConc.cd",
         "multipleIncarnation/BothAssocSidesMIRef.cd",
-            "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
+        "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
   }
 
   @Test
@@ -305,14 +321,14 @@ public class ConcretizationCompleterTest {
         "associations/AssociationSuperMatchingOut.cd",
         "associations/AssociationSuperMatchingRef.cd");
     assertTrue(
-            new CDConformanceChecker(
-                    Set.of(
-                            STEREOTYPE_MAPPING,
-                            NAME_MAPPING,
-                            SRC_TARGET_ASSOC_MAPPING,
-                            INHERITANCE,
-                            ALLOW_CARD_RESTRICTION))
-                    .checkConformance(conCD, refCD, Set.of("ref")));
+        new CDConformanceChecker(
+                Set.of(
+                    STEREOTYPE_MAPPING,
+                    NAME_MAPPING,
+                    SRC_TARGET_ASSOC_MAPPING,
+                    INHERITANCE,
+                    ALLOW_CARD_RESTRICTION))
+            .checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   @Test
@@ -326,9 +342,9 @@ public class ConcretizationCompleterTest {
   @Test
   void testTypeMIOneAssocExists() {
     testConcretizedConformsToRefAndExpectedOut(
-            "associations/TypeMIOneAssocExistsConc.cd",
-            "associations/TypeMIOneAssocExistsRef.cd",
-            "associations/TypeMIOneAssocExistsOut.cd");
+        "associations/TypeMIOneAssocExistsConc.cd",
+        "associations/TypeMIOneAssocExistsRef.cd",
+        "associations/TypeMIOneAssocExistsOut.cd");
   }
 
   @Test
@@ -340,24 +356,25 @@ public class ConcretizationCompleterTest {
   // ConcretizationHelper tests
   @Test
   void testCDHelperMappings() throws CompletionException {
-    parseModels("helper/HelperConc.cd", "helper/HelperRef.cd");
-
-    DefaultTypeIncCompleter defaultTypeIncCompleter =
-        new DefaultTypeIncCompleter(conCD, refCD, "ref");
-    DefaultAssocIncCompleter defaultAssocIncCompleter =
-        new DefaultAssocIncCompleter(conCD, refCD, "ref");
-
-    defaultTypeIncCompleter.completeIncarnations();
-    defaultAssocIncCompleter.completeIncarnations();
+    String mapping = "ref";
+    parseAndConcretize("helper/HelperConc.cd", "helper/HelperRef.cd");
 
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
+    CompTypeIncStrategy typeIncStrategy = new CompTypeIncStrategy(refCD, mapping);
+    typeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
+    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
+
+    CompAssocIncStrategy assocIncStrategy = new CompAssocIncStrategy(refCD, mapping);
+    assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
+    assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
+    assocIncStrategy.addIncStrategy(
+        new RolePrefixInNavDirIncStrategy(typeIncStrategy, conCD, refCD));
+    assocIncStrategy.addIncStrategy(
+        new RolePrefixIfPresentIncStrategy(typeIncStrategy, conCD, refCD));
+
     ConcretizationHelper helper =
-        new ConcretizationHelper(
-            conCD,
-            refCD,
-            defaultTypeIncCompleter.getTypeStrategy(),
-            defaultAssocIncCompleter.getCompAssocIncStrategy());
+        new ConcretizationHelper(conCD, refCD, typeIncStrategy, assocIncStrategy);
 
     helper.mapReferenceToConcreteRoles();
 
@@ -455,13 +472,7 @@ public class ConcretizationCompleterTest {
       fail("CompletionException", e);
     }
     assertTrue(
-        new CDConformanceChecker(
-                Set.of(
-                    STEREOTYPE_MAPPING,
-                    NAME_MAPPING,
-                    SRC_TARGET_ASSOC_MAPPING,
-                    INHERITANCE,
-                    ALLOW_CARD_RESTRICTION))
+        new CDConformanceChecker(DEFAULT_CONFORMANCE_PARAMS)
             .checkConformance(conCD, refCD, Set.of("ref")));
   }
 
@@ -475,8 +486,9 @@ public class ConcretizationCompleterTest {
 
   private void parseAndConcretize(String conc, String ref) throws CompletionException {
     parseModels(conc, ref);
-    ConcretizationCompleter completer = new ConcretizationCompleter("ref");
-    completer.complete(refCD, conCD);
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.completeCD(conCD, refCD);
     System.out.println("Concretized CD:");
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
   }

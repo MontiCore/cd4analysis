@@ -5,11 +5,10 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdconformance.inc.association.CompAssocIncStrategy;
-import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,8 +16,8 @@ public class ConcretizationHelper {
 
   private final ASTCDCompilationUnit ccd;
   private final ASTCDCompilationUnit rcd;
-  private final CompTypeIncStrategy compTypeIncStrategy;
-  private final CompAssocIncStrategy compAssocIncStrategy;
+  private final MatchingStrategy<ASTCDType> typeIncStrategy;
+  private final MatchingStrategy<ASTCDAssociation> assocIncStrategy;
 
   // Mappings to store results
   public Map<CDTypeSymbol, Set<CDTypeSymbol>> typeMapping;
@@ -29,12 +28,12 @@ public class ConcretizationHelper {
   public ConcretizationHelper(
       ASTCDCompilationUnit ccd,
       ASTCDCompilationUnit rcd,
-      CompTypeIncStrategy compTypeIncStrategy,
-      CompAssocIncStrategy compAssocIncStrategy) {
+      MatchingStrategy<ASTCDType> compTypeIncStrategy,
+      MatchingStrategy<ASTCDAssociation> compAssocIncStrategy) {
     this.ccd = ccd;
     this.rcd = rcd;
-    this.compTypeIncStrategy = compTypeIncStrategy;
-    this.compAssocIncStrategy = compAssocIncStrategy;
+    this.typeIncStrategy = compTypeIncStrategy;
+    this.assocIncStrategy = compAssocIncStrategy;
     this.typeMapping = new HashMap<>();
     this.roleMapping = new HashMap<>();
     this.roleToTypeMapping = new HashMap<>();
@@ -101,7 +100,7 @@ public class ConcretizationHelper {
   // Helper to get all concrete types that incarnate the reference type
   private Set<ASTCDType> getConcreteTypesForReferenceType(ASTCDType refType) {
     return getCDTypes(ccd).stream()
-        .filter(conType -> compTypeIncStrategy.isMatched(conType, refType))
+        .filter(conType -> typeIncStrategy.isMatched(conType, refType))
         .collect(Collectors.toSet());
   }
 
@@ -110,7 +109,7 @@ public class ConcretizationHelper {
       ASTCDType conType, ASTCDAssociation refAssoc) throws CompletionException {
     Set<ASTCDAssociation> set = new HashSet<>();
     for (ASTCDAssociation assoc : ccd.getCDDefinition().getCDAssociationsList()) {
-      if (compAssocIncStrategy.isMatched(assoc, refAssoc)
+      if (assocIncStrategy.isMatched(assoc, refAssoc)
           && (getTypeFromAssocSide(assoc.getLeft()).equals(conType)
               || getTypeFromAssocSide(assoc.getRight()).equals(conType))) {
         set.add(assoc);
@@ -180,7 +179,7 @@ public class ConcretizationHelper {
     }
   }
 
-  protected Set<ASTCDType> getCDTypes(ASTCDCompilationUnit cd) {
+  public static Set<ASTCDType> getCDTypes(ASTCDCompilationUnit cd) {
     Set<ASTCDType> cdTypes = new HashSet<>();
     cdTypes.addAll(cd.getCDDefinition().getCDClassesList());
     cdTypes.addAll(cd.getCDDefinition().getCDInterfacesList());
@@ -188,7 +187,7 @@ public class ConcretizationHelper {
     return cdTypes;
   }
 
-  ASTCDType getAssocLeftType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
+  public static ASTCDType getAssocLeftType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
       throws CompletionException {
     Optional<CDTypeSymbol> typeSymbol =
         cd.getEnclosingScope().resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
@@ -200,7 +199,7 @@ public class ConcretizationHelper {
     }
   }
 
-  ASTCDType getAssocRightType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
+  public static ASTCDType getAssocRightType(ASTCDCompilationUnit cd, ASTCDAssociation assoc)
       throws CompletionException {
     Optional<CDTypeSymbol> typeSymbol =
         cd.getEnclosingScope().resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
@@ -212,7 +211,8 @@ public class ConcretizationHelper {
     }
   }
 
-  ASTCDType getAssocTypeByQName(ASTCDCompilationUnit cd, String QName) throws CompletionException {
+  public static ASTCDType getAssocTypeByQName(ASTCDCompilationUnit cd, String QName)
+      throws CompletionException {
     Optional<CDTypeSymbol> typeSymbol = cd.getEnclosingScope().resolveCDTypeDown(QName);
 
     if (typeSymbol.isPresent()) {

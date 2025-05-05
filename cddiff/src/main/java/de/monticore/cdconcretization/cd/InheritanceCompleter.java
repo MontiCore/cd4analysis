@@ -1,9 +1,10 @@
-package de.monticore.cdconcretization;
+package de.monticore.cdconcretization.cd;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
@@ -14,11 +15,12 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DefaultInheritanceCompleter implements IInheritanceCompleter {
-  protected MatchingStrategy<ASTCDType> typeMatcher;
+public class InheritanceCompleter extends AbstractCDCompleter {
 
   @Override
-  public void completeInheritance(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+  public void complete(
+      ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD, CDCompletionContext context)
+      throws CompletionException {
     CDDiffUtil.refreshSymbolTable(srcCD);
     CDDiffUtil.refreshSymbolTable(tgtCD);
     ICD4CodeArtifactScope srcCDScope = (ICD4CodeArtifactScope) srcCD.getEnclosingScope();
@@ -33,6 +35,8 @@ public class DefaultInheritanceCompleter implements IInheritanceCompleter {
     Set<ASTCDType> typeSet = new HashSet<>();
     typeSet.addAll(classes);
     typeSet.addAll(interfaces);
+
+    MatchingStrategy<ASTCDType> typeMatcher = context.getTypeIncStrategy();
 
     for (ASTCDType type : typeSet) {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, tgtCDScope)));
@@ -115,10 +119,7 @@ public class DefaultInheritanceCompleter implements IInheritanceCompleter {
     }
     CDDiffUtil.refreshSymbolTable(tgtCD);
     ReductionTrafo.removeRedundantAttributes(tgtCD);
-  }
 
-  @Override
-  public void setTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher) {
-    this.typeMatcher = typeMatcher;
+    super.complete(tgtCD, srcCD, context);
   }
 }
