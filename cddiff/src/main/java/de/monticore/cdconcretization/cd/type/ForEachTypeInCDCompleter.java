@@ -94,12 +94,8 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
       StereotypeUtil.removeForEachStereotype(newType.getModifier());
       StereotypeUtil.addStereotype(
           newType.getModifier(), context.getMappingName(), referenceType.getSymbol().getFullName());
-      StereotypeUtil.addIncarnationBindingStereotype(
-          newType.getModifier(),
-          rTargetType.getSymbol().getFullName(),
-          cTargetTypeInc.getSymbol().getFullName());
-      // not only add the binding to the AST. We also need to remember this while processing
-      // this element further!
+
+      // Remember the "binding" while processing this element further!
       // TODO we do not support packages at the moment (see issue 29)
       String newTypeQualifier = context.getConcreteCD().getCDDefinition().getSymbol().getFullName();
       String newTypeFullName = Names.getQualifiedName(newTypeQualifier, newType.getName());

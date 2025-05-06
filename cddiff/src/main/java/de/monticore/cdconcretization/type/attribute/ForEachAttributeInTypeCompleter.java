@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
  */
 public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeCompleter {
 
-  // TODO for testing only. Move to global ConcretizationContext of it stays
-  private static final boolean ADD_BINDING_STEREOTYPE_TO_ATTRIBUTES = false;
-
   @Override
   public void completeAttributeInType(
       ASTCDType concreteType, ASTCDAttribute referenceAttribute, TypeCompletionContext context)
@@ -183,13 +180,6 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
                 newAttribute.getModifier(),
                 context.getMappingName(),
                 referenceAttribute.getSymbol().getFullName());
-
-        if (ADD_BINDING_STEREOTYPE_TO_ATTRIBUTES) {
-          StereotypeUtil.addIncarnationBindingStereotype(
-                  newAttribute.getModifier(),
-                  rTargetAttribute.getSymbol().getFullName(),
-                  SymbolUtil.getFullNameWithoutCD(cAttribute.getSymbol()));
-        }
 
         String newAttrQualifier = cAttributeDeclaringType.getFullName();
         String newAttrFullName = Names.getQualifiedName(newAttrQualifier, newAttribute.getName());

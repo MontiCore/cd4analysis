@@ -1,7 +1,7 @@
 classdiagram ForEachTypeNoTargetIncConc {
   class DataClass;
 
-  <<ref="ForEachTypeRef.Builder", bind="ForEachTypeRef.DataClass=ForEachTypeNoTargetIncConc.DataClass">> class Builder {
+  <<ref="ForEachTypeRef.Builder">> class Builder {
 
   }
 }

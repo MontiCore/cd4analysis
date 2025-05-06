@@ -5,15 +5,15 @@ classdiagram ForEachTypeConc {
 
   <<ref="DataClass">> class Company;
 
-  <<ref="ForEachTypeRef.Builder", bind="ForEachTypeRef.DataClass=ForEachTypeConc.Employee">> class Builder_Employee {
+  <<ref="ForEachTypeRef.Builder">> class Builder_Employee {
 
   }
 
-  <<ref="ForEachTypeRef.Builder", bind="ForEachTypeRef.DataClass=ForEachTypeConc.Department">> class Builder_Department {
+  <<ref="ForEachTypeRef.Builder">> class Builder_Department {
 
   }
 
-  <<ref="ForEachTypeRef.Builder", bind="ForEachTypeRef.DataClass=ForEachTypeConc.Company">> class Builder_Company {
+  <<ref="ForEachTypeRef.Builder">> class Builder_Company {
 
   }
 }

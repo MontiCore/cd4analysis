@@ -13,7 +13,7 @@ classdiagram ForEachTypeForEachAttributeConc {
     <<ref="attribute">> int depId;
   }
 
-  <<ref="ForEachTypeForEachAttributeRef.Builder", bind="ForEachTypeForEachAttributeRef.DataClass=ForEachTypeForEachAttributeConc.Employee">>
+  <<ref="ForEachTypeForEachAttributeRef.Builder">>
   class Builder_Employee {
     <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> String firstName;
     <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> String lastName;
@@ -21,7 +21,7 @@ classdiagram ForEachTypeForEachAttributeConc {
     <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> int salary;
   }
 
-  <<ref="ForEachTypeForEachAttributeRef.Builder", bind="ForEachTypeForEachAttributeRef.DataClass=ForEachTypeForEachAttributeConc.Department">>
+  <<ref="ForEachTypeForEachAttributeRef.Builder">>
   class Builder_Department {
     <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> String managerName;
     <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> int depId;
