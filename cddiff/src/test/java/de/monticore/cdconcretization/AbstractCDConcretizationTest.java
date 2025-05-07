@@ -10,9 +10,14 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractCDConcretizationTest {
@@ -34,14 +39,15 @@ public abstract class AbstractCDConcretizationTest {
 
   protected ASTCDCompilationUnit conCD;
 
-  @BeforeEach
-  public void setup() {
+  @BeforeAll
+  public static void setup() {
     Log.init();
-    Log.setErrorHook(
-        () -> {
-          // fail test with a useful stack trace instead of just terminating the whole JVM...
-          throw new RuntimeException("Log error hook terminated the test");
-        });
+    Log.enableFailQuick(false);
+  }
+
+  @BeforeEach
+  public void setupEach() {
+    Log.clearFindings();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
@@ -64,6 +70,7 @@ public abstract class AbstractCDConcretizationTest {
     } catch (CompletionException e) {
       fail("CompletionException", e);
     }
+    assertNoFindings("Findings while concretizing CD");
 
     // to use deep equals, both CDs need to have the same name
     conCD.getCDDefinition().setName(refCD.getCDDefinition().getName());
@@ -84,6 +91,7 @@ public abstract class AbstractCDConcretizationTest {
     } catch (CompletionException e) {
       fail("CompletionException", e);
     }
+    assertNoFindings("Findings while concretizing CD");
     assertTrue(
         new CDConformanceChecker(DEFAULT_CONFORMANCE_PARAMS)
             .checkConformance(conCD, refCD, Set.of("ref")));
@@ -106,6 +114,7 @@ public abstract class AbstractCDConcretizationTest {
     } catch (CompletionException e) {
       fail("CompletionException", e);
     }
+    assertNoFindings("Findings while concretizing CD");
     // 2. check if concretized CD equals expected output
     assertTrue(conCD.deepEquals(expectedCD, false), "Concretized output does not match expected");
   }
@@ -139,6 +148,14 @@ public abstract class AbstractCDConcretizationTest {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
     cd.accept(new CD4CodeSymbolTableCompleter(cd).getTraverser());
+    assertNoFindings("Findings while loading CD");
     return cd;
+  }
+
+  // TODO Replace once there is a MontiCore method: MCAssertions#assertNoFindings()
+  private static void assertNoFindings(String message) {
+    if (!Log.getFindings().isEmpty()) {
+      fail(message);
+    }
   }
 }
