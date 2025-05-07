@@ -2,15 +2,13 @@ package de.monticore.cdconcretization.cd.type;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
-import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
-import de.monticore.symbols.basicsymbols._ast.ASTType;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
@@ -32,39 +30,13 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
             "Stereotype value must not be empty for stereotype 'forEach' @ "
                 + referenceType.get_SourcePositionStart());
     if (stereotypeValue.isPresent()) {
-      boolean processed = processAsTypeReference(referenceType, context, stereotypeValue.get());
-      // TODO Support other references than types
-      if (!processed) {
-        throw new CompletionException(
-            "Unsupported forEach reference expression" + stereotypeValue.get());
-      }
+      CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
+      symbolHandler.setTypeHandler(rTargetType -> completeTypeParameterizedByType(referenceType, rTargetType, context));
+      // TODO Add support for other references
+      symbolHandler.resolveSymbol(context.getReferenceCD().getEnclosingScope(), stereotypeValue.get(), referenceType.get_SourcePositionStart());
     } else {
       super.completeTypeInCD(concreteCD, referenceType, context);
     }
-  }
-
-  private boolean processAsTypeReference(
-      ASTCDType referenceType, CDCompletionContext context, String referenceExpr)
-      throws CompletionException {
-    Optional<TypeSymbol> typeSymbol =
-        context.getReferenceCD().getEnclosingScope().resolveType(referenceExpr);
-    if (typeSymbol.isPresent()) {
-      ASTType type = typeSymbol.get().getAstNode();
-      // is field an attribute?
-      if (type instanceof ASTCDType) {
-        ASTCDType rTargetType = (ASTCDType) type;
-        completeTypeParameterizedByType(referenceType, rTargetType, context);
-        return true;
-      } else {
-        throw new CompletionException(
-            "Referenced type symbol "
-                + referenceExpr
-                + " is not a CDType! (type: "
-                + type.getClass().getName()
-                + ")");
-      }
-    }
-    return false;
   }
 
   private void completeTypeParameterizedByType(

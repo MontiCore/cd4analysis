@@ -3,13 +3,12 @@ package de.monticore.cdconcretization.type.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
-import de.monticore.symbols.oosymbols._ast.ASTField;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.Names;
 
 import java.util.List;
@@ -41,48 +40,18 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
             "Stereotype value must not be empty for stereotype 'forEach. '"
                 + referenceAttribute.get_SourcePositionStart());
     if (stereotypeValue.isPresent()) {
-      boolean processed =
-          processAsAttributeReference(referenceAttribute, context, stereotypeValue.get());
-      // TODO Support other references than attributes (e.g., types, methods)
-      if (!processed) {
-        throw new CompletionException(
-            "Unsupported forEach reference expression" + stereotypeValue.get());
-      }
+      CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
+      symbolHandler.setAttributeHandler(
+          rTargetAttribute -> completeAttributeUsingAttribute(referenceAttribute, rTargetAttribute, context));
+      // TODO Add support for other references
+      symbolHandler.resolveSymbol(
+          context.getReferenceCD().getEnclosingScope(),
+          stereotypeValue.get(),
+          referenceAttribute.get_SourcePositionStart());
+      // each handler will call super.completeTypeForAttribute() if necessary
     } else {
       super.completeAttributeInType(concreteType, referenceAttribute, context);
     }
-  }
-
-  /**
-   * Tries to process the given reference as an attribute reference, e.g. 'Foo.attr'.
-   *
-   * @param context
-   * @param referenceExpr
-   * @return true if the reference was processed, false otherwise
-   * @throws CompletionException
-   */
-  private boolean processAsAttributeReference(
-      ASTCDAttribute referenceAttribute, TypeCompletionContext context, String referenceExpr)
-      throws CompletionException {
-    Optional<FieldSymbol> fieldSymbol =
-        context.getReferenceCD().getEnclosingScope().resolveField(referenceExpr);
-    if (fieldSymbol.isPresent()) {
-      ASTField field = fieldSymbol.get().getAstNode();
-      // is field an attribute?
-      if (field instanceof ASTCDAttribute) {
-        ASTCDAttribute rTargetAttribute = (ASTCDAttribute) field;
-        completeAttributeUsingAttribute(referenceAttribute, rTargetAttribute, context);
-        return true;
-      } else {
-        throw new CompletionException(
-            "Referenced field symbol "
-                + referenceExpr
-                + " is not a CDAttribute! (type: "
-                + field.getClass().getName()
-                + ")");
-      }
-    }
-    return false;
   }
 
   /**
