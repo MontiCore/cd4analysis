@@ -5,17 +5,22 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
+import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.Names;
+import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
+
+  private static final String LOG_NAME = ForEachTypeInCDCompleter.class.getName();
 
   @Override
   public void completeTypeInCD(
@@ -72,8 +77,7 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
         ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
             .filter(type -> context.getTypeIncStrategy().isMatched(type, rTargetType))
             .collect(Collectors.toSet());
-    System.out.println(
-        "Found type incarnations for " + rTargetType.getName() + ": " + targetTypeIncarnations);
+    Log.debug("Found type incarnations for " + rTargetType.getName() + ": " + targetTypeIncarnations, LOG_NAME);
 
     for (ASTCDType cTargetTypeInc : targetTypeIncarnations) {
       // if we have more than one type incarnation, we need to add a suffix to the new type

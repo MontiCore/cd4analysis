@@ -7,6 +7,7 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IGlobalScope;
 import de.monticore.symboltable.IScope;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
  * always be resolved in the scope of a concrete class diagram (CD) or some sub scope.
  */
 public class ScopedIncarnationBindings {
+
+  private static final String LOG_NAME = ScopedIncarnationBindings.class.getName();
 
   /**
    * The mapping of type incarnations for a specific scope. The key is the name of the concrete type
@@ -72,7 +75,7 @@ public class ScopedIncarnationBindings {
               concreteScope.getEnclosingScope(), referenceType);
     }
     String spanningSymbolName = concreteScope.getSpanningSymbol().getFullName();
-    System.out.println("Checking for type incarnations in scope spanned by: " + spanningSymbolName);
+    Log.debug("Checking for type incarnations in scope spanned by: " + spanningSymbolName, LOG_NAME);
 
     Multimap<String, TypeSymbol> localTypeMapping = typeBindings.get(spanningSymbolName);
     if (localTypeMapping != null && localTypeMapping.containsKey(referenceType.getFullName())) {
@@ -96,8 +99,7 @@ public class ScopedIncarnationBindings {
           concreteScope.getEnclosingScope(), referenceField);
     }
     String spanningSymbolName = concreteScope.getSpanningSymbol().getFullName();
-    System.out.println(
-        "Checking for field incarnations in scope spanned by: " + spanningSymbolName);
+    Log.debug("Checking for field incarnations in scope spanned by: " + spanningSymbolName, LOG_NAME);
 
     // 1. resolve the type of the field
     TypeSymbol declaringTypeSymbol = SymbolUtil.getDeclaringTypeSymbol(referenceField);
