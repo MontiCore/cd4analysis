@@ -6,12 +6,14 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
+import de.monticore.cdconcretization.ScopedIncarnationBindings;
 import de.monticore.cdconcretization.type.ITypeCompleter;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.symboltable.IScope;
 import java.util.Set;
 
 /** Completes the details of types (attributes, methods, etc.) in a CD. */
@@ -39,6 +41,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
         typeDetailsCompleter.completeType(cClass, rType, typeCompletionContext);
       }
     }
+
     for (ASTCDInterface cInterface : concreteCD.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cInterface)) {
         TypeCompletionContext typeCompletionContext =
@@ -72,7 +75,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       this.concreteType = concreteType;
       this.referenceType = referenceType;
 
-      attributeIncStrategy = parentContext.getAttributeIncStrategy(concreteType, referenceType);
+      attributeIncStrategy = parentContext.createAttributeIncStrategy(concreteType, referenceType);
     }
 
     @Override
@@ -133,9 +136,35 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
 
     @Override
-    public MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy(
+    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
-      return parentContext.getAttributeIncStrategy(concreteType, referenceType);
+      return parentContext.createAttributeIncStrategy(concreteType, referenceType);
+    }
+
+    @Override
+    public ScopedIncarnationBindings getScopedIncarnationBindings() {
+      return parentContext.getScopedIncarnationBindings();
+    }
+
+    @Override
+    public Set<ASTCDType> getTypeIncarnations(IScope scope, ASTCDType referenceType) {
+      return parentContext.getTypeIncarnations(scope, referenceType);
+    }
+
+    @Override
+    public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {
+      return getTypeIncarnations(getConcreteType().getSpannedScope(), referenceType);
+    }
+
+    @Override
+    public Set<ASTCDAttribute> getAttributeIncarnations(
+        IScope scope, ASTCDAttribute referenceAttribute) {
+      return parentContext.getAttributeIncarnations(scope, referenceAttribute);
+    }
+
+    @Override
+    public Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute) {
+      return getAttributeIncarnations(getConcreteType().getSpannedScope(), referenceAttribute);
     }
   }
 }

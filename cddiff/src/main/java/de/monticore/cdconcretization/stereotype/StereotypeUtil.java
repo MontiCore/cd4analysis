@@ -1,4 +1,4 @@
-package de.monticore.cdconcretization;
+package de.monticore.cdconcretization.stereotype;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.umlmodifier._ast.ASTModifier;

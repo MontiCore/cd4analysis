@@ -23,4 +23,39 @@ public class TypeConcretizationTest extends AbstractCDConcretizationTest {
         "types/enums/EnumMemberMissingRef.cd",
         "types/enums/EnumMemberMissingOut.cd");
   }
+
+  @Test
+  void testTypeForEachType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "types/forEach/ForEachTypeConc.cd",
+        "types/forEach/ForEachTypeRef.cd",
+        "types/forEach/ForEachTypeOut.cd");
+  }
+
+  /**
+   * We have no incarnation of the target type in the concrete CD. However, the default behavior is
+   * to add the target type to the concrete CD if there is no incarnation. Thus, the forEach loop
+   * has one target to process and adds single 'Builder' to the concrete CD.
+   */
+  @Test
+  void testTypeForEachTypeNoTargetInc() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "types/forEach/ForEachTypeNoTargetIncConc.cd",
+        "types/forEach/ForEachTypeRef.cd",
+        "types/forEach/ForEachTypeNoTargetIncOut.cd");
+  }
+
+  @Test
+  void testTypeForEachTypeForEachAttribute() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    // TODO check conformance. Currently not possible because of any type
+    completer.setCheckConformance(false);
+
+    testConcretizedEqualsExpectedOut(
+        completer,
+        "types/forEach/ForEachTypeForEachAttributeConc.cd",
+        "types/forEach/ForEachTypeForEachAttributeRef.cd",
+        "types/forEach/ForEachTypeForEachAttributeOut.cd");
+  }
 }
