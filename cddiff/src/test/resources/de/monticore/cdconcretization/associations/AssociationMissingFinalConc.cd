@@ -1,0 +1,7 @@
+classdiagram AssociationMissingFinalConc {
+  class Employee {
+  }
+  class Department {
+  }
+  association Employee (employed) -> Department [1];
+}

@@ -1,0 +1,7 @@
+classdiagram AttributeTypeMismatchRef {
+  class Person {
+    int number;
+  }
+  class Teacher extends Person {
+  }
+}

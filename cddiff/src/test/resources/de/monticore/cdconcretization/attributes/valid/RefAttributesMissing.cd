@@ -1,6 +1,0 @@
-classdiagram RefAttributesMissing {
-  class Employee {
-    int number;
-    int salary;
-  }
-}

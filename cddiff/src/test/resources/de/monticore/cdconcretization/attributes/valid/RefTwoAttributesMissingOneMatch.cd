@@ -1,7 +1,0 @@
-classdiagram RefTwoAttributesMissingOneMatch {
-  class Employee {
-    int number;
-    int anotherNumber;
-    int salary;
-  }
-}

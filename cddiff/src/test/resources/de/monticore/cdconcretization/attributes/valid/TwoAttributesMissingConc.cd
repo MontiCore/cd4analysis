@@ -1,0 +1,4 @@
+classdiagram TwoAttributesMissingConc {
+  class Employee {
+  }
+}

@@ -4,6 +4,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 
+/**
+ * A special type matching strategy that matches the reference type if any strict subtype of a
+ * concrete type is an incarnation of the reference type.
+ */
 public class MatchCDTypesToSubTypes extends MatchCDTypeInHierarchy {
 
   public MatchCDTypesToSubTypes(

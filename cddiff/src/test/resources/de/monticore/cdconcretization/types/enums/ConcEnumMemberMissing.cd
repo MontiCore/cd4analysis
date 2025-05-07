@@ -1,4 +1,0 @@
-classdiagram ConcEnumMemberMissing {
-  enum Colour{RED,YELLOW,BLUE,PURPLE;
-  }
-}
