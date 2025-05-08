@@ -50,9 +50,10 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 
-  @Test
-  public void testMethodConformanceCheck() {
-    parseModels("methods/ValidMethods.cd", "methods/ReferenceMethods.cd");
+  @ParameterizedTest
+  @ValueSource(strings = {"ValidMethods.cd", "FQSTMatchValid.cd"})
+  public void testMethodConformanceCheck(String concrete) {
+    parseModels("methods/" + concrete, "methods/ReferenceMethods.cd");
     checker =
         new CDConformanceChecker(
             Set.of(
@@ -76,6 +77,24 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
                 INHERITANCE,
                 ALLOW_CARD_RESTRICTION));
     assertFalse(checker.checkConformance(conCD, refCD, Set.of("incarnates")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"PrimitiveTypes.cd", "ClassIncarnation.cd"})
+  public void testMethodUnderspecifiedValid(String concrete) {
+    parseModels("methods/underspecified/valid/" + concrete,
+            "methods/underspecified/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AnyParamInConcrete.cd", "AnyReturnInConcrete.cd"})
+  public void testMethodypeUnderspecifiedInvalid(String concrete) {
+    parseModels("methods/underspecified/invalid/" + concrete,
+            "methods/underspecified/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   @Test
@@ -128,7 +147,15 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"EqName.cd", "STName.cd", "composed.cd"})
+  @ValueSource(strings = {"STMatch.cd", "FQSTMatch.cd"})
+  public void testTypeConformanceValid(String concrete) {
+    parseModels("types/valid/" + concrete, "types/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"EqName.cd", "STName.cd", "composed.cd", "FQSTName.cd"})
   public void testAttributeConformanceValid(String concrete) {
     parseModels("attributes/valid/" + concrete, "attributes/Reference.cd");
     checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
@@ -160,7 +187,44 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd"})
+  @ValueSource(strings = {"Concrete.cd"})
+  public void testAttributeTypeIncarnationValid(String concrete) {
+    parseModels("attributes/typeIncarnation/valid/" + concrete,
+            "attributes/typeIncarnation/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"NotMarkedAsIncarnation.cd"})
+  public void testAttributeTypeIncarnationInvalid(String concrete) {
+    parseModels("attributes/typeIncarnation/invalid/" + concrete,
+            "attributes/typeIncarnation/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"PrimitiveTypes.cd", "ClassIncarnation.cd"})
+  public void testAttributeTypeUnderspecifiedValid(String concrete) {
+    parseModels("attributes/underspecified/valid/" + concrete,
+            "attributes/underspecified/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"AnyInConcrete.cd"})
+  public void testAttributeTypeUnderspecifiedInvalid(String concrete) {
+    parseModels("attributes/underspecified/invalid/" + concrete,
+            "attributes/underspecified/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, Set.of("ref")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {
+          "AssocInSuperType.cd", "InhrBothSides.cd", "Valid1.cd", "STMatch.cd", "FQSTMatch.cd"})
   public void testDeepAssocConformanceValid(String concrete) {
     parseModels("associations/valid/" + concrete, "associations/Reference.cd");
     checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));

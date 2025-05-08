@@ -1,0 +1,3 @@
+classdiagram STMatch {
+  <<ref="Account">> class MyAccount;
+}

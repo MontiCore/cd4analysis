@@ -1,0 +1,6 @@
+classdiagram Reference {
+  class Account {
+    any username;
+    any id;
+  }
+}
