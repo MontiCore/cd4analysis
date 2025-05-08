@@ -118,6 +118,8 @@ public class CDGenTool extends CDGeneratorTool {
         this.completeSymbolTable(ast);
       }
 
+      asts = this.trafoBeforeCoCos(asts);
+
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         asts.forEach(this::runCoCos);
@@ -287,6 +289,18 @@ public class CDGenTool extends CDGeneratorTool {
     var t = CD4CodeMill.inheritanceTraverser();
     t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
     asts.forEach(ast -> ast.accept(t));
+    return asts;
+  }
+
+  /**
+   * Applies the transformations (trafos) between symbol table creation and coco
+   * checking. Trafos are applied in place, that is, the input asts are mutated.
+   *
+   * @param asts The asts to be transformed
+   * @return The transformed asts
+   */
+  public Collection<ASTCDCompilationUnit> trafoBeforeCoCos(Collection<ASTCDCompilationUnit> asts) {
+    // TODO: see above: #4310
     return asts;
   }
 }
