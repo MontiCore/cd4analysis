@@ -1,0 +1,5 @@
+classdiagram ParameterTypeMIConc {
+
+  <<ref="Account">> class PersonalAccount;
+  <<ref="Account">> class BusinessAccount;
+}

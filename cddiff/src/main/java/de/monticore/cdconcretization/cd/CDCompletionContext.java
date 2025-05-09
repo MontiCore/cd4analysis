@@ -1,5 +1,6 @@
 package de.monticore.cdconcretization.cd;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -80,6 +81,23 @@ public interface CDCompletionContext {
    * type.
    */
   MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
+      ASTCDType concreteType, ASTCDType referenceType);
+
+  /**
+   * Creates a method matching strategy that matches the methods of a specific concrete type with
+   * methods of a specific reference type. The strategy is only valid when comparing methods of
+   * these two given types!<br>
+   * <br>
+   * <b>Note:</b> Most likely you should use
+   * {@link TypeCompletionContext#getMethodIncStrategy()} instead, which gives you the correct
+   * strategy for the current type context.
+   *
+   * @param concreteType the concrete type to which the methods belong
+   * @param referenceType the reference type to which the methods belong
+   * @return the matching strategy that can be used to find incarnations in context of the given
+   * type.
+   */
+  MatchingStrategy<ASTCDMethod> createMethodIncStrategy(
       ASTCDType concreteType, ASTCDType referenceType);
 
   /**

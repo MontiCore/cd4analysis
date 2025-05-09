@@ -105,10 +105,9 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
           CD4CodeMill.mCQualifiedTypeBuilder()
               .setMCQualifiedName(
                   MCQualifiedNameFacade.createQualifiedName(
-                      cAttributeType.getSymbol().getFullName()))
+                      cAttributeType.getSymbol().getInternalQualifiedName()))
               .build());
 
-      // TODO maybe cut off the CD name from FQName?
       StereotypeUtil.addStereotype(
           attributeIncarnation.getModifier(),
           context.getMappingName(),

@@ -1,0 +1,8 @@
+classdiagram ReturnTypeUnderspecifiedRef {
+
+  <<ref="Operator">> class MyOperator {
+    // NOTE: we have no incarnation of "operation()"
+    //  -> leads to error because the return type is underspecified
+    void foo();
+  }
+}

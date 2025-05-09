@@ -1,5 +1,6 @@
 package de.monticore.cdconcretization;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -19,12 +20,18 @@ import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ITypeInCDCompleter;
 import de.monticore.cdconcretization.type.*;
+import de.monticore.cdconcretization.type.method.AbstractMethodInTypeCompleter;
+import de.monticore.cdconcretization.type.method.BaseMethodInTypeCompleter;
+import de.monticore.cdconcretization.type.method.IMethodInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
 import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
 import de.monticore.cdconformance.conf.attribute.STNamedAttributeChecker;
+import de.monticore.cdconformance.conf.method.CompMethodChecker;
+import de.monticore.cdconformance.conf.method.EqNameMethodChecker;
+import de.monticore.cdconformance.conf.method.STNamedMethodChecker;
 import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
@@ -109,16 +116,20 @@ public class ConcretizationCompleter {
 
     IAttributeInTypeCompleter attributeInType =
         new ChainBuilder<AbstractAttributeInTypeCompleter>()
-            // TODO add name stereotype support here
             .add(new ForEachAttributeInTypeCompleter())
             .add(new BaseAttributeInTypeCompleter())
+            .build();
+
+    IMethodInTypeCompleter methodInTypeCompleter =
+        new ChainBuilder<AbstractMethodInTypeCompleter>()
+            .add(new BaseMethodInTypeCompleter())
             .build();
 
     ITypeCompleter typeCompleter =
         new ChainBuilder<AbstractTypeCompleter>()
             .add(new ClassModifierCompleter())
             .add(new TypeAttributesCompleter(attributeInType))
-            // TODO add method completer here
+            .add(new TypeMethodsCompleter(methodInTypeCompleter))
             .add(new DefaultEnumConstantsCompleter())
             .build();
 
@@ -325,6 +336,24 @@ public class ConcretizationCompleter {
       attributeIncStrategy.setConcreteType(concreteType);
       attributeIncStrategy.setReferenceType(referenceType);
       return attributeIncStrategy;
+    }
+
+    @Override
+    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(
+        ASTCDType concreteType, ASTCDType referenceType) {
+      CompMethodChecker methodIncStrategy =
+          new CompMethodChecker(mapping, typeIncarnationHelper);
+      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
+        methodIncStrategy.addIncStrategy(
+            new STNamedMethodChecker(mapping, typeIncarnationHelper));
+      }
+      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
+        methodIncStrategy.addIncStrategy(
+            new EqNameMethodChecker(mapping, typeIncarnationHelper));
+      }
+      methodIncStrategy.setConcreteType(concreteType);
+      methodIncStrategy.setReferenceType(referenceType);
+      return methodIncStrategy;
     }
 
     @Override

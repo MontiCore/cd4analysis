@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram ParameterTypeUnderspecifiedIncarnatedConc {
+
+  <<ref="Operator">> class MyOperator {
+    // nothing changed. we just make sure the tool can process the input and does not add anything
+    <<ref="operation">> void foo(String param);
+  }
+}
