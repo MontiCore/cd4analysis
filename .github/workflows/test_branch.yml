@@ -28,6 +28,7 @@ jobs:
     if: "(github.event.name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository)"
     runs-on: ubuntu-latest
     steps:
+      - run: echo " ${{ github.event.name }}: ${{ github.repository }} vs ${{github.event.pull_request.head.repo.full_name}}"
       - name: Checkout project sources
         uses: actions/checkout@v4
       - name: Setup Gradle
