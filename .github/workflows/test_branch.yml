@@ -10,6 +10,8 @@ on:
     paths-ignore:
       - "*.md" # do not run this pipeline if the only change was to markdown files
     branches-ignore: [ "dev" ] # Do not run this on the default branch
+  pull_request: # run on (remote) pull requests
+    types: [opened, synchronize]
 
 env:
   GRADLE_VERSION: 7.4 # Gradle version used
@@ -22,6 +24,8 @@ permissions:
 
 jobs:
   build:
+    # do not run on pull requests in the same project (only on PRs from external sources)
+    if: ${{github.event_name  != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project sources
@@ -42,6 +46,8 @@ jobs:
 
   # Run the MontiVerse pipeline (tests this change on a suite of projects)
   trigger-montiverse:
+    # do not run on pull requests in the same project (only on PRs from external sources)
+    if: ${{github.event_name  != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository }}
     needs: [ build ]
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
@@ -52,6 +58,8 @@ jobs:
 
   # Check for duplicate error codes (starting with '"0x') and incorrect error codes (not 5 hex chars after the 0x)
   check-error-codes:
+    # do not run on pull requests in the same project (only on PRs from external sources)
+    if: ${{github.event_name  != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout project sources
