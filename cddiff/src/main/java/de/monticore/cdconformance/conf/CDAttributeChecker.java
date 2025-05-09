@@ -8,9 +8,10 @@ public interface CDAttributeChecker
     extends MatchingStrategy<ASTCDAttribute>, ConformanceStrategy<ASTCDAttribute> {
   @Override
   default boolean checkConformance(ASTCDAttribute concrete) {
-    return getMatchedElements(concrete).stream()
-        .allMatch(ref -> ref.getMCType().deepEquals(concrete.getMCType()));
+    return getMatchedElements(concrete).stream().allMatch(ref -> checkConformance(concrete, ref));
   }
+
+  boolean checkConformance(ASTCDAttribute concrete, ASTCDAttribute ref);
 
   ASTCDType getReferenceType();
 

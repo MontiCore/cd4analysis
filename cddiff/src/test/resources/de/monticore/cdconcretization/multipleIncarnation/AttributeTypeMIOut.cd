@@ -1,0 +1,11 @@
+classdiagram AttributeTypeMIConc {
+
+  <<ref="SomeValueType">> class Salery;
+
+  <<ref="SomeValueType">> class CompanyIdentifier;
+
+  class Employee {
+    <<ref="AttributeTypeMIRef.Employee.value">>AttributeTypeMIConc.CompanyIdentifier value_CompanyIdentifier;
+    <<ref="AttributeTypeMIRef.Employee.value">>AttributeTypeMIConc.Salery value_Salery;
+  }
+}

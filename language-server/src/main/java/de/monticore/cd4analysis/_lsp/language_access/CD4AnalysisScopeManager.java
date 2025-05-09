@@ -1,5 +1,6 @@
 package de.monticore.cd4analysis._lsp.language_access;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -18,7 +19,7 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
     super.initGlobalScope(modelPath);
     syncAccessGlobalScope(
         gs -> {
-          BasicSymbolsMill.initializePrimitives();
+          BuiltInTypes.addBuiltInTypes(gs);
           BasicSymbolsMill.initializeString();
         });
   }

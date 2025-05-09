@@ -2,23 +2,25 @@ package de.monticore.cdconformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.CDAttributeChecker;
+import de.monticore.cdconcretization.util.NameUtil;
+import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class STNamedAttributeChecker implements CDAttributeChecker {
-  protected String mapping;
-  protected ASTCDType refType;
-  protected ASTCDType conType;
+public class STNamedAttributeChecker extends AbstractAttributeChecker {
 
-  public STNamedAttributeChecker(String mapping) {
-    this.mapping = mapping;
+  public STNamedAttributeChecker(String mapping, String underspecifiedTypeName,
+                                 MatchingStrategy<ASTCDType> typeMatcher) {
+    super(mapping, underspecifiedTypeName, typeMatcher);
   }
 
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
 
-    return refType.getCDAttributeList().stream()
+    return referenceType.getCDAttributeList().stream()
         .filter(ref -> isMatched(concrete, ref))
         .collect(Collectors.toList());
   }
@@ -28,28 +30,8 @@ public class STNamedAttributeChecker implements CDAttributeChecker {
     if (concrete.getModifier().isPresentStereotype()
         && concrete.getModifier().getStereotype().contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return ref.getName().equals(refName);
+      return referenceType.getSpannedScope().resolveFieldMany(refName).contains(ref.getSymbol());
     }
     return false;
-  }
-
-  @Override
-  public ASTCDType getReferenceType() {
-    return this.refType;
-  }
-
-  @Override
-  public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
-  }
-
-  @Override
-  public ASTCDType getConcreteType() {
-    return conType;
-  }
-
-  @Override
-  public void setConcreteType(ASTCDType conType) {
-    this.conType = conType;
   }
 }

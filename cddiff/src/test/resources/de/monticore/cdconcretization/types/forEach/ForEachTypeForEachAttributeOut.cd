@@ -1,0 +1,29 @@
+import java.lang.String;
+
+classdiagram ForEachTypeForEachAttributeConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+
+  <<ref="ForEachTypeForEachAttributeRef.Builder">>
+  class Builder_Employee {
+    <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> String firstName;
+    <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> String lastName;
+    <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> int number;
+    <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> int salary;
+  }
+
+  <<ref="ForEachTypeForEachAttributeRef.Builder">>
+  class Builder_Department {
+    <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> String managerName;
+    <<ref="ForEachTypeForEachAttributeRef.Builder.attribute">> int depId;
+  }
+}

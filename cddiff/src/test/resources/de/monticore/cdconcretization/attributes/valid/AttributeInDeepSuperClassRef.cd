@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram AttributeInDeepSuperClassRef {
+  class Employee {
+    String firstName;
+    String lastName;
+    int number;
+    int salary;
+  }
+}

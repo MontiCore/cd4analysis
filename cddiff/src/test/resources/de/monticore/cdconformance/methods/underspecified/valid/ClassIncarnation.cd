@@ -1,0 +1,12 @@
+import java.lang.String;
+
+classdiagram ClassIncarnation {
+
+  class Operator {
+    OperationResult operation(Input input, Parameter param);
+  }
+
+  class Input;
+  class Parameter;
+  class OperationResult;
+}

@@ -1,0 +1,7 @@
+classdiagram AssociationMissingRolenameConc {
+  class Employee {
+  }
+  class Department {
+  }
+  association Employee <-> Department;
+}

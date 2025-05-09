@@ -3,19 +3,19 @@ package de.monticore.cdconformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.CDAttributeChecker;
+import de.monticore.cdmatcher.MatchingStrategy;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompAttributeChecker implements CDAttributeChecker {
-  protected String mapping;
-  protected ASTCDType conType;
+public class CompAttributeChecker extends AbstractAttributeChecker {
 
-  protected ASTCDType refType;
+  private final List<CDAttributeChecker> attributeCheckers = new ArrayList<>();
 
-  List<CDAttributeChecker> attributeCheckers = new ArrayList<>();
-
-  public CompAttributeChecker(String mapping) {
-    this.mapping = mapping;
+  public CompAttributeChecker(String mapping,
+                              String underspecifiedTypeName,
+                              MatchingStrategy<ASTCDType> typeMatcher) {
+    super(mapping, underspecifiedTypeName, typeMatcher);
   }
 
   public void addIncStrategy(CDAttributeChecker checker) {
@@ -42,24 +42,14 @@ public class CompAttributeChecker implements CDAttributeChecker {
   }
 
   @Override
-  public ASTCDType getReferenceType() {
-    return refType;
-  }
-
-  @Override
   public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
+    this.referenceType = refType;
     attributeCheckers.forEach(checker -> checker.setReferenceType(refType));
   }
 
   @Override
-  public ASTCDType getConcreteType() {
-    return conType;
-  }
-
-  @Override
   public void setConcreteType(ASTCDType conType) {
-    this.conType = conType;
+    this.concreteType = conType;
     attributeCheckers.forEach(checker -> checker.setConcreteType(conType));
   }
 }

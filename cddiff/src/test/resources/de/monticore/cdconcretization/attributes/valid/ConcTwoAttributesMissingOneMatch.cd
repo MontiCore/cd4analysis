@@ -1,5 +1,0 @@
-classdiagram ConcTwoAttributesMissingOneMatch {
-  class Employee {
-    int number;
-  }
-}

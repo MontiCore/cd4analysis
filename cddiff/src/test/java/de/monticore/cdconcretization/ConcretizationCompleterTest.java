@@ -1,287 +1,145 @@
 package de.monticore.cdconcretization;
 
-import static de.monticore.cdconformance.CDConfParameter.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdconformance.CDConformanceChecker;
-import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
+import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class ConcretizationCompleterTest {
-  public static final String dir = "src/test/resources/de/monticore/cdconcretization/";
-
-  protected ASTCDCompilationUnit refCD;
-
-  protected ASTCDCompilationUnit conCD;
-
-  @BeforeEach
-  public void setup() {
-    Log.init();
-    CD4CodeMill.reset();
-    CD4CodeMill.init();
-    CD4CodeMill.globalScope().clear();
-    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
-  }
+public class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
 
   @Test
-  public void testEvaluation() {
-    testConcretizedConformsToRef("ConcEvaluation.cd", "RefEvaluation.cd");
-  }
-
-  /**
-   * Test that checks if all the types in the reference CD that are missing in the concrete CD are
-   * added based on predefined CDs.
-   */
-  @Test
-  @Disabled
-  public void testTypeMissing() {
-    testConcretizedConformsToRef("types/valid/ConcTypeMissing.cd", "types/valid/RefTypeMissing.cd");
+  void testEvaluation() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "EvaluationConc.cd", "EvaluationRef.cd", "EvaluationOut.cd");
   }
 
   /** Test that checks if completeInheritance works correctly (after adding the types) */
   @Test
-  public void testTypeMissingInheritance() {
+  void testTypeMissingInheritance() {
     testConcretizedEqualsRef(
-        "inheritance/ConcMissingInheritance.cd", "inheritance/RefMissingInheritance.cd");
-  }
-
-  /**
-   * Test that checks if all the attributes in the reference CD that are missing in the concrete CD
-   * are added based on predefined CDs.
-   */
-  @Test
-  public void testMissingAttributes() {
-    testConcretizedEqualsRef(
-        "attributes/valid/ConcAttributesMissing.cd", "attributes/valid/RefAttributesMissing.cd");
+        "inheritance/MissingInheritanceConc.cd", "inheritance/MissingInheritanceRef.cd");
   }
 
   @Test
-  public void testTwoMissingAttributes() {
-    testConcretizedEqualsRef(
-        "attributes/valid/ConcTwoAttributesMissing.cd",
-        "attributes/valid/RefTwoAttributesMissing.cd");
+  void testMultipleIncarnation() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/ClassMIConc.cd",
+        "multipleIncarnation/ClassMIRef.cd",
+        "multipleIncarnation/ClassMIOut.cd");
   }
 
   @Test
-  public void testTwoMissingAttributesOneMatch() {
-    testConcretizedEqualsRef(
-        "attributes/valid/ConcTwoAttributesMissingOneMatch.cd",
-        "attributes/valid/RefTwoAttributesMissingOneMatch.cd");
-  }
-
-  /**
-   * The attributes expected by the reference class are already present in the direct superclass of
-   * 'Employee'. The concretization should not add them again.
-   */
-  @Test
-  public void testAttributeExistsInConcreteSuperclass() {
-    testConcretizedConformsToRef(
-        "attributes/valid/ConcAttributeInSuperClass.cd",
-        "attributes/valid/RefAttributeInSuperClass.cd");
-
-    // The conformance check is not enough here. The tool must not add attributes to the concrete
-    // class if they
-    // are already inherited from a superclass.
-    List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
-
-    ASTCDClass employeeClass =
-        conCD.getCDDefinition().getCDClassesList().stream()
-            .filter(cdClass -> cdClass.getName().equals("Employee"))
-            .findFirst()
-            .orElseThrow();
-    employeeClass.getCDAttributeList().stream()
-        .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
-        .findAny()
-        .ifPresent(
-            cdAttribute -> {
-              fail(
-                  "Attribute "
-                      + cdAttribute
-                      + " should not be added to the concrete class 'Employee' as it is already "
-                      + "inherited from the superclass 'Person'");
-            });
-  }
-
-  /**
-   * The attributes expected by the reference class are already present "deep" in the class
-   * hierarchy of 'Employee'. The concretization should not add them again.
-   */
-  @Test
-  public void testAttributeExistsInConcreteDeepSuperclass() {
-    testConcretizedConformsToRef(
-        "attributes/valid/ConcAttributeInDeepSuperClass.cd",
-        "attributes/valid/RefAttributeInDeepSuperClass.cd");
-
-    // The conformance check is not enough here. The tool must not add attributes to the concrete
-    // class if they
-    // are already inherited from a superclass.
-    List<String> attributesInSuperclass = Arrays.asList("firstName", "lastName");
-
-    ASTCDClass employeeClass =
-        conCD.getCDDefinition().getCDClassesList().stream()
-            .filter(cdClass -> cdClass.getName().equals("Employee"))
-            .findFirst()
-            .orElseThrow();
-    employeeClass.getCDAttributeList().stream()
-        .filter(cdAttribute -> attributesInSuperclass.contains(cdAttribute.getName()))
-        .findAny()
-        .ifPresent(
-            cdAttribute -> {
-              fail(
-                  "Attribute "
-                      + cdAttribute
-                      + " should not be added to the concrete class 'Employee' as it is already "
-                      + "inherited from the superclass 'Person'");
-            });
+  void testAssocBothSidesMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/BothAssocSidesMIConc.cd",
+        "multipleIncarnation/BothAssocSidesMIRef.cd",
+        "multipleIncarnation/BothAssocSidesMIOut.cd");
   }
 
   @Test
-  public void testMissingEnumMember() {
-    testConcretizedConformsToRef(
-        "types/enums/ConcEnumMemberMissing.cd", "types/enums/RefEnumMemberMissing.cd");
+  void testAssocBothSidesMIOneAssocExistsPerTypeIncarnation() {
+    /*
+     * The tool only adds associations between each pair of type incarnations if the concrete CD
+     * does not already contain an association for each SINGLE type incarnation!
+     */
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/BothAssocSidesMIOneAssocExistsConc.cd",
+        "multipleIncarnation/BothAssocSidesMIRef.cd",
+        "multipleIncarnation/BothAssocSidesMIOneAssocExistsOut.cd");
   }
 
   @Test
-  public void testMultipleIncarnation() {
-    testConcretizedConformsToRef(
-        "multipleIncarnation/ConcMultipleIncarnation.cd",
-        "multipleIncarnation/RefMultipleIncarnation.cd");
+  void testMIUnequalCardinalities() {
+    try {
+      parseAndConcretize(
+          "multipleIncarnation/UnequalCardCon.cd", "multipleIncarnation/UnequalCardRef.cd");
+      fail("Expected CompletionException");
+    } catch (CompletionException e) {
+      System.out.println("Completion failed as expected: " + e.getMessage());
+    }
   }
 
   @Test
-  public void testMIBothSides() {
-    testConcretizedConformsToRef(
-        "multipleIncarnation/ConcMIBothSides.cd", "multipleIncarnation/RefMIBothSides.cd");
+  void testInterfaceMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/InterfaceMIConc.cd",
+        "multipleIncarnation/InterfaceMIRef.cd",
+        "multipleIncarnation/InterfaceMIOut.cd");
+  }
+
+  @Test
+  void testAttributeTypeMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "multipleIncarnation/AttributeTypeMIConc.cd",
+        "multipleIncarnation/AttributeTypeMIRef.cd",
+        "multipleIncarnation/AttributeTypeMIOut.cd");
   }
 
   @Test
   @Disabled
   // todo: this test but later
-  public void testMultipleMappingIncarnation() {}
+  void testMultipleMappingIncarnation() {}
 
   /** Test that checks if attributes are inherited in the correct way with a valid example. */
   @Test
-  public void testInheritanceValid() {
-    testConcretizedConformsToRef(
-        "inheritance/ConcAttributeInheritance.cd", "inheritance/RefAttributeInheritance.cd");
+  void testInheritanceValid() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "inheritance/AttributeInheritanceConc.cd",
+        "inheritance/AttributeInheritanceRef.cd",
+        "inheritance/AttributeInheritanceOut.cd");
   }
 
   @Test
   @Disabled
-  public void testAttributetypeIncarnation() {
-    parseModels(
-        "inheritance/ConcAttributetypeIncarnation.cd",
-        "inheritance/RefAttributetypeIncarnation.cd");
+  void testAttributeTypeMismatchWithSuperclass() {
+    try {
+      parseAndConcretize(
+          "inheritance/AttributeTypeMismatchConc.cd", "inheritance/AttributeTypeMismatchRef.cd");
+      fail("Expected CompletionException");
+    } catch (CompletionException e) {
+      System.out.println("Completion failed as expected: " + e.getMessage());
+    }
     // todo: look at cds -> teacher inherites int number and also has attribute double number
   }
 
-  // AssociationTests
-
   @Test
-  public void testAssocMissingSimple() {
-    parseModels(
-        "associations/ConcAssociationMissingSimple.cd",
-        "associations/RefAssociationMissingSimple.cd");
-
-    DefaultAssocIncCompleter incarnationCompleter =
-        new DefaultAssocIncCompleter(conCD, refCD, "incarnates");
-    try {
-      incarnationCompleter.completeIncarnations();
-      conCD.getCDDefinition().setName("RefAssociationMissingSimple");
-
-      assertTrue(
-          new CDConformanceChecker(
-                  Set.of(
-                      STEREOTYPE_MAPPING,
-                      NAME_MAPPING,
-                      SRC_TARGET_ASSOC_MAPPING,
-                      INHERITANCE,
-                      ALLOW_CARD_RESTRICTION))
-              .checkConformance(conCD, refCD, Set.of("ref")));
-
-    } catch (CompletionException e) {
-      fail(e.getMessage());
-    }
-  }
-
-  @Test
-  public void testAssocMissingCardinality() {
-    parseModels(
-        "associations/ConcAssociationMissingCardinality.cd",
-        "associations/RefAssociationMissingCardinality.cd");
-
-    testConcretizedEqualsRef(
-        "associations/ConcAssociationMissingCardinality.cd",
-        "associations/RefAssociationMissingCardinality.cd");
-  }
-
-  @Test
-  public void testAssocMissingRolename() {
-    testConcretizedEqualsRef(
-        "associations/ConcAssociationMissingRolename.cd",
-        "associations/RefAssociationMissingRolename.cd");
-  }
-
-  @Test
-  public void testAssocMissingFinal() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssociationMissingFinal.cd",
-        "associations/RefAssociationMissingFinal.cd");
-  }
-
-  @Test
-  public void testAssocMultipleTypeIncarnation() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssocMultipleTypeIncarnation.cd",
-        "associations/RefAssocMultipleTypeIncarnation.cd");
-  }
-
-  @Test
-  public void testAssociationReverseMatch() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssociationReverseMatch.cd",
-        "associations/RefAssociationReverseMatch.cd");
-  }
-
-  @Test
-  public void testAssocRename() {
-    testConcretizedConformsToRef(
-        "associations/ConcAssocRename.cd", "associations/RefAssocRename.cd");
+  void testCDHelperExample() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "helper/HelperConc.cd", "helper/HelperRef.cd", "helper/HelperOut.cd");
   }
 
   // ConcretizationHelper tests
   @Test
-  public void testCDHelperMappings() throws CompletionException {
-    parseModels("helper/ConcHelper.cd", "helper/RefHelper.cd");
-
-    DefaultTypeIncCompleter defaultTypeIncCompleter =
-        new DefaultTypeIncCompleter(conCD, refCD, "ref");
-    DefaultAssocIncCompleter defaultAssocIncCompleter =
-        new DefaultAssocIncCompleter(conCD, refCD, "ref");
-
-    defaultTypeIncCompleter.completeIncarnations();
-    defaultAssocIncCompleter.completeIncarnations();
+  void testCDHelperMappings() throws CompletionException {
+    String mapping = "ref";
+    parseAndConcretize("helper/HelperConc.cd", "helper/HelperRef.cd");
 
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
 
+    CompTypeIncStrategy typeIncStrategy = new CompTypeIncStrategy(refCD, mapping);
+    typeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
+    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
+
+    CompAssocIncStrategy assocIncStrategy = new CompAssocIncStrategy(refCD, mapping);
+    assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
+    assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
+    assocIncStrategy.addIncStrategy(
+        new RolePrefixInNavDirIncStrategy(typeIncStrategy, conCD, refCD));
+    assocIncStrategy.addIncStrategy(
+        new RolePrefixIfPresentIncStrategy(typeIncStrategy, conCD, refCD));
+
     ConcretizationHelper helper =
-        new ConcretizationHelper(
-            conCD,
-            refCD,
-            defaultTypeIncCompleter.getTypeStrategy(),
-            defaultAssocIncCompleter.getCompAssocIncStrategy());
+        new ConcretizationHelper(conCD, refCD, typeIncStrategy, assocIncStrategy);
 
     helper.mapReferenceToConcreteRoles();
 
@@ -341,80 +199,5 @@ public class ConcretizationCompleterTest {
     assertEquals(actualMapTemp3, expectedMap3);
 
      */
-  }
-
-  /***
-   * Parses the two models and checks if the concretized CD equals the reference CD.
-   * <br>
-   * Use this to test if basic completion of model elements works, without any application of
-   * explicit incarnation mappings.
-   *
-   * @param conc the path to the concrete CD
-   * @param ref the path to the reference CD
-   */
-  private void testConcretizedEqualsRef(String conc, String ref) {
-    try {
-      parseAndConcretize(conc, ref);
-    } catch (CompletionException e) {
-      fail("CompletionException", e);
-    }
-
-    // to use deep equals, both CDs need to have the same name
-    conCD.getCDDefinition().setName(refCD.getCDDefinition().getName());
-    assertTrue(conCD.deepEquals(refCD, false));
-  }
-
-  /**
-   * Parses the two models and checks if the concretized CD conforms to the reference CD. <br>
-   * Use this for all non-trivial test cases where the concretization is no longer expected to equal
-   * to the reference CD.
-   *
-   * @param conc the path to the concrete CC
-   * @param ref the path to the reference CD
-   */
-  private void testConcretizedConformsToRef(String conc, String ref) {
-    try {
-      parseAndConcretize(conc, ref);
-    } catch (CompletionException e) {
-      fail("CompletionException", e);
-    }
-    assertTrue(
-        new CDConformanceChecker(
-                Set.of(
-                    STEREOTYPE_MAPPING,
-                    NAME_MAPPING,
-                    SRC_TARGET_ASSOC_MAPPING,
-                    INHERITANCE,
-                    ALLOW_CARD_RESTRICTION))
-            .checkConformance(conCD, refCD, Set.of("ref")));
-  }
-
-  private void parseAndConcretize(String conc, String ref) throws CompletionException {
-    parseModels(conc, ref);
-    ConcretizationCompleter completer = new ConcretizationCompleter("ref");
-    completer.complete(refCD, conCD);
-    System.out.println("Concretized CD:");
-    System.out.println(CD4CodeMill.prettyPrint(conCD, false));
-  }
-
-  private void parseModels(String concrete, String ref) {
-    try {
-      Optional<ASTCDCompilationUnit> conCD =
-          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
-      Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
-      if (conCD.isPresent() && refCD.isPresent()) {
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(refCD.get());
-        conCD.get().accept(new CD4CodeSymbolTableCompleter(conCD.get()).getTraverser());
-        refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
-        this.refCD = refCD.get();
-        this.conCD = conCD.get();
-      } else {
-        fail("Could not parse CDs.");
-      }
-
-    } catch (IOException e) {
-      fail(e);
-    }
   }
 }

@@ -2,22 +2,21 @@ package de.monticore.cdconformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.CDAttributeChecker;
+import de.monticore.cdmatcher.MatchingStrategy;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EqNameAttributeChecker implements CDAttributeChecker {
-  protected ASTCDType refType;
-  protected ASTCDType conType;
-  protected String mapping;
+public class EqNameAttributeChecker extends AbstractAttributeChecker {
 
-  public EqNameAttributeChecker(String mapping) {
-    this.mapping = mapping;
+  public EqNameAttributeChecker(String mapping, String underspecifiedTypeName,
+                                MatchingStrategy<ASTCDType> typeMatcher) {
+    super(mapping, underspecifiedTypeName, typeMatcher);
   }
 
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
-    return refType.getCDAttributeList().stream()
+    return referenceType.getCDAttributeList().stream()
         .filter(attr -> isMatched(concrete, attr))
         .collect(Collectors.toList());
   }
@@ -25,25 +24,5 @@ public class EqNameAttributeChecker implements CDAttributeChecker {
   @Override
   public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
     return ref.getName().equals(concrete.getName());
-  }
-
-  @Override
-  public ASTCDType getReferenceType() {
-    return refType;
-  }
-
-  @Override
-  public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
-  }
-
-  @Override
-  public ASTCDType getConcreteType() {
-    return conType;
-  }
-
-  @Override
-  public void setConcreteType(ASTCDType conType) {
-    this.conType = conType;
   }
 }
