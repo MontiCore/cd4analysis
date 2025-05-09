@@ -46,8 +46,8 @@ jobs:
 
   # Run the MontiVerse pipeline (tests this change on a suite of projects)
   trigger-montiverse:
-    # do not run on pull requests in the same project (only on PRs from external sources)
-    if: ${{github.event_name  != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository }}
+    # do not run on PRs. Forked PRs are handled via report_proposed_changes[workflow_run].
+    if: ${{github.event_name  == 'push'}}
     needs: [ build ]
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
