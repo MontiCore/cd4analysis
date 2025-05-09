@@ -63,6 +63,12 @@ public class ConcretizationCompleter {
   private boolean reorderElements = true;
 
   /**
+   * If true, the name of the parameter element is replaced with its incarnation name in reference
+   * elements annotated with 'forEach'.
+   */
+  private boolean forEachNameAdaptationEnabled = true;
+
+  /**
    * Name of the placeholder type that is used to mark underspecified types in the reference CD. See
    * {@link UnderspecifiedPlaceholderType}.
    */
@@ -161,6 +167,10 @@ public class ConcretizationCompleter {
    */
   public void setUnderspecifiedPlaceholderTypeName(String underspecifiedPlaceholderTypeName) {
     this.underspecifiedPlaceholderTypeName = underspecifiedPlaceholderTypeName;
+  }
+
+  public void setForEachNameAdaptationEnabled(boolean forEachNameAdaptationEnabled) {
+    this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
   }
 
   /***
@@ -266,6 +276,11 @@ public class ConcretizationCompleter {
     @Override
     public String getUnderspecifiedPlaceholderTypeName() {
       return underspecifiedPlaceholderTypeName;
+    }
+
+    @Override
+    public boolean isForEachNameAdaptationEnabled() {
+      return forEachNameAdaptationEnabled;
     }
 
     @Override

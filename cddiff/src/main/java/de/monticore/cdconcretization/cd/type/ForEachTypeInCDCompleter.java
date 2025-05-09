@@ -71,21 +71,23 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
     Log.debug("Found type incarnations for " + paramType.getName() + ": " + paramTypeIncarnations, LOG_NAME);
 
     for (ASTCDType paramTypeInc : paramTypeIncarnations) {
-      // if we have more than one type incarnation, we need to add a suffix to the new type
-      String paramIncName = SymbolUtil.getFullNameWithoutCD(paramTypeInc.getSymbol());
-      String typeSuffix = paramTypeIncarnations.size() > 1
-              ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(paramIncName)
-              : "";
-
       ASTCDType newType = referenceType.deepClone();
 
-      // TODO maybe introduce convention for type names (issue 33)
-      // e.g., if the param type name is a substring of the reference type name, we replace it
-      // otherwise we append it with a suffix
-      newType.setName(referenceType.getName() + typeSuffix);
+      // 1. decide name of the new type
+      Optional<String> adaptedName = NameUtil.adaptTemplatedName(
+              referenceType.getName(), paramType.getName(), paramTypeInc.getName());
+      if (context.isForEachNameAdaptationEnabled() && adaptedName.isPresent()) {
+        newType.setName(adaptedName.get());
+      } else {
+        // Default: add the param incarnation name as suffix
+        String paramIncName = SymbolUtil.getFullNameWithoutCD(paramTypeInc.getSymbol());
+        String typeSuffix = paramTypeIncarnations.size() > 1
+                ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(paramIncName)
+                : "";
+        newType.setName(referenceType.getName() + typeSuffix);
+      }
 
-      // remove forEach stereotype from concrete attribute but add a reference to the
-      // original attribute
+      // remove forEach stereotype from concrete type but add a reference to the original type
       StereotypeUtil.removeForEachStereotype(newType.getModifier());
       StereotypeUtil.addStereotype(
           newType.getModifier(), context.getMappingName(), referenceType.getSymbol().getFullName());
@@ -98,7 +100,7 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
           .getScopedIncarnationBindings()
           .addTypeBinding(newTypeFullName, paramType.getSymbol(), paramTypeInc.getSymbol());
 
-      // 4. pass the new attribute to the next completer
+      // 4. pass the new type to the next completer
       super.completeTypeInCD(context.getConcreteCD().getCDDefinition(), newType, context);
     }
   }

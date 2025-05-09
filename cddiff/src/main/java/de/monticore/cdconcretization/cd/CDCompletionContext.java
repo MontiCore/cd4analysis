@@ -45,6 +45,8 @@ public interface CDCompletionContext {
   /** Parameters for the conformance checker, that also influence the completion behavior. */
   Set<CDConfParameter> getConformanceParams();
 
+  boolean isForEachNameAdaptationEnabled();
+
   /**
    * @return the incarnation strategy that can be used to find incarnations of types in the current
    * context.
