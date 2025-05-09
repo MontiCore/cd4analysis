@@ -9,9 +9,9 @@ classdiagram ForEachAttributeDifferentTypeConc {
   }
 
   class Builder {
-    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedAttribute_firstName;
-    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedAttribute_lastName;
-    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedAttribute_number;
-    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedAttribute_salary;
+    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedFirstName;
+    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedLastName;
+    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedNumber;
+    <<ref="ForEachAttributeDifferentTypeRef.Builder.hasModifiedAttribute">> boolean hasModifiedSalary;
   }
 }
