@@ -8,8 +8,8 @@ on:
 # Note: This is a separate workflow (file) to constrain the write permissions & secrets
 jobs:
   trigger-montiverse-fork:
-    # only run on forked PRs (as we have to elevate permissions & gain access to secrets)
-    if: ${{github.event.workflow_run.event  == 'pull_request' && github.event.workflow_run.head_repository.full_name != github.repository}}
+    # only run on forked PRs with a successful build workflow (as we have to elevate permissions & gain access to secrets)
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event  == 'pull_request' && github.event.workflow_run.head_repository.full_name != github.repository}}
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
       project: "CD4A"
@@ -20,6 +20,7 @@ jobs:
 
   checks:
     runs-on: ubuntu-latest
+    if: ${{github.event.workflow_run.conclusion  != 'skipped'}}
     permissions:
       checks: write
     steps:
