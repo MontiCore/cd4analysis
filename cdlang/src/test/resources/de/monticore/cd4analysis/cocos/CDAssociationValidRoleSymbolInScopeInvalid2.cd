@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationValidRoleSymbolInScopeInvalid2 {
+
+  class Person {
+    public String fullName;
+    int age;
+  }
+
+  association mother [1] Person <-> (child) Person [1];
+  association father [1] Person <-> (child) Person [1];
+}
