@@ -13,7 +13,7 @@ jobs:
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
       project: "CD4A"
-      refspec: github.event.workflow_run.head_sha # Use the head commit of the PR
+      refspec: ${{github.event.workflow_run.head_sha}} # Use the head commit of the PR
     permissions: # allow this action to give feedback on its checks
       pull-requests: write
     secrets: inherit
