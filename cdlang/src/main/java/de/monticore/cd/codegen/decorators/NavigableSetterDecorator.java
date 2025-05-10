@@ -37,43 +37,45 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
         || attribute.getModifier().isReadonly()
         || attribute.getModifier().isFinal()) return;
 
-    // For every attribute, for which the SetterDecorator has created methods:
-    var methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
-    if (methods == null || methods.isEmpty()) return;
+    if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
+      // For every attribute, for which the SetterDecorator has created methods:
+      var methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
+      if (methods == null || methods.isEmpty()) return;
 
-    var role = this.decoratorData.fieldToRoles.get(attribute.getSymbol());
+      var role = this.decoratorData.fieldToRoles.get(attribute.getSymbol());
 
-    // And for which a role symbol was present (before being transformed away) and which is
-    // navigable in both directions
-    if (role == null
+      // And for which a role symbol was present (before being transformed away) and which is
+      // navigable in both directions
+      if (role == null
         || !role.isIsDefinitiveNavigable()
         || !role.getOtherSide().isIsDefinitiveNavigable()) return;
 
-    var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
-    var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
+      var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
+      var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
 
-    if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      Log.error("0xTODO: Unable to have a navigable assoc to a boolean", role.getSourcePosition());
-    } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-      Log.warn("0xTODO: WIP List NavSetter ", role.getSourcePosition());
-    } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-      Log.warn("0xTODO: WIP Set NavSetter ", role.getSourcePosition());
-    } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-      Log.warn("0xTODO: WIP Optional NavSetter", role.getSourcePosition());
-    } else {
-      // Add set${role}Local method
-      decorateMandatoryLocal(otherClassDec, role.getOtherSide());
-      // Call ${role}.set${otherRole}Local when updating
-      methods.forEach(
-          m ->
-              glexOpt.ifPresent(
-                  g ->
-                      g.addAfterTemplate(
-                          "methods.Set",
-                          m,
-                          new TemplateHookPoint(
-                              "methods.CallLocal", role.getOtherSide().getName()))));
-      // TODO: Unset old?
+      if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
+        Log.error("0xTODO: Unable to have a navigable assoc to a boolean", role.getSourcePosition());
+      } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
+        Log.warn("0xTODO: WIP List NavSetter ", role.getSourcePosition());
+      } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+        Log.warn("0xTODO: WIP Set NavSetter ", role.getSourcePosition());
+      } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
+        Log.warn("0xTODO: WIP Optional NavSetter", role.getSourcePosition());
+      } else {
+        // Add set${role}Local method
+        decorateMandatoryLocal(otherClassDec, role.getOtherSide());
+        // Call ${role}.set${otherRole}Local when updating
+        methods.forEach(
+            m ->
+                glexOpt.ifPresent(
+                    g ->
+                        g.addAfterTemplate(
+                            "methods.Set",
+                            m,
+                            new TemplateHookPoint(
+                                "methods.CallLocal", role.getOtherSide().getName()))));
+        // TODO: Unset old?
+      }
     }
   }
 
