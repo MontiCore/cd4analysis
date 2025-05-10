@@ -16,7 +16,7 @@ jobs:
       refspec: ${{github.event.workflow_run.head_sha}} # Use the head commit of the PR
     permissions: # allow this action to give feedback on its checks
       pull-requests: write
-      checks: write
+      statuses: write
     secrets: inherit
 
   checks:
