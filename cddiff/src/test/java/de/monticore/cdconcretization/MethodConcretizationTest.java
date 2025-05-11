@@ -121,4 +121,50 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
         "methods/underspecified/ParameterTypeUnderspecifiedRef.cd",
         "methods/underspecified/ParameterTypeUnderspecifiedIncarnatedOut.cd");
   }
+
+  // --- ForEach ---
+
+  @Test
+  void testMethodForEachAttribute() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeConc.cd",
+        "methods/forEach/ForEachAttributeRef.cd",
+        "methods/forEach/ForEachAttributeOut.cd");
+  }
+
+  @Test
+  void testMethodForEachAttributeDifferentReturnType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeDifferentReturnTypeConc.cd",
+        "methods/forEach/ForEachAttributeDifferentReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeDifferentReturnTypeOut.cd");
+  }
+
+  /**
+   * Multiple parameters. One matches the name of the attribute and is therefore adapted, the
+   * other one stays the same for all incarnations.
+   */
+  @Test
+  void testMethodForEachAttributeMultipleParameters() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeMultipleParametersConc.cd",
+        "methods/forEach/ForEachAttributeMultipleParametersRef.cd",
+        "methods/forEach/ForEachAttributeMultipleParametersOut.cd");
+  }
+
+  @Test
+  void testMethodForEachAttributeSameReturnType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeOut.cd");
+  }
+
+  @Test
+  void testMethodForEachAttributeSameReturnTypeClassMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeSameReturnTypeClassMIConc.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeClassMIOut.cd");
+  }
 }

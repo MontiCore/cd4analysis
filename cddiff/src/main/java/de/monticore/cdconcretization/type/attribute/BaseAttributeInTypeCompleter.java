@@ -12,6 +12,8 @@ import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -85,10 +87,7 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
     }
 
     ASTCDType rAttributeType = (ASTCDType) rAttributeTypeOpt.get();
-    Set<ASTCDType> typeIncarnations =
-        ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
-            .filter(type -> context.getTypeIncStrategy().isMatched(type, rAttributeType))
-            .collect(Collectors.toSet());
+    Set<ASTCDType> typeIncarnations = context.getTypeIncarnations(rAttributeType);
 
     for (ASTCDType cAttributeType : typeIncarnations) {
       ASTCDAttribute attributeIncarnation = referenceAttribute.deepClone();

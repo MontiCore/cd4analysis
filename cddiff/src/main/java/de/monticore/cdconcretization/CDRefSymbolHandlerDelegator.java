@@ -46,7 +46,7 @@ public class CDRefSymbolHandlerDelegator {
     if (!processed) {
       // TODO Rework error logging/reporting & exception usage
       throw new CompletionException(
-              "Unsupported forEach reference referenceSymbol" + referenceSymbol + " at " + sourcePosition);
+              "Unsupported forEach reference referenceSymbol '" + referenceSymbol + "' at " + sourcePosition);
     }
   }
 

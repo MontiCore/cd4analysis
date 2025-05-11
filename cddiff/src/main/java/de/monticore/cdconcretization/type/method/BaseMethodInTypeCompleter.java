@@ -111,10 +111,7 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
     }
 
     ASTCDType rAttributeType = (ASTCDType) rAttributeTypeOpt.get();
-    Set<ASTCDType> typeIncarnations =
-            ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
-                    .filter(type -> context.getTypeIncStrategy().isMatched(type, rAttributeType))
-                    .collect(Collectors.toSet());
+    Set<ASTCDType> typeIncarnations = context.getTypeIncarnations(rAttributeType);
     if (typeIncarnations.isEmpty()) {
       // if we do not have any incarnations, we can just use the type as is
       return Collections.singletonList(refMCType);

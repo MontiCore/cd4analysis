@@ -38,8 +38,7 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
     Optional<String> stereotypeValue =
         StereotypeUtil.getForEachStereotypeValue(
             referenceAttribute.getModifier(),
-            "Stereotype value must not be empty for stereotype 'forEach. '"
-                + referenceAttribute.get_SourcePositionStart());
+            "Stereotype value must not be empty for stereotype 'forEach'");
     if (stereotypeValue.isPresent()) {
       CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
       symbolHandler.setAttributeHandler(
