@@ -342,14 +342,14 @@ public class ConcretizationCompleter {
     public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
       CompMethodChecker methodIncStrategy =
-          new CompMethodChecker(mapping, typeIncarnationHelper);
+          new CompMethodChecker(mapping, conformanceParams, typeIncarnationHelper);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
         methodIncStrategy.addIncStrategy(
-            new STNamedMethodChecker(mapping, typeIncarnationHelper));
+            new STNamedMethodChecker(mapping, conformanceParams, typeIncarnationHelper));
       }
       if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
         methodIncStrategy.addIncStrategy(
-            new EqNameMethodChecker(mapping, typeIncarnationHelper));
+            new EqNameMethodChecker(mapping, conformanceParams, typeIncarnationHelper));
       }
       methodIncStrategy.setConcreteType(concreteType);
       methodIncStrategy.setReferenceType(referenceType);

@@ -3,37 +3,58 @@ package de.monticore.cdconformance.conf.method;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
+
 public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected final String mapping;
+  protected final Set<CDConfParameter> params;
   protected final TypeIncarnationHelper typeHelper;
   protected ASTCDType conType;
   protected ASTCDType refType;
 
-  protected AbstractMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
+  protected AbstractMethodChecker(
+          String mapping,
+          Set<CDConfParameter> params,
+          TypeIncarnationHelper typeHelper) {
     this.mapping = mapping;
+    this.params = params;
     this.typeHelper = typeHelper;
   }
 
   @Override
   public boolean checkConformance(ASTCDMethod concrete, ASTCDMethod ref) {
     return checkReturnTypeConformance(concrete.getMCReturnType(), ref.getMCReturnType())
-        && ref.getCDParameterList().stream()
-            .allMatch(
-                refPar ->
-                    concrete.getCDParameterList().stream()
-                        .anyMatch(conPar -> checkParameterConformance(conPar, refPar)));
+        && checkParameterListConformance(concrete.getCDParameterList(), ref.getCDParameterList());
+
+  }
+
+  protected boolean checkParameterListConformance(
+          List<ASTCDParameter> conParams, List<ASTCDParameter> refParams) {
+    if (params.contains(CDConfParameter.IGNORE_PARAMETER_ORDER)) {
+      return refParams.stream()
+              .allMatch(refPar ->
+                  conParams.stream()
+                          .anyMatch(conPar -> checkParameterConformance(conPar, refPar)));
+    } else {
+      return IntStream.range(0, conParams.size())
+              .allMatch(i -> checkParameterConformance(conParams.get(i), refParams.get(i)));
+    }
   }
 
   protected boolean checkParameterConformance(ASTCDParameter conPar, ASTCDParameter refPar) {
-    if (conPar.getName().equals(refPar.getName())) {
-      return typeHelper.isMCTypeMatched(conPar.getMCType(), refPar.getMCType());
+    if (params.contains(CDConfParameter.IGNORE_PARAMETER_ORDER)
+            && !conPar.getName().equals(refPar.getName())) {
+      return false;
     }
-    return false;
+    return typeHelper.isMCTypeMatched(conPar.getMCType(), refPar.getMCType());
   }
 
   protected boolean checkReturnTypeConformance(

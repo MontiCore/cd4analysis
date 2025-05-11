@@ -13,7 +13,13 @@ public enum CDConfParameter {
   ALLOW_CARD_RESTRICTION(
       "when added, the cardinality of a concrete association can refine the card  of a reference association "),
 
-  NO_MULTI_INC("when added a type, assoc or attribute can have many incarnations");
+  NO_MULTI_INC("when added a type, assoc or attribute can have many incarnations"),
+
+  /**
+   * If not added, the order of parameters and the type is considered when checking conformance.
+   */
+  // TODO what about additional parameters in concrete model?
+  IGNORE_PARAMETER_ORDER("when added the order of parameters is ignored when checking conformance. Instead for each reference parameter there has to be one concrete parameter with the same name"),;
 
   private final String description;
 

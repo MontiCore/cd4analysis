@@ -2,9 +2,11 @@ package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -18,8 +20,8 @@ import java.util.stream.Collectors;
  * - the reference type is underspecified
  */
 public class EqNameMethodChecker extends AbstractMethodChecker {
-  public EqNameMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
-    super(mapping, typeHelper);
+  public EqNameMethodChecker(String mapping, Set<CDConfParameter> params, TypeIncarnationHelper typeHelper) {
+    super(mapping, params, typeHelper);
   }
 
   @Override

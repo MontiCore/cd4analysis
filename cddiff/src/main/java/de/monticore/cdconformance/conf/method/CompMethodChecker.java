@@ -2,17 +2,19 @@ package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CompMethodChecker extends AbstractMethodChecker {
   private final List<ICDMethodChecker> methodCheckers = new ArrayList<>();
 
-  public CompMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
-    super(mapping, typeHelper);
+  public CompMethodChecker(String mapping, Set<CDConfParameter> params, TypeIncarnationHelper typeHelper) {
+    super(mapping, params, typeHelper);
   }
 
   public void addIncStrategy(ICDMethodChecker checker) {

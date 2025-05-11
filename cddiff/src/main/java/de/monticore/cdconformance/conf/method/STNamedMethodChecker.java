@@ -1,14 +1,16 @@
 package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.type.TypeIncarnationHelper;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class STNamedMethodChecker extends AbstractMethodChecker {
-  public STNamedMethodChecker(String mapping, TypeIncarnationHelper typeHelper) {
-    super(mapping, typeHelper);
+  public STNamedMethodChecker(String mapping, Set<CDConfParameter> params, TypeIncarnationHelper typeHelper) {
+    super(mapping, params, typeHelper);
   }
 
   @Override
