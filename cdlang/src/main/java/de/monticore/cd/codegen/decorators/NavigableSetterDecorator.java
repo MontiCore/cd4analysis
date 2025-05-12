@@ -3,6 +3,7 @@ package de.monticore.cd.codegen.decorators;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
+import com.google.common.collect.Iterables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
@@ -18,6 +19,8 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,9 +29,10 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
     implements CDBasisVisitor2 {
 
   @Override
-  public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
+  @SuppressWarnings("rawtypes")
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     // We require data of the Setter Decorator
-    return List.of(SetterDecorator.class);
+    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
   }
 
   @Override

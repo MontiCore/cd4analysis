@@ -43,7 +43,8 @@ public class TOPTrafo extends AbstractDecorator<AbstractDecorator.NoData>
   }
 
   @Override
-  public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
+  @SuppressWarnings("rawtypes")
+  public List<Class<? extends IDecorator>> getMustRunAfter() {
     throw new IllegalStateException(
         "The TOPTrafo MUST be run as a Post-Decorate action (which is currently not configurable)");
   }

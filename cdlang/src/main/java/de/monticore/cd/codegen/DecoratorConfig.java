@@ -2,6 +2,7 @@
 package de.monticore.cd.codegen;
 
 import de.monticore.cd.codegen.creators.CopyCreator;
+import de.monticore.cd.codegen.creators.ICreator;
 import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.cd.codegen.decorators.matcher.ICLIMatcher;
@@ -16,6 +17,8 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.ObjectFactory;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
+
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -31,6 +34,10 @@ public class DecoratorConfig {
   public ChainableGenSetup withDecorator(IDecorator<?> decorator) {
     this.decorators.add(decorator);
     return new ChainableGenSetup((Class<? extends IDecorator<?>>) decorator.getClass());
+  }
+
+  public ChainableGenSetup withCopyCreator() {
+    return this.withDecorator(new CopyCreator());
   }
 
   public ChainableGenSetup withDefaultsForCardinalityAttrs() {
@@ -154,9 +161,9 @@ public class DecoratorConfig {
     }
     // Initialize edges (in the reverse order)
     for (IDecorator<?> node : this.decorators) {
-      for (Class<? extends IDecorator<?>> depOn : node.getMustRunAfter()) {
+      for (@SuppressWarnings("rawtypes") Class<? extends IDecorator> depOn : node.getMustRunAfter()) {
         for (IDecorator<?> depNodeCandidate : this.decorators) {
-          if (depNodeCandidate.getClass() == depOn) {
+          if (node != depNodeCandidate && depOn.isAssignableFrom(depNodeCandidate.getClass())) {
             graph.get(depNodeCandidate).add(node);
             inDegrees.put(node, inDegrees.getOrDefault(node, 0) + 1);
           }
@@ -188,22 +195,23 @@ public class DecoratorConfig {
       phases.add(phase);
     }
 
+    if (!phases.isEmpty() && phases.get(0).decorators.stream().noneMatch(d->d instanceof ICreator)) {
+      Log.error("0xTODO: Missing creating decorator (such as withCopyCreator())");
+    }
+
     return phases;
   }
 
-  public ASTCDCompilationUnit decorate(
+  @Nonnull
+  public Optional<ASTCDCompilationUnit> decorate(
       ASTCDCompilationUnit root,
       Map<FieldSymbol, CDRoleSymbol> fieldToRoles,
       Optional<GlobalExtensionManagement> glexOpt) {
     // Start by ordering the phases
     List<DecoratorPhase> phases = createPhases();
 
-    // Then create the target CD
-    CopyCreator creator = new CopyCreator();
-    var created = creator.createFrom(root);
-
     // Create the parent-child tree relationship
-    decoratorData.setupParents(created, cliConfig);
+    decoratorData.setupParents(root, cliConfig);
     decoratorData.fieldToRoles = fieldToRoles;
 
     // Some safeguard: "hash" the original AST (by pretty printing it)
@@ -227,7 +235,12 @@ public class DecoratorConfig {
       }
     }
 
-    return created.getDecorated();
+    if (!(decoratorData.getData(ICreator.class) instanceof ICreator.ICreatedData)) {
+      Log.error("0xTODO: Missing creating decorator (such as withCopyCreator())");
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(((ICreator.ICreatedData) decoratorData.getData(ICreator.class)).getDecorated());
   }
 
   /**
@@ -236,5 +249,12 @@ public class DecoratorConfig {
    */
   static class DecoratorPhase {
     final List<IDecorator<?>> decorators = new ArrayList<>();
+
+    @Override
+    public String toString() {
+      return "DecoratorPhase{" +
+        "decorators=" + decorators +
+        '}';
+    }
   }
 }

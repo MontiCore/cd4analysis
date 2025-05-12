@@ -68,16 +68,16 @@ public class AbstractCDGenTest {
 
     CDGenerator generator = new CDGenerator(generatorSetup);
 
-    var decorated = setup.decorate(cd, roleTrafo.getFieldToRoles(), Optional.of(glex));
+    var decoratedOpt = setup.decorate(cd, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
-    System.err.println(CD4CodeMill.prettyPrint(decorated, true));
+    System.err.println(CD4CodeMill.prettyPrint(decoratedOpt.get(), true));
 
     // Post-Decorate
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-    decorated.accept(t);
+    decoratedOpt.get().accept(t);
 
-    generator.generate(decorated);
+    generator.generate(decoratedOpt.get());
     System.out.println(
         "Wrote CDGenTest results to " + generatorSetup.getOutputDirectory().getAbsolutePath());
   }

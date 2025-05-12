@@ -182,12 +182,17 @@ public class CDGenTool extends CDGeneratorTool {
 
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
+          if (decorated.isEmpty()) {
+            Log.error("0xTODO: Failed generation for " + ast.getCDDefinition().getName());
+            continue;
+          }
+
           // Post-Decorate: apply trafos needed for code generation
           CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
           t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-          decorated.accept(t);
+          decorated.get().accept(t);
           // Post-Decorate: make methods in interfaces abstract
-          this.makeMethodsInInterfacesAbstract(decorated);
+          this.makeMethodsInInterfacesAbstract(decorated.get());
           // Post-Decorate: map import statements to classes
           this.mapCD4CImports(ast);
 
@@ -197,9 +202,9 @@ public class CDGenTool extends CDGeneratorTool {
           TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
           t = CD4CodeMill.inheritanceTraverser();
           topTransformer.addToTraverser(t);
-          decorated.accept(t);
+          decorated.get().accept(t);
 
-          generator.generate(decorated);
+          generator.generate(decorated.get());
         }
       }
 
