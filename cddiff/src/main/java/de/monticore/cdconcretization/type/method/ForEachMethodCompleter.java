@@ -1,5 +1,6 @@
 package de.monticore.cdconcretization.type.method;
 
+import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -10,11 +11,13 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
 import de.monticore.cdconcretization.CompletionException;
+import de.monticore.cdconcretization.cd.CDCompletionContext;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.Names;
 
 import java.util.List;
@@ -37,7 +40,8 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
       CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
       symbolHandler.setAttributeHandler(
           paramAttr -> completeMethodUsingAttribute(referenceMethod, paramAttr, context));
-      // TODO Add support for other parameter elements
+      symbolHandler.setTypeHandler(
+          paramType -> completeMethodUsingType(referenceMethod, paramType, context));
       symbolHandler.resolveSymbol(
           context.getReferenceType().getSpannedScope(),
           stereotypeValue.get(),
@@ -158,18 +162,115 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
         // --> first think about how we would use this information -> only to build an advanced
         // incarnation mapping data structure, e.g., as input to the OCL adaptation tool
 
-        // TODO This does not seem right...
         // we need to have the symbol table information when further processing the new method (in BaseMethodInTypeCompleter)
-        // TODO is there a way to only update the symbol table for a certain subgraph of the AST?
-        // workaround: temporary add the method to the CD type, update symbol table and remove it again
-        context.getConcreteType().addCDMember(newMethod);
-        CDDiffUtil.refreshSymbolTable(context.getConcreteCD());
-        context.getConcreteType().removeCDMember(newMethod);
-        // TODO we should refresh the symbol table again here to get back to the old state, right?
+        updateMethodSymbolTableWorkaround(newMethod, context);
 
         // 5. pass the new method to the next completer
         super.completeMethodInType(context.getConcreteType(), newMethod, context);
       }
     }
+  }
+
+  private void completeMethodUsingType(
+          ASTCDMethod referenceMethod,
+          ASTCDType paramType,
+          TypeCompletionContext context)
+          throws CompletionException {
+
+    Set<ASTCDType> paramTypeIncarnations = context.getTypeIncarnations(paramType);
+    for (ASTCDType paramTypeInc : paramTypeIncarnations) {
+      // now we have a specific incarnation of the parameter type in the concrete CD.
+      // we can now construct a new method based on this incarnation for the concrete type
+      ASTCDMethod newMethod = referenceMethod.deepClone();
+
+      // 1. decide return type of the new method
+      if (referenceMethod.getMCReturnType().isPresentMCType()
+              && referenceMethod.getMCReturnType().getMCType().getDefiningSymbol().get().getFullName()
+              .equals(paramType.getSymbol().getFullName())) {
+        // Convention: If the param attribute type matches the reference method return type
+        // -> Use the attribute incarnation type as return type
+        newMethod.setMCReturnType(CD4CodeMill.mCReturnTypeBuilder()
+                .setMCType(CD4CodeMill.mCQualifiedTypeBuilder()
+                        .setMCQualifiedName(
+                              MCQualifiedNameFacade.createQualifiedName(
+                                    paramTypeInc.getSymbol().getInternalQualifiedName()))
+                        .build()
+                ).build());
+      }
+      // ELSE: Default: keep the return type of the reference attribute
+
+      boolean parameterSignatureAdapted = false;
+      // 2. adapt parameters
+      for (int i=0; i<referenceMethod.getCDParameterList().size(); i++) {
+        ASTCDParameter referenceParameter = referenceMethod.getCDParameter(i);
+        ASTCDParameter newParameter = newMethod.getCDParameter(i);
+        // 2.1 parameter name
+        Optional<String> adaptedParameterName = NameUtil.adaptTemplatedName(
+                referenceParameter.getName(),
+                paramType.getName(),
+                paramTypeInc.getName());
+        if (context.isForEachNameAdaptationEnabled() && adaptedParameterName.isPresent()) {
+          newParameter.setName(adaptedParameterName.get());
+        }
+        // ELSE: parameter name stays as is! only needs to be unique in scope of the method
+
+        // 2.2 parameter type
+        if (referenceParameter.getMCType().getDefiningSymbol().get().getFullName()
+                .equals(paramType.getSymbol().getFullName())) {
+          // TODO naming is weird when we talk about parameters and a parameter element!
+          // Convention: If the param type matches the reference method parameter type
+          // -> Use the type incarnation as parameter type
+          newParameter.setMCType(CD4CodeMill.mCQualifiedTypeBuilder()
+                  .setMCQualifiedName(
+                          MCQualifiedNameFacade.createQualifiedName(
+                                  paramTypeInc.getSymbol().getInternalQualifiedName()))
+                  .build());
+          parameterSignatureAdapted = true;
+        }
+        // ELSE: Default: keep the parameter type of the reference attribute resp.
+      }
+
+
+      // 3. decide name of the new method
+      Optional<String> adaptedName = NameUtil.adaptTemplatedName(
+              referenceMethod.getName(),
+              paramType.getName(),
+              paramTypeInc.getName());
+      if (context.isForEachNameAdaptationEnabled() && adaptedName.isPresent()) {
+        newMethod.setName(adaptedName.get());
+      } else if (!parameterSignatureAdapted) {
+        // Default: add the param incarnation name as suffix
+        // We only have to add a suffix if we have not changed the parameter signature!
+        String typeSuffix = paramTypeIncarnations.size() > 1
+                ? "_" + paramTypeInc.getName()
+                : "";
+        newMethod.setName(referenceMethod.getName() + typeSuffix);
+      }
+
+      // 4. remove forEach stereotype from concrete method but add a reference to the
+      // original method
+      StereotypeUtil.removeForEachStereotype(newMethod.getModifier());
+      StereotypeUtil.addStereotype(
+              newMethod.getModifier(),
+              context.getMappingName(),
+              referenceMethod.getSymbol().getFullName());
+
+      // we need to have the symbol table information when further processing the new method (in BaseMethodInTypeCompleter)
+      updateMethodSymbolTableWorkaround(newMethod, context);
+
+      // 5. pass the new method to the next completer
+      super.completeMethodInType(context.getConcreteType(), newMethod, context);
+    }
+  }
+
+  private void updateMethodSymbolTableWorkaround(ASTCDMethod newMethod, TypeCompletionContext context) {
+    // TODO This does not seem right...
+    // we need to have the symbol table information when further processing the new method (in BaseMethodInTypeCompleter)
+    // TODO is there a way to only update the symbol table for a certain subgraph of the AST?
+    // workaround: temporary add the method to the CD type, update symbol table and remove it again
+    context.getConcreteType().addCDMember(newMethod);
+    CDDiffUtil.refreshSymbolTable(context.getConcreteCD());
+    context.getConcreteType().removeCDMember(newMethod);
+    // TODO we should refresh the symbol table again here to get back to the old state, right?
   }
 }

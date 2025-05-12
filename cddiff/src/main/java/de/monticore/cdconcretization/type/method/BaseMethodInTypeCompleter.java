@@ -155,6 +155,8 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
         if (returnTypeIncarnations.size() > 1) {
           // if we have more than one return type incarnation, we need to add a suffix to the new
           // methods name
+          // TODO not necessarily! If we change the parameter signature at the same time, we can keep the original method name!
+          //  -> see how we did it in ForEachMethodCompleter
           methodClone.setName(referenceMethod.getName() + "_"
                   + NameUtil.escapeQualifiedNameAsIdentifier(returnTypeIncarnation.printType()));
         }

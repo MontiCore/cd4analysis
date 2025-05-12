@@ -1,0 +1,5 @@
+classdiagram ForEachTypeSameReturnTypeConc {
+  <<ref="Message">> class HandshakeMessage;
+  <<ref="Message">> class DataMessage;
+  <<ref="Message">> class AckMessage;
+}

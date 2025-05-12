@@ -1,0 +1,11 @@
+classdiagram ForEachTypeSameReturnTypeConc {
+  <<ref="Message">> class HandshakeMessage;
+  <<ref="Message">> class DataMessage;
+  <<ref="Message">> class AckMessage;
+
+  class MessageBus {
+    <<ref="ForEachTypeSameReturnTypeRef.MessageBus.sendMessage">> void sendHandshakeMessage(HandshakeMessage handshakeMessage);
+    <<ref="ForEachTypeSameReturnTypeRef.MessageBus.sendMessage">> void sendDataMessage(DataMessage dataMessage);
+    <<ref="ForEachTypeSameReturnTypeRef.MessageBus.sendMessage">> void sendAckMessage(AckMessage ackMessage);
+  }
+}
