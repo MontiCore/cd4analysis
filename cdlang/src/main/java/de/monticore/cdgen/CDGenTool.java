@@ -12,6 +12,7 @@ import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRole
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.generating.GeneratorSetup;
@@ -20,6 +21,7 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -27,11 +29,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.commons.cli.*;
 
 /**
  * This class is a further development of the {@link CDGeneratorTool} and meant as a replacement. It
- * provides configurable decorator functionality in addition to generation
+ * provides configurable decorator functionality in addition to generation.
+ * This tool is tested via the CDGenGradlePluginTest:
+ * cdtool/cdgradle/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
  */
 public class CDGenTool extends CDGeneratorTool {
 
@@ -124,12 +130,6 @@ public class CDGenTool extends CDGeneratorTool {
         Log.enableFailQuick(true);
       }
 
-      if (cmd.hasOption("s")) {
-        for (ICD4CodeArtifactScope scope : scopes) {
-          this.storeSymTab(scope, cmd.getOptionValue("s"));
-        }
-      }
-
       if (cmd.hasOption("o")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
@@ -176,6 +176,7 @@ public class CDGenTool extends CDGeneratorTool {
 
         hpp.processValue(tc, configTemplateArgs);
 
+        List<ASTCDCompilationUnit> decoratedASTs = new ArrayList<>();
         for (ASTCDCompilationUnit ast : asts) {
           // Prepare
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
@@ -205,9 +206,42 @@ public class CDGenTool extends CDGeneratorTool {
           decorated.get().accept(t);
 
           generator.generate(decorated.get());
+
+          decoratedASTs.add(decorated.get());
+
+          // The following imports (cf. Imports.ftl) have to be added
+          decorated.get().addMCImportStatement(CDBasisMill.mCImportStatementBuilder().setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util")).setStar(true).build());
+
+        }
+        if (cmd.hasOption("s")) {
+          // TODO: Move before generator trafos (such as TOP)
+          // If required, we also output the symbol table of the *decorated* AST
+          if (!c2mc) {
+            // Without Class2MC we must add fake-symbols for field, arg and return types used during decoration
+            for (Class<?> c : Arrays.asList(List.class, Set.class,
+              Collection.class, Iterator.class,
+              Spliterator.class, Stream.class, Optional.class)) {
+              CDBasisMill.globalScope().add(
+                CDBasisMill.typeSymbolBuilder()
+                  .setName(c.getSimpleName())
+                  .setFullName(c.getName())
+                  .setSpannedScope(CDBasisMill.scope())
+                  .setEnclosingScope(CDBasisMill.globalScope())
+                  .build());
+            }
+          }
+          for (var decorated : decoratedASTs) {
+            // Create the symbol-table (symbol table creation phase 1)
+            var decoratedScope = this.createSymbolTable(decorated, true);
+
+            // Complete the symbol-table (symbol table creation phase 2)
+            this.completeSymbolTable(decorated);
+
+            // Store the decorated symbol table
+            this.storeSymTab(decoratedScope, cmd.getOptionValue("s"));
+          }
         }
       }
-
     } catch (ParseException e) {
       CD4CodeMill.globalScope().clear();
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());

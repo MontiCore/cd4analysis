@@ -61,6 +61,7 @@ public class CDGenGradlePlugin implements Plugin<Project> {
 
                             genTask.getInput().from(cdSrcDirSet.getSourceDirectories());
                             genTask.getOutputDir().set(cdSrcDirSet.getDestinationDirectory());
+                            genTask.getSymbolOutput().set(project.getLayout().getBuildDirectory().dir("cdgensymbols/" + sourceSet.getName()));
 
                             sourceSet.getJava().srcDir(genTask.getOutputDir());
                             genTask

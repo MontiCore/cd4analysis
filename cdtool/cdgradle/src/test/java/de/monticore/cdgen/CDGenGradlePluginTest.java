@@ -10,9 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import javax.annotation.Nullable;
+
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.se_rwth.commons.logging.LogStub;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -107,6 +112,26 @@ public class CDGenGradlePluginTest {
             .build();
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
+
+    File symbolsOut = new File(testProjectDir, "build/cdgensymbols/main/MyCD.cdsym");
+    assertTrue(symbolsOut.exists(), "Exported symbols missing");
+
+    // Test if we can successfully resolve a decorated function
+    LogStub.initPlusLog();
+    CD4CodeMill.init();
+    BasicSymbolsMill.initializePrimitives();
+    BasicSymbolsMill.initializeString();
+    // Load the (freshly generated) CD-sym
+    CD4CodeMill.globalScope().getSymbolPath().addEntry(symbolsOut.getParentFile().toPath());
+    CD4CodeMill.globalScope().loadDiagram("MyCD");
+
+    CD4CodeMill.globalScope().resolveMethod("MyCD.MyCD.CanBeObserved.getName");
+    CD4CodeMill.globalScope().resolveMethod("MyCD.MyCD.IncompleteATOP.getName"); // TODO: check for IncompleteA (without TOP)
+    CD4CodeMill.globalScope().resolveType("MyCD.MyCD.BBuilder");
+
+    Assertions.assertEquals(0, LogStub.getFindingsCount());
+
+    CD4CodeMill.reset();
   }
 
   @Test
