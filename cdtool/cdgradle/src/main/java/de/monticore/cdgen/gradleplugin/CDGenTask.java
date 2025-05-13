@@ -44,13 +44,22 @@ public abstract class CDGenTask extends MCAllFilesTask {
   abstract Property<Boolean> getCoCos();
 
   /**
-   * If present, the symbol tables will be exported into this directory
+   * If present, the original symbol tables will be exported into this directory
    *
    * @return property
    */
   @Optional
   @OutputDirectory
-  abstract DirectoryProperty getSymbolOutput();
+  abstract DirectoryProperty getOriginalSymbolOutput();
+
+  /**
+   * If present, the decorated symbol tables will be exported into this directory
+   *
+   * @return property
+   */
+  @Optional
+  @OutputDirectory
+  abstract DirectoryProperty getDecoratedSymbolOutput();
 
   @Override
   protected List<String> createArgList(Function<Path, String> handlePath) {
@@ -65,9 +74,15 @@ public abstract class CDGenTask extends MCAllFilesTask {
     if (getCoCos().getOrElse(true)) {
       list.add("--checkcococs");
     }
-    if (getSymbolOutput().isPresent()) {
+    // We have to use two separate directories for the symbol outputs
+    // to avoid: 0xA1294 The following entries for the file `MyCD\..*sym` are ambiguous
+    if (getOriginalSymbolOutput().isPresent()) {
       list.add("-s");
-      list.add(getSymbolOutput().get().getAsFile().getAbsolutePath());
+      list.add(getOriginalSymbolOutput().get().getAsFile().getAbsolutePath());
+    }
+    if (getDecoratedSymbolOutput().isPresent()) {
+      list.add("-sd");
+      list.add(getDecoratedSymbolOutput().get().getAsFile().getAbsolutePath());
     }
     return list;
   }
@@ -87,21 +102,5 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Override
   protected Consumer<String[]> getRunMethod() {
     return CDGenToolInvoker::run;
-  }
-
-  /**
-   * @return a lazy, but live {@link FileCollection} of the exported decorated symbol tables
-   */
-  @OutputFiles
-  public FileCollection getDecoratedSymbolFiles() {
-    return this.getSymbolOutput().getAsFileTree().filter(f -> f.getName().endsWith(".deccdsym"));
-  }
-
-  /**
-   * @return a lazy, but live {@link FileCollection} of the exported original symbol tables
-   */
-  @OutputFiles
-  public FileCollection getOriginalSymbolFiles() {
-    return this.getSymbolOutput().getAsFileTree().filter(f -> f.getName().endsWith(".cdsym"));
   }
 }

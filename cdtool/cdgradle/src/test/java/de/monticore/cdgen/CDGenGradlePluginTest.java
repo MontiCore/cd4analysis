@@ -113,8 +113,11 @@ public class CDGenGradlePluginTest {
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
 
-    File symbolsOut = new File(testProjectDir, "build/cdgensymbols/main/MyCD.cdsym");
-    assertTrue(symbolsOut.exists(), "Exported symbols missing");
+    File origSymbolsOut = new File(testProjectDir, "build/cdgensymbols/main/original/MyCD.cdsym");
+    assertTrue(origSymbolsOut.exists(), "Exported original symbols missing");
+
+    File symbolsOut = new File(testProjectDir, "build/cdgensymbols/main/original/MyCD.cdsym");
+    assertTrue(symbolsOut.exists(), "Exported decorated symbols missing");
 
     // Test if we can successfully resolve a decorated function
     LogStub.initPlusLog();

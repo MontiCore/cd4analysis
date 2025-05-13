@@ -2,19 +2,27 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
+import de.monticore.cd._visitor.CDElementVisitor;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
+import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDElement;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -22,6 +30,8 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.MCTypeFacade;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -192,7 +202,7 @@ public class CDGenTool extends CDGeneratorTool {
 
         hpp.processValue(tc, configTemplateArgs);
 
-        if (cmd.hasOption("s")) {
+        if (cmd.hasOption("sd")) {
           // Prepare the global scope for decorated symbol table
           this.initDecoratedGlobalScope(c2mc);
         }
@@ -221,9 +231,9 @@ public class CDGenTool extends CDGeneratorTool {
           // The following imports (cf. Imports.ftl) have to be added
           decorated.get().addMCImportStatement(CDBasisMill.mCImportStatementBuilder().setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util")).setStar(true).build());
 
-          if (cmd.hasOption("s")) {
+          if (cmd.hasOption("sd")) {
             // If required, we also output the symbol table of the *decorated* AST
-            this.createAndExportDecoratedSymbolTable(decorated.get(), cmd.getOptionValue("s"));
+            this.createAndExportDecoratedSymbolTable(decorated.get(), cmd.getOptionValue("sd"));
           }
 
           // Post-Decorate: TOP Decorator
@@ -342,6 +352,13 @@ public class CDGenTool extends CDGeneratorTool {
             .argName("fqn:key[=value]")
             .build());
 
+    options.addOption(org.apache.commons.cli.Option.builder("sd")
+      .longOpt("symboltabledecorated")
+      .argName("file")
+      .hasArg()
+      .desc("Serializes the decorated symbol table of the given artifact.")
+      .build());
+
     return options;
   }
 
@@ -372,5 +389,33 @@ public class CDGenTool extends CDGeneratorTool {
     t.add4UMLModifier(new DefaultVisibilityPublicTrafo());
     asts.forEach(ast -> ast.accept(t));
     return asts;
+  }
+
+  /**
+   * Updates the map of cd types to import statement in the given cd4c object, adding the imports
+   * for each cd type (classes, enums, and interfaces) defined in the given ast.
+   *
+   * @param ast the input ast
+   */
+  public void mapCD4CImports(ASTCDCompilationUnit ast) {
+    CD4C cd4c = CD4C.getInstance();
+    List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
+
+    for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
+      for (ASTMCImportStatement i : imports) {
+        String qName = i.getQName();
+        cd4c.addImport(cdClass, i.isStar() ? qName + ".*" : qName);
+      }
+    }
+    for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
+      for (ASTMCImportStatement i : imports) {
+        cd4c.addImport(cdInterface, i.getQName());
+      }
+    }
+    for (ASTCDEnum cdEnum : ast.getCDDefinition().getCDEnumsList()) {
+      for (ASTMCImportStatement i : imports) {
+        cd4c.addImport(cdEnum, i.getQName());
+      }
+    }
   }
 }
