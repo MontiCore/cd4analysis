@@ -15,4 +15,20 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
         "evaluation/builder/BuilderAndMillRef.cd",
         "evaluation/builder/BuilderAndMillOut.cd");
   }
+
+  @Test
+  void testGetter() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "evaluation/getter-setter/DataModelConc.cd",
+        "evaluation/getter-setter/GetterRef.cd",
+        "evaluation/getter-setter/GetterOut.cd");
+  }
+
+  @Test
+  void testSetter() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "evaluation/getter-setter/DataModelConc.cd",
+        "evaluation/getter-setter/SetterRef.cd",
+        "evaluation/getter-setter/SetterOut.cd");
+  }
 }
