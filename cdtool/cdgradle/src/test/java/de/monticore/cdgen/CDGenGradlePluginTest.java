@@ -126,7 +126,9 @@ public class CDGenGradlePluginTest {
     CD4CodeMill.globalScope().loadDiagram("MyCD");
 
     CD4CodeMill.globalScope().resolveMethod("MyCD.MyCD.CanBeObserved.getName");
-    CD4CodeMill.globalScope().resolveMethod("MyCD.MyCD.IncompleteATOP.getName"); // TODO: check for IncompleteA (without TOP)
+    // Check for a method within a class, which is TOPed
+    // We explicitly expect the method to be resolvable via IncompleteA
+    CD4CodeMill.globalScope().resolveMethod("MyCD.MyCD.IncompleteA.getName");
     CD4CodeMill.globalScope().resolveType("MyCD.MyCD.BBuilder");
 
     Assertions.assertEquals(0, LogStub.getFindingsCount());

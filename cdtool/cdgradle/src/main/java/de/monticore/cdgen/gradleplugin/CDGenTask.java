@@ -3,17 +3,19 @@ package de.monticore.cdgen.gradleplugin;
 
 import de.monticore.gradle.common.AToolAction;
 import de.monticore.gradle.common.MCAllFilesTask;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileCollection;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.OutputFiles;
+
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Gradle Task of the {@link de.monticore.cdgen.CDGenTool} It is an all-files task, as -i A.cd -i
@@ -34,6 +36,7 @@ public abstract class CDGenTask extends MCAllFilesTask {
 
   /**
    * Whether CoCos should be checked, default is true
+   *
    * @return property
    */
   @Optional
@@ -42,6 +45,7 @@ public abstract class CDGenTask extends MCAllFilesTask {
 
   /**
    * If present, the symbol tables will be exported into this directory
+   *
    * @return property
    */
   @Optional
@@ -83,5 +87,21 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Override
   protected Consumer<String[]> getRunMethod() {
     return CDGenToolInvoker::run;
+  }
+
+  /**
+   * @return a lazy, but live {@link FileCollection} of the exported decorated symbol tables
+   */
+  @OutputFiles
+  public FileCollection getDecoratedSymbolFiles() {
+    return this.getSymbolOutput().getAsFileTree().filter(f -> f.getName().endsWith(".deccdsym"));
+  }
+
+  /**
+   * @return a lazy, but live {@link FileCollection} of the exported original symbol tables
+   */
+  @OutputFiles
+  public FileCollection getOriginalSymbolFiles() {
+    return this.getSymbolOutput().getAsFileTree().filter(f -> f.getName().endsWith(".cdsym"));
   }
 }

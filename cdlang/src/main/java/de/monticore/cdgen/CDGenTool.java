@@ -23,6 +23,7 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.nio.file.Path;
@@ -105,6 +106,13 @@ public class CDGenTool extends CDGeneratorTool {
           this.parse(".cd", this.createModelPath(cmd).getEntries());
       Log.enableFailQuick(true);
 
+      // Run CoCos
+      if (cmd.hasOption("c")) {
+        Log.enableFailQuick(false);
+        asts.forEach(this::runBeforeSTCoCos);
+        Log.enableFailQuick(true);
+      }
+
       // apply trafos needed for symbol table creation
       asts = this.trafoBeforeSymtab(asts);
 
@@ -124,10 +132,18 @@ public class CDGenTool extends CDGeneratorTool {
         this.completeSymbolTable(ast);
       }
 
+      // Run CoCos
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         asts.forEach(this::runCoCos);
         Log.enableFailQuick(true);
+      }
+
+      // Export original symbol table
+      if (cmd.hasOption("s")) {
+        for (ICD4CodeArtifactScope scope : scopes) {
+          this.storeSymTab(scope, cmd.getOptionValue("s"));
+        }
       }
 
       if (cmd.hasOption("o")) {
@@ -176,6 +192,11 @@ public class CDGenTool extends CDGeneratorTool {
 
         hpp.processValue(tc, configTemplateArgs);
 
+        if (cmd.hasOption("s")) {
+          // Prepare the global scope for decorated symbol table
+          this.initDecoratedGlobalScope(c2mc);
+        }
+
         List<ASTCDCompilationUnit> decoratedASTs = new ArrayList<>();
         for (ASTCDCompilationUnit ast : asts) {
           // Prepare
@@ -195,10 +216,18 @@ public class CDGenTool extends CDGeneratorTool {
           // Post-Decorate: make methods in interfaces abstract
           this.makeMethodsInInterfacesAbstract(decorated.get());
           // Post-Decorate: map import statements to classes
-          this.mapCD4CImports(ast);
+          this.mapCD4CImports(decorated.get());
+
+          // The following imports (cf. Imports.ftl) have to be added
+          decorated.get().addMCImportStatement(CDBasisMill.mCImportStatementBuilder().setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util")).setStar(true).build());
+
+          if (cmd.hasOption("s")) {
+            // If required, we also output the symbol table of the *decorated* AST
+            this.createAndExportDecoratedSymbolTable(decorated.get(), cmd.getOptionValue("s"));
+          }
 
           // Post-Decorate: TOP Decorator
-          // TODO: #4310 - make this TOP decorator/transformation configurable via the config
+          // TODO: #4310 - make this TOP transformation configurable via the config
           // template
           TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
           t = CD4CodeMill.inheritanceTraverser();
@@ -206,40 +235,6 @@ public class CDGenTool extends CDGeneratorTool {
           decorated.get().accept(t);
 
           generator.generate(decorated.get());
-
-          decoratedASTs.add(decorated.get());
-
-          // The following imports (cf. Imports.ftl) have to be added
-          decorated.get().addMCImportStatement(CDBasisMill.mCImportStatementBuilder().setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util")).setStar(true).build());
-
-        }
-        if (cmd.hasOption("s")) {
-          // TODO: Move before generator trafos (such as TOP)
-          // If required, we also output the symbol table of the *decorated* AST
-          if (!c2mc) {
-            // Without Class2MC we must add fake-symbols for field, arg and return types used during decoration
-            for (Class<?> c : Arrays.asList(List.class, Set.class,
-              Collection.class, Iterator.class,
-              Spliterator.class, Stream.class, Optional.class)) {
-              CDBasisMill.globalScope().add(
-                CDBasisMill.typeSymbolBuilder()
-                  .setName(c.getSimpleName())
-                  .setFullName(c.getName())
-                  .setSpannedScope(CDBasisMill.scope())
-                  .setEnclosingScope(CDBasisMill.globalScope())
-                  .build());
-            }
-          }
-          for (var decorated : decoratedASTs) {
-            // Create the symbol-table (symbol table creation phase 1)
-            var decoratedScope = this.createSymbolTable(decorated, true);
-
-            // Complete the symbol-table (symbol table creation phase 2)
-            this.completeSymbolTable(decorated);
-
-            // Store the decorated symbol table
-            this.storeSymTab(decoratedScope, cmd.getOptionValue("s"));
-          }
         }
       }
     } catch (ParseException e) {
@@ -247,6 +242,46 @@ public class CDGenTool extends CDGeneratorTool {
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
     CD4CodeMill.globalScope().clear();
+  }
+
+  /**
+   * Without Class2MC, we have to load symbols used in the generated CD
+   * @param c2mc whether Class2MC was loaded
+   */
+  public void initDecoratedGlobalScope(boolean c2mc) {
+    if (!c2mc) {
+      // Without Class2MC we must add fake-symbols for field, arg and return types used during decoration
+      // Load these symbols from an exported symbol table
+      for (Class<?> c : Arrays.asList(List.class, Set.class,
+        Collection.class, Iterator.class,
+        Spliterator.class, Stream.class, Optional.class)) {
+        CDBasisMill.globalScope().add(
+          CDBasisMill.typeSymbolBuilder()
+            .setName(c.getSimpleName())
+            .setFullName(c.getName())
+            .setSpannedScope(CDBasisMill.scope())
+            .setEnclosingScope(CDBasisMill.globalScope())
+            .build());
+      }
+    }
+  }
+
+  /**
+   * Create, complete, and export the symbol table of a decorated CD
+   * @param decorated the CD
+   * @param symbolOutPath the directory into which the ST is exported
+   */
+  public void createAndExportDecoratedSymbolTable(ASTCDCompilationUnit decorated, String symbolOutPath) {
+    // Create the symbol-table (symbol table creation phase 1)
+    var decoratedScope = this.createSymbolTable(decorated, true);
+
+    // Complete the symbol-table (symbol table creation phase 2)
+    this.completeSymbolTable(decorated);
+
+    // Store the decorated symbol table
+    this.storeSymbols(
+      decoratedScope,
+      Paths.get(symbolOutPath, Names.getPathFromPackage(decoratedScope.getFullName()) + ".deccdsym").toString());
   }
 
   /**
@@ -311,9 +346,19 @@ public class CDGenTool extends CDGeneratorTool {
   }
 
   /**
-   * checks all cocos on the current ast
+   * checks all cocos on the original ast before the symbol table is created
    *
-   * @param ast the current ast
+   * @param ast the original ast, without ST
+   */
+  public void runBeforeSTCoCos(ASTCDCompilationUnit ast) {
+    // Nothing yet, decide how we expose them
+  }
+
+
+  /**
+   * checks all cocos on the original ast
+   *
+   * @param ast the original ast
    */
   public void runCoCos(ASTCDCompilationUnit ast) {
     super.runCoCos(ast);
