@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MatchCDAssocsBySrcNameAndTgtRole implements MatchingStrategy<ASTCDAssociation> {
+public class MatchCDAssocsBySrcTypeAndTgtRole implements MatchingStrategy<ASTCDAssociation> {
 
   protected final MatchingStrategy<ASTCDType> typeMatcher;
   protected final ASTCDCompilationUnit srcCD;
   protected final ASTCDCompilationUnit tgtCD;
 
-  public MatchCDAssocsBySrcNameAndTgtRole(
+  public MatchCDAssocsBySrcTypeAndTgtRole(
       MatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {

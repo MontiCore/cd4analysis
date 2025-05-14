@@ -19,7 +19,7 @@ import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syn2semdiff.datastructures.*;
 import de.monticore.cddiff.syndiff.CDAssocDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
+import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
 import de.monticore.cdmatcher.MatchCDTypesByName;
 import de.monticore.cdmatcher.MatchCDTypesToSuperTypes;
 import de.monticore.od4report.OD4ReportMill;
@@ -121,7 +121,7 @@ public class Syn2SemDiffHelper {
    */
   private List<ASTCDAssociation> deletedAssocs;
 
-  private MatchCDAssocsBySrcNameAndTgtRole matcher;
+  private MatchCDAssocsBySrcTypeAndTgtRole matcher;
   private List<CDAssocDiff> diffs;
   private List<MatchingStrategy> matchingStrategies;
 
@@ -808,8 +808,8 @@ public class Syn2SemDiffHelper {
             .isPresent()
         || (typeToMatch.isPresent() && srcSubMap.get(type1).contains(typeToMatch.get()))
         || (isSource
-            ? tgtSubMap.get(type2).contains(type1Matched.get())
-            : srcSubMap.get(type1).contains(typeToMatch.get()));
+            ? (type1Matched.isPresent() && tgtSubMap.get(type2).contains(type1Matched.get()))
+            : (typeToMatch.isPresent() && srcSubMap.get(type1).contains(typeToMatch.get())));
   }
 
   /**
@@ -2687,7 +2687,7 @@ public class Syn2SemDiffHelper {
     MatchCDTypesByName nameTypeMatch = new MatchCDTypesByName(tgtCD);
     MatchCDTypesToSuperTypes superTypeMatchNameType =
         new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    matcher = new MatchCDAssocsBySrcNameAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
+    matcher = new MatchCDAssocsBySrcTypeAndTgtRole(superTypeMatchNameType, srcCD, tgtCD);
   }
 
   public List<Pair<ASTCDClass, List<AssocStruct>>> sortDiffs(

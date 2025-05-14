@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
+import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -271,12 +272,28 @@ public class CDDiffUtil {
   /**
    * A helper function to compute the reflexive transitive hull of all super-types of type in cd.
    */
+  @Deprecated
   public static Set<ASTCDType> getAllSuperTypes(ASTCDClass type, ASTCDDefinition cd) {
     Set<ASTCDType> superTypes = new HashSet<>();
     superTypes.addAll(getAllSuperclasses(type, cd.getCDClassesList()));
     superTypes.addAll(getAllInterfaces(type, cd.getCDInterfacesList()));
     return superTypes;
   }
+
+  public static Set<ASTCDType> getAllSuperTypes(ASTCDType type) {
+    LinkedHashSet<ASTCDType> superTypes = new LinkedHashSet<>();
+    superTypes.add(type);
+    if (type instanceof ASTCDClass) {
+      if (type.getSymbol().isPresentSuperClass()) {
+        for(SymTypeExpression s : type.getSymbol().getSuperClassesOnly()){
+          superTypes.addAll(getAllSuperTypes((ASTCDType) s.getTypeInfo().getAstNode()));
+        }
+      }
+    }
+    superTypes.addAll(CDSymbolTables.getTransitiveSuperInterfaces(type));
+    return superTypes;
+  }
+
 
   /**
    * A helper function to compute the reflexive transitive hull of all super-types of type in cd.

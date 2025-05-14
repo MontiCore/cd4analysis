@@ -210,10 +210,10 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
       if (Objects.requireNonNull(matchingStrategy)
           == de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy
               .SOURCE_TARGET_MATCHING) {
-        MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchNameType =
-            new MatchCDAssocsBySrcNameAndTgtRole(new MatchCDTypesByName(tgtCD), srcCD, tgtCD);
-        MatchCDAssocsBySrcNameAndTgtRole associationSrcTgtMatchStructureType =
-            new MatchCDAssocsBySrcNameAndTgtRole(new MatchCDTypeByStructure(tgtCD), srcCD, tgtCD);
+        MatchCDAssocsBySrcTypeAndTgtRole associationSrcTgtMatchNameType =
+            new MatchCDAssocsBySrcTypeAndTgtRole(new MatchCDTypesByName(tgtCD), srcCD, tgtCD);
+        MatchCDAssocsBySrcTypeAndTgtRole associationSrcTgtMatchStructureType =
+            new MatchCDAssocsBySrcTypeAndTgtRole(new MatchCDTypeByStructure(tgtCD), srcCD, tgtCD);
         assocMatchers.add(associationSrcTgtMatchNameType);
         assocMatchers.add(associationSrcTgtMatchStructureType);
       }

@@ -3,10 +3,10 @@ package de.monticore.cdconformance.inc.association;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
+import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
 import de.monticore.cdmatcher.MatchingStrategy;
 
-public class STRoleAssocIncStrategy extends MatchCDAssocsBySrcNameAndTgtRole {
+public class STRoleAssocIncStrategy extends MatchCDAssocsBySrcTypeAndTgtRole {
 
   protected String mapping;
 

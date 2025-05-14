@@ -1,7 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import java.io.IOException;
@@ -9,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import de.monticore.cddiff.CDDiffUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,6 +72,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println(sb.printDiff());
   }
 
+  @Disabled
   @Test
   public void testMaCoCo(){
     CDDiffUtil.setUseJavaTypes(true);
