@@ -58,7 +58,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
       var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
 
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-        Log.error("0xTODO: Unable to have a navigable assoc to a boolean", role.getSourcePosition());
+        Log.error("0xCDD60: Unable to have a navigable assoc to a boolean", role.getSourcePosition());
       } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         Log.warn("0xTODO: WIP List NavSetter ", role.getSourcePosition());
       } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {

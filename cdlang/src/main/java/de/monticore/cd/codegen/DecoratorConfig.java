@@ -196,7 +196,7 @@ public class DecoratorConfig {
     }
 
     if (!phases.isEmpty() && phases.get(0).decorators.stream().noneMatch(d->d instanceof ICreator)) {
-      Log.error("0xTODO: Missing creating decorator (such as withCopyCreator())");
+      Log.error("0xCDD10: Missing creating decorator (such as withCopyCreator())");
     }
 
     return phases;
@@ -229,14 +229,14 @@ public class DecoratorConfig {
       String afterAsString = CD4CodeMill.prettyPrint(root, true);
       if (!initialAsString.equals(afterAsString)) {
         Log.error(
-            "0xTODO: A Decorator of phase "
+            "0xCDD30: A Decorator of phase "
                 + phase.decorators
                 + " has modified the original CD instead of the decorated CD");
       }
     }
 
     if (!(decoratorData.getData(ICreator.class) instanceof ICreator.ICreatedData)) {
-      Log.error("0xTODO: Missing creating decorator (such as withCopyCreator())");
+      Log.error("0xCDD11: Missing creating decorator (such as withCopyCreator())");
       return Optional.empty();
     }
 

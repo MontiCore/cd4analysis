@@ -30,6 +30,8 @@ import java.util.function.Supplier;
 
 public class DecoratorData {
 
+  public final static String INTERNAL_ERROR_CODE = "0xCDD00";
+
   // TODO: If not found, walk upwards up to IDecorator
   public Map<Class<? extends IDecorator>, Object> decoratorDataMap = new IdentityHashMap<>();
   public Map<FieldSymbol, CDRoleSymbol> fieldToRoles; // Assoc -> Field
@@ -145,7 +147,7 @@ public class DecoratorData {
       result = matchCDCU((ASTCDCompilationUnit) node, matcherData);
     } else {
       Log.error(
-        "0xTODO: Unable add to parent of unknown type " + node.getClass().getName(),
+        INTERNAL_ERROR_CODE + ": Unable add to parent of unknown type " + node.getClass().getName(),
         node.get_SourcePositionStart());
       throw new IllegalStateException(
         "Unable add to parent of unknown type " + node.getClass().getName());

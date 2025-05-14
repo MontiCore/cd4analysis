@@ -215,7 +215,7 @@ public class CDGenTool extends CDGeneratorTool {
           var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
 
           if (decorated.isEmpty()) {
-            Log.error("0xTODO: Failed generation for " + ast.getCDDefinition().getName());
+            Log.error("0xCDD12: Failed generation for " + ast.getCDDefinition().getName());
             continue;
           }
 
