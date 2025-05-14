@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Matches classes / interfaces by structure. */
+@Deprecated
 public class MatchCDTypeByStructure implements MatchingStrategy<ASTCDType> {
 
   protected final ASTCDCompilationUnit tgtCD;

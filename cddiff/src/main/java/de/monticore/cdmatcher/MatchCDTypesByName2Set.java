@@ -1,0 +1,30 @@
+package de.monticore.cdmatcher;
+
+import de.monticore.cdbasis._ast.ASTCDType;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class MatchCDTypesByName2Set implements MatchingStrategy<ASTCDType> {
+
+  protected LinkedHashSet<ASTCDType> tgtSet;
+
+  public MatchCDTypesByName2Set(Collection<ASTCDType> tgtSet) {
+    this.tgtSet = new LinkedHashSet<>(tgtSet);
+  }
+
+  @Override
+  public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
+    return tgtSet.stream()
+      .filter(type -> isMatched(srcElem, type))
+      .collect(Collectors.toList());
+  }
+
+  /** Match types iff they have the same name. */
+  @Override
+  public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
+    return srcElem.getName().equals(tgtElem.getName());
+  }
+}

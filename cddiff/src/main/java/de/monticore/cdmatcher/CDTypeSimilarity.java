@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CDTypeSimilarity {
+public class CDTypeSimilarity implements CDSimilarity<ASTCDType>{
   public Double computeWeight(ASTCDType srcElem, ASTCDType tgtElem) {
     double weight;
     Set<ASTCDMember> srcMembers = CDDiffUtil.getAllSuperTypes(srcElem).stream().flatMap(st -> st.getCDMemberList().stream()).collect(Collectors.toSet());
