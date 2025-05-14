@@ -464,12 +464,14 @@ public class CDGeneratorTool extends CD4CodeTool {
     }
     for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
       for (ASTMCImportStatement i : imports) {
-        cd4c.addImport(cdInterface, i.getQName());
+        String qName = i.getQName();
+        cd4c.addImport(cdInterface, i.isStar() ? qName + ".*" : qName);
       }
     }
     for (ASTCDEnum cdEnum : ast.getCDDefinition().getCDEnumsList()) {
       for (ASTMCImportStatement i : imports) {
-        cd4c.addImport(cdEnum, i.getQName());
+        String qName = i.getQName();
+        cd4c.addImport(cdEnum, i.isStar() ? qName + ".*" : qName);
       }
     }
   }
