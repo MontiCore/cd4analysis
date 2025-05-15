@@ -9,7 +9,7 @@ classdiagram MyCD {
   }
 
   <<builder, setter>>
-  public class B {
+  public class B extends MyCD2.MyCD2B {
     public int x;
     <<noGetter, noSetter>> public String pub;
   }
