@@ -97,6 +97,8 @@ public class CDGenGradlePluginTest {
     writeFile(buildFile, buildFileContent);
     Files.copy(
         new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd").toPath());
+    Files.copy(
+        new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd").toPath());
     var myCDJava = new File(javaMainDir, "MyCD");
     myCDJava.mkdirs();
     Files.copy(
@@ -211,6 +213,8 @@ public class CDGenGradlePluginTest {
     writeFile(buildFile, buildFileContent);
     Files.copy(
         new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd").toPath());
+    Files.copy(
+        new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd").toPath());
     File srcSet = new File(testProjectDir, "src/dec/java/mc");
     srcSet.mkdirs();
     Files.copy(

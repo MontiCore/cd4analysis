@@ -24,7 +24,9 @@ public class CopyCreator extends AbstractDecorator<CopyCreator.Created>
    */
   @Override
   public void visit(ASTCDCompilationUnit originalCD) {
-    var ret = getData(originalCD);
+    var ret = getData();
+    ret.originalToDecorated.clear();
+    ret.original = originalCD;
     ret.decorated = originalCD.deepClone();
 
     var origStack = new StackCreator(ret.original).stack;
@@ -38,8 +40,8 @@ public class CopyCreator extends AbstractDecorator<CopyCreator.Created>
     }
   }
 
-  public Created getData(ASTCDCompilationUnit originalCD) {
-    return decoratorData.createDataIfAbsent(ICreator.class, () -> new Created(originalCD));
+  public Created getData() {
+    return decoratorData.createDataIfAbsent(ICreator.class, Created::new);
   }
 
   @Override
@@ -63,13 +65,9 @@ public class CopyCreator extends AbstractDecorator<CopyCreator.Created>
   }
 
   public static class Created implements ICreator.ICreatedData {
-    protected final ASTCDCompilationUnit original;
+    protected ASTCDCompilationUnit original;
     protected ASTCDCompilationUnit decorated;
     protected final Map<ASTNode, ASTNode> originalToDecorated = new HashMap<>();
-
-    public Created(ASTCDCompilationUnit original) {
-      this.original = original;
-    }
 
     public ASTCDCompilationUnit getOriginal() {
       return original;
