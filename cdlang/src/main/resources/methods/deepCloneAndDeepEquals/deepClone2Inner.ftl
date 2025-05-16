@@ -54,14 +54,13 @@ if(${thisObjectName} == null) {
 }
 <#-- Map types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCMapType(mCType))>
-MAPTYPE NOT IMPLEMENTED YET
 <#-- Optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
 if(${thisObjectName} == null) {
   ${resultObjectName} = null;
 } else {
   <#assign optionalResultName = "optionalResult" + mCType.hashCode()?replace(".","")?replace(",","")>
-  ${mCType.printType()} ${optionalResultName} = Optional.empty();
+  ${mCType.printType()} ${optionalResultName} = Optional.ofNullable(null);
   if(map.get(${thisObjectName}) == null) {
     if(${thisObjectName}.isPresent()) {
       <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
@@ -71,6 +70,9 @@ if(${thisObjectName} == null) {
       if(map.get(${newInnerType}) == null) {
         map.put(${thisObjectName}, new Object[] {${optionalResultName}, true});
         ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultObjectName)}
+        <#-- this is needed because the optional.empty() reference is changed when filling the optional with a value->>
+        <#-- Because we can not have circular references in Optionals it is ok in this case to add the optional to the list after it has been resolved -->
+        map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
       }else{
         ${newResultObjectName} = (${innerType.printType()}) map.get(${newInnerType})[0];
       }
