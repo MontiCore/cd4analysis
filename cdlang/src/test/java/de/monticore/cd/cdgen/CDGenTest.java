@@ -24,6 +24,8 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Optional;
+
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 public class CDGenTest {

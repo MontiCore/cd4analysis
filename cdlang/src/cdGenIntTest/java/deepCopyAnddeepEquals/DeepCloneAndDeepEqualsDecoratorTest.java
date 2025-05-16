@@ -44,6 +44,21 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de2.myInt = 1;
     Assertions.assertFalse(de1.deepEquals(de2));
     //endregion
+    //region deepEquals for String types
+    ClassWithString deString1 = new ClassWithString();
+    ClassWithString deString2 = new ClassWithString();
+    deString1.myString = "test";
+    deString2.myString = "test";
+    Assertions.assertTrue(deString1.deepEquals(deString2));
+    deString1.myString = "test1";
+    deString2.myString = "test";
+    Assertions.assertFalse(deString1.deepEquals(deString2));
+    //null check
+    deString1.myString = null;
+    Assertions.assertFalse(deString1.deepEquals(deString2));
+    deString2.myString = null;
+    Assertions.assertTrue(deString1.deepEquals(deString2));
+    //endregion
     //region deepEquals for pojo types
     de1.myInt = 1;
     de2.myInt = 1;
@@ -179,6 +194,9 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(de13.deepEquals(de14));
     Assertions.assertTrue(de13.deepEquals(de14,false));
     Assertions.assertTrue(de13.deepEquals(de14,true));
+
+
+
 
     //Test 2Dim Optional
     ClassWith2DimOptional deO1 = new ClassWith2DimOptional();
@@ -329,6 +347,33 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc2 = dc1.deepClone();
     Assertions.assertNotSame(dc1,dc2);
     Assertions.assertTrue(dc1.deepEquals(dc2));
+    //endregion
+    //region deepClone for String types
+    ClassWithString dcString1 = new ClassWithString();
+    dcString1.myString = "test";
+    ClassWithString dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1,dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    dcString1.myString = "test1";
+    Assertions.assertFalse(dcString1.deepEquals(dcString2));
+    //null check
+    dcString1.myString = null;
+    dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1,dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    Assertions.assertNull(dcString2.myString);
+    //test Map correctness
+    dcString1.myString = "test";
+    dcString1.myString2 = dcString1.myString;
+    dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1,dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    Assertions.assertSame(dcString2.myString,dcString2.myString2);
+    dcString1.myString2 = null;
+    dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1,dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    Assertions.assertNotSame(dcString2.myString,dcString2.myString2);
     //endregion
     //region deepClone for pojo types
     ClassWithPojoClassType dc3 = new ClassWithPojoClassType();

@@ -80,6 +80,10 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " String[] arrayOfString; \n" +
           " java.lang.String [][][] threeDimArrayOfStrings; \n " +
           "}\n" +
+          "public class ClassWithString { \n" +
+          " public String myString;\n" +
+          " public String myString2;\n" +
+          "}\n" +
           "public class B { \n" +
           "}\n" +
           "association [1] AllTogether (owner) <-> (owns) B [*]public; "+

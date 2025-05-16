@@ -16,7 +16,7 @@ ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
 <#if attributeList??>
 <#list attributeList as attr>
 <#-- we need to declare a boolean result, as in recursive list checks we cannot return false when we check while having the flag forceSameOrder set to false -->
-<#assign resultBooleanName = "result" + attr.getName()?cap_first + attr.getMCType().printType()?cap_first?replace(".","")?replace("<","")?replace(">","")>
+<#assign resultBooleanName = "result" + attr.getName()?cap_first + attr.getMCType().printType()?cap_first?replace(".","")?replace("<","")?replace(">","")?replace("[","")?replace("]","")>
 boolean ${resultBooleanName} = true;
 <#assign firstObjectName = "this." + attr.getName()>
 <#assign secondObjectName = "castO." + attr.getName()>
