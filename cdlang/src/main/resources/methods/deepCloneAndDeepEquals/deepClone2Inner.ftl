@@ -60,7 +60,7 @@ if(${thisObjectName} == null) {
   ${resultObjectName} = null;
 } else {
   <#assign optionalResultName = "optionalResult" + mCType.hashCode()?replace(".","")?replace(",","")>
-  ${mCType.printType()} ${optionalResultName} = Optional.ofNullable(null);
+  ${mCType.printType()} ${optionalResultName} = Optional.empty();
   if(map.get(${thisObjectName}) == null) {
     if(${thisObjectName}.isPresent()) {
       <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>

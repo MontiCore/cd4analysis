@@ -37,27 +37,34 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " }\n" +
           " public class ClassWith2DimList { \n" +
           " public List<List<Integer>> my2dimList;\n" +
+          " public List<List<Integer>> my2dimList2;\n" +
           " }\n" +
           " public class ClassWith2DimSet { \n" +
           " public Set<Set<Integer>> my2dimSet;\n" +
+          " public Set<Set<Integer>> my2dimSet2;\n" +
           " }\n" +
           "public class ClassWithOptional { " +
           " public Optional<Integer> myOptionalInteger;\n" +
+          " public Optional<Integer> myOptionalInteger2;\n" +
           "}\n " +
           "public class ClassWith2DimOptional { " +
           " public Optional<Optional<B>> my2DimOptional;\n" +
+          " public Optional<Optional<B>> my2DimOptional2;\n" +
           "}\n " +
           "public class ClassWithPojoClassType { " +
           " public ClassWithPrimitiveType pojoType;\n" +
+          " public ClassWithPrimitiveType pojoType2;\n" +
           "}\n " +
           "public class ClassWithPrimitiveType { " +
           " public int myInt;\n" +
           "}\n " +
           "public class ClassWithSet { " +
           " public Set<Integer> mySet;\n" +
+          " public Set<Integer> mySet2;\n" +
           "}\n " +
           "public class ClassWithList { \n" +
           " public List<Integer> myIntegerList;\n" +
+          " public List<Integer> myIntegerList2;\n" +
           "}  \n" +
           "public class ClassCircular1 { \n" +
           "public ClassCircular2 myClassCircular2;\n" +
@@ -75,6 +82,9 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           "-> (opt)B [0..1] public;\n" +
           "-> (many)B [*] public;\n" +
           "-> (one)B [1] public;\n" +
+          "-> (opt2)B [0..1] public;\n" +
+          "-> (many2)B [*] public;\n" +
+          "-> (one2)B [1] public;\n" +
           "}\n" +
           "public class ClassWithArray { \n" +
           " String[] arrayOfString; \n" +
@@ -88,6 +98,7 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           "}\n" +
           "association [1] AllTogether (owner) <-> (owns) B [*]public; "+
           "association [1] ClassWithAssociation (owner) <-> (owns) B [*]public; "+
+          "association [1] ClassWithAssociation (owner2) <-> (owns2) B [*]public; "+
           "}");
 
     Assertions.assertTrue(opt.isPresent());
