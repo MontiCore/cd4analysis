@@ -4,8 +4,12 @@
 <#-- its primary purpose is to enable recursive which are need when resolving Lists and Sets -->
 ${tc.signature("mCType", "PojoClazzesAsStringList","firstObjectName", "secondObjectName","resultBooleanName")}
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
+<#-- Array types -->
+<#if (CD4AnalysisTypeDispatcher.isMCArrayTypesASTMCArrayType(mCType))>
+<#-- first we check for equal sizes and the for content -->
+IMPLEMENT HERE PLS
 <#-- Set types -->
-<#if (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
+<#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
 if(${firstObjectName} == null && ${secondObjectName} == null){
   ${resultBooleanName} = true;
