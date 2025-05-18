@@ -123,6 +123,9 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
         parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
+    for (ASTODArtifact od : witnesses) {
+      System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+    }
     assertTrue(witnesses.isEmpty());
   }
 }

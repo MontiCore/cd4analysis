@@ -18,6 +18,7 @@ public class SyntaxDiffPrinter extends DiffPrinter {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD);
+    this.matches = syntaxDiff.matches;
     setStrings(this.syntaxDiff);
   }
 
@@ -33,6 +34,7 @@ public class SyntaxDiffPrinter extends DiffPrinter {
     this.srcCD = syntaxDiff.getSrcCD();
     this.tgtCD = syntaxDiff.getTgtCD();
     this.syntaxDiff = syntaxDiff;
+    this.matches = syntaxDiff.matches;
     setStrings(this.syntaxDiff);
   }
 

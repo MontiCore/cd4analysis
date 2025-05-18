@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
@@ -17,6 +18,7 @@ import org.antlr.v4.runtime.misc.Triple;
  */
 public class CDSynDiffMatches {
   protected Map<ASTCDType, ASTCDType> typeMatches;
+  protected MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs;
   protected Map<ASTCDAssociation, ASTCDAssociation> assocMatches;
 
   public CDSynDiffMatches(
@@ -27,7 +29,7 @@ public class CDSynDiffMatches {
     Set<ASTCDType> tgtTypes = getAllTypesFromCD(tgtCD);
 
     // compute a matching of types by name
-    MatchingStrategy<ASTCDType> typeMatcher = new MatchCDTypesByName2Set(tgtTypes);
+    MatchingStrategy<ASTCDType> typeMatcher = new MatchCDTypesByQName2Set(tgtTypes);
     Map<ASTCDType, ASTCDType> typeMatchesByName = computeMatching(srcTypes, typeMatcher);
 
     /*
@@ -54,7 +56,9 @@ public class CDSynDiffMatches {
       MultiMap<ASTCDType, ASTCDType> typeMatches = computeMultiMatching(srcTypes, typeMatcher);
 
       for (ASTCDType srcType : srcTypes) {
-        typeMatches.get(srcType).add(typeMatchesByName.get(srcType));
+        if (typeMatchesByName.containsKey(srcType)) {
+          typeMatches.get(srcType).add(typeMatchesByName.get(srcType));
+        }
       }
 
       // We compute a best-match to reduce the multimap to a map.
@@ -62,13 +66,19 @@ public class CDSynDiffMatches {
         computeValueSet(typeMatches, new CDTypeSimilarity());
       this.typeMatches = computeBestMatching(typeMatches, typeSimilaritySet);
 
+      this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() + " ==> " + tgt.getName()));
+
       // We add the structural matching to the type-matching for associations
-      typeMatcher = new MatchSuperTypes2Set(new CachedMultiMatches<>(typeMatches), tgtTypes);
+      typeMatcher = new MatchSuperTypes2Set(new CachedMatches<>(this.typeMatches), tgtTypes);
       typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
 
     } else {
       typeMatches = typeMatchesByName;
     }
+
+    //fixme: assoc matching has to be reworked entirely
+
+    this.typeMatches4Assocs = typeMatches4Assocs;
 
     MatchingStrategy<ASTCDAssociation> assocMatcher =
       new MatchAssocsByRole2Set(
@@ -95,6 +105,9 @@ public class CDSynDiffMatches {
     Set<Triple<ASTCDAssociation, ASTCDAssociation, Double>> assocSimilaritySet =
       computeValueSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
     this.assocMatches = computeBestMatching(assocMatches, assocSimilaritySet);
+
+    this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ CD4CodeMill.prettyPrint(src,false) + " ==> " + CD4CodeMill.prettyPrint(tgt,false)));
+
   }
 
   /**
@@ -103,32 +116,33 @@ public class CDSynDiffMatches {
    */
   protected <T> Map<T, T> computeBestMatching(
     MultiMap<T, T> matches, Set<Triple<T,T,Double>> valueSet) {
+    List<Triple<T,T,Double>> remainingMatches = new ArrayList<>(valueSet);
     Map<T, T> bestMatches = new LinkedHashMap<>();
-    Set<T> remainingSrcTypes = matches.keySet();
-    Set<T> remainingTgtTypes =
-      matches.values().stream().flatMap(List::stream).collect(Collectors.toSet());
 
     /*
      * modified selection sort always puts the highest value matches in the map
      * with the lowest amount of matches for the srcType
      */
-    for (Triple<T, T, Double> match : valueSet) {
-      if (remainingSrcTypes.contains(match.a) && remainingTgtTypes.contains(match.b)) {
-        Triple<T, T, Double> bestMatch = match;
-        double bestScore = bestMatch.c;
-        for (Triple<T, T, Double> altMatch : valueSet) {
-          if (remainingSrcTypes.contains(altMatch.a) && remainingTgtTypes.contains(altMatch.b)) {
-            double score = altMatch.c;
-            if (score > bestScore
-              || (score == bestScore
-              && matches.get(altMatch.a).size() < matches.get(bestMatch.a).size())) {
-              bestMatch = altMatch;
-            }
+    while (!remainingMatches.isEmpty()) {
+      Triple<T, T, Double> bestMatch = remainingMatches.get(0);
+      double bestScore = bestMatch.c;
+      for (Triple<T, T, Double> match : valueSet) {
+        if (remainingMatches.contains(match)) {
+          double score = match.c;
+          if (score > bestScore
+            || (score == bestScore
+            && matches.get(match.a).size() < matches.get(bestMatch.a).size())) {
+            bestMatch = match;
+            bestScore = score;
           }
         }
-        bestMatches.put(bestMatch.a, bestMatch.b);
-        remainingSrcTypes.remove(match.a);
-        remainingTgtTypes.remove(match.b);
+      }
+      bestMatches.put(bestMatch.a, bestMatch.b);
+      remainingMatches.remove(bestMatch);
+      for (Triple<T, T, Double> match : valueSet){
+        if (remainingMatches.contains(match) && (match.a.equals(bestMatch.a) || match.b.equals(bestMatch.b))) {
+          remainingMatches.remove(match);
+        }
       }
     }
 
@@ -232,5 +246,10 @@ public class CDSynDiffMatches {
 
   public Map<ASTCDAssociation, ASTCDAssociation> getAssocMatches() {
     return assocMatches;
+  }
+
+  @Deprecated
+  public MultiMap<ASTCDType, ASTCDType> getTypeMatches4Assocs() {
+    return typeMatches4Assocs;
   }
 }

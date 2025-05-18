@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class CDTypeSimilarity implements CDSimilarity<ASTCDType>{
   public Double computeWeight(ASTCDType srcElem, ASTCDType tgtElem) {
-    double weight;
+
     Set<ASTCDMember> srcMembers = CDDiffUtil.getAllSuperTypes(srcElem).stream().flatMap(st -> st.getCDMemberList().stream()).collect(Collectors.toSet());
     Set<ASTCDMember> tgtMembers = CDDiffUtil.getAllSuperTypes(tgtElem).stream().flatMap(st -> st.getCDMemberList().stream()).collect(Collectors.toSet());
 
@@ -60,13 +60,18 @@ public class CDTypeSimilarity implements CDSimilarity<ASTCDType>{
     double similarity = similarMembers.size() + similarRoles.size();
     double unionSize = allMembers.size() + allRoles.size();
 
-    // Jaccard Index
-    if (srcElem.getName().equals(tgtElem.getName())) {
-      weight = (similarity+2) / unionSize;
-    } else {
-      weight = similarity / unionSize;
+    if (unionSize < 1) {
+      unionSize = 1;
     }
 
-    return weight;
+    if (srcElem.getName().equals(tgtElem.getName())){
+      similarity+=2;
+    }
+
+    if (srcElem.getSymbol().getInternalQualifiedName().equals(tgtElem.getSymbol().getInternalQualifiedName())){
+      similarity++;
+    }
+
+    return similarity / unionSize;
   }
 }

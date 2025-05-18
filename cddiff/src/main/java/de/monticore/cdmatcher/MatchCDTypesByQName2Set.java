@@ -7,11 +7,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatchCDTypesByName2Set implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypesByQName2Set implements MatchingStrategy<ASTCDType> {
 
   protected LinkedHashSet<ASTCDType> tgtSet;
 
-  public MatchCDTypesByName2Set(Collection<ASTCDType> tgtSet) {
+  public MatchCDTypesByQName2Set(Collection<ASTCDType> tgtSet) {
     this.tgtSet = new LinkedHashSet<>(tgtSet);
   }
 
@@ -25,6 +25,6 @@ public class MatchCDTypesByName2Set implements MatchingStrategy<ASTCDType> {
   /** Match types iff they have the same name. */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    return srcElem.getName().equals(tgtElem.getName());
+    return srcElem.getSymbol().getInternalQualifiedName().equals(tgtElem.getSymbol().getInternalQualifiedName());
   }
 }
