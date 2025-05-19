@@ -92,6 +92,36 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
     }
   }
 }
+<#-- Map types -->
+<#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCMapType(mCType))>
+<#assign keyType = mCType.getKey().getMCTypeOpt().get()>
+<#assign valueType = mCType.getValue().getMCTypeOpt().get()>
+<#assign firstKeySetName = "firstKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
+<#assign firstKeySetIteratorName = "firstKeyIterator" + mCType.hashCode()?replace(".","")?replace(",","")>
+Set<${keyType.printType()}> ${firstKeySetName} = ${firstObjectName}.keySet();
+Set<${keyType.printType()}> ${secondKeySetName} = ${secondObjectName}.keySet();
+Iterator<${keyType.printType()}> ${firstKeySetIteratorName} = ${firstObjectName}Keys.iterator();
+while(${firstKeySetIteratorName}.hasNext()){
+  <#assign firstKeyObjectName = "firstKeyObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign firstValueObjectName = "firstValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
+  ${keyType.printType()} ${firstKeyObjectName} = ${firstKeySetIteratorName}.next();
+  ${valueType.printType()} ${firstValueObjectName} = ${firstObjectName}.get(${firstKeyObjectName});
+  <#assign secondKeyIteratorName = "secondKeyIteratorName" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
+  Iterator<${keyType.printType()}> ${secondKeySetIteratorName} = ${secondObjectName}.keySet().iterator();
+  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
+  boolean ${matchFoundName} = false;
+  while(${secondKeySetIteratorName}.hasNext()){
+    <#assign secondKeyObjectName = "secondKeyObject" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign secondValueObjectName = "secondValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
+    ${keyType.printType()} ${secondKeyObjectName} = ${secondKeySetIteratorName}.next();
+    ${valueType.printType()} ${secondValueObjectName} = ${secondObjectName}.get(${secondKeyObjectName});
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", valueType, PojoClazzesAsStringList, value1Name, value2Name, matchFoundName)};
+  }
+  if(!${matchFoundName}{
+    return false;
+  }
+}
 <#-- optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
