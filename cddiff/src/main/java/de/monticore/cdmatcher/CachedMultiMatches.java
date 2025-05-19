@@ -25,6 +25,6 @@ public class CachedMultiMatches<T> implements MatchingStrategy<T>{
 
   public boolean isMatched(T srcElem, T tgtElem) {
 
-    return matches.containsKey(srcElem) || getMatchedElements(srcElem).contains(tgtElem);
+    return matches.containsKey(srcElem) && getMatchedElements(srcElem).contains(tgtElem);
   }
 }

@@ -34,7 +34,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation>{
       score++;
     }
 
-    System.out.println("[ASSOC MATCH]: " + CD4CodeMill.prettyPrint(srcElem,false) + " [WITH] " +  CD4CodeMill.prettyPrint(srcElem,true) + " : " +score);
+    //System.out.println("[ASSOC MATCH]: " + CD4CodeMill.prettyPrint(srcElem,false) + " [WITH] " +  CD4CodeMill.prettyPrint(srcElem,true) + " : " +score);
 
 
     return score;

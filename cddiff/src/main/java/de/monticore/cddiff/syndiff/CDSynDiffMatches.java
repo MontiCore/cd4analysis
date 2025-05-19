@@ -66,7 +66,7 @@ public class CDSynDiffMatches {
         computeValueSet(typeMatches, new CDTypeSimilarity());
       this.typeMatches = computeBestMatching(typeMatches, typeSimilaritySet);
 
-      this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() + " ==> " + tgt.getName()));
+      //this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() + " ==> " + tgt.getName()));
 
       // We add the structural matching to the type-matching for associations
       typeMatcher = new MatchSuperTypes2Set(new CachedMatches<>(this.typeMatches), tgtTypes);
@@ -106,7 +106,7 @@ public class CDSynDiffMatches {
       computeValueSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
     this.assocMatches = computeBestMatching(assocMatches, assocSimilaritySet);
 
-    this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ CD4CodeMill.prettyPrint(src,false) + " ==> " + CD4CodeMill.prettyPrint(tgt,false)));
+    //this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ CD4CodeMill.prettyPrint(src,false) + " ==> " + CD4CodeMill.prettyPrint(tgt,false)));
 
   }
 
