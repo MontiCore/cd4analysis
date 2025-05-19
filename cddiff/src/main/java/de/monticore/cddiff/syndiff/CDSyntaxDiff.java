@@ -18,6 +18,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the core class for semantic differencing. It contains the results of the syntactic
@@ -562,7 +563,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               && matched.isPresent()
               && !helper.getNotInstClassesTgt().contains(right)
               && !helper.getNotInstClassesSrc().contains(matched.get())
-              && !helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())) {
+              && !(helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())
+            || helper.classHasAssociationTgtSrcRev(assocStruct.get(), matched.get()))) {
             isDeletedTgt = matched.get();
           } else if (!helper.getNotInstClassesTgt().contains(right)
               && sub.isPresent()
@@ -580,7 +582,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               && matched.isPresent()
               && !helper.getNotInstClassesTgt().contains(astcdClass)
               && !helper.getNotInstClassesSrc().contains(matched.get())
-              && !helper.classHasAssociationTgtSrc(assocStruct.get(), matched.get())) {
+              && !(helper.classHasAssociationTgtSrc(assocStruct.get(), matched.get())
+            || helper.classIsTargetTgtSrcRev(assocStruct.get(), matched.get()))) {
             isDeletedSrc = matched.get();
           } else if (!helper.getNotInstClassesTgt().contains(astcdClass)
               && sub.isPresent()
@@ -599,7 +602,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               && matched.isPresent()
               && !helper.getNotInstClassesTgt().contains(left)
               && !helper.getNotInstClassesSrc().contains(matched.get())
-              && !helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())) {
+              && !(helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())
+            || helper.classHasAssociationTgtSrcRev(assocStruct.get(), matched.get()))) {
             isDeletedTgt = matched.get();
           } else if (!helper.getNotInstClassesTgt().contains(left)
               && sub.isPresent()
@@ -1048,8 +1052,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       if (matched.isPresent() && !helper.getNotInstClassesTgt().contains(matched.get())) {
         List<AssocStruct> assocStructs = helper.getSrcMap().get(astcdType);
         List<AssocStruct> copy = new ArrayList<>(assocStructs);
-        List<AssocStruct> added = helper.addedAssocsForClass(astcdType);
-        copy.removeAll(added);
+        copy.removeAll(helper.addedAssocsForClass(astcdType));
         List<Pair<ASTCDClass, AssocStruct>> addedAssocs =
             helper.srcAssocsExist(copy, matched.get());
         allAddedAssocs.addAll(helper.sortDiffs(addedAssocs));
@@ -1068,8 +1071,17 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       if (matched.isPresent() && !helper.getNotInstClassesSrc().contains(matched.get())) {
         List<AssocStruct> assocStructs = helper.getTgtMap().get(astcdType);
         List<AssocStruct> copy = new ArrayList<>(assocStructs);
-        List<AssocStruct> added = helper.deletedAssocsForClass(astcdType);
-        copy.removeAll(added);
+        copy = copy.stream()
+          .filter(assoc -> {
+            if (assoc.getSide() == ClassSide.Left) {
+              return assoc.getAssociation().getRight().getCDCardinality().isOne() || assoc.getAssociation().getRight().getCDCardinality().isAtLeastOne();
+            } else if (assoc.getSide() == ClassSide.Right) {
+              return assoc.getAssociation().getLeft().getCDCardinality().isOne() || assoc.getAssociation().getLeft().getCDCardinality().isAtLeastOne();
+            }
+            return false;
+          })
+          .collect(Collectors.toList());
+        copy.removeAll(helper.deletedAssocsForClass(astcdType));
         List<Pair<ASTCDClass, AssocStruct>> deletedAssocs =
             helper.tgtAssocsExist(copy, matched.get());
         allDeletedAssocs.addAll(helper.sortDiffs(deletedAssocs));

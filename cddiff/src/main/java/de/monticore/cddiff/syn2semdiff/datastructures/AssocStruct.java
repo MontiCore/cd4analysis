@@ -34,11 +34,12 @@ public class AssocStruct {
       AssocDirection direction,
       ClassSide side,
       ASTCDType astcdType,
-      ASTCDType astcdTgtType) {
+      ASTCDType astcdTgtType,
+      ASTCDAssociation originalAssoc) {
     this.association = association;
     this.direction = direction;
     this.side = side;
-    this.unmodifiedAssoc = association;
+    this.unmodifiedAssoc = originalAssoc;
     this.originalType = astcdType;
     this.originalTgtType = astcdTgtType;
   }
