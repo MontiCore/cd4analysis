@@ -135,7 +135,6 @@ task fmt {
 evaluationDependsOnChildren()
 
 def withDSTLGen = ("true").equals(getProperty('genTR'))
-def withTagGen = ("true").equals(getProperty('genTagging'))
 
 publishing {
   publications {
@@ -176,14 +175,6 @@ publishing {
         group "de.monticore.lang"
       }
       // Trafos are published in :cdlang
-      if (withTagGen) {
-        // If available, publish tagging here too
-        "tagging"(MavenPublication) {
-          artifactId = project.name + "-tagging"
-          artifact project(":cdlang").tasks.taggingJar { archiveAppendix = 'tagging' }
-          artifact project(":cdlang").tasks.taggingSourcesJar { archiveAppendix = 'tagging'; archiveClassifier = 'sources' }
-        }
-      }
     }
   }
   repositories.maven {

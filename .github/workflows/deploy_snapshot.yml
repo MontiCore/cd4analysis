@@ -16,11 +16,11 @@ on:
 
 env:
   GRADLE_VERSION: 7.4 # Gradle version used
-  GRADLE_CLI_OPTS: "-Pci --build-cache -PgenTR=false -PgenTagging=true --refresh-dependencies " # CLI options passed to Gradle
+  GRADLE_CLI_OPTS: "-Pci --build-cache -PgenTR=false --refresh-dependencies " # CLI options passed to Gradle
   GRADLE_BUILD_ACTION_CACHE_KEY_JOB: "test-cache-${{ github.head_ref }}.${{ github.sha }}"
 
 permissions:
-  contents: read 
+  contents: read
 
 
 jobs:
@@ -53,7 +53,7 @@ jobs:
         run: gradle publish ${{env.GRADLE_CLI_OPTS}} -PmavenPassword=${{ secrets.SE_NEXUS_PASSWORD }} -PmavenUser=${{ secrets.SE_NEXUS_USER }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                    
+
   # Trigger GitHub downstream projects (without reporting the pipeline result)
   trigger-github-downstream:
     needs: [ deploy ]

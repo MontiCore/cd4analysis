@@ -20,7 +20,6 @@ if (hasProperty('bootstrap')) {
 }
 
 def withDSTLGen = ("true").equals(getProperty('genTR'))
-def withTagGen = ("true").equals(getProperty('genTagging'))
 
 ext {
   grammar_classifier = "grammars"
@@ -39,9 +38,6 @@ sourceSets {
   test {
     if (withDSTLGen) {
       java.srcDirs += ["src/test/javatrafo/", testGrammarOutDir]
-    }
-    if (withTagGen) {
-      java.srcDirs += ["src/test/javatagging/"]
     }
   }
   // The following is required as we still publish a Feature-variant (with usingSourceSet(grammarsForVariant))
@@ -100,14 +96,6 @@ dependencies {
     testImplementation(sourceSets.trafo.output.classesDirs)
     testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
   }
-  //dependencies for tagging
-  if (withTagGen) {
-    taggingGrammar "de.monticore:monticore-grammar:$mc_version" // Tagging Grammars are packed with the main grammar dependency
-    taggingImplementation "de.monticore:monticore-grammar-tagging:$mc_version"
-
-    testImplementation(sourceSets.tagging.output.classesDirs)
-    testImplementation "de.monticore:monticore-grammar-tagging:$mc_version"
-  }
 
 }
 
@@ -115,50 +103,6 @@ tasks.withType(MCGenTask).configureEach {
   // Use an empty templates directory (as we do not override any)
   tmplDir = project.layout.buildDirectory.dir("empty_templates")
   tmplDir.get().getAsFile().mkdirs()
-}
-
-if (withTagGen) {
-  // Explicitly configure tagging
-  var generateTagDefGrammars = tasks.register('generateTagDefGrammars', MCGenTask) {
-    // Make sure we use the output of the generate task
-    // (this ensures, that the inputs are not evaluated too early, resulting in this task being skipped)
-    grammar.setFrom(tasks.named("generateMCGrammars", MCGenTask).get().getTagDefOutput().matching {
-      exclude(['**/de/monticore/tagging/*', '**/Grammar_WithConcepts*'])
-    })
-    outputDir = file taggingOutDir
-    genTag = true
-    modelPath.from(file grammarOutDir)
-    dependsOn("generateMCGrammars")
-
-
-    if (findProperty("ci") != null) {
-      script = "de/monticore/monticore_noreports.groovy"
-    }
-    symbolPathConfiguration.from(configurations.named("taggingGrammarSymbolDependencies"))
-  }
-  compileTaggingJava.dependsOn(generateTagDefGrammars)
-  processGrammarsForVariantResources.dependsOn(generateTagDefGrammars)
-  var generateTagSchemaGrammars = tasks.register("generateTagSchemaGrammars", MCGenTask) {
-    // Make sure we use the output of the generate task
-    // (this ensures, that the inputs are not evaluated too early, resulting in this task being skipped)
-    grammar.setFrom(tasks.named("generateMCGrammars", MCGenTask).get().getTagSchemaOutput().matching {
-      exclude(['**/de/monticore/tagging/*', '**/de/monticore/grammar/*'])
-    })
-    outputDir = file taggingOutDir
-    modelPath.from(file grammarOutDir)
-    dependsOn("generateMCGrammars")
-    if (findProperty("ci") != null) {
-      script = "de/monticore/monticore_noreports.groovy"
-    }
-    symbolPathConfiguration.from(configurations.named("taggingGrammarSymbolDependencies"))
-  }
-  compileTaggingJava.dependsOn(generateTagSchemaGrammars)
-  processGrammarsForVariantResources.dependsOn(generateTagSchemaGrammars)
-
-  dependencies {
-    // use compileOnly as the tagging- and trafo-artifact are only an extension to the default artifact
-    taggingCompileOnly project(path)
-  }
 }
 
 tasks.register('generateTestTrafos') {}
