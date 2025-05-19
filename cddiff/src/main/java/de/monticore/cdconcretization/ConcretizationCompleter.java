@@ -142,8 +142,8 @@ public class ConcretizationCompleter {
       completerChainBuilder.add(new ReorderElementsCompletionStep());
     }
     if (checkConformance) {
-      completerChainBuilder.add(
-          new ConformanceCheckCompletionStep(mapping, "Completion result is not conform"));
+      completerChainBuilder.add(new ConformanceCheckCompletionStep(
+              mapping, conformanceParams, "Completion result is not conform"));
     }
 
     // perform the actual concretization
