@@ -108,20 +108,22 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
       for (ASTCDAttribute paramAttributeInc : paramAttributeIncarnations) {
         // now we have a specific incarnation of the parameter attribute in the concrete CD.
         // we can now construct a new attribute based on this incarnation for the concrete type
-
-        // if we have more than one declaring type incarnation, we need to add a suffix to the
-        // new attributes
-        String attributeSuffix = paramAttributeIncarnations.size() > 1 ? "_" + paramAttributeInc.getName() : "";
-
         ASTCDAttribute newAttribute = referenceAttribute.deepClone();
 
         // 1. decide name of the new attribute
-        if (referenceAttribute.getName().equals(paramAttribute.getName())) {
-          // Convention: If the param attribute name matches the reference attribute name
-          // -> Use the param incarnation name without a suffix (but still a type suffix)
-          newAttribute.setName(paramAttributeInc.getName() + declaringTypeSuffix);
+        Optional<String> adaptedName = NameUtil.adaptTemplatedName(
+                        referenceAttribute.getName(),
+                        paramAttribute.getName(),
+                        paramAttributeInc.getName());
+        if (context.isForEachNameAdaptationEnabled() && adaptedName.isPresent()) {
+          newAttribute.setName(adaptedName.get() + declaringTypeSuffix);
         } else {
           // Default: add the param incarnation name as suffix
+          // if we have more than one declaring type incarnation, we need to add a suffix to the
+          // new attributes
+          String attributeSuffix = paramAttributeIncarnations.size() > 1
+                  ? "_" + paramAttributeInc.getName()
+                  : "";
           newAttribute.setName(
                   referenceAttribute.getName() + declaringTypeSuffix + attributeSuffix);
         }

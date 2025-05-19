@@ -32,6 +32,29 @@ public class TypeConcretizationTest extends AbstractCDConcretizationTest {
         "types/forEach/ForEachTypeOut.cd");
   }
 
+  @Test
+  void testTypeForEachTypeWithInfixReplacement() {
+    testConcretizedConformsToRefAndExpectedOut(
+            "types/forEach/ForEachTypeInfixReplaceConc.cd",
+            "types/forEach/ForEachTypeInfixReplaceRef.cd",
+            "types/forEach/ForEachTypeInfixReplaceOut.cd");
+  }
+
+  /**
+   * The reference model would allow for infix replacement of the forEach annotated type. However,
+   * we disable the feature.
+   */
+  @Test
+  void testTypeForEachTypeWithInfixReplacementDisabled() {
+    ConcretizationCompleter completer = new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.setForEachNameAdaptationEnabled(false);
+    testConcretizedEqualsExpectedOut(
+            completer,
+            "types/forEach/ForEachTypeInfixReplaceConc.cd",
+            "types/forEach/ForEachTypeInfixReplaceRef.cd",
+            "types/forEach/ForEachTypeInfixReplaceDisabledOut.cd");
+  }
+
   /**
    * We have no incarnation of the target type in the concrete CD. However, the default behavior is
    * to add the target type to the concrete CD if there is no incarnation. Thus, the forEach loop

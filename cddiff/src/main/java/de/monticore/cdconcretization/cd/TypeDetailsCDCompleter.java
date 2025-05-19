@@ -99,6 +99,11 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
 
     @Override
+    public boolean isForEachNameAdaptationEnabled() {
+      return parentContext.isForEachNameAdaptationEnabled();
+    }
+
+    @Override
     public Set<CDConfParameter> getConformanceParams() {
       return parentContext.getConformanceParams();
     }

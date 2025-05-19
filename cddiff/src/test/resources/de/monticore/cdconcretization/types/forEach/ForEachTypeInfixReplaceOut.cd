@@ -1,0 +1,19 @@
+classdiagram ForEachTypeInfixReplaceConc {
+  <<ref="DataClass">> class Employee;
+
+  <<ref="DataClass">> class Department;
+
+  <<ref="DataClass">> class Company;
+
+  <<ref="ForEachTypeRef.DataClassBuilder">> class EmployeeBuilder {
+
+  }
+
+  <<ref="ForEachTypeRef.DataClassBuilder">> class DepartmentBuilder {
+
+  }
+
+  <<ref="ForEachTypeRef.DataClassBuilder">> class CompanyBuilder {
+
+  }
+}
