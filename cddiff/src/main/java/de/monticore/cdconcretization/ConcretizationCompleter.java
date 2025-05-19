@@ -22,13 +22,18 @@ import de.monticore.cdconcretization.type.*;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
-import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
-import de.monticore.cdconformance.conf.attribute.STNamedAttributeChecker;
 import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
+import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
+import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
+import de.monticore.cdconformance.inc.method.CompMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.EqNameMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -184,6 +189,7 @@ public class ConcretizationCompleter {
     private final CompTypeIncStrategy typeIncStrategy;
     private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
     private final CompAssocIncStrategy assocIncStrategy;
+    private final MCTypeMatcher mcTypeMatcher;
 
     private final ScopedIncarnationBindings scopedIncarnationBindings =
         new ScopedIncarnationBindings();
@@ -200,6 +206,8 @@ public class ConcretizationCompleter {
 
       typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
       assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
+
+      mcTypeMatcher = new MCTypeMatcher(underspecifiedPlaceholderTypeName, typeIncStrategy);
 
       /*
        * We configure the matching strategies depending on the conformance checker parameter as we
@@ -304,19 +312,14 @@ public class ConcretizationCompleter {
     }
 
     @Override
-    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
-        ASTCDType concreteType, ASTCDType referenceType) {
-      CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(
-              mapping, underspecifiedPlaceholderTypeName, typeIncStrategy);
+    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
+      CompAttributeIncStrategy attributeIncStrategy = new CompAttributeIncStrategy();
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(
-                mapping, underspecifiedPlaceholderTypeName, typeIncStrategy));
+        attributeIncStrategy.addIncStrategy(new STAttributeIncStrategy(mapping));
       }
       if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new EqNameAttributeChecker(
-                mapping, underspecifiedPlaceholderTypeName, typeIncStrategy));
+        attributeIncStrategy.addIncStrategy(new EqNameAttributeIncStrategy());
       }
-      attributeIncStrategy.setConcreteType(concreteType);
       attributeIncStrategy.setReferenceType(referenceType);
       return attributeIncStrategy;
     }
@@ -375,7 +378,7 @@ public class ConcretizationCompleter {
             .flatMap(
                 (cAttributeDeclaringType) -> {
                   MatchingStrategy<ASTCDAttribute> attributeIncStrategy =
-                      createAttributeIncStrategy(cAttributeDeclaringType, attributeDeclaringType);
+                      createAttributeIncStrategy(attributeDeclaringType);
                   return cAttributeDeclaringType.getCDAttributeList().stream()
                       .filter(
                           attributeIncarnation ->

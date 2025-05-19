@@ -10,19 +10,23 @@ import de.monticore.cdconcretization.UnderspecifiedPlaceholderType;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.association.BasicAssocConfStrategy;
 import de.monticore.cdconformance.conf.association.DeepAssocConfStrategy;
-import de.monticore.cdconformance.conf.attribute.CompAttributeChecker;
-import de.monticore.cdconformance.conf.attribute.EqNameAttributeChecker;
-import de.monticore.cdconformance.conf.attribute.STNamedAttributeChecker;
+import de.monticore.cdconformance.conf.attribute.BasicAttributeConfStrategy;
 import de.monticore.cdconformance.conf.cd.BasicCDConfStrategy;
-import de.monticore.cdconformance.conf.method.CompMethodChecker;
-import de.monticore.cdconformance.conf.method.EqNameMethodChecker;
-import de.monticore.cdconformance.conf.method.STNamedMethodChecker;
+import de.monticore.cdconformance.conf.method.BasicMethodConfStrategy;
 import de.monticore.cdconformance.conf.type.BasicTypeConfStrategy;
 import de.monticore.cdconformance.conf.type.DeepTypeConfStrategy;
 import de.monticore.cdconformance.inc.association.*;
+import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
+import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
+import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
+import de.monticore.cdconformance.inc.method.CompMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.EqNameMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.se_rwth.commons.logging.Log;
@@ -35,10 +39,11 @@ public class CDConformanceChecker {
   protected Set<CDConfParameter> params;
   protected String underspecifiedTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
   protected CompTypeIncStrategy typeInc;
+  protected MCTypeMatcher typeMatcher;
   protected CompAssocIncStrategy assocInc;
-  protected CompAttributeChecker attrInc;
+  protected CompAttributeIncStrategy attrInc;
 
-  protected CompMethodChecker methInc;
+  protected CompMethodIncStrategy methInc;
 
   protected Map<ASTCDType, List<ASTCDType>> typeMap = new HashMap<>();
   protected Map<ASTCDAttribute, List<ASTCDAttribute>> attributeMap = new HashMap<>();
@@ -75,22 +80,29 @@ public class CDConformanceChecker {
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
     // init incarnation checker
     typeInc = new CompTypeIncStrategy(referenceCD, mapping);
+    typeMatcher = new MCTypeMatcher(underspecifiedTypeName, typeInc);
+
     assocInc = new CompAssocIncStrategy(referenceCD, mapping);
-    attrInc = new CompAttributeChecker(mapping, underspecifiedTypeName, typeInc);
-    methInc = new CompMethodChecker(mapping, underspecifiedTypeName, typeInc);
+    attrInc = new CompAttributeIncStrategy();
+    methInc = new CompMethodIncStrategy();
 
     if (params.contains(STEREOTYPE_MAPPING)) {
       typeInc.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
-      attrInc.addIncStrategy(new STNamedAttributeChecker(mapping, underspecifiedTypeName, typeInc));
-      methInc.addIncStrategy(new STNamedMethodChecker(mapping, underspecifiedTypeName, typeInc));
+      attrInc.addIncStrategy(new STAttributeIncStrategy(mapping));
+      methInc.addIncStrategy(new STMethodIncStrategy(mapping));
     }
 
     if (params.contains(NAME_MAPPING)) {
       typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
-      attrInc.addIncStrategy(new EqNameAttributeChecker(mapping, underspecifiedTypeName, typeInc));
-      methInc.addIncStrategy(new EqNameMethodChecker(mapping, underspecifiedTypeName, typeInc));
+      attrInc.addIncStrategy(new EqNameAttributeIncStrategy());
+      if(params.contains(METHOD_OVERLOADING)) {
+        methInc.addIncStrategy(new EqSignatureMethodIncStrategy(
+                typeMatcher, params.contains(STRICT_PARAMETER_ORDER)));
+      } else {
+        methInc.addIncStrategy(new EqNameMethodIncStrategy());
+      }
     }
 
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
@@ -128,16 +140,21 @@ public class CDConformanceChecker {
     BasicAssocConfStrategy assocChecker;
     boolean cardRestriction = params.contains(ALLOW_CARD_RESTRICTION);
 
+    BasicAttributeConfStrategy attrChecker =
+        new BasicAttributeConfStrategy(attrInc, typeMatcher);
+    BasicMethodConfStrategy methodChecker =
+            new BasicMethodConfStrategy(methInc, typeMatcher, params);
+
     if (params.contains(INHERITANCE)) {
       assocChecker =
           new DeepAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction);
       typeChecker =
-          new DeepTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
+          new DeepTypeConfStrategy(concreteCD, referenceCD, attrChecker, methodChecker, attrInc, methInc, typeInc, assocInc);
     } else {
       assocChecker =
           (new BasicAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction));
       typeChecker =
-          new BasicTypeConfStrategy(concreteCD, referenceCD, attrInc, methInc, typeInc, assocInc);
+          new BasicTypeConfStrategy(concreteCD, referenceCD, attrChecker, methodChecker, attrInc, methInc, typeInc, assocInc);
     }
 
     return new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);
@@ -255,7 +272,6 @@ public class CDConformanceChecker {
     getRefElements(conType)
         .forEach(
             refType -> {
-              attrInc.setConcreteType(conType);
               attrInc.setReferenceType(refType);
               refElements.addAll(attrInc.getMatchedElements(con));
             });
@@ -267,7 +283,6 @@ public class CDConformanceChecker {
     getRefElements(conType)
         .forEach(
             refType -> {
-              methInc.setConcreteType(conType);
               methInc.setReferenceType(refType);
               refElements.addAll(methInc.getMatchedElements(con));
             });

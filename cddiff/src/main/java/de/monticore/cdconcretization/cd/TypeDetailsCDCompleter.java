@@ -75,7 +75,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       this.concreteType = concreteType;
       this.referenceType = referenceType;
 
-      attributeIncStrategy = parentContext.createAttributeIncStrategy(concreteType, referenceType);
+      attributeIncStrategy = parentContext.createAttributeIncStrategy(referenceType);
     }
 
     @Override
@@ -141,9 +141,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
 
     @Override
-    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
-        ASTCDType concreteType, ASTCDType referenceType) {
-      return parentContext.createAttributeIncStrategy(concreteType, referenceType);
+    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
+      return parentContext.createAttributeIncStrategy(referenceType);
     }
 
     @Override

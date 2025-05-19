@@ -6,9 +6,11 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.CDAttributeChecker;
+import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
-import de.monticore.cdconformance.conf.ICDMethodChecker;
+import de.monticore.cdconformance.conf.method.CDMethodChecker;
+import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -22,8 +24,9 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected ASTCDCompilationUnit conCD;
 
   protected CDAttributeChecker attributeChecker;
-
-  protected ICDMethodChecker methodChecker;
+  protected CDMethodChecker methodChecker;
+  protected CDAttributeMatchingStrategy attributeInc;
+  protected CDMethodMatchingStrategy methodInc;
   protected MatchingStrategy<ASTCDType> typeInc;
   protected MatchingStrategy<ASTCDAssociation> assocInc;
 
@@ -31,13 +34,17 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
       ASTCDCompilationUnit conCD,
       ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker,
-      ICDMethodChecker methodChecker,
+      CDMethodChecker methodChecker,
+      CDAttributeMatchingStrategy attributeInc,
+      CDMethodMatchingStrategy methodInc,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc) {
     this.refCD = refCD;
     this.conCD = conCD;
     this.attributeChecker = attributeChecker;
     this.methodChecker = methodChecker;
+    this.attributeInc = attributeInc;
+    this.methodInc = methodInc;
     this.typeInc = typeInc;
     this.assocInc = assocInc;
   }
@@ -99,13 +106,11 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
 
     // check if all necessary attributes are present
     attributeChecker.setReferenceType(ref);
-    attributeChecker.setConcreteType(concrete);
     boolean attributes =
         checkAttributeIncarnation(concrete, ref) && checkAttributeConformance(concrete);
 
     // check if all necessary methods are present
     methodChecker.setReferenceType(ref);
-    methodChecker.setConcreteType(concrete);
     boolean methods = checkMethodIncarnation(concrete, ref) && checkMethodConformance(concrete);
 
     // check if reference associations are incarnated
@@ -213,7 +218,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
                 (refAttr.getModifier().isPresentStereotype()
                         && refAttr.getModifier().getStereotype().contains("optional"))
                     || con.stream()
-                        .anyMatch(conAttr -> attributeChecker.isMatched(conAttr, refAttr)));
+                        .anyMatch(conAttr -> attributeInc.isMatched(conAttr, refAttr)));
   }
 
   protected boolean checkMethodIncarnation(Set<ASTCDMethod> con, Set<ASTCDMethod> ref) {
@@ -223,14 +228,14 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
                 (refMethod.getModifier().isPresentStereotype()
                         && refMethod.getModifier().getStereotype().contains("optional"))
                     || con.stream()
-                        .anyMatch(conMethod -> methodChecker.isMatched(conMethod, refMethod)));
+                        .anyMatch(conMethod -> methodInc.isMatched(conMethod, refMethod)));
   }
 
   protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete) {
     return concrete.stream()
         .allMatch(
             conAttr ->
-                attributeChecker.getMatchedElements(conAttr).isEmpty()
+                attributeInc.getMatchedElements(conAttr).isEmpty()
                     || attributeChecker.checkConformance(conAttr));
   }
 
@@ -238,7 +243,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     return concrete.stream()
         .allMatch(
             conMethod ->
-                methodChecker.getMatchedElements(conMethod).isEmpty()
+                    methodInc.getMatchedElements(conMethod).isEmpty()
                     || methodChecker.checkConformance(conMethod));
   }
 }

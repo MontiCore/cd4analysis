@@ -33,7 +33,8 @@ public abstract class AbstractCDConcretizationTest {
           NAME_MAPPING,
           SRC_TARGET_ASSOC_MAPPING,
           INHERITANCE,
-          ALLOW_CARD_RESTRICTION);
+          ALLOW_CARD_RESTRICTION,
+          METHOD_OVERLOADING);
 
   protected ASTCDCompilationUnit refCD;
 
