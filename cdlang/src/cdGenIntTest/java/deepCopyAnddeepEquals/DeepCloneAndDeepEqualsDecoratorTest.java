@@ -238,6 +238,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(deMap1.deepEquals(deMap2,false));
     Assertions.assertTrue(deMap1.deepEquals(deMap2,true));
     //endregion
+    //TODO multidemensional map test
     //region deepEquals association types
     ClassWithAssociation de15 = new ClassWithAssociation();
     ClassWithAssociation de16 = new ClassWithAssociation();
@@ -619,6 +620,11 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(dcO1.deepEquals(dcO2));
     Assertions.assertSame(dcO2.my2DimOptional,dcO2.my2DimOptional2);
     //endregion
+    //region deepClone map types
+
+
+    //endregion
+    //TODO actually implement the tests
     //region deepClone association types
     ClassWithAssociation dc15 = new ClassWithAssociation();
     dc15.owns = new HashSet<>();

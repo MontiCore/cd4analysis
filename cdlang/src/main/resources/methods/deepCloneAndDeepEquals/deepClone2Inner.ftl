@@ -54,6 +54,33 @@ if(${thisObjectName} == null) {
 }
 <#-- Map types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCMapType(mCType))>
+if(${thisObjectName} == null) {
+  ${resultObjectName} = null;
+} else {
+  <#assign keyType = mCType.getKey().getMCTypeOpt().get()>
+  <#assign valueType = mCType.getValue().getMCTypeOpt().get()>
+  <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
+  if(map.get(${thisObjectName}) == null) {
+    ${resultObjectName} = new HashMap<>();
+    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+    java.util.Iterator<${keyType.printType()}> ${iteratorName} = ${thisObjectName}.keySet().iterator();
+    while(${iteratorName}.hasNext()) {
+      <#assign thisKeyName = "thisKey" + mCType.hashCode()?replace(".","")?replace(",","")>
+      <#assign thisValueName = "thisValue" + mCType.hashCode()?replace(".","")?replace(",","")>
+      <#assign clonedKeyName = "clonedKey" + mCType.hashCode()?replace(".","")?replace(",","")>
+      <#assign clonedValueName = "clonedValue" + mCType.hashCode()?replace(".","")?replace(",","")>
+      ${keyType.printType()} ${thisKeyName} = ${iteratorName}.next();
+      ${valueType.printType()} ${thisValueName} = ${thisObjectName}.get(${thisKeyName});
+      ${keyType.printType()} ${clonedKeyName};
+      ${valueType.printType()} ${clonedValueName};
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", keyType, PojoClazzesAsStringList, thisKeyName, clonedKeyName)}
+      ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", valueType, PojoClazzesAsStringList, thisValueName, clonedValueName)}
+      ${resultObjectName}.put(${clonedKeyName},${clonedValueName});
+    }
+  }else{
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+  }
+}
 <#-- Optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
 if(${thisObjectName} == null) {
