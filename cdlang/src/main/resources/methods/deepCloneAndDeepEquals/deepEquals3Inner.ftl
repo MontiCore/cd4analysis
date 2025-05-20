@@ -100,45 +100,45 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
   if((${firstObjectName} == null || ${secondObjectName} == null)||(${firstObjectName}.size() != ${secondObjectName}.size())){
     ${resultBooleanName} = false;
   }else{
-<#assign keyType = mCType.getKey().getMCTypeOpt().get()>
-<#assign valueType = mCType.getValue().getMCTypeOpt().get()>
-<#assign firstKeySetName = "firstKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
-<#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
-<#assign firstKeySetIteratorName = "firstKeySetIterator" + mCType.hashCode()?replace(".","")?replace(",","")>
-Set<${keyType.printType()}> ${firstKeySetName} = ${firstObjectName}.keySet();
-Set<${keyType.printType()}> ${secondKeySetName} = ${secondObjectName}.keySet();
-Iterator<${keyType.printType()}> ${firstKeySetIteratorName} = ${firstKeySetName}.iterator();
-while(${firstKeySetIteratorName}.hasNext()){
-  <#assign firstKeyObjectName = "firstKeyObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign firstValueObjectName = "firstValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
-  ${keyType.printType()} ${firstKeyObjectName} = ${firstKeySetIteratorName}.next();
-  ${valueType.printType()} ${firstValueObjectName} = ${firstObjectName}.get(${firstKeyObjectName});
-  <#assign secondKeySetIteratorName = "secondKeySetIteratorName" + mCType.hashCode()?replace(".","")?replace(",","")>
-  <#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
-  Iterator<${keyType.printType()}> ${secondKeySetIteratorName} = ${secondKeySetName}.iterator();
-  <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
-  boolean ${matchFoundName} = false;
-  while(${secondKeySetIteratorName}.hasNext()){
-    <#assign secondKeyObjectName = "secondKeyObject" + mCType.hashCode()?replace(".","")?replace(",","")>
-    <#assign secondValueObjectName = "secondValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
-    ${keyType.printType()} ${secondKeyObjectName} = ${secondKeySetIteratorName}.next();
-    ${valueType.printType()} ${secondValueObjectName} = ${secondObjectName}.get(${secondKeyObjectName});
-    <#assign keyIsEqual = "keyIsEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
-    <#assign valueIsEqual = "valueIsEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
-    boolean ${keyIsEqual} = true;
-    boolean ${valueIsEqual} = true;
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", keyType, PojoClazzesAsStringList, firstKeyObjectName, secondKeyObjectName, keyIsEqual)};
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", valueType, PojoClazzesAsStringList, firstValueObjectName, secondValueObjectName, valueIsEqual)};
-    if(${keyIsEqual} && ${valueIsEqual}){
-      ${matchFoundName} = true;
-      break;
+    <#assign keyType = mCType.getKey().getMCTypeOpt().get()>
+    <#assign valueType = mCType.getValue().getMCTypeOpt().get()>
+    <#assign firstKeySetName = "firstKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign firstKeySetIteratorName = "firstKeySetIterator" + mCType.hashCode()?replace(".","")?replace(",","")>
+    Set<${keyType.printType()}> ${firstKeySetName} = ${firstObjectName}.keySet();
+    Set<${keyType.printType()}> ${secondKeySetName} = ${secondObjectName}.keySet();
+    Iterator<${keyType.printType()}> ${firstKeySetIteratorName} = ${firstKeySetName}.iterator();
+    while(${firstKeySetIteratorName}.hasNext()){
+      <#assign firstKeyObjectName = "firstKeyObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
+      <#assign firstValueObjectName = "firstValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
+      ${keyType.printType()} ${firstKeyObjectName} = ${firstKeySetIteratorName}.next();
+      ${valueType.printType()} ${firstValueObjectName} = ${firstObjectName}.get(${firstKeyObjectName});
+      <#assign secondKeySetIteratorName = "secondKeySetIteratorName" + mCType.hashCode()?replace(".","")?replace(",","")>
+      <#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
+      Iterator<${keyType.printType()}> ${secondKeySetIteratorName} = ${secondKeySetName}.iterator();
+      <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
+      boolean ${matchFoundName} = false;
+      while(${secondKeySetIteratorName}.hasNext()){
+        <#assign secondKeyObjectName = "secondKeyObject" + mCType.hashCode()?replace(".","")?replace(",","")>
+        <#assign secondValueObjectName = "secondValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
+        ${keyType.printType()} ${secondKeyObjectName} = ${secondKeySetIteratorName}.next();
+        ${valueType.printType()} ${secondValueObjectName} = ${secondObjectName}.get(${secondKeyObjectName});
+        <#assign keyIsEqual = "keyIsEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
+        <#assign valueIsEqual = "valueIsEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
+        boolean ${keyIsEqual} = true;
+        boolean ${valueIsEqual} = true;
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", keyType, PojoClazzesAsStringList, firstKeyObjectName, secondKeyObjectName, keyIsEqual)};
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", valueType, PojoClazzesAsStringList, firstValueObjectName, secondValueObjectName, valueIsEqual)};
+        if(${keyIsEqual} && ${valueIsEqual}){
+          ${matchFoundName} = true;
+          break;
+        }
+      }
+      if(!${matchFoundName}){
+        return false;
+      }
     }
   }
-  if(!${matchFoundName}){
-    return false;
-  }
-}
-}
 }
 <#-- optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
