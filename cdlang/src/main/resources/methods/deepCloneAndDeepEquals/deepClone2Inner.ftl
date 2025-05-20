@@ -59,8 +59,7 @@ if(${thisObjectName} == null) {
 if(${thisObjectName} == null) {
   ${resultObjectName} = null;
 } else {
-  <#assign optionalResultName = "optionalResult" + mCType.hashCode()?replace(".","")?replace(",","")>
-  ${mCType.printType()} ${optionalResultName} = Optional.empty();
+  ${resultObjectName} = Optional.empty();
   if(map.get(${thisObjectName}) == null) {
     if(${thisObjectName}.isPresent()) {
       <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
@@ -68,18 +67,20 @@ if(${thisObjectName} == null) {
       ${innerType.printType()} ${newInnerType} = ${thisObjectName}.get();
       ${innerType.printType()} ${newResultObjectName};
       if(map.get(${newInnerType}) == null) {
-        map.put(${thisObjectName}, new Object[] {${optionalResultName}, true});
+        map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
         ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultObjectName)}
         <#-- this is needed because the optional.empty() reference is changed when filling the optional with a value->>
         <#-- Because we can not have circular references in Optionals it is ok in this case to add the optional to the list after it has been resolved -->
+        ${resultObjectName} = Optional.of(${newResultObjectName});
         map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
       }else{
         ${newResultObjectName} = (${innerType.printType()}) map.get(${newInnerType})[0];
+        ${resultObjectName} = Optional.of(${newResultObjectName});
+        map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
       }
-      ${resultObjectName} = Optional.of(${newResultObjectName});
     } else {
       ${resultObjectName} = Optional.empty();
-      map.put(${thisObjectName}, new Object[] {${optionalResultName}, true});
+      map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
     }
   }else{
     ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
