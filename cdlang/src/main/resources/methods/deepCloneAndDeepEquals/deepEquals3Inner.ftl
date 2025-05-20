@@ -94,21 +94,28 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
 }
 <#-- Map types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCMapType(mCType))>
+if(${firstObjectName} == null && ${secondObjectName} == null){
+  ${resultBooleanName} = true;
+}else{
+  if((${firstObjectName} == null || ${secondObjectName} == null)||(${firstObjectName}.size() != ${secondObjectName}.size())){
+    ${resultBooleanName} = false;
+  }else{
 <#assign keyType = mCType.getKey().getMCTypeOpt().get()>
 <#assign valueType = mCType.getValue().getMCTypeOpt().get()>
 <#assign firstKeySetName = "firstKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
-<#assign firstKeySetIteratorName = "firstKeyIterator" + mCType.hashCode()?replace(".","")?replace(",","")>
+<#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
+<#assign firstKeySetIteratorName = "firstKeySetIterator" + mCType.hashCode()?replace(".","")?replace(",","")>
 Set<${keyType.printType()}> ${firstKeySetName} = ${firstObjectName}.keySet();
 Set<${keyType.printType()}> ${secondKeySetName} = ${secondObjectName}.keySet();
-Iterator<${keyType.printType()}> ${firstKeySetIteratorName} = ${firstObjectName}Keys.iterator();
+Iterator<${keyType.printType()}> ${firstKeySetIteratorName} = ${firstKeySetName}.iterator();
 while(${firstKeySetIteratorName}.hasNext()){
   <#assign firstKeyObjectName = "firstKeyObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
   <#assign firstValueObjectName = "firstValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
   ${keyType.printType()} ${firstKeyObjectName} = ${firstKeySetIteratorName}.next();
   ${valueType.printType()} ${firstValueObjectName} = ${firstObjectName}.get(${firstKeyObjectName});
-  <#assign secondKeyIteratorName = "secondKeyIteratorName" + mCType.hashCode()?replace(".","")?replace(",","")>
+  <#assign secondKeySetIteratorName = "secondKeySetIteratorName" + mCType.hashCode()?replace(".","")?replace(",","")>
   <#assign secondKeySetName = "secondKeySet" + mCType.hashCode()?replace(".","")?replace(",","")>
-  Iterator<${keyType.printType()}> ${secondKeySetIteratorName} = ${secondObjectName}.keySet().iterator();
+  Iterator<${keyType.printType()}> ${secondKeySetIteratorName} = ${secondKeySetName}.iterator();
   <#assign matchFoundName = "matchFound" + mCType.hashCode()?replace(".","")?replace(",","")>
   boolean ${matchFoundName} = false;
   while(${secondKeySetIteratorName}.hasNext()){
@@ -116,11 +123,22 @@ while(${firstKeySetIteratorName}.hasNext()){
     <#assign secondValueObjectName = "secondValueObjectName" + mCType.hashCode()?replace(".","")?replace(",","")>
     ${keyType.printType()} ${secondKeyObjectName} = ${secondKeySetIteratorName}.next();
     ${valueType.printType()} ${secondValueObjectName} = ${secondObjectName}.get(${secondKeyObjectName});
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", valueType, PojoClazzesAsStringList, value1Name, value2Name, matchFoundName)};
+    <#assign keyIsEqual = "keyIsEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
+    <#assign valueIsEqual = "valueIsEqual" + mCType.hashCode()?replace(".","")?replace(",","")>
+    boolean ${keyIsEqual} = true;
+    boolean ${valueIsEqual} = true;
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", keyType, PojoClazzesAsStringList, firstKeyObjectName, secondKeyObjectName, keyIsEqual)};
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", valueType, PojoClazzesAsStringList, firstValueObjectName, secondValueObjectName, valueIsEqual)};
+    if(${keyIsEqual} && ${valueIsEqual}){
+      ${matchFoundName} = true;
+      break;
+    }
   }
-  if(!${matchFoundName}{
+  if(!${matchFoundName}){
     return false;
   }
+}
+}
 }
 <#-- optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>

@@ -94,11 +94,15 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " public String myString;\n" +
           " public String myString2;\n" +
           "}\n" +
+          "public class ClassWithMap { \n" +
+          " public Map<String, B> myMap;\n" +
+          " public Map<String, B> myMap2;\n" +
+          "}\n" +
           "public class B { \n" +
           "}\n" +
-          "association [1] AllTogether (owner) <-> (owns) B [*]public; "+
-          "association [1] ClassWithAssociation (owner) <-> (owns) B [*]public; "+
-          "association [1] ClassWithAssociation (owner2) <-> (owns2) B [*]public; "+
+          "association [1] AllTogether (owner) -> (owns) B [*]public; "+
+          "association [1] ClassWithAssociation (owner) -> (owns) B [*]public; "+
+          "association [1] ClassWithAssociation (owner2) -> (owns2) B [*]public; "+
           "}");
 
     Assertions.assertTrue(opt.isPresent());
