@@ -31,7 +31,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation>{
         + computeSideScore(srcElem.getRight(),tgtElem.getLeft()));
 
     if (srcElem.isPresentName() && tgtElem.isPresentName() && srcElem.getName().equals(tgtElem.getName())){
-      score++;
+      score+=2;
     }
 
     //System.out.println("[ASSOC MATCH]: " + CD4CodeMill.prettyPrint(srcElem,false) + " [WITH] " +  CD4CodeMill.prettyPrint(srcElem,true) + " : " +score);
@@ -97,7 +97,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation>{
     if (srcSide.isPresentCDRole()
       && tgtSide.isPresentCDRole()
       && srcSide.getName().equals(tgtSide.getName())) {
-      score += 0.5;
+      score += 1;
     }
 
     return score;
