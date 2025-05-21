@@ -1,13 +1,11 @@
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.*;
 import java.util.*;
-import java.util.stream.Collectors;
 import org.antlr.v4.runtime.misc.MultiMap;
 import org.antlr.v4.runtime.misc.Triple;
 
@@ -25,8 +23,8 @@ public class CDSynDiffMatches {
     ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean matchStructure) {
 
     // Compute types of srcCD and tgtCD without using the traverser
-    Set<ASTCDType> srcTypes = getAllTypesFromCD(srcCD);
-    Set<ASTCDType> tgtTypes = getAllTypesFromCD(tgtCD);
+    Set<ASTCDType> srcTypes = CDDiffUtil.getAllTypesFromCD(srcCD);
+    Set<ASTCDType> tgtTypes = CDDiffUtil.getAllTypesFromCD(tgtCD);
 
     // compute a matching of types by name
     MatchingStrategy<ASTCDType> typeMatcher = new MatchCDTypesByQName2Set(tgtTypes);
@@ -39,12 +37,12 @@ public class CDSynDiffMatches {
      * subtype should be detected.
      * todo: Rethink this approach!
      */
-    typeMatcher = new MatchSuperTypes2Set(new CachedMatches<>(typeMatchesByName), tgtTypes);
+    typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(typeMatchesByName), srcCD,tgtCD);
     MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
 
     // Compute associations of srcCD and tgtCD without using the traverser
-    Set<ASTCDAssociation> srcAssocs = getAllAssocsFromCD(srcCD);
-    Set<ASTCDAssociation> tgtAssocs = getAllAssocsFromCD(tgtCD);
+    Set<ASTCDAssociation> srcAssocs = CDDiffUtil.getAllAssocsFromCD(srcCD);
+    Set<ASTCDAssociation> tgtAssocs = CDDiffUtil.getAllAssocsFromCD(tgtCD);
 
     /*
      * Types are matched according to structural similarities.
@@ -69,7 +67,7 @@ public class CDSynDiffMatches {
       //this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() + " ==> " + tgt.getName()));
 
       // We add the structural matching to the type-matching for associations
-      typeMatcher = new MatchSuperTypes2Set(new CachedMatches<>(this.typeMatches), tgtTypes);
+      typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(this.typeMatches), srcCD,tgtCD);
       typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
 
     } else {
@@ -182,62 +180,6 @@ public class CDSynDiffMatches {
       matching.put(srcType, matcher.getMatchedElements(srcType));
     }
     return matching;
-  }
-
-  protected Set<ASTCDType> getAllTypesFromCD(ASTCDCompilationUnit cd) {
-    Set<ASTCDType> types =
-      cd.getCDDefinition().getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDType)
-        .map(e -> (ASTCDType) e)
-        .collect(Collectors.toSet());
-    types.addAll(
-      cd.getCDDefinition().getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDPackage)
-        .flatMap(p -> getAllTypesFromPackage((ASTCDPackage) p).stream())
-        .collect(Collectors.toSet()));
-    return types;
-  }
-
-  protected Set<ASTCDType> getAllTypesFromPackage(ASTCDPackage astcdPackage) {
-    Set<ASTCDType> types =
-      astcdPackage.getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDType)
-        .map(e -> (ASTCDType) e)
-        .collect(Collectors.toSet());
-    types.addAll(
-      astcdPackage.getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDPackage)
-        .flatMap(p -> getAllTypesFromPackage((ASTCDPackage) p).stream())
-        .collect(Collectors.toSet()));
-    return types;
-  }
-
-  protected Set<ASTCDAssociation> getAllAssocsFromCD(ASTCDCompilationUnit cd) {
-    Set<ASTCDAssociation> assocs =
-      cd.getCDDefinition().getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDAssociation)
-        .map(e -> (ASTCDAssociation) e)
-        .collect(Collectors.toSet());
-    assocs.addAll(
-      cd.getCDDefinition().getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDPackage)
-        .flatMap(p -> getAllAssocsFromPackages((ASTCDPackage) p).stream())
-        .collect(Collectors.toSet()));
-    return assocs;
-  }
-
-  protected Set<ASTCDAssociation> getAllAssocsFromPackages(ASTCDPackage astcdPackage) {
-    Set<ASTCDAssociation> assocs =
-      astcdPackage.getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDAssociation)
-        .map(e -> (ASTCDAssociation) e)
-        .collect(Collectors.toSet());
-    assocs.addAll(
-      astcdPackage.getCDElementList().stream()
-        .filter(e -> e instanceof ASTCDPackage)
-        .flatMap(p -> getAllAssocsFromPackages((ASTCDPackage) p).stream())
-        .collect(Collectors.toSet()));
-    return assocs;
   }
 
   public Map<ASTCDType, ASTCDType> getTypeMatches() {

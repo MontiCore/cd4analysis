@@ -1,18 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
-import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
+import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
@@ -280,18 +279,25 @@ public class CDDiffUtil {
     return superTypes;
   }
 
+  /**
+   * This version of the method uses CDInheritanceHelper.getAllSuper which
+   * utilizes a custom resolve-method.
+   * This is necessary, since the SymbolTableCompleter does not always properly
+   * resolve super-types when comparing two CDs that define types with the same
+   * internal qualified name.
+   */
   public static Set<ASTCDType> getAllSuperTypes(ASTCDType type) {
-    LinkedHashSet<ASTCDType> superTypes = new LinkedHashSet<>();
-    superTypes.add(type);
-    if (type instanceof ASTCDClass) {
-      if (type.getSymbol().isPresentSuperClass()) {
-        for(SymTypeExpression s : type.getSymbol().getSuperClassesOnly()){
-          superTypes.addAll(getAllSuperTypes((ASTCDType) s.getTypeInfo().getAstNode()));
-        }
+    ICDBasisScope scope = type.getEnclosingScope();
+    while (scope != null && !(scope instanceof ICD4CodeArtifactScope)) {
+      if (scope instanceof ICDBasisGlobalScope) {
+        return new HashSet<>();
       }
+      scope = scope.getEnclosingScope();
     }
-    superTypes.addAll(CDSymbolTables.getTransitiveSuperInterfaces(type));
-    return superTypes;
+    if (scope != null){
+      return CDInheritanceHelper.getAllSuper(type,(ICD4CodeArtifactScope) scope);
+    }
+    return new HashSet<>();
   }
 
 
@@ -365,5 +371,73 @@ public class CDDiffUtil {
   public static String printOD(ASTODArtifact astodArtifact) {
     // pretty print the AST
     return OD4ReportMill.prettyPrint(astodArtifact, true);
+  }
+
+  /**
+   * Efficient retrieval of all types from a CD without the use of a traverser.
+   */
+  public static Set<ASTCDType> getAllTypesFromCD(ASTCDCompilationUnit cd) {
+    Set<ASTCDType> types =
+        cd.getCDDefinition().getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDType)
+            .map(e -> (ASTCDType) e)
+            .collect(Collectors.toSet());
+    types.addAll(
+        cd.getCDDefinition().getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDPackage)
+            .flatMap(p -> getAllTypesFromPackage((ASTCDPackage) p).stream())
+            .collect(Collectors.toSet()));
+    return types;
+  }
+
+  /**
+   * Efficient retrieval of all types from a package without the use of a traverser.
+   */
+  public static Set<ASTCDType> getAllTypesFromPackage(ASTCDPackage astcdPackage) {
+    Set<ASTCDType> types =
+        astcdPackage.getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDType)
+            .map(e -> (ASTCDType) e)
+            .collect(Collectors.toSet());
+    types.addAll(
+        astcdPackage.getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDPackage)
+            .flatMap(p -> getAllTypesFromPackage((ASTCDPackage) p).stream())
+            .collect(Collectors.toSet()));
+    return types;
+  }
+
+  /**
+   * Efficient retrieval of all associations from a CD without the use of a traverser.
+   */
+  public static Set<ASTCDAssociation> getAllAssocsFromCD(ASTCDCompilationUnit cd) {
+    Set<ASTCDAssociation> assocs =
+        cd.getCDDefinition().getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDAssociation)
+            .map(e -> (ASTCDAssociation) e)
+            .collect(Collectors.toSet());
+    assocs.addAll(
+        cd.getCDDefinition().getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDPackage)
+            .flatMap(p -> getAllAssocsFromPackages((ASTCDPackage) p).stream())
+            .collect(Collectors.toSet()));
+    return assocs;
+  }
+
+  /**
+   * Efficient retrieval of all associations from a package without the use of a traverser.
+   */
+  public static Set<ASTCDAssociation> getAllAssocsFromPackages(ASTCDPackage astcdPackage) {
+    Set<ASTCDAssociation> assocs =
+        astcdPackage.getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDAssociation)
+            .map(e -> (ASTCDAssociation) e)
+            .collect(Collectors.toSet());
+    assocs.addAll(
+        astcdPackage.getCDElementList().stream()
+            .filter(e -> e instanceof ASTCDPackage)
+            .flatMap(p -> getAllAssocsFromPackages((ASTCDPackage) p).stream())
+            .collect(Collectors.toSet()));
+    return assocs;
   }
 }
