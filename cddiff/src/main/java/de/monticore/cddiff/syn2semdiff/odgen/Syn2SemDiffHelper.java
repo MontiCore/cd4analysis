@@ -48,7 +48,6 @@ public class Syn2SemDiffHelper {
 
   private CDSynDiffMatches matches;
 
-  private final ODBuilder ODBuilder = new ODBuilder();
   /**
    * Map with all possible associations (as AssocStructs) for classes from srcCD where the given
    * class serves as source. The non-instantiatable classes and associations are removed after the
@@ -573,22 +572,31 @@ public class Syn2SemDiffHelper {
    * @return merged direction in ASTCDAssocDir
    */
   public static ASTCDAssocDir mergeAssocDir(AssocStruct association, AssocStruct superAssociation) {
-    if (association.getDirection().equals(AssocDirection.BiDirectional)
-        || superAssociation.getDirection().equals(AssocDirection.BiDirectional)) {
+    AssocDirection dir1 = association.getDirection();
+    AssocDirection dir2 = superAssociation.getDirection();
+
+    if (dir1.equals(AssocDirection.BiDirectional) || dir2.equals(AssocDirection.BiDirectional)) {
       return CD4CodeMill.cDBiDirBuilder().build();
-    } else if (association.getDirection().equals(AssocDirection.LeftToRight)) {
-      if (superAssociation.getDirection().equals(AssocDirection.LeftToRight)) {
-        return CD4CodeMill.cDLeftToRightDirBuilder().build();
-      } else {
-        return CD4CodeMill.cDBiDirBuilder().build();
-      }
-    } else {
-      if (superAssociation.getDirection().equals(AssocDirection.RightToLeft)) {
-        return CD4CodeMill.cDRightToLeftDirBuilder().build();
-      } else {
-        return CD4CodeMill.cDBiDirBuilder().build();
+    }
+
+    ClassSide side1 = association.getSide();
+    ClassSide side2 = superAssociation.getSide();
+
+    boolean sameLogicalDirection =
+      (dir1 == dir2 && side1 == side2) ||
+        (dir1 == AssocDirection.LeftToRight && dir2 == AssocDirection.RightToLeft && side1 == ClassSide.Left && side2 == ClassSide.Right) ||
+        (dir1 == AssocDirection.RightToLeft && dir2 == AssocDirection.LeftToRight && side1 == ClassSide.Right && side2 == ClassSide.Left);
+
+    if (sameLogicalDirection) {
+      switch (dir1) {
+        case LeftToRight:
+          return CD4CodeMill.cDLeftToRightDirBuilder().build();
+        case RightToLeft:
+          return CD4CodeMill.cDRightToLeftDirBuilder().build();
       }
     }
+
+    return CD4CodeMill.cDBiDirBuilder().build();
   }
 
   /**
@@ -2297,6 +2305,12 @@ public class Syn2SemDiffHelper {
       List<AssocStruct> assocStructs, ASTCDType tgtType) {
     List<Pair<ASTCDClass, AssocStruct>> list = new ArrayList<>();
     for (AssocStruct assocStruct : assocStructs) {
+      Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(assocStruct.getAssociation(), srcCD);
+      if ((assocStruct.getSide().equals(ClassSide.Right) && pair.a.getModifier().isAbstract())
+          || (assocStruct.getSide().equals(ClassSide.Left)
+              && pair.b.getModifier().isAbstract())) {
+        continue; // One of the classes is abstract so nothing to be done with this association
+      }
       boolean foundMatch = false;
       for (AssocStruct assocStructTgt : tgtMap.get(tgtType)) {
         if (sameAssociationTypeSrcTgt(assocStruct, assocStructTgt)) { // the given pair is a match
@@ -2322,6 +2336,7 @@ public class Syn2SemDiffHelper {
           break;
         }
       }
+      // this might not be needed as we already iterate the srcMap
       if (!foundMatch) { // if a match for the assocStruct from src is not found in tgt - create a
         // diff-witness
         ASTCDClass classToUse = null;
