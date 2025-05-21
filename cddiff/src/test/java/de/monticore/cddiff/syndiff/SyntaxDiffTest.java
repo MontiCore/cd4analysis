@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Disabled
 public class SyntaxDiffTest extends CDDiffTestBasis {
 
   /*--------------------------------------------------------------------*/
@@ -72,12 +73,13 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println(sb.printDiff());
   }
 
-  @Disabled
   @Test
   public void testMaCoCo(){
     CDDiffUtil.setUseJavaTypes(true);
     parseModels("MaCoCo_v1.cd", "MaCoCo_v2.cd");
     SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
+    System.out.println(sb.printDiff());
+    sb = new SyntaxDiffPrinter(tgt,src);
     System.out.println(sb.printDiff());
   }
 

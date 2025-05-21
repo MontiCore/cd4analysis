@@ -2,7 +2,7 @@
 
 import java.lang.String;
 
-classdiagram Management {
+classdiagram ManagementV2 {
   abstract class Employee {
     String name;
   }
