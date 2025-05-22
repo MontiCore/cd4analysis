@@ -1,6 +1,5 @@
 package de.monticore.cdmatcher;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -22,20 +21,15 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation>{
   public Double computeWeight(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     double score = 0.0;
 
-    //fixme: assoc matches are bad
-
     score += Double.max(
       computeSideScore(srcElem.getLeft(),tgtElem.getLeft())
-        + computeSideScore(srcElem.getRight(),tgtElem.getRight())+0.1,
+        + computeSideScore(srcElem.getRight(),tgtElem.getRight())+0.05,
       computeSideScore(srcElem.getLeft(),tgtElem.getRight())
         + computeSideScore(srcElem.getRight(),tgtElem.getLeft()));
 
     if (srcElem.isPresentName() && tgtElem.isPresentName() && srcElem.getName().equals(tgtElem.getName())){
-      score+=2;
+      score+=1.5;
     }
-
-    //System.out.println("[ASSOC MATCH]: " + CD4CodeMill.prettyPrint(srcElem,false) + " [WITH] " +  CD4CodeMill.prettyPrint(srcElem,true) + " : " +score);
-
 
     return score;
   }
@@ -58,13 +52,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation>{
         .findFirst();
 
       if (entry.isPresent()) {
-        score += entry.get().c;
-        /*
-        System.out.println("[HERE1]: " + entry.get().a.getName()
-          + " ==> " + entry.get().b.getName()
-          + " : " + entry.get().c
-        );
-         */
+        score += Double.min(entry.get().c,0.9);
       }
 
     } else {
@@ -76,21 +64,13 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation>{
             && t.b.getSymbol().getInternalQualifiedName().contains(
               tgtSide.getMCQualifiedType().getMCQualifiedName().getQName()
           ))
-        .findFirst();
+        .max(Comparator.comparingDouble(e->e.c));
 
       if (entry.isPresent()) {
-        score += entry.get().c;
-        /*
-        System.out.println("[HERE2]: " + entry.get().a.getName()
-        + " ==> " + entry.get().b.getName()
-          + " : " + entry.get().c
-        );
-
-         */
+        score += Double.min(entry.get().c,0.8);
       } else if (srcSide.getMCQualifiedType().getMCQualifiedName().getQName().equals(
         tgtSide.getMCQualifiedType().getMCQualifiedName().getQName())) {
-        assert false;
-        score++;
+        score+=0.7;
       }
     }
 
