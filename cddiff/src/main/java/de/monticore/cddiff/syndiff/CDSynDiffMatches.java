@@ -10,9 +10,9 @@ import org.antlr.v4.runtime.misc.MultiMap;
 import org.antlr.v4.runtime.misc.Triple;
 
 /**
- * This class should be used to construct a matching of respectively types and
- * associations between the srcCD and the tgtCD for the SynDiff and Syn2SemDiff.
- * Recomputing of matches should be avoided.
+ * This class should be used to construct a matching of respectively types and associations between
+ * the srcCD and the tgtCD for the SynDiff and Syn2SemDiff. Recomputing of matches should be
+ * avoided.
  */
 public class CDSynDiffMatches {
   protected Map<ASTCDType, ASTCDType> typeMatches;
@@ -20,7 +20,7 @@ public class CDSynDiffMatches {
   protected Map<ASTCDAssociation, ASTCDAssociation> assocMatches;
 
   public CDSynDiffMatches(
-    ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean matchStructure) {
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean matchStructure) {
 
     // Compute types of srcCD and tgtCD without using the traverser
     Set<ASTCDType> srcTypes = CDDiffUtil.getAllTypesFromCD(srcCD);
@@ -37,7 +37,7 @@ public class CDSynDiffMatches {
      * subtype should be detected.
      * todo: Rethink this approach!
      */
-    typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(typeMatchesByName), srcCD,tgtCD);
+    typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(typeMatchesByName), srcCD, tgtCD);
     MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
 
     // Compute associations of srcCD and tgtCD without using the traverser
@@ -61,60 +61,62 @@ public class CDSynDiffMatches {
 
       // We compute a best-match to reduce the multimap to a map.
       Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet =
-        computeValueSet(typeMatches, new CDTypeSimilarity());
+          computeValueSet(typeMatches, new CDTypeSimilarity());
       this.typeMatches = computeBestMatching(typeMatches, typeSimilaritySet);
 
-      //this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() + " ==> " + tgt.getName()));
+      // this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() +
+      // " ==> " + tgt.getName()));
 
       // We add the structural matching to the type-matching for associations
-      typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(this.typeMatches), srcCD,tgtCD);
+      typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(this.typeMatches), srcCD, tgtCD);
       typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
 
     } else {
       typeMatches = typeMatchesByName;
     }
 
-    //fixme: assoc matching has to be reworked entirely
+    // fixme: assoc matching has to be reworked entirely
 
     this.typeMatches4Assocs = typeMatches4Assocs;
 
     MatchingStrategy<ASTCDAssociation> assocMatcher =
-      new MatchAssocsByRole2Set(
-        new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
+        new MatchAssocsByRole2Set(
+            new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
     MultiMap<ASTCDAssociation, ASTCDAssociation> assocMatches =
-      computeMultiMatching(srcAssocs, assocMatcher);
+        computeMultiMatching(srcAssocs, assocMatcher);
 
     // add greedy assoc matches if structure matching is active
     if (matchStructure) {
-      assocMatcher = new MatchCDAssocsGreedy2Set(
-        new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
+      assocMatcher =
+          new MatchCDAssocsGreedy2Set(
+              new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
       MultiMap<ASTCDAssociation, ASTCDAssociation> greedyAssocMatches =
-        computeMultiMatching(srcAssocs, assocMatcher);
+          computeMultiMatching(srcAssocs, assocMatcher);
 
       for (ASTCDAssociation srcAssoc : srcAssocs) {
         assocMatches.get(srcAssoc).addAll(greedyAssocMatches.get(srcAssoc));
       }
-
     }
 
     // Compute best-match for associations using the similarity metric for types.
     Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet =
-      computeValueSet(typeMatches4Assocs, new CDTypeSimilarity());
+        computeValueSet(typeMatches4Assocs, new CDTypeSimilarity());
     Set<Triple<ASTCDAssociation, ASTCDAssociation, Double>> assocSimilaritySet =
-      computeValueSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
+        computeValueSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
     this.assocMatches = computeBestMatching(assocMatches, assocSimilaritySet);
 
-    //this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ CD4CodeMill.prettyPrint(src,false) + " ==> " + CD4CodeMill.prettyPrint(tgt,false)));
+    // this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+
+    // CD4CodeMill.prettyPrint(src,false) + " ==> " + CD4CodeMill.prettyPrint(tgt,false)));
 
   }
 
   /**
-   * Helper-function that computes a best-matching given a multi-matching
-   * and a set of element-element-score triples.
+   * Helper-function that computes a best-matching given a multi-matching and a set of
+   * element-element-score triples.
    */
   protected <T> Map<T, T> computeBestMatching(
-    MultiMap<T, T> matches, Set<Triple<T,T,Double>> valueSet) {
-    List<Triple<T,T,Double>> remainingMatches = new ArrayList<>(valueSet);
+      MultiMap<T, T> matches, Set<Triple<T, T, Double>> valueSet) {
+    List<Triple<T, T, Double>> remainingMatches = new ArrayList<>(valueSet);
     Map<T, T> bestMatches = new LinkedHashMap<>();
 
     /*
@@ -128,8 +130,8 @@ public class CDSynDiffMatches {
         if (remainingMatches.contains(match)) {
           double score = match.c;
           if (score > bestScore
-            || (score == bestScore
-            && matches.get(match.a).size() < matches.get(bestMatch.a).size())) {
+              || (score == bestScore
+                  && matches.get(match.a).size() < matches.get(bestMatch.a).size())) {
             bestMatch = match;
             bestScore = score;
           }
@@ -137,8 +139,9 @@ public class CDSynDiffMatches {
       }
       bestMatches.put(bestMatch.a, bestMatch.b);
       remainingMatches.remove(bestMatch);
-      for (Triple<T, T, Double> match : valueSet){
-        if (remainingMatches.contains(match) && (match.a.equals(bestMatch.a) || match.b.equals(bestMatch.b))) {
+      for (Triple<T, T, Double> match : valueSet) {
+        if (remainingMatches.contains(match)
+            && (match.a.equals(bestMatch.a) || match.b.equals(bestMatch.b))) {
           remainingMatches.remove(match);
         }
       }
@@ -148,16 +151,16 @@ public class CDSynDiffMatches {
   }
 
   /**
-   * Helper-function that computes the score for each matching pair of elements
-   * in a multi-matching and outputs the set of element-element-score triples.
+   * Helper-function that computes the score for each matching pair of elements in a multi-matching
+   * and outputs the set of element-element-score triples.
    */
-  protected <T> Set<Triple<T,T,Double>> computeValueSet(
-    MultiMap<T, T> matches, CDSimilarity<T> similarity) {
-    Set<Triple<T,T,Double>> valueSet = new LinkedHashSet<>();
+  protected <T> Set<Triple<T, T, Double>> computeValueSet(
+      MultiMap<T, T> matches, CDSimilarity<T> similarity) {
+    Set<Triple<T, T, Double>> valueSet = new LinkedHashSet<>();
 
     for (T srcElem : matches.keySet()) {
       for (T tgtElem : matches.get(srcElem)) {
-        valueSet.add(new Triple<>(srcElem,tgtElem,similarity.computeWeight(srcElem,tgtElem)));
+        valueSet.add(new Triple<>(srcElem, tgtElem, similarity.computeWeight(srcElem, tgtElem)));
       }
     }
     return valueSet;

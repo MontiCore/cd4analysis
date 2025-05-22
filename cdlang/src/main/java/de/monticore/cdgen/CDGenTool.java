@@ -2,13 +2,11 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
-import de.monticore.cd._visitor.CDElementVisitor;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -18,8 +16,6 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDElement;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -30,7 +26,6 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.MCTypeFacade;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.Names;
@@ -41,13 +36,12 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.cli.*;
 
 /**
  * This class is a further development of the {@link CDGeneratorTool} and meant as a replacement. It
- * provides configurable decorator functionality in addition to generation.
- * This tool is tested via the CDGenGradlePluginTest:
+ * provides configurable decorator functionality in addition to generation. This tool is tested via
+ * the CDGenGradlePluginTest:
  * cdtool/cdgradle/src/test/java/de/monticore/cdgen/CDGenGradlePluginTest.java
  */
 public class CDGenTool extends CDGeneratorTool {
@@ -229,7 +223,14 @@ public class CDGenTool extends CDGeneratorTool {
           this.mapCD4CImports(decorated.get());
 
           // The following imports (cf. Imports.ftl) have to be added
-          decorated.get().addMCImportStatement(CDBasisMill.mCImportStatementBuilder().setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util")).setStar(true).build());
+          decorated
+              .get()
+              .addMCImportStatement(
+                  CDBasisMill.mCImportStatementBuilder()
+                      .setMCQualifiedName(
+                          MCTypeFacade.getInstance().createQualifiedName("java.util"))
+                      .setStar(true)
+                      .build());
 
           if (cmd.hasOption("sd")) {
             // If required, we also output the symbol table of the *decorated* AST
@@ -256,32 +257,43 @@ public class CDGenTool extends CDGeneratorTool {
 
   /**
    * Without Class2MC, we have to load symbols used in the generated CD
+   *
    * @param c2mc whether Class2MC was loaded
    */
   public void initDecoratedGlobalScope(boolean c2mc) {
     if (!c2mc) {
-      // Without Class2MC we must add fake-symbols for field, arg and return types used during decoration
+      // Without Class2MC we must add fake-symbols for field, arg and return types used during
+      // decoration
       // Load these symbols from an exported symbol table
-      for (Class<?> c : Arrays.asList(List.class, Set.class,
-        Collection.class, Iterator.class,
-        Spliterator.class, Stream.class, Optional.class)) {
-        CDBasisMill.globalScope().add(
-          CDBasisMill.typeSymbolBuilder()
-            .setName(c.getSimpleName())
-            .setFullName(c.getName())
-            .setSpannedScope(CDBasisMill.scope())
-            .setEnclosingScope(CDBasisMill.globalScope())
-            .build());
+      for (Class<?> c :
+          Arrays.asList(
+              List.class,
+              Set.class,
+              Collection.class,
+              Iterator.class,
+              Spliterator.class,
+              Stream.class,
+              Optional.class)) {
+        CDBasisMill.globalScope()
+            .add(
+                CDBasisMill.typeSymbolBuilder()
+                    .setName(c.getSimpleName())
+                    .setFullName(c.getName())
+                    .setSpannedScope(CDBasisMill.scope())
+                    .setEnclosingScope(CDBasisMill.globalScope())
+                    .build());
       }
     }
   }
 
   /**
    * Create, complete, and export the symbol table of a decorated CD
+   *
    * @param decorated the CD
    * @param symbolOutPath the directory into which the ST is exported
    */
-  public void createAndExportDecoratedSymbolTable(ASTCDCompilationUnit decorated, String symbolOutPath) {
+  public void createAndExportDecoratedSymbolTable(
+      ASTCDCompilationUnit decorated, String symbolOutPath) {
     // Create the symbol-table (symbol table creation phase 1)
     var decoratedScope = this.createSymbolTable(decorated, true);
 
@@ -290,8 +302,10 @@ public class CDGenTool extends CDGeneratorTool {
 
     // Store the decorated symbol table
     this.storeSymbols(
-      decoratedScope,
-      Paths.get(symbolOutPath, Names.getPathFromPackage(decoratedScope.getFullName()) + ".deccdsym").toString());
+        decoratedScope,
+        Paths.get(
+                symbolOutPath, Names.getPathFromPackage(decoratedScope.getFullName()) + ".deccdsym")
+            .toString());
   }
 
   /**
@@ -352,12 +366,13 @@ public class CDGenTool extends CDGeneratorTool {
             .argName("fqn:key[=value]")
             .build());
 
-    options.addOption(org.apache.commons.cli.Option.builder("sd")
-      .longOpt("symboltabledecorated")
-      .argName("file")
-      .hasArg()
-      .desc("Serializes the decorated symbol table of the given artifact.")
-      .build());
+    options.addOption(
+        org.apache.commons.cli.Option.builder("sd")
+            .longOpt("symboltabledecorated")
+            .argName("file")
+            .hasArg()
+            .desc("Serializes the decorated symbol table of the given artifact.")
+            .build());
 
     return options;
   }
@@ -370,7 +385,6 @@ public class CDGenTool extends CDGeneratorTool {
   public void runBeforeSTCoCos(ASTCDCompilationUnit ast) {
     // Nothing yet, decide how we expose them
   }
-
 
   /**
    * checks all cocos on the original ast

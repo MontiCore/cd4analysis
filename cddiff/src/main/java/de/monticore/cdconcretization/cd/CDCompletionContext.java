@@ -20,25 +20,21 @@ import java.util.Set;
  */
 public interface CDCompletionContext {
 
-  /**
-   * @return the concrete class diagram that is currently being completed.
-   */
+  /** @return the concrete class diagram that is currently being completed. */
   ASTCDCompilationUnit getConcreteCD();
 
-  /**
-   * @return the reference class diagram that is used to complete the concrete class diagram.
-   */
+  /** @return the reference class diagram that is used to complete the concrete class diagram. */
   ASTCDCompilationUnit getReferenceCD();
 
   /**
-   * @return the name of the stereotype that is used to annotate the concrete class diagram with
-   * the name of the reference model element that they incarnate.
+   * @return the name of the stereotype that is used to annotate the concrete class diagram with the
+   *     name of the reference model element that they incarnate.
    */
   String getMappingName(); // TODO maybe even have additional config object for this
 
   /**
    * @return the name of the type that is used to mark attribute types, method return types or
-   * parameter types as unspecified.
+   *     parameter types as unspecified.
    */
   String getUnderspecifiedPlaceholderTypeName();
 
@@ -49,20 +45,20 @@ public interface CDCompletionContext {
 
   /**
    * @return the incarnation strategy that can be used to find incarnations of types in the current
-   * context.
+   *     context.
    */
   MatchingStrategy<ASTCDType> getTypeIncStrategy();
 
   /**
-   * The same type incarnation strategy as {@link #getTypeIncStrategy()} but if the
-   * {@link CDConfParameter#INHERITANCE} parameter is present, this strategy will also match
-   * concrete types if one of their subtypes is an incarnation of the reference type.
+   * The same type incarnation strategy as {@link #getTypeIncStrategy()} but if the {@link
+   * CDConfParameter#INHERITANCE} parameter is present, this strategy will also match concrete types
+   * if one of their subtypes is an incarnation of the reference type.
    */
   MatchingStrategy<ASTCDType> getTypeIncStrategyMatchingSubTypes();
 
   /**
    * @return the incarnation strategy that can be used to find incarnations of associations in the
-   * current context.
+   *     current context.
    */
   MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy();
 
@@ -77,7 +73,7 @@ public interface CDCompletionContext {
    * @param concreteType the concrete type to which the attributes belong
    * @param referenceType the reference type to which the attributes belong
    * @return the matching strategy that can be used to find incarnations in context of the given
-   * type.
+   *     type.
    */
   MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
       ASTCDType concreteType, ASTCDType referenceType);
@@ -95,7 +91,6 @@ public interface CDCompletionContext {
    *
    * @param referenceType the reference type for which incarnations are searched
    * @return all incarnations of the given reference type in this context
-   *
    * @see #getTypeIncarnations(IScope, ASTCDType)
    */
   Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType);
@@ -117,14 +112,12 @@ public interface CDCompletionContext {
    *
    * @param referenceAttribute the reference attribute for which incarnations are searched
    * @return all incarnations of the given reference type in this context
-   *
    * @see #getAttributeIncarnations(IScope, ASTCDAttribute)
    */
   Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute);
 
   /**
-   * Returns all incarnations of the given reference type in a certain scope.
-   * <br>
+   * Returns all incarnations of the given reference type in a certain scope. <br>
    * The incarnation mapping in a certain scope can be limited to a subset of the incarnations using
    * {@link ScopedIncarnationBindings#addFieldBinding(String, FieldSymbol, Set)}
    *

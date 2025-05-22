@@ -583,9 +583,15 @@ public class Syn2SemDiffHelper {
     ClassSide side2 = superAssociation.getSide();
 
     boolean sameLogicalDirection =
-      (dir1 == dir2 && side1 == side2) ||
-        (dir1 == AssocDirection.LeftToRight && dir2 == AssocDirection.RightToLeft && side1 == ClassSide.Left && side2 == ClassSide.Right) ||
-        (dir1 == AssocDirection.RightToLeft && dir2 == AssocDirection.LeftToRight && side1 == ClassSide.Right && side2 == ClassSide.Left);
+        (dir1 == dir2 && side1 == side2)
+            || (dir1 == AssocDirection.LeftToRight
+                && dir2 == AssocDirection.RightToLeft
+                && side1 == ClassSide.Left
+                && side2 == ClassSide.Right)
+            || (dir1 == AssocDirection.RightToLeft
+                && dir2 == AssocDirection.LeftToRight
+                && side1 == ClassSide.Right
+                && side2 == ClassSide.Left);
 
     if (sameLogicalDirection) {
       switch (dir1) {
@@ -1201,58 +1207,58 @@ public class Syn2SemDiffHelper {
 
   public boolean sameAssociationTypeSrcTgtRev(AssocStruct srcAssocSub, AssocStruct tgtAssocSuper) {
     boolean isLeftLeft =
-      srcAssocSub.getSide().equals(ClassSide.Left)
-        && tgtAssocSuper.getSide().equals(ClassSide.Left);
+        srcAssocSub.getSide().equals(ClassSide.Left)
+            && tgtAssocSuper.getSide().equals(ClassSide.Left);
     boolean isLeftRight =
-      srcAssocSub.getSide().equals(ClassSide.Left)
-        && tgtAssocSuper.getSide().equals(ClassSide.Right);
+        srcAssocSub.getSide().equals(ClassSide.Left)
+            && tgtAssocSuper.getSide().equals(ClassSide.Right);
     boolean isRightRight =
-      srcAssocSub.getSide().equals(ClassSide.Right)
-        && tgtAssocSuper.getSide().equals(ClassSide.Right);
+        srcAssocSub.getSide().equals(ClassSide.Right)
+            && tgtAssocSuper.getSide().equals(ClassSide.Right);
     boolean isRightLeft =
-      srcAssocSub.getSide().equals(ClassSide.Right)
-        && tgtAssocSuper.getSide().equals(ClassSide.Left);
+        srcAssocSub.getSide().equals(ClassSide.Right)
+            && tgtAssocSuper.getSide().equals(ClassSide.Left);
 
     if (isLeftRight || isRightLeft) {
       return matchRoleNames(
-        srcAssocSub.getAssociation().getLeft(), tgtAssocSuper.getAssociation().getLeft())
-        && matchRoleNames(
-        srcAssocSub.getAssociation().getRight(), tgtAssocSuper.getAssociation().getRight())
-        && matchDirection(srcAssocSub, new Pair<>(tgtAssocSuper, tgtAssocSuper.getSide()))
-        && compareTypes(
-        getConnectedTypes(srcAssocSub.getAssociation(), srcCD).a,
-        getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).a,
-        true)
-        && compareTypes(
-        getConnectedTypes(srcAssocSub.getAssociation(), srcCD).b,
-        getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).b,
-        true)
-        && isContainedIn(
-        cardToEnum(srcAssocSub.getAssociation().getLeft().getCDCardinality()),
-        cardToEnum(tgtAssocSuper.getAssociation().getLeft().getCDCardinality()))
-        && isContainedIn(
-        cardToEnum(srcAssocSub.getAssociation().getRight().getCDCardinality()),
-        cardToEnum(tgtAssocSuper.getAssociation().getRight().getCDCardinality()));
+              srcAssocSub.getAssociation().getLeft(), tgtAssocSuper.getAssociation().getLeft())
+          && matchRoleNames(
+              srcAssocSub.getAssociation().getRight(), tgtAssocSuper.getAssociation().getRight())
+          && matchDirection(srcAssocSub, new Pair<>(tgtAssocSuper, tgtAssocSuper.getSide()))
+          && compareTypes(
+              getConnectedTypes(srcAssocSub.getAssociation(), srcCD).a,
+              getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).a,
+              true)
+          && compareTypes(
+              getConnectedTypes(srcAssocSub.getAssociation(), srcCD).b,
+              getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).b,
+              true)
+          && isContainedIn(
+              cardToEnum(srcAssocSub.getAssociation().getLeft().getCDCardinality()),
+              cardToEnum(tgtAssocSuper.getAssociation().getLeft().getCDCardinality()))
+          && isContainedIn(
+              cardToEnum(srcAssocSub.getAssociation().getRight().getCDCardinality()),
+              cardToEnum(tgtAssocSuper.getAssociation().getRight().getCDCardinality()));
     } else if (isLeftLeft || isRightRight) {
       return matchRoleNames(
-        srcAssocSub.getAssociation().getLeft(), tgtAssocSuper.getAssociation().getRight())
-        && matchRoleNames(
-        srcAssocSub.getAssociation().getRight(), tgtAssocSuper.getAssociation().getLeft())
-        && matchDirection(srcAssocSub, new Pair<>(tgtAssocSuper, tgtAssocSuper.getSide()))
-        && compareTypes(
-        getConnectedTypes(srcAssocSub.getAssociation(), srcCD).a,
-        getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).b,
-        true)
-        && compareTypes(
-        getConnectedTypes(srcAssocSub.getAssociation(), srcCD).b,
-        getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).a,
-        true)
-        && isContainedIn(
-        cardToEnum(srcAssocSub.getAssociation().getLeft().getCDCardinality()),
-        cardToEnum(tgtAssocSuper.getAssociation().getRight().getCDCardinality()))
-        && isContainedIn(
-        cardToEnum(srcAssocSub.getAssociation().getRight().getCDCardinality()),
-        cardToEnum(tgtAssocSuper.getAssociation().getLeft().getCDCardinality()));
+              srcAssocSub.getAssociation().getLeft(), tgtAssocSuper.getAssociation().getRight())
+          && matchRoleNames(
+              srcAssocSub.getAssociation().getRight(), tgtAssocSuper.getAssociation().getLeft())
+          && matchDirection(srcAssocSub, new Pair<>(tgtAssocSuper, tgtAssocSuper.getSide()))
+          && compareTypes(
+              getConnectedTypes(srcAssocSub.getAssociation(), srcCD).a,
+              getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).b,
+              true)
+          && compareTypes(
+              getConnectedTypes(srcAssocSub.getAssociation(), srcCD).b,
+              getConnectedTypes(tgtAssocSuper.getAssociation(), tgtCD).a,
+              true)
+          && isContainedIn(
+              cardToEnum(srcAssocSub.getAssociation().getLeft().getCDCardinality()),
+              cardToEnum(tgtAssocSuper.getAssociation().getRight().getCDCardinality()))
+          && isContainedIn(
+              cardToEnum(srcAssocSub.getAssociation().getRight().getCDCardinality()),
+              cardToEnum(tgtAssocSuper.getAssociation().getLeft().getCDCardinality()));
     }
 
     return false;
@@ -2307,8 +2313,7 @@ public class Syn2SemDiffHelper {
     for (AssocStruct assocStruct : assocStructs) {
       Pair<ASTCDType, ASTCDType> pair = getConnectedTypes(assocStruct.getAssociation(), srcCD);
       if ((assocStruct.getSide().equals(ClassSide.Right) && pair.a.getModifier().isAbstract())
-          || (assocStruct.getSide().equals(ClassSide.Left)
-              && pair.b.getModifier().isAbstract())) {
+          || (assocStruct.getSide().equals(ClassSide.Left) && pair.b.getModifier().isAbstract())) {
         continue; // One of the classes is abstract so nothing to be done with this association
       }
       boolean foundMatch = false;
@@ -2331,7 +2336,7 @@ public class Syn2SemDiffHelper {
                     srcCD,
                     tgtCD,
                     this,
-                  matches));
+                    matches));
           }
           break;
         }
@@ -2392,14 +2397,10 @@ public class Syn2SemDiffHelper {
         if (sameAssociationTypeSrcTgt(assocStructSrc, assocStruct)) {
           foundMatch = true;
           break;
-        } else if (
-          (matchingStrategies.isEmpty()
-            || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING))
+        } else if ((matchingStrategies.isEmpty()
+                || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING))
             && matcher.isMatched(
-              assocStructSrc.getUnmodifiedAssoc(),
-              assocStruct.getUnmodifiedAssoc()
-          )
-        ) {
+                assocStructSrc.getUnmodifiedAssoc(), assocStruct.getUnmodifiedAssoc())) {
           foundMatch = true;
           if (!containedInList(assocStructSrc, assocStruct)) {
             diffs.add(
@@ -2409,7 +2410,7 @@ public class Syn2SemDiffHelper {
                     srcCD,
                     tgtCD,
                     this,
-                  matches));
+                    matches));
           }
           break;
         }

@@ -9,7 +9,6 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 
 public abstract class AbstractMethodChecker implements ICDMethodChecker {
@@ -20,8 +19,8 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
   protected ASTCDType conType;
   protected ASTCDType refType;
 
-  protected AbstractMethodChecker(String mapping, String underspecifiedTypeName,
-                                  MatchingStrategy<ASTCDType> typeMatcher) {
+  protected AbstractMethodChecker(
+      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
     this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
@@ -91,8 +90,7 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
       if (conCDType.isPresentAstNode()) {
         return Optional.of(
             typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
-                .anyMatch(
-                    r -> r.getSymbol().getFullName().equals(refCDType.getFullName())));
+                .anyMatch(r -> r.getSymbol().getFullName().equals(refCDType.getFullName())));
       }
     }
     return Optional.empty();

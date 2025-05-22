@@ -35,9 +35,9 @@ public class TypeConcretizationTest extends AbstractCDConcretizationTest {
   @Test
   void testTypeForEachTypeWithInfixReplacement() {
     testConcretizedConformsToRefAndExpectedOut(
-            "types/forEach/ForEachTypeInfixReplaceConc.cd",
-            "types/forEach/ForEachTypeInfixReplaceRef.cd",
-            "types/forEach/ForEachTypeInfixReplaceOut.cd");
+        "types/forEach/ForEachTypeInfixReplaceConc.cd",
+        "types/forEach/ForEachTypeInfixReplaceRef.cd",
+        "types/forEach/ForEachTypeInfixReplaceOut.cd");
   }
 
   /**
@@ -46,13 +46,14 @@ public class TypeConcretizationTest extends AbstractCDConcretizationTest {
    */
   @Test
   void testTypeForEachTypeWithInfixReplacementDisabled() {
-    ConcretizationCompleter completer = new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
     completer.setForEachNameAdaptationEnabled(false);
     testConcretizedEqualsExpectedOut(
-            completer,
-            "types/forEach/ForEachTypeInfixReplaceConc.cd",
-            "types/forEach/ForEachTypeInfixReplaceRef.cd",
-            "types/forEach/ForEachTypeInfixReplaceDisabledOut.cd");
+        completer,
+        "types/forEach/ForEachTypeInfixReplaceConc.cd",
+        "types/forEach/ForEachTypeInfixReplaceRef.cd",
+        "types/forEach/ForEachTypeInfixReplaceDisabledOut.cd");
   }
 
   /**

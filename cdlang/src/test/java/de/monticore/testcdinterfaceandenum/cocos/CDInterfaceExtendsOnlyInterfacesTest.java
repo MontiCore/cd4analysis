@@ -44,5 +44,6 @@ public class CDInterfaceExtendsOnlyInterfacesTest extends CDInterfaceAndEnumTest
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCF6"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

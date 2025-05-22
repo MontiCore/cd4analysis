@@ -1,16 +1,15 @@
 package de.monticore.cd.plantuml;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class PlantUMLUtilTest extends CD4AnalysisTestBasis {
 

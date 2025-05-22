@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTObjectDiagram;
@@ -16,12 +18,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class NormalizeLinksTrafoTest {
 
@@ -51,8 +50,7 @@ public class NormalizeLinksTrafoTest {
     assertEquals(7, result.size());
     // check directions
     result.forEach(l -> assertInstanceOf(ASTODLeftToRightDir.class, l.getODLinkDirection()));
-    result.forEach(
-        l -> assertFalse((l.getODLinkDirection() instanceof ASTODRightToLeftDir)));
+    result.forEach(l -> assertFalse((l.getODLinkDirection() instanceof ASTODRightToLeftDir)));
     result.forEach(l -> assertFalse(l.getODLinkDirection() instanceof ASTODBiDir));
 
     // check roles

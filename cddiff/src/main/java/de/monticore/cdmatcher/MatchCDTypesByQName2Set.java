@@ -1,7 +1,6 @@
 package de.monticore.cdmatcher;
 
 import de.monticore.cdbasis._ast.ASTCDType;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,14 +16,15 @@ public class MatchCDTypesByQName2Set implements MatchingStrategy<ASTCDType> {
 
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
-    return tgtSet.stream()
-      .filter(type -> isMatched(srcElem, type))
-      .collect(Collectors.toList());
+    return tgtSet.stream().filter(type -> isMatched(srcElem, type)).collect(Collectors.toList());
   }
 
   /** Match types iff they have the same name. */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    return srcElem.getSymbol().getInternalQualifiedName().equals(tgtElem.getSymbol().getInternalQualifiedName());
+    return srcElem
+        .getSymbol()
+        .getInternalQualifiedName()
+        .equals(tgtElem.getSymbol().getInternalQualifiedName());
   }
 }

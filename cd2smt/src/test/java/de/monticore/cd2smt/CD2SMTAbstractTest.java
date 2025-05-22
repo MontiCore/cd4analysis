@@ -1,5 +1,8 @@
 package de.monticore.cd2smt;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.microsoft.z3.Context;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
@@ -15,9 +18,6 @@ import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.provider.Arguments;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class CD2SMTAbstractTest {
   protected final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/cd2smt";
@@ -47,8 +47,7 @@ public class CD2SMTAbstractTest {
       return optAutomaton.get();
     } catch (Exception e) {
       e.printStackTrace();
-      fail(
-          "There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
+      fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
 
     return null;

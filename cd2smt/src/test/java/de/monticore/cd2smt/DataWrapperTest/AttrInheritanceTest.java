@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.DataWrapperTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -19,8 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AttrInheritanceTest extends CD2SMTAbstractTest {
   protected CD2SMTGenerator cd2SMTGenerator;

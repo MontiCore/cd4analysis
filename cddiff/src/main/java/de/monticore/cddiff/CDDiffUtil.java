@@ -280,11 +280,10 @@ public class CDDiffUtil {
   }
 
   /**
-   * This version of the method uses CDInheritanceHelper.getAllSuper which
-   * utilizes a custom resolve-method.
-   * This is necessary, since the SymbolTableCompleter does not always properly
-   * resolve super-types when comparing two CDs that define types with the same
-   * internal qualified name.
+   * This version of the method uses CDInheritanceHelper.getAllSuper which utilizes a custom
+   * resolve-method. This is necessary, since the SymbolTableCompleter does not always properly
+   * resolve super-types when comparing two CDs that define types with the same internal qualified
+   * name.
    */
   public static Set<ASTCDType> getAllSuperTypes(ASTCDType type) {
     ICDBasisScope scope = type.getEnclosingScope();
@@ -294,12 +293,11 @@ public class CDDiffUtil {
       }
       scope = scope.getEnclosingScope();
     }
-    if (scope != null){
-      return CDInheritanceHelper.getAllSuper(type,(ICD4CodeArtifactScope) scope);
+    if (scope != null) {
+      return CDInheritanceHelper.getAllSuper(type, (ICD4CodeArtifactScope) scope);
     }
     return new HashSet<>();
   }
-
 
   /**
    * A helper function to compute the reflexive transitive hull of all super-types of type in cd.
@@ -373,9 +371,7 @@ public class CDDiffUtil {
     return OD4ReportMill.prettyPrint(astodArtifact, true);
   }
 
-  /**
-   * Efficient retrieval of all types from a CD without the use of a traverser.
-   */
+  /** Efficient retrieval of all types from a CD without the use of a traverser. */
   public static Set<ASTCDType> getAllTypesFromCD(ASTCDCompilationUnit cd) {
     Set<ASTCDType> types =
         cd.getCDDefinition().getCDElementList().stream()
@@ -390,9 +386,7 @@ public class CDDiffUtil {
     return types;
   }
 
-  /**
-   * Efficient retrieval of all types from a package without the use of a traverser.
-   */
+  /** Efficient retrieval of all types from a package without the use of a traverser. */
   public static Set<ASTCDType> getAllTypesFromPackage(ASTCDPackage astcdPackage) {
     Set<ASTCDType> types =
         astcdPackage.getCDElementList().stream()
@@ -407,9 +401,7 @@ public class CDDiffUtil {
     return types;
   }
 
-  /**
-   * Efficient retrieval of all associations from a CD without the use of a traverser.
-   */
+  /** Efficient retrieval of all associations from a CD without the use of a traverser. */
   public static Set<ASTCDAssociation> getAllAssocsFromCD(ASTCDCompilationUnit cd) {
     Set<ASTCDAssociation> assocs =
         cd.getCDDefinition().getCDElementList().stream()
@@ -424,9 +416,7 @@ public class CDDiffUtil {
     return assocs;
   }
 
-  /**
-   * Efficient retrieval of all associations from a package without the use of a traverser.
-   */
+  /** Efficient retrieval of all associations from a package without the use of a traverser. */
   public static Set<ASTCDAssociation> getAllAssocsFromPackages(ASTCDPackage astcdPackage) {
     Set<ASTCDAssociation> assocs =
         astcdPackage.getCDElementList().stream()

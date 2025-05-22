@@ -7,7 +7,6 @@ import de.monticore.cdconformance.conf.CDAttributeChecker;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 
 public abstract class AbstractAttributeChecker implements CDAttributeChecker {
@@ -18,8 +17,8 @@ public abstract class AbstractAttributeChecker implements CDAttributeChecker {
   protected ASTCDType concreteType;
   protected ASTCDType referenceType;
 
-  protected AbstractAttributeChecker(String mapping, String underspecifiedTypeName,
-                                     MatchingStrategy<ASTCDType> typeMatcher) {
+  protected AbstractAttributeChecker(
+      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
     this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
@@ -52,16 +51,15 @@ public abstract class AbstractAttributeChecker implements CDAttributeChecker {
 
   protected Optional<Boolean> checkTypeIncarnation(ASTMCType refType, ASTMCType conType) {
     if (conType.getDefiningSymbol().isPresent()
-            && conType.getDefiningSymbol().get() instanceof CDTypeSymbol
-            && refType.getDefiningSymbol().isPresent()
-            && refType.getDefiningSymbol().get() instanceof CDTypeSymbol) {
+        && conType.getDefiningSymbol().get() instanceof CDTypeSymbol
+        && refType.getDefiningSymbol().isPresent()
+        && refType.getDefiningSymbol().get() instanceof CDTypeSymbol) {
       CDTypeSymbol conCDType = (CDTypeSymbol) conType.getDefiningSymbol().get();
       CDTypeSymbol refCDType = (CDTypeSymbol) refType.getDefiningSymbol().get();
       if (conCDType.isPresentAstNode()) {
         return Optional.of(
-                typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
-                        .anyMatch(
-                                r -> r.getSymbol().getFullName().equals(refCDType.getFullName())));
+            typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
+                .anyMatch(r -> r.getSymbol().getFullName().equals(refCDType.getFullName())));
       }
     }
     return Optional.empty();

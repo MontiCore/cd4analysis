@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cdmerge.BaseTest;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /** TODO: Write me! */
 public class JPrimitiveTypeTest extends BaseTest {

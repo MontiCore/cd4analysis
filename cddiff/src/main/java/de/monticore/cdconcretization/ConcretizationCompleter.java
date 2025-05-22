@@ -8,17 +8,17 @@ import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
-import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
-import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompleter;
-import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
-import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter;
-import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
+import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ITypeInCDCompleter;
 import de.monticore.cdconcretization.type.*;
+import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
@@ -41,8 +41,8 @@ import java.util.stream.Collectors;
  * Tool for automatic completion of a concrete class diagram (CD) such that it conforms to a given
  * reference CD. The completion process is implemented using multiple modular completer
  * implementations for each element kind in a CD. This class is the facade with easy to use
- * configuration parameters and a single method to perform the completion:
- * {@link #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
+ * configuration parameters and a single method to perform the completion: {@link
+ * #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
  */
 public class ConcretizationCompleter {
 
@@ -214,11 +214,15 @@ public class ConcretizationCompleter {
         assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       }
 
-      // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference type
+      // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference
+      // type
       // themselves or have a subclass which is an incarnation of the reference type.
-      // This strategy is only used when matching associations. If we want to allow the concrete CD to
-      // define associations in superclasses of the actual type incarnation, we have to pass this type
-      // matching strategy to the association matching strategies. This allows supertypes to 'act' as
+      // This strategy is only used when matching associations. If we want to allow the concrete CD
+      // to
+      // define associations in superclasses of the actual type incarnation, we have to pass this
+      // type
+      // matching strategy to the association matching strategies. This allows supertypes to 'act'
+      // as
       // incarnation of the reference type in context of a specific association.
       // For example in the following concrete CD, A is a valid incarnation of A in the reference CD
       // because A is a subclass of X, which has an association towards B.
@@ -306,14 +310,16 @@ public class ConcretizationCompleter {
     @Override
     public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
-      CompAttributeChecker attributeIncStrategy = new CompAttributeChecker(
-              mapping, underspecifiedPlaceholderTypeName, typeIncStrategy);
+      CompAttributeChecker attributeIncStrategy =
+          new CompAttributeChecker(mapping, underspecifiedPlaceholderTypeName, typeIncStrategy);
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new STNamedAttributeChecker(
+        attributeIncStrategy.addIncStrategy(
+            new STNamedAttributeChecker(
                 mapping, underspecifiedPlaceholderTypeName, typeIncStrategy));
       }
       if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new EqNameAttributeChecker(
+        attributeIncStrategy.addIncStrategy(
+            new EqNameAttributeChecker(
                 mapping, underspecifiedPlaceholderTypeName, typeIncStrategy));
       }
       attributeIncStrategy.setConcreteType(concreteType);

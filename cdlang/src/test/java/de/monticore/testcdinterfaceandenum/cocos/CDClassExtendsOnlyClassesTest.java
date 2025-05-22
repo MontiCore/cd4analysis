@@ -44,5 +44,6 @@ public class CDClassExtendsOnlyClassesTest extends CDInterfaceAndEnumTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC08"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

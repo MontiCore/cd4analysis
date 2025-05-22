@@ -44,6 +44,7 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CDAssociation
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd.facade.CDExtendUsageFacade;
 import de.monticore.cd.facade.CDInterfaceUsageFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -16,8 +18,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class FullExpanderTest extends CDDiffTestBasis {
 
@@ -226,8 +226,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     scope
         .resolveCDTypeDown("ins.Employee")
         .ifPresent(
-            type ->
-                assertEquals("ins", fullExpander.determinePackageName(type.getAstNode())));
+            type -> assertEquals("ins", fullExpander.determinePackageName(type.getAstNode())));
   }
 
   @Test

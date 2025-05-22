@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.symboltable;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
@@ -17,8 +19,6 @@ import de.se_rwth.commons.logging.Log;
 import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CDAssociationDeSerTest extends CDAssociationTestBasis {
 

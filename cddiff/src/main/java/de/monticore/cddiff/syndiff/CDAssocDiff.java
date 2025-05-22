@@ -21,9 +21,8 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
-import org.antlr.v4.runtime.misc.MultiMap;
-
 import java.util.*;
+import org.antlr.v4.runtime.misc.MultiMap;
 
 /**
  * This class computes the differences between two ASTCDAssociation nodes. It analyzes the role

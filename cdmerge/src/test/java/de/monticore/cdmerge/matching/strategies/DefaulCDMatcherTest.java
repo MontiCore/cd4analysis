@@ -127,7 +127,7 @@ public class DefaulCDMatcherTest extends BaseTest {
         1,
         nodes.get(0).getMatchedElements().size(),
         "Find asscociations with right reference 'Person'");
-    
+
     nodes =
         result.findNodes(
             t -> t.getElement().getLeftQualifiedName().getBaseName().equals("Department"));

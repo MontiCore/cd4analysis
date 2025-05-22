@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.methodtemplates;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.facade.CDAttributeFacade;
@@ -31,8 +33,6 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /** Tests for parameterized calls of the {@link TemplateController} */
 public class CD4CTest extends CD4CodeTestBasis {

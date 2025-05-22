@@ -1,18 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class JoinLinksTrafoTest extends CDDiffTestBasis {
 
@@ -24,7 +23,7 @@ public class JoinLinksTrafoTest extends CDDiffTestBasis {
       Optional<ASTODArtifact> od =
           new OD4ReportParser()
               .parse("src/test/resources/de/monticore/cddiff/JoinLinksTrafo/EmployeesInstance.od");
-      
+
       assertTrue(od.isPresent());
       new JoinLinksTrafo(cd).transform(od.get());
       assertEquals(

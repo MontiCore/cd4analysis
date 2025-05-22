@@ -1,6 +1,5 @@
 package de.monticore.cdconformance.inc.association;
 
-import de.monticore.cd4code._symboltable.CD4CodeScope;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -32,7 +31,8 @@ public class STNamedAssocIncStrategy implements MatchingStrategy<ASTCDAssociatio
         && ref.isPresentName()) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
       return ((ICD4CodeScope) refCD.getEnclosingScope())
-              .resolveCDAssociationDownMany(refName).contains(ref.getSymbol());
+          .resolveCDAssociationDownMany(refName)
+          .contains(ref.getSymbol());
     }
     return false;
   }

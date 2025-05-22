@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.cocos;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CD4AnalysisCoCoTest extends CD4AnalysisTestBasis {
 

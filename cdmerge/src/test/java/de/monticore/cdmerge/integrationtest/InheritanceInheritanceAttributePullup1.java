@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -16,17 +18,16 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class InheritanceInheritanceAttributePullup1 extends BaseTest {
-  
+
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
-  
+
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/inheritanceAttributePullup1/A.cd";
 
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/inheritanceAttributePullup1/B.cd";
 
-  private static final String EXPECTED = INPUT_MODEL_DIR + "/inheritanceAttributePullup1/mergedCD.cd";
+  private static final String EXPECTED =
+      INPUT_MODEL_DIR + "/inheritanceAttributePullup1/mergedCD.cd";
 
   @Test
   public void testInheritanceInheritanceAttributePullup1() throws IOException, MergingException {

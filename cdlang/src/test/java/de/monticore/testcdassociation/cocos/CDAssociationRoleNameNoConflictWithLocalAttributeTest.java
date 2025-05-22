@@ -44,6 +44,7 @@ public class CDAssociationRoleNameNoConflictWithLocalAttributeTest extends CDAss
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xC4A27"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

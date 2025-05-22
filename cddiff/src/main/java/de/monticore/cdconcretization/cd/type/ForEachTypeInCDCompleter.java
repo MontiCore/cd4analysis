@@ -11,7 +11,6 @@ import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,9 +42,13 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
                 + referenceType.get_SourcePositionStart());
     if (stereotypeValue.isPresent()) {
       CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
-      symbolHandler.setTypeHandler(paramType -> completeTypeParameterizedByType(referenceType, paramType, context));
+      symbolHandler.setTypeHandler(
+          paramType -> completeTypeParameterizedByType(referenceType, paramType, context));
       // TODO Add support for other parameter elements
-      symbolHandler.resolveSymbol(context.getReferenceCD().getEnclosingScope(), stereotypeValue.get(), referenceType.get_SourcePositionStart());
+      symbolHandler.resolveSymbol(
+          context.getReferenceCD().getEnclosingScope(),
+          stereotypeValue.get(),
+          referenceType.get_SourcePositionStart());
     } else {
       super.completeTypeInCD(concreteCD, referenceType, context);
     }
@@ -59,29 +62,31 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
    * @param context the completion context
    */
   private void completeTypeParameterizedByType(
-      ASTCDType referenceType,
-      ASTCDType paramType,
-      CDCompletionContext context)
+      ASTCDType referenceType, ASTCDType paramType, CDCompletionContext context)
       throws CompletionException {
 
     Set<ASTCDType> paramTypeIncarnations =
         ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
             .filter(type -> context.getTypeIncStrategy().isMatched(type, paramType))
             .collect(Collectors.toSet());
-    Log.debug("Found type incarnations for " + paramType.getName() + ": " + paramTypeIncarnations, LOG_NAME);
+    Log.debug(
+        "Found type incarnations for " + paramType.getName() + ": " + paramTypeIncarnations,
+        LOG_NAME);
 
     for (ASTCDType paramTypeInc : paramTypeIncarnations) {
       ASTCDType newType = referenceType.deepClone();
 
       // 1. decide name of the new type
-      Optional<String> adaptedName = NameUtil.adaptTemplatedName(
+      Optional<String> adaptedName =
+          NameUtil.adaptTemplatedName(
               referenceType.getName(), paramType.getName(), paramTypeInc.getName());
       if (context.isForEachNameAdaptationEnabled() && adaptedName.isPresent()) {
         newType.setName(adaptedName.get());
       } else {
         // Default: add the param incarnation name as suffix
         String paramIncName = SymbolUtil.getFullNameWithoutCD(paramTypeInc.getSymbol());
-        String typeSuffix = paramTypeIncarnations.size() > 1
+        String typeSuffix =
+            paramTypeIncarnations.size() > 1
                 ? "_" + NameUtil.escapeQualifiedNameAsIdentifier(paramIncName)
                 : "";
         newType.setName(referenceType.getName() + typeSuffix);

@@ -168,7 +168,12 @@ public abstract class DiffPrinter extends SyntaxDiffHelper {
       for (ASTCDAssociation x : syntaxDiff.getAddedAssocs()) {
         CDAssocDiff diff =
             new CDAssocDiff(
-                x, x, syntaxDiff.getSrcCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper(),matches);
+                x,
+                x,
+                syntaxDiff.getSrcCD(),
+                syntaxDiff.getSrcCD(),
+                syntaxDiff.getHelper(),
+                matches);
         String tmp = diff.printAddedAssoc() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -180,7 +185,12 @@ public abstract class DiffPrinter extends SyntaxDiffHelper {
       for (ASTCDAssociation x : syntaxDiff.getDeletedAssocs()) {
         CDAssocDiff diff =
             new CDAssocDiff(
-                x, x, syntaxDiff.getTgtCD(), syntaxDiff.getTgtCD(), syntaxDiff.getHelper(),matches);
+                x,
+                x,
+                syntaxDiff.getTgtCD(),
+                syntaxDiff.getTgtCD(),
+                syntaxDiff.getHelper(),
+                matches);
         String tmp = diff.printDeletedAssoc() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));

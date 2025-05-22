@@ -10,8 +10,8 @@ import java.util.List;
 public class CompMethodChecker extends AbstractMethodChecker {
   private final List<ICDMethodChecker> methodCheckers = new ArrayList<>();
 
-  public CompMethodChecker(String mapping, String underspecifiedTypeName,
-                           MatchingStrategy<ASTCDType> typeMatcher) {
+  public CompMethodChecker(
+      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
     super(mapping, underspecifiedTypeName, typeMatcher);
   }
 

@@ -19,10 +19,7 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
 
   private final IAssociationCompleter assocDetailsCompleter;
 
-
-
-  public ExistingAssociationsCDCompleter(
-      IAssociationCompleter assocDetailsCompleter) {
+  public ExistingAssociationsCDCompleter(IAssociationCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
 
@@ -50,8 +47,8 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
   }
 
   /**
-   * Checks in what direction the concrete association matches the reference association.
-   * If the direction cannot be determined, an exception is thrown.
+   * Checks in what direction the concrete association matches the reference association. If the
+   * direction cannot be determined, an exception is thrown.
    *
    * @param cAssoc the concrete association
    * @param rAssoc the reference association
@@ -59,8 +56,9 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
    * @throws CompletionException if the match direction cannot be determined.
    */
   private AssocMatchDirection determineMatchDirection(
-          ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, CDCompletionContext context)
-      throws CompletionException {ASTCDCompilationUnit ccd = context.getConcreteCD();
+      ASTCDAssociation cAssoc, ASTCDAssociation rAssoc, CDCompletionContext context)
+      throws CompletionException {
+    ASTCDCompilationUnit ccd = context.getConcreteCD();
     ASTCDCompilationUnit rcd = context.getReferenceCD();
     // Extract the left and right types of the concrete association
     ASTCDType cLeftType = ConcretizationHelper.getAssocLeftType(ccd, cAssoc);
@@ -137,6 +135,5 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     }
 
     return match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
-
   }
 }

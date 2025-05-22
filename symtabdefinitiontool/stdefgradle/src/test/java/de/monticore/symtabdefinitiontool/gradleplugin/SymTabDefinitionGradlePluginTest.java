@@ -1,6 +1,9 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.symtabdefinitiontool.gradleplugin;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,13 +17,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class SymTabDefinitionGradlePluginTest {
 
-  @TempDir
-  File testProjectDir;
+  @TempDir File testProjectDir;
   File settingsFile;
   File propertiesFile;
   File buildFile;

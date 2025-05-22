@@ -1,6 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdgen;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,10 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import javax.annotation.Nullable;
-
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.se_rwth.commons.logging.LogStub;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
@@ -22,11 +23,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class CDGenGradlePluginTest {
-  @TempDir
-  File testProjectDir;
+  @TempDir File testProjectDir;
   File settingsFile;
   File propertiesFile;
   File buildFile;

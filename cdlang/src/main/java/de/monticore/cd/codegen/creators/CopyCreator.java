@@ -8,17 +8,16 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.visitor.IVisitor;
-
 import java.util.*;
 
 /** Create the initial target CD as a copy of the original */
 public class CopyCreator extends AbstractDecorator<CopyCreator.Created>
-  implements ICreator<CopyCreator.Created>, CDBasisVisitor2 {
+    implements ICreator<CopyCreator.Created>, CDBasisVisitor2 {
 
   /**
    * Initialized the decorated CD with a deep-copy of the original CD. The Original->Decorated Map
-   * will be created on the fly.
-   * Do NOT call this method explicitly, instead this class as a decorator
+   * will be created on the fly. Do NOT call this method explicitly, instead this class as a
+   * decorator
    *
    * @param originalCD the initial, original CD which will be copied
    */

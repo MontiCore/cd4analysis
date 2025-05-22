@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum.prettyprint;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
@@ -8,8 +10,6 @@ import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {

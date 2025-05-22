@@ -20,14 +20,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class InheritanceInheritanceAttributePullup2 extends BaseTest {
-  
+
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
-  
+
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/inheritanceAttributePullup2/A.cd";
 
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/inheritanceAttributePullup2/B.cd";
 
-  private static final String EXPECTED = INPUT_MODEL_DIR + "/inheritanceAttributePullup2/mergedCD.cd";
+  private static final String EXPECTED =
+      INPUT_MODEL_DIR + "/inheritanceAttributePullup2/mergedCD.cd";
 
   @Test
   public void testInheritanceInheritanceAttributePullup2() throws IOException {

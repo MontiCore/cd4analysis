@@ -8,7 +8,6 @@ import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.visitor.IVisitor;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 /** Extend {@link AbstractDecorator} for shared */

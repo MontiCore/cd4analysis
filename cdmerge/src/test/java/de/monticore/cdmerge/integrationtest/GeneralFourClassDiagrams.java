@@ -21,9 +21,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class GeneralFourClassDiagrams extends BaseTest {
-  
+
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/General";
-  
+
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/four_classdiagrams/A.cd";
 
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/four_classdiagrams/B.cd";

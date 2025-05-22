@@ -69,7 +69,7 @@ public class TopDecoratorTest extends DecoratorTestCase {
     List<Finding> findings = Log.getFindings();
     assertFalse(findings.isEmpty(), "Log messages empty");
     Finding lastMsg = findings.get(findings.size() - 1);
-    assertTrue(lastMsg.isError(),"Last Message was not an error");
+    assertTrue(lastMsg.isError(), "Last Message was not an error");
     assertTrue(lastMsg.getMsg().contains(reasonString), "Reason not found in last message");
   }
 

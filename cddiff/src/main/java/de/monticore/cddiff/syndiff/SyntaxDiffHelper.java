@@ -1,8 +1,5 @@
 package de.monticore.cddiff.syndiff;
 
-import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.*;
 import java.util.*;
 

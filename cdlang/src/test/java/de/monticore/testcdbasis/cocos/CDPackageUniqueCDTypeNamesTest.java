@@ -42,6 +42,7 @@ public class CDPackageUniqueCDTypeNamesTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC0F"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

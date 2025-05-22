@@ -44,5 +44,6 @@ public class CDClassExtendsNotCyclicTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDC07"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

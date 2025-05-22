@@ -1,13 +1,12 @@
 package de.monticore.cdmatcher;
 
 import de.monticore.cdbasis._ast.ASTCDType;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatchCDTypeByStructure2Set implements MatchingStrategy<ASTCDType>{
+public class MatchCDTypeByStructure2Set implements MatchingStrategy<ASTCDType> {
 
   protected LinkedHashSet<ASTCDType> tgtSet;
   protected double threshold = 0.5;
@@ -24,7 +23,9 @@ public class MatchCDTypeByStructure2Set implements MatchingStrategy<ASTCDType>{
 
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType srcElem) {
-    return tgtSet.stream().filter(tgtElem -> isMatched(srcElem,tgtElem)).collect(Collectors.toList());
+    return tgtSet.stream()
+        .filter(tgtElem -> isMatched(srcElem, tgtElem))
+        .collect(Collectors.toList());
   }
 
   @Override

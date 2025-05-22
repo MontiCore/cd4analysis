@@ -20,7 +20,6 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 

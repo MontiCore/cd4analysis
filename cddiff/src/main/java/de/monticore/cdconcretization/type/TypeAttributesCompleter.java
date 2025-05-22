@@ -8,9 +8,9 @@ import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 /**
- * Completes the attributes of a concrete type by calling the attribute completer for each
- * attribute in the reference type. This is done for both classes and interfaces as interfaces
- * could hold static attributes as well.
+ * Completes the attributes of a concrete type by calling the attribute completer for each attribute
+ * in the reference type. This is done for both classes and interfaces as interfaces could hold
+ * static attributes as well.
  */
 /*
  * NOTE: Although, this is a very fine-grained decomposition of the logic, we kep the architecture

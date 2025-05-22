@@ -6,16 +6,21 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class CDTypeSimilarity implements CDSimilarity<ASTCDType>{
+public class CDTypeSimilarity implements CDSimilarity<ASTCDType> {
   public Double computeWeight(ASTCDType srcElem, ASTCDType tgtElem) {
 
-    Set<ASTCDMember> srcMembers = CDDiffUtil.getAllSuperTypes(srcElem).stream().flatMap(st -> st.getCDMemberList().stream()).collect(Collectors.toSet());
-    Set<ASTCDMember> tgtMembers = CDDiffUtil.getAllSuperTypes(tgtElem).stream().flatMap(st -> st.getCDMemberList().stream()).collect(Collectors.toSet());
+    Set<ASTCDMember> srcMembers =
+        CDDiffUtil.getAllSuperTypes(srcElem).stream()
+            .flatMap(st -> st.getCDMemberList().stream())
+            .collect(Collectors.toSet());
+    Set<ASTCDMember> tgtMembers =
+        CDDiffUtil.getAllSuperTypes(tgtElem).stream()
+            .flatMap(st -> st.getCDMemberList().stream())
+            .collect(Collectors.toSet());
 
     Set<ASTCDMember> tgtDeletedMembers = new LinkedHashSet<>(tgtMembers);
     Set<ASTCDMember> similarMembers = new LinkedHashSet<>();
@@ -39,8 +44,14 @@ public class CDTypeSimilarity implements CDSimilarity<ASTCDType>{
     Set<ASTCDMember> allMembers = new LinkedHashSet<>(srcMembers);
     allMembers.addAll(tgtDeletedMembers);
 
-    Set<CDRoleSymbol> srcRoles = CDDiffUtil.getAllSuperTypes(srcElem).stream().flatMap(st -> st.getSymbol().getCDRoleList().stream()).collect(Collectors.toSet());
-    Set<CDRoleSymbol> tgtRoles = CDDiffUtil.getAllSuperTypes(tgtElem).stream().flatMap(st -> st.getSymbol().getCDRoleList().stream()).collect(Collectors.toSet());
+    Set<CDRoleSymbol> srcRoles =
+        CDDiffUtil.getAllSuperTypes(srcElem).stream()
+            .flatMap(st -> st.getSymbol().getCDRoleList().stream())
+            .collect(Collectors.toSet());
+    Set<CDRoleSymbol> tgtRoles =
+        CDDiffUtil.getAllSuperTypes(tgtElem).stream()
+            .flatMap(st -> st.getSymbol().getCDRoleList().stream())
+            .collect(Collectors.toSet());
 
     Set<CDRoleSymbol> tgtDeletedRoles = new LinkedHashSet<>(tgtRoles);
     Set<CDRoleSymbol> similarRoles = new LinkedHashSet<>();
@@ -64,11 +75,14 @@ public class CDTypeSimilarity implements CDSimilarity<ASTCDType>{
       unionSize = 1;
     }
 
-    if (srcElem.getName().equals(tgtElem.getName())){
-      similarity+=2;
+    if (srcElem.getName().equals(tgtElem.getName())) {
+      similarity += 2;
     }
 
-    if (srcElem.getSymbol().getInternalQualifiedName().equals(tgtElem.getSymbol().getInternalQualifiedName())){
+    if (srcElem
+        .getSymbol()
+        .getInternalQualifiedName()
+        .equals(tgtElem.getSymbol().getInternalQualifiedName())) {
       similarity++;
     }
 

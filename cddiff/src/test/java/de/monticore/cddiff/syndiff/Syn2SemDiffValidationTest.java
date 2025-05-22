@@ -4,7 +4,6 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.ValidationAndPerformanceTest;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
@@ -48,7 +47,7 @@ public class Syn2SemDiffValidationTest {
 
       Assertions.assertFalse(witnesses.isEmpty());
 
-      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD,cd1,cd2, witnesses);
+      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -68,7 +67,7 @@ public class Syn2SemDiffValidationTest {
 
       Assertions.assertFalse(witnesses.isEmpty());
 
-      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD,cd1,cd2, witnesses);
+      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -136,7 +135,7 @@ public class Syn2SemDiffValidationTest {
 
       Assertions.assertFalse(witnesses.isEmpty());
 
-      checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD,cd1,cd2, witnesses);
+      checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -210,7 +209,7 @@ public class Syn2SemDiffValidationTest {
       String dir1 = file1.replaceAll("\\.cd", "");
       String dir2 = file2.replaceAll("\\.cd", "");
       CDDiffUtil.saveDiffCDs2File(
-        cd1, cd2, "target/generated/syn2semdiff-test/" + dir1 + "vs" + dir2);
+          cd1, cd2, "target/generated/syn2semdiff-test/" + dir1 + "vs" + dir2);
 
       Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
@@ -220,11 +219,11 @@ public class Syn2SemDiffValidationTest {
         Assertions.assertTrue(witnesses.isEmpty());
       }
 
-      checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD,cd1,cd2, witnesses);
+      checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, witnesses);
 
       CD4CodeMill.scopesGenitorDelegator().createFromAST(original1);
       CD4CodeMill.scopesGenitorDelegator().createFromAST(original2);
-      checkDiffWitnesses(CDSemantics.STA_OPEN_WORLD,original1,original2, witnesses);
+      checkDiffWitnesses(CDSemantics.STA_OPEN_WORLD, original1, original2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -232,13 +231,12 @@ public class Syn2SemDiffValidationTest {
   }
 
   protected void checkDiffWitnesses(
-    CDSemantics semantics,
-    ASTCDCompilationUnit cd1,
-    ASTCDCompilationUnit cd2,
-    Collection<ASTODArtifact> witnesses){
+      CDSemantics semantics,
+      ASTCDCompilationUnit cd1,
+      ASTCDCompilationUnit cd2,
+      Collection<ASTODArtifact> witnesses) {
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-        .checkIfDiffWitness(semantics, cd1, cd2, od)) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(semantics, cd1, cd2, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         Assertions.fail();
       }

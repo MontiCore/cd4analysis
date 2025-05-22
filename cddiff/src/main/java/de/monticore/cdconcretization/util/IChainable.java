@@ -9,8 +9,6 @@ public interface IChainable<T extends IChainable<T>> {
    */
   void setNext(T next);
 
-  /**
-   * @return true if there is a next element in the chain, false otherwise
-   */
+  /** @return true if there is a next element in the chain, false otherwise */
   boolean hasNext();
 }

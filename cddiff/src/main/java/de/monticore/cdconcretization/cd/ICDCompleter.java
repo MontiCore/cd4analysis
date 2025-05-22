@@ -15,7 +15,6 @@ public interface ICDCompleter {
    * @param concreteCD the concrete CD to be completed
    * @param referenceCD the reference CD to be used for completion
    * @param context the context of the completion
-   *
    * @throws CompletionException if the concrete CD cannot be completed to conform to the reference.
    */
   void complete(

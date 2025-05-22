@@ -3,7 +3,6 @@ package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

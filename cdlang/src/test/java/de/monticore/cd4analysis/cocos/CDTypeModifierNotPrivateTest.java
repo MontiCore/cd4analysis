@@ -32,5 +32,6 @@ public class CDTypeModifierNotPrivateTest extends CD4AnalysisTestBasis {
     assertTrue(Log.getFindings().get(2).getMsg().startsWith(CDTypeModifierNotPrivate.ERROR_CODE));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

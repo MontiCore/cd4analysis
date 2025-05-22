@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.strategies;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -13,12 +15,9 @@ import de.monticore.cdmerge.merging.strategies.DefaultAtributeMerger;
 import de.monticore.cdmerge.merging.strategies.DefaultTypeMergeStrategy;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class EnumConstantsMergeTest extends BaseTest {
 
@@ -35,7 +34,7 @@ public class EnumConstantsMergeTest extends BaseTest {
         .withParam(MergeParameter.SAVE_RESULT_TO_FILE, MergeParameter.OFF)
         .withParam(MergeParameter.CHECK_ONLY)
         .withParam(MergeParameter.LOG_DEBUG, MergeParameter.ON);
-    
+
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     this.TESTANT = new DefaultTypeMergeStrategy(blackBoard, new DefaultAtributeMerger(blackBoard));
   }

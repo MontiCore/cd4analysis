@@ -44,5 +44,6 @@ public class CDEnumImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestBa
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCF5"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

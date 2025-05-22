@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -231,8 +230,8 @@ public class CDGeneratorToolTest {
     ICD4CodeArtifactScope scope =
         new CD4CodeSymbols2Json()
             .load(Paths.get("target/generated/example/rolefield/model/Example.cdsym").toString());
-    assertEquals(2,
-        scope.getCDTypeSymbols().get("A").get(0).getSpannedScope().getFieldSymbols().size());
+    assertEquals(
+        2, scope.getCDTypeSymbols().get("A").get(0).getSpannedScope().getFieldSymbols().size());
   }
 
   @AfterEach

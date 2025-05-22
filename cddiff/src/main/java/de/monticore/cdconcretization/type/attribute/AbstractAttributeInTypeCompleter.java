@@ -6,8 +6,8 @@ import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.IChainable;
 
-public abstract class AbstractAttributeInTypeCompleter implements IAttributeInTypeCompleter,
-        IChainable<AbstractAttributeInTypeCompleter> {
+public abstract class AbstractAttributeInTypeCompleter
+    implements IAttributeInTypeCompleter, IChainable<AbstractAttributeInTypeCompleter> {
 
   private AbstractAttributeInTypeCompleter next;
 
