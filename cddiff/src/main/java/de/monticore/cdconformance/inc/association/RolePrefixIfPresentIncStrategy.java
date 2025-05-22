@@ -4,10 +4,10 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchCDAssocsBySrcNameAndTgtRole;
+import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
 import de.monticore.cdmatcher.MatchingStrategy;
 
-public class RolePrefixIfPresentIncStrategy extends MatchCDAssocsBySrcNameAndTgtRole {
+public class RolePrefixIfPresentIncStrategy extends MatchCDAssocsBySrcTypeAndTgtRole {
 
   public RolePrefixIfPresentIncStrategy(
       MatchingStrategy<ASTCDType> typeMatcher,

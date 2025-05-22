@@ -1,17 +1,20 @@
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import de.monticore.cddiff.CDDiffUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Disabled
 public class SyntaxDiffTest extends CDDiffTestBasis {
 
   /*--------------------------------------------------------------------*/
@@ -70,16 +73,24 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     System.out.println(sb.printDiff());
   }
 
+  @Test
+  public void testMaCoCo(){
+    CDDiffUtil.setUseJavaTypes(true);
+    parseModels("MaCoCo_v1.cd", "MaCoCo_v2.cd");
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
+    System.out.println(sb.printDiff());
+    sb = new SyntaxDiffPrinter(tgt,src);
+    System.out.println(sb.printDiff());
+  }
+
   public void parseModels(String concrete, String ref) {
     try {
       Optional<ASTCDCompilationUnit> src =
           CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (src.isPresent() && tgt.isPresent()) {
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
-        src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
-        tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
+        CDDiffUtil.refreshSymbolTable(src.get());
+        CDDiffUtil.refreshSymbolTable(tgt.get());
         this.tgt = tgt.get();
         this.src = src.get();
       } else {

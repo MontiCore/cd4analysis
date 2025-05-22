@@ -317,13 +317,13 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     boolean conditionSatisfied = false; // Track if the condition is satisfied
     for (ASTCDClass subClass : classList) {
       if (!helper.getNotInstClassesTgt().contains(subClass)
-          && !new Syn2SemDiffHelper().isAttContainedInClassTgt(attribute, subClass)) {
+          && !helper.isAttContainedInClassTgt(attribute, subClass)) {
         Set<ASTCDType> astcdClassList =
             getAllSuper(subClass, (ICD4CodeArtifactScope) helper.getTgtCD().getEnclosingScope());
         astcdClassList.remove(getTgtElem());
         for (ASTCDType type : astcdClassList) {
           if (helper.getNotInstClassesSrc().contains(type)
-              && new Syn2SemDiffHelper().isAttContainedInClassTgt(attribute, type)) {
+              && helper.isAttContainedInClassTgt(attribute, type)) {
             conditionSatisfied = true; // Set the flag to true if the condition holds
             break;
           }

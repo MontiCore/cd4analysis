@@ -42,8 +42,8 @@ public class CD2CDMatcher {
       ASTCDCompilationUnit tgtCD) {
 
     MatchCDTypesByName typeMatcher = new MatchCDTypesByName(tgtCD);
-    MatchCDAssocsBySrcNameAndTgtRole matcher =
-        new MatchCDAssocsBySrcNameAndTgtRole(typeMatcher, srcCD, tgtCD);
+    MatchCDAssocsBySrcTypeAndTgtRole matcher =
+        new MatchCDAssocsBySrcTypeAndTgtRole(typeMatcher, srcCD, tgtCD);
     return matcher.isMatched(srcElem, tgtElem);
   }
 }

@@ -18,6 +18,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the core class for semantic differencing. It contains the results of the syntactic
@@ -50,7 +51,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   List<ASTCDType> srcCDTypes;
   ICD4CodeArtifactScope scopeSrcCD, scopeTgtCD;
 
-  public Syn2SemDiffHelper helper;
+  protected CDSynDiffMatches matches;
+  protected Syn2SemDiffHelper helper;
   private final List<MatchingStrategy> matchingStrategies;
 
   public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
@@ -65,7 +67,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     this.tgtCD = tgtCD;
     CDDiffUtil.refreshSymbolTable(srcCD);
     CDDiffUtil.refreshSymbolTable(tgtCD);
-    helper = new Syn2SemDiffHelper(); // Don't change the order of the calls!
+
+    this.matchingStrategies = matchingStrategies;
+    boolean structureMatch =
+      matchingStrategies.contains(MatchingStrategy.STRUCTURE_TYPE_MATCHING)
+        || matchingStrategies.isEmpty();
+    this.matches = new CDSynDiffMatches(this.srcCD, this.tgtCD, structureMatch);
+
+    helper = new Syn2SemDiffHelper(matches); // Don't change the order of the calls!
     helper.setNotInstClassesSrc(new HashSet<>());
     helper.setNotInstClassesTgt(new HashSet<>());
     helper.setMatchingStrategies(matchingStrategies);
@@ -103,8 +112,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     new CD4CodeDirectCompositionTrafo().transform(srcCD);
     new CD4CodeDirectCompositionTrafo().transform(tgtCD);
 
-    this.matchingStrategies = matchingStrategies;
-    loadAllLists(srcCD, tgtCD, scopeSrcCD, scopeTgtCD, matchingStrategies);
+    loadAllLists(srcCD, tgtCD, scopeSrcCD, scopeTgtCD);
     helper.setMatchedClasses(matchedClasses);
     helper.setDeletedAssocs(deletedAssocs);
     helper.setAddedAssocs(addedAssocs);
@@ -555,7 +563,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               && matched.isPresent()
               && !helper.getNotInstClassesTgt().contains(right)
               && !helper.getNotInstClassesSrc().contains(matched.get())
-              && !helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())) {
+              && !(helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())
+            || helper.classHasAssociationTgtSrcRev(assocStruct.get(), matched.get()))) {
             isDeletedTgt = matched.get();
           } else if (!helper.getNotInstClassesTgt().contains(right)
               && sub.isPresent()
@@ -573,7 +582,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               && matched.isPresent()
               && !helper.getNotInstClassesTgt().contains(astcdClass)
               && !helper.getNotInstClassesSrc().contains(matched.get())
-              && !helper.classHasAssociationTgtSrc(assocStruct.get(), matched.get())) {
+              && !(helper.classHasAssociationTgtSrc(assocStruct.get(), matched.get())
+            || helper.classIsTargetTgtSrcRev(assocStruct.get(), matched.get()))) {
             isDeletedSrc = matched.get();
           } else if (!helper.getNotInstClassesTgt().contains(astcdClass)
               && sub.isPresent()
@@ -592,7 +602,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
               && matched.isPresent()
               && !helper.getNotInstClassesTgt().contains(left)
               && !helper.getNotInstClassesSrc().contains(matched.get())
-              && !helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())) {
+              && !(helper.classIsTargetTgtSrc(assocStruct.get(), matched.get())
+            || helper.classHasAssociationTgtSrcRev(assocStruct.get(), matched.get()))) {
             isDeletedTgt = matched.get();
           } else if (!helper.getNotInstClassesTgt().contains(left)
               && sub.isPresent()
@@ -1041,8 +1052,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       if (matched.isPresent() && !helper.getNotInstClassesTgt().contains(matched.get())) {
         List<AssocStruct> assocStructs = helper.getSrcMap().get(astcdType);
         List<AssocStruct> copy = new ArrayList<>(assocStructs);
-        List<AssocStruct> added = helper.addedAssocsForClass(astcdType);
-        copy.removeAll(added);
+        copy.removeAll(helper.addedAssocsForClass(astcdType));
         List<Pair<ASTCDClass, AssocStruct>> addedAssocs =
             helper.srcAssocsExist(copy, matched.get());
         allAddedAssocs.addAll(helper.sortDiffs(addedAssocs));
@@ -1061,8 +1071,17 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       if (matched.isPresent() && !helper.getNotInstClassesSrc().contains(matched.get())) {
         List<AssocStruct> assocStructs = helper.getTgtMap().get(astcdType);
         List<AssocStruct> copy = new ArrayList<>(assocStructs);
-        List<AssocStruct> added = helper.deletedAssocsForClass(astcdType);
-        copy.removeAll(added);
+        copy = copy.stream()
+          .filter(assoc -> {
+            if (assoc.getSide() == ClassSide.Left) {
+              return assoc.getAssociation().getRight().getCDCardinality().isOne() || assoc.getAssociation().getRight().getCDCardinality().isAtLeastOne();
+            } else if (assoc.getSide() == ClassSide.Right) {
+              return assoc.getAssociation().getLeft().getCDCardinality().isOne() || assoc.getAssociation().getLeft().getCDCardinality().isAtLeastOne();
+            }
+            return false;
+          })
+          .collect(Collectors.toList());
+        copy.removeAll(helper.deletedAssocsForClass(astcdType));
         List<Pair<ASTCDClass, AssocStruct>> deletedAssocs =
             helper.tgtAssocsExist(copy, matched.get());
         allDeletedAssocs.addAll(helper.sortDiffs(deletedAssocs));
@@ -1240,7 +1259,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    */
   public void addAllChangedAssocs() {
     for (Pair<ASTCDAssociation, ASTCDAssociation> pair : matchedAssocs) {
-      CDAssocDiff assocDiff = new CDAssocDiff(pair.a, pair.b, srcCD, tgtCD, helper);
+      CDAssocDiff assocDiff = new CDAssocDiff(pair.a, pair.b, srcCD, tgtCD, helper,matches);
       if (!assocDiff.getBaseDiff().isEmpty()) {
         changedAssocs.add(assocDiff);
         baseDiff.addAll(assocDiff.getBaseDiff());
@@ -1505,42 +1524,38 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
    * @param tgtCDScope The target CD scope.
    */
   private void loadAllLists(
-      ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD,
-      ICD4CodeArtifactScope srcCDScope,
-      ICD4CodeArtifactScope tgtCDScope,
-      List<MatchingStrategy> matchingStrategies) {
-    addAllMatchedTypes(computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
-    addAllMatchedAssocs(
-        computeMatchingMapAssocs(
-            srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD, matchingStrategies));
+    ASTCDCompilationUnit srcCD,
+    ASTCDCompilationUnit tgtCD,
+    ICD4CodeArtifactScope srcCDScope,
+    ICD4CodeArtifactScope tgtCDScope) {
+    addAllMatchedTypes(matches.getTypeMatches());
+    addAllMatchedAssocs(matches.getAssocMatches());
     addAllChangedTypes();
     addAllChangedAssocs();
     addAllAddedClasses(
-        srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      srcCD, matches.getTypeMatches());
     addAllDeletedClasses(
-        tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      tgtCD, matches.getTypeMatches());
     addAllAddedInterfaces(
-        srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      srcCD, matches.getTypeMatches());
     addAllDeletedInterfaces(
-        tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      tgtCD, matches.getTypeMatches());
     addAllAddedClassesSem(srcCD, tgtCD);
     addAllDeletedClassesSem(tgtCD, tgtCD);
-    addAllAddedEnums(srcCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+    addAllAddedEnums(srcCD, matches.getTypeMatches());
     addAllDeletedEnums(
-        tgtCD, computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      tgtCD, matches.getTypeMatches());
     addAllAddedAssocs(
-        srcCD,
-        computeMatchingMapAssocs(
-            srcCD.getCDDefinition().getCDAssociationsList(), srcCD, tgtCD, matchingStrategies));
+      srcCD,
+      matches.getAssocMatches());
     addAllDeletedAssocs(tgtCD);
     addAllAddedInheritance(
-        srcCDScope,
-        tgtCDScope,
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      srcCDScope,
+      tgtCDScope,
+      matches.getTypeMatches());
     addAllDeletedInheritance(
-        srcCDScope,
-        tgtCDScope,
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD, matchingStrategies));
+      srcCDScope,
+      tgtCDScope,
+      matches.getTypeMatches());
   }
 }

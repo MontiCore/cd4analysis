@@ -44,13 +44,13 @@ public abstract class CDDiffTestBasis {
   protected ASTCDCompilationUnit parseModel(String modelFile) {
     Path model = Paths.get(modelFile);
     CD4AnalysisParser parser = new CD4AnalysisParser();
-    Optional<ASTCDCompilationUnit> optAutomaton;
+    Optional<ASTCDCompilationUnit> optModel;
     try {
-      optAutomaton = parser.parse(model.toString());
+      optModel = parser.parse(model.toString());
       // assertFalse(parser.hasErrors());
-      assertTrue(optAutomaton.isPresent());
-      (new CD4AnalysisAfterParseTrafo()).transform(optAutomaton.get());
-      return optAutomaton.get();
+      assertTrue(optModel.isPresent());
+      (new CD4AnalysisAfterParseTrafo()).transform(optModel.get());
+      return optModel.get();
     } catch (Exception e) {
       e.printStackTrace();
       fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
@@ -63,11 +63,7 @@ public abstract class CDDiffTestBasis {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(ast);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    CD4CodeSymbolTableCompleter c =
-        new CD4CodeSymbolTableCompleter(
-            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
-    ast.accept(c.getTraverser());
+    CDDiffUtil.refreshSymbolTable(ast);
     CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
     CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
     cocos.checkAll(ast);
