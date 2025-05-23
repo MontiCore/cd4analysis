@@ -1,21 +1,21 @@
-package de.monticore.cdconformance.conf.attribute;
+package de.monticore.cdconformance.inc.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class STNamedAttributeChecker extends AbstractAttributeChecker {
+public class STAttributeIncStrategy implements CDAttributeMatchingStrategy {
 
-  public STNamedAttributeChecker(
-      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
-    super(mapping, underspecifiedTypeName, typeMatcher);
+  private final String mapping;
+  private ASTCDType referenceType;
+
+  public STAttributeIncStrategy(String mapping) {
+    this.mapping = mapping;
   }
 
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
-
     return referenceType.getCDAttributeList().stream()
         .filter(ref -> isMatched(concrete, ref))
         .collect(Collectors.toList());
@@ -29,5 +29,10 @@ public class STNamedAttributeChecker extends AbstractAttributeChecker {
       return referenceType.getSpannedScope().resolveFieldMany(refName).contains(ref.getSymbol());
     }
     return false;
+  }
+
+  @Override
+  public void setReferenceType(ASTCDType referenceType) {
+    this.referenceType = referenceType;
   }
 }

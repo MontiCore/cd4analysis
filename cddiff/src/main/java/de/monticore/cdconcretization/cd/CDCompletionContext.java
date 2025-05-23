@@ -63,20 +63,17 @@ public interface CDCompletionContext {
   MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy();
 
   /**
-   * Creates an attribute matching strategy that matches the attributes of a specific concrete type
-   * with attributes of a specific reference type. The strategy is only valid when comparing
-   * attributes of these two given types!<br>
+   * Creates an attribute matching strategy that matches against the attributes of a specific
+   * reference type.<br>
    * <br>
    * <b>Note:</b> Most likely you should use {@link TypeCompletionContext#getAttributeIncStrategy()}
    * instead, which gives you the correct strategy for the current type context.
    *
-   * @param concreteType the concrete type to which the attributes belong
    * @param referenceType the reference type to which the attributes belong
    * @return the matching strategy that can be used to find incarnations in context of the given
    *     type.
    */
-  MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
-      ASTCDType concreteType, ASTCDType referenceType);
+  MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType);
 
   /**
    * The scoped incarnation binding stored restrictions of the incarnation binding in certain
