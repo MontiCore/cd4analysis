@@ -13,6 +13,7 @@ import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
@@ -46,12 +47,7 @@ public class Syn2SemDiffValidationTest {
 
       Assertions.assertFalse(witnesses.isEmpty());
 
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
+      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -71,12 +67,7 @@ public class Syn2SemDiffValidationTest {
 
       Assertions.assertFalse(witnesses.isEmpty());
 
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
+      checkDiffWitnesses(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -144,12 +135,7 @@ public class Syn2SemDiffValidationTest {
 
       Assertions.assertFalse(witnesses.isEmpty());
 
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
+      checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
@@ -180,140 +166,34 @@ public class Syn2SemDiffValidationTest {
 
   @Test
   public void testOWDigitalTwin2() {
-    try {
-      ASTCDCompilationUnit cd1 =
-          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
-      ASTCDCompilationUnit cd2 =
-          CDDiffUtil.loadCD("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
-
-      ASTCDCompilationUnit original1 = cd1.deepClone();
-      ASTCDCompilationUnit original2 = cd2.deepClone();
-
-      ReductionTrafo trafo = new ReductionTrafo();
-      trafo.transform(cd1, cd2);
-
-      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
-      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
-      CDDiffUtil.saveDiffCDs2File(cd1, cd2, "target/generated/syn2semdiff-test/DT3vsDT2");
-
-      Assertions.assertFalse(witnesses.isEmpty());
-
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
-
-    } catch (IOException e) {
-      Assertions.fail(e.getMessage());
-    }
+    String path = "src/test/resources/de/monticore/cddiff/DigitalTwins/";
+    String file1 = "DigitalTwin3.cd";
+    String file2 = "DigitalTwin2.cd";
+    checkReductionBasedDiff(path, file1, file2, true);
   }
 
   @ParameterizedTest
   @MethodSource("performanceSet")
   public void testReductionBasedOWDiff(String file1, String file2) {
     String path = "src/test/resources/validation/Performance/";
-    try {
-      ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
-      ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
-      ASTCDCompilationUnit original1 = cd1.deepClone();
-      ASTCDCompilationUnit original2 = cd2.deepClone();
-
-      // reduction-based
-      ReductionTrafo trafo = new ReductionTrafo();
-      trafo.transform(cd1, cd2);
-
-      // print modified CDs
-      String dir1 = file1.replaceAll("\\.cd", "");
-      String dir2 = file2.replaceAll("\\.cd", "");
-      CDDiffUtil.saveDiffCDs2File(
-          cd1, cd2, "target/generated/syn2semdiff-test/" + dir1 + "vs" + dir2);
-
-      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
-      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
-
-      Assertions.assertFalse(witnesses.isEmpty());
-
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
-
-    } catch (IOException e) {
-      Assertions.fail(e.getMessage());
-    }
+    checkReductionBasedDiff(path, file1, file2, true);
   }
 
   @ParameterizedTest
   @MethodSource("cddiffSet")
   public void testReductionBasedOWDiff2(String file1, String file2, boolean diff) {
     String path = "src/test/resources/validation/cddiff/";
-    try {
-      ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
-      ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
-      ASTCDCompilationUnit original1 = cd1.deepClone();
-      ASTCDCompilationUnit original2 = cd2.deepClone();
-
-      // reduction-based
-      ReductionTrafo trafo = new ReductionTrafo();
-      trafo.transform(cd1, cd2);
-
-      // print modified CDs
-      String dir1 = file1.replaceAll("\\.cd", "");
-      String dir2 = file2.replaceAll("\\.cd", "");
-      CDDiffUtil.saveDiffCDs2File(
-          cd1, cd2, "target/generated/syn2semdiff-test/" + dir1 + "vs" + dir2);
-
-      Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
-      List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
-      if (diff) {
-        Assertions.assertFalse(witnesses.isEmpty());
-      }
-
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
-
-      for (ASTODArtifact od : witnesses) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
-
-    } catch (IOException e) {
-      Assertions.fail(e.getMessage());
-    }
+    checkReductionBasedDiff(path, file1, file2, diff);
   }
 
   @ParameterizedTest // Fixed test
   @MethodSource("cd4analysisSet")
   public void testReductionBasedOWDiff3(String file1, String file2, boolean diff) {
     String path = "src/test/resources/validation/cd4analysis/";
+    checkReductionBasedDiff(path, file1, file2, diff);
+  }
+
+  protected void checkReductionBasedDiff(String path, String file1, String file2, boolean diff) {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
@@ -335,25 +215,31 @@ public class Syn2SemDiffValidationTest {
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
+      } else {
+        Assertions.assertTrue(witnesses.isEmpty());
       }
 
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
+      checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, witnesses);
 
-      for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
-          Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-          Assertions.fail();
-        }
-      }
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(original1);
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(original2);
+      checkDiffWitnesses(CDSemantics.STA_OPEN_WORLD, original1, original2, witnesses);
 
     } catch (IOException e) {
       Assertions.fail(e.getMessage());
+    }
+  }
+
+  protected void checkDiffWitnesses(
+      CDSemantics semantics,
+      ASTCDCompilationUnit cd1,
+      ASTCDCompilationUnit cd2,
+      Collection<ASTODArtifact> witnesses) {
+    for (ASTODArtifact od : witnesses) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(semantics, cd1, cd2, od)) {
+        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+        Assertions.fail();
+      }
     }
   }
 

@@ -22,6 +22,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
+import org.antlr.v4.runtime.misc.MultiMap;
 
 /**
  * This class computes the differences between two ASTCDAssociation nodes. It analyzes the role
@@ -42,6 +43,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
 
   private AssocStruct srcStruct;
   private AssocStruct tgtStruct;
+  private CDSynDiffMatches matches;
 
   MatchCDTypesByName nameTypeMatch;
   MatchCDTypeByStructure structureTypeMatch;
@@ -81,22 +83,15 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
       ASTCDAssociation tgtElem,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD,
-      Syn2SemDiffHelper helper) {
+      Syn2SemDiffHelper helper,
+      CDSynDiffMatches matches) {
     this.srcElem = srcElem;
     this.tgtElem = tgtElem;
     this.helper = helper;
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
+    this.matches = matches;
     this.baseDiff = new ArrayList<>();
-    nameTypeMatch = new MatchCDTypesByName(tgtCD);
-    structureTypeMatch = new MatchCDTypeByStructure(tgtCD);
-    superTypeMatchName = new MatchCDTypesToSuperTypes(nameTypeMatch, srcCD, tgtCD);
-    superTypeMatchStructure = new MatchCDTypesToSuperTypes(structureTypeMatch, srcCD, tgtCD);
-    typeMatchers = new ArrayList<>();
-    typeMatchers.add(nameTypeMatch);
-    typeMatchers.add(structureTypeMatch);
-    typeMatchers.add(superTypeMatchStructure);
-    typeMatchers.add(superTypeMatchName);
     srcCDTypes = new ArrayList<>();
     srcCDTypes.add(
         srcCD
@@ -471,9 +466,6 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
     tgtLeftSymbol.ifPresent(cdTypeSymbol -> this.tgtLeftType = cdTypeSymbol.getAstNode());
     tgtRightSymbol.ifPresent(cdTypeSymbol -> this.tgtRightType = cdTypeSymbol.getAstNode());
 
-    Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
-
     ASTCDAssocSide targetVirtualLeft = tgtAssoc.getLeft();
     ASTCDAssocSide targetVirtualRight = tgtAssoc.getRight();
 
@@ -685,17 +677,16 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
-    Map<ASTCDType, ASTCDType> computedMatchingMapTypes =
-        computeMatchingMapTypes(srcCDTypes, srcCD, tgtCD);
+    MultiMap<ASTCDType, ASTCDType> computedMatchingMapTypes = matches.getTypeMatches4Assocs();
 
     isReversed = false;
 
     if (computedMatchingMapTypes.entrySet().stream()
         .anyMatch(
             entry ->
-                entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtRightType)
+                entry.getKey().equals(srcLeftType) && entry.getValue().contains(tgtRightType)
                     || entry.getKey().equals(srcRightType)
-                        && entry.getValue().equals(tgtLeftType))) {
+                        && entry.getValue().contains(tgtLeftType))) {
       isReversed =
           CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()))
                   && !CDDiffUtil.inferRole(srcAssoc.getRight())
@@ -711,9 +702,9 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
             || computedMatchingMapTypes.entrySet().stream()
                 .noneMatch(
                     entry ->
-                        entry.getKey().equals(srcLeftType) && entry.getValue().equals(tgtLeftType)
+                        entry.getKey().equals(srcLeftType) && entry.getValue().contains(tgtLeftType)
                             || entry.getKey().equals(srcRightType)
-                                && entry.getValue().equals(tgtRightType));
+                                && entry.getValue().contains(tgtRightType));
   }
 
   /**
