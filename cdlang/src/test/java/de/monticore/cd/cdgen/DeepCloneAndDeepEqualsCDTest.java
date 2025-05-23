@@ -98,6 +98,10 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           " public Map<String, B> myMap;\n" +
           " public Map<String, B> myMap2;\n" +
           "}\n" +
+          "public class ClassWith2DMap { \n" +
+          " public Map<String, Map<String,B>> myMap;\n" +
+          " public Map<String, Map<String,B>> myMap2;\n" +
+          "}\n" +
           "public class B { \n" +
           "}\n" +
           "association [1] AllTogether (owner) -> (owns) B [*]public; "+

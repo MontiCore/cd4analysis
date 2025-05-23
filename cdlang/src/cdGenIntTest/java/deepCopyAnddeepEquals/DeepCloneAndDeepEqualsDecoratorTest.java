@@ -237,8 +237,35 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertTrue(deMap1.deepEquals(deMap2));
     Assertions.assertTrue(deMap1.deepEquals(deMap2,false));
     Assertions.assertTrue(deMap1.deepEquals(deMap2,true));
+
+    //test 2D map types
+    ClassWith2DMap deMap3 = new ClassWith2DMap();
+    ClassWith2DMap deMap4 = new ClassWith2DMap();
+    deMap3.myMap = new HashMap<>();
+    deMap4.myMap = new HashMap<>();
+    deMap3.myMap.put("key", new HashMap<>());
+    deMap4.myMap.put("key", new HashMap<>());
+    Assertions.assertTrue(deMap3.deepEquals(deMap4));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4,false));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4,true));
+    deMap3.myMap.get("key").put("key", new B());
+    Assertions.assertFalse(deMap3.deepEquals(deMap4));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4,false));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4,true));
+    deMap4.myMap.get("key").put("key", new B());
+    Assertions.assertTrue(deMap3.deepEquals(deMap4));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4,false));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4,true));
+    //null check
+    deMap3.myMap = null;
+    Assertions.assertFalse(deMap3.deepEquals(deMap4));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4,false));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4,true));
+    deMap4.myMap = null;
+    Assertions.assertTrue(deMap3.deepEquals(deMap4));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4,false));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4,true));
     //endregion
-    //TODO multidemensional map test
     //region deepEquals association types
     ClassWithAssociation de15 = new ClassWithAssociation();
     ClassWithAssociation de16 = new ClassWithAssociation();
@@ -621,10 +648,82 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dcO2.my2DimOptional,dcO2.my2DimOptional2);
     //endregion
     //region deepClone map types
+    ClassWithMap dcMap1 = new ClassWithMap();
+    dcMap1.myMap = null;
+    ClassWithMap dcMap2 = dcMap1.deepClone();
+    Assertions.assertNotSame(dcMap1,dcMap2);
+    Assertions.assertNull(dcMap2.myMap);
+    Assertions.assertTrue(dcMap1.deepEquals(dcMap2));
+    dcMap1.myMap = new HashMap<>();
+    Assertions.assertFalse(dcMap1.deepEquals(dcMap2));
+    dcMap2 = dcMap1.deepClone();
+    Assertions.assertNotSame(dcMap1,dcMap2);
+    Assertions.assertNotSame(dcMap1.myMap,dcMap2.myMap);
+    Assertions.assertTrue(dcMap1.deepEquals(dcMap2));
+    dcMap1.myMap.put("key", new B());
+    dcMap2 = dcMap1.deepClone();
+    Assertions.assertNotSame(dcMap1,dcMap2);
+    Assertions.assertNotSame(dcMap1.myMap,dcMap2.myMap);
+    Assertions.assertTrue(dcMap1.deepEquals(dcMap2));
+    //null check
+    dcMap1.myMap = null;
+    dcMap2 = dcMap1.deepClone();
+    Assertions.assertNotSame(dcMap1,dcMap2);
+    Assertions.assertNull(dcMap2.myMap);
+    Assertions.assertTrue(dcMap1.deepEquals(dcMap2));
+    //test Map correctness
+    dcMap1.myMap = new HashMap<>();
+    dcMap1.myMap2 = dcMap1.myMap;
+    dcMap2 = dcMap1.deepClone();
+    Assertions.assertNotSame(dcMap1,dcMap2);
+    Assertions.assertNotSame(dcMap1.myMap,dcMap2.myMap);
+    Assertions.assertNotSame(dcMap1.myMap2,dcMap2.myMap2);
+    Assertions.assertSame(dcMap2.myMap,dcMap2.myMap2);
+    Assertions.assertTrue(dcMap1.deepEquals(dcMap2));
 
-
+    //Test 2D map types
+    ClassWith2DMap dcMap3 = new ClassWith2DMap();
+    ClassWith2DMap dcMap4 = new ClassWith2DMap();
+    dcMap3.myMap = new HashMap<>();
+    dcMap3.myMap.put("key", new HashMap<>());
+    dcMap3.myMap.put("key2", new HashMap<>());
+    dcMap3.myMap.get("key").put("key", new B());
+    dcMap3.myMap.get("key").put("key2", new B());
+    dcMap3.myMap.get("key2").put("key", new B());
+    dcMap3.myMap.get("key2").put("key2", new B());
+    dcMap3.myMap.get("key").put("key3", new B());
+    dcMap3.myMap.get("key2").put("key3", new B());
+    dcMap4 = dcMap3.deepClone();
+    Assertions.assertNotSame(dcMap3,dcMap4);
+    Assertions.assertNotSame(dcMap3.myMap,dcMap4.myMap);
+    Assertions.assertNotSame(dcMap3.myMap.get("key"),dcMap4.myMap.get("key"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key").get("key"),dcMap4.myMap.get("key").get("key"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key").get("key2"),dcMap4.myMap.get("key").get("key2"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key2"),dcMap4.myMap.get("key2"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key2").get("key"),dcMap4.myMap.get("key2").get("key"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key2").get("key2"),dcMap4.myMap.get("key2").get("key2"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key").get("key3"),dcMap4.myMap.get("key").get("key3"));
+    Assertions.assertNotSame(dcMap3.myMap.get("key2").get("key3"),dcMap4.myMap.get("key2").get("key3"));
+    Assertions.assertTrue(dcMap3.deepEquals(dcMap4));
+    dcMap3.myMap.get("key").put("key4", new B());
+    Assertions.assertFalse(dcMap3.deepEquals(dcMap4));
+    dcMap4 = dcMap3.deepClone();
+    Assertions.assertNotSame(dcMap3,dcMap4);
+    Assertions.assertTrue(dcMap3.deepEquals(dcMap4));
+    //null check
+    dcMap3.myMap = null;
+    dcMap4 = dcMap3.deepClone();
+    Assertions.assertNotSame(dcMap3,dcMap4);
+    Assertions.assertNull(dcMap4.myMap);
+    Assertions.assertTrue(dcMap3.deepEquals(dcMap4));
+    //test Map correctness
+    dcMap3.myMap = new HashMap<>();
+    dcMap3.myMap2 = dcMap3.myMap;
+    dcMap4 = dcMap3.deepClone();
+    Assertions.assertNotSame(dcMap3,dcMap4);
+    Assertions.assertNotSame(dcMap3.myMap,dcMap4.myMap);
+    Assertions.assertNotSame(dcMap3.myMap2,dcMap4.myMap2);
     //endregion
-    //TODO actually implement the tests
     //region deepClone association types
     ClassWithAssociation dc15 = new ClassWithAssociation();
     dc15.owns = new HashSet<>();
