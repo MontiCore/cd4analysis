@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** Matches types iff they have the same qualified name. */
 public class MatchCDTypesByQName2Set implements MatchingStrategy<ASTCDType> {
 
   protected LinkedHashSet<ASTCDType> tgtSet;
@@ -21,7 +22,6 @@ public class MatchCDTypesByQName2Set implements MatchingStrategy<ASTCDType> {
     return tgtSet.stream().filter(type -> isMatched(srcElem, type)).collect(Collectors.toList());
   }
 
-  /** Match types iff they have the same name. */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
     return srcElem

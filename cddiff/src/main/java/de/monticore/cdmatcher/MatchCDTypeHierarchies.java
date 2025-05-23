@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Matches a type to all sub- and supertypes of any other type that is matched via an existing type
+ * matching.
+ */
 public class MatchCDTypeHierarchies implements MatchingStrategy<ASTCDType> {
   protected MatchingStrategy<ASTCDType> typeMatcher;
   protected Set<ASTCDType> srcTypes;

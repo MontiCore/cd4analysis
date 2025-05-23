@@ -157,6 +157,7 @@ public class CDDiffUtil {
    *
    * @return All superclasses of a class
    */
+  @Deprecated
   public static Set<ASTCDClass> getAllSuperclasses(
       ASTCDClass astcdClass, Collection<ASTCDClass> classes) {
     // Initialize variables
@@ -193,6 +194,7 @@ public class CDDiffUtil {
    * A helper function to compute the transitive hull of all interfaces implemented by a class
    * superClass in environment classes.
    */
+  @Deprecated
   public static Set<ASTCDInterface> getAllInterfaces(
       ASTCDClass superClass, Collection<ASTCDInterface> allowedInterfaces) {
     // Initialize variables
@@ -245,6 +247,7 @@ public class CDDiffUtil {
    * A helper function to compute the reflexive transitive hull of all super-interfaces of an
    * interface in allowedInterfaces.
    */
+  @Deprecated
   public static Set<ASTCDInterface> getAllInterfaces(
       ASTCDInterface astcdInterface, Collection<ASTCDInterface> allowedInterfaces) {
     Set<ASTCDInterface> interfaces = new HashSet<>();
@@ -302,6 +305,7 @@ public class CDDiffUtil {
   /**
    * A helper function to compute the reflexive transitive hull of all super-types of type in cd.
    */
+  @Deprecated
   public static Set<ASTCDType> getAllSuperTypes(ASTCDType type, ASTCDDefinition cd) {
     if (type instanceof ASTCDClass) {
       return getAllSuperTypes((ASTCDClass) type, cd);
@@ -345,7 +349,7 @@ public class CDDiffUtil {
     allTypes.addAll(cd.getCDClassesList());
 
     for (ASTCDType astcdType : allTypes) {
-      if (getAllSuperTypes(astcdType, cd).contains(type)) {
+      if (getAllSuperTypes(astcdType).contains(type)) {
         result.add(astcdType);
       }
     }

@@ -24,6 +24,12 @@ public class CDSynDiffMatches {
   protected MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs;
   protected Map<ASTCDAssociation, ASTCDAssociation> assocMatches;
 
+  /**
+   * The constructor call computes all matches of types and associations between srcCD and tgtCD.
+   *
+   * @param matchStructure determines whether structural similarities are used to determine type
+   *     matches
+   */
   public CDSynDiffMatches(
       ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean matchStructure) {
 
@@ -36,11 +42,10 @@ public class CDSynDiffMatches {
     Map<ASTCDType, ASTCDType> typeMatchesByName = computeMatching(srcTypes, typeMatcher);
 
     /*
-     * Compute a matching of types of the srcCD if their super-types match according
-     * to the previous matching.
+     * Compute a matching of types of the srcCD if their sub- or supertypes
+     * match according to the previous matching.
      * This is used for the association matching, when moving an association to a
-     * subtype should be detected.
-     * todo: Rethink this approach!
+     * subtype or supertype should be detected.
      */
     typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(typeMatchesByName), srcCD, tgtCD);
     MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
@@ -66,7 +71,7 @@ public class CDSynDiffMatches {
 
       // We compute a best-match to reduce the multimap to a map.
       Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet =
-          computeValueSet(typeMatches, new CDTypeSimilarity());
+          computeMatchAndScoreSet(typeMatches, new CDTypeSimilarity());
       this.typeMatches = computeBestMatching(typeMatches, typeSimilaritySet);
 
       // this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() +
@@ -79,8 +84,6 @@ public class CDSynDiffMatches {
     } else {
       typeMatches = typeMatchesByName;
     }
-
-    // fixme: assoc matching has to be reworked entirely
 
     this.typeMatches4Assocs = typeMatches4Assocs;
 
@@ -105,9 +108,9 @@ public class CDSynDiffMatches {
 
     // Compute best-match for associations using the similarity metric for types.
     Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet =
-        computeValueSet(typeMatches4Assocs, new CDTypeSimilarity());
+        computeMatchAndScoreSet(typeMatches4Assocs, new CDTypeSimilarity());
     Set<Triple<ASTCDAssociation, ASTCDAssociation, Double>> assocSimilaritySet =
-        computeValueSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
+        computeMatchAndScoreSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
     this.assocMatches = computeBestMatching(assocMatches, assocSimilaritySet);
 
     // this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+
@@ -119,9 +122,9 @@ public class CDSynDiffMatches {
    * Helper-function that computes a best-matching given a multi-matching and a set of
    * element-element-score triples.
    */
-  protected <T> Map<T, T> computeBestMatching(
-      MultiMap<T, T> matches, Set<Triple<T, T, Double>> valueSet) {
-    List<Triple<T, T, Double>> remainingMatches = new ArrayList<>(valueSet);
+  public static <T> Map<T, T> computeBestMatching(
+      MultiMap<T, T> matches, Set<Triple<T, T, Double>> matchAndScoreSet) {
+    List<Triple<T, T, Double>> remainingMatches = new ArrayList<>(matchAndScoreSet);
     Map<T, T> bestMatches = new LinkedHashMap<>();
 
     /*
@@ -131,7 +134,7 @@ public class CDSynDiffMatches {
     while (!remainingMatches.isEmpty()) {
       Triple<T, T, Double> bestMatch = remainingMatches.get(0);
       double bestScore = bestMatch.c;
-      for (Triple<T, T, Double> match : valueSet) {
+      for (Triple<T, T, Double> match : matchAndScoreSet) {
         if (remainingMatches.contains(match)) {
           double score = match.c;
           if (score > bestScore
@@ -144,7 +147,7 @@ public class CDSynDiffMatches {
       }
       bestMatches.put(bestMatch.a, bestMatch.b);
       remainingMatches.remove(bestMatch);
-      for (Triple<T, T, Double> match : valueSet) {
+      for (Triple<T, T, Double> match : matchAndScoreSet) {
         if (remainingMatches.contains(match)
             && (match.a.equals(bestMatch.a) || match.b.equals(bestMatch.b))) {
           remainingMatches.remove(match);
@@ -159,19 +162,21 @@ public class CDSynDiffMatches {
    * Helper-function that computes the score for each matching pair of elements in a multi-matching
    * and outputs the set of element-element-score triples.
    */
-  protected <T> Set<Triple<T, T, Double>> computeValueSet(
+  public static <T> Set<Triple<T, T, Double>> computeMatchAndScoreSet(
       MultiMap<T, T> matches, CDSimilarity<T> similarity) {
-    Set<Triple<T, T, Double>> valueSet = new LinkedHashSet<>();
+    Set<Triple<T, T, Double>> matchAndScoreSet = new LinkedHashSet<>();
 
     for (T srcElem : matches.keySet()) {
       for (T tgtElem : matches.get(srcElem)) {
-        valueSet.add(new Triple<>(srcElem, tgtElem, similarity.computeWeight(srcElem, tgtElem)));
+        matchAndScoreSet.add(
+            new Triple<>(srcElem, tgtElem, similarity.computeWeight(srcElem, tgtElem)));
       }
     }
-    return valueSet;
+    return matchAndScoreSet;
   }
 
-  protected <T> Map<T, T> computeMatching(Set<T> srcSet, MatchingStrategy<T> matcher) {
+  /** computes a matching based on a MatchingStrategy */
+  public static <T> Map<T, T> computeMatching(Set<T> srcSet, MatchingStrategy<T> matcher) {
     Map<T, T> matching = new LinkedHashMap<>();
     for (T srcType : srcSet) {
       List<T> matches = matcher.getMatchedElements(srcType);
@@ -182,7 +187,8 @@ public class CDSynDiffMatches {
     return matching;
   }
 
-  protected <T> MultiMap<T, T> computeMultiMatching(Set<T> srcSet, MatchingStrategy<T> matcher) {
+  public static <T> MultiMap<T, T> computeMultiMatching(
+      Set<T> srcSet, MatchingStrategy<T> matcher) {
     MultiMap<T, T> matching = new MultiMap<>();
     for (T srcType : srcSet) {
       matching.put(srcType, matcher.getMatchedElements(srcType));
@@ -198,7 +204,6 @@ public class CDSynDiffMatches {
     return assocMatches;
   }
 
-  @Deprecated
   public MultiMap<ASTCDType, ASTCDType> getTypeMatches4Assocs() {
     return typeMatches4Assocs;
   }

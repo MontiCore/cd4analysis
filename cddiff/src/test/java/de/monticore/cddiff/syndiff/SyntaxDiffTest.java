@@ -10,7 +10,6 @@ import de.monticore.cddiff.CDDiffUtil;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
@@ -35,7 +34,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void testSyntax1() {
+  public void testSyntaxDiff1() {
     parseModels("Source1.cd", "Target1.cd");
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
@@ -59,40 +58,60 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assertEquals(2, synDiff.getDeletedAssocs().size());
   }
 
-  @Disabled
   @Test
-  public void testSyntax2() {
+  public void testSyntaxDiff2() {
     parseModels("Source2.cd", "Target2.cd");
-    // todo: add appropriate asserts
-    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
-    System.out.println(sb.printDiff());
+
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
+    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    // System.out.println(sb.printDiff());
+
+    assertEquals(2, synDiff.getAddedClasses().size());
+    assertEquals(2, synDiff.getDeletedClasses().size());
+
+    assertEquals(1, synDiff.getAddedEnums().size());
+    assertEquals(1, synDiff.getDeletedEnums().size());
+
+    assertEquals(1, synDiff.getAddedAssocs().size());
+    assertEquals(1, synDiff.getDeletedAssocs().size());
   }
 
-  @Disabled
   @Test
-  public void testSyntax3() {
+  public void testSyntaxDiff3() {
     parseModels("TechStoreV2.cd", "TechStoreV1.cd");
-    // todo: add appropriate asserts
-    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
-    System.out.println(sb.printDiff());
+
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
+    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    // System.out.println(sb.printDiff());
+
+    assertEquals(2, synDiff.getDeletedClasses().size());
+    assertEquals(3, synDiff.getChangedTypes().size());
+
+    assertEquals(5, synDiff.getChangedAssocs().size());
+    assertEquals(4, synDiff.getAddedAssocs().size());
+    assertEquals(2, synDiff.getDeletedAssocs().size());
   }
 
-  @Disabled
   @Test
-  public void testSyntax4() {
+  public void testSyntaxDiff4() {
     parseModels("TechStoreV9.cd", "TechStoreV10.cd");
-    // todo: add appropriate asserts
-    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
-    System.out.println(sb.printDiff());
+
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
+    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    // System.out.println(sb.printDiff());
+
+    assertEquals(1, synDiff.getDeletedAssocs().size());
   }
 
-  @Disabled
   @Test
-  public void testSyntax5() {
+  public void testSyntaxDiff5() {
     parseModels("TechStoreV11.cd", "TechStoreV12.cd");
-    // todo: add appropriate asserts
-    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
-    System.out.println(sb.printDiff());
+
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
+    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    // System.out.println(sb.printDiff());
+
+    assertEquals(3, synDiff.getChangedTypes().size());
   }
 
   @Test

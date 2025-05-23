@@ -22,7 +22,7 @@ public class MatchCDTypesToSuperTypes extends MatchCDTypeInHierarchy {
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    return CDDiffUtil.getAllSuperTypes(srcElem, srcCD.getCDDefinition()).stream()
+    return CDDiffUtil.getAllSuperTypes(srcElem).stream()
         .anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
   }
 }

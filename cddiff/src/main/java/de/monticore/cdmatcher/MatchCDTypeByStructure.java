@@ -15,7 +15,7 @@ public class MatchCDTypeByStructure implements MatchingStrategy<ASTCDType> {
 
   protected final ASTCDCompilationUnit tgtCD;
   protected double threshold = 0.5;
-  protected final CDTypeSimilarity typeSimilarity = new CDTypeSimilarity();
+  protected final CDSimilarity<ASTCDType> typeSimilarity = new CDTypeSimilarity();
 
   public MatchCDTypeByStructure(ASTCDCompilationUnit tgtCD) {
     this.tgtCD = tgtCD;

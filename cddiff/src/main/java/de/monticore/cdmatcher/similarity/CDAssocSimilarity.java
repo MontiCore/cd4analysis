@@ -20,6 +20,10 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
   public Double computeWeight(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     double score = 0.0;
 
+    /*
+     * We determine the maximum score for a straight and a reverse match.
+     * The straight match is scored slightly more.
+     */
     score +=
         Double.max(
             computeSideScore(srcElem.getLeft(), tgtElem.getLeft())
@@ -28,6 +32,10 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
             computeSideScore(srcElem.getLeft(), tgtElem.getRight())
                 + computeSideScore(srcElem.getRight(), tgtElem.getLeft()));
 
+    /*
+     * A match of the association name is weighted more than a role name,
+     * but less than two role-names.
+     */
     if (srcElem.isPresentName()
         && tgtElem.isPresentName()
         && srcElem.getName().equals(tgtElem.getName())) {
@@ -37,12 +45,27 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
     return score;
   }
 
+  /**
+   * Determines the similarity score of srcSide to tgtSide
+   *
+   * @param srcSide AssocSide of the src-association
+   * @param tgtSide AssocSide of the tgt-association
+   * @return similarity-score as a double
+   */
   protected double computeSideScore(ASTCDAssocSide srcSide, ASTCDAssocSide tgtSide) {
     double score = 0.0;
+
+    /*
+     * First we need to determine the score of the type-match.
+     * A type-match is weighted less than a role-name match as we assume that
+     * the associations are already filtered according to a best-match of types
+     * as well as their sub- and supertypes.
+     */
 
     Optional<ISymbol> srcTSymbol = srcSide.getMCQualifiedType().getDefiningSymbol();
     Optional<ISymbol> tgtTSymbol = tgtSide.getMCQualifiedType().getDefiningSymbol();
 
+    // The defining symbol is unfortunately not always present.
     if (srcTSymbol.isPresent()
         && srcTSymbol.get() instanceof CDTypeSymbol
         && tgtTSymbol.isPresent()
@@ -62,6 +85,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
       }
 
     } else {
+      // If we cannot use getDefiningSymbol(), we instead match via q-name
       Optional<Triple<ASTCDType, ASTCDType, Double>> entry =
           typeSimilaritySet.stream()
               .filter(
@@ -78,6 +102,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
                                   tgtSide.getMCQualifiedType().getMCQualifiedName().getQName()))
               .max(Comparator.comparingDouble(e -> e.c));
 
+      // If the type still cannot be resolved, we check if the q-names match
       if (entry.isPresent()) {
         score += Double.min(entry.get().c, 0.8);
       } else if (srcSide
