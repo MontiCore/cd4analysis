@@ -6,8 +6,50 @@ ${tc.signature("mCType", "PojoClazzesAsStringList","thisObjectName", "resultObje
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
 <#-- create the result object at the very start and fill thisObject and the resultObjects in  the map -->
 <#assign newResultObjectName = "newResult" + mCType.hashCode()?replace(".","")?replace(",","")>
-<#-- array type -->
+<#-- Array type -->
 <#if (CD4AnalysisTypeDispatcher.isMCArrayTypesASTMCArrayType(mCType))>
+if(${thisObjectName} == null) {
+  ${resultObjectName} = null;
+} else {
+  if(map.get(${thisObjectName}) == null) {
+  <#assign arrayType = mCType.getMCType()>
+  <#assign arrayTypeName = arrayType.printType()>
+  <#assign depth = mCType.getDimensions()>
+  <#assign resultBracketsWithSize = "">
+  <#assign resultBracketsInitialize = "">
+  <#assign thisObjectArrayBracketsWith0index = "">
+  <#assign resultObjectCurrentBrackets = "">
+  <#list 0..depth-1 as i>
+    int arrayDim${i} = ${thisObjectName + thisObjectArrayBracketsWith0index}.length;
+    <#assign thisObjectArrayBracketsWith0index = thisObjectArrayBracketsWith0index + "[0]">
+    <#assign resultBracketsWithSize = resultBracketsWithSize + "[arrayDim" + i + "]">
+    <#assign resultBracketsInitialize = resultBracketsInitialize + "[]">
+    <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[i${i}]">
+  </#list>
+  ${arrayTypeName}${resultBracketsInitialize} ${newResultObjectName} = new ${arrayTypeName}${resultBracketsWithSize};
+  <#list 0..depth-1 as i>
+    for(int i${i} = 0; i${i} < arrayDim${i}; i${i}++) {
+  </#list>
+  <#assign innerTypeResultName = "innerType" + mCType.hashCode()?replace(".","")?replace(",","")>
+  ${arrayTypeName} ${innerTypeResultName};
+  ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", arrayType, PojoClazzesAsStringList, thisObjectName + resultObjectCurrentBrackets, innerTypeResultName)}
+  ${newResultObjectName + resultObjectCurrentBrackets} = ${innerTypeResultName};
+  <#list 0..depth-1 as i>
+    }
+    <#assign mapAddArrayBrackets = "">
+    <#list 0..(depth-(i+1)) as j>
+       <#if j == 0>
+         <#assign mapAddArrayBrackets = mapAddArrayBrackets >
+       <#else>
+         <#assign mapAddArrayBrackets = mapAddArrayBrackets + "[i" + (j-1) + "]">
+       </#if>
+    </#list>
+    map.put(${thisObjectName} ${mapAddArrayBrackets}, new Object[] {${newResultObjectName + mapAddArrayBrackets}, true});
+  </#list>
+  }else{
+      ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+  }
+}
 <#-- Set types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
 if(${thisObjectName} == null) {
@@ -113,11 +155,11 @@ if(${thisObjectName} == null) {
     ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
   }
 }
-<#-- primitive types -->
-<#-- can not be null -->
+<#-- Primitive types -->
+<#-- Primitive types can not be null -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(mCType))>
 ${resultObjectName} = ${thisObjectName};
-<#-- pojo class types -->
+<#-- Pojo class types -->
 <#else>
 <#-- only when the type is present in the class diagram the getDefiningSymbol is present -->
   <#if mCType.getDefiningSymbol().isPresent()>
@@ -135,7 +177,7 @@ if(${thisObjectName} == null) {
     ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
   }
 }
-<#-- all other types -->
+<#-- All other types -->
   <#else>
 if(${thisObjectName} == null) {
   ${resultObjectName} = null;

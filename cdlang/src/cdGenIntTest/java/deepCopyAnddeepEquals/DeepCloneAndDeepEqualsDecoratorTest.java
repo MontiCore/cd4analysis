@@ -44,6 +44,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de2.myInt = 1;
     Assertions.assertFalse(de1.deepEquals(de2));
     //endregion
+    //region deepEquals for array types
     //region deepEquals for String types
     ClassWithString deString1 = new ClassWithString();
     ClassWithString deString2 = new ClassWithString();

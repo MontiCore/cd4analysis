@@ -7,7 +7,49 @@ ${tc.signature("mCType", "PojoClazzesAsStringList","firstObjectName", "secondObj
 <#-- Define a macro to repeat a string n times -->
 <#-- Array types -->
 <#if (CD4AnalysisTypeDispatcher.isMCArrayTypesASTMCArrayType(mCType))>
+<#assign arrayType = mCType.getMCType()>
+<#assign arrayTypeName = arrayType.printType()>
+<#assign depth = mCType.getDimensions()>
+if(${firstObjectName} == null && ${secondObjectName} == null){
+  ${resultBooleanName} = true;
+}else{
+  <#assign thisObjectArrayBracketsWith0index = "">
+  <#list 0..depth-1 as i>
+    int firstArrayDim${i} = ${firstObjectName + thisObjectArrayBracketsWith0index}.length;
+    <#assign thisObjectArrayBracketsWith0index = thisObjectArrayBracketsWith0index + "[0]">
+  </#list>
+  <#list 0..depth-1 as i>
+    <#assign mapAddArrayBrackets = "">
+    <#list 0..i as j>
+       <#if j == 0>
+         <#assign mapAddArrayBrackets = mapAddArrayBrackets >
+       <#else>
+         <#assign mapAddArrayBrackets = mapAddArrayBrackets + "[i${j-1}]" >
+       </#if>
+    </#list>
+    if(${firstObjectName}${mapAddArrayBrackets}.length != ${secondObjectName}${mapAddArrayBrackets}.length){
+      ${resultBooleanName} = false;
+    }else{
+      for(int i${i} = 0; i${i} < firstArrayDim${i}; i${i}++) {
+  </#list>
+  <#assign isEqual = "isEqual">
+  boolean isEqual = true;
+  if(forceSameOrder){
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObjectName + thisObjectArrayBracketsWith0index, secondObjectName + thisObjectArrayBracketsWith0index, isEqual)};
+  }else{
+    ${arrayType.printType()} ${firstObjectName}${mapAddArrayBrackets} = ${mCType.printType()};
 
+  }
+  if(!isEqual){
+    ${resultBooleanName} = false;
+  }
+  <#list 0..depth-1 as i>
+   }
+  }
+  </#list>
+
+
+}
 <#-- Set types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
@@ -140,7 +182,7 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
     }
   }
 }
-<#-- optional types -->
+<#-- Optional types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(mCType))>
 <#assign innerType = (mCType.getMCTypeArgument().getMCTypeOpt().get())>
 <#-- if the first object is not present and the second object is present, return false -->
@@ -156,8 +198,8 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
     ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", innerType, PojoClazzesAsStringList, firstObjectName + ".get()", secondObjectName + ".get()", resultBooleanName)};
   }
 }
-<#-- primitive types -->
-<#-- primitive types can not be null -->
+<#-- Primitive types -->
+<#-- Primitive types can not be null -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(mCType))>
 ${resultBooleanName} = ${firstObjectName} == ${secondObjectName};
 <#-- pojo class types -->

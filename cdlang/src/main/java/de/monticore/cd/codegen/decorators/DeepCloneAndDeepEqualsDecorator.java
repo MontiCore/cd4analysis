@@ -145,6 +145,8 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",List.of(parameter1,parameter2));
 
+    int i = arrayType.getDimensions();
+    System.out.println("Array type dimensions: " + i);
     decoratedClass.addCDMember(deepClone2Method);
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2",originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
