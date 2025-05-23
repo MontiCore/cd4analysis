@@ -35,9 +35,27 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
   <#assign isEqual = "isEqual">
   boolean isEqual = true;
   if(forceSameOrder){
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObjectName + thisObjectArrayBracketsWith0index, secondObjectName + thisObjectArrayBracketsWith0index, isEqual)};
+    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObjectName + thisObjectArrayBracketsWith0index, secondObjectName + thisObjectArrayBracketsWith0index, isEqual)}
   }else{
-    ${arrayType.printType()} ${firstObjectName}${mapAddArrayBrackets} = ${mCType.printType()};
+     <#assign resultObjectCurrentBrackets = "">
+     <#list 0..depth-1 as i>
+       <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[i${i}]">
+     </#list>
+     <#assign firstObject = "firstObject">
+     ${arrayType.printType()} ${firstObject} = ${firstObjectName}${resultObjectCurrentBrackets};
+     <#list 0..depth-1 as i>
+       for(int innerI${i} = 0; innerI$${i} < firstArrayDim${i}; innerI$${i}++) {
+     </#list>
+     <#assign secondObject = "secondObject">
+     <#assign resultObjectCurrentBrackets = "">
+     <#list 0..depth-1 as i>
+       <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[innerI${i}]">
+     </#list>
+     ${arrayType.printType()} ${secondObject} = ${secondObjectName}${resultObjectCurrentBrackets};
+     ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObject, secondObject, isEqual)}
+     <#list 0..depth-1 as i>
+       }
+     </#list>
 
   }
   if(!isEqual){
@@ -225,7 +243,7 @@ if(${firstObjectName} == null && ${secondObjectName} == null){
   } else if(${firstObjectName} == null || ${secondObjectName} == null){
     ${resultBooleanName} = false;
   } else {
-  ${resultBooleanName} = ${secondObjectName}.equals(${firstObjectName});
+    ${resultBooleanName} = ${secondObjectName}.equals(${firstObjectName});
   }
   </#if>
 </#if>
