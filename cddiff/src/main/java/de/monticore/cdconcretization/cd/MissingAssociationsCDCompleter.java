@@ -13,7 +13,7 @@ import de.monticore.cdconcretization.association.AssociationMatch;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.Optional;

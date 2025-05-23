@@ -12,7 +12,7 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import de.monticore.symboltable.IScope;
 import java.util.Set;
 

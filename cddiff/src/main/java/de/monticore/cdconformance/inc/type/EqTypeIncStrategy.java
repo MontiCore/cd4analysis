@@ -3,7 +3,7 @@ package de.monticore.cdconformance.inc.type;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 

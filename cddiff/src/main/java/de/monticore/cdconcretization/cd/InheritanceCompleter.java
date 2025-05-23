@@ -11,7 +11,7 @@ import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import java.util.*;
 import java.util.stream.Collectors;
 

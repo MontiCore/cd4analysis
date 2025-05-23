@@ -1,4 +1,4 @@
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.similarity;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;

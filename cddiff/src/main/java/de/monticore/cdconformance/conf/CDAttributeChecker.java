@@ -2,7 +2,7 @@ package de.monticore.cdconformance.conf;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 
 public interface CDAttributeChecker
     extends MatchingStrategy<ASTCDAttribute>, ConformanceStrategy<ASTCDAttribute> {

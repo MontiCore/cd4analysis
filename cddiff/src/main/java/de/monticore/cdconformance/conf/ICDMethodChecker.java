@@ -2,7 +2,7 @@ package de.monticore.cdconformance.conf;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 
 public interface ICDMethodChecker
     extends MatchingStrategy<ASTCDMethod>, ConformanceStrategy<ASTCDMethod> {

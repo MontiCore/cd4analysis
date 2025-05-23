@@ -2,6 +2,8 @@ package de.monticore.cdmatcher;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.*;
+
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import org.antlr.v4.runtime.misc.Triple;
 
 public abstract class CD2CDCombinedMatching<T> {

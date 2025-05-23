@@ -2,6 +2,8 @@ package de.monticore.cdmatcher;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import org.antlr.v4.runtime.misc.MultiMap;
 
 public class CachedMultiMatches<T> implements MatchingStrategy<T> {

@@ -124,7 +124,7 @@ public class Syn2SemDiffHelper {
    */
   private List<ASTCDAssociation> deletedAssocs;
 
-  private de.monticore.cdmatcher.MatchingStrategy<ASTCDAssociation> matcher;
+  private de.monticore.cdmatcher.matching.MatchingStrategy<ASTCDAssociation> matcher;
   private List<CDAssocDiff> diffs;
   private List<MatchingStrategy> matchingStrategies;
 

@@ -3,7 +3,7 @@ package de.monticore.cdconcretization.type;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 
 /** A {@link CDCompletionContext} with additional information when completing a single type. */
 public interface TypeCompletionContext extends CDCompletionContext {

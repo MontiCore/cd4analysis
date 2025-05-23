@@ -3,7 +3,7 @@ package de.monticore.cdconformance.conf.method;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import java.util.ArrayList;
 import java.util.List;
 

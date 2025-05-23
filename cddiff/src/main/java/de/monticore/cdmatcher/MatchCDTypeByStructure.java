@@ -2,6 +2,9 @@ package de.monticore.cdmatcher;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

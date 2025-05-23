@@ -4,6 +4,9 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

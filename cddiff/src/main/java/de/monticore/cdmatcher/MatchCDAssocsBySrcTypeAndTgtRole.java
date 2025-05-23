@@ -6,6 +6,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

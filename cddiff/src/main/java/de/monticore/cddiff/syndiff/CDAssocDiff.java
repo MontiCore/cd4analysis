@@ -17,7 +17,7 @@ import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
 import de.monticore.cdmatcher.MatchCDTypeByStructure;
 import de.monticore.cdmatcher.MatchCDTypesByName;
 import de.monticore.cdmatcher.MatchCDTypesToSuperTypes;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;

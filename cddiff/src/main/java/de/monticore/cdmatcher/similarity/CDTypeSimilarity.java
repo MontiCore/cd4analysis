@@ -1,4 +1,4 @@
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.similarity;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;

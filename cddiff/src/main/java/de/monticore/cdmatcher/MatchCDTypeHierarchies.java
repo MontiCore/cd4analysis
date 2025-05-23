@@ -3,6 +3,8 @@ package de.monticore.cdmatcher;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

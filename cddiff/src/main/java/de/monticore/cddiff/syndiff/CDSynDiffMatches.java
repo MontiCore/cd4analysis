@@ -6,6 +6,11 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.*;
 import java.util.*;
+
+import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.similarity.CDAssocSimilarity;
+import de.monticore.cdmatcher.similarity.CDSimilarity;
+import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
 import org.antlr.v4.runtime.misc.MultiMap;
 import org.antlr.v4.runtime.misc.Triple;
 

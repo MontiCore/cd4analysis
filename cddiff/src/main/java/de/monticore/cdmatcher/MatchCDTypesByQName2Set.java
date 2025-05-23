@@ -1,6 +1,8 @@
 package de.monticore.cdmatcher;
 
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
