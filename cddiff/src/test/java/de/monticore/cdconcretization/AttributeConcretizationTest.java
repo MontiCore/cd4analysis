@@ -130,9 +130,9 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
    * We have different names of the 'forEach' annotated attribute and the reference target
    * attribute. Also, we have multiple incarnations of the class with the target attribute.
    * Therefore, the attributes in Builder class get two suffixes, one for the type incarnation and
-   * one for the target attribute incarnation name. If we want to have one Builder incarnation
-   * per type incarnation, we need to add an additional <<forEach="DataClass">> to the reference
-   * Builder class
+   * one for the target attribute incarnation name. If we want to have one Builder incarnation per
+   * type incarnation, we need to add an additional <<forEach="DataClass">> to the reference Builder
+   * class
    */
   @Test
   void testAttributeForEachAttributeDifferentNameClassMI() {

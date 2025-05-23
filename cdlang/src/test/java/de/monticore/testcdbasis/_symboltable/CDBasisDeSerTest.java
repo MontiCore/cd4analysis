@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.google.common.collect.Lists;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -18,8 +20,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CDBasisDeSerTest {
 

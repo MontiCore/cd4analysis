@@ -39,5 +39,6 @@ public class CDPackageNotContainingCDPackageTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC20"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

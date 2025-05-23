@@ -2,7 +2,6 @@ package de.monticore.cdconformance.inc.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
-
 import java.util.ArrayList;
 import java.util.List;
 

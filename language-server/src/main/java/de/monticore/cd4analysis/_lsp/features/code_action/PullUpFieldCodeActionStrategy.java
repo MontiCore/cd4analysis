@@ -51,7 +51,8 @@ public class PullUpFieldCodeActionStrategy implements CodeActionStrategy {
                         .getMatchedToken(range.getStart())
                         .filter(
                             matchedToken ->
-                                matchedToken.tokenPathMatches(".*.(cDClass|cDInterface).cDAttribute.cDAttribute"))
+                                matchedToken.tokenPathMatches(
+                                    ".*.(cDClass|cDInterface).cDAttribute.cDAttribute"))
                         .map(
                             matchedToken ->
                                 symbolUsageResolutionProvider.getSymbols(

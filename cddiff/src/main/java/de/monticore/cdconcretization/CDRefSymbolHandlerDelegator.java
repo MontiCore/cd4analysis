@@ -9,16 +9,14 @@ import de.monticore.symbols.oosymbols._ast.ASTField;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
+import java.util.Optional;
 import org.apache.commons.lang3.function.FailableConsumer;
 
-import java.util.Optional;
-
 /**
- * Resolves a symbol name to an AST node from a CD. When a matching AST node is found,
- * the appropriate handler for the different kinds of model elements is called (CDType, CDAttribute,
- * CDMethod).
- * This class is used to process references used e.g., in the 'forEach' stereotype which can be
- * of different kinds.
+ * Resolves a symbol name to an AST node from a CD. When a matching AST node is found, the
+ * appropriate handler for the different kinds of model elements is called (CDType, CDAttribute,
+ * CDMethod). This class is used to process references used e.g., in the 'forEach' stereotype which
+ * can be of different kinds.
  */
 public class CDRefSymbolHandlerDelegator {
 
@@ -36,8 +34,8 @@ public class CDRefSymbolHandlerDelegator {
    * @throws CompletionException
    */
   public void resolveSymbol(
-          ICDBasisScope scope, String referenceSymbol, SourcePosition sourcePosition)
-          throws CompletionException {
+      ICDBasisScope scope, String referenceSymbol, SourcePosition sourcePosition)
+      throws CompletionException {
     boolean processed = resolveAsTypeSymbol(scope, referenceSymbol, sourcePosition);
     if (!processed) {
       processed = resolveAsAttributeSymbol(scope, referenceSymbol, sourcePosition);
@@ -46,7 +44,10 @@ public class CDRefSymbolHandlerDelegator {
     if (!processed) {
       // TODO Rework error logging/reporting & exception usage
       throw new CompletionException(
-              "Unsupported forEach reference referenceSymbol" + referenceSymbol + " at " + sourcePosition);
+          "Unsupported forEach reference referenceSymbol"
+              + referenceSymbol
+              + " at "
+              + sourcePosition);
     }
   }
 
@@ -57,8 +58,8 @@ public class CDRefSymbolHandlerDelegator {
    * @throws CompletionException
    */
   protected boolean resolveAsTypeSymbol(
-          ICDBasisScope scope, String referenceSymbol, SourcePosition sourcePosition)
-          throws CompletionException {
+      ICDBasisScope scope, String referenceSymbol, SourcePosition sourcePosition)
+      throws CompletionException {
     Optional<TypeSymbol> typeSymbol = scope.resolveType(referenceSymbol);
     if (typeSymbol.isPresent()) {
       ASTType type = typeSymbol.get().getAstNode();
@@ -67,17 +68,18 @@ public class CDRefSymbolHandlerDelegator {
         Log.debug("Resolved CDType reference: " + referencedType, LOG_NAME);
         if (typeHandler == null) {
           throw new CompletionException(
-                  "A reference to a CDType is not supported @ " + sourcePosition);
+              "A reference to a CDType is not supported @ " + sourcePosition);
         }
         typeHandler.accept(referencedType);
         return true;
       } else {
         throw new CompletionException(
-                "Referenced type symbol "
-                        + referenceSymbol
-                        + " is not a CDType! (type: "
-                        + type.getClass().getName()
-                        + ") @ " + sourcePosition);
+            "Referenced type symbol "
+                + referenceSymbol
+                + " is not a CDType! (type: "
+                + type.getClass().getName()
+                + ") @ "
+                + sourcePosition);
       }
     }
     return false;
@@ -90,8 +92,8 @@ public class CDRefSymbolHandlerDelegator {
    * @throws CompletionException
    */
   private boolean resolveAsAttributeSymbol(
-          ICDBasisScope scope, String referenceExpr, SourcePosition sourcePosition)
-          throws CompletionException {
+      ICDBasisScope scope, String referenceExpr, SourcePosition sourcePosition)
+      throws CompletionException {
     Optional<FieldSymbol> fieldSymbol = scope.resolveField(referenceExpr);
     if (fieldSymbol.isPresent()) {
       ASTField field = fieldSymbol.get().getAstNode();
@@ -100,17 +102,18 @@ public class CDRefSymbolHandlerDelegator {
         Log.debug("Resolved CDAttribute reference: " + referencedAttribute, LOG_NAME);
         if (attributeHandler == null) {
           throw new CompletionException(
-                  "A reference to a CDAttribute is not supported @ " + sourcePosition);
+              "A reference to a CDAttribute is not supported @ " + sourcePosition);
         }
         attributeHandler.accept(referencedAttribute);
         return true;
       } else {
         throw new CompletionException(
-                "Referenced field symbol "
-                        + referenceExpr
-                        + " is not a CDAttribute! (type: "
-                        + field.getClass().getName()
-                        + ") @" + sourcePosition);
+            "Referenced field symbol "
+                + referenceExpr
+                + " is not a CDAttribute! (type: "
+                + field.getClass().getName()
+                + ") @"
+                + sourcePosition);
       }
     }
     return false;
@@ -131,7 +134,7 @@ public class CDRefSymbolHandlerDelegator {
    * @param attributeHandler the handler to be called
    */
   public void setAttributeHandler(
-          FailableConsumer<ASTCDAttribute, CompletionException> attributeHandler) {
+      FailableConsumer<ASTCDAttribute, CompletionException> attributeHandler) {
     this.attributeHandler = attributeHandler;
   }
 }

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.evaluationTests;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdlib.refactorings.PullUp;
 import de.monticore.cdlib.utilities.FileUtility;
@@ -13,8 +15,6 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test Testcases for Pull Up

@@ -20,9 +20,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AssociationCardinalities extends BaseTest {
-  
+
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Association";
-  
+
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/cardinalities/A.cd";
 
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/cardinalities/B.cd";

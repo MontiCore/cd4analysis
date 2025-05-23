@@ -25,8 +25,8 @@ import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
 import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
-import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
+import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.se_rwth.commons.logging.Log;
@@ -97,9 +97,9 @@ public class CDConformanceChecker {
       typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
       assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new EqNameAttributeIncStrategy());
-      if(params.contains(METHOD_OVERLOADING)) {
-        methInc.addIncStrategy(new EqSignatureMethodIncStrategy(
-                typeMatcher, params.contains(STRICT_PARAMETER_ORDER)));
+      if (params.contains(METHOD_OVERLOADING)) {
+        methInc.addIncStrategy(
+            new EqSignatureMethodIncStrategy(typeMatcher, params.contains(STRICT_PARAMETER_ORDER)));
       } else {
         methInc.addIncStrategy(new EqNameMethodIncStrategy());
       }
@@ -140,21 +140,36 @@ public class CDConformanceChecker {
     BasicAssocConfStrategy assocChecker;
     boolean cardRestriction = params.contains(ALLOW_CARD_RESTRICTION);
 
-    BasicAttributeConfStrategy attrChecker =
-        new BasicAttributeConfStrategy(attrInc, typeMatcher);
+    BasicAttributeConfStrategy attrChecker = new BasicAttributeConfStrategy(attrInc, typeMatcher);
     BasicMethodConfStrategy methodChecker =
-            new BasicMethodConfStrategy(methInc, typeMatcher, params);
+        new BasicMethodConfStrategy(methInc, typeMatcher, params);
 
     if (params.contains(INHERITANCE)) {
       assocChecker =
           new DeepAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction);
       typeChecker =
-          new DeepTypeConfStrategy(concreteCD, referenceCD, attrChecker, methodChecker, attrInc, methInc, typeInc, assocInc);
+          new DeepTypeConfStrategy(
+              concreteCD,
+              referenceCD,
+              attrChecker,
+              methodChecker,
+              attrInc,
+              methInc,
+              typeInc,
+              assocInc);
     } else {
       assocChecker =
           (new BasicAssocConfStrategy(concreteCD, referenceCD, typeInc, assocInc, cardRestriction));
       typeChecker =
-          new BasicTypeConfStrategy(concreteCD, referenceCD, attrChecker, methodChecker, attrInc, methInc, typeInc, assocInc);
+          new BasicTypeConfStrategy(
+              concreteCD,
+              referenceCD,
+              attrChecker,
+              methodChecker,
+              attrInc,
+              methInc,
+              typeInc,
+              assocInc);
     }
 
     return new BasicCDConfStrategy(referenceCD, typeInc, assocInc, typeChecker, assocChecker);

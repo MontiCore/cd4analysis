@@ -1,15 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.creators;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import org.junit.jupiter.api.Test;
-
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 /** Tests {@link CopyCreator} */
 class CopyCreatorTest extends CD4CodeTestBasis {
@@ -32,8 +31,7 @@ class CopyCreatorTest extends CD4CodeTestBasis {
 
     // Then
     assertAll(
-      () -> assertEquals("GenAuction", decoratedAuction.getCDDefinition().getName()),
-      () -> assertEquals("Automaton", decoratedAutomaton.getCDDefinition().getName())
-    );
+        () -> assertEquals("GenAuction", decoratedAuction.getCDDefinition().getName()),
+        () -> assertEquals("Automaton", decoratedAutomaton.getCDDefinition().getName()));
   }
 }

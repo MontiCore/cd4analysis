@@ -8,7 +8,6 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IGlobalScope;
 import de.monticore.symboltable.IScope;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,9 +53,7 @@ public class ScopedIncarnationBindings {
   }
 
   public void addFieldBinding(
-          String scopeSpanningSymbolName,
-          FieldSymbol referenceField,
-          Set<FieldSymbol> concreteFields) {
+      String scopeSpanningSymbolName, FieldSymbol referenceField, Set<FieldSymbol> concreteFields) {
     Multimap<String, FieldSymbol> fieldBinding =
         fieldBindings.computeIfAbsent(scopeSpanningSymbolName, (k) -> ArrayListMultimap.create());
     // TODO future: make sure the binding we add does not conflict with existing ones
@@ -71,11 +68,11 @@ public class ScopedIncarnationBindings {
     }
     if (!concreteScope.isPresentSpanningSymbol()) {
       // ignore the scope and jump one level higher
-      return getScopedTypeIncarnations(
-              concreteScope.getEnclosingScope(), referenceType);
+      return getScopedTypeIncarnations(concreteScope.getEnclosingScope(), referenceType);
     }
     String spanningSymbolName = concreteScope.getSpanningSymbol().getFullName();
-    Log.debug("Checking for type incarnations in scope spanned by: " + spanningSymbolName, LOG_NAME);
+    Log.debug(
+        "Checking for type incarnations in scope spanned by: " + spanningSymbolName, LOG_NAME);
 
     Multimap<String, TypeSymbol> localTypeMapping = typeBindings.get(spanningSymbolName);
     if (localTypeMapping != null && localTypeMapping.containsKey(referenceType.getFullName())) {
@@ -95,11 +92,11 @@ public class ScopedIncarnationBindings {
     }
     if (!concreteScope.isPresentSpanningSymbol()) {
       // ignore the scope and jump one level higher
-      return getScopedFieldIncarnations(
-          concreteScope.getEnclosingScope(), referenceField);
+      return getScopedFieldIncarnations(concreteScope.getEnclosingScope(), referenceField);
     }
     String spanningSymbolName = concreteScope.getSpanningSymbol().getFullName();
-    Log.debug("Checking for field incarnations in scope spanned by: " + spanningSymbolName, LOG_NAME);
+    Log.debug(
+        "Checking for field incarnations in scope spanned by: " + spanningSymbolName, LOG_NAME);
 
     // 1. resolve the type of the field
     TypeSymbol declaringTypeSymbol = SymbolUtil.getDeclaringTypeSymbol(referenceField);
@@ -110,13 +107,14 @@ public class ScopedIncarnationBindings {
     Multimap<String, FieldSymbol> localFieldMapping = fieldBindings.get(spanningSymbolName);
 
     Optional<Collection<FieldSymbol>> fieldIncarnations;
-    if (localFieldMapping != null && localFieldMapping.containsKey(declaringTypeSymbol.getFullName())) {
+    if (localFieldMapping != null
+        && localFieldMapping.containsKey(declaringTypeSymbol.getFullName())) {
       // incarnation is locally defined in that scope
       fieldIncarnations = Optional.of(localFieldMapping.get(declaringTypeSymbol.getFullName()));
     } else {
       // search higher in the scope hierarchy
       fieldIncarnations =
-              getScopedFieldIncarnations(concreteScope.getEnclosingScope(), referenceField);
+          getScopedFieldIncarnations(concreteScope.getEnclosingScope(), referenceField);
     }
 
     // 3. filter the field incarnations by the declaring type incarnations, if present
@@ -126,7 +124,10 @@ public class ScopedIncarnationBindings {
               // only return the field incarnations that are declared in one of the type
               // incarnations of this scope
               .filter(
-                  field -> declaringTypeIncarnations.get().contains(SymbolUtil.getDeclaringTypeSymbol(field)))
+                  field ->
+                      declaringTypeIncarnations
+                          .get()
+                          .contains(SymbolUtil.getDeclaringTypeSymbol(field)))
               .collect(Collectors.toSet()));
     } else {
       // no declaring type incarnations, return all field incarnations

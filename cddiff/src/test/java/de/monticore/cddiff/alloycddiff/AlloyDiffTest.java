@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloycddiff;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
@@ -14,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /** Test classes to test the generation of different alloy modules for cddiff */
 public class AlloyDiffTest extends CDDiffTestBasis {

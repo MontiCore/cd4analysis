@@ -32,13 +32,13 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
 
   private boolean greedyMatcherEnabled = true; // TODO remove! only for testing
 
-  public MissingAssociationsCDCompleter(
-      IAssociationCompleter assocDetailsCompleter) {
+  public MissingAssociationsCDCompleter(IAssociationCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
 
   @Override
-  public void complete(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
+  public void complete(
+      ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd, CDCompletionContext context)
       throws CompletionException {
     Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);
@@ -371,7 +371,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
                         assoc
                             .getLeftQualifiedName()
                             .getQName())) // TODO why contains?? - if because CD names can differ ->
-                                          // remove first part
+    // remove first part
     // additionally, check if any supertype of the opposite types matches the right side of
     // the association
     ) {
@@ -387,7 +387,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
                           assoc
                               .getRightQualifiedName()
                               .getQName()))) { // TODO why contains?? - if because CD names can
-                                               // differ -> remove first part
+        // differ -> remove first part
         return Optional.of(
             leftToRight
                 ? AssocMatchDirection.SAME_DIRECTION

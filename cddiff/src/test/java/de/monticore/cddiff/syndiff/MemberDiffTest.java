@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -9,8 +11,6 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MemberDiffTest extends CDDiffTestBasis {
 

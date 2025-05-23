@@ -250,8 +250,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
     assertTrue(optOd.isPresent());
 
     printOD(optOd.get(), targetName);
-    assertTrue(
-        matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
+    assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
   }
 
   public IdentifiableBoolExpr typeNotEmpty(CD2SMTGenerator cd2SMTGenerator, ASTCDDefinition cd) {

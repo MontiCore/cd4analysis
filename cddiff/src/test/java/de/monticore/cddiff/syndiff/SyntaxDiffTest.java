@@ -1,5 +1,8 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -8,9 +11,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
 

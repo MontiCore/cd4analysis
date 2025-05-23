@@ -12,21 +12,20 @@ import de.monticore.symboltable.ISymbol;
 
 public class SymbolUtil {
 
-  private SymbolUtil() {
-  }
+  private SymbolUtil() {}
 
   public static TypeSymbol getDeclaringTypeSymbol(FieldSymbol fieldSymbol) {
     IScope enclosingScope = fieldSymbol.getEnclosingScope();
     if (!enclosingScope.isPresentSpanningSymbol()) {
       throw new IllegalStateException(
-              "FieldSymbol without enclosing scope: " + fieldSymbol.getFullName());
+          "FieldSymbol without enclosing scope: " + fieldSymbol.getFullName());
     }
     IScopeSpanningSymbol symbol = enclosingScope.getSpanningSymbol();
     if (symbol instanceof TypeSymbol) {
       return (TypeSymbol) symbol;
     } else {
       throw new IllegalStateException(
-              "FieldSymbol not enclosed in a type symbol: " + fieldSymbol.getFullName());
+          "FieldSymbol not enclosed in a type symbol: " + fieldSymbol.getFullName());
     }
   }
 
@@ -40,7 +39,7 @@ public class SymbolUtil {
       return (ASTCDType) astType;
     } else {
       throw new IllegalStateException(
-              "TypeSymbol is not representing a CDType: " + typeSymbol.getFullName());
+          "TypeSymbol is not representing a CDType: " + typeSymbol.getFullName());
     }
   }
 
@@ -50,7 +49,7 @@ public class SymbolUtil {
       return (ASTCDAttribute) astField;
     } else {
       throw new IllegalStateException(
-              "FieldSymbol is not representing a CDAttribute: " + fieldSymbol.getFullName());
+          "FieldSymbol is not representing a CDAttribute: " + fieldSymbol.getFullName());
     }
   }
 }

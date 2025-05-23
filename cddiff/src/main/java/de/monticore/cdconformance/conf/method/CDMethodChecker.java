@@ -16,7 +16,7 @@ public abstract class CDMethodChecker implements ConformanceStrategy<ASTCDMethod
   @Override
   public boolean checkConformance(ASTCDMethod concrete) {
     return methodIncStrategy.getMatchedElements(concrete).stream()
-            .allMatch(ref -> checkConformance(concrete, ref));
+        .allMatch(ref -> checkConformance(concrete, ref));
   }
 
   protected abstract boolean checkConformance(ASTCDMethod concrete, ASTCDMethod ref);

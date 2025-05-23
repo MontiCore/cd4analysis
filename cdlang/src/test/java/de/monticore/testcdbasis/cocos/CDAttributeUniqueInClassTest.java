@@ -42,6 +42,7 @@ public class CDAttributeUniqueInClassTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC06"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

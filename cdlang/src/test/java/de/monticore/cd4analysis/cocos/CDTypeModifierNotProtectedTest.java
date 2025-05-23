@@ -32,5 +32,6 @@ public class CDTypeModifierNotProtectedTest extends CD4AnalysisTestBasis {
     assertTrue(Log.getFindings().get(2).getMsg().startsWith(CDTypeModifierNotProtected.ERROR_CODE));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

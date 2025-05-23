@@ -38,13 +38,20 @@ public class MoveOptionalAttributeTest {
 
     assertEquals(2, ast.get().getCDDefinition().getCDClassesList().size());
     assertEquals("A", ast.get().getCDDefinition().getCDClassesList().get(0).getName());
-    assertEquals(0,
-        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
+    assertEquals(
+        0, ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
     assertEquals("B", ast.get().getCDDefinition().getCDClassesList().get(1).getName());
-    assertEquals(1,
-        ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().size());
-    assertEquals("foo",
-        ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().get(0).getName());
+    assertEquals(
+        1, ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().size());
+    assertEquals(
+        "foo",
+        ast.get()
+            .getCDDefinition()
+            .getCDClassesList()
+            .get(1)
+            .getCDAttributeList()
+            .get(0)
+            .getName());
   }
 
   @Test
@@ -61,8 +68,8 @@ public class MoveOptionalAttributeTest {
 
     assertEquals(1, ast.get().getCDDefinition().getCDClassesList().size());
     assertEquals("A", ast.get().getCDDefinition().getCDClassesList().get(0).getName());
-    assertEquals(0,
-        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
+    assertEquals(
+        0, ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
   }
 
   @Test
@@ -79,7 +86,7 @@ public class MoveOptionalAttributeTest {
 
     assertEquals(1, ast.get().getCDDefinition().getCDClassesList().size());
     assertEquals("B", ast.get().getCDDefinition().getCDClassesList().get(0).getName());
-    assertEquals(0,
-        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
+    assertEquals(
+        0, ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
   }
 }

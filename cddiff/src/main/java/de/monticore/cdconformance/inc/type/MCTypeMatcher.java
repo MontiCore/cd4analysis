@@ -39,10 +39,9 @@ public class MCTypeMatcher {
   }
 
   /**
-   * Two types are matched if one of the following holds:
-   * - the concrete type has the exact same type as the reference type
-   * - the concrete type is an incarnation of the reference type
-   * - the reference type is underspecified
+   * Two types are matched if one of the following holds: - the concrete type has the exact same
+   * type as the reference type - the concrete type is an incarnation of the reference type - the
+   * reference type is underspecified
    *
    * @param conType the concrete type
    * @param refType the reference type
@@ -84,7 +83,7 @@ public class MCTypeMatcher {
       CDTypeSymbol refCDType = (CDTypeSymbol) refType;
       if (conCDType.isPresentAstNode()) {
         return typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
-                .anyMatch(r -> r.getSymbol().getFullName().equals(refCDType.getFullName()));
+            .anyMatch(r -> r.getSymbol().getFullName().equals(refCDType.getFullName()));
       }
     }
     return false;

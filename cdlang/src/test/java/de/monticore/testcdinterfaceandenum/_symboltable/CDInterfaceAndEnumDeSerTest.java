@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.google.common.collect.Lists;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -21,8 +23,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CDInterfaceAndEnumDeSerTest {
 

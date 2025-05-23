@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -11,8 +13,6 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /** This is an integration test that e.g. checks that generated files exist as expected. */
 public class AlloyGeneratorTest extends CDDiffTestBasis {

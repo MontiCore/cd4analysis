@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd.OutTestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -26,8 +28,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ExampleCommandTest extends OutTestBasis {
 
@@ -190,8 +190,7 @@ public class ExampleCommandTest extends OutTestBasis {
     tool.run(new String[] {"-i", fileName});
 
     // Then
-    assertEquals(
-        3, Log.getFindingsCount(), "Actual findings: " + Log.getFindings().toString());
+    assertEquals(3, Log.getFindingsCount(), "Actual findings: " + Log.getFindings().toString());
     assertEquals("0xA0324 Cannot find symbol Address", Log.getFindings().get(0).getMsg());
     Log.clearFindings();
   }

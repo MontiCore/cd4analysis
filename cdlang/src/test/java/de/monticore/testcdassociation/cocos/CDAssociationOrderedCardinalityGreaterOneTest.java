@@ -41,6 +41,7 @@ public class CDAssociationOrderedCardinalityGreaterOneTest extends CDAssociation
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC65"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

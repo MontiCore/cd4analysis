@@ -40,6 +40,7 @@ public class CDAssociationNameUniqueTest extends CDAssociationTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC64"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

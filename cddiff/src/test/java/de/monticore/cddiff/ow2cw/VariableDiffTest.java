@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -8,11 +10,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
-import org.junit.jupiter.api.Test;
-
 import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 public class VariableDiffTest extends CDDiffTestBasis {
 
@@ -67,7 +66,6 @@ public class VariableDiffTest extends CDDiffTestBasis {
     assertEquals(2, found);
 
     assertEquals(3, cd1.getCDDefinition().getCDAssociationsList().size());
-    assertEquals(
-        2, cd1.getCDDefinition().getCDEnumsList().get(0).getCDEnumConstantList().size());
+    assertEquals(2, cd1.getCDDefinition().getCDEnumsList().get(0).getCDEnumConstantList().size());
   }
 }

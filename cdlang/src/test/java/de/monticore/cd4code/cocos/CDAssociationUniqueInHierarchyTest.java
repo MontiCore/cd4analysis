@@ -54,5 +54,6 @@ public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
     return as;
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

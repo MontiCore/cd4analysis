@@ -42,5 +42,6 @@ public class CDDefinitionNameUpperCaseTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC0B"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.parser;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
@@ -15,8 +17,6 @@ import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 

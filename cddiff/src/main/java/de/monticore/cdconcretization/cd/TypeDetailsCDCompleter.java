@@ -21,9 +21,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
 
   private final ITypeCompleter typeDetailsCompleter;
 
-  public TypeDetailsCDCompleter(
-
-      ITypeCompleter typeDetailsCompleter) {
+  public TypeDetailsCDCompleter(ITypeCompleter typeDetailsCompleter) {
     this.typeDetailsCompleter = typeDetailsCompleter;
   }
 
@@ -32,7 +30,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       ASTCDCompilationUnit concreteCD,
       ASTCDCompilationUnit referenceCD,
       CDCompletionContext context)
-      throws CompletionException {MatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
+      throws CompletionException {
+    MatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
     // complete member incarnations
     for (ASTCDClass cClass : concreteCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {

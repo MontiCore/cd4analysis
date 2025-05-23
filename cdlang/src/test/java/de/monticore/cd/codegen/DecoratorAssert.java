@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.CDModifier;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
@@ -9,8 +11,6 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public final class DecoratorAssert {
 

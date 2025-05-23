@@ -2,14 +2,10 @@ package de.monticore.cdconformance.inc.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchingStrategy;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Matches methods only bei their name. This strategy ignores parameter and return types.
- */
+/** Matches methods only bei their name. This strategy ignores parameter and return types. */
 public class EqNameMethodIncStrategy implements CDMethodMatchingStrategy {
 
   private ASTCDType refType;

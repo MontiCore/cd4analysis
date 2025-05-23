@@ -17,10 +17,9 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.ObjectFactory;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
-
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
 
 /** This class configures a set of {@link IDecorator} with their matchers and order of execution */
 public class DecoratorConfig {
@@ -161,7 +160,8 @@ public class DecoratorConfig {
     }
     // Initialize edges (in the reverse order)
     for (IDecorator<?> node : this.decorators) {
-      for (@SuppressWarnings("rawtypes") Class<? extends IDecorator> depOn : node.getMustRunAfter()) {
+      for (@SuppressWarnings("rawtypes")
+      Class<? extends IDecorator> depOn : node.getMustRunAfter()) {
         for (IDecorator<?> depNodeCandidate : this.decorators) {
           if (node != depNodeCandidate && depOn.isAssignableFrom(depNodeCandidate.getClass())) {
             graph.get(depNodeCandidate).add(node);
@@ -195,7 +195,8 @@ public class DecoratorConfig {
       phases.add(phase);
     }
 
-    if (!phases.isEmpty() && phases.get(0).decorators.stream().noneMatch(d->d instanceof ICreator)) {
+    if (!phases.isEmpty()
+        && phases.get(0).decorators.stream().noneMatch(d -> d instanceof ICreator)) {
       Log.error("0xCDD10: Missing creating decorator (such as withCopyCreator())");
     }
 
@@ -240,7 +241,8 @@ public class DecoratorConfig {
       return Optional.empty();
     }
 
-    return Optional.ofNullable(((ICreator.ICreatedData) decoratorData.getData(ICreator.class)).getDecorated());
+    return Optional.ofNullable(
+        ((ICreator.ICreatedData) decoratorData.getData(ICreator.class)).getDecorated());
   }
 
   /**
@@ -252,9 +254,7 @@ public class DecoratorConfig {
 
     @Override
     public String toString() {
-      return "DecoratorPhase{" +
-        "decorators=" + decorators +
-        '}';
+      return "DecoratorPhase{" + "decorators=" + decorators + '}';
     }
   }
 }

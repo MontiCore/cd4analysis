@@ -56,7 +56,7 @@ public class FileUtilityTest {
     // Create Utility object
     String inputFile = "cdlib/A";
     FileUtility utility = new FileUtility(inputFile);
-    
+
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
   }
 

@@ -10,8 +10,8 @@ public interface IAssociationCompleter {
    * <br>
    * Because of the concrete textual syntax of CD4A, associations have a left and right side.
    * However, these have no semantic meaning. The associations <code>A -> B</code> and <code>B <- A
-   * </code> are semantically equivalent. Therefore, we additionally pass the match direction as
-   * a parameter.
+   * </code> are semantically equivalent. Therefore, we additionally pass the match direction as a
+   * parameter.
    *
    * @param concreteAssoc
    * @param referenceAssoc

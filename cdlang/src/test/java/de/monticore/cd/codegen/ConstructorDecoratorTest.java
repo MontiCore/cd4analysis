@@ -40,15 +40,19 @@ public class ConstructorDecoratorTest {
     decorator.decorate(ast);
     assertEquals(6, ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().size());
     assertEquals(1, ast.getCDDefinition().getCDClassesList().get(1).getCDMemberList().size());
-    assertEquals("x", ((ASTCDConstructor)
-            (ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().get(5)))
-        .getCDParameterList()
-        .get(0)
-        .getName());
-    assertEquals("isTrue", ((ASTCDConstructor)
-            (ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().get(5)))
-        .getCDParameterList()
-        .get(1)
-        .getName());
+    assertEquals(
+        "x",
+        ((ASTCDConstructor)
+                (ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().get(5)))
+            .getCDParameterList()
+            .get(0)
+            .getName());
+    assertEquals(
+        "isTrue",
+        ((ASTCDConstructor)
+                (ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().get(5)))
+            .getCDParameterList()
+            .get(1)
+            .getName());
   }
 }

@@ -5,8 +5,8 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.MatchingStrategy;
 
 /**
- * Specific {@link MatchingStrategy} interface for CD methods. A strategy for methods always
- * needs to know a reference type against whose methods it matches the concrete methods.
+ * Specific {@link MatchingStrategy} interface for CD methods. A strategy for methods always needs
+ * to know a reference type against whose methods it matches the concrete methods.
  */
 public interface CDMethodMatchingStrategy extends MatchingStrategy<ASTCDMethod> {
 

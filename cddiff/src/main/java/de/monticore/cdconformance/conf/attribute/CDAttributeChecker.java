@@ -16,7 +16,7 @@ public abstract class CDAttributeChecker implements ConformanceStrategy<ASTCDAtt
   @Override
   public boolean checkConformance(ASTCDAttribute concrete) {
     return attributeIncStrategy.getMatchedElements(concrete).stream()
-            .allMatch(ref -> checkConformance(concrete, ref));
+        .allMatch(ref -> checkConformance(concrete, ref));
   }
 
   protected abstract boolean checkConformance(ASTCDAttribute concrete, ASTCDAttribute ref);

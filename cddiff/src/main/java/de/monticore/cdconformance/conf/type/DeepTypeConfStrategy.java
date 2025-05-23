@@ -24,7 +24,8 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
       CDMethodMatchingStrategy methodInc,
       MatchingStrategy<ASTCDType> typeInc,
       MatchingStrategy<ASTCDAssociation> assocInc) {
-    super(conCD, refCD, attributeChecker, methodChecker, attributeInc, methodInc, typeInc, assocInc);
+    super(
+        conCD, refCD, attributeChecker, methodChecker, attributeInc, methodInc, typeInc, assocInc);
   }
 
   @Override

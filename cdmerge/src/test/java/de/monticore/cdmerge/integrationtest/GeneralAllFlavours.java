@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -16,12 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class GeneralAllFlavours extends BaseTest {
-  
+
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/General";
-  
+
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/allFlavours/CDA.cd";
 
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/allFlavours/CDB.cd";

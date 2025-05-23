@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.se_rwth.commons.logging.Log;
@@ -9,8 +11,6 @@ import java.io.File;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class OD2CDMatcherTest {
 
@@ -41,8 +41,7 @@ public class OD2CDMatcherTest {
   @Test
   public void singleInstanceCheckClosedWorldTest() {
     // TODO
-    assertFalse(
-        matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cdModel1, odModel1));
+    assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cdModel1, odModel1));
   }
 
   @Test

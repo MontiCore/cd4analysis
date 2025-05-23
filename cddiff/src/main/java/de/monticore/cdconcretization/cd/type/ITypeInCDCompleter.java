@@ -19,6 +19,6 @@ public interface ITypeInCDCompleter {
    * @param referenceType
    */
   void completeTypeInCD(
-          ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
-          throws CompletionException;
+      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
+      throws CompletionException;
 }

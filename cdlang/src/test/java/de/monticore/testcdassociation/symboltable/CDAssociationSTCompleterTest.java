@@ -15,7 +15,6 @@ import de.monticore.testcdassociation._symboltable.ITestCDAssociationArtifactSco
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

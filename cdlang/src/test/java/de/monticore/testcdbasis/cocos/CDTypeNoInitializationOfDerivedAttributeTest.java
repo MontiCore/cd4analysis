@@ -41,5 +41,6 @@ public class CDTypeNoInitializationOfDerivedAttributeTest extends CDBasisTestBas
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC0C"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

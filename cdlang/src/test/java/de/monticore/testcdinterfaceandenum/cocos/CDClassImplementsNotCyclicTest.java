@@ -44,5 +44,6 @@ public class CDClassImplementsNotCyclicTest extends CDInterfaceAndEnumTestBasis 
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC09"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

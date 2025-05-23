@@ -65,6 +65,7 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
     ast.accept(c.getTraverser());
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

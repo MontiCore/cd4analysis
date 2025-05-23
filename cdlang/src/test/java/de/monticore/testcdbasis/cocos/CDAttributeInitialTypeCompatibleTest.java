@@ -46,5 +46,6 @@ public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(2).getMsg().startsWith("0xCDC02"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

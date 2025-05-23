@@ -44,5 +44,6 @@ public class CDEnumImplementsNotCyclicTest extends CDInterfaceAndEnumTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC31"));
   }
 
-  @AfterEach  public void after() {}
+  @AfterEach
+  public void after() {}
 }

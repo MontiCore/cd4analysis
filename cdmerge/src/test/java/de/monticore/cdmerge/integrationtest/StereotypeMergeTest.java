@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -17,13 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 public class StereotypeMergeTest extends BaseTest {
 
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams";
-  
+
   // A stereo
   private static final String INPUT_MODEL_A = INPUT_MODEL_DIR + "/Stereotypes/CD1.cd";
 
@@ -113,7 +113,8 @@ public class StereotypeMergeTest extends BaseTest {
     assertTrue(cl.getModifier().isPresentStereotype(), "Class stereo missing");
     assertTrue(cl.getModifier().getStereotype().contains("A2"), "Class stereo incorrect");
     assertTrue(cl.getModifier().getStereotype().contains("B2"), "Class stereo incorrect");
-    assertTrue(((ASTCDAttribute) cl.getCDMember(0)).getModifier().isPresentStereotype(),
+    assertTrue(
+        ((ASTCDAttribute) cl.getCDMember(0)).getModifier().isPresentStereotype(),
         "Attribute stereo missing");
     ASTCDAttribute attr_a =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd1")).findAny().get();

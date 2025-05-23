@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -27,8 +29,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CDBasisSTCompleterTest {
 

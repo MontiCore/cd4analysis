@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.trafo;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cd.facade.CDModifier;
 import de.monticore.cdbasis._ast.*;
@@ -14,8 +16,6 @@ import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CDBasisTrafoTest extends TestBasis {
 

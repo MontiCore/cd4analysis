@@ -22,7 +22,8 @@ public class ConformanceCheckCompletionStep extends AbstractCDCompleter {
   private final String errorMessage;
   private final CDConformanceChecker conformanceChecker;
 
-  public ConformanceCheckCompletionStep(String mapping, Set<CDConfParameter> params,  String errorMessage) {
+  public ConformanceCheckCompletionStep(
+      String mapping, Set<CDConfParameter> params, String errorMessage) {
     this.mapping = mapping;
     this.errorMessage = errorMessage;
     this.conformanceChecker = new CDConformanceChecker(params);

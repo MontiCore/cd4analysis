@@ -43,6 +43,7 @@ public class CDAssociationRoleNameLowerCaseTest extends CDAssociationTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC66"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

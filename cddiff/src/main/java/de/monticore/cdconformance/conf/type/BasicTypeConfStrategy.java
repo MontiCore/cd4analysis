@@ -6,8 +6,8 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
+import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.method.CDMethodChecker;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
@@ -217,8 +217,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
             refAttr ->
                 (refAttr.getModifier().isPresentStereotype()
                         && refAttr.getModifier().getStereotype().contains("optional"))
-                    || con.stream()
-                        .anyMatch(conAttr -> attributeInc.isMatched(conAttr, refAttr)));
+                    || con.stream().anyMatch(conAttr -> attributeInc.isMatched(conAttr, refAttr)));
   }
 
   protected boolean checkMethodIncarnation(Set<ASTCDMethod> con, Set<ASTCDMethod> ref) {
@@ -243,7 +242,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     return concrete.stream()
         .allMatch(
             conMethod ->
-                    methodInc.getMatchedElements(conMethod).isEmpty()
+                methodInc.getMatchedElements(conMethod).isEmpty()
                     || methodChecker.checkConformance(conMethod));
   }
 }

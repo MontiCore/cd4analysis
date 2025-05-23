@@ -19,9 +19,7 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collections;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 /** Add special handling to the setters of bidirectional associations */
@@ -32,7 +30,8 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     // We require data of the Setter Decorator
-    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
+    return Iterables.concat(
+        super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
   }
 
   @Override
@@ -51,14 +50,15 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
       // And for which a role symbol was present (before being transformed away) and which is
       // navigable in both directions
       if (role == null
-        || !role.isIsDefinitiveNavigable()
-        || !role.getOtherSide().isIsDefinitiveNavigable()) return;
+          || !role.isIsDefinitiveNavigable()
+          || !role.getOtherSide().isIsDefinitiveNavigable()) return;
 
       var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
       var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
 
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-        Log.error("0xCDD60: Unable to have a navigable assoc to a boolean", role.getSourcePosition());
+        Log.error(
+            "0xCDD60: Unable to have a navigable assoc to a boolean", role.getSourcePosition());
       } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         Log.warn("0xTODO: WIP List NavSetter ", role.getSourcePosition());
       } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {

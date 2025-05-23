@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -15,8 +17,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBasis {
 

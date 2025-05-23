@@ -19,7 +19,6 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collections;
 import java.util.Stack;
 
@@ -32,7 +31,8 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     // We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
+    return Iterables.concat(
+        super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();

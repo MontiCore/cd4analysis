@@ -17,7 +17,8 @@ public class OutTestBasis extends TestBasis {
     System.setErr(new PrintStream(errContent));
   }
 
-  @AfterEach  public void reset() {
+  @AfterEach
+  public void reset() {
     outContent.reset();
     errContent.reset();
   }

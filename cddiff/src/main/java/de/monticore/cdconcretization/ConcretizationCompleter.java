@@ -8,17 +8,17 @@ import de.monticore.cdconcretization.association.DefaultAssocCompleter;
 import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
-import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
-import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompleter;
-import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
-import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter;
-import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdconcretization.cd.*;
 import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
+import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ITypeInCDCompleter;
 import de.monticore.cdconcretization.type.*;
+import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
@@ -26,14 +26,10 @@ import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
-import de.monticore.cdconformance.inc.method.CompMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.EqNameMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
-import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
+import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -46,8 +42,8 @@ import java.util.stream.Collectors;
  * Tool for automatic completion of a concrete class diagram (CD) such that it conforms to a given
  * reference CD. The completion process is implemented using multiple modular completer
  * implementations for each element kind in a CD. This class is the facade with easy to use
- * configuration parameters and a single method to perform the completion:
- * {@link #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
+ * configuration parameters and a single method to perform the completion: {@link
+ * #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
  */
 public class ConcretizationCompleter {
 
@@ -147,7 +143,8 @@ public class ConcretizationCompleter {
       completerChainBuilder.add(new ReorderElementsCompletionStep());
     }
     if (checkConformance) {
-      completerChainBuilder.add(new ConformanceCheckCompletionStep(
+      completerChainBuilder.add(
+          new ConformanceCheckCompletionStep(
               mapping, conformanceParams, "Completion result is not conform"));
     }
 
@@ -222,11 +219,15 @@ public class ConcretizationCompleter {
         assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       }
 
-      // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference type
+      // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference
+      // type
       // themselves or have a subclass which is an incarnation of the reference type.
-      // This strategy is only used when matching associations. If we want to allow the concrete CD to
-      // define associations in superclasses of the actual type incarnation, we have to pass this type
-      // matching strategy to the association matching strategies. This allows supertypes to 'act' as
+      // This strategy is only used when matching associations. If we want to allow the concrete CD
+      // to
+      // define associations in superclasses of the actual type incarnation, we have to pass this
+      // type
+      // matching strategy to the association matching strategies. This allows supertypes to 'act'
+      // as
       // incarnation of the reference type in context of a specific association.
       // For example in the following concrete CD, A is a valid incarnation of A in the reference CD
       // because A is a subclass of X, which has an association towards B.

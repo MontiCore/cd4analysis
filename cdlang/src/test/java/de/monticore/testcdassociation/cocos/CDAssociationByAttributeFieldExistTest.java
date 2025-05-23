@@ -44,6 +44,7 @@ public class CDAssociationByAttributeFieldExistTest extends CDAssociationTestBas
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC6B"));
   }
 
-  @AfterEach  @Override
+  @AfterEach
+  @Override
   public void after() {}
 }

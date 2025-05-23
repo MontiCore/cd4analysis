@@ -72,16 +72,19 @@ public class TestCDBasisResolvingWithoutPackageDeclTest extends TestBasis {
     checkLogError();
 
     final Optional<CDTypeSymbol> a1 = globalScope.resolveCDType("A");
-    assertFalse(a1.isPresent(), "CDType cdbasis.parser.Packages.A could be resolved but shouldn't.");
+    assertFalse(
+        a1.isPresent(), "CDType cdbasis.parser.Packages.A could be resolved but shouldn't.");
     checkLogError();
 
     final Optional<CDTypeSymbol> a2 = globalScope.resolveCDType("Packages.a.A");
-    assertTrue(a2.isPresent(),
+    assertTrue(
+        a2.isPresent(),
         "CDType cdbasis.parser.Packages.a.A could not be resolved:\n" + getJoinedErrors());
     checkLogError();
 
     final Optional<CDTypeSymbol> a3 = globalScope.resolveCDType("Packages.a.b.c.C");
-    assertTrue(a3.isPresent(),
+    assertTrue(
+        a3.isPresent(),
         "CDType cdbasis.parser.Packages.a.b.c.C could not be resolved:\n" + getJoinedErrors());
     checkLogError();
 

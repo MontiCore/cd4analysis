@@ -9,12 +9,11 @@ import java.io.IOException;
 import org.apache.commons.cli.ParseException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ToolTest extends OutTestBasis {
   @SuppressWarnings("deprecation")
-
   protected static final String TOOL_PATH = "src/test/resources/de/monticore/";
 
   @Test
@@ -162,7 +161,8 @@ public class ToolTest extends OutTestBasis {
     Runtime.getRuntime().addShutdownHook(failOnExitHook);
   }
 
-  @AfterEach  public void removeFailOnExitHook() {
+  @AfterEach
+  public void removeFailOnExitHook() {
     Runtime.getRuntime().removeShutdownHook(failOnExitHook);
   }
 }

@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -10,11 +12,8 @@ import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ComplexityTest extends CDDiffTestBasis {
   @Test
