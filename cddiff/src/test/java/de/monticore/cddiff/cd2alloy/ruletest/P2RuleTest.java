@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.ruletest;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.util.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /** Tests the P2 rule using the examples from the technical report */
 public class P2RuleTest extends CDDiffTestBasis {
@@ -22,7 +22,7 @@ public class P2RuleTest extends CDDiffTestBasis {
   protected ASTCDCompilationUnit m2Ast =
       parseModel("src/test/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
-  @Before
+  @BeforeEach
   public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);

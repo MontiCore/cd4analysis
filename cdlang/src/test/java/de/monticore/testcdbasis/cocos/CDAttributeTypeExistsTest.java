@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeTypeExists;
@@ -10,8 +10,8 @@ import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CDAttributeTypeExistsTest extends CDBasisTestBasis {
 
@@ -39,11 +39,11 @@ public class CDAttributeTypeExistsTest extends CDBasisTestBasis {
     createSymTab(ast);
     completeSymTab(ast);
     coCoChecker.checkAll(ast);
-    assertEquals(Log.getFindings().toString(), 1, Log.getFindings().size());
+    assertEquals(1, Log.getFindings().size(), Log.getFindings().toString());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 
-  @After
+  @AfterEach
   @Override
   public void after() {}
 }

@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -15,26 +18,23 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StereotypeMergeTest extends BaseTest {
 
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams";
+
   // A stereo
-  private static final String INPUT_MODEL_A =
-      "src/test/resources/class_diagrams" + "/Stereotypes/CD1.cd";
+  private static final String INPUT_MODEL_A = INPUT_MODEL_DIR + "/Stereotypes/CD1.cd";
 
   // B stereo
-  private static final String INPUT_MODEL_B =
-      "src/test/resources/class_diagrams" + "/Stereotypes/CD2.cd";
+  private static final String INPUT_MODEL_B = INPUT_MODEL_DIR + "/Stereotypes/CD2.cd";
 
   // No stereos
-  private static final String INPUT_MODEL_NO =
-      "src/test/resources/class_diagrams" + "/Stereotypes/CD3.cd";
+  private static final String INPUT_MODEL_NO = INPUT_MODEL_DIR + "/Stereotypes/CD3.cd";
 
   // multiple stereos
-  private static final String INPUT_MODEL_MULT =
-      "src/test/resources/class_diagrams" + "/Stereotypes/CD4.cd";
+  private static final String INPUT_MODEL_MULT = INPUT_MODEL_DIR + "/Stereotypes/CD4.cd";
 
   @Test
   public void testMergeWithOneSide() throws IOException, MergingException {
@@ -46,24 +46,22 @@ public class StereotypeMergeTest extends BaseTest {
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
 
-    Assert.assertTrue(results.mergeSuccess());
-    Assert.assertTrue(results.getMergedCD().isPresent());
+    assertTrue(results.mergeSuccess());
+    assertTrue(results.getMergedCD().isPresent());
 
     ASTCDDefinition def = results.getMergedCD().get().getCDDefinition();
-    Assert.assertTrue("CDDefinition stereo missing", def.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("A1"));
+    assertTrue(def.getModifier().isPresentStereotype(), "CDDefinition stereo missing");
+    assertTrue(def.getModifier().getStereotype().contains("A1"), "CDDefinition stereo incorrect");
     ASTCDClass cl = def.getCDClassesList().get(0);
-    Assert.assertTrue("Class stereo missing", cl.getModifier().isPresentStereotype());
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("A2"));
+    assertTrue(cl.getModifier().isPresentStereotype(), "Class stereo missing");
+    assertTrue(cl.getModifier().getStereotype().contains("A2"), "Class stereo incorrect");
     ASTCDAttribute attr_a =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd1")).findAny().get();
     ASTCDAttribute attr_no =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd3")).findAny().get();
-    Assert.assertTrue("Attribute stereo missing", attr_a.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_a.getModifier().getStereotype().contains("A3"));
-    Assert.assertFalse("Attribute stereo not missing", attr_no.getModifier().isPresentStereotype());
+    assertTrue(attr_a.getModifier().isPresentStereotype(), "Attribute stereo missing");
+    assertTrue(attr_a.getModifier().getStereotype().contains("A3"), "Attribute stereo incorrect");
+    assertFalse(attr_no.getModifier().isPresentStereotype(), "Attribute stereo not missing");
   }
 
   @Test
@@ -76,24 +74,22 @@ public class StereotypeMergeTest extends BaseTest {
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
 
-    Assert.assertTrue(results.mergeSuccess());
-    Assert.assertTrue(results.getMergedCD().isPresent());
+    assertTrue(results.mergeSuccess());
+    assertTrue(results.getMergedCD().isPresent());
 
     ASTCDDefinition def = results.getMergedCD().get().getCDDefinition();
-    Assert.assertTrue("CDDefinition stereo missing", def.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("A1"));
+    assertTrue(def.getModifier().isPresentStereotype(), "CDDefinition stereo missing");
+    assertTrue(def.getModifier().getStereotype().contains("A1"), "CDDefinition stereo incorrect");
     ASTCDClass cl = def.getCDClassesList().get(0);
-    Assert.assertTrue("Class stereo missing", cl.getModifier().isPresentStereotype());
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("A2"));
+    assertTrue(cl.getModifier().isPresentStereotype(), "Class stereo missing");
+    assertTrue(cl.getModifier().getStereotype().contains("A2"), "Class stereo incorrect");
     ASTCDAttribute attr_a =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd1")).findAny().get();
     ASTCDAttribute attr_no =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd3")).findAny().get();
-    Assert.assertTrue("Attribute stereo missing", attr_a.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_a.getModifier().getStereotype().contains("A3"));
-    Assert.assertFalse("Attribute stereo not missing", attr_no.getModifier().isPresentStereotype());
+    assertTrue(attr_a.getModifier().isPresentStereotype(), "Attribute stereo missing");
+    assertTrue(attr_a.getModifier().getStereotype().contains("A3"), "Attribute stereo incorrect");
+    assertFalse(attr_no.getModifier().isPresentStereotype(), "Attribute stereo not missing");
   }
 
   @Test
@@ -106,32 +102,28 @@ public class StereotypeMergeTest extends BaseTest {
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
 
-    Assert.assertTrue(results.mergeSuccess());
-    Assert.assertTrue(results.getMergedCD().isPresent());
+    assertTrue(results.mergeSuccess());
+    assertTrue(results.getMergedCD().isPresent());
 
     ASTCDDefinition def = results.getMergedCD().get().getCDDefinition();
-    Assert.assertTrue("CDDefinition stereo missing", def.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("A1"));
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("B1"));
+    assertTrue(def.getModifier().isPresentStereotype(), "CDDefinition stereo missing");
+    assertTrue(def.getModifier().getStereotype().contains("A1"), "CDDefinition stereo incorrect");
+    assertTrue(def.getModifier().getStereotype().contains("B1"), "CDDefinition stereo incorrect");
     ASTCDClass cl = def.getCDClassesList().get(0);
-    Assert.assertTrue("Class stereo missing", cl.getModifier().isPresentStereotype());
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("A2"));
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("B2"));
-    Assert.assertTrue(
-        "Attribute stereo missing",
-        ((ASTCDAttribute) cl.getCDMember(0)).getModifier().isPresentStereotype());
+    assertTrue(cl.getModifier().isPresentStereotype(), "Class stereo missing");
+    assertTrue(cl.getModifier().getStereotype().contains("A2"), "Class stereo incorrect");
+    assertTrue(cl.getModifier().getStereotype().contains("B2"), "Class stereo incorrect");
+    assertTrue(
+        ((ASTCDAttribute) cl.getCDMember(0)).getModifier().isPresentStereotype(),
+        "Attribute stereo missing");
     ASTCDAttribute attr_a =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd1")).findAny().get();
     ASTCDAttribute attr_b =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd2")).findAny().get();
-    Assert.assertTrue("Attribute stereo missing", attr_a.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_a.getModifier().getStereotype().contains("A3"));
-    Assert.assertTrue("Attribute stereo missing", attr_b.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_b.getModifier().getStereotype().contains("B3"));
+    assertTrue(attr_a.getModifier().isPresentStereotype(), "Attribute stereo missing");
+    assertTrue(attr_a.getModifier().getStereotype().contains("A3"), "Attribute stereo incorrect");
+    assertTrue(attr_b.getModifier().isPresentStereotype(), "Attribute stereo missing");
+    assertTrue(attr_b.getModifier().getStereotype().contains("B3"), "Attribute stereo incorrect");
   }
 
   @Test
@@ -144,34 +136,30 @@ public class StereotypeMergeTest extends BaseTest {
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
 
-    Assert.assertTrue(results.mergeSuccess());
-    Assert.assertTrue(results.getMergedCD().isPresent());
+    assertTrue(results.mergeSuccess());
+    assertTrue(results.getMergedCD().isPresent());
 
     ASTCDDefinition def = results.getMergedCD().get().getCDDefinition();
-    Assert.assertTrue("CDDefinition stereo missing", def.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("A1"));
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("D1"));
-    Assert.assertTrue(
-        "CDDefinition stereo incorrect", def.getModifier().getStereotype().contains("DD1"));
+    assertTrue(def.getModifier().isPresentStereotype(), "CDDefinition stereo missing");
+    assertTrue(def.getModifier().getStereotype().contains("A1"), "CDDefinition stereo incorrect");
+    assertTrue(def.getModifier().getStereotype().contains("D1"), "CDDefinition stereo incorrect");
+    assertTrue(def.getModifier().getStereotype().contains("DD1"), "CDDefinition stereo incorrect");
     ASTCDClass cl = def.getCDClassesList().get(0);
-    Assert.assertTrue("Class stereo missing", cl.getModifier().isPresentStereotype());
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("A2"));
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("D2"));
-    Assert.assertTrue("Class stereo incorrect", cl.getModifier().getStereotype().contains("DD2"));
+    assertTrue(cl.getModifier().isPresentStereotype(), "Class stereo missing");
+    assertTrue(cl.getModifier().getStereotype().contains("A2"), "Class stereo incorrect");
+    assertTrue(cl.getModifier().getStereotype().contains("D2"), "Class stereo incorrect");
+    assertTrue(cl.getModifier().getStereotype().contains("DD2"), "Class stereo incorrect");
     ASTCDAttribute attr_a =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd1")).findAny().get();
     ASTCDAttribute attr_mult =
         cl.getCDAttributeList().stream().filter(a -> a.getName().equals("cd4")).findAny().get();
-    Assert.assertTrue("Attribute stereo missing", attr_a.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_a.getModifier().getStereotype().contains("A3"));
-    Assert.assertTrue("Attribute stereo missing", attr_mult.getModifier().isPresentStereotype());
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_mult.getModifier().getStereotype().contains("D3"));
-    Assert.assertTrue(
-        "Attribute stereo incorrect", attr_mult.getModifier().getStereotype().contains("DD3"));
+    assertTrue(attr_a.getModifier().isPresentStereotype(), "Attribute stereo missing");
+    assertTrue(attr_a.getModifier().getStereotype().contains("A3"), "Attribute stereo incorrect");
+    assertTrue(attr_mult.getModifier().isPresentStereotype(), "Attribute stereo missing");
+    assertTrue(
+        attr_mult.getModifier().getStereotype().contains("D3"), "Attribute stereo incorrect");
+    assertTrue(
+        attr_mult.getModifier().getStereotype().contains("DD3"), "Attribute stereo incorrect");
   }
 
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {

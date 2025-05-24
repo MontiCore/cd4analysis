@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -10,8 +12,7 @@ import de.monticore.odvalidity.OD2CDMatcher;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class Syn2SemDiffTest extends CDDiffTestBasis {
 
@@ -27,7 +28,7 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
-    Assert.assertTrue(witnesses.isEmpty());
+    assertTrue(witnesses.isEmpty());
   }
 
   @Test
@@ -42,7 +43,7 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
-    Assert.assertTrue(witnesses.isEmpty());
+    assertTrue(witnesses.isEmpty());
   }
 
   @Test
@@ -57,7 +58,7 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
-    Assert.assertTrue(witnesses.isEmpty());
+    assertTrue(witnesses.isEmpty());
   }
 
   @Test
@@ -72,14 +73,14 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
 
-    Assert.assertFalse(witnesses.isEmpty());
+    assertFalse(witnesses.isEmpty());
 
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher()
           .checkIfDiffWitness(
               CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
+        fail();
       }
     }
   }
@@ -98,7 +99,7 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
           .checkIfDiffWitness(
               CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
+        fail();
       }
     }
   }
@@ -111,14 +112,7 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
         parseModel("src/test/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-    for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
-      }
-    }
+    assertTrue(witnesses.isEmpty());
   }
 
   @Test
@@ -130,12 +124,8 @@ public class Syn2SemDiffTest extends CDDiffTestBasis {
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
-        Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assert.fail();
-      }
+      System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
     }
+    assertTrue(witnesses.isEmpty());
   }
 }

@@ -7,10 +7,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
+import org.gradle.api.tasks.OutputDirectory;
 
 /**
  * Gradle Task of the {@link de.monticore.cdgen.CDGenTool} It is an all-files task, as -i A.cd -i
@@ -29,6 +31,33 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Input
   abstract Property<Boolean> getClass2MC();
 
+  /**
+   * Whether CoCos should be checked, default is true
+   *
+   * @return property
+   */
+  @Optional
+  @Input
+  abstract Property<Boolean> getCoCos();
+
+  /**
+   * If present, the original symbol tables will be exported into this directory
+   *
+   * @return property
+   */
+  @Optional
+  @OutputDirectory
+  abstract DirectoryProperty getOriginalSymbolOutput();
+
+  /**
+   * If present, the decorated symbol tables will be exported into this directory
+   *
+   * @return property
+   */
+  @Optional
+  @OutputDirectory
+  abstract DirectoryProperty getDecoratedSymbolOutput();
+
   @Override
   protected List<String> createArgList(Function<Path, String> handlePath) {
     var list = super.createArgList(handlePath);
@@ -38,6 +67,19 @@ public abstract class CDGenTask extends MCAllFilesTask {
     }
     if (getClass2MC().isPresent() && getClass2MC().get()) {
       list.add("--class2mc");
+    }
+    if (getCoCos().getOrElse(true)) {
+      list.add("--checkcococs");
+    }
+    // We have to use two separate directories for the symbol outputs
+    // to avoid: 0xA1294 The following entries for the file `MyCD\..*sym` are ambiguous
+    if (getOriginalSymbolOutput().isPresent()) {
+      list.add("-s");
+      list.add(getOriginalSymbolOutput().get().getAsFile().getAbsolutePath());
+    }
+    if (getDecoratedSymbolOutput().isPresent()) {
+      list.add("-sd");
+      list.add(getDecoratedSymbolOutput().get().getAsFile().getAbsolutePath());
     }
     return list;
   }

@@ -1,0 +1,4 @@
+classdiagram EnumMemberMissingConc {
+  enum Colour{RED,YELLOW,BLUE,PURPLE;
+  }
+}

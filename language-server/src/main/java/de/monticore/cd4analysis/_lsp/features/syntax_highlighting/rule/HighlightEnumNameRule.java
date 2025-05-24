@@ -10,7 +10,7 @@ public class HighlightEnumNameRule implements TokenClassificationRule {
 
   @Override
   public boolean matches(Token token) {
-    return (token.tokenPathMatches(".*.cDElement.*.cDEnum")) && token.isNameToken();
+    return (token.tokenPathMatches(".*.cDEnum.*.cDEnum")) && token.isNameToken();
   }
 
   @Override

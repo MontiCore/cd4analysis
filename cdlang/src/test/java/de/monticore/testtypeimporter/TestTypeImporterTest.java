@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testtypeimporter;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -19,7 +19,7 @@ import de.monticore.testtypeimporter._symboltable.ITestTypeImporterGlobalScope;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestTypeImporterTest extends TestBasis {
   @Test

@@ -237,24 +237,27 @@ public class GetterDecorator extends AbstractDecorator<AbstractDecorator.NoData>
 
   protected static final String CONTAINS = "public boolean contains%s(Object element);";
   protected static final String CONTAINS_ALL =
-      "public boolean containsAll%s(Collection<?> collection);";
+      "public boolean containsAll%s(java.util.Collection<?> collection);";
   protected static final String IS_EMPTY = "public boolean isEmpty%s();";
-  protected static final String ITERATOR = "public Iterator<%s> iterator%s();";
+  protected static final String ITERATOR = "public java.util.Iterator<%s> iterator%s();";
   protected static final String SIZE = "public int size%s();";
   protected static final String TO_ARRAY = "public %s[] toArray%s(%s[] array);";
   protected static final String TO_ARRAY_ = "public Object[] toArray%s();";
-  protected static final String SPLITERATOR = "public Spliterator<%s> spliterator%s();";
-  protected static final String STREAM = "public Stream<%s> stream%s();";
-  protected static final String PARALLEL_STREAM = "public Stream<%s> parallelStream%s();";
+  protected static final String SPLITERATOR = "public java.util.Spliterator<%s> spliterator%s();";
+  protected static final String STREAM = "public java.util.stream.Stream<%s> stream%s();";
+  protected static final String PARALLEL_STREAM =
+      "public java.util.stream.Stream<%s> parallelStream%s();";
   protected static final String GET = "public %s get%s(int index);";
   protected static final String INDEX_OF = "public int indexOf%s(Object element);";
   protected static final String LAST_INDEX_OF = "public int lastIndexOf%s(Object element);";
   protected static final String EQUALS = "public boolean equals%s(Object o);";
   protected static final String HASHCODE = "public int hashCode%s();";
-  protected static final String LIST_ITERATOR = "public ListIterator<%s> listIterator%s();";
+  protected static final String LIST_ITERATOR =
+      "public java.util.ListIterator<%s> listIterator%s();";
   protected static final String LIST_ITERATOR_ =
-      "public ListIterator<%s> listIterator%s(int index);";
-  protected static final String SUBLIST = "public List<%s> subList%s(int start, int end);";
+      "public java.util.ListIterator<%s> listIterator%s(int index);";
+  protected static final String SUBLIST =
+      "public java.util.List<%s> subList%s(int start, int end);";
 
   protected void updateModifier(ASTCDAttribute attribute) {
     var decoratedModifier = decoratorData.getAsDecorated(attribute).getModifier();

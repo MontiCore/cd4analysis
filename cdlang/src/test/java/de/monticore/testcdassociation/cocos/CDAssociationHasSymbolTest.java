@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationHasSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -12,7 +12,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CDAssociationHasSymbolTest extends CDAssociationTestBasis {
 

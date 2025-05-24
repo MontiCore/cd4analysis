@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -14,7 +14,7 @@ import de.monticore.io.paths.MCPath;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeDeSerTest extends CD4CodeTestBasis {

@@ -16,8 +16,8 @@ import de.monticore.cdmerge.util.CDMergeUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public class BaseTest {
 
@@ -39,7 +39,7 @@ public class BaseTest {
 
   protected ICD4CodeGlobalScope globalScope;
 
-  @BeforeClass
+  @BeforeAll
   public static void init() {
     MCLoggerWrapper.init(ErrorLevel.WARNING, true);
   }
@@ -48,7 +48,7 @@ public class BaseTest {
     parser = CD4CodeMill.parser();
   }
 
-  @Before
+  @BeforeEach
   public void initBefore() {
     CD4CodeMill.reset();
     CD4CodeMill.init();

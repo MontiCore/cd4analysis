@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
-import de.monticore.cd.CDMill;
+import static de.monticore.cd._visitor.CDMemberVisitor.Options.*;
+
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -51,14 +52,68 @@ public interface ASTCDType extends ASTCDTypeTOP {
    */
   default <T extends ASTCDMember> List<T> getCDMemberList(
       CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
-    final ArrayList<CDMemberVisitor.Options> list = new ArrayList<>(Arrays.asList(options));
-    list.add(0, option);
+    List<CDMemberVisitor.Options> allOptions = new ArrayList<>();
+    allOptions.add(option);
+    allOptions.addAll(Arrays.asList(options));
 
-    final CDMemberVisitor cdMemberVisitor =
-        CDMill.cDMemberVisitor(list.toArray(new CDMemberVisitor.Options[0]));
-    cdMemberVisitor.run(this);
-    return cdMemberVisitor.getElements();
+    Set<T> res = new LinkedHashSet<>();
+
+    if (allOptions.contains(ALL)) {
+      res.addAll((Collection<? extends T>) getCDMemberList());
+    }
+
+    if (allOptions.contains(FIELDS)) {
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isField()) {
+          res.add((T) m);
+        }
+      }
+    }
+
+    if (allOptions.contains(ATTRIBUTES)) {
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isAttribute()) {
+          res.add((T) m);
+        }
+      }
+    }
+
+    if (allOptions.contains(ROLES)) {
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isRole()) {
+          res.add((T) m);
+        }
+      }
+    }
+
+    if (allOptions.contains(METHOD_SIGNATURES)) {
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isMethodSignature()) {
+          res.add((T) m);
+        }
+      }
+    }
+
+    if (allOptions.contains(CONSTRUCTORS)) {
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isConstructor()) {
+          res.add((T) m);
+        }
+      }
+    }
+
+    if (allOptions.contains(METHODS)) {
+      for (ASTCDMember m : getCDMemberList()) {
+        if (m.isMethod()) {
+          res.add((T) m);
+        }
+      }
+    }
+
+    return new ArrayList<>(res);
   }
+
+  List<ASTCDMember> getCDMemberList();
 
   default <T extends ASTCDMember> Iterator<T> iterateCDMembers(
       CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
@@ -97,7 +152,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
   }
 
   default List<ASTCDMethod> getCDMethodList() {
-    return getCDMemberList(CDMemberVisitor.Options.METHODS);
+    return getCDMemberList(METHODS);
   }
 
   default List<ASTCDMethodSignature> getCDMethodSignatureList() {

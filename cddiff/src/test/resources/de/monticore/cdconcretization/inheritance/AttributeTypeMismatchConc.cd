@@ -1,0 +1,5 @@
+classdiagram AttributeTypeMismatchConc {
+  class Teacher  {
+    double number;
+  }
+}

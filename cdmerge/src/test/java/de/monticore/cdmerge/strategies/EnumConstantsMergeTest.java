@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.strategies;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -17,7 +17,7 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EnumConstantsMergeTest extends BaseTest {
 
@@ -34,7 +34,6 @@ public class EnumConstantsMergeTest extends BaseTest {
         .withParam(MergeParameter.SAVE_RESULT_TO_FILE, MergeParameter.OFF)
         .withParam(MergeParameter.CHECK_ONLY)
         .withParam(MergeParameter.LOG_DEBUG, MergeParameter.ON);
-    ;
 
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     this.TESTANT = new DefaultTypeMergeStrategy(blackBoard, new DefaultAtributeMerger(blackBoard));
@@ -695,7 +694,7 @@ public class EnumConstantsMergeTest extends BaseTest {
   public void testMergeEnumsConflictParameter() {}
 
   private void checkOrder(List<ASTCDEnumConstant> expected, List<ASTCDEnumConstant> testresult) {
-    assertTrue(expected.size() == testresult.size());
+    assertEquals(expected.size(), testresult.size());
     for (int i = 0; i < testresult.size(); i++) {
       assertTrue(expected.get(i).getName().equalsIgnoreCase(testresult.get(i).getName()));
     }

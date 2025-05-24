@@ -1,5 +1,8 @@
 package de.monticore.cd2smt;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.microsoft.z3.Context;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
@@ -14,7 +17,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.Arguments;
 
 public class CD2SMTAbstractTest {
@@ -30,7 +32,7 @@ public class CD2SMTAbstractTest {
           outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
-      Assertions.fail();
+      fail();
     }
   }
 
@@ -40,13 +42,12 @@ public class CD2SMTAbstractTest {
     Optional<ASTCDCompilationUnit> optAutomaton;
     try {
       optAutomaton = parser.parseCDCompilationUnit(model.toString());
-      Assertions.assertTrue(optAutomaton.isPresent());
+      assertTrue(optAutomaton.isPresent());
       (new CD4CodeAfterParseTrafo()).transform(optAutomaton.get());
       return optAutomaton.get();
     } catch (Exception e) {
       e.printStackTrace();
-      Assertions.fail(
-          "There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
+      fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
 
     return null;

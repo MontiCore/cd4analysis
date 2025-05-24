@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -17,9 +19,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TypeDIffTest extends CDDiffTestBasis {
 
@@ -59,7 +60,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
           .checkIfDiffWitness(
               CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        fail();
       }
     }
   }
@@ -83,7 +84,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
           .checkIfDiffWitness(
               CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        fail();
       }
     }
   }
@@ -108,7 +109,7 @@ public class TypeDIffTest extends CDDiffTestBasis {
           .checkIfDiffWitness(
               CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
-        Assertions.fail();
+        fail();
       }
     }
   }
@@ -214,11 +215,11 @@ public class TypeDIffTest extends CDDiffTestBasis {
         this.tgt = tgt.get();
         this.src = src.get();
       } else {
-        Assert.fail("Could not parse CDs.");
+        fail("Could not parse CDs.");
       }
 
     } catch (IOException e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 }

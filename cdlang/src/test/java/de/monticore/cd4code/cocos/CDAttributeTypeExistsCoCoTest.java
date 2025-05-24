@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.cocos;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import org.apache.commons.cli.ParseException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CDAttributeTypeExistsCoCoTest extends CD4CodeTestBasis {

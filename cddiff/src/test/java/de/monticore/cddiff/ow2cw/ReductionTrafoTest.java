@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -14,8 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ReductionTrafoTest extends CDDiffTestBasis {
 
@@ -99,7 +100,7 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
 
     String cd2 = CD4CodeMill.prettyPrint(lecture2, false);
 
-    Assert.assertEquals(cd1, cd2);
+    assertEquals(cd1, cd2);
   }
 
   @Test
@@ -127,11 +128,11 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     for (ASTCDType type : typeList) {
       if (subList.stream()
           .anyMatch(sub -> sub.equals(type.getSymbol().getInternalQualifiedName()))) {
-        Assert.assertFalse(
+        assertFalse(
             type.getCDAttributeList().stream()
                 .anyMatch(attribute -> attribute.getName().equals("test")));
       } else {
-        Assert.assertTrue(
+        assertTrue(
             type.getCDAttributeList().stream()
                 .anyMatch(attribute -> attribute.getName().equals("test")));
       }
@@ -145,14 +146,14 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     new ReductionTrafo().createCommonInterface(employees8, "Object");
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
 
-    Assert.assertTrue(
+    assertTrue(
         employees8.getCDDefinition().getCDClassesList().stream()
             .allMatch(
                 cdClass ->
                     CDInheritanceHelper.isSuperOf(
                         "Object", cdClass.getSymbol().getInternalQualifiedName(), scope)));
 
-    Assert.assertTrue(
+    assertTrue(
         employees8.getCDDefinition().getCDInterfacesList().stream()
             .allMatch(
                 cdInterface ->

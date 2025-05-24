@@ -1,7 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+
 import de.monticore.ast.ASTNode;
+import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+import com.google.common.collect.Iterables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDConstructorFacade;
@@ -23,6 +26,9 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.StringTransformations;
+import de.se_rwth.commons.logging.Log;
+import java.util.Collections;
+import java.util.Stack;
 
 import java.util.*;
 
@@ -36,12 +42,13 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
   CD4AnalysisTypeDispatcher dispatcher = new CD4AnalysisTypeDispatcher();
 
   @Override
-  public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
-    //We check that the SetterDecorator has added a Setter for an attribute,
+
+  @SuppressWarnings("rawtypes")
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
+    // We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    //We also check that the DeepCloneAndDeepEqualsDecorator has run before, as we generate classes
-    // which should not have the generated deepCopy and deepEquals methods
-    return List.of(SetterDecorator.class, DeepCloneAndDeepEqualsDecorator.class);
+    return Iterables.concat(
+        super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();

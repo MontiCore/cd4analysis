@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * is defined by the incarnation mapping. If multiple elements are matched, abort.
  * (CDMerge-compliant)
  */
-public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcNameAndTgtRole {
+public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
 
   public MatchCDAssocsGreedy(
       MatchingStrategy<ASTCDType> typeMatcher,

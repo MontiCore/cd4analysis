@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDInterfaceExtendsNotCyclic;
@@ -10,8 +10,8 @@ import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CDInterfaceExtendsNotCyclicTest extends CDInterfaceAndEnumTestBasis {
 
@@ -45,6 +45,6 @@ public class CDInterfaceExtendsNotCyclicTest extends CDInterfaceAndEnumTestBasis
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDC32"));
   }
 
-  @After
+  @AfterEach
   public void after() {}
 }

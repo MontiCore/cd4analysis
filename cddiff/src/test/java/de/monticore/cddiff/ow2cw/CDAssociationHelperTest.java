@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -8,16 +11,15 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CDAssociationHelperTest extends CDDiffTestBasis {
   protected final ASTCDCompilationUnit conflictCD =
       parseModel("src/test/resources/de/monticore/cddiff/Conflict/ConflictEmployees.cd");
   protected ICD4CodeArtifactScope scope;
 
-  @Before
+  @BeforeEach
   public void buildSymbolTable() {
     CDDiffUtil.refreshSymbolTable(conflictCD);
     scope = (ICD4CodeArtifactScope) conflictCD.getEnclosingScope();
@@ -29,10 +31,10 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
         new ArrayList<>(conflictCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
       assocList.remove(src);
-      Assert.assertTrue(
+      assertTrue(
           assocList.stream()
               .anyMatch(target -> CDAssociationHelper.inConflict(src, target, scope)));
-      Assert.assertFalse(
+      assertFalse(
           assocList.stream()
               .allMatch(target -> CDAssociationHelper.inConflict(src, target, scope)));
       assocList.add(src);
@@ -45,7 +47,7 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
         new ArrayList<>(conflictCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
       assocList.remove(src);
-      Assert.assertTrue(
+      assertTrue(
           assocList.stream().noneMatch(target -> CDAssociationHelper.sameAssociation(src, target)));
       assocList.add(src);
     }
@@ -57,7 +59,7 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
         new ArrayList<>(conflictCD.getCDDefinition().getCDAssociationsList());
     for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
       assocList.remove(src);
-      Assert.assertTrue(
+      assertTrue(
           assocList.stream()
               .anyMatch(
                   target ->
@@ -65,7 +67,7 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
                           || CDAssociationHelper.isSuperAssociationInReverse(src, target, scope)
                           || CDAssociationHelper.isSuperAssociation(target, src, scope)
                           || CDAssociationHelper.isSuperAssociationInReverse(target, src, scope)));
-      Assert.assertFalse(
+      assertFalse(
           assocList.stream()
               .allMatch(
                   target ->

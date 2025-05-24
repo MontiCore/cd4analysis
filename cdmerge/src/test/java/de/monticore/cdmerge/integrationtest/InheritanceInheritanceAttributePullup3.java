@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -14,18 +16,18 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InheritanceInheritanceAttributePullup3 extends BaseTest {
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup3/A.cd";
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup3/B.cd";
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/inheritanceAttributePullup3/A.cd";
+
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/inheritanceAttributePullup3/B.cd";
 
   private static final String EXPECTED =
-      "src/test/resources/class_diagrams/Inheritance" + "/inheritanceAttributePullup3/mergedCD.cd";
+      INPUT_MODEL_DIR + "/inheritanceAttributePullup3/mergedCD.cd";
 
   @Test
   public void testInheritanceInheritanceAttributePullup3() throws IOException, MergingException {
@@ -36,7 +38,7 @@ public class InheritanceInheritanceAttributePullup3 extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

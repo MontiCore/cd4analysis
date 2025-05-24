@@ -4,7 +4,7 @@ package de.monticore.cd.codegen.decorators.data;
 import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
-import de.monticore.cd.codegen.creators.CopyCreator;
+import de.monticore.cd.codegen.creators.ICreator;
 import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd.codegen.decorators.matcher.MatcherData;
@@ -25,12 +25,16 @@ import de.monticore.visitor.IVisitor;
 import de.se_rwth.commons.logging.Log;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.function.Supplier;
 
 public class DecoratorData {
 
-  public Map<Class<? extends IDecorator<?>>, Object> decoratorDataMap = new HashMap<>();
+  public static final String INTERNAL_ERROR_CODE = "0xCDD00";
+
+  // TODO: If not found, walk upwards up to IDecorator
+  public Map<Class<? extends IDecorator>, Object> decoratorDataMap = new IdentityHashMap<>();
   public Map<FieldSymbol, CDRoleSymbol> fieldToRoles; // Assoc -> Field
-  protected Map<Class<? extends IDecorator<?>>, MatcherData> matchers = new HashMap<>();
+  protected Map<Class<? extends IDecorator<?>>, MatcherData> matchers = new IdentityHashMap<>();
 
   protected String[][] cliConfig;
 
@@ -45,7 +49,6 @@ public class DecoratorData {
 
   protected SimpleSymbolTagger tagger = new SimpleSymbolTagger(this::_getTaggingUnits);
   protected ASTTagUnit internalTagUnit;
-  public CopyCreator.Created created;
 
   public DecoratorData() {
     this.internalTagUnit = TagsMill.tagUnitBuilder().setName("__cd_decorator_internak").build();
@@ -69,7 +72,7 @@ public class DecoratorData {
     return (D) this.decoratorDataMap.get(decorator);
   }
 
-  public void setupParents(CopyCreator.Created created, String[][] cliConfig) {
+  public void setupParents(ASTCDCompilationUnit originalCD, String[][] cliConfig) {
     parents.clear();
     cache.clear();
     this.cliConfig = cliConfig;
@@ -89,14 +92,24 @@ public class DecoratorData {
             nodeStack.pop();
           }
         });
-    created.getOriginal().accept(t);
-    this.created = created;
+
+    originalCD.accept(t);
   }
 
   public Optional<ASTNode> getParent(ASTNode p) {
     return this.parents.containsKey(p)
         ? Optional.ofNullable(parents.get(p).get())
         : Optional.empty();
+  }
+
+  // Does not respect super classes
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public <D> D getData(Class<? extends IDecorator> decorator) {
+    return (D) this.decoratorDataMap.get(decorator);
+  }
+
+  public <D> D createDataIfAbsent(Class<? extends IDecorator> d, Supplier<? super D> supplier) {
+    return (D) this.decoratorDataMap.computeIfAbsent(d, p -> supplier.get());
   }
 
   public boolean shouldDecorate(Class<? extends IDecorator> decorator, ASTNode node) {
@@ -126,7 +139,9 @@ public class DecoratorData {
       result = matchCDCU((ASTCDCompilationUnit) node, matcherData);
     } else {
       Log.error(
-          "0xTODO: Unable add to parent of unknown type " + node.getClass().getName(),
+          INTERNAL_ERROR_CODE
+              + ": Unable add to parent of unknown type "
+              + node.getClass().getName(),
           node.get_SourcePositionStart());
       throw new IllegalStateException(
           "Unable add to parent of unknown type " + node.getClass().getName());
@@ -232,7 +247,16 @@ public class DecoratorData {
     return MatchResult.DEFAULT;
   }
 
+  protected ICreator.ICreatedData _createdData;
+
+  public ICreator.ICreatedData getCreatedData() {
+    if (_createdData == null) {
+      _createdData = getData(ICreator.class);
+    }
+    return _createdData;
+  }
+
   public <T extends ASTNode> T getAsDecorated(T originalClazz) {
-    return (T) created.getOriginalToDecoratedMap().get(originalClazz);
+    return (T) getCreatedData().getOriginalToDecoratedMap().get(originalClazz);
   }
 }

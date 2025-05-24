@@ -8,7 +8,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisPretterPrinterTest extends TestBasis {

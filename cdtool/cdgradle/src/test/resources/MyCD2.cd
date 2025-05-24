@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram MyCD2 {
+
+  <<getter, setter>>
+  public class MyCD2A extends MyCD.A {
+  }
+
+  public class MyCD2B { }
+}

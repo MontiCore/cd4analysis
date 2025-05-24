@@ -1,0 +1,32 @@
+/* (c) https://github.com/MontiCore/monticore */
+plugins {
+  id "jacoco"
+  id "maven-publish"
+}
+
+
+dependencies {
+  api 'de.se_rwth.commons:se-commons-logging:' + mc_version
+
+  implementation 'de.se_rwth.commons:se-commons-utilities:' + mc_version
+  implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+}
+
+description = 'CD: Runtime'
+
+java {
+
+}
+
+publishing {
+  publications {
+    maven(MavenPublication) {
+      groupId = 'de.monticore.lang'
+      from components.java
+    }
+  }
+}
+

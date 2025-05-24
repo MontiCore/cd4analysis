@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -19,13 +19,13 @@ import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CDAssociationTestBasis extends TestBasis {
   protected TestCDAssociationParser p;
   protected CDAssociationCoCoChecker coCoChecker;
 
-  @Before
+  @BeforeEach
   public void initObjects() {
     TestCDAssociationMill.reset();
     TestCDAssociationMill.init();

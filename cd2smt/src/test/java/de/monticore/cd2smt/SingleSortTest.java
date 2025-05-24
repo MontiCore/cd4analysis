@@ -3,6 +3,7 @@ package de.monticore.cd2smt;
 import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
 import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SSCOMB;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -11,7 +12,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -62,7 +62,7 @@ public class SingleSortTest extends CD2SMTAbstractTest {
     }
     for (IdentifiableBoolExpr UNSATConstr : UNSATConstrList) {
       Solver solver = cd2SMTGenerator.makeSolver(List.of(UNSATConstr));
-      Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
+      assertEquals(Status.UNSATISFIABLE, solver.check());
     }
   }
 }

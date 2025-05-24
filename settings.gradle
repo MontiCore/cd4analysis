@@ -30,4 +30,5 @@ if(!hasProperty('bootstrap')) {
     include(":trafo-library")
   }
   include(':cdtool:cdgradle')
+  include(':cd-runtime')
 }

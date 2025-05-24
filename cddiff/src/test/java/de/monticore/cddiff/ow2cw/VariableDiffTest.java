@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -9,8 +11,7 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import java.util.HashSet;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class VariableDiffTest extends CDDiffTestBasis {
 
@@ -31,41 +32,40 @@ public class VariableDiffTest extends CDDiffTestBasis {
 
     System.out.println(CD4CodeMill.prettyPrint(cd1, true));
 
-    Assert.assertTrue(
+    assertTrue(
         cd2.getCDDefinition().getModifier().isPresentStereotype()
             && cd2.getCDDefinition()
                 .getModifier()
                 .getStereotype()
                 .contains(VariableExpander.VAR_TAG));
 
-    Assert.assertTrue(
+    assertTrue(
         cd2.getCDDefinition().getCDClassesList().stream()
             .noneMatch(
                 subClass ->
                     subClass.getName().contains("Sub4Diff")
                         || subClass.getName().contains("ManagerTask")));
 
-    Assert.assertTrue(
+    assertTrue(
         cd2.getCDDefinition().getCDInterfacesList().stream()
             .noneMatch(subClass -> subClass.getName().contains("Doable")));
 
-    Assert.assertEquals(3, cd2.getCDDefinition().getCDAssociationsList().size());
+    assertEquals(3, cd2.getCDDefinition().getCDAssociationsList().size());
 
     int found = 0;
     for (ASTCDClass current : new HashSet<>(cd1.getCDDefinition().getCDClassesList())) {
       if (current.getName().equals("Employee")) {
-        Assert.assertFalse(CDInheritanceHelper.isSuperOf("Insurable", "Employee", scope1));
+        assertFalse(CDInheritanceHelper.isSuperOf("Insurable", "Employee", scope1));
         found++;
       }
       if (current.getName().equals("Person")) {
-        Assert.assertTrue(current.getCDAttributeList().isEmpty());
+        assertTrue(current.getCDAttributeList().isEmpty());
         found++;
       }
     }
-    Assert.assertEquals(2, found);
+    assertEquals(2, found);
 
-    Assert.assertEquals(3, cd1.getCDDefinition().getCDAssociationsList().size());
-    Assert.assertEquals(
-        2, cd1.getCDDefinition().getCDEnumsList().get(0).getCDEnumConstantList().size());
+    assertEquals(3, cd1.getCDDefinition().getCDAssociationsList().size());
+    assertEquals(2, cd1.getCDDefinition().getCDEnumsList().get(0).getCDEnumConstantList().size());
   }
 }

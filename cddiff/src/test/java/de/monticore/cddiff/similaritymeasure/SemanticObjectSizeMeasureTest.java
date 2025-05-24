@@ -1,12 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.similaritymeasure;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /** Test classes to test the similarity measure for semantic size differencing */
 public class SemanticObjectSizeMeasureTest extends CDDiffTestBasis {
@@ -17,7 +18,7 @@ public class SemanticObjectSizeMeasureTest extends CDDiffTestBasis {
    * desired again: Please test against concrete differences/etc. and not against an abstract
    * difference value that is subject to changes.
    */
-  @Ignore
+  @Disabled
   @Test
   public void testManger() {
     // Parse Test Modules

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -14,18 +16,17 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GeneralOffice extends BaseTest {
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams/General" + "/office/A.cd";
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/General";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams/General" + "/office/B.cd";
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/office/A.cd";
 
-  private static final String EXPECTED =
-      "src/test/resources/class_diagrams/General/office" + "/mergedCD.cd";
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/office/B.cd";
+
+  private static final String EXPECTED = INPUT_MODEL_DIR + "/office/mergedCD.cd";
 
   @Test
   public void testOffice() throws IOException, MergingException {
@@ -36,7 +37,7 @@ public class GeneralOffice extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult result = cdMerger.mergeCDs();
     processResult(result);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(result.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

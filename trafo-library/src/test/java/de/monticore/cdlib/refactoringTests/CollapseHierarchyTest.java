@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactoringTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -17,8 +17,8 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Collapse Hierarchy
@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class CollapseHierarchyTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();

@@ -404,7 +404,7 @@ public class Syn2SemDiff {
                       .b
                       .getSymbol()
                       .getInternalQualifiedName()
-                  + "for the class "
+                  + " for the class "
                   + astcdClass.getSymbol().getInternalQualifiedName()
                   + " has been removed from the diagram.";
           Optional<ASTODArtifact> astodArtifact =

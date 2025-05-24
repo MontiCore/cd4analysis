@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram Reference {
+
+  class Operator {
+    any operation(any input, any param);
+  }
+}

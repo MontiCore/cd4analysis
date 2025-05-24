@@ -1,5 +1,8 @@
 package de.monticore.cd4analysis.prettyprint;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
@@ -13,8 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -68,7 +69,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -82,7 +83,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected:\n" + expected);
 
-    Assert.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -122,7 +123,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -136,7 +137,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -176,7 +177,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -190,7 +191,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -230,7 +231,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -244,7 +245,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -283,7 +284,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -297,7 +298,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -336,7 +337,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -350,7 +351,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -389,7 +390,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -403,7 +404,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 
   /**
@@ -442,7 +443,7 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     tool.init();
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(filePath);
-    Assertions.assertTrue(astcdCompilationUnit.isPresent());
+    assertTrue(astcdCompilationUnit.isPresent());
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
@@ -456,6 +457,6 @@ public class CD4AnalysisPlantUMLFullPrettyPrinterTest extends CD4AnalysisTestBas
     expected = expected.replaceAll("(?m)^[ \t]*\r?\n", "").replaceAll("\r\n", "\n");
     System.out.println("Expected: \n " + expected);
 
-    Assertions.assertEquals(expected, output);
+    assertEquals(expected, output);
   }
 }

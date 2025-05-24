@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -22,7 +22,7 @@ import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class CD4CodeTestBasis extends TestBasis {
   protected CD4CodeParser p;
@@ -31,7 +31,7 @@ public class CD4CodeTestBasis extends TestBasis {
   protected CD4CodeSymbols2Json symbols2Json;
   protected CD4CodeCoCoChecker coCoChecker;
 
-  @Before
+  @BeforeEach
   public void initObjects() {
     LogStub.init();
     Log.enableFailQuick(false);

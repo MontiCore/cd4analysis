@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symtabdefinition.symboltable;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symtabdefinition.SymTabDefinitionTestBasis;

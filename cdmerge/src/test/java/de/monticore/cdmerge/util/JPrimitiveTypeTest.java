@@ -1,33 +1,33 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cdmerge.BaseTest;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** TODO: Write me! */
 public class JPrimitiveTypeTest extends BaseTest {
 
   @Test
   public void testGetType() {
-    assertTrue(JPrimitiveType.getType("byte") == JPrimitiveType.BYTE);
-    assertTrue(JPrimitiveType.getType("short") == JPrimitiveType.SHORT);
-    assertTrue(JPrimitiveType.getType("int") == JPrimitiveType.INT);
-    assertTrue(JPrimitiveType.getType("long") == JPrimitiveType.LONG);
-    assertTrue(JPrimitiveType.getType("float") == JPrimitiveType.FLOAT);
-    assertTrue(JPrimitiveType.getType("double") == JPrimitiveType.DOUBLE);
-    assertTrue(JPrimitiveType.getType("boolean") == JPrimitiveType.BOOLEAN);
-    assertTrue(JPrimitiveType.getType("char") == JPrimitiveType.CHAR);
-    assertTrue(JPrimitiveType.getType("string") == JPrimitiveType.STRING);
+    assertSame(JPrimitiveType.BYTE, JPrimitiveType.getType("byte"));
+    assertSame(JPrimitiveType.SHORT, JPrimitiveType.getType("short"));
+    assertSame(JPrimitiveType.INT, JPrimitiveType.getType("int"));
+    assertSame(JPrimitiveType.LONG, JPrimitiveType.getType("long"));
+    assertSame(JPrimitiveType.FLOAT, JPrimitiveType.getType("float"));
+    assertSame(JPrimitiveType.DOUBLE, JPrimitiveType.getType("double"));
+    assertSame(JPrimitiveType.BOOLEAN, JPrimitiveType.getType("boolean"));
+    assertSame(JPrimitiveType.CHAR, JPrimitiveType.getType("char"));
+    assertSame(JPrimitiveType.STRING, JPrimitiveType.getType("string"));
 
     try {
       JPrimitiveType.getType("Date");
       fail("NoSuchElementException expected!");
     } catch (NoSuchElementException e) {
-      assertTrue(e.getMessage().equals("JPrimitiveType does not contain a type with name Date"));
+      assertEquals("JPrimitiveType does not contain a type with name Date", e.getMessage());
     }
   }
 
@@ -52,7 +52,7 @@ public class JPrimitiveTypeTest extends BaseTest {
     Optional<JPrimitiveType> type =
         JPrimitiveType.getCommonSuperType(JPrimitiveType.BOOLEAN, JPrimitiveType.BOOLEAN);
     assertTrue(type.isPresent());
-    assertTrue(type.get() == JPrimitiveType.BOOLEAN);
+    assertSame(JPrimitiveType.BOOLEAN, type.get());
 
     // One boolean
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.BOOLEAN, JPrimitiveType.CHAR);
@@ -61,16 +61,16 @@ public class JPrimitiveTypeTest extends BaseTest {
     // Chars and Strings
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.STRING, JPrimitiveType.CHAR);
     assertTrue(type.isPresent());
-    assertTrue(type.get() == JPrimitiveType.STRING);
+    assertSame(JPrimitiveType.STRING, type.get());
 
     // Float and double
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.FLOAT, JPrimitiveType.DOUBLE);
     assertTrue(type.isPresent());
-    assertTrue(type.get() == JPrimitiveType.DOUBLE);
+    assertSame(JPrimitiveType.DOUBLE, type.get());
 
     // String and double
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.STRING, JPrimitiveType.DOUBLE);
     assertTrue(type.isPresent());
-    assertTrue(type.get() == JPrimitiveType.STRING);
+    assertSame(JPrimitiveType.STRING, type.get());
   }
 }

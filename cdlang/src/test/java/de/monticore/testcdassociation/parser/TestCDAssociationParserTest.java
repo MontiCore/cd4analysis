@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.parser;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
@@ -16,7 +16,7 @@ import de.monticore.testcdassociation.TestCDAssociationMill;
 import de.monticore.testcdassociation._visitor.TestCDAssociationTraverser;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 
@@ -48,7 +48,7 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
         new CDAssociationVisitor2() {
           @Override
           public void visit(ASTCDCardinality node) {
-            assertTrue(node instanceof ASTCDCardMult);
+            assertInstanceOf(ASTCDCardMult.class, node);
           }
         };
     traverser.add4CDAssociation(visitor);
@@ -63,7 +63,7 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
         new CDAssociationVisitor2() {
           @Override
           public void visit(ASTCDCardinality node) {
-            assertTrue(node instanceof ASTCDCardOne);
+            assertInstanceOf(ASTCDCardOne.class, node);
           }
         };
     traverser.add4CDAssociation(visitor);
@@ -79,7 +79,7 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
         new CDAssociationVisitor2() {
           @Override
           public void visit(ASTCDCardinality node) {
-            assertTrue(node instanceof ASTCDCardAtLeastOne);
+            assertInstanceOf(ASTCDCardAtLeastOne.class, node);
           }
         };
     traverser.add4CDAssociation(visitor);
@@ -94,7 +94,7 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
         new CDAssociationVisitor2() {
           @Override
           public void visit(ASTCDCardinality node) {
-            assertTrue(node instanceof ASTCDCardOpt);
+            assertInstanceOf(ASTCDCardOpt.class, node);
           }
         };
     traverser.add4CDAssociation(visitor);
@@ -109,7 +109,7 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
         new CDAssociationVisitor2() {
           @Override
           public void visit(ASTCDCardinality node) {
-            assertTrue(node instanceof ASTCDCardOther);
+            assertInstanceOf(ASTCDCardOther.class, node);
             assertTrue(
                 (node.toCardinality().getLowerBound() == 2
                         && node.toCardinality().getUpperBound() == 3)

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTObjectDiagram;
@@ -16,16 +18,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class NormalizeLinksTrafoTest {
 
   NormalizeLinksTrafo trafo;
 
-  @Before
+  @BeforeEach
   public void setUp() {
 
     OD4ReportMill.reset();
@@ -46,15 +47,14 @@ public class NormalizeLinksTrafoTest {
     // transform
     List<ASTODLink> result = trafo.transformLinksToLTR(odLinks);
 
-    Assert.assertEquals(7, result.size());
+    assertEquals(7, result.size());
     // check directions
-    result.forEach(l -> Assert.assertTrue(l.getODLinkDirection() instanceof ASTODLeftToRightDir));
-    result.forEach(
-        l -> Assert.assertFalse((l.getODLinkDirection() instanceof ASTODRightToLeftDir)));
-    result.forEach(l -> Assert.assertFalse(l.getODLinkDirection() instanceof ASTODBiDir));
+    result.forEach(l -> assertInstanceOf(ASTODLeftToRightDir.class, l.getODLinkDirection()));
+    result.forEach(l -> assertFalse((l.getODLinkDirection() instanceof ASTODRightToLeftDir)));
+    result.forEach(l -> assertFalse(l.getODLinkDirection() instanceof ASTODBiDir));
 
     // check roles
-    result.forEach(l -> Assert.assertTrue(l.getODLinkRightSide().isPresentRole()));
+    result.forEach(l -> assertTrue(l.getODLinkRightSide().isPresentRole()));
 
     ODLinkFullPrettyPrinter p = new ODLinkFullPrettyPrinter(new IndentPrinter(), false);
     result.forEach(l -> System.out.println(p.prettyprint(l)));
@@ -71,7 +71,7 @@ public class NormalizeLinksTrafoTest {
     return od.get().getObjectDiagram();
   }
 
-  @After
+  @AfterEach
   public void reset() {
     OD4ReportMill.reset();
   }

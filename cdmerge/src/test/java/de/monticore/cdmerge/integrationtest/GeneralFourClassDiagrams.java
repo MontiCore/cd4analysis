@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -17,24 +18,21 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class GeneralFourClassDiagrams extends BaseTest {
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams/General" + "/four_classdiagrams/A.cd";
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/General";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams/General" + "/four_classdiagrams/B.cd";
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/four_classdiagrams/A.cd";
 
-  private static final String INPUT_MODEL_3 =
-      "src/test/resources/class_diagrams/General" + "/four_classdiagrams/C.cd";
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/four_classdiagrams/B.cd";
 
-  private static final String INPUT_MODEL_4 =
-      "src/test/resources/class_diagrams/General" + "/four_classdiagrams/D.cd";
+  private static final String INPUT_MODEL_3 = INPUT_MODEL_DIR + "/four_classdiagrams/C.cd";
 
-  private static final String EXPECTED =
-      "src/test/resources/class_diagrams/General" + "/four_classdiagrams/mergedCD.cd";
+  private static final String INPUT_MODEL_4 = INPUT_MODEL_DIR + "/four_classdiagrams/D.cd";
+
+  private static final String EXPECTED = INPUT_MODEL_DIR + "/four_classdiagrams/mergedCD.cd";
 
   @Test
   public void testFourCDs() throws IOException, MergingException {
@@ -48,7 +46,7 @@ public class GeneralFourClassDiagrams extends BaseTest {
     try {
       MergeResult results = cdMerger.mergeCDs();
       processResult(results);
-      org.junit.Assert.assertTrue(
+      assertTrue(
           parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
               .deepEquals(expectedCD, false));
 

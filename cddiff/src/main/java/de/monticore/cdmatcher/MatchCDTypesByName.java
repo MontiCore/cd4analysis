@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class MatchCDTypesByName implements MatchingStrategy<ASTCDType> {
 
   private final ASTCDCompilationUnit tgtCD;

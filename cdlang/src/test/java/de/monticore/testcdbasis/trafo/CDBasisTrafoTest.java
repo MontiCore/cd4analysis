@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.trafo;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd.facade.CDModifier;
@@ -15,12 +14,12 @@ import de.monticore.testcdbasis._visitor.TestCDBasisTraverser;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CDBasisTrafoTest extends TestBasis {
 
-  @Before
+  @BeforeEach
   public void setupAll() {
     // reset the GlobalScope
     TestCDBasisMill.reset();
@@ -88,7 +87,7 @@ public class CDBasisTrafoTest extends TestBasis {
     assertEquals(expectedDefPkgName, cd.getDefaultPackage().getMCQualifiedName().getQName());
 
     for (ASTCDElement e : cd.getCDElementList()) {
-      assertTrue(e instanceof ASTCDPackage);
+      assertInstanceOf(ASTCDPackage.class, e);
       ASTCDPackage pkg = (ASTCDPackage) e;
       assertTrue(pkg.getMCQualifiedName().getQName().startsWith(expectedDefPkgName));
     }

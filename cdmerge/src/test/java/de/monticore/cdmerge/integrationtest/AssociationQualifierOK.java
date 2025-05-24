@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -14,7 +16,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AssociationQualifierOK extends BaseTest {
 
@@ -36,7 +38,7 @@ public class AssociationQualifierOK extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

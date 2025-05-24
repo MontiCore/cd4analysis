@@ -3,21 +3,21 @@ package de.monticore.cd;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import org.junit.After;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 
 /** a base class for tests to use stdout and stderr */
 public class OutTestBasis extends TestBasis {
   protected static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   protected static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeClass() {
     System.setOut(new PrintStream(outContent));
     System.setErr(new PrintStream(errContent));
   }
 
-  @After
+  @AfterEach
   public void reset() {
     outContent.reset();
     errContent.reset();

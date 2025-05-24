@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisCoCoChecker;
 import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
@@ -14,8 +14,8 @@ import de.monticore.testcd4codebasis._symboltable.TestCD4CodeBasisSymbolTableCom
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CD4CodeEnumConstantParameterMatchConstructorArgumentsTest
     extends CD4CodeBasisTestBasis {
@@ -69,6 +69,6 @@ public class CD4CodeEnumConstantParameterMatchConstructorArgumentsTest
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDCD2")); // for BAR
   }
 
-  @After
+  @AfterEach
   public void after() {}
 }

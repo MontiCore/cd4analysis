@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloy2od;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -12,7 +12,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Test if diff-witnesses match first class diagram and not second */
 public class WitnessTest extends CDDiffTestBasis {

@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
@@ -16,9 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import org.apache.commons.io.file.PathUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CDDiffCLIToolTest {
 
@@ -27,7 +26,7 @@ public class CDDiffCLIToolTest {
 
   final String[] cwDiffOptions = {"", "--rule-based"};
 
-  @Before
+  @BeforeEach
   public void init() {
     LogStub.init();
   }
@@ -102,7 +101,7 @@ public class CDDiffCLIToolTest {
 
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
-            Assert.assertTrue(
+            assertTrue(
                 new OD2CDMatcher()
                     .checkIfDiffWitness(
                         CDSemantics.SIMPLE_CLOSED_WORLD,
@@ -194,7 +193,7 @@ public class CDDiffCLIToolTest {
 
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
-          Assert.assertTrue(
+          assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
                       CDSemantics.SIMPLE_CLOSED_WORLD,
@@ -454,7 +453,7 @@ public class CDDiffCLIToolTest {
 
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
-            Assert.assertTrue(
+            assertTrue(
                 new OD2CDMatcher()
                     .checkIfDiffWitness(
                         CDSemantics.SIMPLE_CLOSED_WORLD,
@@ -497,12 +496,12 @@ public class CDDiffCLIToolTest {
 
       // no corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
-      Assert.assertNotNull(odFiles);
+      assertNotNull(odFiles);
 
       try {
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
-            Assert.assertTrue(
+            assertTrue(
                 new OD2CDMatcher()
                     .checkIfDiffWitness(
                         CDSemantics.STA_CLOSED_WORLD,
@@ -515,7 +514,7 @@ public class CDDiffCLIToolTest {
       } catch (Exception e) {
         e.printStackTrace();
         Log.warn("This should not happen!");
-        Assert.fail();
+        fail();
       }
     }
   }
@@ -546,21 +545,21 @@ public class CDDiffCLIToolTest {
 
     // no corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();
-    Assert.assertNotNull(odFiles);
+    assertNotNull(odFiles);
 
     try {
       ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
       ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
-          Assert.assertTrue(
+          assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
                       CDSemantics.STA_OPEN_WORLD,
                       ast1,
                       ast2,
                       CDDiffUtil.loadODModel(odFile.getPath())));
-          Assert.assertTrue(
+          assertTrue(
               new OD2CDMatcher()
                   .checkIfDiffWitness(
                       CDSemantics.STA_CLOSED_WORLD,
@@ -573,7 +572,7 @@ public class CDDiffCLIToolTest {
     } catch (Exception e) {
       e.printStackTrace();
       Log.warn("This should not happen!");
-      Assert.fail();
+      fail();
     }
   }
 }

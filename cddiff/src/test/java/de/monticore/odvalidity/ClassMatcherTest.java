@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -9,9 +11,8 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.FileNotFoundException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ClassMatcherTest {
   final String resources = "src/test/resources/de/monticore/odvalidity/classmatcher/";
@@ -39,7 +40,7 @@ public class ClassMatcherTest {
 
   final ClassMatcher classMatcher = new ClassMatcher();
 
-  @Before
+  @BeforeEach
   public void initTests() {
     LogStub.init();
     CD4CodeMill.init();
@@ -98,10 +99,10 @@ public class ClassMatcherTest {
       throws FileNotFoundException {
     reloadOD(odPath);
 
-    Assert.assertEquals(
+    assertEquals(
         shouldPass,
         classMatcher.checkAllObjectsInClassDiagram(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
-    Assert.assertEquals(
+    assertEquals(
         shouldPass,
         classMatcher.checkAllObjectsInClassDiagram(od, cd, CDSemantics.SIMPLE_OPEN_WORLD));
   }
@@ -110,6 +111,6 @@ public class ClassMatcherTest {
       throws FileNotFoundException {
     reloadOD(odPath);
 
-    Assert.assertEquals(shouldPass, classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic));
+    assertEquals(shouldPass, classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic));
   }
 }

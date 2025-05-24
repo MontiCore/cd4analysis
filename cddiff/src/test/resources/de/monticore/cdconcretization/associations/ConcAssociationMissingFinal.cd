@@ -1,7 +1,0 @@
-classdiagram ConcAssociationMissingFinal {
-  class Employee {
-  }
-  class Department {
-  }
-  association Employee (employed) -> Department [1];
-}

@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -12,8 +15,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
@@ -28,7 +30,7 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
     opt.ifPresent(
         cdTypeSymbol ->
-            Assert.assertTrue(
+            assertTrue(
                 CDInheritanceHelper.isAttributInSuper(
                     CDAttributeFacade.getInstance()
                         .createAttribute(
@@ -56,7 +58,7 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
     if (opt.isPresent()) {
       for (ASTCDType superType : CDInheritanceHelper.getAllSuper(opt.get().getAstNode(), scope1)) {
-        Assert.assertTrue(superList.stream().anyMatch(name -> name.equals(superType.getName())));
+        assertTrue(superList.stream().anyMatch(name -> name.equals(superType.getName())));
       }
     }
   }
@@ -72,7 +74,7 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
         .resolveCDType("Manager")
         .ifPresent(
             src ->
-                Assert.assertEquals(
+                assertEquals(
                     "ins.Employee",
                     CDInheritanceHelper.resolveClosestType(
                             src.getAstNode(), "Employee", employees8.getEnclosingScope())

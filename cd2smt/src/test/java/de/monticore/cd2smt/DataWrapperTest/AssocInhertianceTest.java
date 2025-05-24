@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.DataWrapperTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -19,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,7 +44,6 @@ public class AssocInhertianceTest extends CD2SMTAbstractTest {
     ASTCDCompilationUnit ast =
         parseModel(Paths.get("DataWrapper/inheritance/association/AssocInheritance.cd").toString());
     CD2SMTMill.initDefault();
-    ;
     cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     ctx = cd2SMTGenerator.getContext();
@@ -59,10 +59,10 @@ public class AssocInhertianceTest extends CD2SMTAbstractTest {
 
     Optional<Expr<? extends Sort>> link1 =
         Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, type1, type2, obj1, obj2));
-    Assertions.assertTrue(link1.isPresent());
+    assertTrue(link1.isPresent());
     Optional<Expr<? extends Sort>> link2 =
         Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, type2, type1, obj2, obj1));
-    Assertions.assertTrue(link2.isPresent());
+    assertTrue(link2.isPresent());
   }
 
   @ParameterizedTest

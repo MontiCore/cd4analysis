@@ -9,7 +9,7 @@ import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {

@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class DiffPrinter extends SyntaxDiffHelper {
+public abstract class DiffPrinter extends SyntaxDiffHelper {
   public StringBuilder outputSrc, outputTgt, outputAdded, outputDeleted, outputChanged, outputDiff;
+  protected CDSynDiffMatches matches;
 
   /**
    * Sets various string outputs for different elements and changes found in a syntax difference
@@ -167,7 +168,12 @@ public class DiffPrinter extends SyntaxDiffHelper {
       for (ASTCDAssociation x : syntaxDiff.getAddedAssocs()) {
         CDAssocDiff diff =
             new CDAssocDiff(
-                x, x, syntaxDiff.getSrcCD(), syntaxDiff.getSrcCD(), syntaxDiff.getHelper());
+                x,
+                x,
+                syntaxDiff.getSrcCD(),
+                syntaxDiff.getSrcCD(),
+                syntaxDiff.getHelper(),
+                matches);
         String tmp = diff.printAddedAssoc() + RESET;
         onlySrcCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyAddedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
@@ -179,7 +185,12 @@ public class DiffPrinter extends SyntaxDiffHelper {
       for (ASTCDAssociation x : syntaxDiff.getDeletedAssocs()) {
         CDAssocDiff diff =
             new CDAssocDiff(
-                x, x, syntaxDiff.getTgtCD(), syntaxDiff.getTgtCD(), syntaxDiff.getHelper());
+                x,
+                x,
+                syntaxDiff.getTgtCD(),
+                syntaxDiff.getTgtCD(),
+                syntaxDiff.getHelper(),
+                matches);
         String tmp = diff.printDeletedAssoc() + RESET;
         onlyTgtCDSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));
         onlyDeletedSort.add(new Pair<>(x.get_SourcePositionStart().getLine(), tmp));

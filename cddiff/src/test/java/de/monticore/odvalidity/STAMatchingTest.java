@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -9,9 +12,8 @@ import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.FileNotFoundException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class STAMatchingTest {
   String[] validBaseCDModelsOpenWorld = {
@@ -40,7 +42,7 @@ public class STAMatchingTest {
 
   ModelLoader loader = new ModelLoader();
 
-  @Before
+  @BeforeEach
   public void loadModels() {
     LogStub.init();
     Log.enableFailQuick(false);
@@ -67,9 +69,9 @@ public class STAMatchingTest {
       ASTCDCompilationUnit compCD = loader.loadCDModel(cdCompareModel).get();
 
       if (closedDiff[i]) {
-        Assert.assertTrue(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
+        assertTrue(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
       } else {
-        Assert.assertFalse(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
+        assertFalse(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
       }
     }
   }
@@ -90,9 +92,9 @@ public class STAMatchingTest {
       ASTCDCompilationUnit compCD = loader.loadCDModel(cdCompareModel).get();
 
       if (openDiff[i]) {
-        Assert.assertTrue(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
+        assertTrue(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
       } else {
-        Assert.assertFalse(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
+        assertFalse(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
       }
     }
   }

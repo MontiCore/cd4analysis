@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -14,18 +16,17 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InheritanceDisjointInterfaces extends BaseTest {
 
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Inheritance/disjointInterfaces/A.cd";
+  private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
 
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Inheritance/disjointInterfaces/B.cd";
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/disjointInterfaces/A.cd";
 
-  private static final String EXPECTED =
-      "src/test/resources/class_diagrams/Inheritance" + "/disjointInterfaces/mergedCD.cd";
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/disjointInterfaces/B.cd";
+
+  private static final String EXPECTED = INPUT_MODEL_DIR + "/disjointInterfaces/mergedCD.cd";
 
   @Test
   public void testInheritanceDisjointInterfaces() throws IOException, MergingException {
@@ -36,7 +37,7 @@ public class InheritanceDisjointInterfaces extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
-    org.junit.Assert.assertTrue(
+    assertTrue(
         parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
             .deepEquals(expectedCD, false));
   }

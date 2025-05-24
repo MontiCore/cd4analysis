@@ -1,5 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -9,8 +11,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class AssocDiffTest extends CDDiffTestBasis {
 
@@ -95,11 +96,11 @@ public class AssocDiffTest extends CDDiffTestBasis {
         this.tgt = tgt.get();
         this.src = src.get();
       } else {
-        Assert.fail("Could not parse CDs.");
+        fail("Could not parse CDs.");
       }
 
     } catch (IOException e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
   }
 }

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.DataWrapperTest;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -17,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,7 @@ public class AttrInheritanceTest extends CD2SMTAbstractTest {
   public void checkAttribute(ASTCDClass Class, String attrname, Expr<? extends Sort> obj) {
     Optional<Expr<? extends Sort>> attribute =
         Optional.ofNullable(cd2SMTGenerator.getAttribute(Class, attrname, obj));
-    Assertions.assertTrue(attribute.isPresent());
+    assertTrue(attribute.isPresent());
   }
 
   @Test

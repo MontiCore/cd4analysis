@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd4analysis.typescalculator.FullDeriveFromCD4Analysis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -11,8 +11,8 @@ import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
 
@@ -46,6 +46,6 @@ public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(2).getMsg().startsWith("0xCDC02"));
   }
 
-  @After
+  @AfterEach
   public void after() {}
 }

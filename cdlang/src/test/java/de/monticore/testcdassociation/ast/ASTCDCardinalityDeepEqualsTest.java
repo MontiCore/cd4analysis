@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.ast;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cdassociation._ast.ASTCDCardAtLeastOne;
 import de.monticore.cdassociation._ast.ASTCDCardMult;
@@ -10,7 +10,7 @@ import de.monticore.cdassociation._ast.ASTCDCardOpt;
 import de.monticore.testcdassociation.TestCDAssociationMill;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ASTCDCardinalityDeepEqualsTest {
 

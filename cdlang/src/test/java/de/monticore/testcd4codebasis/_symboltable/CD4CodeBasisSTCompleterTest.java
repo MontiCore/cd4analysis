@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis._symboltable;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CD4CodeBasisSTCompleterTest extends CD4CodeBasisTestBasis {
 

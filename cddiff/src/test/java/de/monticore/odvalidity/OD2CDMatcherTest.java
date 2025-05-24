@@ -1,15 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.nio.file.Paths;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OD2CDMatcherTest {
 
@@ -25,7 +26,7 @@ public class OD2CDMatcherTest {
 
   File odModel1;
 
-  @Before
+  @BeforeEach
   public void reloadModels() {
     CD4CodeMill.reset();
     CD4CodeMill.init();
@@ -40,8 +41,7 @@ public class OD2CDMatcherTest {
   @Test
   public void singleInstanceCheckClosedWorldTest() {
     // TODO
-    Assert.assertFalse(
-        matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cdModel1, odModel1));
+    assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cdModel1, odModel1));
   }
 
   @Test
@@ -49,11 +49,11 @@ public class OD2CDMatcherTest {
     final File cd1 = new File(resources + "IntegrationTest/OCLDiff/car.cd");
 
     File[] odFiles = Paths.get(resources + "IntegrationTest/OCLDiff").toFile().listFiles();
-    Assert.assertNotNull(odFiles);
+    assertNotNull(odFiles);
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
       }
     }
   }
@@ -64,12 +64,12 @@ public class OD2CDMatcherTest {
     final File cd2 = new File(resources + "IntegrationTest/Class/CD2.cd");
 
     File[] odFiles = Paths.get(resources + "IntegrationTest/Class").toFile().listFiles();
-    Assert.assertNotNull(odFiles);
+    assertNotNull(odFiles);
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
-        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
   }
@@ -80,12 +80,12 @@ public class OD2CDMatcherTest {
     final File cd2 = new File(resources + "IntegrationTest/Combination/Employees1A.cd");
 
     File[] odFiles = Paths.get(resources + "IntegrationTest/Combination").toFile().listFiles();
-    Assert.assertNotNull(odFiles);
+    assertNotNull(odFiles);
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
-        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
   }
@@ -96,12 +96,12 @@ public class OD2CDMatcherTest {
     final File cd2 = new File(resources + "IntegrationTest/Direction/Direction1A.cd");
 
     File[] odFiles = Paths.get(resources + "IntegrationTest/Direction").toFile().listFiles();
-    Assert.assertNotNull(odFiles);
+    assertNotNull(odFiles);
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
-        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
   }
@@ -112,12 +112,12 @@ public class OD2CDMatcherTest {
     final File cd2 = new File(resources + "IntegrationTest/Overlap/OverlapB.cd");
 
     File[] odFiles = Paths.get(resources + "IntegrationTest/Overlap").toFile().listFiles();
-    Assert.assertNotNull(odFiles);
+    assertNotNull(odFiles);
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
-        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
   }

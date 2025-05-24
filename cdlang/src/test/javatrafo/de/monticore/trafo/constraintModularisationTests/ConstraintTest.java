@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo.constraintModularisationTests;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4code.CD4CodeMill;
@@ -11,9 +11,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.tf.*;
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /** Created by Alexander Wilts on 31.10.2016. */
 public class ConstraintTest {
@@ -21,7 +21,7 @@ public class ConstraintTest {
   private final String DexInfrastructureCD =
       "src/test/resources/de/monticore/trafo/GroupDexInfrastructure.cd";
 
-  @BeforeClass
+  @BeforeAll
   public static void init() {
     CD4CodeMill.init();
   }
@@ -383,7 +383,7 @@ public class ConstraintTest {
   }
 
   @Test
-  @Ignore // TODO: This test fails due to the order of interfaces and classes
+  @Disabled // TODO: This test fails due to the order of interfaces and classes
   public void testTrafoOptionalInOrInList() throws IOException {
     Optional<ASTCDCompilationUnit> astOpt = CD4CodeMill.parser().parse(DexInfrastructureCD);
 

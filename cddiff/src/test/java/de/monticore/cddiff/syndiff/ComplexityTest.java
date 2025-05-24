@@ -1,6 +1,6 @@
 package de.monticore.cddiff.syndiff;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -12,12 +12,12 @@ import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ComplexityTest extends CDDiffTestBasis {
   @Test
-  @Ignore
+  @Disabled
   public void testRuntime4Performance() {
 
     String path = "src/test/resources/de/monticore/cddiff/Performance/";
@@ -68,7 +68,7 @@ public class ComplexityTest extends CDDiffTestBasis {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void testRunTime4PerformanceNoLink() {
     String path = "src/test/resources/de/monticore/cddiff/Performance/";
 
@@ -118,7 +118,7 @@ public class ComplexityTest extends CDDiffTestBasis {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void testRunTime4Performance100() {
     String path = "src/test/resources/de/monticore/cddiff/Performance/";
 

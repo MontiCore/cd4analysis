@@ -1,6 +1,9 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.symtabdefinitiontool.gradleplugin;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,24 +13,20 @@ import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class SymTabDefinitionGradlePluginTest {
 
-  @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder();
-  File testProjectDir;
+  @TempDir File testProjectDir;
   File settingsFile;
   File propertiesFile;
   File buildFile;
   File modelDir;
 
-  @Before
+  @BeforeEach
   public void setup() throws IOException {
-    testProjectDir = temporaryFolder.newFolder();
     settingsFile = new File(testProjectDir, "settings.gradle");
     buildFile = new File(testProjectDir, "build.gradle");
     propertiesFile = new File(testProjectDir, "gradle.properties");
@@ -56,12 +55,12 @@ public class SymTabDefinitionGradlePluginTest {
 
     File cdlangLibs = new File("../../cdlang/target/libs");
     File cd4aJarFile = new File(cdlangLibs, "cd4analysis-" + projVersion + ".jar");
-    Assert.assertTrue(cdlangLibs.exists());
+    assertTrue(cd4aJarFile.exists());
 
     File stdeftoolLibs = new File("../target/libs");
     File stdeftoolJarFile =
         new File(stdeftoolLibs, "cd4analysis-" + projVersion + "-symtabdefinitiontool.jar");
-    Assert.assertTrue(stdeftoolLibs.exists());
+    assertTrue(stdeftoolJarFile.exists());
 
     String buildFileContent =
         "plugins {\n"
@@ -94,7 +93,7 @@ public class SymTabDefinitionGradlePluginTest {
             .withProjectDir(testProjectDir)
             .withArguments("build", "--info", "--stacktrace")
             .build();
-    Assert.assertEquals(TaskOutcome.SUCCESS, result.task(":generateSymbolTables").getOutcome());
+    assertEquals(TaskOutcome.SUCCESS, result.task(":generateSymbolTables").getOutcome());
   }
 
   void writeFile(File destination, String content) throws IOException {
