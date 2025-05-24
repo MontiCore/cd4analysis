@@ -501,7 +501,5 @@ public class BuilderDecoratorTest {
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyIntAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
-
-
   }
 }

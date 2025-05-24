@@ -27,7 +27,43 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 
 /**
- * Decorator that adds deepCopy and deepEquals methods to artifacts specified in the class diagram.
+ * Decorator that adds deepCopy and deepEquals methods to artifacts specified in the class diagram.<br>
+ * The deepCopy method is actually two methods: <br>
+ * 1. deepClone(): <br>
+ *    Creates a new instance of the class and calls the deepClone method with the new instance.<br>
+ *    <br>
+ * 2. deepClone(result: PojoClass, map: Map‹PojoClass, Object[2]{PojoClass,boolean}›): <br>
+ *   This method is used to correctly copy with respect class diagrams which are cyclic or have
+ *   data structures containing multiple references to the same object. <br>
+ *   To realize this, we need to pass a map of already visited objects to the deepClone method.
+ *   If an object is already in the map, we can return the already cloned object instead of cloning it again.
+ *   The map is a Map‹PojoClass, Object[2]{PojoClass,boolean}› where the first element is the
+ *   original object and the second element is a boolean indicating whether the object has been cloned or not.
+ *   If it is set to <code>false</code>' it indicates that the cloning process for this object has started but is not yet complete
+ *   (i.e., it is currently being cloned higher up in the call stack).
+ *   If the boolean is <code>true</code> indicates that the object has been fully cloned.
+ *   This boolean flag is crucial for correctly handling cyclic dependencies, preventing infinite loops
+ *   and ensuring that an object instance is created only once, even if referenced multiple times or cyclically.
+ *   <br>
+ *   <br>
+ * The deepEquals method is also three methods: <br>
+ * 1. deepEquals(o: Object): <br>
+ *    This method calls the deepEquals method with the signature deepEquals(o: Object, <code>forceSameOrder</code>: boolean).<br>
+ *    <br>
+ * 2. deepEquals(o: Object, <code>forceSameOrder</code>: boolean): <br>
+ *    This method calls the deepEquals method with the signature deepEquals(o: Object, <code>forceSameOrder</code>: boolean, visitedObjects: Set<Object>).
+ *    With a new set of visited objects to avoid cyclic references.
+ *    <br>
+ *  3. deepEquals(o: Object, <code>forceSameOrder</code>: boolean, <code>visitedObjects</code>: Set‹Object›): <br>
+ *    This method is the actual implementation of the deepEquals method.<br>
+ *    It compares the object with the current instance and checks if the attributes are equal.<br>
+ *    It begins by adding the <code>currentObject</code> to the set of <code>visitedObjects</code>.<br>
+ *    Then it resolves the <code>currentObject</code>.<br>
+ *    Because we added the <code>currentObject</code> to the set of <code>visitedObjects</code>,
+ *    we can detect cyclic references and avoid them.<br>
+ *    Afterward, we remove the <code>currentObject</code> from the set
+ *    of <code>visitedObjects</code> to allow further comparisons.<br>
+ *    TODO currently the deepEquals method is not symmetric, meaning that if A.equals(B) is true, B.equals(A) is not necessarily true.
  */
 public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
