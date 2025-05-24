@@ -20,6 +20,8 @@ class ObserverCDTest extends AbstractCDGenTest {
    */
   @Test
   void testObserver() throws Exception {
+    setup.withCopyCreator().defaultApply();
+
     setup.withDecorator(new GetterDecorator());
     setup.configApplyMatchName(GetterDecorator.class, "getter");
     setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");

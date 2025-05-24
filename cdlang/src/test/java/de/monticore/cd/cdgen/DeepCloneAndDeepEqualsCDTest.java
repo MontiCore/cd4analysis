@@ -1,14 +1,11 @@
 package de.monticore.cd.cdgen;
 
-import de.monticore.cd.codegen.decorators.BuilderDecorator;
 import de.monticore.cd.codegen.decorators.CardinalityDefaultDecorator;
 import de.monticore.cd.codegen.decorators.DeepCloneAndDeepEqualsDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +16,8 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
 
   @Test
   public void testDeepCopyAndDeepEquals() throws Exception {
+    setup.withCopyCreator().defaultApply();
+
     setup.withDecorator(new CardinalityDefaultDecorator());
     setup.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
 

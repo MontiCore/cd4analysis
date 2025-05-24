@@ -1,5 +1,6 @@
 package de.monticore.cd.codegen.decorators;
 
+import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
@@ -12,12 +13,9 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcarraytypes._ast.ASTMCArrayType;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
@@ -38,6 +36,12 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    */
   List<String> classesFromClassdiagramAsString = new ArrayList<>();
   boolean isInitialized = false;
+
+  @Override
+  @SuppressWarnings("rawtypes")
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
+    return super.getMustRunAfter();
+  }
 
   private void initClassesFromClassDiagramAsString(ASTNode node) {
     if(isInitialized) {
@@ -71,17 +75,18 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   @Override
   public void visit(ASTCDClass node) {
     initClassesFromClassDiagramAsString(node);
+
     ASTCDClass decClazz = decoratorData.getAsDecorated(node);
 
     addDeepCloneMethod(node, decClazz);
-    addDeepCloneMethod1(node,decClazz);
+    addDeepCloneMethod1(node, decClazz);
     addDeepCloneMethod2(node, decClazz);
     addDeepEquals1Method(node, decClazz);
     addDeepEquals2Method(node, decClazz);
     addDeepEquals3Method(node, decClazz);
 
     //add a private constructor to the pojo class when no one exists. Needed for deepClone
-    if(!decClazz.getCDConstructorList().isEmpty()) {
+    if (!decClazz.getCDConstructorList().isEmpty()) {
       boolean hasDefaultConstructor = decClazz.getCDConstructorList().stream().anyMatch(c -> c.getCDParameterList().isEmpty());
       if (!hasDefaultConstructor) {
         ASTCDConstructor constructor1 = CDConstructorFacade.getInstance().createDefaultConstructor(CD4CodeMill.modifierBuilder().PRIVATE().build(), node);
@@ -145,8 +150,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",List.of(parameter1,parameter2));
 
-    int i = arrayType.getDimensions();
-    System.out.println("Array type dimensions: " + i);
     decoratedClass.addCDMember(deepClone2Method);
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2",originalClassQualifiedType, originalClass.getCDAttributeList(),classesFromClassdiagramAsString)));
@@ -220,10 +223,5 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
-  }
-
-  @Override
-  public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
-    return super.getMustRunAfter();
   }
 }

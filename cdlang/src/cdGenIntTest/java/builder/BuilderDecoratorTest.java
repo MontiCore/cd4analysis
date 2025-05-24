@@ -424,7 +424,7 @@ public class BuilderDecoratorTest {
     Assertions.assertEquals(Modifier.PUBLIC, constructorWithoutSetterModifier.intValue());
 
     //build methods
-    Method buildWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("build");
+    Method buildWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("build");
     BigInteger modifier = BigInteger.valueOf(buildWithSetter.getModifiers());
     Assertions.assertEquals(Modifier.PUBLIC, modifier.intValue());
 
@@ -433,7 +433,7 @@ public class BuilderDecoratorTest {
     Assertions.assertEquals(Modifier.PUBLIC, modifierWithoutSetter.intValue());
 
     //unsafeBuild methods
-    Method unsafeBuildWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("unsafeBuild");
+    Method unsafeBuildWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("unsafeBuild");
     BigInteger unsafeModifier = BigInteger.valueOf(unsafeBuildWithSetter.getModifiers());
     Assertions.assertEquals(Modifier.PUBLIC, unsafeModifier.intValue());
 
@@ -442,7 +442,7 @@ public class BuilderDecoratorTest {
     Assertions.assertEquals(Modifier.PUBLIC, unsafeModifierWithoutSetter.intValue());
 
     //isValid methods
-    Method isValidWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("isValid");
+    Method isValidWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("isValid");
     BigInteger isValidModifier = BigInteger.valueOf(isValidWithSetter.getModifiers());
     Assertions.assertEquals(Modifier.PRIVATE, isValidModifier.intValue());
 
@@ -451,55 +451,55 @@ public class BuilderDecoratorTest {
     Assertions.assertEquals(Modifier.PRIVATE, isValidModifierWithoutSetter.intValue());
 
     //set methods
-    Method setManyBWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setManyB", Set.class);
+    Method setManyBWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setManyB", Set.class);
     Assertions.assertEquals(Modifier.PUBLIC, setManyBWithSetter.getModifiers());
 
     Method setManyBWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setManyB", Set.class);
     Assertions.assertEquals(Modifier.PUBLIC, setManyBWithoutSetter.getModifiers());
 
-    Method setOptBWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setOptB", B.class);
+    Method setOptBWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setOptB", B.class);
     Assertions.assertEquals(Modifier.PUBLIC, setOptBWithSetter.getModifiers());
 
     Method setOptBWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setOptB", B.class);
     Assertions.assertEquals(Modifier.PUBLIC, setOptBWithoutSetter.getModifiers());
 
-    Method setOneBWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setOneB", B.class);
+    Method setOneBWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setOneB", B.class);
     Assertions.assertEquals(Modifier.PUBLIC, setOneBWithSetter.getModifiers());
 
     Method setOneBWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setOneB", B.class);
     Assertions.assertEquals(Modifier.PUBLIC, setOneBWithoutSetter.getModifiers());
 
-    Method setMyIntWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyInt", int.class);
+    Method setMyIntWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyInt", int.class);
     Assertions.assertEquals(Modifier.PUBLIC, setMyIntWithSetter.getModifiers());
 
     Method setMyIntWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyInt", int.class);
     Assertions.assertEquals(Modifier.PUBLIC, setMyIntWithoutSetter.getModifiers());
 
-    Method setMyBoolWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyBool", boolean.class);
+    Method setMyBoolWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyBool", boolean.class);
     Assertions.assertEquals(Modifier.PUBLIC, setMyBoolWithSetter.getModifiers());
 
     Method setMyBoolWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBool", boolean.class);
     Assertions.assertEquals(Modifier.PUBLIC, setMyBoolWithoutSetter.getModifiers());
 
     //setAbsent methods
-    Method setManyBAbsentWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setManyBAbsent");
+    Method setManyBAbsentWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setManyBAbsent");
     Assertions.assertEquals(Modifier.PUBLIC, setManyBAbsentWithSetter.getModifiers());
 
     Method setManyBAbsentWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setManyBAbsent");
     Assertions.assertEquals(Modifier.PUBLIC, setManyBAbsentWithoutSetter.getModifiers());
 
-    Method setOptBAbsentWithSetter = TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setOptBAbsent");
+    Method setOptBAbsentWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredMethod("setOptBAbsent");
     Assertions.assertEquals(Modifier.PUBLIC, setOptBAbsentWithSetter.getModifiers());
 
     Method setOptBAbsentWithoutSetter = TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setOptBAbsent");
     Assertions.assertEquals(Modifier.PUBLIC, setOptBAbsentWithoutSetter.getModifiers());
 
     //setAbsent should not exist for cardinality of 1
-    Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setOneBAbsent"));
+    Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilder.class.getDeclaredMethod("setOneBAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setOneBAbsent"));
-    Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyIntAbsent"));
+    Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyIntAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyIntAbsent"));
-    Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilderTOP.class.getDeclaredMethod("setMyBoolAbsent"));
+    Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
 
 

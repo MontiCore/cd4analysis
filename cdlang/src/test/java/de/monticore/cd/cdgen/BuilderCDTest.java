@@ -16,6 +16,8 @@ class BuilderCDTest extends AbstractCDGenTest{
 
   @Test
   public void testBuilder() throws Exception {
+    setup.withCopyCreator().defaultApply();
+
     setup.withDecorator(new SetterDecorator());
     setup.configApplyMatchName(SetterDecorator.class, ("setter"));
     setup.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));

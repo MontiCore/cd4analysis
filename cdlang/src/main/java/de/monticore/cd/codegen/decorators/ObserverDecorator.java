@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.facade.CDMethodFacade;
@@ -22,6 +23,7 @@ import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,12 +33,11 @@ import java.util.stream.Collectors;
 public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
 
   @Override
-  public List<Class<? extends IDecorator<?>>> getMustRunAfter() {
+  @SuppressWarnings("rawtypes")
+  public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     //We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    //We also check that the DeepCloneAndDeepEqualsDecorator has run before, as we generate classes
-    // which should not have the generated deepCopy and deepEquals methods
-    return List.of(SetterDecorator.class, DeepCloneAndDeepEqualsDecorator.class);
+    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
   }
 
   @Override
