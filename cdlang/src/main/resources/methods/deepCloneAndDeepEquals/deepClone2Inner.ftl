@@ -46,9 +46,8 @@ if(${thisObjectName} == null) {
     </#list>
     map.put(${thisObjectName} ${mapAddArrayBrackets}, new Object[] {${newResultObjectName + mapAddArrayBrackets}, true});
   </#list>
-  }else{
-      ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
   }
+  ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
 }
 <#-- Set types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>

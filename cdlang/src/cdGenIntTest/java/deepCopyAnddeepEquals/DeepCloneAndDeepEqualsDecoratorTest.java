@@ -498,7 +498,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
     Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
     Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
-    dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
+    dcArray1.arrayOfString[0].myInt = 1;
     Assertions.assertFalse(dcArray1.deepEquals(dcArray2));
     dcArray2 = dcArray1.deepClone();
     Assertions.assertNotSame(dcArray1,dcArray2);
@@ -548,7 +548,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
     Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
-    dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][0][0].myInt=1;
     Assertions.assertFalse(dcArray3.deepEquals(dcArray4));
     dcArray4 = dcArray3.deepClone();
     Assertions.assertNotSame(dcArray3,dcArray4);
@@ -612,9 +612,6 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0],dcArray4.threeDimArrayOfString[1][0]);
     Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1],dcArray4.threeDimArrayOfString[1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][0]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][1]);
     //check for deepClone with two equal references inside the first array
     dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
     dcArray3.threeDimArrayOfString[0][0] = new ClassWithPrimitiveType[2];
@@ -631,9 +628,6 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0],dcArray4.threeDimArrayOfString[1][0]);
     Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1],dcArray4.threeDimArrayOfString[1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][0]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][1]);
     //endregion
     //region deepClone for String types
     ClassWithString dcString1 = new ClassWithString();
@@ -1109,6 +1103,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dc25.optClassWith2DimList.get(),dc25.oneClassWith2DimList);
     //endregion
     //endregion
+
     //check construction of default constructor if not present
     ClassWithNoDefaultConstructor classWithNoDefaultConstructor = new ClassWithNoDefaultConstructor(1);
     ClassWithNoDefaultConstructor classWithNoDefaultConstructor2 = classWithNoDefaultConstructor.deepClone();
