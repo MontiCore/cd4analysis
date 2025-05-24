@@ -33,6 +33,9 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     }
     //endregion
 
+    //TODO should deepEquals always be be symmetric? a=b implies b=a?
+    // this is only the case when forceSameOrder is true
+    // in this case we can call the method always with a.equals(b) and b.equals(a)
     //region DeepEquals
     //region deepEquals for primitive types
     ClassWithPrimitiveType de1 = new ClassWithPrimitiveType();
@@ -45,6 +48,77 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertFalse(de1.deepEquals(de2));
     //endregion
     //region deepEquals for array types
+    ClassWithArray deArray1 = new ClassWithArray();
+    ClassWithArray deArray2 = new ClassWithArray();
+    deArray1.arrayOfString = new ClassWithPrimitiveType[2];
+    deArray2.arrayOfString = new ClassWithPrimitiveType[2];
+    deArray1.arrayOfString[0] = new ClassWithPrimitiveType();
+    deArray1.arrayOfString[1] = new ClassWithPrimitiveType();
+    deArray2.arrayOfString[0] = new ClassWithPrimitiveType();
+    deArray2.arrayOfString[1] = new ClassWithPrimitiveType();
+    Assertions.assertTrue(deArray1.deepEquals(deArray2));
+    Assertions.assertTrue(deArray1.deepEquals(deArray1,true));
+    Assertions.assertTrue(deArray1.deepEquals(deArray1,false));
+    deArray2.arrayOfString[1].myInt=2;
+    Assertions.assertFalse(deArray1.deepEquals(deArray2));
+    Assertions.assertFalse(deArray1.deepEquals(deArray2,true));
+    Assertions.assertTrue(deArray1.deepEquals(deArray2,false));
+    //TODO Nico note here that deArray1.deepEquals(deArray2) is true but deArray2.deepEquals(deArray1) is not
+    Assertions.assertFalse(deArray2.deepEquals(deArray1));
+    Assertions.assertFalse(deArray2.deepEquals(deArray1,true));
+    Assertions.assertFalse(deArray2.deepEquals(deArray1,false));
+    //null check
+    deArray1.arrayOfString = null;
+    Assertions.assertFalse(deArray1.deepEquals(deArray2));
+    Assertions.assertFalse(deArray1.deepEquals(deArray2,true));
+    Assertions.assertFalse(deArray1.deepEquals(deArray2,false));
+    deArray2.arrayOfString = null;
+    Assertions.assertTrue(deArray1.deepEquals(deArray2));
+    Assertions.assertTrue(deArray1.deepEquals(deArray2,true));
+    Assertions.assertTrue(deArray1.deepEquals(deArray2,false));
+
+    //test multidimensional arrays
+    ClassWith3DArray deArray3 = new ClassWith3DArray();
+    ClassWith3DArray deArray4 = new ClassWith3DArray();
+    deArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
+    deArray4.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
+    deArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[0][0][1] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[0][1][0] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[0][1][1] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[1][0][0] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[1][0][1] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[1][1][0] = new ClassWithPrimitiveType();
+    deArray3.threeDimArrayOfString[1][1][1] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[0][0][1] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[0][1][0] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[0][1][1] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[1][0][0] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[1][0][1] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[1][1][0] = new ClassWithPrimitiveType();
+    deArray4.threeDimArrayOfString[1][1][1] = new ClassWithPrimitiveType();
+    Assertions.assertTrue(deArray3.deepEquals(deArray4));
+    Assertions.assertTrue(deArray3.deepEquals(deArray3,true));
+    Assertions.assertTrue(deArray3.deepEquals(deArray3,false));
+    deArray4.threeDimArrayOfString[0][0][0].myInt=1;
+    Assertions.assertFalse(deArray3.deepEquals(deArray4));
+    Assertions.assertFalse(deArray3.deepEquals(deArray4,true));
+    Assertions.assertTrue(deArray3.deepEquals(deArray4,false));
+    //TODO here the same problem as above
+    Assertions.assertFalse(deArray4.deepEquals(deArray3));
+    Assertions.assertFalse(deArray4.deepEquals(deArray3,true));
+    Assertions.assertFalse(deArray4.deepEquals(deArray3,false));
+    //null check
+    deArray3.threeDimArrayOfString = null;
+    Assertions.assertFalse(deArray3.deepEquals(deArray4));
+    Assertions.assertFalse(deArray3.deepEquals(deArray4,true));
+    Assertions.assertFalse(deArray3.deepEquals(deArray4,false));
+    deArray4.threeDimArrayOfString = null;
+    Assertions.assertTrue(deArray3.deepEquals(deArray4));
+    Assertions.assertTrue(deArray3.deepEquals(deArray4,true));
+    Assertions.assertTrue(deArray3.deepEquals(deArray4,false));
+    //endregion
     //region deepEquals for String types
     ClassWithString deString1 = new ClassWithString();
     ClassWithString deString2 = new ClassWithString();
@@ -125,6 +199,19 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de7.my2dimList.set(0, listDescent1);
     Assertions.assertFalse(de7.deepEquals(de8));
     Assertions.assertTrue(de7.deepEquals(de8,false));
+    Assertions.assertFalse(de7.deepEquals(de8,true));
+    de7.my2dimList = new ArrayList<>();
+    de7.my2dimList.add(listAbsent1);
+    de7.my2dimList.add(new ArrayList<>());
+    de7.my2dimList.add(listAbsent2);
+    de8.my2dimList = new ArrayList<>();
+    de8.my2dimList.add(listDescent1);
+    de8.my2dimList.add(listDescent1);
+    Assertions.assertFalse(de8.deepEquals(de7));
+    Assertions.assertFalse(de8.deepEquals(de7,false));
+    Assertions.assertFalse(de8.deepEquals(de7,true));
+    Assertions.assertFalse(de7.deepEquals(de8));
+    Assertions.assertFalse(de7.deepEquals(de8,false));
     Assertions.assertFalse(de7.deepEquals(de8,true));
     //endregion
     //region deepEquals set types
@@ -398,6 +485,155 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc2 = dc1.deepClone();
     Assertions.assertNotSame(dc1,dc2);
     Assertions.assertTrue(dc1.deepEquals(dc2));
+    //endregion
+    //region deepClone for array types
+    ClassWithArray dcArray1 = new ClassWithArray();
+    ClassWithArray dcArray2 = new ClassWithArray();
+    dcArray1.arrayOfString = new ClassWithPrimitiveType[2];
+    dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
+    dcArray1.arrayOfString[1] = new ClassWithPrimitiveType();
+    dcArray2 = dcArray1.deepClone();
+    Assertions.assertNotSame(dcArray1,dcArray2);
+    Assertions.assertNotSame(dcArray1.arrayOfString,dcArray2.arrayOfString);
+    Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
+    Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
+    Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
+    dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
+    Assertions.assertFalse(dcArray1.deepEquals(dcArray2));
+    dcArray2 = dcArray1.deepClone();
+    Assertions.assertNotSame(dcArray1,dcArray2);
+    Assertions.assertNotSame(dcArray1.arrayOfString,dcArray2.arrayOfString);
+    Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
+    Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
+    Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
+    //null check
+    dcArray1.arrayOfString = null;
+    dcArray2 = dcArray1.deepClone();
+    Assertions.assertNotSame(dcArray1,dcArray2);
+    Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
+    Assertions.assertNull(dcArray2.arrayOfString);
+    //test Map correctness
+    dcArray1.arrayOfString = new ClassWithPrimitiveType[2];
+    dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
+    dcArray1.arrayOfString[1] = dcArray1.arrayOfString[0];
+    dcArray2 = dcArray1.deepClone();
+    Assertions.assertNotSame(dcArray1,dcArray2);
+    Assertions.assertNotSame(dcArray1.arrayOfString,dcArray2.arrayOfString);
+    Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
+    Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
+    Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
+    Assertions.assertSame(dcArray2.arrayOfString[0],dcArray2.arrayOfString[1]);
+
+    //test multidimensional arrays
+    ClassWith3DArray dcArray3 = new ClassWith3DArray();
+    ClassWith3DArray dcArray4 = new ClassWith3DArray();
+    dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
+    dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][0][1] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][1][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][1][1] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[1][0][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[1][0][1] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[1][1][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[1][1][1] = new ClassWithPrimitiveType();
+    dcArray4 = dcArray3.deepClone();
+    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][1][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[1][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[1][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
+    Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
+    dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    Assertions.assertFalse(dcArray3.deepEquals(dcArray4));
+    dcArray4 = dcArray3.deepClone();
+    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][1][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[1][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[1][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
+    Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
+    //null check
+    dcArray3.threeDimArrayOfString = null;
+    dcArray4 = dcArray3.deepClone();
+    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
+    Assertions.assertNull(dcArray4.threeDimArrayOfString);
+    //test Map correctness
+    dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
+    dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][0][1] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[0][1][0] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[0][1][1] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[1][0][0] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[1][0][1] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[1][1][0] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[1][1][1] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray4 = dcArray3.deepClone();
+    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][1][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[1][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[1][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
+    Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    //check for map correctness with array type
+    dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
+    dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][0][1] = dcArray3.threeDimArrayOfString[0][0][0];
+    dcArray3.threeDimArrayOfString[0][1] = dcArray3.threeDimArrayOfString[0][0];
+    dcArray3.threeDimArrayOfString[1][0] = dcArray3.threeDimArrayOfString[0][0];
+    dcArray3.threeDimArrayOfString[1][1] = dcArray3.threeDimArrayOfString[0][0];
+    dcArray4 = dcArray3.deepClone();
+    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1],dcArray4.threeDimArrayOfString[0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0],dcArray4.threeDimArrayOfString[1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1],dcArray4.threeDimArrayOfString[1][1]);
+    Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][0]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][1]);
+    //check for deepClone with two equal references inside the first array
+    dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
+    dcArray3.threeDimArrayOfString[0][0] = new ClassWithPrimitiveType[2];
+    dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][0][1] = new ClassWithPrimitiveType();
+    dcArray3.threeDimArrayOfString[0][1] = dcArray3.threeDimArrayOfString[0][0];
+    dcArray3.threeDimArrayOfString[1][0] = dcArray3.threeDimArrayOfString[0][0];
+    dcArray3.threeDimArrayOfString[1][1] = dcArray3.threeDimArrayOfString[0][0];
+    dcArray4 = dcArray3.deepClone();
+    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1],dcArray4.threeDimArrayOfString[0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0],dcArray4.threeDimArrayOfString[1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1],dcArray4.threeDimArrayOfString[1][1]);
+    Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][0]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[1][1]);
     //endregion
     //region deepClone for String types
     ClassWithString dcString1 = new ClassWithString();

@@ -87,8 +87,12 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
           "-> (one2)B [1] public;\n" +
           "}\n" +
           "public class ClassWithArray { \n" +
-          " String[] arrayOfString; \n" +
-          " java.lang.String [][][] threeDimArrayOfStrings; \n " +
+          " public ClassWithPrimitiveType[] arrayOfString; \n" +
+          " public ClassWithPrimitiveType[] arrayOfString2; \n" +
+          "}\n" +
+          "public class ClassWith3DArray { \n" +
+          " public ClassWithPrimitiveType[][][] threeDimArrayOfString; \n" +
+          " public ClassWithPrimitiveType[][][] threeDimArrayOfString2; \n" +
           "}\n" +
           "public class ClassWithString { \n" +
           " public String myString;\n" +

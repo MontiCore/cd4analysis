@@ -13,60 +13,74 @@ ${tc.signature("mCType", "PojoClazzesAsStringList","firstObjectName", "secondObj
 if(${firstObjectName} == null && ${secondObjectName} == null){
   ${resultBooleanName} = true;
 }else{
-  <#assign thisObjectArrayBracketsWith0index = "">
-  <#list 0..depth-1 as i>
-    int firstArrayDim${i} = ${firstObjectName + thisObjectArrayBracketsWith0index}.length;
-    <#assign thisObjectArrayBracketsWith0index = thisObjectArrayBracketsWith0index + "[0]">
-  </#list>
-  <#list 0..depth-1 as i>
-    <#assign mapAddArrayBrackets = "">
-    <#list 0..i as j>
-       <#if j == 0>
-         <#assign mapAddArrayBrackets = mapAddArrayBrackets >
-       <#else>
-         <#assign mapAddArrayBrackets = mapAddArrayBrackets + "[i${j-1}]" >
-       </#if>
-    </#list>
-    if(${firstObjectName}${mapAddArrayBrackets}.length != ${secondObjectName}${mapAddArrayBrackets}.length){
-      ${resultBooleanName} = false;
-    }else{
-      for(int i${i} = 0; i${i} < firstArrayDim${i}; i${i}++) {
-  </#list>
-  <#assign isEqual = "isEqual">
-  boolean isEqual = true;
-  if(forceSameOrder){
-    ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObjectName + thisObjectArrayBracketsWith0index, secondObjectName + thisObjectArrayBracketsWith0index, isEqual)}
-  }else{
-     <#assign resultObjectCurrentBrackets = "">
-     <#list 0..depth-1 as i>
-       <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[i${i}]">
-     </#list>
-     <#assign firstObject = "firstObject">
-     ${arrayType.printType()} ${firstObject} = ${firstObjectName}${resultObjectCurrentBrackets};
-     <#list 0..depth-1 as i>
-       for(int innerI${i} = 0; innerI$${i} < firstArrayDim${i}; innerI$${i}++) {
-     </#list>
-     <#assign secondObject = "secondObject">
-     <#assign resultObjectCurrentBrackets = "">
-     <#list 0..depth-1 as i>
-       <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[innerI${i}]">
-     </#list>
-     ${arrayType.printType()} ${secondObject} = ${secondObjectName}${resultObjectCurrentBrackets};
-     ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObject, secondObject, isEqual)}
-     <#list 0..depth-1 as i>
-       }
-     </#list>
-
-  }
-  if(!isEqual){
+  if((${firstObjectName} == null || ${secondObjectName} == null)||(${firstObjectName}.length != ${secondObjectName}.length)){
     ${resultBooleanName} = false;
-  }
-  <#list 0..depth-1 as i>
-   }
-  }
-  </#list>
+  }else{
+     <#assign thisObjectArrayBracketsWith0index = "">
+     <#list 0..depth-1 as i>
+       int firstArrayDim${i} = ${firstObjectName + thisObjectArrayBracketsWith0index}.length;
+       <#assign thisObjectArrayBracketsWith0index = thisObjectArrayBracketsWith0index + "[0]">
+     </#list>
+     <#list 0..depth-1 as i>
+       <#assign mapAddArrayBrackets = "">
+       <#list 0..i as j>
+          <#if j == 0>
+            <#assign mapAddArrayBrackets = mapAddArrayBrackets >
+          <#else>
+            <#assign mapAddArrayBrackets = mapAddArrayBrackets + "[i${j-1}]" >
+          </#if>
+       </#list>
+       if(${firstObjectName}${mapAddArrayBrackets}.length != ${secondObjectName}${mapAddArrayBrackets}.length){
+         ${resultBooleanName} = false;
+       }else{
+         for(int i${i} = 0; i${i} < firstArrayDim${i}; i${i}++) {
+     </#list>
+     <#assign isEqual = "isEqual">
+     boolean isEqual = true;
+     if(forceSameOrder){
+       <#assign currentObjectArrayBrackets = "">
+        <#list 0..depth-1 as j>
+          <#assign currentObjectArrayBrackets = currentObjectArrayBrackets + "[i${j}]">
+        </#list>
+       ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObjectName + currentObjectArrayBrackets, secondObjectName + currentObjectArrayBrackets, isEqual)}
+     }else{
+        <#assign matchFound = "matchFound">
+        boolean matchFound = false;
+        <#assign resultObjectCurrentBrackets = "">
+        <#list 0..depth-1 as i>
+          <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[i${i}]">
+        </#list>
+        <#assign firstObject = "firstObject">
+        ${arrayType.printType()} ${firstObject} = ${firstObjectName}${resultObjectCurrentBrackets};
+        <#list 0..depth-1 as i>
+          for(int innerI${i} = 0; innerI${i} < firstArrayDim${i}; innerI${i}++) {
+        </#list>
+        <#assign secondObject = "secondObject">
+        <#assign resultObjectCurrentBrackets = "">
+        <#list 0..depth-1 as i>
+          <#assign resultObjectCurrentBrackets = resultObjectCurrentBrackets + "[innerI${i}]">
+        </#list>
+        ${arrayType.printType()} ${secondObject} = ${secondObjectName}${resultObjectCurrentBrackets};
+        ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", arrayType, PojoClazzesAsStringList, firstObject, secondObject, matchFound)}
 
-
+        <#list 0..depth-1 as i>
+            if(${matchFound}){
+              break;
+            }
+          }
+        </#list>
+        if(!${matchFound}){
+          isEqual = false;
+        }
+     }
+     if(!isEqual){
+       ${resultBooleanName} = false;
+     }
+     <#list 0..depth-1 as i>
+      }
+     }
+     </#list>
+  }
 }
 <#-- Set types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
