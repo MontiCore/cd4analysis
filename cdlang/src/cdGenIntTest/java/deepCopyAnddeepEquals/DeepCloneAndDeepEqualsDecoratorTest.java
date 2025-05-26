@@ -3,6 +3,8 @@ package deepCopyAnddeepEquals;
 import TestDeepCloneAndDeepEquals.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class DeepCloneAndDeepEqualsDecoratorTest {
@@ -432,6 +434,27 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertFalse(de19.deepEquals(de20));
     Assertions.assertFalse(de19.deepEquals(de20,false));
     Assertions.assertFalse(de19.deepEquals(de20,true));
+    //endregion
+    //region check for deepEquals where the firstObject has another reference structure than the secondObject to compare to
+    //because the firstObject contains twice the same attributes, it has to be checked if the second objects attributes equal
+    // for the second option as well if it is not equal to the same object found before
+    ClassCircular1 deCircular11 = new ClassCircular1();
+    ClassCircular1 deCircular12 = new ClassCircular1();
+    ClassCircular1 deCircular1NotEqual = new ClassCircular1();
+    ClassCircular2 deCircular21 = new ClassCircular2();
+    ClassCircular2 deCircular22 = new ClassCircular2();
+    //create a relation where we found our first element before, and it is in the map, but it does not match
+    // the second type on the second occasion.
+
+    //create first circle
+    deCircular11.myClassCircular2 = deCircular21;
+    deCircular21.myClassCircular1 = deCircular11;
+    //create second object which has no circle
+    deCircular12.myClassCircular2 = deCircular22;
+    deCircular22.myClassCircular1 = deCircular1NotEqual;
+    Assertions.assertFalse(deCircular11.deepEquals(deCircular12));
+    Assertions.assertFalse(deCircular11.deepEquals(deCircular12,true));
+    Assertions.assertFalse(deCircular11.deepEquals(deCircular12,false));
     //endregion
     //region Test multiple types and multiple dimensions at the same time
     AllTogether de21 = new AllTogether();
