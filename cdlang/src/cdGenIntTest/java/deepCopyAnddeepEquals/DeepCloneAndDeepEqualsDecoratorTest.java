@@ -1,6 +1,7 @@
 package deepCopyAnddeepEquals;
 
 import TestDeepCloneAndDeepEquals.*;
+import com.sun.nio.sctp.Association;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -8,38 +9,57 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 public class DeepCloneAndDeepEqualsDecoratorTest {
-  static List<Integer> listAbsent1 = new ArrayList<>();
-  static List<Integer> listAbsent2 = new ArrayList<>();
-  static List<Integer> listDescent1 = new ArrayList<>();
-  static List<Integer> listUnequal = new ArrayList<>();
-  static Set<Integer> set1 = new HashSet<>();
-  static Set<Integer> set2 = new HashSet<>();
-  static Set<Integer> setUnequal = new HashSet<>();
-
+  
   @Test
   public void test() throws Exception {
-    //region create equal sets and lists
-    for(int i =0; i<= 10;i++){
-      Integer absent1 = i;
-      Integer absent2 = i;
-      Integer descent = 10-i;
-      Random rand = new Random();
-      Integer unequal = rand.nextInt();
-      listAbsent1.add(absent1);
-      listAbsent2.add(absent2);
-      listDescent1.add(descent);
-      listUnequal.add(unequal);
-      set1.add(absent1);
-      set2.add(absent1);
-      setUnequal.add(unequal);
-    }
-    //endregion
-
     //TODO should deepEquals always be be symmetric? a=b implies b=a?
     // this is only the case when forceSameOrder is true
     // in this case we can call the method always with a.equals(b) and b.equals(a)
-    //region DeepEquals
-    //region deepEquals for primitive types
+    testDeepEquals();
+
+    testDeepClone();
+
+    //check construction of default constructor if not present
+    ClassWithNoDefaultConstructor classWithNoDefaultConstructor = new ClassWithNoDefaultConstructor(1);
+    ClassWithNoDefaultConstructor classWithNoDefaultConstructor2 = classWithNoDefaultConstructor.deepClone();
+    Assertions.assertTrue(classWithNoDefaultConstructor.deepEquals(classWithNoDefaultConstructor2));
+  }
+
+  @Test
+  public void testDeepEquals() {
+    testDeepEqualsPrimitiveTypes();
+    testDeepEqualsStringTypes();
+    testDeepEqualsArrayTypes();
+    testDeepEqualsPojoTypes();
+    testDeepEqualsListTypes();
+    testDeepEqualsSetTypes();
+    testDeepEqualsOptionalTypes();
+    testDeepEqualsMapTypes();
+    testDeepEqualsAssociationTypes();
+    testDeepEqualsCompositionTypes();
+    testDeepEqualsCircularRelations();
+    testDeepEqualsUnequalCircularRelations();
+    testDeepEqualsAllTogether();
+  }
+
+  @Test
+  public void testDeepClone() {
+    testDeepClonePrimitiveType();
+    testDeepCloneStringType();
+    testDeepCloneArrayType();
+    testDeepClonePojoType();
+    testDeepCloneListType();
+    testDeepCloneSetType();
+    testDeepCloneOptionalType();
+    testDeepCloneMapType();
+    testDeepCloneAssociationType();
+    testDeepCloneCompositionType();
+    testDeepCloneCircularRelations();
+    testDeepCloneMulipleTypesAndDimensions();
+  }
+
+  @Test
+  public void testDeepEqualsPrimitiveTypes() {
     ClassWithPrimitiveType de1 = new ClassWithPrimitiveType();
     ClassWithPrimitiveType de2 = new ClassWithPrimitiveType();
     de1.myInt = 1;
@@ -48,8 +68,27 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de1.myInt = 2;
     de2.myInt = 1;
     Assertions.assertFalse(de1.deepEquals(de2));
-    //endregion
-    //region deepEquals for array types
+  }
+
+  @Test
+  public void testDeepEqualsStringTypes() {
+    ClassWithString deString1 = new ClassWithString();
+    ClassWithString deString2 = new ClassWithString();
+    deString1.myString = "test";
+    deString2.myString = "test";
+    Assertions.assertTrue(deString1.deepEquals(deString2));
+    deString1.myString = "test1";
+    deString2.myString = "test";
+    Assertions.assertFalse(deString1.deepEquals(deString2));
+    //null check
+    deString1.myString = null;
+    Assertions.assertFalse(deString1.deepEquals(deString2));
+    deString2.myString = null;
+    Assertions.assertTrue(deString1.deepEquals(deString2));
+  }
+
+  @Test
+  public void testDeepEqualsArrayTypes() {
     ClassWithArray deArray1 = new ClassWithArray();
     ClassWithArray deArray2 = new ClassWithArray();
     deArray1.arrayOfString = new ClassWithPrimitiveType[2];
@@ -59,25 +98,25 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     deArray2.arrayOfString[0] = new ClassWithPrimitiveType();
     deArray2.arrayOfString[1] = new ClassWithPrimitiveType();
     Assertions.assertTrue(deArray1.deepEquals(deArray2));
-    Assertions.assertTrue(deArray1.deepEquals(deArray1,true));
-    Assertions.assertTrue(deArray1.deepEquals(deArray1,false));
-    deArray2.arrayOfString[1].myInt=2;
+    Assertions.assertTrue(deArray1.deepEquals(deArray1, true));
+    Assertions.assertTrue(deArray1.deepEquals(deArray1, false));
+    deArray2.arrayOfString[1].myInt = 2;
     Assertions.assertFalse(deArray1.deepEquals(deArray2));
-    Assertions.assertFalse(deArray1.deepEquals(deArray2,true));
-    Assertions.assertTrue(deArray1.deepEquals(deArray2,false));
+    Assertions.assertFalse(deArray1.deepEquals(deArray2, true));
+    Assertions.assertTrue(deArray1.deepEquals(deArray2, false));
     //TODO Nico note here that deArray1.deepEquals(deArray2) is true but deArray2.deepEquals(deArray1) is not
     Assertions.assertFalse(deArray2.deepEquals(deArray1));
-    Assertions.assertFalse(deArray2.deepEquals(deArray1,true));
-    Assertions.assertFalse(deArray2.deepEquals(deArray1,false));
+    Assertions.assertFalse(deArray2.deepEquals(deArray1, true));
+    Assertions.assertFalse(deArray2.deepEquals(deArray1, false));
     //null check
     deArray1.arrayOfString = null;
     Assertions.assertFalse(deArray1.deepEquals(deArray2));
-    Assertions.assertFalse(deArray1.deepEquals(deArray2,true));
-    Assertions.assertFalse(deArray1.deepEquals(deArray2,false));
+    Assertions.assertFalse(deArray1.deepEquals(deArray2, true));
+    Assertions.assertFalse(deArray1.deepEquals(deArray2, false));
     deArray2.arrayOfString = null;
     Assertions.assertTrue(deArray1.deepEquals(deArray2));
-    Assertions.assertTrue(deArray1.deepEquals(deArray2,true));
-    Assertions.assertTrue(deArray1.deepEquals(deArray2,false));
+    Assertions.assertTrue(deArray1.deepEquals(deArray2, true));
+    Assertions.assertTrue(deArray1.deepEquals(deArray2, false));
 
     //test multidimensional arrays
     ClassWith3DArray deArray3 = new ClassWith3DArray();
@@ -101,60 +140,66 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     deArray4.threeDimArrayOfString[1][1][0] = new ClassWithPrimitiveType();
     deArray4.threeDimArrayOfString[1][1][1] = new ClassWithPrimitiveType();
     Assertions.assertTrue(deArray3.deepEquals(deArray4));
-    Assertions.assertTrue(deArray3.deepEquals(deArray3,true));
-    Assertions.assertTrue(deArray3.deepEquals(deArray3,false));
-    deArray4.threeDimArrayOfString[0][0][0].myInt=1;
+    Assertions.assertTrue(deArray3.deepEquals(deArray3, true));
+    Assertions.assertTrue(deArray3.deepEquals(deArray3, false));
+    deArray4.threeDimArrayOfString[0][0][0].myInt = 1;
     Assertions.assertFalse(deArray3.deepEquals(deArray4));
-    Assertions.assertFalse(deArray3.deepEquals(deArray4,true));
-    Assertions.assertTrue(deArray3.deepEquals(deArray4,false));
+    Assertions.assertFalse(deArray3.deepEquals(deArray4, true));
+    Assertions.assertTrue(deArray3.deepEquals(deArray4, false));
     //TODO here the same problem as above
     Assertions.assertFalse(deArray4.deepEquals(deArray3));
-    Assertions.assertFalse(deArray4.deepEquals(deArray3,true));
-    Assertions.assertFalse(deArray4.deepEquals(deArray3,false));
+    Assertions.assertFalse(deArray4.deepEquals(deArray3, true));
+    Assertions.assertFalse(deArray4.deepEquals(deArray3, false));
     //null check
     deArray3.threeDimArrayOfString = null;
     Assertions.assertFalse(deArray3.deepEquals(deArray4));
-    Assertions.assertFalse(deArray3.deepEquals(deArray4,true));
-    Assertions.assertFalse(deArray3.deepEquals(deArray4,false));
+    Assertions.assertFalse(deArray3.deepEquals(deArray4, true));
+    Assertions.assertFalse(deArray3.deepEquals(deArray4, false));
     deArray4.threeDimArrayOfString = null;
     Assertions.assertTrue(deArray3.deepEquals(deArray4));
-    Assertions.assertTrue(deArray3.deepEquals(deArray4,true));
-    Assertions.assertTrue(deArray3.deepEquals(deArray4,false));
-    //endregion
-    //region deepEquals for String types
-    ClassWithString deString1 = new ClassWithString();
-    ClassWithString deString2 = new ClassWithString();
-    deString1.myString = "test";
-    deString2.myString = "test";
-    Assertions.assertTrue(deString1.deepEquals(deString2));
-    deString1.myString = "test1";
-    deString2.myString = "test";
-    Assertions.assertFalse(deString1.deepEquals(deString2));
-    //null check
-    deString1.myString = null;
-    Assertions.assertFalse(deString1.deepEquals(deString2));
-    deString2.myString = null;
-    Assertions.assertTrue(deString1.deepEquals(deString2));
-    //endregion
-    //region deepEquals for pojo types
-    de1.myInt = 1;
-    de2.myInt = 1;
+    Assertions.assertTrue(deArray3.deepEquals(deArray4, true));
+    Assertions.assertTrue(deArray3.deepEquals(deArray4, false));
+  }
+
+  @Test
+  public void testDeepEqualsPojoTypes() {
+    ClassWithPrimitiveType dePrimitiveType1 = new ClassWithPrimitiveType();
+    ClassWithPrimitiveType dePrimitiveType2 = new ClassWithPrimitiveType();
+    dePrimitiveType1.myInt = 1;
+    dePrimitiveType2.myInt = 1;
     ClassWithPojoClassType de3 = new ClassWithPojoClassType();
     ClassWithPojoClassType de4 = new ClassWithPojoClassType();
-    de3.pojoType = de1;
-    de4.pojoType = de2;
+    de3.pojoType = dePrimitiveType1;
+    de4.pojoType = dePrimitiveType2;
     Assertions.assertTrue(de3.deepEquals(de4));
-    de1.myInt=2;
-    de2.myInt=1;
+    dePrimitiveType1.myInt = 2;
+    dePrimitiveType2.myInt = 1;
     Assertions.assertFalse(de3.deepEquals(de4));
     //null check
-    de1.myInt=2;
-    de2.myInt=1;
+    dePrimitiveType1.myInt = 2;
+    dePrimitiveType2.myInt = 1;
     de3.pojoType = null;
     de4.pojoType = null;
     Assertions.assertTrue(de3.deepEquals(de4));
-    //endregion
-    //region deepEquals list types
+  }
+
+  @Test
+  public void testDeepEqualsListTypes() {
+    List<Integer> listAbsent1 = new ArrayList<>();
+    List<Integer> listAbsent2 = new ArrayList<>();
+    List<Integer> listDescent1 = new ArrayList<>();
+    List<Integer> listUnequal = new ArrayList<>();
+    for (int i = 0; i <= 10; i++) {
+      Integer absent1 = i;
+      Integer absent2 = i;
+      Integer descent = 10 - i;
+      Random rand = new Random();
+      Integer unequal = rand.nextInt();
+      listAbsent1.add(absent1);
+      listAbsent2.add(absent2);
+      listDescent1.add(descent);
+      listUnequal.add(unequal);
+    }
     ClassWithList de5 = new ClassWithList();
     ClassWithList de6 = new ClassWithList();
     de5.myIntegerList = listAbsent1;
@@ -163,21 +208,21 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de5.myIntegerList = listDescent1;
     de6.myIntegerList = listAbsent2;
     Assertions.assertFalse(de5.deepEquals(de6));
-    Assertions.assertFalse(de5.deepEquals(de6,true));
-    Assertions.assertTrue(de5.deepEquals(de6,false));
+    Assertions.assertFalse(de5.deepEquals(de6, true));
+    Assertions.assertTrue(de5.deepEquals(de6, false));
     de5.myIntegerList = listAbsent1;
     de6.myIntegerList = listUnequal;
     Assertions.assertFalse(de5.deepEquals(de6));
-    Assertions.assertFalse(de5.deepEquals(de6,true));
-    Assertions.assertFalse(de5.deepEquals(de6,false));
-    de5.myIntegerList=new ArrayList<>();
-    de6.myIntegerList=new ArrayList<>();
+    Assertions.assertFalse(de5.deepEquals(de6, true));
+    Assertions.assertFalse(de5.deepEquals(de6, false));
+    de5.myIntegerList = new ArrayList<>();
+    de6.myIntegerList = new ArrayList<>();
     Assertions.assertTrue(de5.deepEquals(de6));
-    Assertions.assertTrue(de5.deepEquals(de6,true));
-    Assertions.assertTrue(de5.deepEquals(de6,false));
+    Assertions.assertTrue(de5.deepEquals(de6, true));
+    Assertions.assertTrue(de5.deepEquals(de6, false));
     //null check
-    de5.myIntegerList=null;
-    de6.myIntegerList=null;
+    de5.myIntegerList = null;
+    de6.myIntegerList = null;
     Assertions.assertTrue(de5.deepEquals(de6));
 
     //Test 2D list types
@@ -190,18 +235,18 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de7.my2dimList.add(new ArrayList<>());
     de8.my2dimList.add(new ArrayList<>());
     Assertions.assertTrue(de7.deepEquals(de8));
-    Assertions.assertTrue(de7.deepEquals(de8,false));
-    Assertions.assertTrue(de7.deepEquals(de8,true));
+    Assertions.assertTrue(de7.deepEquals(de8, false));
+    Assertions.assertTrue(de7.deepEquals(de8, true));
     List<Integer> hSwap = de7.my2dimList.get(0);
     de7.my2dimList.set(0, de7.my2dimList.get(1));
     de7.my2dimList.set(1, hSwap);
     Assertions.assertFalse(de7.deepEquals(de8));
-    Assertions.assertTrue(de7.deepEquals(de8,false));
-    Assertions.assertFalse(de7.deepEquals(de8,true));
+    Assertions.assertTrue(de7.deepEquals(de8, false));
+    Assertions.assertFalse(de7.deepEquals(de8, true));
     de7.my2dimList.set(0, listDescent1);
     Assertions.assertFalse(de7.deepEquals(de8));
-    Assertions.assertTrue(de7.deepEquals(de8,false));
-    Assertions.assertFalse(de7.deepEquals(de8,true));
+    Assertions.assertTrue(de7.deepEquals(de8, false));
+    Assertions.assertFalse(de7.deepEquals(de8, true));
     de7.my2dimList = new ArrayList<>();
     de7.my2dimList.add(listAbsent1);
     de7.my2dimList.add(new ArrayList<>());
@@ -210,30 +255,43 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de8.my2dimList.add(listDescent1);
     de8.my2dimList.add(listDescent1);
     Assertions.assertFalse(de8.deepEquals(de7));
-    Assertions.assertFalse(de8.deepEquals(de7,false));
-    Assertions.assertFalse(de8.deepEquals(de7,true));
+    Assertions.assertFalse(de8.deepEquals(de7, false));
+    Assertions.assertFalse(de8.deepEquals(de7, true));
     Assertions.assertFalse(de7.deepEquals(de8));
-    Assertions.assertFalse(de7.deepEquals(de8,false));
-    Assertions.assertFalse(de7.deepEquals(de8,true));
-    //endregion
-    //region deepEquals set types
+    Assertions.assertFalse(de7.deepEquals(de8, false));
+    Assertions.assertFalse(de7.deepEquals(de8, true));
+  }
+
+  @Test
+  public void testDeepEqualsSetTypes() {
+    Set<Integer> set1 = new HashSet<>();
+    Set<Integer> set2 = new HashSet<>();
+    Set<Integer> setUnequal = new HashSet<>();
+    for (int i = 0; i <= 10; i++) {
+      Integer absent1 = i;
+      Random rand = new Random();
+      Integer unequal = rand.nextInt();
+      set1.add(absent1);
+      set2.add(absent1);
+      setUnequal.add(unequal);
+    }
     ClassWithSet de9 = new ClassWithSet();
     ClassWithSet de10 = new ClassWithSet();
     de9.mySet = set1;
     de10.mySet = set2;
     Assertions.assertTrue(de9.deepEquals(de10));
-    Assertions.assertTrue(de9.deepEquals(de10,false));
-    Assertions.assertTrue(de9.deepEquals(de10,true));
+    Assertions.assertTrue(de9.deepEquals(de10, false));
+    Assertions.assertTrue(de9.deepEquals(de10, true));
     de9.mySet = setUnequal;
     de10.mySet = set2;
     Assertions.assertFalse(de9.deepEquals(de10));
-    Assertions.assertFalse(de9.deepEquals(de10,false));
-    Assertions.assertFalse(de9.deepEquals(de10,true));
+    Assertions.assertFalse(de9.deepEquals(de10, false));
+    Assertions.assertFalse(de9.deepEquals(de10, true));
     de9.mySet = new HashSet<>();
     de10.mySet = new HashSet<>();
     Assertions.assertTrue(de9.deepEquals(de10));
-    Assertions.assertTrue(de9.deepEquals(de10,false));
-    Assertions.assertTrue(de9.deepEquals(de10,true));
+    Assertions.assertTrue(de9.deepEquals(de10, false));
+    Assertions.assertTrue(de9.deepEquals(de10, true));
     //null check
     de9.mySet = null;
     de10.mySet = null;
@@ -249,84 +307,85 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de11.my2dimSet.add(new HashSet<>());
     de12.my2dimSet.add(new HashSet<>());
     Assertions.assertTrue(de11.deepEquals(de12));
-    Assertions.assertTrue(de11.deepEquals(de12,false));
-    Assertions.assertTrue(de11.deepEquals(de12,true));
+    Assertions.assertTrue(de11.deepEquals(de12, false));
+    Assertions.assertTrue(de11.deepEquals(de12, true));
     de12.my2dimSet = new HashSet<>();
     de12.my2dimSet.add(set2);
     de12.my2dimSet.add(new HashSet<>());
     Assertions.assertTrue(de11.deepEquals(de12));
-    Assertions.assertTrue(de11.deepEquals(de12,false));
-    Assertions.assertTrue(de11.deepEquals(de12,true));
-    //endregion
-    //region deepEquals optional types
+    Assertions.assertTrue(de11.deepEquals(de12, false));
+    Assertions.assertTrue(de11.deepEquals(de12, true));
+  }
+
+  @Test
+  public void testDeepEqualsOptionalTypes() {
     ClassWithOptional de13 = new ClassWithOptional();
     ClassWithOptional de14 = new ClassWithOptional();
     de13.myOptionalInteger = Optional.of(1);
     de14.myOptionalInteger = Optional.of(1);
     Assertions.assertTrue(de13.deepEquals(de14));
-    Assertions.assertTrue(de13.deepEquals(de14,false));
-    Assertions.assertTrue(de13.deepEquals(de14,true));
+    Assertions.assertTrue(de13.deepEquals(de14, false));
+    Assertions.assertTrue(de13.deepEquals(de14, true));
     de13.myOptionalInteger = Optional.of(2);
     de14.myOptionalInteger = Optional.of(1);
     Assertions.assertFalse(de13.deepEquals(de14));
-    Assertions.assertFalse(de13.deepEquals(de14,false));
-    Assertions.assertFalse(de13.deepEquals(de14,true));
+    Assertions.assertFalse(de13.deepEquals(de14, false));
+    Assertions.assertFalse(de13.deepEquals(de14, true));
     de13.myOptionalInteger = Optional.empty();
     de14.myOptionalInteger = Optional.empty();
     Assertions.assertTrue(de13.deepEquals(de14));
-    de13.myOptionalInteger= Optional.of(1);
+    de13.myOptionalInteger = Optional.of(1);
     Assertions.assertFalse(de13.deepEquals(de14));
-    Assertions.assertFalse(de13.deepEquals(de14,false));
-    Assertions.assertFalse(de13.deepEquals(de14,true));
+    Assertions.assertFalse(de13.deepEquals(de14, false));
+    Assertions.assertFalse(de13.deepEquals(de14, true));
     //null check
     de13.myOptionalInteger = null;
     de14.myOptionalInteger = null;
     Assertions.assertTrue(de13.deepEquals(de14));
-    Assertions.assertTrue(de13.deepEquals(de14,false));
-    Assertions.assertTrue(de13.deepEquals(de14,true));
-
-
-
+    Assertions.assertTrue(de13.deepEquals(de14, false));
+    Assertions.assertTrue(de13.deepEquals(de14, true));
 
     //Test 2Dim Optional
     ClassWith2DimOptional deO1 = new ClassWith2DimOptional();
     ClassWith2DimOptional deO2 = new ClassWith2DimOptional();
     deO1.my2DimOptional = Optional.of(Optional.of(new B()));
     Assertions.assertFalse(deO1.deepEquals(deO2));
-    deO2.my2DimOptional= Optional.empty();
+    deO2.my2DimOptional = Optional.empty();
     Assertions.assertFalse(deO1.deepEquals(deO2));
-    deO2.my2DimOptional= Optional.of(Optional.empty());
+    deO2.my2DimOptional = Optional.of(Optional.empty());
     Assertions.assertFalse(deO1.deepEquals(deO2));
-    deO2.my2DimOptional= Optional.of(Optional.of(new B()));
+    deO2.my2DimOptional = Optional.of(Optional.of(new B()));
     Assertions.assertTrue(deO1.deepEquals(deO2));
     //null check
-    deO1 .my2DimOptional=null;
-    deO2.my2DimOptional=null;
+    deO1.my2DimOptional = null;
+    deO2.my2DimOptional = null;
     Assertions.assertTrue(deO1.deepEquals(deO2));
     deO2 = null;
     Assertions.assertFalse(deO1.deepEquals(deO2));
-    //endregion
-    //region deepEquals map types
+  }
+
+  @Test
+  public void testDeepEqualsMapTypes() {
     ClassWithMap deMap1 = new ClassWithMap();
     ClassWithMap deMap2 = new ClassWithMap();
     deMap1.myMap = null;
     deMap2.myMap = null;
     Assertions.assertTrue(deMap1.deepEquals(deMap2));
-    Assertions.assertTrue(deMap1.deepEquals(deMap2,false));
-    Assertions.assertTrue(deMap1.deepEquals(deMap2,true));
+    Assertions.assertTrue(deMap1.deepEquals(deMap2, false));
+    Assertions.assertTrue(deMap1.deepEquals(deMap2, true));
     deMap1.myMap = new HashMap<>();
     Assertions.assertFalse(deMap1.deepEquals(deMap2));
-    Assertions.assertFalse(deMap1.deepEquals(deMap2,false));
-    Assertions.assertFalse(deMap1.deepEquals(deMap2,true));
+    Assertions.assertFalse(deMap1.deepEquals(deMap2, false));
+    Assertions.assertFalse(deMap1.deepEquals(deMap2, true));
     deMap2.myMap = new HashMap<>();
     Assertions.assertTrue(deMap1.deepEquals(deMap2));
-    Assertions.assertTrue(deMap1.deepEquals(deMap2,false));
-    Assertions.assertTrue(deMap1.deepEquals(deMap2,true));
+    Assertions.assertTrue(deMap1.deepEquals(deMap2, false));
+    Assertions.assertTrue(deMap1.deepEquals(deMap2, true));
     deMap1.myMap.put("key", new B());
     deMap2.myMap.put("key", new B());
     Assertions.assertTrue(deMap1.deepEquals(deMap2));
-    Assertions.assertTrue(deMap1.deepEquals(deMap2,false));
-    Assertions.assertTrue(deMap1.deepEquals(deMap2,true));
+    Assertions.assertTrue(deMap1.deepEquals(deMap2, false));
+    Assertions.assertTrue(deMap1.deepEquals(deMap2, true));
 
     //test 2D map types
     ClassWith2DMap deMap3 = new ClassWith2DMap();
@@ -336,51 +395,57 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     deMap3.myMap.put("key", new HashMap<>());
     deMap4.myMap.put("key", new HashMap<>());
     Assertions.assertTrue(deMap3.deepEquals(deMap4));
-    Assertions.assertTrue(deMap3.deepEquals(deMap4,false));
-    Assertions.assertTrue(deMap3.deepEquals(deMap4,true));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4, false));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4, true));
     deMap3.myMap.get("key").put("key", new B());
     Assertions.assertFalse(deMap3.deepEquals(deMap4));
-    Assertions.assertFalse(deMap3.deepEquals(deMap4,false));
-    Assertions.assertFalse(deMap3.deepEquals(deMap4,true));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4, false));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4, true));
     deMap4.myMap.get("key").put("key", new B());
     Assertions.assertTrue(deMap3.deepEquals(deMap4));
-    Assertions.assertTrue(deMap3.deepEquals(deMap4,false));
-    Assertions.assertTrue(deMap3.deepEquals(deMap4,true));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4, false));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4, true));
     //null check
     deMap3.myMap = null;
     Assertions.assertFalse(deMap3.deepEquals(deMap4));
-    Assertions.assertFalse(deMap3.deepEquals(deMap4,false));
-    Assertions.assertFalse(deMap3.deepEquals(deMap4,true));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4, false));
+    Assertions.assertFalse(deMap3.deepEquals(deMap4, true));
     deMap4.myMap = null;
     Assertions.assertTrue(deMap3.deepEquals(deMap4));
-    Assertions.assertTrue(deMap3.deepEquals(deMap4,false));
-    Assertions.assertTrue(deMap3.deepEquals(deMap4,true));
-    //endregion
-    //region deepEquals association types
+    Assertions.assertTrue(deMap3.deepEquals(deMap4, false));
+    Assertions.assertTrue(deMap3.deepEquals(deMap4, true));
+  }
+
+  @Test
+  public void testDeepEqualsAssociationTypes() {
+    // deepEquals association types
     ClassWithAssociation de15 = new ClassWithAssociation();
     ClassWithAssociation de16 = new ClassWithAssociation();
     de15.owns = new HashSet<>();
     de16.owns = new HashSet<>();
     Assertions.assertTrue(de15.deepEquals(de16));
-    Assertions.assertTrue(de15.deepEquals(de16,false));
-    Assertions.assertTrue(de15.deepEquals(de16,true));
+    Assertions.assertTrue(de15.deepEquals(de16, false));
+    Assertions.assertTrue(de15.deepEquals(de16, true));
     B b1 = new B();
     de15.owns.add(b1);
     Assertions.assertFalse(de15.deepEquals(de16));
-    Assertions.assertFalse(de15.deepEquals(de16,false));
-    Assertions.assertFalse(de15.deepEquals(de16,true));
+    Assertions.assertFalse(de15.deepEquals(de16, false));
+    Assertions.assertFalse(de15.deepEquals(de16, true));
     de16.owns.add(b1);
     Assertions.assertTrue(de15.deepEquals(de16));
-    Assertions.assertTrue(de15.deepEquals(de16,false));
-    Assertions.assertTrue(de15.deepEquals(de16,true));
+    Assertions.assertTrue(de15.deepEquals(de16, false));
+    Assertions.assertTrue(de15.deepEquals(de16, true));
     //null check
     de15.owns = null;
     de16.owns = null;
     Assertions.assertTrue(de15.deepEquals(de16));
-    Assertions.assertTrue(de15.deepEquals(de16,false));
-    Assertions.assertTrue(de15.deepEquals(de16,true));
-    //endregion
-    //region deepEquals composition types
+    Assertions.assertTrue(de15.deepEquals(de16, false));
+    Assertions.assertTrue(de15.deepEquals(de16, true));
+  }
+
+  @Test
+  public void testDeepEqualsCompositionTypes() {
+    // deepEquals composition types
     ClassWithComposition de17 = new ClassWithComposition();
     ClassWithComposition de18 = new ClassWithComposition();
     de17.many = null;
@@ -390,35 +455,38 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de17.opt = null;
     de18.opt = null;
     Assertions.assertTrue(de17.deepEquals(de18));
-    Assertions.assertTrue(de17.deepEquals(de18,false));
-    Assertions.assertTrue(de17.deepEquals(de18,true));
+    Assertions.assertTrue(de17.deepEquals(de18, false));
+    Assertions.assertTrue(de17.deepEquals(de18, true));
     de17.many = new HashSet<>();
-    Assertions.assertFalse(de17.deepEquals(de18,false));
+    Assertions.assertFalse(de17.deepEquals(de18, false));
     de17.many.add(new B());
-    Assertions.assertFalse(de17.deepEquals(de18,false));
-    de18.many=new HashSet<>();
+    Assertions.assertFalse(de17.deepEquals(de18, false));
+    de18.many = new HashSet<>();
     de18.many.add(new B());
     Assertions.assertTrue(de17.deepEquals(de18));
-    Assertions.assertTrue(de17.deepEquals(de18,false));
-    Assertions.assertTrue(de17.deepEquals(de18,true));
+    Assertions.assertTrue(de17.deepEquals(de18, false));
+    Assertions.assertTrue(de17.deepEquals(de18, true));
     de17.one = new B();
     Assertions.assertFalse(de17.deepEquals(de18));
     de18.one = new B();
     Assertions.assertTrue(de17.deepEquals(de18));
-    Assertions.assertTrue(de17.deepEquals(de18,false));
-    Assertions.assertTrue(de17.deepEquals(de18,true));
+    Assertions.assertTrue(de17.deepEquals(de18, false));
+    Assertions.assertTrue(de17.deepEquals(de18, true));
     de17.opt = Optional.empty();
-    Assertions.assertFalse(de17.deepEquals(de18,false));
+    Assertions.assertFalse(de17.deepEquals(de18, false));
     de18.opt = Optional.of(new B());
     Assertions.assertFalse(de17.deepEquals(de18));
-    Assertions.assertFalse(de17.deepEquals(de18,false));
-    Assertions.assertFalse(de17.deepEquals(de18,true));
+    Assertions.assertFalse(de17.deepEquals(de18, false));
+    Assertions.assertFalse(de17.deepEquals(de18, true));
     de17.opt = Optional.of(new B());
     Assertions.assertTrue(de17.deepEquals(de18));
-    Assertions.assertTrue(de17.deepEquals(de18,false));
-    Assertions.assertTrue(de17.deepEquals(de18,true));
-    //endregion
-    //region termination condition needs to be checked in circular references
+    Assertions.assertTrue(de17.deepEquals(de18, false));
+    Assertions.assertTrue(de17.deepEquals(de18, true));
+  }
+
+  @Test
+  public void testDeepEqualsCircularRelations() {
+    //termination condition needs to be checked in circular references
     ClassCircular1 de19 = new ClassCircular1();
     ClassCircular1 de20 = new ClassCircular1();
     ClassCircular2 c131 = new ClassCircular2();
@@ -428,14 +496,17 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     c131.myClassCircular1 = de19;
     c141.myClassCircular1 = de20;
     Assertions.assertTrue(de19.deepEquals(de20));
-    Assertions.assertTrue(de19.deepEquals(de20,false));
-    Assertions.assertTrue(de19.deepEquals(de20,true));
+    Assertions.assertTrue(de19.deepEquals(de20, false));
+    Assertions.assertTrue(de19.deepEquals(de20, true));
     de19.myClassCircular2 = null;
     Assertions.assertFalse(de19.deepEquals(de20));
-    Assertions.assertFalse(de19.deepEquals(de20,false));
-    Assertions.assertFalse(de19.deepEquals(de20,true));
-    //endregion
-    //region check for deepEquals where the firstObject has another reference structure than the secondObject to compare to
+    Assertions.assertFalse(de19.deepEquals(de20, false));
+    Assertions.assertFalse(de19.deepEquals(de20, true));
+  }
+
+  @Test
+  public void testDeepEqualsUnequalCircularRelations() {
+    //check for deepEquals where the firstObject has another reference structure than the secondObject to compare to
     //because the firstObject contains twice the same attributes, it has to be checked if the second objects attributes equal
     // for the second option as well if it is not equal to the same object found before
     ClassCircular1 deCircular11 = new ClassCircular1();
@@ -453,14 +524,41 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     deCircular12.myClassCircular2 = deCircular22;
     deCircular22.myClassCircular1 = deCircular1NotEqual;
     Assertions.assertFalse(deCircular11.deepEquals(deCircular12));
-    Assertions.assertFalse(deCircular11.deepEquals(deCircular12,true));
-    Assertions.assertFalse(deCircular11.deepEquals(deCircular12,false));
-    //endregion
-    //region Test multiple types and multiple dimensions at the same time
+    Assertions.assertFalse(deCircular11.deepEquals(deCircular12, true));
+    Assertions.assertFalse(deCircular11.deepEquals(deCircular12, false));
+
+    //create bigger circular relation
+    ClassCircular1 deCircular131 = new ClassCircular1();
+    ClassCircular1 deCircular132 = new ClassCircular1();
+    ClassCircular1 deCircular133 = new ClassCircular1();
+    ClassCircular2 deCircular231 = new ClassCircular2();
+    ClassCircular2 deCircular232 = new ClassCircular2();
+    ClassCircular2 deCircular233 = new ClassCircular2();
+
+    deCircular131.myClassCircular2 = deCircular231;
+    deCircular231.myClassCircular1 = deCircular132;
+    deCircular132.myClassCircular2 = deCircular232;
+    deCircular232.myClassCircular1 = deCircular133;
+    deCircular133.myClassCircular2 = deCircular233;
+    deCircular233.myClassCircular1 = deCircular131;
+
+    Assertions.assertTrue(deCircular131.deepEquals(deCircular11));
+    Assertions.assertTrue(deCircular131.deepEquals(deCircular11, false));
+    Assertions.assertTrue(deCircular131.deepEquals(deCircular11, true));
+  }
+
+  @Test
+  public void testDeepEqualsAllTogether() {
+    List<Integer> listAbsent1 = new ArrayList<>();
+    List<Integer> listAbsent2 = new ArrayList<>();
+    for (int i = 0; i <= 10; i++) {
+      listAbsent1.add(i);
+      listAbsent2.add(i);
+    }
     AllTogether de21 = new AllTogether();
     AllTogether de22 = new AllTogether();
-    de21.owns= new HashSet<>();
-    de22.owns= new HashSet<>();
+    de21.owns = new HashSet<>();
+    de22.owns = new HashSet<>();
     de21.myBool = true;
     de22.myBool = true;
     de21.myInt = 1;
@@ -482,57 +580,121 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     de21.optClassWith2DimList = Optional.empty();
     de22.optClassWith2DimList = Optional.empty();
     Assertions.assertTrue(de21.deepEquals(de22));
-    Assertions.assertTrue(de21.deepEquals(de22,false));
-    Assertions.assertTrue(de21.deepEquals(de22,true));
+    Assertions.assertTrue(de21.deepEquals(de22, false));
+    Assertions.assertTrue(de21.deepEquals(de22, true));
     c112.my2dimList = new ArrayList<>();
     Assertions.assertFalse(de21.deepEquals(de22));
-    Assertions.assertFalse(de21.deepEquals(de22,false));
-    Assertions.assertFalse(de21.deepEquals(de22,true));
+    Assertions.assertFalse(de21.deepEquals(de22, false));
+    Assertions.assertFalse(de21.deepEquals(de22, true));
     c112.my2dimList = new ArrayList<>();
     c112.my2dimList.add(new ArrayList<>());
     c112.my2dimList.add(listAbsent1);
     Assertions.assertFalse(de21.deepEquals(de22));
-    Assertions.assertTrue(de21.deepEquals(de22,false));
-    Assertions.assertFalse(de21.deepEquals(de22,true));
-    //endregion
-    //endregion
-    //region DeepClone
-    //region deepClone for primitive types
+    Assertions.assertTrue(de21.deepEquals(de22, false));
+    Assertions.assertFalse(de21.deepEquals(de22, true));
+  }
+
+  @Test
+  public void testDeepClonePrimitiveType(){
     ClassWithPrimitiveType dc1 = new ClassWithPrimitiveType();
-    dc1.myInt=0;
+    dc1.myInt = 0;
     ClassWithPrimitiveType dc2 = dc1.deepClone();
-    Assertions.assertNotSame(dc1,dc2);
+    Assertions.assertNotSame(dc1, dc2);
     Assertions.assertTrue(dc1.deepEquals(dc2));
     dc1.myInt = 1;
     Assertions.assertFalse(dc1.deepEquals(dc2));
     dc2 = dc1.deepClone();
-    Assertions.assertNotSame(dc1,dc2);
+    Assertions.assertNotSame(dc1, dc2);
     Assertions.assertTrue(dc1.deepEquals(dc2));
-    //endregion
-    //region deepClone for array types
+  }
+
+  @Test
+  public void testDeepCloneStringType(){
+    ClassWithString dcString1 = new ClassWithString();
+    dcString1.myString = "test";
+    ClassWithString dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1, dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    dcString1.myString = "test1";
+    Assertions.assertFalse(dcString1.deepEquals(dcString2));
+    //null check
+    dcString1.myString = null;
+    dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1, dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    Assertions.assertNull(dcString2.myString);
+    //test Map correctness
+    dcString1.myString = "test";
+    dcString1.myString2 = dcString1.myString;
+    dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1, dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    Assertions.assertSame(dcString2.myString, dcString2.myString2);
+    dcString1.myString2 = null;
+    dcString2 = dcString1.deepClone();
+    Assertions.assertNotSame(dcString1, dcString2);
+    Assertions.assertTrue(dcString1.deepEquals(dcString2));
+    Assertions.assertNotSame(dcString2.myString, dcString2.myString2);
+  }
+
+  @Test
+  public void testDeepClonePojoType(){
+    ClassWithPrimitiveType dc1 = new ClassWithPrimitiveType();
+    ClassWithPojoClassType dc3 = new ClassWithPojoClassType();
+    dc3.pojoType = dc1;
+    dc1.myInt = 0;
+    ClassWithPojoClassType dc4 = dc3.deepClone();
+    Assertions.assertNotSame(dc3, dc4);
+    Assertions.assertNotSame(dc3.pojoType, dc4.pojoType);
+    Assertions.assertTrue(dc3.deepEquals(dc4));
+    dc3.pojoType.myInt = 1;
+    Assertions.assertFalse(dc3.deepEquals(dc4));
+    dc4 = dc3.deepClone();
+    Assertions.assertNotSame(dc3, dc4);
+    Assertions.assertNotSame(dc3.pojoType, dc4.pojoType);
+    Assertions.assertTrue(dc3.deepEquals(dc4));
+    //null check
+    dc3.pojoType = null;
+    dc4 = dc3.deepClone();
+    Assertions.assertNotSame(dc3, dc4);
+    Assertions.assertTrue(dc3.deepEquals(dc4));
+    Assertions.assertNull(dc4.pojoType);
+    //test Map correctness
+    dc3.pojoType = dc1;
+    dc3.pojoType2 = dc3.pojoType;
+    dc4 = dc3.deepClone();
+    Assertions.assertNotSame(dc3, dc4);
+    Assertions.assertNotSame(dc3.pojoType, dc4.pojoType);
+    Assertions.assertNotSame(dc3.pojoType2, dc4.pojoType2);
+    Assertions.assertTrue(dc3.deepEquals(dc4));
+    Assertions.assertSame(dc4.pojoType, dc4.pojoType2);
+  }
+
+  @Test
+  public void testDeepCloneArrayType(){
     ClassWithArray dcArray1 = new ClassWithArray();
     ClassWithArray dcArray2 = new ClassWithArray();
     dcArray1.arrayOfString = new ClassWithPrimitiveType[2];
     dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
     dcArray1.arrayOfString[1] = new ClassWithPrimitiveType();
     dcArray2 = dcArray1.deepClone();
-    Assertions.assertNotSame(dcArray1,dcArray2);
-    Assertions.assertNotSame(dcArray1.arrayOfString,dcArray2.arrayOfString);
-    Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
-    Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
+    Assertions.assertNotSame(dcArray1, dcArray2);
+    Assertions.assertNotSame(dcArray1.arrayOfString, dcArray2.arrayOfString);
+    Assertions.assertNotSame(dcArray1.arrayOfString[0], dcArray2.arrayOfString[0]);
+    Assertions.assertNotSame(dcArray1.arrayOfString[1], dcArray2.arrayOfString[1]);
     Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
     dcArray1.arrayOfString[0].myInt = 1;
     Assertions.assertFalse(dcArray1.deepEquals(dcArray2));
     dcArray2 = dcArray1.deepClone();
-    Assertions.assertNotSame(dcArray1,dcArray2);
-    Assertions.assertNotSame(dcArray1.arrayOfString,dcArray2.arrayOfString);
-    Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
-    Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
+    Assertions.assertNotSame(dcArray1, dcArray2);
+    Assertions.assertNotSame(dcArray1.arrayOfString, dcArray2.arrayOfString);
+    Assertions.assertNotSame(dcArray1.arrayOfString[0], dcArray2.arrayOfString[0]);
+    Assertions.assertNotSame(dcArray1.arrayOfString[1], dcArray2.arrayOfString[1]);
     Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
     //null check
     dcArray1.arrayOfString = null;
     dcArray2 = dcArray1.deepClone();
-    Assertions.assertNotSame(dcArray1,dcArray2);
+    Assertions.assertNotSame(dcArray1, dcArray2);
     Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
     Assertions.assertNull(dcArray2.arrayOfString);
     //test Map correctness
@@ -540,12 +702,12 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
     dcArray1.arrayOfString[1] = dcArray1.arrayOfString[0];
     dcArray2 = dcArray1.deepClone();
-    Assertions.assertNotSame(dcArray1,dcArray2);
-    Assertions.assertNotSame(dcArray1.arrayOfString,dcArray2.arrayOfString);
-    Assertions.assertNotSame(dcArray1.arrayOfString[0],dcArray2.arrayOfString[0]);
-    Assertions.assertNotSame(dcArray1.arrayOfString[1],dcArray2.arrayOfString[1]);
+    Assertions.assertNotSame(dcArray1, dcArray2);
+    Assertions.assertNotSame(dcArray1.arrayOfString, dcArray2.arrayOfString);
+    Assertions.assertNotSame(dcArray1.arrayOfString[0], dcArray2.arrayOfString[0]);
+    Assertions.assertNotSame(dcArray1.arrayOfString[1], dcArray2.arrayOfString[1]);
     Assertions.assertTrue(dcArray1.deepEquals(dcArray2));
-    Assertions.assertSame(dcArray2.arrayOfString[0],dcArray2.arrayOfString[1]);
+    Assertions.assertSame(dcArray2.arrayOfString[0], dcArray2.arrayOfString[1]);
 
     //test multidimensional arrays
     ClassWith3DArray dcArray3 = new ClassWith3DArray();
@@ -560,35 +722,35 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dcArray3.threeDimArrayOfString[1][1][0] = new ClassWithPrimitiveType();
     dcArray3.threeDimArrayOfString[1][1][1] = new ClassWithPrimitiveType();
     dcArray4 = dcArray3.deepClone();
-    Assertions.assertNotSame(dcArray3,dcArray4);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][1][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[1][0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[1][0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
+    Assertions.assertNotSame(dcArray3, dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString, dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0], dcArray4.threeDimArrayOfString[0][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0], dcArray4.threeDimArrayOfString[0][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1], dcArray4.threeDimArrayOfString[0][1][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0], dcArray4.threeDimArrayOfString[1][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1], dcArray4.threeDimArrayOfString[1][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0], dcArray4.threeDimArrayOfString[1][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1], dcArray4.threeDimArrayOfString[1][1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
-    dcArray3.threeDimArrayOfString[0][0][0].myInt=1;
+    dcArray3.threeDimArrayOfString[0][0][0].myInt = 1;
     Assertions.assertFalse(dcArray3.deepEquals(dcArray4));
     dcArray4 = dcArray3.deepClone();
-    Assertions.assertNotSame(dcArray3,dcArray4);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][1][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[1][0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[1][0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
+    Assertions.assertNotSame(dcArray3, dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString, dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0], dcArray4.threeDimArrayOfString[0][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0], dcArray4.threeDimArrayOfString[0][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1], dcArray4.threeDimArrayOfString[0][1][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0], dcArray4.threeDimArrayOfString[1][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1], dcArray4.threeDimArrayOfString[1][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0], dcArray4.threeDimArrayOfString[1][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1], dcArray4.threeDimArrayOfString[1][1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
     //null check
     dcArray3.threeDimArrayOfString = null;
     dcArray4 = dcArray3.deepClone();
-    Assertions.assertNotSame(dcArray3,dcArray4);
+    Assertions.assertNotSame(dcArray3, dcArray4);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
     Assertions.assertNull(dcArray4.threeDimArrayOfString);
     //test Map correctness
@@ -602,24 +764,24 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dcArray3.threeDimArrayOfString[1][1][0] = dcArray3.threeDimArrayOfString[0][0][0];
     dcArray3.threeDimArrayOfString[1][1][1] = dcArray3.threeDimArrayOfString[0][0][0];
     dcArray4 = dcArray3.deepClone();
-    Assertions.assertNotSame(dcArray3,dcArray4);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][1][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[1][0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[1][0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[1][1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[1][1][1]);
+    Assertions.assertNotSame(dcArray3, dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString, dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][0], dcArray4.threeDimArrayOfString[0][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0][1], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][0], dcArray4.threeDimArrayOfString[0][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1][1], dcArray4.threeDimArrayOfString[0][1][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][0], dcArray4.threeDimArrayOfString[1][0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0][1], dcArray4.threeDimArrayOfString[1][0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][0], dcArray4.threeDimArrayOfString[1][1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1][1], dcArray4.threeDimArrayOfString[1][1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0][0],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][1][0],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][1][1],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][0][0],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][0][1],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][1][0],dcArray4.threeDimArrayOfString[0][0][1]);
-    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][1][1],dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][0][0], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][1][0], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[0][1][1], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][0][0], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][0][1], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][1][0], dcArray4.threeDimArrayOfString[0][0][1]);
+    Assertions.assertSame(dcArray4.threeDimArrayOfString[1][1][1], dcArray4.threeDimArrayOfString[0][0][1]);
     //check for map correctness with array type
     dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
     dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
@@ -628,12 +790,12 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dcArray3.threeDimArrayOfString[1][0] = dcArray3.threeDimArrayOfString[0][0];
     dcArray3.threeDimArrayOfString[1][1] = dcArray3.threeDimArrayOfString[0][0];
     dcArray4 = dcArray3.deepClone();
-    Assertions.assertNotSame(dcArray3,dcArray4);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1],dcArray4.threeDimArrayOfString[0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0],dcArray4.threeDimArrayOfString[1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1],dcArray4.threeDimArrayOfString[1][1]);
+    Assertions.assertNotSame(dcArray3, dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString, dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0], dcArray4.threeDimArrayOfString[0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1], dcArray4.threeDimArrayOfString[0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0], dcArray4.threeDimArrayOfString[1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1], dcArray4.threeDimArrayOfString[1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
     //check for deepClone with two equal references inside the first array
     dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
@@ -644,82 +806,35 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dcArray3.threeDimArrayOfString[1][0] = dcArray3.threeDimArrayOfString[0][0];
     dcArray3.threeDimArrayOfString[1][1] = dcArray3.threeDimArrayOfString[0][0];
     dcArray4 = dcArray3.deepClone();
-    Assertions.assertNotSame(dcArray3,dcArray4);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString,dcArray4.threeDimArrayOfString);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0],dcArray4.threeDimArrayOfString[0][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1],dcArray4.threeDimArrayOfString[0][1]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0],dcArray4.threeDimArrayOfString[1][0]);
-    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1],dcArray4.threeDimArrayOfString[1][1]);
+    Assertions.assertNotSame(dcArray3, dcArray4);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString, dcArray4.threeDimArrayOfString);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][0], dcArray4.threeDimArrayOfString[0][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[0][1], dcArray4.threeDimArrayOfString[0][1]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][0], dcArray4.threeDimArrayOfString[1][0]);
+    Assertions.assertNotSame(dcArray3.threeDimArrayOfString[1][1], dcArray4.threeDimArrayOfString[1][1]);
     Assertions.assertTrue(dcArray3.deepEquals(dcArray4));
-    //endregion
-    //region deepClone for String types
-    ClassWithString dcString1 = new ClassWithString();
-    dcString1.myString = "test";
-    ClassWithString dcString2 = dcString1.deepClone();
-    Assertions.assertNotSame(dcString1,dcString2);
-    Assertions.assertTrue(dcString1.deepEquals(dcString2));
-    dcString1.myString = "test1";
-    Assertions.assertFalse(dcString1.deepEquals(dcString2));
-    //null check
-    dcString1.myString = null;
-    dcString2 = dcString1.deepClone();
-    Assertions.assertNotSame(dcString1,dcString2);
-    Assertions.assertTrue(dcString1.deepEquals(dcString2));
-    Assertions.assertNull(dcString2.myString);
-    //test Map correctness
-    dcString1.myString = "test";
-    dcString1.myString2 = dcString1.myString;
-    dcString2 = dcString1.deepClone();
-    Assertions.assertNotSame(dcString1,dcString2);
-    Assertions.assertTrue(dcString1.deepEquals(dcString2));
-    Assertions.assertSame(dcString2.myString,dcString2.myString2);
-    dcString1.myString2 = null;
-    dcString2 = dcString1.deepClone();
-    Assertions.assertNotSame(dcString1,dcString2);
-    Assertions.assertTrue(dcString1.deepEquals(dcString2));
-    Assertions.assertNotSame(dcString2.myString,dcString2.myString2);
-    //endregion
-    //region deepClone for pojo types
-    ClassWithPojoClassType dc3 = new ClassWithPojoClassType();
-    dc3.pojoType = dc1;
-    dc1.myInt=0;
-    ClassWithPojoClassType dc4 = dc3.deepClone();
-    Assertions.assertNotSame(dc3,dc4);
-    Assertions.assertNotSame(dc3.pojoType,dc4.pojoType);
-    Assertions.assertTrue(dc3.deepEquals(dc4));
-    dc3.pojoType.myInt = 1;
-    Assertions.assertFalse(dc3.deepEquals(dc4));
-    dc4 = dc3.deepClone();
-    Assertions.assertNotSame(dc3,dc4);
-    Assertions.assertNotSame(dc3.pojoType,dc4.pojoType);
-    Assertions.assertTrue(dc3.deepEquals(dc4));
-    //null check
-    dc3.pojoType = null;
-    dc4 = dc3.deepClone();
-    Assertions.assertNotSame(dc3,dc4);
-    Assertions.assertTrue(dc3.deepEquals(dc4));
-    Assertions.assertNull(dc4.pojoType);
-    //test Map correctness
-    dc3.pojoType = dc1;
-    dc3.pojoType2 = dc3.pojoType;
-    dc4 = dc3.deepClone();
-    Assertions.assertNotSame(dc3,dc4);
-    Assertions.assertNotSame(dc3.pojoType,dc4.pojoType);
-    Assertions.assertNotSame(dc3.pojoType2,dc4.pojoType2);
-    Assertions.assertTrue(dc3.deepEquals(dc4));
-    Assertions.assertSame(dc4.pojoType,dc4.pojoType2);
-    //endregion
-    //region deepClone list types
+  }
+
+  @Test
+  public void testDeepCloneListType() {
+    List<Integer> listAbsent1 = new ArrayList<>();
+    List<Integer> listDescent1 = new ArrayList<>();
+    for (int i = 0; i <= 10; i++) {
+      Integer absent1 = i;
+      Integer descent = 10 - i;
+      listAbsent1.add(absent1);
+      listDescent1.add(descent);
+    }
     ClassWithList dc5 = new ClassWithList();
     dc5.myIntegerList = listAbsent1;
     ClassWithList dc6 = dc5.deepClone();
-    Assertions.assertNotSame(dc5,dc6);
-    Assertions.assertNotSame(dc5.myIntegerList,dc6.myIntegerList);
+    Assertions.assertNotSame(dc5, dc6);
+    Assertions.assertNotSame(dc5.myIntegerList, dc6.myIntegerList);
     Assertions.assertTrue(dc5.deepEquals(dc6));
     dc5.myIntegerList = listDescent1;
     dc6 = dc5.deepClone();
-    Assertions.assertNotSame(dc5,dc6);
-    Assertions.assertNotSame(dc5.myIntegerList,dc6.myIntegerList);
+    Assertions.assertNotSame(dc5, dc6);
+    Assertions.assertNotSame(dc5.myIntegerList, dc6.myIntegerList);
     Assertions.assertTrue(dc5.deepEquals(dc6));
     //null check
     dc5.myIntegerList = null;
@@ -730,34 +845,34 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc5.myIntegerList = listAbsent1;
     dc5.myIntegerList2 = dc5.myIntegerList;
     dc6 = dc5.deepClone();
-    Assertions.assertNotSame(dc5,dc6);
-    Assertions.assertNotSame(dc5.myIntegerList,dc6.myIntegerList);
-    Assertions.assertNotSame(dc5.myIntegerList2,dc6.myIntegerList2);
+    Assertions.assertNotSame(dc5, dc6);
+    Assertions.assertNotSame(dc5.myIntegerList, dc6.myIntegerList);
+    Assertions.assertNotSame(dc5.myIntegerList2, dc6.myIntegerList2);
     Assertions.assertTrue(dc5.deepEquals(dc6));
-    Assertions.assertSame(dc6.myIntegerList,dc6.myIntegerList2);
+    Assertions.assertSame(dc6.myIntegerList, dc6.myIntegerList2);
 
     //Test 2D list types
     ClassWith2DimList dc7 = new ClassWith2DimList();
-    dc7.my2dimList= new ArrayList<>();
+    dc7.my2dimList = new ArrayList<>();
     dc7.my2dimList.add(listAbsent1);
     dc7.my2dimList.add(listAbsent1);
     dc7.my2dimList.add(new ArrayList<>());
     ClassWith2DimList dc8 = dc7.deepClone();
-    Assertions.assertNotSame(dc7,dc8);
-    Assertions.assertNotSame(dc7.my2dimList,dc8.my2dimList);
+    Assertions.assertNotSame(dc7, dc8);
+    Assertions.assertNotSame(dc7.my2dimList, dc8.my2dimList);
     Assertions.assertTrue(dc7.deepEquals(dc8));
     dc7.my2dimList = new ArrayList<>();
     Assertions.assertFalse(dc7.deepEquals(dc8));
     dc8 = dc7.deepClone();
-    Assertions.assertNotSame(dc7,dc8);
-    Assertions.assertNotSame(dc7.my2dimList,dc8.my2dimList);
+    Assertions.assertNotSame(dc7, dc8);
+    Assertions.assertNotSame(dc7.my2dimList, dc8.my2dimList);
     Assertions.assertTrue(dc7.deepEquals(dc8));
     //check for deepClone with zwo equal references inside the first list
     dc7.my2dimList = new ArrayList<>();
     dc7.my2dimList.add(listAbsent1);
     dc7.my2dimList.add(listAbsent1);
     dc8 = dc7.deepClone();
-    Assertions.assertSame(dc8.my2dimList.get(0),dc8.my2dimList.get(1));
+    Assertions.assertSame(dc8.my2dimList.get(0), dc8.my2dimList.get(1));
     //null check
     dc7.my2dimList = null;
     dc8 = dc7.deepClone();
@@ -767,24 +882,35 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc7.my2dimList = new ArrayList<>();
     dc7.my2dimList2 = dc7.my2dimList;
     dc8 = dc7.deepClone();
-    Assertions.assertNotSame(dc7,dc8);
-    Assertions.assertNotSame(dc7.my2dimList,dc8.my2dimList);
-    Assertions.assertNotSame(dc7.my2dimList2,dc8.my2dimList2);
+    Assertions.assertNotSame(dc7, dc8);
+    Assertions.assertNotSame(dc7.my2dimList, dc8.my2dimList);
+    Assertions.assertNotSame(dc7.my2dimList2, dc8.my2dimList2);
     Assertions.assertTrue(dc7.deepEquals(dc8));
-    Assertions.assertSame(dc8.my2dimList,dc8.my2dimList2);
-    //endregion
-    //region deepClone set types
+    Assertions.assertSame(dc8.my2dimList, dc8.my2dimList2);
+  }
+
+  @Test
+  public void testDeepCloneSetType(){
+    Set<Integer> set1 = new HashSet<>();
+    Set<Integer> setUnequal = new HashSet<>();
+    for (int i = 0; i <= 10; i++) {
+      Integer absent1 = i;
+      Random rand = new Random();
+      Integer unequal = rand.nextInt();
+      set1.add(absent1);
+      setUnequal.add(unequal);
+    }
     ClassWithSet dc9 = new ClassWithSet();
     dc9.mySet = set1;
     ClassWithSet dc10 = dc9.deepClone();
-    Assertions.assertNotSame(dc9,dc10);
-    Assertions.assertNotSame(dc9.mySet,dc10.mySet);
+    Assertions.assertNotSame(dc9, dc10);
+    Assertions.assertNotSame(dc9.mySet, dc10.mySet);
     Assertions.assertTrue(dc9.deepEquals(dc10));
     dc9.mySet = setUnequal;
     Assertions.assertFalse(dc9.deepEquals(dc10));
     dc10 = dc9.deepClone();
-    Assertions.assertNotSame(dc9,dc10);
-    Assertions.assertNotSame(dc9.mySet,dc10.mySet);
+    Assertions.assertNotSame(dc9, dc10);
+    Assertions.assertNotSame(dc9.mySet, dc10.mySet);
     Assertions.assertTrue(dc9.deepEquals(dc10));
     //null check
     dc9.mySet = null;
@@ -795,11 +921,11 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc9.mySet = set1;
     dc9.mySet2 = dc9.mySet;
     dc10 = dc9.deepClone();
-    Assertions.assertNotSame(dc9,dc10);
-    Assertions.assertNotSame(dc9.mySet,dc10.mySet);
-    Assertions.assertNotSame(dc9.mySet2,dc10.mySet2);
+    Assertions.assertNotSame(dc9, dc10);
+    Assertions.assertNotSame(dc9.mySet, dc10.mySet);
+    Assertions.assertNotSame(dc9.mySet2, dc10.mySet2);
     Assertions.assertTrue(dc9.deepEquals(dc10));
-    Assertions.assertSame(dc10.mySet,dc10.mySet2);
+    Assertions.assertSame(dc10.mySet, dc10.mySet2);
 
     //Test 2D set types
     ClassWith2DimSet dc11 = new ClassWith2DimSet();
@@ -807,14 +933,14 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc11.my2dimSet.add(set1);
     dc11.my2dimSet.add(set1);
     ClassWith2DimSet dc12 = dc11.deepClone();
-    Assertions.assertNotSame(dc11,dc12);
-    Assertions.assertNotSame(dc11.my2dimSet,dc12.my2dimSet);
+    Assertions.assertNotSame(dc11, dc12);
+    Assertions.assertNotSame(dc11.my2dimSet, dc12.my2dimSet);
     Assertions.assertTrue(dc11.deepEquals(dc12));
     dc11.my2dimSet = new HashSet<>();
     Assertions.assertFalse(dc11.deepEquals(dc12));
     dc12 = dc11.deepClone();
-    Assertions.assertNotSame(dc11,dc12);
-    Assertions.assertNotSame(dc11.my2dimSet,dc12.my2dimSet);
+    Assertions.assertNotSame(dc11, dc12);
+    Assertions.assertNotSame(dc11.my2dimSet, dc12.my2dimSet);
     Assertions.assertTrue(dc11.deepEquals(dc12));
     //check for deepClone with zwo equal references inside the first set
     //TODO this doesnt work as set will just compress the two elements
@@ -833,24 +959,26 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc11.my2dimSet = new HashSet<>();
     dc11.my2dimSet2 = dc11.my2dimSet;
     dc12 = dc11.deepClone();
-    Assertions.assertNotSame(dc11,dc12);
-    Assertions.assertNotSame(dc11.my2dimSet,dc12.my2dimSet);
-    Assertions.assertNotSame(dc11.my2dimSet2,dc12.my2dimSet2);
+    Assertions.assertNotSame(dc11, dc12);
+    Assertions.assertNotSame(dc11.my2dimSet, dc12.my2dimSet);
+    Assertions.assertNotSame(dc11.my2dimSet2, dc12.my2dimSet2);
     Assertions.assertTrue(dc11.deepEquals(dc12));
-    Assertions.assertSame(dc12.my2dimSet,dc12.my2dimSet2);
-    //endregion
-    //region deepClone optional types
+    Assertions.assertSame(dc12.my2dimSet, dc12.my2dimSet2);
+  }
+
+  @Test
+  public void testDeepCloneOptionalType() {
     ClassWithOptional dc13 = new ClassWithOptional();
     dc13.myOptionalInteger = Optional.of(1);
     ClassWithOptional dc14 = dc13.deepClone();
-    Assertions.assertNotSame(dc13,dc14);
-    Assertions.assertNotSame(dc13.myOptionalInteger,dc14.myOptionalInteger);
+    Assertions.assertNotSame(dc13, dc14);
+    Assertions.assertNotSame(dc13.myOptionalInteger, dc14.myOptionalInteger);
     Assertions.assertTrue(dc13.deepEquals(dc14));
     dc13.myOptionalInteger = Optional.of(2);
     Assertions.assertFalse(dc13.deepEquals(dc14));
     dc14 = dc13.deepClone();
-    Assertions.assertNotSame(dc13,dc14);
-    Assertions.assertNotSame(dc13.myOptionalInteger,dc14.myOptionalInteger);
+    Assertions.assertNotSame(dc13, dc14);
+    Assertions.assertNotSame(dc13.myOptionalInteger, dc14.myOptionalInteger);
     Assertions.assertTrue(dc13.deepEquals(dc14));
     //null check
     dc13.myOptionalInteger = null;
@@ -862,26 +990,26 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dc13.myOptionalInteger = opt;
     dc13.myOptionalInteger2 = opt;
     dc14 = dc13.deepClone();
-    Assertions.assertNotSame(dc13,dc14);
+    Assertions.assertNotSame(dc13, dc14);
     //they are the same as Integer has no deepClone method therefore we just copy the reference
     //Assertions.assertNotSame(dc13.myOptionalInteger,dc14.myOptionalInteger);
     //Assertions.assertNotSame(dc13.myOptionalInteger2,dc14.myOptionalInteger2);
     Assertions.assertTrue(dc13.deepEquals(dc14));
-    Assertions.assertSame(dc13.myOptionalInteger,dc13.myOptionalInteger2);
-    Assertions.assertSame(dc14.myOptionalInteger,dc14.myOptionalInteger2);
+    Assertions.assertSame(dc13.myOptionalInteger, dc13.myOptionalInteger2);
+    Assertions.assertSame(dc14.myOptionalInteger, dc14.myOptionalInteger2);
 
     //Test 2D Optional
     ClassWith2DimOptional dcO1 = new ClassWith2DimOptional();
     ClassWith2DimOptional dcO2 = new ClassWith2DimOptional();
     dcO1.my2DimOptional = Optional.of(Optional.of(new B()));
     dcO2 = dcO1.deepClone();
-    Assertions.assertNotSame(dcO1,dcO2);
-    Assertions.assertNotSame(dcO1.my2DimOptional,dcO2.my2DimOptional);
+    Assertions.assertNotSame(dcO1, dcO2);
+    Assertions.assertNotSame(dcO1.my2DimOptional, dcO2.my2DimOptional);
     Assertions.assertTrue(dcO1.deepEquals(dcO2));
     dcO1.my2DimOptional = Optional.empty();
     Assertions.assertFalse(dcO1.deepEquals(dcO2));
     dcO2 = dcO1.deepClone();
-    Assertions.assertNotSame(dcO1,dcO2);
+    Assertions.assertNotSame(dcO1, dcO2);
     //Because Optional.empty() == Optional.empty() is true
     //Assertions.assertNotSame(dcO1.my2DimOptional,dcO3.my2DimOptional);
     Assertions.assertTrue(dcO1.deepEquals(dcO2));
@@ -895,13 +1023,15 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     dcO1.my2DimOptional = Optional.of(Optional.of(new B()));
     dcO1.my2DimOptional2 = dcO1.my2DimOptional;
     dcO2 = dcO1.deepClone();
-    Assertions.assertNotSame(dcO1,dcO2);
-    Assertions.assertNotSame(dcO1.my2DimOptional,dcO2.my2DimOptional);
-    Assertions.assertNotSame(dcO1.my2DimOptional2,dcO2.my2DimOptional2);
+    Assertions.assertNotSame(dcO1, dcO2);
+    Assertions.assertNotSame(dcO1.my2DimOptional, dcO2.my2DimOptional);
+    Assertions.assertNotSame(dcO1.my2DimOptional2, dcO2.my2DimOptional2);
     Assertions.assertTrue(dcO1.deepEquals(dcO2));
-    Assertions.assertSame(dcO2.my2DimOptional,dcO2.my2DimOptional2);
-    //endregion
-    //region deepClone map types
+    Assertions.assertSame(dcO2.my2DimOptional, dcO2.my2DimOptional2);
+  }
+
+  @Test
+  public void testDeepCloneMapType(){
     ClassWithMap dcMap1 = new ClassWithMap();
     dcMap1.myMap = null;
     ClassWithMap dcMap2 = dcMap1.deepClone();
@@ -977,8 +1107,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dcMap3,dcMap4);
     Assertions.assertNotSame(dcMap3.myMap,dcMap4.myMap);
     Assertions.assertNotSame(dcMap3.myMap2,dcMap4.myMap2);
-    //endregion
-    //region deepClone association types
+  }
+
+  @Test
+  public void testDeepCloneAssociationType(){
     ClassWithAssociation dc15 = new ClassWithAssociation();
     dc15.owns = new HashSet<>();
     ClassWithAssociation dc16 = dc15.deepClone();
@@ -1004,8 +1136,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dc15.owns2,dc16.owns2);
     Assertions.assertTrue(dc15.deepEquals(dc16));
     Assertions.assertSame(dc16.owns,dc16.owns2);
-    //endregion
-    //region deepClone composition types
+  }
+
+  @Test
+  public void testDeepCloneCompositionType(){
     ClassWithComposition dc17 = new ClassWithComposition();
     dc17.many = new HashSet<>();
     ClassWithComposition dc18 = dc17.deepClone();
@@ -1069,8 +1203,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dc18.many,dc18.many2);
     Assertions.assertSame(dc18.one,dc18.one2);
     Assertions.assertSame(dc18.opt,dc18.opt2);
-    //endregion
-    //region deepClone circular references
+  }
+
+  @Test
+  public void testDeepCloneCircularRelations(){
     ClassCircular1 dc19 = new ClassCircular1();
     ClassCircular2 dc20 = new ClassCircular2();
     dc19.myClassCircular2 = dc20;
@@ -1080,8 +1216,15 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dc21.myClassCircular2,dc21.myClassCircular2.myClassCircular1.myClassCircular2);
     Assertions.assertNotSame(dc19,dc21);
     Assertions.assertNotSame(dc19.myClassCircular2,dc21.myClassCircular2);
-    //endregion
-    //region check creation of same references
+
+  }
+
+  @Test
+  public void testDeepCloneCheckSameCreation(){
+    List<Integer> listAbsent1 = new ArrayList<>();
+    for(int i =0; i<= 10;i++){
+      listAbsent1.add(i);
+    }
     ClassWith2DimList dc22 = new ClassWith2DimList();
     dc22.my2dimList = new ArrayList<>();
     dc22.my2dimList.add(listAbsent1);
@@ -1091,8 +1234,14 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dc22,dc23);
     Assertions.assertNotSame(dc22.my2dimList,dc23.my2dimList);
     Assertions.assertTrue(dc22.my2dimList.get(0)==dc22.my2dimList.get(1) && dc23.my2dimList.get(0)==dc23.my2dimList.get(1));
-    //endregion
-    //region Test multiple types and multiple dimensions at the same time
+  }
+
+  @Test
+  public void testDeepCloneMulipleTypesAndDimensions(){
+    List<Integer> listAbsent1 = new ArrayList<>();
+    for(int i =0; i<= 10;i++){
+      listAbsent1.add(i);
+    }
     AllTogether dc24 = new AllTogether();
     dc24.owns = new HashSet<>();
     dc24.manyClassWith2DimList = new HashSet<>();
@@ -1124,12 +1273,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0], dc25.oneClassWith2DimList);
     Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0],dc25.optClassWith2DimList.get());
     Assertions.assertSame(dc25.optClassWith2DimList.get(),dc25.oneClassWith2DimList);
-    //endregion
-    //endregion
-
-    //check construction of default constructor if not present
-    ClassWithNoDefaultConstructor classWithNoDefaultConstructor = new ClassWithNoDefaultConstructor(1);
-    ClassWithNoDefaultConstructor classWithNoDefaultConstructor2 = classWithNoDefaultConstructor.deepClone();
-    Assertions.assertTrue(classWithNoDefaultConstructor.deepEquals(classWithNoDefaultConstructor2));
   }
+  //endregion
+
 }
