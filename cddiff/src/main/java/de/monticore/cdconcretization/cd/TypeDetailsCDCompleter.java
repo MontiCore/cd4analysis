@@ -1,5 +1,6 @@
 package de.monticore.cdconcretization.cd;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -61,12 +62,10 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
   static class DefaultTypeCompletionContext implements TypeCompletionContext {
 
     private final CDCompletionContext parentContext;
-
     private final ASTCDType concreteType;
-
     private final ASTCDType referenceType;
-
     private final MatchingStrategy<ASTCDAttribute> attributeIncStrategy;
+    private final MatchingStrategy<ASTCDMethod> methodIncStrategy;
 
     DefaultTypeCompletionContext(
         CDCompletionContext parentContext, ASTCDType concreteType, ASTCDType referenceType) {
@@ -75,6 +74,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       this.referenceType = referenceType;
 
       attributeIncStrategy = parentContext.createAttributeIncStrategy(referenceType);
+      methodIncStrategy = parentContext.createMethodIncStrategy(referenceType);
     }
 
     @Override
@@ -142,6 +142,16 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     @Override
     public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
       return parentContext.createAttributeIncStrategy(referenceType);
+    }
+
+    @Override
+    public MatchingStrategy<ASTCDMethod> getMethodIncStrategy() {
+      return methodIncStrategy;
+    }
+
+    @Override
+    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
+      return parentContext.createMethodIncStrategy(referenceType);
     }
 
     @Override

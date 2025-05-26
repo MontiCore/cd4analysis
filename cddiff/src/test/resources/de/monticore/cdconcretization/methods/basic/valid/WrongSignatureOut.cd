@@ -1,0 +1,10 @@
+classdiagram WrongSignatureConc {
+  class Account {
+    void withdraw(double amount);
+    void deposit(double amount);
+    void withdraw(int amount);
+    void deposit(int amount);
+    void transfer(int amount, Account account);
+    int getBalance();
+  }
+}

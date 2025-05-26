@@ -8,7 +8,7 @@ import java.util.Set;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class AssociationConcretizationTest extends AbstractCDConcretizationTest {
+class AssociationConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   @Disabled("disabled until issue 13 is clarified")

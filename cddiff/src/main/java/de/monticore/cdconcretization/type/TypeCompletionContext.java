@@ -1,5 +1,6 @@
 package de.monticore.cdconcretization.type;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
@@ -21,4 +22,12 @@ public interface TypeCompletionContext extends CDCompletionContext {
    * @return the matching strategy for the attribute incarnations.
    */
   MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy();
+
+  /**
+   * Returns the matching strategy for the method incarnations. The strategy returned here is only
+   * valid in the current type context!
+   *
+   * @return the matching strategy for the method incarnations.
+   */
+  MatchingStrategy<ASTCDMethod> getMethodIncStrategy();
 }

@@ -1,0 +1,9 @@
+classdiagram ReturnTypeMIOneExistsConc {
+
+  <<ref="Transaction">> class NormalTransaction;
+  <<ref="Transaction">> class InstantTransaction;
+
+  class Bank {
+    NormalTransaction transfer(Account from, Account to, int amount);
+  }
+}

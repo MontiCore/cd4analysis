@@ -1,0 +1,6 @@
+classdiagram ParameterTypeUnderspecifiedRef {
+
+  class Operator {
+    void operation(any param);
+  }
+}
