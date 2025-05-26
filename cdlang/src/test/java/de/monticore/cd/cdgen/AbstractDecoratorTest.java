@@ -4,7 +4,6 @@ package de.monticore.cd.cdgen;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdgen.CDGenTool;
@@ -15,6 +14,7 @@ import de.se_rwth.commons.logging.LogStub;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +30,14 @@ import org.junit.jupiter.api.BeforeEach;
 public abstract class AbstractDecoratorTest {
 
   protected File outputDir;
+  protected CDGenTool tool;
 
   @BeforeEach
   public void init() {
     LogStub.initPlusLog();
     CD4CodeMill.reset();
     CD4CodeMill.init();
+    tool = new CDGenTool();
     this.outputDir = new File("target/cdGenOutTest/" + getClass().getSimpleName());
   }
 
@@ -68,16 +70,16 @@ public abstract class AbstractDecoratorTest {
   public TestResult doTest(ASTCDCompilationUnit cd) {
     outputDir.mkdirs();
 
-    CDGenTool tool = new CDGenTool();
+    tool.trafoBeforeSymtab(Collections.singletonList(cd));
 
     final boolean class2mc = this.withClass2MC();
     tool.initializeSymbolTable(class2mc);
 
     // Create ST
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    tool.createSymbolTable(cd);
 
     // Complete ST
-    cd.accept(new CD4CodeSymbolTableCompleter(cd).getTraverser());
+    tool.completeSymbolTable(cd);
 
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     GeneratorSetup generatorSetup = tool.newConfiguredGeneratorSetup(getAdditionalTemplatesPath(), getHandWrittenPath(),
