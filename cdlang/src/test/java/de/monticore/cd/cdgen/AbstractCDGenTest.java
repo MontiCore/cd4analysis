@@ -5,6 +5,7 @@ import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
@@ -18,6 +19,7 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -83,6 +85,13 @@ public class AbstractCDGenTest {
     // Post-Decorate
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+    decoratedOpt.get().accept(t);
+
+    //Top-Decorate
+    MCPath path = new MCPath("src/cdGenIntTestHwc/java");
+    TOPTrafo topTransformer = new TOPTrafo(path);
+    t = CD4CodeMill.inheritanceTraverser();
+    topTransformer.addToTraverser(t);
     decoratedOpt.get().accept(t);
 
     generator.generate(decoratedOpt.get());

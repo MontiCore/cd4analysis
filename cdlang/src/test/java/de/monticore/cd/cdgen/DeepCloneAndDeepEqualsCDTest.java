@@ -121,8 +121,13 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
   public void testTemplateExistence() {
     //test existence of the templates
     List<Path> templatePaths= new ArrayList<>();
-    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepClone.ftl"));
-    //TODO add more later
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepClone1.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepClone2.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepClone2Inner.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepEquals1.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepEquals2.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepEquals3.ftl"));
+    templatePaths.add(Paths.get("src/main/resources/methods/deepCloneAndDeepEquals/deepEquals3Inner.ftl"));
     for (Path temPath: templatePaths) {
       Assertions.assertTrue(Files.exists(temPath));
     }
