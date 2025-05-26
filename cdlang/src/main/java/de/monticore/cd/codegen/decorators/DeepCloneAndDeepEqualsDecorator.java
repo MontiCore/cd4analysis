@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
-
 /**
  * Decorator that adds deepCopy and deepEquals methods to artifacts specified in the class diagram.<br>
  * The deepCopy method is actually two methods: <br>
@@ -52,17 +51,18 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  *    <br>
  * 2. deepEquals(o: Object, <code>forceSameOrder</code>: boolean): <br>
  *    This method calls the deepEquals method with the signature deepEquals(o: Object, <code>forceSameOrder</code>: boolean, visitedObjects: Set<Object>).
- *    With a new set of visited objects to avoid cyclic references.
+ *    With a new Map‹Object, Set‹Object›› of visited objects to avoid cyclic references. <br>
  *    <br>
  *  3. deepEquals(o: Object, <code>forceSameOrder</code>: boolean, <code>visitedObjects</code>: Set‹Object›): <br>
  *    This method is the actual implementation of the deepEquals method.<br>
  *    It compares the object with the current instance and checks if the attributes are equal.<br>
- *    It begins by adding the <code>currentObject</code> to the set of <code>visitedObjects</code>.<br>
+ *    It begins by adding the <code>currentObject</code> to the map of <code>visitedObjects</code>.<br>
+ *    The map maps objects found in the first object onto objects found for that specific object in the second object.<br>
  *    Then it resolves the <code>currentObject</code>.<br>
- *    Because we added the <code>currentObject</code> to the set of <code>visitedObjects</code>,
+ *    Because we added the <code>currentObject</code> to the set of <code>visitedObjects</code> of the specific first object,
  *    we can detect cyclic references and avoid them.<br>
- *    Afterward, we remove the <code>currentObject</code> from the set
- *    of <code>visitedObjects</code> to allow further comparisons.<br>
+ *    Afterward, we remove the <code>currentObject</code> from the map of <code>visitedObjects</code>
+ *    to allow for further comparisons.<br>
  *    TODO currently the deepEquals method is not symmetric, meaning that if A.equals(B) is true, B.equals(A) is not necessarily true.
  */
 public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements CDBasisVisitor2 {
@@ -212,7 +212,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   /**
    * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean)
    * to the decorated class.
-   * This class calls the deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Set<Object>)
+   * This class calls the deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Map<Object,Set<Object>>)
    *
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
@@ -230,15 +230,21 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   }
 
   /**
-   * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Set<Object>)
+   * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Map<Object,Set<Object>>)
    * We need 3 parameters in the deepEquals method:
    * Because when iterating over lists and sets we need to declare a boolean for every type and check it afterward as return false would not work
    * 1. the object to compare with
    * 2. the forceSameOrder boolean
-   * 3. a set of already visited objects as the classdiagram can be cyclic
+   * 3. a map which maps objects found in the first object onto a set of objects found for that specific object in the second object
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
    */
+    //TODO equals is not symmetric, meaning that if A.equals(B) is true, B.equals(A) is not necessarily true.
+    // this is only because of the parameter forceSameOrder,
+    // which when set to false results in not detecting differt objects in b
+    // example: a list with ob1, obj1, obj2 and b with obj1, obj2, ob3 will result in true when forceSameOrder is false
+    // as the second list contains all objects from the first list
+    // my solution: internally call a.deepEquals(b) and b.deepEquals(a) and return true if both are true
   private void addDeepEquals3Method(ASTCDClass originalClass, ASTCDClass decoratedClass) {
     String packageName = originalClass.getSymbol().getPackageName();
     String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();

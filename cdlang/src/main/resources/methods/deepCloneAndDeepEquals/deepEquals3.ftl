@@ -2,7 +2,7 @@
 <#-- 3 stands for 3 argument which is the object to compare with -->
 <#-- the first argument is the object to compare with -->
 <#-- the second argument is a boolean which will decide if the right order of elements in set and lists is enforced -->
-<#-- the third argument is a set which will be used to store the already visited objects as the language can have circular structure -->
+<#-- the third argument is a map which will be used to store the already visited objects as the language can have circular structure -->
 <#-- to remember the visited objects we therefore need to save them -->
 ${tc.signature("originalClazzType", "attributeList", "PojoClazzesAsStringList")}
 <#-- as we want terminate on cyclic relations we need to add the object before we compare it sto our visited objects -->
