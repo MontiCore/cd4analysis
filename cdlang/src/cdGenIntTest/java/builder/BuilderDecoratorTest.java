@@ -12,8 +12,7 @@ import java.math.BigInteger;
 import java.util.Set;
 
 /**
- * Test the result of the Builder Decorator. When we arrive in this test, the output compiles
- * correctly
+ * Test the result of the Builder Decorator.
  */
 public class BuilderDecoratorTest {
 

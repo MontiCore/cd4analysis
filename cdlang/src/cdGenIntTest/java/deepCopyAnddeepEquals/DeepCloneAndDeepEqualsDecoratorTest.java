@@ -8,8 +8,11 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Array;
 import java.util.*;
 
+/**
+ * Test the result of the DeepCloneAndDeepEquals Decorator.
+ */
 public class DeepCloneAndDeepEqualsDecoratorTest {
-  
+
   @Test
   public void test() throws Exception {
     //TODO should deepEquals always be be symmetric? a=b implies b=a?

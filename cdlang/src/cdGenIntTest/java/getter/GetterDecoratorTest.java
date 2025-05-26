@@ -11,8 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Test the result of the Getter Decorator. When we arrive in this test, the output compiles
- * correctly
+ * Test the result of the Getter Decorator.
  */
 public class GetterDecoratorTest {
 
