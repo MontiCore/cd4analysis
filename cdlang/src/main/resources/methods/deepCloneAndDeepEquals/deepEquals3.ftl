@@ -7,14 +7,18 @@
 ${tc.signature("originalClazzType", "attributeList", "PojoClazzesAsStringList")}
 <#-- as we want terminate on cyclic relations we need to add the object before we compare it sto our visited objects -->
 <#-- we will later delete it after comparing, so that if a object exists multiple times in a non cyclic way, it is checked anyways-->
-if(visitedObjects.contains(this)){
-  return true;
-}
 if(!(o instanceof ${originalClazzType.printType()})){
   return false;
 }
-visitedObjects.add(this);
 ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;
+if(visitedObjects.get(this) != null){
+  if(visitedObjects.get(this).contains(castO)){
+    return true;
+  }
+  visitedObjects.get(this).add(castO);
+}else{
+  visitedObjects.put(this,new HashSet(Collections.singletonList(castO)));
+}
 <#if attributeList??>
 <#list attributeList as attr>
 <#-- we need to declare a boolean result, as in recursive list checks we cannot return false when we check while having the flag forceSameOrder set to false -->
@@ -24,7 +28,7 @@ boolean ${resultBooleanName} = true;
 <#assign secondObjectName = "castO." + attr.getName()>
   <#-- we call the deepEquals3Inner template here which can be called repulsively when the type is a List or a Set -->
   ${includeArgs("methods.deepCloneAndDeepEquals.deepEquals3Inner", attr.getMCType(), PojoClazzesAsStringList, firstObjectName, secondObjectName, resultBooleanName)}
-visitedObjects.remove(this);
+visitedObjects.get(this).remove(castO);
 if(! ${resultBooleanName}){
   return false;
 }

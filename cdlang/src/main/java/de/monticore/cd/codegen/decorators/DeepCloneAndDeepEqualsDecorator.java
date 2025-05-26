@@ -245,10 +245,11 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(originalClassFullQualifiedName);
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
     ASTMCReturnType booleanReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(CD4CodeMill.mCPrimitiveTypeBuilder().setPrimitive(1).build()).build();
-    ASTMCSetType visitedObjectsType = MCTypeFacade.getInstance().createSetTypeOf(objectType);
+    ASTMCSetType visitedObjectsSet = MCTypeFacade.getInstance().createSetTypeOf(objectType);
+    ASTMCMapType visitedObjectsMapOfSet = MCTypeFacade.getInstance().createMapTypeOf(objectType,visitedObjectsSet);
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(objectType).setName("o").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(CD4CodeMill.mCPrimitiveTypeBuilder().setPrimitive(1).build()).setName("forceSameOrder").build();
-    ASTCDParameter parameter3 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("visitedObjects").build();
+    ASTCDParameter parameter3 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsMapOfSet).setName("visitedObjects").build();
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
 
     decoratedClass.addCDMember(deepEquals3Method);
