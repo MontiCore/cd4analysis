@@ -44,10 +44,9 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
   @Override
   public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
     config.withDecorator(new GetterDecorator());
-    config.withCopyCreator().defaultApply();
     config.configApplyMatchName(GetterDecorator.class, "getter");
     config.configIgnoreMatchName(GetterDecorator.class, "noGetter");
-
-    config.withDecorator(new CardinalityDefaultDecorator());
+    config.withDecorator(new CardinalityDefaultDecorator()).defaultApply();
+    config.withCopyCreator().defaultApply();
   }
 }
