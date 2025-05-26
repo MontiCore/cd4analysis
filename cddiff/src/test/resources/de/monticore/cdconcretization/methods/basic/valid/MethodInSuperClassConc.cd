@@ -1,0 +1,10 @@
+classdiagram MethodInSuperClassConc {
+  class AccountBase {
+    void withdraw(int amount);
+    void deposit(int amount);
+    void transfer(int amount, AccountBase account);
+    int getBalance();
+  }
+
+  class Account extends AccountBase;
+}
