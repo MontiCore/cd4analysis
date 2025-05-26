@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
  * Test the result of the Getter Decorator. When we arrive in this test, the output compiles
  * correctly
  */
-public class GetterDecoratorTest {
+public class GetterDecoratorResultTest {
 
   @Test
   public void test() throws Exception {
