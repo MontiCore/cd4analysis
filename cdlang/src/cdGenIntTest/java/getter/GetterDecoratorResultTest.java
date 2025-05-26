@@ -41,6 +41,10 @@ public class GetterDecoratorResultTest {
         java.lang.NoSuchMethodException.class,
         () -> TestGetter.TestGetterC.class.getDeclaredMethod("getPubX"));
 
+    // Test that the CardinalityDefaultDecorator run correctly
+    Assertions.assertNotNull(obj.__getRoleB());
+    Assertions.assertNotNull(obj.__getOrderedRole());
+
     // Test the initial size of lists/sets
     Assertions.assertEquals(0, obj.__getRoleB().size());
     Assertions.assertEquals(0, obj.__getOrderedRole().size());
