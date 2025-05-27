@@ -142,13 +142,10 @@ public class TopDecorator {
   /**
    * Log an error, if the needsTop stereo is present on a class. Replace the first %s within the
    * value of the stereo with the qualifiedName, and append it to the error message
+   * Without an enabled quick-fail, this ensures useful, understandable
    */
   protected void checkNeedsHandwrittenClass(
       boolean existsHw, ASTCDClass cdClass, String qualifiedName) {
-    // ensure fail quick
-    boolean failQuickEnabled = Log.isFailQuickEnabled();
-    Log.enableFailQuick(true);
-
     // check for stereotype
     getStereotype(cdClass)
         .flatMap(
@@ -164,9 +161,6 @@ public class TopDecorator {
                 Log.error(String.format(errorMsg, qualifiedName));
               }
             });
-
-    // reset fail quick
-    Log.enableFailQuick(failQuickEnabled);
   }
 
   protected Optional<ASTStereotype> getStereotype(ASTCDClass cdClass) {
