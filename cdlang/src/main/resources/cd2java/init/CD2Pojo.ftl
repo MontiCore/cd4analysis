@@ -29,6 +29,8 @@ ${deConf.withSetters().ignoreOnName("noSetter").defaultApply()}
 <#-- And the NavigableSetters (for bidirectional assocs). -->
 <#-- The implementation of the NavigableSetters decorator requires that the Setter decorator has run before.-->
 ${deConf.withNavigableSetters().ignoreOnName("noSetter").defaultApply()}
+<#--Method signatures will be turned into abstract methods-->
+${deConf.withAbstractMethodSignatures().ignoreOnName("nonAbstractMethod").defaultApply()}
 <#--The following decorators are not applied by default, instead they have to be explicitly configured using stereos/tags/etc-->
 <#-- By default, the Builders decorator is NOT applied, unless an element or its parents are marked with builder -->
 <#--  Builders are also not applied when the element is not marked and the parent is marked with noBuilder. -->
