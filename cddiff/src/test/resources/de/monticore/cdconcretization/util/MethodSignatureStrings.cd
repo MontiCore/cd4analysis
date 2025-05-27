@@ -1,0 +1,17 @@
+import java.lang.String;
+
+classdiagram MethodSignatureStrings {
+  class A {
+    // m1 must be resolved with full signature as the name itself is not unique
+    void m1();
+    void m1(int i);
+    void m1(String s);
+    void m1(int i, String s);
+    void m1(int i, String s, double d);
+    void m1(int i, String s, double d, boolean b);
+
+    // m2 and m3 can be resolved with the name only, no matter if they have parameters or not
+    int m2();
+    String m3(int i, String s);
+  }
+}
