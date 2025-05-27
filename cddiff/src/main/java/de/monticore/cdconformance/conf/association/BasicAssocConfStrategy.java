@@ -7,8 +7,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,15 +18,15 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
 
   protected ASTCDCompilationUnit refCD;
   protected ASTCDCompilationUnit conCD;
-  protected MatchingStrategy<ASTCDType> typeInc;
-  protected MatchingStrategy<ASTCDAssociation> assocInc;
+  protected ExternalCandidatesMatchingStrategy<ASTCDType> typeInc;
+  protected ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc;
   protected boolean allowCardRestriction;
 
   public BasicAssocConfStrategy(
       ASTCDCompilationUnit conCD,
       ASTCDCompilationUnit refCD,
-      MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc,
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeInc,
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc,
       boolean allowCardRestriction) {
     this.refCD = refCD;
     this.conCD = conCD;

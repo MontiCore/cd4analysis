@@ -1,18 +1,17 @@
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.*;
-import java.util.*;
-
+import de.monticore.cdmatcher.matching.CachedMatch;
 import de.monticore.cdmatcher.matching.MatchingStrategy;
-import de.monticore.cdmatcher.similarity.CDAssocSimilarity;
-import de.monticore.cdmatcher.similarity.CDSimilarity;
-import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
-import org.antlr.v4.runtime.misc.MultiMap;
-import org.antlr.v4.runtime.misc.Triple;
+import de.monticore.cdmatcher.matching.cdtype.*;
+import org.antlr.v4.runtime.misc.Pair;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class should be used to construct a matching of respectively types and associations between
@@ -21,8 +20,8 @@ import org.antlr.v4.runtime.misc.Triple;
  */
 public class CDSynDiffMatches {
   protected Map<ASTCDType, ASTCDType> typeMatches;
-  protected MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs;
   protected Map<ASTCDAssociation, ASTCDAssociation> assocMatches;
+  protected Map<ASTCDAttribute, ASTCDAttribute> attributeMatches;
 
   /**
    * The constructor call computes all matches of types and associations between srcCD and tgtCD.
@@ -31,167 +30,58 @@ public class CDSynDiffMatches {
    *     matches
    */
   public CDSynDiffMatches(
-      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean matchStructure) {
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, boolean matchStructure, int matchingIterations, double threshold) {
+
+    de.monticore.cdmatcher.matching.CachedMatches.clear();
 
     // Compute types of srcCD and tgtCD without using the traverser
     Set<ASTCDType> srcTypes = CDDiffUtil.getAllTypesFromCD(srcCD);
     Set<ASTCDType> tgtTypes = CDDiffUtil.getAllTypesFromCD(tgtCD);
 
-    // compute a matching of types by name
-    MatchingStrategy<ASTCDType> typeMatcher = new MatchCDTypesByQName2Set(tgtTypes);
-    Map<ASTCDType, ASTCDType> typeMatchesByName = computeMatching(srcTypes, typeMatcher);
+    Set<MatchingStrategy<ASTCDType>> matchingStrategies = new HashSet<>((Set.of(
+      new MatchCDTypeByName(),
+      new MatchCDTypeByAssocs(),
+      new MatchCDTypeByAttribute()
+    )));
+    if(matchStructure) {
+      new MatchCDTypeByDirectSuperClasses();
+    }
 
-    /*
-     * Compute a matching of types of the srcCD if their sub- or supertypes
-     * match according to the previous matching.
-     * This is used for the association matching, when moving an association to a
-     * subtype or supertype should be detected.
-     */
-    typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(typeMatchesByName), srcCD, tgtCD);
-    MultiMap<ASTCDType, ASTCDType> typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
+    MatchCDType matcher = new MatchCDType(matchingStrategies);
 
-    // Compute associations of srcCD and tgtCD without using the traverser
-    Set<ASTCDAssociation> srcAssocs = CDDiffUtil.getAllAssocsFromCD(srcCD);
-    Set<ASTCDAssociation> tgtAssocs = CDDiffUtil.getAllAssocsFromCD(tgtCD);
-
-    /*
-     * Types are matched according to structural similarities.
-     * The previous matching is added to the new multi-matching.
-     */
-    if (matchStructure) {
-
-      typeMatcher = new MatchCDTypeByStructure2Set(tgtTypes);
-      MultiMap<ASTCDType, ASTCDType> typeMatches = computeMultiMatching(srcTypes, typeMatcher);
-
+    for(int i = 0; i < matchingIterations; i++) {
       for (ASTCDType srcType : srcTypes) {
-        if (typeMatchesByName.containsKey(srcType)) {
-          typeMatches.get(srcType).add(typeMatchesByName.get(srcType));
-        }
-      }
-
-      // We compute a best-match to reduce the multimap to a map.
-      Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet =
-          computeMatchAndScoreSet(typeMatches, new CDTypeSimilarity());
-      this.typeMatches = computeBestMatching(typeMatches, typeSimilaritySet);
-
-      // this.typeMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+ src.getName() +
-      // " ==> " + tgt.getName()));
-
-      // We add the structural matching to the type-matching for associations
-      typeMatcher = new MatchCDTypeHierarchies(new CachedMatches<>(this.typeMatches), srcCD, tgtCD);
-      typeMatches4Assocs = computeMultiMatching(srcTypes, typeMatcher);
-
-    } else {
-      typeMatches = typeMatchesByName;
-    }
-
-    this.typeMatches4Assocs = typeMatches4Assocs;
-
-    MatchingStrategy<ASTCDAssociation> assocMatcher =
-        new MatchAssocsByRole2Set(
-            new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
-    MultiMap<ASTCDAssociation, ASTCDAssociation> assocMatches =
-        computeMultiMatching(srcAssocs, assocMatcher);
-
-    // add greedy assoc matches if structure matching is active
-    if (matchStructure) {
-      assocMatcher =
-          new MatchCDAssocsGreedy2Set(
-              new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
-      MultiMap<ASTCDAssociation, ASTCDAssociation> greedyAssocMatches =
-          computeMultiMatching(srcAssocs, assocMatcher);
-
-      for (ASTCDAssociation srcAssoc : srcAssocs) {
-        assocMatches.get(srcAssoc).addAll(greedyAssocMatches.get(srcAssoc));
-      }
-    }
-
-    // Compute best-match for associations using the similarity metric for types.
-    Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet =
-        computeMatchAndScoreSet(typeMatches4Assocs, new CDTypeSimilarity());
-    Set<Triple<ASTCDAssociation, ASTCDAssociation, Double>> assocSimilaritySet =
-        computeMatchAndScoreSet(assocMatches, new CDAssocSimilarity(typeSimilaritySet));
-    this.assocMatches = computeBestMatching(assocMatches, assocSimilaritySet);
-
-    // this.assocMatches.forEach((src,tgt) ->  System.out.println("[BEST MATCH] "+
-    // CD4CodeMill.prettyPrint(src,false) + " ==> " + CD4CodeMill.prettyPrint(tgt,false)));
-
-  }
-
-  /**
-   * Helper-function that computes a best-matching given a multi-matching and a set of
-   * element-element-score triples.
-   */
-  public static <T> Map<T, T> computeBestMatching(
-      MultiMap<T, T> matches, Set<Triple<T, T, Double>> matchAndScoreSet) {
-    List<Triple<T, T, Double>> remainingMatches = new ArrayList<>(matchAndScoreSet);
-    Map<T, T> bestMatches = new LinkedHashMap<>();
-
-    /*
-     * modified selection sort always puts the highest value matches in the map
-     * with the lowest amount of matches for the srcType
-     */
-    while (!remainingMatches.isEmpty()) {
-      Triple<T, T, Double> bestMatch = remainingMatches.get(0);
-      double bestScore = bestMatch.c;
-      for (Triple<T, T, Double> match : matchAndScoreSet) {
-        if (remainingMatches.contains(match)) {
-          double score = match.c;
-          if (score > bestScore
-              || (score == bestScore
-                  && matches.get(match.a).size() < matches.get(bestMatch.a).size())) {
-            bestMatch = match;
-            bestScore = score;
-          }
-        }
-      }
-      bestMatches.put(bestMatch.a, bestMatch.b);
-      remainingMatches.remove(bestMatch);
-      for (Triple<T, T, Double> match : matchAndScoreSet) {
-        if (remainingMatches.contains(match)
-            && (match.a.equals(bestMatch.a) || match.b.equals(bestMatch.b))) {
-          remainingMatches.remove(match);
+        for (ASTCDType tgtType : tgtTypes) {
+          matcher.getScore(srcType, tgtType);
         }
       }
     }
 
-    return bestMatches;
-  }
-
-  /**
-   * Helper-function that computes the score for each matching pair of elements in a multi-matching
-   * and outputs the set of element-element-score triples.
-   */
-  public static <T> Set<Triple<T, T, Double>> computeMatchAndScoreSet(
-      MultiMap<T, T> matches, CDSimilarity<T> similarity) {
-    Set<Triple<T, T, Double>> matchAndScoreSet = new LinkedHashSet<>();
-
-    for (T srcElem : matches.keySet()) {
-      for (T tgtElem : matches.get(srcElem)) {
-        matchAndScoreSet.add(
-            new Triple<>(srcElem, tgtElem, similarity.computeWeight(srcElem, tgtElem)));
-      }
-    }
-    return matchAndScoreSet;
+    // compute a matching of types by name
+    typeMatches = computeMatching(de.monticore.cdmatcher.matching.CachedMatches.getTypeMatches(), threshold);
+    assocMatches = computeMatching(de.monticore.cdmatcher.matching.CachedMatches.getAssocMatches(), threshold);
+    attributeMatches = computeMatching(de.monticore.cdmatcher.matching.CachedMatches.getAttributeMatches(), threshold);
   }
 
   /** computes a matching based on a MatchingStrategy */
-  public static <T> Map<T, T> computeMatching(Set<T> srcSet, MatchingStrategy<T> matcher) {
+  public static <T> Map<T, T> computeMatching(CachedMatch<T> matches, double threshold) {
     Map<T, T> matching = new LinkedHashMap<>();
-    for (T srcType : srcSet) {
-      List<T> matches = matcher.getMatchedElements(srcType);
-      if (matches.size() == 1) {
-        matching.put(srcType, matches.get(0));
-      }
-    }
-    return matching;
-  }
+    List<Map.Entry<Pair<T, T>, Double>> matchScores = matches.getMatches().entrySet().stream().sorted(
+      Map.Entry.comparingByValue(Comparator.reverseOrder())
+    ).collect(Collectors.toList());
+    Iterator<Map.Entry<Pair<T, T>, Double>> iterator = matchScores.iterator();
 
-  public static <T> MultiMap<T, T> computeMultiMatching(
-      Set<T> srcSet, MatchingStrategy<T> matcher) {
-    MultiMap<T, T> matching = new MultiMap<>();
-    for (T srcType : srcSet) {
-      matching.put(srcType, matcher.getMatchedElements(srcType));
+    while (iterator.hasNext()) {
+      Map.Entry<Pair<T, T>, Double> entry = iterator.next();
+      if(entry.getValue() < threshold) {
+        break;
+      }
+      Pair<T, T> pair = entry.getKey();
+      if (!matching.containsKey(pair.a)) {
+        matching.put(pair.a, pair.b);
+      } else {
+        iterator.remove();
+      }
     }
     return matching;
   }
@@ -204,7 +94,7 @@ public class CDSynDiffMatches {
     return assocMatches;
   }
 
-  public MultiMap<ASTCDType, ASTCDType> getTypeMatches4Assocs() {
-    return typeMatches4Assocs;
+  public Map<ASTCDAttribute, ASTCDAttribute> getAttributeMatches() {
+    return attributeMatches;
   }
 }

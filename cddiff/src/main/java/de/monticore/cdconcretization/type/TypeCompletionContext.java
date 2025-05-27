@@ -3,7 +3,7 @@ package de.monticore.cdconcretization.type;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
 
 /** A {@link CDCompletionContext} with additional information when completing a single type. */
 public interface TypeCompletionContext extends CDCompletionContext {
@@ -20,5 +20,5 @@ public interface TypeCompletionContext extends CDCompletionContext {
    *
    * @return the matching strategy for the attribute incarnations.
    */
-  MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy();
+  BooleanMatchingStrategy<ASTCDAttribute> getAttributeIncStrategy();
 }

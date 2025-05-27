@@ -11,7 +11,8 @@ import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     typeSet.addAll(classes);
     typeSet.addAll(interfaces);
 
-    MatchingStrategy<ASTCDType> typeMatcher = context.getTypeIncStrategy();
+    ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher = context.getTypeIncStrategy();
 
     for (ASTCDType type : typeSet) {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, tgtCDScope)));

@@ -34,7 +34,7 @@ public class Syn2SemDiff {
   private int diffLimit = 0;
   private int diffSize = 0;
   private boolean analyseOverlapping = true;
-  private List<MatchingStrategy> matchingStrategies = new ArrayList<>();
+  private List<MatchingType> matchingStrategies = new ArrayList<>();
 
   public Syn2SemDiffHelper getHelper() {
     return helper;
@@ -66,7 +66,7 @@ public class Syn2SemDiff {
   public Syn2SemDiff(
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD,
-      List<MatchingStrategy> matchingStrategies) {
+      List<MatchingType> matchingStrategies) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, matchingStrategies);
     this.matchingStrategies = matchingStrategies;
@@ -126,7 +126,7 @@ public class Syn2SemDiff {
       int diffLimit,
       int diffSize,
       boolean analyseOverlapping,
-      List<MatchingStrategy> matchingStrategies) {
+      List<MatchingType> matchingStrategies) {
     ReductionTrafo.handleAssocDirections(srcCD, tgtCD);
     this.syntaxDiff = new CDSyntaxDiff(srcCD, tgtCD, matchingStrategies);
     this.matchingStrategies = matchingStrategies;
@@ -153,7 +153,7 @@ public class Syn2SemDiff {
   public List<ASTODArtifact> generateODs(boolean staDiff) {
     List<ASTODArtifact> artifactList = new ArrayList<>();
     if (matchingStrategies.isEmpty()
-        || matchingStrategies.contains(MatchingStrategy.NAME_TYPE_MATCHING)) {
+        || matchingStrategies.contains(MatchingType.NAME_TYPE_MATCHING)) {
       for (Pair<ASTCDType, ASTCDType> astcdClass1 : syntaxDiff.addedClassList()) {
         String comment =
             "// A new class "
@@ -361,7 +361,7 @@ public class Syn2SemDiff {
     }
 
     if (matchingStrategies.isEmpty()
-        || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+        || matchingStrategies.contains(MatchingType.SOURCE_TARGET_MATCHING)) {
       for (Pair<ASTCDAssociation, List<ASTCDType>> association : syntaxDiff.addedAssocList()) {
         Pair<ASTCDType, ASTCDType> pair =
             Syn2SemDiffHelper.getConnectedTypes(association.a, helper.getSrcCD());

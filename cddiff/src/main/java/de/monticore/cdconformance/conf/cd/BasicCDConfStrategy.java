@@ -5,7 +5,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilationUnit> {
   protected ASTCDCompilationUnit refCD;
-  protected MatchingStrategy<ASTCDType> typeInc;
-  protected MatchingStrategy<ASTCDAssociation> assocInc;
+  protected BooleanMatchingStrategy<ASTCDType> typeInc;
+  protected BooleanMatchingStrategy<ASTCDAssociation> assocInc;
   protected ConformanceStrategy<ASTCDType> typeChecker;
   protected ConformanceStrategy<ASTCDAssociation> assocChecker;
 
@@ -22,8 +22,8 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
 
   public BasicCDConfStrategy(
       ASTCDCompilationUnit refCD,
-      MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc,
+      BooleanMatchingStrategy<ASTCDType> typeInc,
+      BooleanMatchingStrategy<ASTCDAssociation> assocInc,
       ConformanceStrategy<ASTCDType> typeChecker,
       ConformanceStrategy<ASTCDAssociation> assocChecker) {
     this.refCD = refCD;

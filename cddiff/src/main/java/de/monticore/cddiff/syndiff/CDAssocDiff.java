@@ -1,28 +1,23 @@
 package de.monticore.cddiff.syndiff;
 
-import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
-
 import de.monticore.cd4code._prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocCardinality;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syn2semdiff.datastructures.ClassSide;
 import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
-import de.monticore.cdmatcher.MatchCDTypeByStructure;
-import de.monticore.cdmatcher.MatchCDTypesByName;
-import de.monticore.cdmatcher.MatchCDTypesToSuperTypes;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
+
 import java.util.*;
-import org.antlr.v4.runtime.misc.MultiMap;
+
+import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.*;
 
 /**
  * This class computes the differences between two ASTCDAssociation nodes. It analyzes the role
@@ -44,12 +39,6 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   private AssocStruct srcStruct;
   private AssocStruct tgtStruct;
   private CDSynDiffMatches matches;
-
-  MatchCDTypesByName nameTypeMatch;
-  MatchCDTypeByStructure structureTypeMatch;
-  MatchCDTypesToSuperTypes superTypeMatchStructure;
-  MatchCDTypesToSuperTypes superTypeMatchName;
-  List<MatchingStrategy<ASTCDType>> typeMatchers;
   // Print
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   private String srcAssocType,
@@ -677,34 +666,23 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
-    MultiMap<ASTCDType, ASTCDType> computedMatchingMapTypes = matches.getTypeMatches4Assocs();
+    Map<ASTCDType, ASTCDType> computedMatchingMapTypes = matches.getTypeMatches();
+    Map<ASTCDAssociation, ASTCDAssociation> assocMatches = matches.getAssocMatches();
 
-    isReversed = false;
-
-    if (computedMatchingMapTypes.entrySet().stream()
-        .anyMatch(
-            entry ->
-                entry.getKey().equals(srcLeftType) && entry.getValue().contains(tgtRightType)
-                    || entry.getKey().equals(srcRightType)
-                        && entry.getValue().contains(tgtLeftType))) {
-      isReversed =
-          CDDiffUtil.inferRole(srcAssoc.getRight()).equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()))
-                  && !CDDiffUtil.inferRole(srcAssoc.getRight())
-                      .equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
-              || CDDiffUtil.inferRole(srcAssoc.getLeft())
-                      .equals(CDDiffUtil.inferRole(tgtAssoc.getRight()))
-                  && !CDDiffUtil.inferRole(srcAssoc.getLeft())
-                      .equals(CDDiffUtil.inferRole(tgtAssoc.getLeft()));
+    if(assocMatches.get(srcAssoc) == null || !assocMatches.get(srcAssoc).equals(tgtAssoc)) {
+      isReversed = false;
+      return;
     }
 
-    isReversed =
-        isReversed
-            || computedMatchingMapTypes.entrySet().stream()
-                .noneMatch(
-                    entry ->
-                        entry.getKey().equals(srcLeftType) && entry.getValue().contains(tgtLeftType)
-                            || entry.getKey().equals(srcRightType)
-                                && entry.getValue().contains(tgtRightType));
+    if(srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() ||
+        srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      isReversed = false;
+      return;
+    }
+
+    isReversed = srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && tgtAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+        || srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft()
+            && tgtAssoc.getCDAssocDir().isDefinitiveNavigableRight();
   }
 
   /**

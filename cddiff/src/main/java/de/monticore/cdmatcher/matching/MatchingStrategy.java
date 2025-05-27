@@ -9,12 +9,11 @@ public interface MatchingStrategy<T> {
   /**
    * @return returns a map of the matched elements together with their score.
    */
-  default Map<T, Double> getMatchedElements(T srcElem, Set<T> tgtElems){
+  default Map<T, Double> getMatchedElements(T srcElem, Set<T> tgtElems, double threshold) {
     return tgtElems.stream()
-      .collect(Collectors.toMap(
-        tgtElem -> tgtElem,
-        tgtElem -> getScore(srcElem, tgtElem)
-      ));
+      .map(tgtElem -> Map.entry(tgtElem, getScore(srcElem, tgtElem)))
+      .filter(entry -> entry.getValue() >= threshold)
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   /**

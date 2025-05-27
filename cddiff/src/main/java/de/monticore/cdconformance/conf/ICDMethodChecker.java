@@ -2,10 +2,10 @@ package de.monticore.cdconformance.conf;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 
 public interface ICDMethodChecker
-    extends MatchingStrategy<ASTCDMethod>, ConformanceStrategy<ASTCDMethod> {
+    extends ExternalCandidatesMatchingStrategy<ASTCDMethod>, ConformanceStrategy<ASTCDMethod> {
   @Override
   default boolean checkConformance(ASTCDMethod concrete) {
     return getMatchedElements(concrete).stream().allMatch(ref -> checkConformance(concrete, ref));

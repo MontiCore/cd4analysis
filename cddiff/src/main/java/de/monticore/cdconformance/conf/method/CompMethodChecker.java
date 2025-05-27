@@ -3,15 +3,18 @@ package de.monticore.cdconformance.conf.method;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CompMethodChecker extends AbstractMethodChecker {
   private final List<ICDMethodChecker> methodCheckers = new ArrayList<>();
 
   public CompMethodChecker(
-      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
+      String mapping, String underspecifiedTypeName, ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher) {
     super(mapping, underspecifiedTypeName, typeMatcher);
   }
 
@@ -20,22 +23,15 @@ public class CompMethodChecker extends AbstractMethodChecker {
   }
 
   @Override
-  public List<ASTCDMethod> getMatchedElements(ASTCDMethod concrete) {
-    List<ASTCDMethod> refElements = new ArrayList<>();
-
-    for (ICDMethodChecker checker : methodCheckers) {
-      refElements.addAll(checker.getMatchedElements(concrete));
-      if (!refElements.isEmpty()) {
-        return refElements;
-      }
-    }
-
-    return refElements;
+  public Set<ASTCDMethod> getMatchedElements(ASTCDMethod concrete) {
+    return methodCheckers.stream()
+      .map(strategy -> strategy.getMatchedElements(concrete))
+      .collect(HashSet::new, Set::addAll, Set::addAll);
   }
 
   @Override
   public boolean isMatched(ASTCDMethod concrete, ASTCDMethod ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return methodCheckers.stream().anyMatch(strategy -> strategy.isMatched(concrete,ref));
   }
 
   @Override

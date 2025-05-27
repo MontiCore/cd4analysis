@@ -1,11 +1,10 @@
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.matching.booleanMatchingStrategy;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -16,17 +15,17 @@ import java.util.stream.Collectors;
 public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
 
   public MatchCDAssocsGreedy(
-      MatchingStrategy<ASTCDType> typeMatcher,
+      BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
 
   @Override
-  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
+  public Set<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream()
         .filter(tgtElem -> isMatched(srcElem, tgtElem))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   /**

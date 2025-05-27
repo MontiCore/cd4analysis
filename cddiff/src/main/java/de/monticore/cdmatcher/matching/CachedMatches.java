@@ -3,38 +3,51 @@ package de.monticore.cdmatcher.matching;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import org.antlr.v4.runtime.misc.Pair;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class CachedMatches {
-  private static final Map<Pair<ASTCDType, ASTCDType>, Double> classMatches = new HashMap<>();
-  private static final Map<Pair<ASTCDAttribute, ASTCDAttribute>, Double> attributeMatches = new HashMap<>();
-  private static final Map<Pair<ASTCDAssociation, ASTCDAssociation>, Double> assocMatches = new HashMap<>();
+  private static final CachedMatch<ASTCDType> typeMatches = new CachedMatch<>();
+  private static final CachedMatch<ASTCDAttribute> attributeMatches = new CachedMatch<>();
+  private static final CachedMatch<ASTCDAssociation> assocMatches = new CachedMatch<>();
 
   public static void putMatch(ASTCDType srcElem, ASTCDType tgtElem, Double value) {
-    classMatches.put(new Pair<>(srcElem, tgtElem), value);
+    typeMatches.putMatch(srcElem, tgtElem, value);
   }
 
   public static void putMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem, Double value) {
-    attributeMatches.put(new Pair<>(srcElem, tgtElem), value);
+    attributeMatches.putMatch(srcElem, tgtElem, value);
   }
 
   public static void putMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, Double value) {
-    assocMatches.put(new Pair<>(srcElem, tgtElem), value);
+    assocMatches.putMatch(srcElem, tgtElem, value);
   }
 
   public static Double getMatch(ASTCDType srcElem, ASTCDType tgtElem) {
-    return classMatches.get(new Pair<>(srcElem, tgtElem));
+    return typeMatches.getMatch(srcElem, tgtElem);
   }
 
   public static Double getMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
-    return attributeMatches.get(new Pair<>(srcElem, tgtElem));
+    return attributeMatches.getMatch(srcElem, tgtElem);
   }
 
   public static Double getMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
-    return assocMatches.get(new Pair<>(srcElem, tgtElem));
+    return assocMatches.getMatch(srcElem, tgtElem);
   }
 
+  public static CachedMatch<ASTCDType> getTypeMatches() {
+    return typeMatches;
+  }
+
+  public static CachedMatch<ASTCDAttribute> getAttributeMatches() {
+    return attributeMatches;
+  }
+
+  public static CachedMatch<ASTCDAssociation> getAssocMatches() {
+    return assocMatches;
+  }
+
+  public static void clear() {
+    typeMatches.clear();
+    attributeMatches.clear();
+    assocMatches.clear();
+  }
 }

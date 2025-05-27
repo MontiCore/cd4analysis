@@ -9,7 +9,7 @@ import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.association.AssocMatchDirection;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.Set;
 
@@ -52,7 +52,6 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
    *
    * @param cAssoc the concrete association
    * @param rAssoc the reference association
-   * @return
    * @throws CompletionException if the match direction cannot be determined.
    */
   private AssocMatchDirection determineMatchDirection(
@@ -73,7 +72,7 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     Set<ASTCDType> cRightSuperTypes =
         CDDiffUtil.getAllSuperTypes(rRightType, ccd.getCDDefinition());
 
-    MatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes =
+    BooleanMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes =
         context.getTypeIncStrategyMatchingSubTypes();
     // Determine if the concrete association matches the reference association in the standard
     // direction.

@@ -1,6 +1,7 @@
-package de.monticore.cdmatcher.matching;
+package de.monticore.cdmatcher.matching.cdtype;
 
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdmatcher.matching.MatchingStrategy;
 import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
 
 public class MatchCDTypeByName implements MatchingStrategy<ASTCDType> {

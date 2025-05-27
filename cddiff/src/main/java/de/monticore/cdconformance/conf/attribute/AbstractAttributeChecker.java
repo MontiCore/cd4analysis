@@ -4,7 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.conf.CDAttributeChecker;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
@@ -13,12 +13,12 @@ public abstract class AbstractAttributeChecker implements CDAttributeChecker {
 
   protected final String mapping;
   protected final String underspecifiedTypeName;
-  protected final MatchingStrategy<ASTCDType> typeMatcher;
+  protected final ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher;
   protected ASTCDType concreteType;
   protected ASTCDType referenceType;
 
   protected AbstractAttributeChecker(
-      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
+      String mapping, String underspecifiedTypeName, ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
     this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
@@ -42,11 +42,7 @@ public abstract class AbstractAttributeChecker implements CDAttributeChecker {
       // every type is allowed if the reference type is underspecified
       return true;
     }
-    Optional<Boolean> conReturnType = checkTypeIncarnation(refType, conType);
-    if (conReturnType.isPresent()) {
-      return conReturnType.get();
-    }
-    return conType.deepEquals(refType);
+    return checkTypeIncarnation(refType, conType).orElseGet(() -> conType.deepEquals(refType));
   }
 
   protected Optional<Boolean> checkTypeIncarnation(ASTMCType refType, ASTMCType conType) {

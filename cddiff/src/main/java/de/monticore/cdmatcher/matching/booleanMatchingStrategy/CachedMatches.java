@@ -1,7 +1,8 @@
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.matching.booleanMatchingStrategy;
 
 import java.util.List;
 import java.util.Map;
+
 import org.antlr.v4.runtime.misc.MultiMap;
 
 public class CachedMatches<T> extends CachedMultiMatches<T> {

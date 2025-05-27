@@ -2,23 +2,24 @@ package de.monticore.cdconformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
-import java.util.List;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class STNamedAttributeChecker extends AbstractAttributeChecker {
 
   public STNamedAttributeChecker(
-      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
+      String mapping, String underspecifiedTypeName, ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher) {
     super(mapping, underspecifiedTypeName, typeMatcher);
   }
 
   @Override
-  public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
+  public Set<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
 
     return referenceType.getCDAttributeList().stream()
         .filter(ref -> isMatched(concrete, ref))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   @Override

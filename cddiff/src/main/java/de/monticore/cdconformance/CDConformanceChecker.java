@@ -24,7 +24,7 @@ import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.MatchCDTypesToSubTypes;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -75,7 +75,7 @@ public class CDConformanceChecker {
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
     // init incarnation checker
     typeInc = new CompTypeIncStrategy(referenceCD, mapping);
-    assocInc = new CompAssocIncStrategy(referenceCD, mapping);
+    assocInc = new CompAssocIncStrategy();
     attrInc = new CompAttributeChecker(mapping, underspecifiedTypeName, typeInc);
     methInc = new CompMethodChecker(mapping, underspecifiedTypeName, typeInc);
 
@@ -87,7 +87,7 @@ public class CDConformanceChecker {
     }
 
     if (params.contains(NAME_MAPPING)) {
-      typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
+      typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD));
       assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new EqNameAttributeChecker(mapping, underspecifiedTypeName, typeInc));
       methInc.addIncStrategy(new EqNameMethodChecker(mapping, underspecifiedTypeName, typeInc));
@@ -242,11 +242,11 @@ public class CDConformanceChecker {
     return true;
   }
 
-  public List<ASTCDType> getRefElements(ASTCDType con) {
+  public Set<ASTCDType> getRefElements(ASTCDType con) {
     return typeInc.getMatchedElements(con);
   }
 
-  public List<ASTCDAssociation> getRefElements(ASTCDAssociation con) {
+  public Set<ASTCDAssociation> getRefElements(ASTCDAssociation con) {
     return assocInc.getMatchedElements(con);
   }
 

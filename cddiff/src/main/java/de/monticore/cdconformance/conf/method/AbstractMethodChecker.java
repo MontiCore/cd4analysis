@@ -5,7 +5,7 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
@@ -15,12 +15,12 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
 
   protected final String mapping;
   protected final String underspecifiedTypeName;
-  protected final MatchingStrategy<ASTCDType> typeMatcher;
+  protected final ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher;
   protected ASTCDType conType;
   protected ASTCDType refType;
 
   protected AbstractMethodChecker(
-      String mapping, String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
+      String mapping, String underspecifiedTypeName, ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher) {
     this.mapping = mapping;
     this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
@@ -47,10 +47,7 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
         return true;
       }
       Optional<Boolean> conParType = checkTypeIncarnation(refPar.getMCType(), conPar.getMCType());
-      if (conParType.isPresent()) {
-        return conParType.get();
-      }
-      return conPar.getMCType().deepEquals(refPar.getMCType());
+      return conParType.orElseGet(() -> conPar.getMCType().deepEquals(refPar.getMCType()));
     }
     return false;
   }
@@ -74,10 +71,7 @@ public abstract class AbstractMethodChecker implements ICDMethodChecker {
     }
     Optional<Boolean> conReturnType =
         checkTypeIncarnation(refReturn.getMCType(), conReturn.getMCType());
-    if (conReturnType.isPresent()) {
-      return conReturnType.get();
-    }
-    return conReturn.getMCType().deepEquals(refReturn.getMCType());
+    return conReturnType.orElseGet(() -> conReturn.getMCType().deepEquals(refReturn.getMCType()));
   }
 
   protected Optional<Boolean> checkTypeIncarnation(ASTMCType refType, ASTMCType conType) {

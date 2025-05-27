@@ -17,11 +17,12 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syn2semdiff.datastructures.*;
-import de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy;
+import de.monticore.cddiff.syn2semdiff.datastructures.MatchingType;
 import de.monticore.cddiff.syndiff.CDAssocDiff;
 import de.monticore.cddiff.syndiff.CDSynDiffMatches;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.*;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.CachedMatches;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -46,7 +47,7 @@ public class Syn2SemDiffHelper {
     this.matches = matches;
   }
 
-  private CDSynDiffMatches matches;
+  private final CDSynDiffMatches matches;
 
   /**
    * Map with all possible associations (as AssocStructs) for classes from srcCD where the given
@@ -124,9 +125,9 @@ public class Syn2SemDiffHelper {
    */
   private List<ASTCDAssociation> deletedAssocs;
 
-  private de.monticore.cdmatcher.matching.MatchingStrategy<ASTCDAssociation> matcher;
+  private BooleanMatchingStrategy<ASTCDAssociation> matcher;
   private List<CDAssocDiff> diffs;
-  private List<MatchingStrategy> matchingStrategies;
+  private List<MatchingType> matchingStrategies;
 
   // CHECKED
   public boolean isAttContainedInClass(ASTCDAttribute attribute, ASTCDType astcdClass) {
@@ -254,7 +255,7 @@ public class Syn2SemDiffHelper {
     this.matchedInterfaces = matchedInterfaces;
   }
 
-  public void setMatchingStrategies(List<MatchingStrategy> matchingStrategies) {
+  public void setMatchingStrategies(List<MatchingType> matchingStrategies) {
     this.matchingStrategies = matchingStrategies;
   }
 
@@ -2322,7 +2323,7 @@ public class Syn2SemDiffHelper {
           foundMatch = true;
           break;
         } else if ((matchingStrategies.isEmpty()
-                || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING))
+                || matchingStrategies.contains(MatchingType.SOURCE_TARGET_MATCHING))
             && matcher.isMatched(
                 assocStruct.getUnmodifiedAssoc(),
                 assocStructTgt.getUnmodifiedAssoc())) { // the given pair is a CDAssocDiff
@@ -2398,7 +2399,7 @@ public class Syn2SemDiffHelper {
           foundMatch = true;
           break;
         } else if ((matchingStrategies.isEmpty()
-                || matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING))
+                || matchingStrategies.contains(MatchingType.SOURCE_TARGET_MATCHING))
             && matcher.isMatched(
                 assocStructSrc.getUnmodifiedAssoc(), assocStruct.getUnmodifiedAssoc())) {
           foundMatch = true;

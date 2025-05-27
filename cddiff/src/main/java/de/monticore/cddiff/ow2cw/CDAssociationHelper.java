@@ -5,10 +5,15 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CDAssociationHelper {
 
@@ -271,5 +276,19 @@ public class CDAssociationHelper {
 
   public static boolean matchRoleNames(ASTCDAssocSide side1, ASTCDAssocSide side2) {
     return CDDiffUtil.inferRole(side1).equals(CDDiffUtil.inferRole(side2));
+  }
+
+  public static ASTCDType getCDTypeSymbol(ASTCDAssocSide assoc) {
+    Optional<TypeSymbol> typeSymbol = assoc.getSymbol().getEnclosingScope()
+      .resolveType(assoc.getSymbol().getType().getTypeInfo().getName());
+    if (typeSymbol.isPresent() && typeSymbol.get().getAstNode().isPresentSymbol()
+        && typeSymbol.get().getAstNode() instanceof ASTCDType) {
+      return (ASTCDType) typeSymbol.get().getAstNode();
+    }
+    return null;
+  }
+
+  public static Set<ASTCDAssociation> getAssociations(ASTCDType type) {
+    return type.getCDRoleList().stream().map(r -> r.getSymbol().getAssoc().getAssociation().getAstNode()).collect(Collectors.toSet());
   }
 }

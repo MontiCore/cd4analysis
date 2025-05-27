@@ -128,9 +128,9 @@ public class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
 
     CompTypeIncStrategy typeIncStrategy = new CompTypeIncStrategy(refCD, mapping);
     typeIncStrategy.addIncStrategy(new STTypeIncStrategy(refCD, mapping));
-    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD, mapping));
+    typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(refCD));
 
-    CompAssocIncStrategy assocIncStrategy = new CompAssocIncStrategy(refCD, mapping);
+    CompAssocIncStrategy assocIncStrategy = new CompAssocIncStrategy();
     assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(refCD, mapping));
     assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(refCD, mapping));
     assocIncStrategy.addIncStrategy(

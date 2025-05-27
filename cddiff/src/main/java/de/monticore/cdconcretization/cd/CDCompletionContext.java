@@ -7,7 +7,8 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.ScopedIncarnationBindings;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IScope;
@@ -47,20 +48,20 @@ public interface CDCompletionContext {
    * @return the incarnation strategy that can be used to find incarnations of types in the current
    *     context.
    */
-  MatchingStrategy<ASTCDType> getTypeIncStrategy();
+  ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategy();
 
   /**
    * The same type incarnation strategy as {@link #getTypeIncStrategy()} but if the {@link
    * CDConfParameter#INHERITANCE} parameter is present, this strategy will also match concrete types
    * if one of their subtypes is an incarnation of the reference type.
    */
-  MatchingStrategy<ASTCDType> getTypeIncStrategyMatchingSubTypes();
+  BooleanMatchingStrategy<ASTCDType> getTypeIncStrategyMatchingSubTypes();
 
   /**
    * @return the incarnation strategy that can be used to find incarnations of associations in the
    *     current context.
    */
-  MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy();
+  ExternalCandidatesMatchingStrategy<ASTCDAssociation> getAssociationIncStrategy();
 
   /**
    * Creates an attribute matching strategy that matches the attributes of a specific concrete type
@@ -75,7 +76,7 @@ public interface CDCompletionContext {
    * @return the matching strategy that can be used to find incarnations in context of the given
    *     type.
    */
-  MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
+  BooleanMatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
       ASTCDType concreteType, ASTCDType referenceType);
 
   /**

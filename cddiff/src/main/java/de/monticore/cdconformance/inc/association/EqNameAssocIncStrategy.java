@@ -2,11 +2,12 @@ package de.monticore.cdconformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
-import java.util.List;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EqNameAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
+public class EqNameAssocIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
 
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
@@ -17,10 +18,10 @@ public class EqNameAssocIncStrategy implements MatchingStrategy<ASTCDAssociation
   }
 
   @Override
-  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
+  public Set<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
     return refCD.getCDDefinition().getCDAssociationsList().stream()
         .filter(assoc -> isMatched(concrete, assoc))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   @Override

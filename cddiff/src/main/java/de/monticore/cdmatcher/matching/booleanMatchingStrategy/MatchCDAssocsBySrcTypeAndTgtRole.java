@@ -1,4 +1,4 @@
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.matching.booleanMatchingStrategy;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -6,20 +6,19 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MatchCDAssocsBySrcTypeAndTgtRole implements MatchingStrategy<ASTCDAssociation> {
+public class MatchCDAssocsBySrcTypeAndTgtRole implements ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
 
-  protected final MatchingStrategy<ASTCDType> typeMatcher;
+  protected final BooleanMatchingStrategy<ASTCDType> typeMatcher;
   protected final ASTCDCompilationUnit srcCD;
   protected final ASTCDCompilationUnit tgtCD;
 
   public MatchCDAssocsBySrcTypeAndTgtRole(
-      MatchingStrategy<ASTCDType> typeMatcher,
+      BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
@@ -28,10 +27,10 @@ public class MatchCDAssocsBySrcTypeAndTgtRole implements MatchingStrategy<ASTCDA
   }
 
   @Override
-  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
+  public Set<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream()
         .filter(assoc -> isMatched(srcElem, assoc))
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   /**

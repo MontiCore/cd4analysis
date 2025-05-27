@@ -2,41 +2,37 @@ package de.monticore.cdconformance.inc.type;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
-import java.util.ArrayList;
-import java.util.List;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 
-public class CompTypeIncStrategy implements MatchingStrategy<ASTCDType> {
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class CompTypeIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
 
-  List<MatchingStrategy<ASTCDType>> incStrategies = new ArrayList<>();
+  List<ExternalCandidatesMatchingStrategy<ASTCDType>> incStrategies = new ArrayList<>();
 
   public CompTypeIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
     this.mapping = mapping;
   }
 
-  public void addIncStrategy(MatchingStrategy<ASTCDType> strategy) {
+  public void addIncStrategy(ExternalCandidatesMatchingStrategy<ASTCDType> strategy) {
     incStrategies.add(strategy);
   }
 
   @Override
-  public List<ASTCDType> getMatchedElements(ASTCDType concrete) {
-    List<ASTCDType> refElements = new ArrayList<>();
-
-    for (MatchingStrategy<ASTCDType> strategy : incStrategies) {
-      refElements.addAll(strategy.getMatchedElements(concrete));
-      if (!refElements.isEmpty()) {
-        return refElements;
-      }
-    }
-
-    return refElements;
+  public Set<ASTCDType> getMatchedElements(ASTCDType concrete) {
+    return incStrategies.stream()
+      .map(strategy -> strategy.getMatchedElements(concrete))
+      .collect(HashSet::new, Set::addAll, Set::addAll);
   }
 
   @Override
   public boolean isMatched(ASTCDType concrete, ASTCDType ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
   }
 }

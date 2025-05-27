@@ -1,42 +1,30 @@
 package de.monticore.cdconformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class CompAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
-  protected ASTCDCompilationUnit refCD;
-  protected String mapping;
+public class CompAssocIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
 
-  List<MatchingStrategy<ASTCDAssociation>> incStrategies = new ArrayList<>();
+  List<ExternalCandidatesMatchingStrategy<ASTCDAssociation>> incStrategies = new ArrayList<>();
 
-  public CompAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
-    this.refCD = refCD;
-    this.mapping = mapping;
-  }
-
-  public void addIncStrategy(MatchingStrategy<ASTCDAssociation> strategy) {
+  public void addIncStrategy(ExternalCandidatesMatchingStrategy<ASTCDAssociation> strategy) {
     incStrategies.add(strategy);
   }
 
   @Override
-  public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
-    List<ASTCDAssociation> refElements = new ArrayList<>();
-
-    for (MatchingStrategy<ASTCDAssociation> strategy : incStrategies) {
-      refElements.addAll(strategy.getMatchedElements(concrete));
-      if (!refElements.isEmpty()) {
-        return refElements;
-      }
-    }
-
-    return refElements;
+  public Set<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
+    return incStrategies.stream()
+      .map(strategy -> strategy.getMatchedElements(concrete))
+      .collect(HashSet::new, Set::addAll, Set::addAll);
   }
 
   @Override
   public boolean isMatched(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
   }
 }

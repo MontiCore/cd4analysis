@@ -7,7 +7,8 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.CDAttributeChecker;
 import de.monticore.cdconformance.conf.ICDMethodChecker;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,8 +19,8 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
       ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker,
       ICDMethodChecker methodChecker,
-      MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc) {
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeInc,
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc) {
     super(conCD, refCD, attributeChecker, methodChecker, typeInc, assocInc);
   }
 

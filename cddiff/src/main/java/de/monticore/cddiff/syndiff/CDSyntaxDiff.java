@@ -53,7 +53,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
 
   protected CDSynDiffMatches matches;
   protected Syn2SemDiffHelper helper;
-  private final List<MatchingStrategy> matchingStrategies;
+  private final List<MatchingType> matchingStrategies;
 
   public CDSyntaxDiff(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this(srcCD, tgtCD, List.of()); // Use all matching strategies
@@ -62,7 +62,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public CDSyntaxDiff(
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD,
-      List<MatchingStrategy> matchingStrategies) {
+      List<MatchingType> matchingStrategies) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
     CDDiffUtil.refreshSymbolTable(srcCD);
@@ -70,9 +70,9 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
 
     this.matchingStrategies = matchingStrategies;
     boolean structureMatch =
-        matchingStrategies.contains(MatchingStrategy.STRUCTURE_TYPE_MATCHING)
+        matchingStrategies.contains(MatchingType.SUPER_TYPE_MATCHING)
             || matchingStrategies.isEmpty();
-    this.matches = new CDSynDiffMatches(this.srcCD, this.tgtCD, structureMatch);
+    this.matches = new CDSynDiffMatches(this.srcCD, this.tgtCD, structureMatch, 5, 0.5);
 
     helper = new Syn2SemDiffHelper(matches); // Don't change the order of the calls!
     helper.setNotInstClassesSrc(new HashSet<>());
@@ -494,7 +494,6 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
       }
     }
     boolean isContained = false;
-    Optional<ASTCDType> matched = helper.findMatchedTypeTgt(astcdClass);
 
     for (AssocStruct newAssocs : helper.getSrcMap().get(astcdClass)) {
       for (AssocStruct srcStruct :
@@ -807,7 +806,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public List<Pair<ASTCDAssociation, List<ASTCDType>>> addedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDType>>> associationList = new ArrayList<>();
     if (!matchingStrategies.isEmpty()
-        && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+        && !matchingStrategies.contains(MatchingType.SOURCE_TARGET_MATCHING)) {
       return associationList;
     }
     for (ASTCDAssociation association : addedAssocs) {
@@ -824,7 +823,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public List<Pair<ASTCDAssociation, List<ASTCDType>>> deletedAssocList() {
     List<Pair<ASTCDAssociation, List<ASTCDType>>> list = new ArrayList<>();
     if (!matchingStrategies.isEmpty()
-        && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+        && !matchingStrategies.contains(MatchingType.SOURCE_TARGET_MATCHING)) {
       return list;
     }
     for (ASTCDAssociation association : deletedAssocs) {
@@ -1098,7 +1097,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   @Override
   public List<AssocMatching> getAssocDiffs() {
     if (!matchingStrategies.isEmpty()
-        && !matchingStrategies.contains(MatchingStrategy.SOURCE_TARGET_MATCHING)) {
+        && !matchingStrategies.contains(MatchingType.SOURCE_TARGET_MATCHING)) {
       return List.of();
     }
     List<Pair<ASTCDClass, List<AssocStruct>>> srcAssocExistsTgtNot = srcAssocExistsTgtNot();

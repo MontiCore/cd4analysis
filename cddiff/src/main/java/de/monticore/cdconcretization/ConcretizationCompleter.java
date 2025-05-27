@@ -29,8 +29,9 @@ import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
-import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.MatchCDTypesToSubTypes;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IScope;
@@ -199,7 +200,7 @@ public class ConcretizationCompleter {
       this.conformanceParams = conformanceParams;
 
       typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
-      assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
+      assocIncStrategy = new CompAssocIncStrategy();
 
       /*
        * We configure the matching strategies depending on the conformance checker parameter as we
@@ -210,7 +211,7 @@ public class ConcretizationCompleter {
         assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
       }
       if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
+        typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD));
         assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       }
 
@@ -303,12 +304,12 @@ public class ConcretizationCompleter {
     }
 
     @Override
-    public MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
+    public ExternalCandidatesMatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
       return assocIncStrategy;
     }
 
     @Override
-    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
+    public BooleanMatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
         ASTCDType concreteType, ASTCDType referenceType) {
       CompAttributeChecker attributeIncStrategy =
           new CompAttributeChecker(mapping, underspecifiedPlaceholderTypeName, typeIncStrategy);
@@ -380,7 +381,7 @@ public class ConcretizationCompleter {
         return getTypeIncarnations(scope, attributeDeclaringType).stream()
             .flatMap(
                 (cAttributeDeclaringType) -> {
-                  MatchingStrategy<ASTCDAttribute> attributeIncStrategy =
+                  BooleanMatchingStrategy<ASTCDAttribute> attributeIncStrategy =
                       createAttributeIncStrategy(cAttributeDeclaringType, attributeDeclaringType);
                   return cAttributeDeclaringType.getCDAttributeList().stream()
                       .filter(

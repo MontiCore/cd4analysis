@@ -3,13 +3,13 @@ package de.monticore.cdconformance.inc.association;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
-import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.matching.booleanMatchingStrategy.MatchCDAssocsBySrcTypeAndTgtRole;
 
 public class RolePrefixInNavDirIncStrategy extends MatchCDAssocsBySrcTypeAndTgtRole {
 
   public RolePrefixInNavDirIncStrategy(
-      MatchingStrategy<ASTCDType> typeMatcher,
+      BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);

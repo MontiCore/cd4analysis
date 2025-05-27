@@ -36,14 +36,14 @@ public class BuildMappingTest extends ConfAbstractTest {
   public void TestTypeMap() {
 
     ASTCDType account = getType("Account", conCD);
-    List<ASTCDType> refTypes = checker.getRefElements(account);
+    Set<ASTCDType> refTypes = checker.getRefElements(account);
     Assertions.assertEquals(1, refTypes.size());
-    Assertions.assertEquals("Account", refTypes.get(0).getName());
+    Assertions.assertEquals("Account", refTypes.stream().findFirst().get().getName());
 
     ASTCDType bAccount = getType("BankAccount", conCD);
     refTypes = checker.getRefElements(bAccount);
     Assertions.assertEquals(1, refTypes.size());
-    Assertions.assertEquals("Account", refTypes.get(0).getName());
+    Assertions.assertEquals("Account", refTypes.stream().findFirst().get().getName());
 
     ASTCDType deposit = getType("Deposit", conCD);
     refTypes = checker.getRefElements(deposit);
@@ -53,9 +53,9 @@ public class BuildMappingTest extends ConfAbstractTest {
   @Test
   public void TestAssociationMap() {
     ASTCDAssociation hasItems = getAssociation("hasItems", conCD);
-    List<ASTCDAssociation> refAssoc = checker.getRefElements(hasItems);
+    Set<ASTCDAssociation> refAssoc = checker.getRefElements(hasItems);
     Assertions.assertEquals(1, refAssoc.size());
-    Assertions.assertEquals("hasItems", refAssoc.get(0).getName());
+    Assertions.assertEquals("hasItems", refAssoc.stream().findFirst().get().getName());
   }
 
   @Test

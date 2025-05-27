@@ -1,12 +1,12 @@
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.matching.booleanMatchingStrategy;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import de.monticore.cdmatcher.matching.MatchingStrategy;
 import org.antlr.v4.runtime.misc.MultiMap;
 
-public class CachedMultiMatches<T> implements MatchingStrategy<T> {
+public class CachedMultiMatches<T> implements ExternalCandidatesMatchingStrategy<T> {
   protected MultiMap<T, T> matches;
 
   public CachedMultiMatches(MultiMap<T, T> matches) {
@@ -15,11 +15,11 @@ public class CachedMultiMatches<T> implements MatchingStrategy<T> {
   }
 
   @Override
-  public List<T> getMatchedElements(T srcElem) {
+  public Set<T> getMatchedElements(T srcElem) {
     if (!matches.containsKey(srcElem)) {
       matches.put(srcElem, new ArrayList<>());
     }
-    return matches.get(srcElem);
+    return new HashSet<>(matches.get(srcElem));
   }
 
   @Override
