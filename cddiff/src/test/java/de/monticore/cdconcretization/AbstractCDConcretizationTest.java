@@ -12,6 +12,7 @@ import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,8 @@ public abstract class AbstractCDConcretizationTest {
 
   protected ASTCDCompilationUnit conCD;
 
+  protected Set<CDConfParameter> confParameters;
+
   @BeforeAll
   public static void setup() {
     Log.init();
@@ -50,6 +53,7 @@ public abstract class AbstractCDConcretizationTest {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     UnderspecifiedPlaceholderType.addPlaceholderType(CD4CodeMill.globalScope());
+    confParameters = new HashSet<>(DEFAULT_CONFORMANCE_PARAMS);
   }
 
   /***
@@ -90,8 +94,7 @@ public abstract class AbstractCDConcretizationTest {
     }
     assertNoFindings("Findings while concretizing CD");
     assertTrue(
-        new CDConformanceChecker(DEFAULT_CONFORMANCE_PARAMS)
-            .checkConformance(conCD, refCD, Set.of("ref")));
+        new CDConformanceChecker(confParameters).checkConformance(conCD, refCD, Set.of("ref")));
   }
 
   protected void testConcretizedConformsToRefAndExpectedOut(String conc, String ref, String out) {
@@ -117,7 +120,7 @@ public abstract class AbstractCDConcretizationTest {
   }
 
   protected void parseAndConcretize(String conc, String ref) throws CompletionException {
-    parseAndConcretize(new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS), conc, ref);
+    parseAndConcretize(new ConcretizationCompleter("ref", confParameters), conc, ref);
   }
 
   protected void parseAndConcretize(ConcretizationCompleter completer, String conc, String ref)

@@ -1,0 +1,5 @@
+classdiagram ForEachTypeSameReturnTypeConc {
+  <<ref="Builder">>  class EmployeeBuilder;
+  <<ref="Builder">>  class DepartmentBuilder;
+  <<ref="Builder">>  class CompanyBuilder;
+}

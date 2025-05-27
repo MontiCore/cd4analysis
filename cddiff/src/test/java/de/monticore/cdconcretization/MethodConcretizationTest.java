@@ -2,6 +2,7 @@ package de.monticore.cdconcretization;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import de.monticore.cdconformance.CDConfParameter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -120,7 +121,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
         "methods/underspecified/ParameterTypeUnderspecifiedIncarnatedOut.cd");
   }
 
-  // --- ForEach ---
+  // --- ForEach: attribute parameter element ---
 
   @Test
   void testMethodForEachAttribute() {
@@ -184,5 +185,41 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
         "methods/forEach/ForEachAttributeSameReturnTypeClassMIConc.cd",
         "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
         "methods/forEach/ForEachAttributeSameReturnTypeClassMIOut.cd");
+  }
+
+  // --- ForEach: type parameter element ---
+
+  @Test
+  void testMethodForEachTypeSameReturnType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeOut.cd");
+  }
+
+  @Test
+  void testMethodForEachTypeSameReturnTypeNoNameMatch() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeNoNameMatchRef.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeNoNameMatchOut.cd");
+  }
+
+  @Test
+  void testMethodForEachTypeSameParameterType() {
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeRef.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeOut.cd");
+  }
+
+  @Test
+  void testMethodForEachTypeSameParameterTypeNoNameMatch() {
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeNoNameMatchRef.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeNoNameMatchOut.cd");
   }
 }
