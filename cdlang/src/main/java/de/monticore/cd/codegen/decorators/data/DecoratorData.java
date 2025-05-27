@@ -9,6 +9,7 @@ import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd.codegen.decorators.matcher.MatcherData;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -137,6 +138,8 @@ public class DecoratorData {
       result = matchCDDef((ASTCDDefinition) node, matcherData);
     } else if (node instanceof ASTCDCompilationUnit) {
       result = matchCDCU((ASTCDCompilationUnit) node, matcherData);
+    } else if (node instanceof ASTCDMethod) {
+      result = matchCDMethod((ASTCDMethod) node, matcherData);
     } else {
       Log.error(
           INTERNAL_ERROR_CODE
@@ -144,7 +147,7 @@ public class DecoratorData {
               + node.getClass().getName(),
           node.get_SourcePositionStart());
       throw new IllegalStateException(
-          "Unable add to parent of unknown type " + node.getClass().getName());
+          "Unable find parent of unknown type " + node.getClass().getName());
     }
 
     if (result != MatchResult.DEFAULT) return result;
@@ -177,6 +180,24 @@ public class DecoratorData {
   }
 
   protected MatchResult matchCDAttribute(ASTCDAttribute node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT) return r;
+      }
+    }
+
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT) return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT) return r;
+    }
+
+    return MatchResult.DEFAULT;
+  }
+
+  protected MatchResult matchCDMethod(ASTCDMethod node, MatcherData matcherData) {
     if (node.getModifier().isPresentStereotype()) {
       for (var s : node.getModifier().getStereotype().getValuesList()) {
         var r = matchStereo(s, matcherData);

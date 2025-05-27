@@ -13,6 +13,8 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.umlmodifier._ast.ASTModifier;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -98,12 +100,19 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
                                 ArrayList.class.getName()))));
   }
 
+  protected ASTModifier createModifier(ASTModifier original) {
+    // Turn the modifier of a class into the modifier of its constructor
+    var ret = original.deepClone();
+    ret.setAbstract(false); // constructors may not be abstract!
+    return ret;
+  }
+
   protected List<ASTCDConstructor> getOrCreateDecConstructors(ASTCDClass decoratedClazz) {
     List<ASTCDConstructor> constructors = new ArrayList<>(decoratedClazz.getCDConstructorList());
     if (constructors.isEmpty()) {
       var c =
           CDConstructorFacade.getInstance()
-              .createDefaultConstructor(decoratedClazz.getModifier().deepClone(), decoratedClazz);
+              .createDefaultConstructor(createModifier(decoratedClazz.getModifier()), decoratedClazz);
       addToClass(decoratedClazz, c);
       constructors.add(c);
     }

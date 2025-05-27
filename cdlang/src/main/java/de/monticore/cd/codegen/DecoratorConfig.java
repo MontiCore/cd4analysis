@@ -55,6 +55,10 @@ public class DecoratorConfig {
     return this.withDecorator(new NavigableSetterDecorator());
   }
 
+  public ChainableGenSetup withAbstractMethodSignatures() {
+    return this.withDecorator(new AbstractMethodDecorator());
+  }
+
   public ChainableGenSetup withBuilders() {
     return this.withDecorator(new BuilderDecorator());
   }
