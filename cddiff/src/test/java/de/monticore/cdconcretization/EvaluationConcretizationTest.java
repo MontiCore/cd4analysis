@@ -1,16 +1,15 @@
 package de.monticore.cdconcretization;
 
+import de.monticore.cdconformance.CDConfParameter;
 import org.junit.jupiter.api.Test;
 
 class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testBuilderAndMillPattern() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-
-    testConcretizedEqualsExpectedOut(
-        completer,
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
         "evaluation/builder/DataModelConc.cd",
         "evaluation/builder/BuilderAndMillRef.cd",
         "evaluation/builder/BuilderAndMillOut.cd");
@@ -26,6 +25,8 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testSetter() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "evaluation/getter-setter/DataModelConc.cd",
         "evaluation/getter-setter/SetterRef.cd",

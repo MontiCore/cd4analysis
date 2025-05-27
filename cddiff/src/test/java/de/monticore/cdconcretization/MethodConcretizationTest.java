@@ -125,11 +125,9 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testMethodForEachAttribute() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    completer.setCheckConformance(false);
-    testConcretizedEqualsExpectedOut(
-        completer,
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachAttributeConc.cd",
         "methods/forEach/ForEachAttributeRef.cd",
         "methods/forEach/ForEachAttributeOut.cd");
@@ -137,11 +135,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testMethodForEachAttributeDifferentReturnType() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    completer.setCheckConformance(false);
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachAttributeDifferentReturnTypeConc.cd",
         "methods/forEach/ForEachAttributeDifferentReturnTypeRef.cd",
         "methods/forEach/ForEachAttributeDifferentReturnTypeOut.cd");
@@ -153,11 +147,9 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
    */
   @Test
   void testMethodForEachAttributeMultipleParameters() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    completer.setCheckConformance(false);
-    testConcretizedEqualsExpectedOut(
-        completer,
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachAttributeMultipleParametersConc.cd",
         "methods/forEach/ForEachAttributeMultipleParametersRef.cd",
         "methods/forEach/ForEachAttributeMultipleParametersOut.cd");
@@ -165,11 +157,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testMethodForEachAttributeSameReturnType() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    completer.setCheckConformance(false);
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachAttributeSameReturnTypeConc.cd",
         "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
         "methods/forEach/ForEachAttributeSameReturnTypeOut.cd");
@@ -177,11 +165,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testMethodForEachAttributeSameReturnTypeClassMI() {
-    ConcretizationCompleter completer =
-        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
-    completer.setCheckConformance(false);
-    testConcretizedEqualsExpectedOut(
-        completer,
+    testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachAttributeSameReturnTypeClassMIConc.cd",
         "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
         "methods/forEach/ForEachAttributeSameReturnTypeClassMIOut.cd");
@@ -207,6 +191,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testMethodForEachTypeSameParameterType() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
@@ -216,6 +201,7 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
 
   @Test
   void testMethodForEachTypeSameParameterTypeNoNameMatch() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut(
         "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
