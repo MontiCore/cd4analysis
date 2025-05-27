@@ -8,7 +8,6 @@ import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.NameUtil;
@@ -104,10 +103,7 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
     }
 
     ASTCDType rAttributeType = (ASTCDType) rAttributeTypeOpt.get();
-    Set<ASTCDType> typeIncarnations =
-        ConcretizationHelper.getCDTypes(context.getConcreteCD()).stream()
-            .filter(type -> context.getTypeIncStrategy().isMatched(type, rAttributeType))
-            .collect(Collectors.toSet());
+    Set<ASTCDType> typeIncarnations = context.getTypeIncarnations(rAttributeType);
     if (typeIncarnations.isEmpty()) {
       // if we do not have any incarnations, we can just use the type as is
       return Collections.singletonList(refMCType);

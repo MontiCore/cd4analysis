@@ -119,4 +119,70 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
         "methods/underspecified/ParameterTypeUnderspecifiedRef.cd",
         "methods/underspecified/ParameterTypeUnderspecifiedIncarnatedOut.cd");
   }
+
+  // --- ForEach ---
+
+  @Test
+  void testMethodForEachAttribute() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.setCheckConformance(false);
+    testConcretizedEqualsExpectedOut(
+        completer,
+        "methods/forEach/ForEachAttributeConc.cd",
+        "methods/forEach/ForEachAttributeRef.cd",
+        "methods/forEach/ForEachAttributeOut.cd");
+  }
+
+  @Test
+  void testMethodForEachAttributeDifferentReturnType() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.setCheckConformance(false);
+    testConcretizedEqualsExpectedOut(
+        completer,
+        "methods/forEach/ForEachAttributeDifferentReturnTypeConc.cd",
+        "methods/forEach/ForEachAttributeDifferentReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeDifferentReturnTypeOut.cd");
+  }
+
+  /**
+   * Multiple parameters. One matches the name of the attribute and is therefore adapted, the other
+   * one stays the same for all incarnations.
+   */
+  @Test
+  void testMethodForEachAttributeMultipleParameters() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.setCheckConformance(false);
+    testConcretizedEqualsExpectedOut(
+        completer,
+        "methods/forEach/ForEachAttributeMultipleParametersConc.cd",
+        "methods/forEach/ForEachAttributeMultipleParametersRef.cd",
+        "methods/forEach/ForEachAttributeMultipleParametersOut.cd");
+  }
+
+  @Test
+  void testMethodForEachAttributeSameReturnType() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.setCheckConformance(false);
+    testConcretizedEqualsExpectedOut(
+        completer,
+        "methods/forEach/ForEachAttributeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeOut.cd");
+  }
+
+  @Test
+  void testMethodForEachAttributeSameReturnTypeClassMI() {
+    ConcretizationCompleter completer =
+        new ConcretizationCompleter("ref", DEFAULT_CONFORMANCE_PARAMS);
+    completer.setCheckConformance(false);
+    testConcretizedEqualsExpectedOut(
+        completer,
+        "methods/forEach/ForEachAttributeSameReturnTypeClassMIConc.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeClassMIOut.cd");
+  }
 }
