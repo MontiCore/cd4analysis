@@ -108,7 +108,8 @@ public class ObserverDecoratorTest {
    * Method: TestObserver.IOtherCObservable
    * @throws Exception when the class or method does not exist
    */
-  private void checkClassAndMethodExistence() throws Exception {
+  @Test
+  public void checkClassAndMethodExistence() throws Exception {
     //check for the existence of the interfaces
     Class<?> interfaceObservable = Class.forName("TestObserver.IOtherCObservable");
     Assertions.assertTrue(Modifier.isPublic(interfaceObservable.getModifiers()));

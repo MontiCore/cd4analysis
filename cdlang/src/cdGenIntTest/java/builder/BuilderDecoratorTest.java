@@ -19,21 +19,23 @@ public class BuilderDecoratorTest {
   @Test
   public void test() throws Exception {
     checkClassAndMethodExistence();
-    Set<B> manyBTest = Set.of(new B(), new B());
-    B optBTest = new B();
-    B oneBTest = new B();
 
-    /**
-     * Test the generated build method with all setters
-     */
     //we need to disable the fail quick mode, otherwise the test will be skipped
     // Afterward we will test for error messages
     Log.enableFailQuick(false);
     Log.clearFindings();
 
-    /**
-     * build
-     */
+    testBuild();
+    testUnsafeBuild();
+    testConstructorModificationsAndCreations();
+  }
+
+  @Test
+  public void testBuild() {
+    Set<B> manyBTest = Set.of(new B(), new B());
+    B optBTest = new B();
+    B oneBTest = new B();
+
     //build with all parameters set
     TestBuilderWithoutSetter objWithoutPojoSetters = new TestBuilderWithoutSetterBuilder()
       .setManyB(manyBTest)
@@ -220,10 +222,14 @@ public class BuilderDecoratorTest {
     Log.clearFindings();
     Assertions.assertFalse(objWithoutPojoSettersOptBNotSet.isMyBool());
     Assertions.assertEquals(1, objWithoutPojoSettersOptBNotSet.getMyInt());
+  }
 
-    /**
-     * unsafeBuild
-     */
+  @Test
+  public void testUnsafeBuild() {
+    Set<B> manyBTest = Set.of(new B(), new B());
+    B optBTest = new B();
+    B oneBTest = new B();
+
     //unsafeBuild with all parameters set
     TestBuilderWithoutSetter unsafeBuildObjWithoutPojoSetters = new TestBuilderWithoutSetterBuilder()
       .setManyB(manyBTest)
@@ -323,7 +329,7 @@ public class BuilderDecoratorTest {
       .unsafeBuild();
     Assertions.assertNull(unsafeBuildObjWithPojoSetterOneBNull.getOneB());
 
-    TestBuilderWithoutSetter unsafeBuildObjWithoutPojoSetterOneBNull =  new TestBuilderWithoutSetterBuilder()
+    TestBuilderWithoutSetter unsafeBuildObjWithoutPojoSetterOneBNull = new TestBuilderWithoutSetterBuilder()
       .setManyB(manyBTest)
       .setOneB(null)
       .setOptB(optBTest)
@@ -361,7 +367,7 @@ public class BuilderDecoratorTest {
       .unsafeBuild();
     Assertions.assertNull(unsafeBuildObjWithPojoSettersOneBNotSet.getOneB());
 
-    TestBuilderWithoutSetter  unsafeBuildObjWithoutPojoSettersOneBNotSet  = new TestBuilderWithoutSetterBuilder()
+    TestBuilderWithoutSetter unsafeBuildObjWithoutPojoSettersOneBNotSet = new TestBuilderWithoutSetterBuilder()
       .setManyB(manyBTest)
       //.setOneB(oneBTest)
       .setOptB(optBTest)
@@ -406,12 +412,15 @@ public class BuilderDecoratorTest {
     //unsafeBuild with no arguments
     TestBuilderWithoutSetter unsafeBuildEmpty = new TestBuilderWithoutSetterBuilder().unsafeBuild();
     Assertions.assertNull(unsafeBuildEmpty.getManyB());
+  }
 
-    //constructor modifications
+  @Test
+  public void testConstructorModificationsAndCreations() {
     PrivateDefaultConstructor privateDefaultConstructor = new PrivateDefaultConstructorBuilder().unsafeBuild();
     NoDefaultConstructor noDefaultConstructorBuilder = new NoDefaultConstructorBuilder().unsafeBuild();
   }
 
+  @Test
   public void checkClassAndMethodExistence() throws Exception {
     //constructor methods
     Constructor<TestBuilderWithSetterBuilder> constructorWithSetter = TestBuilderWithSetterBuilder.class.getDeclaredConstructor();

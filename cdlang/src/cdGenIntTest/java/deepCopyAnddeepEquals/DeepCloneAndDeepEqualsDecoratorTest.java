@@ -11,7 +11,7 @@ import java.util.*;
 public class DeepCloneAndDeepEqualsDecoratorTest {
 
   @Test
-  public void test() throws Exception {
+  public void test() {
     //TODO should deepEquals always be be symmetric? a=b implies b=a?
     // this is only the case when forceSameOrder is true
     // in this case we can call the method always with a.equals(b) and b.equals(a)
@@ -148,7 +148,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertFalse(deArray3.deepEquals(deArray4));
     Assertions.assertFalse(deArray3.deepEquals(deArray4, true));
     Assertions.assertTrue(deArray3.deepEquals(deArray4, false));
-    //TODO here the same problem as above
+    //TODO Nico note here that deArray1.deepEquals(deArray2) is true but deArray2.deepEquals(deArray1) is not
     Assertions.assertFalse(deArray4.deepEquals(deArray3));
     Assertions.assertFalse(deArray4.deepEquals(deArray3, true));
     Assertions.assertFalse(deArray4.deepEquals(deArray3, false));
@@ -944,14 +944,6 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertNotSame(dc11, dc12);
     Assertions.assertNotSame(dc11.my2dimSet, dc12.my2dimSet);
     Assertions.assertTrue(dc11.deepEquals(dc12));
-    //check for deepClone with zwo equal references inside the first set
-    //TODO this doesnt work as set will just compress the two elements
-    // we need to have a 3 dim set. new hashSet().add(new HashSet()).add(new HastSet()) and the add the set on the third level
-    dc11.my2dimSet = new HashSet<>();
-    dc11.my2dimSet.add(set1);
-    dc11.my2dimSet.add(set1);
-    dc12 = dc11.deepClone();
-    //Assertions.assertSame(dc12.my2dimSet.toArray()[0],dc12.my2dimSet.toArray()[1]);
     //null check
     dc11.my2dimSet = null;
     dc12 = dc11.deepClone();

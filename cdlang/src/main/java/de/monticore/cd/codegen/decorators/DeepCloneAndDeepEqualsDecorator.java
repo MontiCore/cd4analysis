@@ -1,6 +1,5 @@
 package de.monticore.cd.codegen.decorators;
 
-import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
@@ -15,28 +14,26 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
-import de.monticore.types.mcarraytypes._ast.ASTMCArrayType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 /**
- * Decorator that adds deepCopy and deepEquals methods to artifacts specified in the class diagram.<br>
- * The deepCopy method is actually two methods: <br>
+ * Decorator that adds deepClone and deepEquals methods to artifacts specified in the class diagram.<br>
+ * The deepClone method is actually two methods: <br>
  * 1. deepClone(): <br>
  *    Creates a new instance of the class and calls the deepClone method with the new instance.<br>
  *    returns a cloned instance by value.<br>
  *    <br>
  * 2. deepClone(map: Map‹Object, Object›): <br>
- *   This method is used to correctly copy with respect class diagrams which are cyclic or have
+ *   This method is used to correctly clone with respect class diagrams which are cyclic or have
  *   data structures containing multiple references to the same object. <br>
  *   To realize this, we need to pass a map of already visited objects to the deepClone method.
- *   When cloning an object we first check if the object is already in the map.<br>
+ *   When cloning an object, we first check if the object is already in the map.<br>
  *   If we encounter an object we have not seen yet, we create a new one and add it to our map.
  *   This is crucial because if that object later contains a reference to itself (either directly or indirectly),
  *   we will recognize it from our map.
@@ -84,7 +81,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     if(isInitialized) {
       return;
     }
-    //region resolve all types from the class diagram
     decoratorData.getParent(node);
     ASTNode parent = decoratorData.getParent(node).get();
     while(!(parent instanceof ASTCDDefinition)){
@@ -105,16 +101,20 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getEnums().stream().map(e-> e.getSymbol().getFullName()).collect(Collectors.toList()));
-    //endregion
     isInitialized = true;
   }
 
+  /**
+   * Only when visiting a class node, we add the deepClone and deepEquals methods to the decorated class.
+   * @param node the ASTCDClass node
+   */
   @Override
   public void visit(ASTCDClass node) {
     initClassesFromClassDiagramAsString(node);
 
     ASTCDClass decClazz = decoratorData.getAsDecorated(node);
 
+    //the numbers correspond to arguments of the deepClone and deepEquals methods
     addDeepCloneMethod(node, decClazz);
     addDeepCloneMethod1(node, decClazz);
     addDeepCloneMethod2(node, decClazz);
