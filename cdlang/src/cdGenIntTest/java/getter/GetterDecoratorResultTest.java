@@ -1,10 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package getter;
 
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -34,8 +32,8 @@ public class GetterDecoratorResultTest {
     // Ensure no getPubX() method exists
     //noinspection JavaReflectionMemberAccess
     Assertions.assertThrows(
-      java.lang.NoSuchMethodException.class,
-      () -> TestGetter.TestGetterC.class.getDeclaredMethod("getPubX"));
+        java.lang.NoSuchMethodException.class,
+        () -> TestGetter.TestGetterC.class.getDeclaredMethod("getPubX"));
 
     // Test that the CardinalityDefaultDecorator run correctly
     Assertions.assertNotNull(obj.getRoleB());

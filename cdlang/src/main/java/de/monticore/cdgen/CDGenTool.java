@@ -146,41 +146,47 @@ public class CDGenTool extends CDGeneratorTool {
 
       if (cmd.hasOption("o")) {
         // Where to load additional templates from
-        List<File> additionalTemplatePaths = cmd.hasOption("fp") ? Arrays.stream(cmd.getOptionValues("fp"))
-          .map(Paths::get)
-          .map(Path::toFile)
-          .collect(Collectors.toList()) : Collections.emptyList();
+        List<File> additionalTemplatePaths =
+            cmd.hasOption("fp")
+                ? Arrays.stream(cmd.getOptionValues("fp"))
+                    .map(Paths::get)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList())
+                : Collections.emptyList();
         // Where handwritten code can be found
-        Optional<MCPath> handcodedPath = cmd.hasOption("hwc") ? Optional.of(
-          new MCPath(Paths.get(cmd.getOptionValue("hwc"))))
-          : Optional.empty();
+        Optional<MCPath> handcodedPath =
+            cmd.hasOption("hwc")
+                ? Optional.of(new MCPath(Paths.get(cmd.getOptionValue("hwc"))))
+                : Optional.empty();
         // output directory
         String outputPath =
-          (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString() : "";
+            (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString() : "";
 
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
-        GeneratorSetup generatorSetup = newConfiguredGeneratorSetup(additionalTemplatePaths, handcodedPath, outputPath, glex);
+        GeneratorSetup generatorSetup =
+            newConfiguredGeneratorSetup(additionalTemplatePaths, handcodedPath, outputPath, glex);
 
         // Finally, invoke the decorating generator
-        decorateAndGenerate(glex,
-                            // Initialize the decorator config
-                            decoratorConfig -> initializeDecConf(glex, decoratorConfig, cmd, generatorSetup),
-                            generatorSetup,
-                            () -> {
-                              // Just before decorating:
-                              if (cmd.hasOption("sd")) {
-                                // Prepare the global scope for decorated symbol table
-                                this.initDecoratedGlobalScope(c2mc);
-                              }
-                            },
-                            decorated -> {
-                              // After each decoration, but before generation
-                              if (cmd.hasOption("sd")) {
-                                // If required, we also output the symbol table of the *decorated* AST
-                                this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
-                              }
-                            },
-                            asts);
+        decorateAndGenerate(
+            glex,
+            // Initialize the decorator config
+            decoratorConfig -> initializeDecConf(glex, decoratorConfig, cmd, generatorSetup),
+            generatorSetup,
+            () -> {
+              // Just before decorating:
+              if (cmd.hasOption("sd")) {
+                // Prepare the global scope for decorated symbol table
+                this.initDecoratedGlobalScope(c2mc);
+              }
+            },
+            decorated -> {
+              // After each decoration, but before generation
+              if (cmd.hasOption("sd")) {
+                // If required, we also output the symbol table of the *decorated* AST
+                this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
+              }
+            },
+            asts);
       }
     } catch (ParseException e) {
       CD4CodeMill.globalScope().clear();
@@ -201,7 +207,11 @@ public class CDGenTool extends CDGeneratorTool {
     }
   }
 
-  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig decSetup, CommandLine cmd, GeneratorSetup setup ) {
+  public void initializeDecConf(
+      GlobalExtensionManagement glex,
+      DecoratorConfig decSetup,
+      CommandLine cmd,
+      GeneratorSetup setup) {
     // Setup CLI config overrides
     if (cmd.hasOption("cliconfig")) {
       decSetup.withCLIConfig(Arrays.asList(cmd.getOptionValues("cliconfig")));
@@ -213,12 +223,13 @@ public class CDGenTool extends CDGeneratorTool {
     hpp.processValue(tc, configTemplateArgs);
   }
 
-  public void decorateAndGenerate(GlobalExtensionManagement glex,
-                                  Consumer<DecoratorConfig> initializeDecConf,
-                                  GeneratorSetup setup,
-                                  Runnable initDecoratedGlobalScope,
-                                  Consumer<ASTCDCompilationUnit> postDecorate,
-                                  Collection<ASTCDCompilationUnit> asts) {
+  public void decorateAndGenerate(
+      GlobalExtensionManagement glex,
+      Consumer<DecoratorConfig> initializeDecConf,
+      GeneratorSetup setup,
+      Runnable initDecoratedGlobalScope,
+      Consumer<ASTCDCompilationUnit> postDecorate,
+      Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
     CDGenerator generator = new CDGenerator(setup);
@@ -254,8 +265,7 @@ public class CDGenTool extends CDGeneratorTool {
           .get()
           .addMCImportStatement(
               CDBasisMill.mCImportStatementBuilder()
-                  .setMCQualifiedName(
-                      MCTypeFacade.getInstance().createQualifiedName("java.util"))
+                  .setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util"))
                   .setStar(true)
                   .build());
 
@@ -274,9 +284,11 @@ public class CDGenTool extends CDGeneratorTool {
     }
   }
 
-  public GeneratorSetup newConfiguredGeneratorSetup(List<File> additionalTemplatePaths,
-                                                    Optional<MCPath> handcodedPath,
-                                                    String outputPath, GlobalExtensionManagement glex) {
+  public GeneratorSetup newConfiguredGeneratorSetup(
+      List<File> additionalTemplatePaths,
+      Optional<MCPath> handcodedPath,
+      String outputPath,
+      GlobalExtensionManagement glex) {
     GeneratorSetup setup = new GeneratorSetup();
 
     setup.setAdditionalTemplatePaths(additionalTemplatePaths);
@@ -287,7 +299,7 @@ public class CDGenTool extends CDGeneratorTool {
   }
 
   public CDAssociationCreateFieldsFromAllRoles performFieldsFromRolesTrafo(
-    Collection<ASTCDCompilationUnit> asts) {
+      Collection<ASTCDCompilationUnit> asts) {
     CDAssociationCreateFieldsFromAllRoles roleTrafo =
         new CDAssociationCreateFieldsFromNavigableRoles();
     final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();

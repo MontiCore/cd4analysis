@@ -14,7 +14,6 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -112,7 +111,8 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
     if (constructors.isEmpty()) {
       var c =
           CDConstructorFacade.getInstance()
-              .createDefaultConstructor(createModifier(decoratedClazz.getModifier()), decoratedClazz);
+              .createDefaultConstructor(
+                  createModifier(decoratedClazz.getModifier()), decoratedClazz);
       addToClass(decoratedClazz, c);
       constructors.add(c);
     }

@@ -11,21 +11,19 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.LogStub;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * The setup of a @{@link DecoratorConfig} test.
- * Override the {@link #initializeDecConf(GlobalExtensionManagement, DecoratorConfig, GeneratorSetup)} method
- * and call the {@link #doTest(ASTCDCompilationUnit)} with your CD.
+ * The setup of a @{@link DecoratorConfig} test. Override the {@link
+ * #initializeDecConf(GlobalExtensionManagement, DecoratorConfig, GeneratorSetup)} method and call
+ * the {@link #doTest(ASTCDCompilationUnit)} with your CD.
  */
 public abstract class AbstractDecoratorTest {
 
@@ -47,13 +45,15 @@ public abstract class AbstractDecoratorTest {
   }
 
   /**
-   * Initialize the {@link DecoratorConfig}, e.g. using {@link DecoratorConfig#withDecorator(IDecorator)}
+   * Initialize the {@link DecoratorConfig}, e.g. using {@link
+   * DecoratorConfig#withDecorator(IDecorator)}
    *
-   * @param glex   the global extension management
+   * @param glex the global extension management
    * @param config the {@link DecoratorConfig} used for decorating the CD
-   * @param setup  the {@link GeneratorSetup} used for generating the decorated CD
+   * @param setup the {@link GeneratorSetup} used for generating the decorated CD
    */
-  public abstract void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup);
+  public abstract void initializeDecConf(
+      GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup);
 
   protected List<File> getAdditionalTemplatesPath() {
     return new ArrayList<>();
@@ -82,35 +82,39 @@ public abstract class AbstractDecoratorTest {
     tool.completeSymbolTable(cd);
 
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
-    GeneratorSetup generatorSetup = tool.newConfiguredGeneratorSetup(getAdditionalTemplatesPath(), getHandWrittenPath(),
-                                                                     this.outputDir.getAbsolutePath(), glex);
+    GeneratorSetup generatorSetup =
+        tool.newConfiguredGeneratorSetup(
+            getAdditionalTemplatesPath(),
+            getHandWrittenPath(),
+            this.outputDir.getAbsolutePath(),
+            glex);
 
     List<TestResult> results = new ArrayList<>();
 
     // Finally, invoke the decorating generator
-    tool.decorateAndGenerate(glex,
-                             // Initialize the decorator config
-                             decoratorConfig -> initializeDecConf(glex, decoratorConfig, generatorSetup),
-                             generatorSetup,
-                             () -> {
-                               // Just before decorating:
-                               // Prepare the global scope for decorated symbol table
-                               tool.initDecoratedGlobalScope(class2mc);
-                             },
-                             decorated -> {
-                               // After each decoration, but before generation
-                               // If required, we also output the symbol table of the *decorated* AST
-                               var decoratedScope = tool.createSymbolTable(decorated, true);
+    tool.decorateAndGenerate(
+        glex,
+        // Initialize the decorator config
+        decoratorConfig -> initializeDecConf(glex, decoratorConfig, generatorSetup),
+        generatorSetup,
+        () -> {
+          // Just before decorating:
+          // Prepare the global scope for decorated symbol table
+          tool.initDecoratedGlobalScope(class2mc);
+        },
+        decorated -> {
+          // After each decoration, but before generation
+          // If required, we also output the symbol table of the *decorated* AST
+          var decoratedScope = tool.createSymbolTable(decorated, true);
 
-                               // Complete the symbol-table (symbol table creation phase 2)
-                               tool.completeSymbolTable(decorated);
+          // Complete the symbol-table (symbol table creation phase 2)
+          tool.completeSymbolTable(decorated);
 
-                               results.add(new TestResult(decorated, decoratedScope));
-                             },
-                             List.of(cd));
+          results.add(new TestResult(decorated, decoratedScope));
+        },
+        List.of(cd));
 
-    System.out.println(
-      "Wrote CDGenTest results to " + outputDir.getAbsolutePath());
+    System.out.println("Wrote CDGenTest results to " + outputDir.getAbsolutePath());
 
     Assertions.assertFalse(results.isEmpty(), "Did not decorate any CD");
     return results.get(0);

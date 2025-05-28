@@ -20,19 +20,19 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
   @Test
   public void testGetter() throws Exception {
     var opt =
-      CD4CodeMill.parser()
-        .parse_String(
-          "classdiagram TestGetter {\n"
-            + " <<getter>> public class TestGetterC { \n"
-            + " boolean myBool;"
-            + " public int myInt;"
-            + " <<noGetter>> public int pubX;"
-            + " }\n"
-            + " public association TestGetterC -> (roleB) Other [*];\n"
-            + " public association TestGetterC -> (orderedRole) Other [*] {ordered};\n"
-            + " <<getter>> public class Other { \n"
-            + "}\n"
-            + "}");
+        CD4CodeMill.parser()
+            .parse_String(
+                "classdiagram TestGetter {\n"
+                    + " <<getter>> public class TestGetterC { \n"
+                    + " boolean myBool;"
+                    + " public int myInt;"
+                    + " <<noGetter>> public int pubX;"
+                    + " }\n"
+                    + " public association TestGetterC -> (roleB) Other [*];\n"
+                    + " public association TestGetterC -> (orderedRole) Other [*] {ordered};\n"
+                    + " <<getter>> public class Other { \n"
+                    + "}\n"
+                    + "}");
 
     Assertions.assertTrue(opt.isPresent());
 
@@ -42,7 +42,8 @@ public class GetterDecoratorTest extends AbstractDecoratorTest {
   }
 
   @Override
-  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+  public void initializeDecConf(
+      GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
     config.withDecorator(new GetterDecorator());
     config.configApplyMatchName(GetterDecorator.class, "getter");
     config.configIgnoreMatchName(GetterDecorator.class, "noGetter");

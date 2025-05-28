@@ -54,8 +54,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
       }
       if (!role.isPresentAssoc()) {
         // happens in case trafos before STC are skipped
-        Log.error("Assoc of role " + role.getName() + " not present",
-                  role.getSourcePosition());
+        Log.error("Assoc of role " + role.getName() + " not present", role.getSourcePosition());
         return;
       }
       if (!role.getOtherSide().isIsDefinitiveNavigable()) return;

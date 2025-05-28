@@ -8,16 +8,14 @@ import de.monticore.cd4codebasis._ast.ASTCDClass;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-
 import java.util.Stack;
 
 /**
- * Turn method signatures into abstract methods.
- * For static methods
- * TODO: We should consider if this decorator would be better suited as a transformation
+ * Turn method signatures into abstract methods. For static methods TODO: We should consider if this
+ * decorator would be better suited as a transformation
  */
 public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator.NoData>
-  implements CD4CodeBasisVisitor2 {
+    implements CD4CodeBasisVisitor2 {
 
   protected Stack<ASTCDClass> classStack = new Stack<>();
 
@@ -53,9 +51,12 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
       } else {
         // static methods can not be turned abstract:
         // instead we throw an error
-        glexOpt.ifPresent(g -> g.replaceTemplate(CD4C.getInstance().getEmptyBodyTemplate(),
-                                                 decoratorData.getAsDecorated(method),
-                                                 new TemplateHookPoint("methods.EmptyBodyThrowError")));
+        glexOpt.ifPresent(
+            g ->
+                g.replaceTemplate(
+                    CD4C.getInstance().getEmptyBodyTemplate(),
+                    decoratorData.getAsDecorated(method),
+                    new TemplateHookPoint("methods.EmptyBodyThrowError")));
       }
       // We could add the TOPTrafo.NEEDS_TOP_IDENTIFIER stereotype for improved error messages,
       // but we have to ensure quickFail is disabled during the TOPTrafo
