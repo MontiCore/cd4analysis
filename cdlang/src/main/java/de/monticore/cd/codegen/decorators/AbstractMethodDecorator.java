@@ -49,7 +49,7 @@ public class AbstractMethodDecorator extends AbstractDecorator<AbstractDecorator
         decoratorData.getAsDecorated(method).getModifier().setAbstract(true);
 
         // And also mark the parent (class) as abstract
-        classStack.peek().getModifier().setAbstract(true);
+        decoratorData.getAsDecorated(classStack.peek()).getModifier().setAbstract(true);
       } else {
         // static methods can not be turned abstract:
         // instead we throw an error
