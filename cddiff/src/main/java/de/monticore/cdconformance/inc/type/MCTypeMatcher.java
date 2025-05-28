@@ -11,10 +11,14 @@ import de.se_rwth.commons.logging.Log;
 public class MCTypeMatcher {
 
   private final String underspecifiedTypeName;
-  private final MatchingStrategy<ASTCDType> typeMatcher;
+  private MatchingStrategy<ASTCDType> typeMatcher;
 
   public MCTypeMatcher(String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
     this.underspecifiedTypeName = underspecifiedTypeName;
+    this.typeMatcher = typeMatcher;
+  }
+
+  public void setTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher) {
     this.typeMatcher = typeMatcher;
   }
 
@@ -82,6 +86,7 @@ public class MCTypeMatcher {
       CDTypeSymbol conCDType = (CDTypeSymbol) conType;
       CDTypeSymbol refCDType = (CDTypeSymbol) refType;
       if (conCDType.isPresentAstNode()) {
+        assert typeMatcher != null;
         return typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
             .anyMatch(r -> r.getSymbol().getFullName().equals(refCDType.getFullName()));
       }

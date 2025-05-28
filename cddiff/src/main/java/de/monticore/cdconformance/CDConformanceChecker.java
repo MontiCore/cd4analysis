@@ -28,7 +28,10 @@ import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.syndiff.CDSynDiffMatches;
+import de.monticore.cdmatcher.CachedMultiMatches;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
+import de.monticore.cdmatcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
@@ -38,9 +41,9 @@ import java.util.*;
 public class CDConformanceChecker {
   protected Set<CDConfParameter> params;
   protected String underspecifiedTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
-  protected CompTypeIncStrategy typeInc;
+  protected MatchingStrategy<ASTCDType> typeInc;
   protected MCTypeMatcher typeMatcher;
-  protected CompAssocIncStrategy assocInc;
+  protected MatchingStrategy<ASTCDAssociation> assocInc;
   protected CompAttributeIncStrategy attrInc;
 
   protected CompMethodIncStrategy methInc;
@@ -78,24 +81,28 @@ public class CDConformanceChecker {
 
   public boolean checkConformance(
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mapping) {
-    // init incarnation checker
-    typeInc = new CompTypeIncStrategy(referenceCD, mapping);
-    typeMatcher = new MCTypeMatcher(underspecifiedTypeName, typeInc);
 
-    assocInc = new CompAssocIncStrategy(referenceCD, mapping);
+    Set<ASTCDType> concTypes = CDDiffUtil.getAllTypesFromCD(concreteCD);
+    Set<ASTCDAssociation> concAssocs = CDDiffUtil.getAllAssocsFromCD(concreteCD);
+
+    // init incarnation checker
+    CompTypeIncStrategy compTypeInc = new CompTypeIncStrategy(referenceCD, mapping);
+    typeMatcher = new MCTypeMatcher(underspecifiedTypeName, compTypeInc);
+
+    CompAssocIncStrategy compAssocInc = new CompAssocIncStrategy(referenceCD, mapping);
     attrInc = new CompAttributeIncStrategy();
     methInc = new CompMethodIncStrategy();
 
     if (params.contains(STEREOTYPE_MAPPING)) {
-      typeInc.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
-      assocInc.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
+      compTypeInc.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
+      compAssocInc.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new STAttributeIncStrategy(mapping));
       methInc.addIncStrategy(new STMethodIncStrategy(mapping));
     }
 
     if (params.contains(NAME_MAPPING)) {
-      typeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
-      assocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
+      compTypeInc.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
+      compAssocInc.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       attrInc.addIncStrategy(new EqNameAttributeIncStrategy());
       if (params.contains(METHOD_OVERLOADING)) {
         methInc.addIncStrategy(
@@ -105,24 +112,36 @@ public class CDConformanceChecker {
       }
     }
 
+    // we compute and cache all type matches to optimize performance
+    typeInc =
+        new CachedMultiMatches<>(CDSynDiffMatches.computeMultiMatching(concTypes, compTypeInc));
+    typeMatcher.setTypeMatcher(typeInc);
+
     if (params.contains(SRC_TARGET_ASSOC_MAPPING)) {
 
       if (params.contains(INHERITANCE)) {
         CompTypeIncStrategy subTypeInc = new CompTypeIncStrategy(referenceCD, mapping);
         subTypeInc.addIncStrategy(typeInc);
-        subTypeInc.addIncStrategy(new MatchCDTypesToSubTypes(typeInc, concreteCD, referenceCD));
+        subTypeInc.addIncStrategy(
+            new CachedMultiMatches<>(
+                CDSynDiffMatches.computeMultiMatching(
+                    concTypes, new MatchCDTypesToSubTypes(typeInc, concreteCD, referenceCD))));
 
-        assocInc.addIncStrategy(
+        compAssocInc.addIncStrategy(
             new RolePrefixInNavDirIncStrategy(subTypeInc, concreteCD, referenceCD));
-        assocInc.addIncStrategy(
+        compAssocInc.addIncStrategy(
             new RolePrefixIfPresentIncStrategy(subTypeInc, concreteCD, referenceCD));
       } else {
-        assocInc.addIncStrategy(
+        compAssocInc.addIncStrategy(
             new RolePrefixInNavDirIncStrategy(typeInc, concreteCD, referenceCD));
-        assocInc.addIncStrategy(
+        compAssocInc.addIncStrategy(
             new RolePrefixIfPresentIncStrategy(typeInc, concreteCD, referenceCD));
       }
     }
+
+    // we compute and cache all association matches to optimize performance
+    assocInc =
+        new CachedMultiMatches<>(CDSynDiffMatches.computeMultiMatching(concAssocs, compAssocInc));
 
     // init Conformance Checker
     ConformanceStrategy<ASTCDCompilationUnit> cdChecker =
@@ -130,6 +149,7 @@ public class CDConformanceChecker {
 
     // check conformance
     boolean multiInc = !params.contains(NO_MULTI_INC);
+    assert typeInc != null;
     return cdChecker.checkConformance(concreteCD)
         && checkIncarnationMap(concreteCD, referenceCD, multiInc);
   }
