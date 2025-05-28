@@ -30,19 +30,20 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * The deepCopy method is actually two methods: <br>
  * 1. deepClone(): <br>
  *    Creates a new instance of the class and calls the deepClone method with the new instance.<br>
+ *    returns a cloned instance by value.<br>
  *    <br>
- * 2. deepClone(result: PojoClass, map: Map‹PojoClass, Object[2]{PojoClass,boolean}›): <br>
+ * 2. deepClone(map: Map‹Object, Object›): <br>
  *   This method is used to correctly copy with respect class diagrams which are cyclic or have
  *   data structures containing multiple references to the same object. <br>
  *   To realize this, we need to pass a map of already visited objects to the deepClone method.
- *   If an object is already in the map, we can return the already cloned object instead of cloning it again.
- *   The map is a Map‹PojoClass, Object[2]{PojoClass,boolean}› where the first element is the
- *   original object and the second element is a boolean indicating whether the object has been cloned or not.
- *   If it is set to <code>false</code>' it indicates that the cloning process for this object has started but is not yet complete
- *   (i.e., it is currently being cloned higher up in the call stack).
- *   If the boolean is <code>true</code> indicates that the object has been fully cloned.
- *   This boolean flag is crucial for correctly handling cyclic dependencies, preventing infinite loops
- *   and ensuring that an object instance is created only once, even if referenced multiple times or cyclically.
+ *   When cloning an object we first check if the object is already in the map.<br>
+ *   If we encounter an object we have not seen yet, we create a new one and add it to our map.
+ *   This is crucial because if that object later contains a reference to itself (either directly or indirectly),
+ *   we will recognize it from our map.
+ *   This prevents us from getting stuck in an endless loop trying to create the same object over and over;
+ *   instead, we just copy the existing reference found in the map<br>
+ *   The map is a Map‹Object, Object› where the key is the original object and the value is the copied object of the key.
+ *   If we do not pass the map, we would end up with a stack overflow error when trying to clone cyclic references.<br>
  *   <br>
  *   <br>
  * The deepEquals method is also three methods: <br>
@@ -131,10 +132,16 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     }
   }
 
+  /**
+   * Adds a deepClone method with the signature deepClone()
+   * @param originalClass the original class
+   * @param decoratedClass the decorated class where the method is added
+   */
   private void addDeepCloneMethod(ASTCDClass originalClass, ASTCDClass decoratedClass) {
     String packageName = originalClass.getSymbol().getPackageName();
     String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();
     ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(originalClassFullQualifiedName);
+
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
     ASTCDMethod deepCloneMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",new ArrayList<>());
 
@@ -154,21 +161,20 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();
     ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(originalClassFullQualifiedName);
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
-    ASTMCArrayType arrayType = MCTypeFacade.getInstance().createArrayType("Object",1);
-    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType, arrayType);
-    ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("map").build();
+    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType, objectType);
+
+    ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("map").build();
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
-    ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",List.of(parameter2));
+
+    ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",List.of(parameter1));
 
     decoratedClass.addCDMember(deepClone2Method);
 
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method, new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone1",originalClassQualifiedType)));
-
-
   }
 
   /**
-   * Adds a deepClone method with the signature deepClone(result: <PojoClass>, map: Map<PojoClass, PojoClass>)
+   * Adds a deepClone method with the signature deepClone(result: ‹PojoClass›, map: Map‹PojoClass, PojoClass›)
    * We need 2 parameters in the deepClone method to prevent cyclic references causing stack overflow errors and instead copy the cyclic references
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
@@ -178,12 +184,12 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();
     ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(originalClassFullQualifiedName);
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
-    ASTMCArrayType arrayType = MCTypeFacade.getInstance().createArrayType("Object",1);
+    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType, objectType);
 
-    ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType, arrayType);
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(originalClassQualifiedType).setName("result").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType).setName("map").build();
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(originalClassQualifiedType).build();
+
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), originalClassReturnType,"deepClone",List.of(parameter1,parameter2));
 
     decoratedClass.addCDMember(deepClone2Method);
@@ -193,8 +199,8 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
 
 
   /**
-   * Adds a deepEquals method with the signature deepEquals(o: <Object>)
-   * This method calls the deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean)
+   * Adds a deepEquals method with the signature deepEquals(o: ‹Object›)
+   * This method calls the deepEquals method with the signature deepEquals(o: ‹Object›, forceSameOrder: boolean)
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
    */
@@ -210,9 +216,9 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   }
 
   /**
-   * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean)
+   * Adds a deepEquals method with the signature deepEquals(o: ‹Object›, forceSameOrder: boolean)
    * to the decorated class.
-   * This class calls the deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Map<Object,Set<Object>>)
+   * This class calls the deepEquals method with the signature deepEquals(o: ‹Object›, forceSameOrder: boolean, visitedObjects: Map‹Object›,Set‹Object››)
    *
    * @param originalClass the original class
    * @param decoratedClass the decorated class where the method is added
@@ -230,7 +236,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   }
 
   /**
-   * Adds a deepEquals method with the signature deepEquals(o: <Object>, forceSameOrder: boolean, visitedObjects: Map<Object,Set<Object>>)
+   * Adds a deepEquals method with the signature deepEquals(o: ‹Object›, forceSameOrder: boolean, visitedObjects: Map‹Object,Set‹Object››)
    * We need 3 parameters in the deepEquals method:
    * Because when iterating over lists and sets we need to declare a boolean for every type and check it afterward as return false would not work
    * 1. the object to compare with
@@ -245,6 +251,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     // example: a list with ob1, obj1, obj2 and b with obj1, obj2, ob3 will result in true when forceSameOrder is false
     // as the second list contains all objects from the first list
     // my solution: internally call a.deepEquals(b) and b.deepEquals(a) and return true if both are true
+    // remark: in MontiCore deepEquals is also not symmetric
   private void addDeepEquals3Method(ASTCDClass originalClass, ASTCDClass decoratedClass) {
     String packageName = originalClass.getSymbol().getPackageName();
     String originalClassFullQualifiedName = packageName.isEmpty()? originalClass.getName(): packageName +"."+ originalClass.getName();
@@ -253,9 +260,11 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCReturnType booleanReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(CD4CodeMill.mCPrimitiveTypeBuilder().setPrimitive(1).build()).build();
     ASTMCSetType visitedObjectsSet = MCTypeFacade.getInstance().createSetTypeOf(objectType);
     ASTMCMapType visitedObjectsMapOfSet = MCTypeFacade.getInstance().createMapTypeOf(objectType,visitedObjectsSet);
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(objectType).setName("o").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(CD4CodeMill.mCPrimitiveTypeBuilder().setPrimitive(1).build()).setName("forceSameOrder").build();
     ASTCDParameter parameter3 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsMapOfSet).setName("visitedObjects").build();
+
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder().PUBLIC().build(), booleanReturnType,"deepEquals",List.of(parameter1,parameter2,parameter3));
 
     decoratedClass.addCDMember(deepEquals3Method);

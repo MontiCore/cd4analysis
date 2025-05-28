@@ -1,11 +1,8 @@
 package deepCopyAnddeepEquals;
 
 import TestDeepCloneAndDeepEquals.*;
-import com.sun.nio.sctp.Association;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -18,6 +15,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     //TODO should deepEquals always be be symmetric? a=b implies b=a?
     // this is only the case when forceSameOrder is true
     // in this case we can call the method always with a.equals(b) and b.equals(a)
+    // remark: this is not the case for deepEquals in MontiCore
     testDeepEquals();
 
     testDeepClone();
@@ -59,6 +57,7 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     testDeepCloneCompositionType();
     testDeepCloneCircularRelations();
     testDeepCloneMulipleTypesAndDimensions();
+
   }
 
   @Test
@@ -1277,6 +1276,4 @@ public class DeepCloneAndDeepEqualsDecoratorTest {
     Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0],dc25.optClassWith2DimList.get());
     Assertions.assertSame(dc25.optClassWith2DimList.get(),dc25.oneClassWith2DimList);
   }
-  //endregion
-
 }

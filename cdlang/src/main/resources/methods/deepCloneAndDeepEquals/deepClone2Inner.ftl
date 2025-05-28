@@ -1,10 +1,10 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 <#-- inner method for deepClone -->
 <#-- this method is used to clone different attributes of the pojo class -->
-<#-- its primary purpose is to enable recursive which are need when resolving Lists and Sets -->
+<#-- its primary purpose is to enable recursive which are need when resolving Lists, Sets and other data structures-->
+<#-- To ensure termination we create the result object at the very start and fill thisObject and the resultObjects in  the map -->
 ${tc.signature("mCType", "PojoClazzesAsStringList","thisObjectName", "resultObjectName")}
 <#assign CD4AnalysisTypeDispatcher = glex.getGlobalVar("cd4AnalysisTypeDispatcher")>
-<#-- create the result object at the very start and fill thisObject and the resultObjects in  the map -->
 <#assign newResultObjectName = "newResult" + mCType.hashCode()?replace(".","")?replace(",","")>
 <#-- Array type -->
 <#if (CD4AnalysisTypeDispatcher.isMCArrayTypesASTMCArrayType(mCType))>
@@ -44,10 +44,10 @@ if(${thisObjectName} == null) {
          <#assign mapAddArrayBrackets = mapAddArrayBrackets + "[i" + (j-1) + "]">
        </#if>
     </#list>
-    map.put(${thisObjectName} ${mapAddArrayBrackets}, new Object[] {${newResultObjectName + mapAddArrayBrackets}, true});
+    map.put(${thisObjectName} ${mapAddArrayBrackets},${newResultObjectName + mapAddArrayBrackets});
   </#list>
   }
-  ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+  ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
 }
 <#-- Set types -->
 <#elseif (CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(mCType))>
@@ -58,7 +58,7 @@ if(${thisObjectName} == null) {
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = new HashSet<>();
-    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+    map.put(${thisObjectName}, ${resultObjectName});
     java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
     while(${iteratorName}.hasNext()) {
       <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
@@ -68,7 +68,7 @@ if(${thisObjectName} == null) {
       ${resultObjectName}.add(${newResultObjectName});
     }
   }else{
-    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
   }
 }
 <#-- List types -->
@@ -80,7 +80,7 @@ if(${thisObjectName} == null) {
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = new ArrayList<>();
-    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+    map.put(${thisObjectName}, ${resultObjectName});
     java.util.Iterator<${innerType.printType()}> ${iteratorName} = ${thisObjectName}.iterator();
     while(${iteratorName}.hasNext()) {
       <#assign newInnerType = "newInnerType" + mCType.hashCode()?replace(".","")?replace(",","")>
@@ -90,7 +90,7 @@ if(${thisObjectName} == null) {
       ${resultObjectName}.add(${newResultObjectName});
     }
   }else{
-    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
   }
 }
 <#-- Map types -->
@@ -103,7 +103,7 @@ if(${thisObjectName} == null) {
   <#assign iteratorName = "iterator"+mCType.hashCode()?replace(".","")?replace(",","")>
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = new HashMap<>();
-    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+    map.put(${thisObjectName}, ${resultObjectName});
     java.util.Iterator<${keyType.printType()}> ${iteratorName} = ${thisObjectName}.keySet().iterator();
     while(${iteratorName}.hasNext()) {
       <#assign thisKeyName = "thisKey" + mCType.hashCode()?replace(".","")?replace(",","")>
@@ -119,7 +119,7 @@ if(${thisObjectName} == null) {
       ${resultObjectName}.put(${clonedKeyName},${clonedValueName});
     }
   }else{
-    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
   }
 }
 <#-- Optional types -->
@@ -135,23 +135,23 @@ if(${thisObjectName} == null) {
       ${innerType.printType()} ${newInnerType} = ${thisObjectName}.get();
       ${innerType.printType()} ${newResultObjectName};
       if(map.get(${newInnerType}) == null) {
-        map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+        map.put(${thisObjectName}, ${resultObjectName});
         ${includeArgs("methods.deepCloneAndDeepEquals.deepClone2Inner", innerType, PojoClazzesAsStringList, newInnerType, newResultObjectName)}
         <#-- this is needed because the optional.empty() reference is changed when filling the optional with a value->>
         <#-- Because we can not have circular references in Optionals it is ok in this case to add the optional to the list after it has been resolved -->
         ${resultObjectName} = Optional.of(${newResultObjectName});
-        map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+        map.put(${thisObjectName}, ${resultObjectName});
       }else{
-        ${newResultObjectName} = (${innerType.printType()}) map.get(${newInnerType})[0];
+        ${newResultObjectName} = (${innerType.printType()}) map.get(${newInnerType});
         ${resultObjectName} = Optional.of(${newResultObjectName});
-        map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+        map.put(${thisObjectName}, ${resultObjectName});
       }
     } else {
       ${resultObjectName} = Optional.empty();
-      map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+      map.put(${thisObjectName}, ${resultObjectName});
     }
   }else{
-    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
   }
 }
 <#-- Primitive types -->
@@ -173,7 +173,7 @@ if(${thisObjectName} == null) {
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = ${thisObjectName}.deepClone(map);
   }else{
-    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
   }
 }
 <#-- All other types -->
@@ -187,9 +187,9 @@ if(${thisObjectName} == null) {
 } else {
   if(map.get(${thisObjectName}) == null) {
     ${resultObjectName} = new String(${thisObjectName});
-    map.put(${thisObjectName}, new Object[] {${resultObjectName}, true});
+    map.put(${thisObjectName}, ${resultObjectName});
    }else{
-    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName})[0];
+    ${resultObjectName} = (${mCType.printType()}) map.get(${thisObjectName});
    }
 }
 <#else>
