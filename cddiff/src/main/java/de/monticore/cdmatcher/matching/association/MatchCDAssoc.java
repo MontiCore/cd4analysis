@@ -22,17 +22,20 @@ public class MatchCDAssoc implements MatchingStrategy<ASTCDAssociation> {
       return new MatchCDAssocByName().getScore(srcElem, tgtElem);
     }
 
+    double nameScore = new MatchCDAssocByName().getScore(srcElem, tgtElem);
+    double typeScore = -1;
+
     Double leftTypeScore = CachedMatches.getMatch(srcLeftType, tgtLeftType);
     Double rightTypeScore = CachedMatches.getMatch(srcRightType, tgtRightType);
 
-    double score = new MatchCDAssocByName().getScore(srcElem, tgtElem);
-
     if(leftTypeScore != null) {
-      score = mean(score, leftTypeScore);
+      typeScore = leftTypeScore;
     }
     if(rightTypeScore != null) {
-      score = mean(score, rightTypeScore);
+      typeScore = typeScore < 0 ? rightTypeScore : mean(typeScore, rightTypeScore);
     }
+
+    double score = typeScore < 0 ? nameScore : nameScore * 0.2 + typeScore * 0.8;
 
     CachedMatches.putMatch(srcElem, tgtElem, score);
     return score;

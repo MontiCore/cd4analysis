@@ -73,6 +73,8 @@ public class CDTypeSimilarity implements CDSimilarity<ASTCDType> {
     double unionSize = allMembers.size() + allRoles.size();
 
     if (unionSize < 1) {
+      // If both sets are empty, we can consider them similar, match only by name
+      similarity = 1;
       unionSize = 1;
     }
 
@@ -87,6 +89,6 @@ public class CDTypeSimilarity implements CDSimilarity<ASTCDType> {
       similarity++;
     }
 
-    return similarity / unionSize;
+    return similarity / (unionSize + 3);
   }
 }

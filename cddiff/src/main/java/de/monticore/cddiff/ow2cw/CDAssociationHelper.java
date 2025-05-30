@@ -4,15 +4,17 @@ package de.monticore.cddiff.ow2cw;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbolTOP;
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CDAssociationHelper {
@@ -279,8 +281,17 @@ public class CDAssociationHelper {
   }
 
   public static ASTCDType getCDTypeSymbol(ASTCDAssocSide assoc) {
-    Optional<TypeSymbol> typeSymbol = assoc.getSymbol().getEnclosingScope()
+    if(!assoc.isPresentSymbol()){
+      return null;
+    }
+    // Depending on the symbol table completion a single type for both cds may exist, in which case the type can be resolved by "name"
+    // or one type for each cd, in which case the full name "packageName.name" must be used.
+    Optional<TypeSymbol> typeSymbol = getCD4CodeArtifactScope(assoc.getSymbol().getEnclosingScope())
       .resolveType(assoc.getSymbol().getType().getTypeInfo().getName());
+    if(typeSymbol.isEmpty()) {
+      typeSymbol = getCD4CodeArtifactScope(assoc.getSymbol().getEnclosingScope())
+        .resolveType(assoc.getSymbol().getType().getTypeInfo().getFullName());
+    }
     if (typeSymbol.isPresent() && typeSymbol.get().getAstNode().isPresentSymbol()
         && typeSymbol.get().getAstNode() instanceof ASTCDType) {
       return (ASTCDType) typeSymbol.get().getAstNode();
@@ -289,6 +300,33 @@ public class CDAssociationHelper {
   }
 
   public static Set<ASTCDAssociation> getAssociations(ASTCDType type) {
-    return type.getCDRoleList().stream().map(r -> r.getSymbol().getAssoc().getAssociation().getAstNode()).collect(Collectors.toSet());
+    return getCD4CodeArtifactScope(type.getEnclosingScope()).getCDAssociationSymbols().asMap().values()
+      .stream()
+      .flatMap(Collection::stream)
+      .filter(CDAssociationSymbolTOP::isPresentAstNode)
+      .map(CDAssociationSymbolTOP::getAstNode)
+      .filter((assoc) -> typeHasAssociation(type, assoc))
+      .collect(Collectors.toSet());
+  }
+
+  private static ICD4CodeArtifactScope getCD4CodeArtifactScope(ICDBasisScope scope) {
+    if (scope instanceof ICD4CodeArtifactScope) {
+      return (ICD4CodeArtifactScope) scope;
+    } else if (scope == null) {
+      Log.error("0xCDD20: ACDType was not contained in a CD4CodeArtifactScope.");
+      return null;
+
+    }
+    else{
+      return getCD4CodeArtifactScope(scope.getEnclosingScope());
+    }
+  }
+
+  private static boolean typeHasAssociation(ASTCDType type, ASTCDAssociation assoc) {
+    if(!type.isPresentSymbol()){
+      return false;
+    }
+    return assoc.getLeftQualifiedName().getQName().equals(type.getSymbol().getInternalQualifiedName()) && (assoc.getCDAssocDir().isDefinitiveNavigableRight())
+        || assoc.getRightQualifiedName().getQName().equals(type.getSymbol().getInternalQualifiedName()) && (assoc.getCDAssocDir().isDefinitiveNavigableLeft());
   }
 }

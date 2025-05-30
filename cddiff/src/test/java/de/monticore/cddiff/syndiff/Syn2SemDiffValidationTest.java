@@ -89,6 +89,10 @@ public class Syn2SemDiffValidationTest {
       Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
 
+      for (ASTODArtifact od : witnesses) {
+        System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      }
+
       Assertions.assertTrue(witnesses.isEmpty());
 
     } catch (IOException e) {
@@ -110,6 +114,10 @@ public class Syn2SemDiffValidationTest {
 
       Syn2SemDiff syn2semdiff = new Syn2SemDiff(cd1, cd2);
       List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
+
+      for (ASTODArtifact od : witnesses) {
+        System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      }
 
       Assertions.assertTrue(witnesses.isEmpty());
 

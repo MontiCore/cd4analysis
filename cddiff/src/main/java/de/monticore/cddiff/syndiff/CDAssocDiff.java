@@ -666,7 +666,6 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
-    Map<ASTCDType, ASTCDType> computedMatchingMapTypes = matches.getTypeMatches();
     Map<ASTCDAssociation, ASTCDAssociation> assocMatches = matches.getAssocMatches();
 
     if(assocMatches.get(srcAssoc) == null || !assocMatches.get(srcAssoc).equals(tgtAssoc)) {

@@ -1,12 +1,11 @@
 package de.monticore.cdconformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdmatcher.matching.booleanMatchingStrategy.ExternalCandidatesMatchingStrategy;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CompAssocIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
 
@@ -20,11 +19,30 @@ public class CompAssocIncStrategy implements ExternalCandidatesMatchingStrategy<
   public Set<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
     return incStrategies.stream()
       .map(strategy -> strategy.getMatchedElements(concrete))
-      .collect(HashSet::new, Set::addAll, Set::addAll);
+      .filter((set) -> !set.isEmpty())
+      .findFirst()
+      .orElseGet(HashSet::new);
   }
 
   @Override
+  public Set<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete, Set<ASTCDAssociation> refTypes) {
+    return getMatchedElements(concrete).stream()
+      .filter(refTypes::contains)
+      .collect(HashSet::new, HashSet::add, HashSet::addAll);
+  }
+
+  @Override
+  public Map<ASTCDAssociation, Double> getMatchedElements(ASTCDAssociation concrete, Set<ASTCDAssociation> refTypes, double threshold) {
+    if(threshold > 1.0)
+      return new HashMap<>();
+    return getMatchedElements(concrete).stream()
+      .map(element -> Map.entry(element, 1.0))
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
+  @Override
+  // isMatched uses getMatchedElements, to avoid conflicts all default methods have to be overridden
   public boolean isMatched(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
+    return getMatchedElements(concrete).contains(ref);
   }
 }
