@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.symboltable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,38 +17,39 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationSymbolTest extends CDAssociationTestBasis {
-
+  
   @Test
   public void testAssociationPackageNames() {
-    ICDAssociationArtifactScope artifactScope =
-        processModel("cdassociation/symboltable/SerializationCD.cd");
-
+    ICDAssociationArtifactScope artifactScope = processModel(
+        "cdassociation/symboltable/SerializationCD.cd");
+    
     final Optional<CDTypeSymbol> b = artifactScope.resolveCDType("A");
     assertTrue(b.isPresent());
-
-    final Optional<CDAssociationSymbol> assocSymbol =
-        artifactScope.resolveCDAssociation("namedAssoc");
+    
+    final Optional<CDAssociationSymbol> assocSymbol = artifactScope.resolveCDAssociation(
+        "namedAssoc");
     assertTrue(assocSymbol.isPresent());
-
+    
     assertEquals(b.get().getPackageName(), assocSymbol.get().getPackageName());
-
+    
     checkLogError();
   }
-
+  
   public ICDAssociationArtifactScope processModel(String model) {
     final ASTCDCompilationUnit astcdCompilationUnit = parseModel(model);
-
+    
     // after parse trafo
     TestCDAssociationTraverser t = TestCDAssociationMill.inheritanceTraverser();
     CDAssociationDirectCompositionTrafo trafo = new CDAssociationDirectCompositionTrafo();
     t.add4CDBasis(trafo);
     t.add4CDAssociation(trafo);
     astcdCompilationUnit.accept(t);
-
+    
     ITestCDAssociationArtifactScope artifactScope = createSymTab(astcdCompilationUnit);
     completeSymTab(astcdCompilationUnit);
-
+    
     checkLogError();
     return artifactScope;
   }
+  
 }

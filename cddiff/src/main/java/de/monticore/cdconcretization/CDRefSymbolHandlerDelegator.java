@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -19,12 +20,12 @@ import org.apache.commons.lang3.function.FailableConsumer;
  * can be of different kinds.
  */
 public class CDRefSymbolHandlerDelegator {
-
+  
   private static final String LOG_NAME = CDRefSymbolHandlerDelegator.class.getName();
-
+  
   private FailableConsumer<ASTCDType, CompletionException> typeHandler;
   private FailableConsumer<ASTCDAttribute, CompletionException> attributeHandler;
-
+  
   /**
    * Resolves a symbol and calls the appropriate handler depending on the kind of model element.
    *
@@ -33,9 +34,8 @@ public class CDRefSymbolHandlerDelegator {
    * @param sourcePosition the source position of the reference symbol. For logging purposes
    * @throws CompletionException
    */
-  public void resolveSymbol(
-      ICDBasisScope scope, String referenceSymbol, SourcePosition sourcePosition)
-      throws CompletionException {
+  public void resolveSymbol(ICDBasisScope scope, String referenceSymbol,
+      SourcePosition sourcePosition) throws CompletionException {
     boolean processed = resolveAsTypeSymbol(scope, referenceSymbol, sourcePosition);
     if (!processed) {
       processed = resolveAsAttributeSymbol(scope, referenceSymbol, sourcePosition);
@@ -43,23 +43,19 @@ public class CDRefSymbolHandlerDelegator {
     // TODO Support method, and association references
     if (!processed) {
       // TODO Rework error logging/reporting & exception usage
-      throw new CompletionException(
-          "Unsupported forEach reference referenceSymbol"
-              + referenceSymbol
-              + " at "
-              + sourcePosition);
+      throw new CompletionException("Unsupported forEach reference referenceSymbol"
+          + referenceSymbol + " at " + sourcePosition);
     }
   }
-
+  
   /**
    * Tries to resolve the given reference as a type symbol, e.g. 'Foo'.
    *
    * @return true if the reference was processed, false otherwise
    * @throws CompletionException
    */
-  protected boolean resolveAsTypeSymbol(
-      ICDBasisScope scope, String referenceSymbol, SourcePosition sourcePosition)
-      throws CompletionException {
+  protected boolean resolveAsTypeSymbol(ICDBasisScope scope, String referenceSymbol,
+      SourcePosition sourcePosition) throws CompletionException {
     Optional<TypeSymbol> typeSymbol = scope.resolveType(referenceSymbol);
     if (typeSymbol.isPresent()) {
       ASTType type = typeSymbol.get().getAstNode();
@@ -67,33 +63,28 @@ public class CDRefSymbolHandlerDelegator {
         ASTCDType referencedType = (ASTCDType) type;
         Log.debug("Resolved CDType reference: " + referencedType, LOG_NAME);
         if (typeHandler == null) {
-          throw new CompletionException(
-              "A reference to a CDType is not supported @ " + sourcePosition);
+          throw new CompletionException("A reference to a CDType is not supported @ "
+              + sourcePosition);
         }
         typeHandler.accept(referencedType);
         return true;
-      } else {
-        throw new CompletionException(
-            "Referenced type symbol "
-                + referenceSymbol
-                + " is not a CDType! (type: "
-                + type.getClass().getName()
-                + ") @ "
-                + sourcePosition);
+      }
+      else {
+        throw new CompletionException("Referenced type symbol " + referenceSymbol
+            + " is not a CDType! (type: " + type.getClass().getName() + ") @ " + sourcePosition);
       }
     }
     return false;
   }
-
+  
   /**
    * Tries to resolve the given reference as an attribute symbol, e.g. 'Foo.attr'.
    *
    * @return true if the reference was processed, false otherwise
    * @throws CompletionException
    */
-  private boolean resolveAsAttributeSymbol(
-      ICDBasisScope scope, String referenceExpr, SourcePosition sourcePosition)
-      throws CompletionException {
+  private boolean resolveAsAttributeSymbol(ICDBasisScope scope, String referenceExpr,
+      SourcePosition sourcePosition) throws CompletionException {
     Optional<FieldSymbol> fieldSymbol = scope.resolveField(referenceExpr);
     if (fieldSymbol.isPresent()) {
       ASTField field = fieldSymbol.get().getAstNode();
@@ -101,24 +92,21 @@ public class CDRefSymbolHandlerDelegator {
         ASTCDAttribute referencedAttribute = (ASTCDAttribute) field;
         Log.debug("Resolved CDAttribute reference: " + referencedAttribute, LOG_NAME);
         if (attributeHandler == null) {
-          throw new CompletionException(
-              "A reference to a CDAttribute is not supported @ " + sourcePosition);
+          throw new CompletionException("A reference to a CDAttribute is not supported @ "
+              + sourcePosition);
         }
         attributeHandler.accept(referencedAttribute);
         return true;
-      } else {
-        throw new CompletionException(
-            "Referenced field symbol "
-                + referenceExpr
-                + " is not a CDAttribute! (type: "
-                + field.getClass().getName()
-                + ") @"
-                + sourcePosition);
+      }
+      else {
+        throw new CompletionException("Referenced field symbol " + referenceExpr
+            + " is not a CDAttribute! (type: " + field.getClass().getName() + ") @"
+            + sourcePosition);
       }
     }
     return false;
   }
-
+  
   /**
    * Sets the handler to be called when a CDType reference is resolved.
    *
@@ -127,7 +115,7 @@ public class CDRefSymbolHandlerDelegator {
   public void setTypeHandler(FailableConsumer<ASTCDType, CompletionException> typeHandler) {
     this.typeHandler = typeHandler;
   }
-
+  
   /**
    * Sets the handler to be called when a CDAttribute reference is resolved.
    *
@@ -137,4 +125,5 @@ public class CDRefSymbolHandlerDelegator {
       FailableConsumer<ASTCDAttribute, CompletionException> attributeHandler) {
     this.attributeHandler = attributeHandler;
   }
+  
 }

@@ -21,19 +21,19 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class GeneralFourClassDiagrams extends BaseTest {
-
+  
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/General";
-
+  
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/four_classdiagrams/A.cd";
-
+  
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/four_classdiagrams/B.cd";
-
+  
   private static final String INPUT_MODEL_3 = INPUT_MODEL_DIR + "/four_classdiagrams/C.cd";
-
+  
   private static final String INPUT_MODEL_4 = INPUT_MODEL_DIR + "/four_classdiagrams/D.cd";
-
+  
   private static final String EXPECTED = INPUT_MODEL_DIR + "/four_classdiagrams/mergedCD.cd";
-
+  
   @Test
   public void testFourCDs() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -46,35 +46,32 @@ public class GeneralFourClassDiagrams extends BaseTest {
     try {
       MergeResult results = cdMerger.mergeCDs();
       processResult(results);
-      assertTrue(
-          parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
-              .deepEquals(expectedCD, false));
-
-    } catch (MergingException e) {
+      assertTrue(parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get())).deepEquals(
+          expectedCD, false));
+      
+    }
+    catch (MergingException e) {
       if (e.getLog().isPresent()) {
-        fail(
-            "Merge Unsuccesful "
-                + e.getMessage()
-                + "\n"
-                + e.getLog().get().toString(ErrorLevel.ERROR));
-      } else {
+        fail("Merge Unsuccesful " + e.getMessage() + "\n" + e.getLog().get().toString(
+            ErrorLevel.ERROR));
+      }
+      else {
         fail("Merge Unsuccesful " + e.getMessage());
       }
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder =
-        getConfigBuilder()
-            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
-            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
-            .withParam(MergeParameter.MERGE_HETEROGENEOUS_TYPES, MergeParameter.ON)
-            // FIXME Tool works but CoCo Fails
-            .withParam(MergeParameter.DISABLE_CONTEXT_CONDITIONS);
+    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
+        MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD").withParam(
+            MergeParameter.MERGE_HETEROGENEOUS_TYPES, MergeParameter.ON)
+        // FIXME Tool works but CoCo Fails
+        .withParam(MergeParameter.DISABLE_CONTEXT_CONDITIONS);
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
+  
 }

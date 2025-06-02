@@ -15,12 +15,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationHasSymbolTest extends CDAssociationTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationHasSymbol());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -29,12 +29,12 @@ public class CDAssociationHasSymbolTest extends CDAssociationTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationHasSymbol());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/CDAssociationHasSymbolInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/CDAssociationHasSymbolInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -42,14 +42,15 @@ public class CDAssociationHasSymbolTest extends CDAssociationTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC62"));
   }
-
+  
   protected ASTMCQualifiedName getPackage(ASTCDCompilationUnit ast) {
     if (ast.isPresentMCPackageDeclaration()) {
       return ast.getMCPackageDeclaration().getMCQualifiedName();
     }
     return MCBasicTypesMill.mCQualifiedNameBuilder().build();
   }
-
+  
   @Override
   public void after() {}
+  
 }

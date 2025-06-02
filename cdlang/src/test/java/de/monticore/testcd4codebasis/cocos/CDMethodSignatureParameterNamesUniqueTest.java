@@ -15,24 +15,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDMethodSignatureParameterNamesUniqueTest extends CD4CodeBasisTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDMethodSignatureParameterNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cd4codebasis/cocos/CDMethodSignatureParameterNamesUniqueValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4codebasis/cocos/CDMethodSignatureParameterNamesUniqueValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDMethodSignatureParameterNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cd4codebasis/cocos/CDMethodSignatureParameterNamesUniqueInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4codebasis/cocos/CDMethodSignatureParameterNamesUniqueInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -40,7 +40,8 @@ public class CDMethodSignatureParameterNamesUniqueTest extends CD4CodeBasisTestB
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC90"));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

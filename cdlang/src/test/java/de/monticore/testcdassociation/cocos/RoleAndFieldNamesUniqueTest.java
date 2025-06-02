@@ -14,12 +14,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class RoleAndFieldNamesUniqueTest extends CDAssociationTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new RoleAndFieldNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -28,12 +28,12 @@ public class RoleAndFieldNamesUniqueTest extends CDAssociationTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testFieldNameTwiceInvalid() throws IOException {
     coCoChecker.addCoCo(new RoleAndFieldNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/FieldNameTwiceInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/FieldNameTwiceInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -44,12 +44,12 @@ public class RoleAndFieldNamesUniqueTest extends CDAssociationTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xC4A28"));
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xC4A28"));
   }
-
+  
   @Test
   public void testSameFieldAndRoleNameInvalid() throws IOException {
     coCoChecker.addCoCo(new RoleAndFieldNamesUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/SameFieldAndRoleNameInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/SameFieldAndRoleNameInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -59,8 +59,9 @@ public class RoleAndFieldNamesUniqueTest extends CDAssociationTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xC4A28"));
   }
-
+  
   @AfterEach
   @Override
   public void after() {}
+  
 }

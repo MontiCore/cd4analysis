@@ -17,20 +17,19 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CD4CodeEnumConstantParameterMatchConstructorArguments
-    implements CDInterfaceAndEnumASTCDEnumCoCo {
-
+public class CD4CodeEnumConstantParameterMatchConstructorArguments implements
+    CDInterfaceAndEnumASTCDEnumCoCo {
+  
   final AbstractDerive calculator;
-
+  
   public CD4CodeEnumConstantParameterMatchConstructorArguments(AbstractDerive calculator) {
     this.calculator = calculator;
   }
-
+  
   @Override
   public void check(ASTCDEnum node) {
-    boolean hasDefaultConstructor =
-        node.getCDConstructorList().isEmpty()
-            || node.getCDConstructorList().stream().anyMatch(c -> c.isEmptyCDParameters());
+    boolean hasDefaultConstructor = node.getCDConstructorList().isEmpty() || node
+        .getCDConstructorList().stream().anyMatch(c -> c.isEmptyCDParameters());
     for (ASTCDEnumConstant enumConstant : node.getCDEnumConstantList()) {
       if (enumConstant instanceof ASTCD4CodeEnumConstant) {
         ASTCD4CodeEnumConstant cenumConstant = (ASTCD4CodeEnumConstant) enumConstant;
@@ -43,19 +42,21 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
           if (!matchConstructor(paramTypes, node.getCDConstructorList())) {
             logError(enumConstant, node.getName());
           }
-        } else if (!hasDefaultConstructor) {
+        }
+        else if (!hasDefaultConstructor) {
           logError(enumConstant, node.getName());
         }
-      } else {
+      }
+      else {
         if (!hasDefaultConstructor) {
           logError(enumConstant, node.getName());
         }
       }
     }
   }
-
-  protected boolean matchConstructor(
-      ArrayList<SymTypeExpression> paramTypes, List<ASTCDConstructor> cdConstructorList) {
+  
+  protected boolean matchConstructor(ArrayList<SymTypeExpression> paramTypes,
+      List<ASTCDConstructor> cdConstructorList) {
     for (ASTCDConstructor constructor : cdConstructorList) {
       List<VariableSymbol> formalParams = constructor.getSymbol().getParameterList();
       if (paramTypes.size() != formalParams.size()) {
@@ -73,12 +74,11 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     }
     return false;
   }
-
+  
   protected void logError(ASTCDEnumConstant enumConstant, String name) {
-    Log.error(
-        String.format(
-            "0xCDCD2: The enum constant %s uses a constructor which is incompatible with the available constructors of the enum %s.",
-            enumConstant.getName(), name),
-        enumConstant.get_SourcePositionStart());
+    Log.error(String.format(
+        "0xCDCD2: The enum constant %s uses a constructor which is incompatible with the available constructors of the enum %s.",
+        enumConstant.getName(), name), enumConstant.get_SourcePositionStart());
   }
+  
 }

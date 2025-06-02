@@ -18,25 +18,25 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
-
+  
   protected JsonNode toJson(Path cd4a_file) throws IOException {
-    final ASTCDCompilationUnit node =
-        p.parseCDCompilationUnit(cd4a_file.toAbsolutePath().toString()).get();
-
+    final ASTCDCompilationUnit node = p.parseCDCompilationUnit(cd4a_file.toAbsolutePath()
+        .toString()).get();
+    
     // create symtab
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
-
+    
     final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(cd4a_file));
     BuiltInTypes.addBuiltInTypes(globalScope);
-
+    
     new CD4AnalysisAfterParseTrafo().transform(node);
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
-
+    
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
-
+    
     // ToDo: not needed? This trafo leads to errors. Without, everything seems to be ok.
     // first add roles if they don't exist
     //    CDAssociationRoleNameTrafo associationRoleNameTrafo = new CDAssociationRoleNameTrafo();
@@ -45,7 +45,7 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
     //    traverser.setCDAssociationHandler(associationRoleNameTrafo);
     //    associationRoleNameTrafo.setTraverser(traverser);
     //    associationRoleNameTrafo.transform(node);
-
+    
     // then add roles as fields
     CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromAllRoles =
         new CDAssociationCreateFieldsFromNavigableRoles();
@@ -54,22 +54,23 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.setTraverser(traverser);
     cdAssociationCreateFieldsFromAllRoles.transform(node);
-
+    
     return CD2JsonUtil.run(node, globalScope);
   }
-
+  
   @Test
   public void cd2json_Simple() throws IOException {
     this.toJson(Paths.get(PATH, "cd4analysis/parser/Simple.cd"));
   }
-
+  
   @Test
   public void cd2json_MyLife() throws IOException {
     this.toJson(Paths.get(PATH, "cd4analysis/parser/MyLife.cd"));
   }
-
+  
   @Test
   public void cd2json_STTest() throws IOException {
     this.toJson(Paths.get(PATH, "cd4analysis/parser/STTest.cd"));
   }
+  
 }

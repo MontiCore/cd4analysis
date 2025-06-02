@@ -15,25 +15,26 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.junit.jupiter.api.Test;
 
 public class CD4CodeVisitorTest extends CD4CodeTestBasis {
-
+  
   @Test
   public void testCDElementVisitor() throws RecognitionException, IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath("cd4code/parser/MyLife2.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(
+        getFilePath("cd4code/parser/MyLife2.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
-
+    
     final ASTCDDefinition node = astcdCompilationUnit.get().getCDDefinition();
     final List<ASTCDPackage> packages = node.getCDPackagesList();
     assertEquals(2, packages.size());
-
+    
     assertEquals(5, node.getCDClassesList().size());
     assertEquals(1, node.getCDInterfacesList().size());
     assertEquals(1, node.getCDEnumsList().size());
     assertEquals(3, node.getCDAssociationsList().size());
-
-    final Optional<ASTCDPackage> entity =
-        packages.stream().filter(p -> p.getName().equals("entity")).findFirst();
+    
+    final Optional<ASTCDPackage> entity = packages.stream().filter(p -> p.getName().equals(
+        "entity")).findFirst();
     assertTrue(entity.isPresent());
     assertEquals(1, entity.get().getCDElementList().size());
   }
+  
 }

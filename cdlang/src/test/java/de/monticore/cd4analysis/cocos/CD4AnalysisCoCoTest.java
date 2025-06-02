@@ -9,25 +9,26 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 public class CD4AnalysisCoCoTest extends CD4AnalysisTestBasis {
-
+  
   @Test
   public void checkMaCoCo() throws IOException {
-    final ASTCDCompilationUnit astcdCompilationUnit =
-        parse("cd4analysis/examples/industrial_strength_models/MaCoCo.cd");
+    final ASTCDCompilationUnit astcdCompilationUnit = parse(
+        "cd4analysis/examples/industrial_strength_models/MaCoCo.cd");
     prepareST(astcdCompilationUnit);
-
+    
     coCoChecker = new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos();
     coCoChecker.checkAll(astcdCompilationUnit);
   }
-
+  
   @Test
   public void checkInviDas() throws IOException {
-    final ASTCDCompilationUnit astcdCompilationUnit =
-        parse("cd4analysis/examples/industrial_strength_models/InviDas.cd");
+    final ASTCDCompilationUnit astcdCompilationUnit = parse(
+        "cd4analysis/examples/industrial_strength_models/InviDas.cd");
     prepareST(astcdCompilationUnit);
-
+    
     assertNotNull(astcdCompilationUnit.getEnclosingScope().resolveCDType("C"));
     coCoChecker = new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos();
     coCoChecker.checkAll(astcdCompilationUnit);
   }
+  
 }

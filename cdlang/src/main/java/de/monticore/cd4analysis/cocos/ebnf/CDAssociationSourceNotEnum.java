@@ -12,7 +12,7 @@ import de.se_rwth.commons.logging.Log;
 /** Checks that type of the type-qualifier of an type-qualified association exists. */
 // TODO should an enum be allowed?
 public class CDAssociationSourceNotEnum implements CDAssociationASTCDAssociationCoCo {
-
+  
   @Override
   public void check(ASTCDAssociation node) {
     if (node.getCDAssocDir().isDefinitiveNavigableLeft()) {
@@ -22,7 +22,7 @@ public class CDAssociationSourceNotEnum implements CDAssociationASTCDAssociation
       check(node.getLeft(), node);
     }
   }
-
+  
   /**
    * Does the actual check.
    *
@@ -32,11 +32,10 @@ public class CDAssociationSourceNotEnum implements CDAssociationASTCDAssociation
   private void check(ASTCDAssocSide side, ASTCDAssociation node) {
     SymTypeExpression type = side.getSymbol().getType();
     if (type.hasTypeInfo() && CoCoHelper.isEnum(type.getTypeInfo())) {
-      Log.error(
-          String.format(
-              "0xCDC67: Association %s is invalid, because an association's source may not be an Enumeration.",
-              CDAssociationMill.prettyPrint(node, false)),
-          node.get_SourcePositionStart());
+      Log.error(String.format(
+          "0xCDC67: Association %s is invalid, because an association's source may not be an Enumeration.",
+          CDAssociationMill.prettyPrint(node, false)), node.get_SourcePositionStart());
     }
   }
+  
 }

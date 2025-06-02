@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ConstructorDecoratorTest {
-
+  
   @BeforeEach
   public void before() {
     CD4CodeMill.globalScope().clear();
@@ -23,36 +23,27 @@ public class ConstructorDecoratorTest {
     CD4CodeMill.init();
     LogStub.init();
   }
-
+  
   @Test
   public void testDecorator() throws IOException {
     CD4CodeParser parser = new CD4CodeParser();
-    final Optional<ASTCDCompilationUnit> optAST =
-        parser.parse("src/test/resources/de/monticore/cd/codegen/constructor/SimpleCD.cd");
+    final Optional<ASTCDCompilationUnit> optAST = parser.parse(
+        "src/test/resources/de/monticore/cd/codegen/constructor/SimpleCD.cd");
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
-
+    
     ConstructorDecorator decorator = new ConstructorDecorator();
-
+    
     assertEquals(2, ast.getCDDefinition().getCDClassesList().size());
     assertEquals(4, ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().size());
     assertTrue(ast.getCDDefinition().getCDClassesList().get(1).getCDConstructorList().isEmpty());
     decorator.decorate(ast);
     assertEquals(6, ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().size());
     assertEquals(1, ast.getCDDefinition().getCDClassesList().get(1).getCDMemberList().size());
-    assertEquals(
-        "x",
-        ((ASTCDConstructor)
-                (ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().get(5)))
-            .getCDParameterList()
-            .get(0)
-            .getName());
-    assertEquals(
-        "isTrue",
-        ((ASTCDConstructor)
-                (ast.getCDDefinition().getCDClassesList().get(0).getCDMemberList().get(5)))
-            .getCDParameterList()
-            .get(1)
-            .getName());
+    assertEquals("x", ((ASTCDConstructor) (ast.getCDDefinition().getCDClassesList().get(0)
+        .getCDMemberList().get(5))).getCDParameterList().get(0).getName());
+    assertEquals("isTrue", ((ASTCDConstructor) (ast.getCDDefinition().getCDClassesList().get(0)
+        .getCDMemberList().get(5))).getCDParameterList().get(1).getName());
   }
+  
 }

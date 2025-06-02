@@ -22,35 +22,33 @@ import de.monticore.odlink._ast.ASTODLink;
 import java.util.*;
 
 public class SMT2ODGenerator {
-
-  public Optional<ASTODArtifact> buildOd(
-      Set<SMTObject> objectSet, String ODName, Model model, DataWrapper dataWrapper) {
+  
+  public Optional<ASTODArtifact> buildOd(Set<SMTObject> objectSet, String ODName, Model model,
+      DataWrapper dataWrapper) {
     List<ASTODElement> elementList = new ArrayList<>();
     // add all Objects
     for (SMTObject obj : objectSet) {
       elementList.add(buildObject(obj));
     }
-
+    
     // add all links
     for (SMTLink smtLink : buildLinkSet(objectSet, model, dataWrapper)) {
       elementList.add(buildLink(smtLink));
     }
-
+    
     return Optional.of(ODHelper.buildOD(ODName, elementList));
   }
-
+  
   protected ASTODNamedObject buildObject(SMTObject obj) {
     List<ASTODAttribute> attributeList = new ArrayList<>();
     attributeList = getAllSuperInstanceAttribute(obj, attributeList);
-
-    return ODHelper.buildObject(
-        SMTHelper.buildObjectName(obj.getSmtExpr(), obj.getASTCDType().getName()),
-        obj.getASTCDType().getName(),
-        attributeList);
+    
+    return ODHelper.buildObject(SMTHelper.buildObjectName(obj.getSmtExpr(), obj.getASTCDType()
+        .getName()), obj.getASTCDType().getName(), attributeList);
   }
-
-  protected List<ASTODAttribute> getAllSuperInstanceAttribute(
-      SMTObject obj, List<ASTODAttribute> attributeList) {
+  
+  protected List<ASTODAttribute> getAllSuperInstanceAttribute(SMTObject obj,
+      List<ASTODAttribute> attributeList) {
     attributeList.addAll(buildAttributeList(obj));
     if (obj.isPresentSuperclass()) {
       getAllSuperInstanceAttribute(obj.getSuperClass(), attributeList);
@@ -60,27 +58,25 @@ public class SMT2ODGenerator {
     }
     return attributeList;
   }
-
+  
   protected ASTODLink buildLink(SMTLink smtLink) {
-    return ODHelper.buildLink(
-        buildObject(smtLink.getLeftObject()).getName(),
-        buildObject(smtLink.getRightObject()).getName(),
-        smtLink.getAssociation().getLeft().getCDRole().getName(),
+    return ODHelper.buildLink(buildObject(smtLink.getLeftObject()).getName(), buildObject(smtLink
+        .getRightObject()).getName(), smtLink.getAssociation().getLeft().getCDRole().getName(),
         smtLink.getAssociation().getRight().getCDRole().getName());
   }
-
+  
   protected ASTODAttribute buildAttribute(
       Map.Entry<ASTCDAttribute, Expr<? extends Sort>> smtAttribute) {
     String value = smtAttribute.getValue().toString();
     if (CDHelper.isDateType(smtAttribute.getKey().getMCType())) {
       value = CDHelper.buildDate(Integer.parseInt(value));
     }
-    return ODHelper.buildAttribute(
-        smtAttribute.getKey().getName(), smtAttribute.getKey().getMCType(), value);
+    return ODHelper.buildAttribute(smtAttribute.getKey().getName(), smtAttribute.getKey()
+        .getMCType(), value);
   }
-
-  protected List<LinkedSMTObject> getSuperInstanceLinks(
-      SMTObject obj, List<LinkedSMTObject> linkedObjects) {
+  
+  protected List<LinkedSMTObject> getSuperInstanceLinks(SMTObject obj,
+      List<LinkedSMTObject> linkedObjects) {
     linkedObjects.addAll(obj.getLinkedObjects());
     if (obj.isPresentSuperclass()) {
       getSuperInstanceLinks(obj.getSuperClass(), linkedObjects);
@@ -90,7 +86,7 @@ public class SMT2ODGenerator {
     }
     return linkedObjects;
   }
-
+  
   protected List<ASTODAttribute> buildAttributeList(SMTObject obj) {
     List<ASTODAttribute> attributeList = new ArrayList<>();
     for (Map.Entry<ASTCDAttribute, Expr<? extends Sort>> entry : obj.getAttributes().entrySet()) {
@@ -98,16 +94,15 @@ public class SMT2ODGenerator {
     }
     return attributeList;
   }
-
-  protected Set<SMTLink> buildLinkSet(
-      Set<SMTObject> objectMap, Model model, DataWrapper dataWrapper) {
+  
+  protected Set<SMTLink> buildLinkSet(Set<SMTObject> objectMap, Model model,
+      DataWrapper dataWrapper) {
     Set<SMTLink> links = new HashSet<>();
     // inherit links of sub instances
     for (SMTObject obj : objectMap) {
       for (LinkedSMTObject linkedObj : getSuperInstanceLinks(obj, new ArrayList<>())) {
-        if (objectMap.stream()
-                .anyMatch(o -> o.getSmtExpr().equals(linkedObj.getLinkedObject().getSmtExpr()))
-            && linkedObj.isLeft()) {
+        if (objectMap.stream().anyMatch(o -> o.getSmtExpr().equals(linkedObj.getLinkedObject()
+            .getSmtExpr())) && linkedObj.isLeft()) {
           links.add(new SMTLink(linkedObj.getLinkedObject(), obj, linkedObj.getAssociation()));
         }
       }
@@ -121,34 +116,23 @@ public class SMT2ODGenerator {
         }
       }
     }
-
+    
     return links;
   }
-
-  protected Optional<SMTLink> haveLinkedSuperInstances(
-      SMTObject leftObj, SMTObject rightObj, Model model, DataWrapper dataWrapper) {
+  
+  protected Optional<SMTLink> haveLinkedSuperInstances(SMTObject leftObj, SMTObject rightObj,
+      Model model, DataWrapper dataWrapper) {
     for (LinkedSMTObject left : getSuperInstanceLinks(leftObj, new ArrayList<>())) {
       for (LinkedSMTObject right : getSuperInstanceLinks(rightObj, new ArrayList<>())) {
-        if (left.getAssociation().equals(right.getAssociation())
-            && left.isLeft()
-            && right.isRight()) {
-          ASTCDType leftType =
-              CDHelper.getLeftType(
-                  left.getAssociation(), dataWrapper.getClassDiagram().getCDDefinition());
-          ASTCDType rightType =
-              CDHelper.getRightType(
-                  left.getAssociation(), dataWrapper.getClassDiagram().getCDDefinition());
-          if (model
-                  .evaluate(
-                      dataWrapper.evaluateLink(
-                          left.getAssociation(),
-                          leftType,
-                          rightType,
-                          left.getLinkedObject().getSmtExpr(),
-                          right.getLinkedObject().getSmtExpr()),
-                      true)
-                  .getBoolValue()
-              == Z3_lbool.Z3_L_TRUE) {
+        if (left.getAssociation().equals(right.getAssociation()) && left.isLeft() && right
+            .isRight()) {
+          ASTCDType leftType = CDHelper.getLeftType(left.getAssociation(), dataWrapper
+              .getClassDiagram().getCDDefinition());
+          ASTCDType rightType = CDHelper.getRightType(left.getAssociation(), dataWrapper
+              .getClassDiagram().getCDDefinition());
+          if (model.evaluate(dataWrapper.evaluateLink(left.getAssociation(), leftType, rightType,
+              left.getLinkedObject().getSmtExpr(), right.getLinkedObject().getSmtExpr()), true)
+              .getBoolValue() == Z3_lbool.Z3_L_TRUE) {
             return Optional.of(new SMTLink(rightObj, leftObj, right.getAssociation()));
           }
         }
@@ -156,4 +140,5 @@ public class SMT2ODGenerator {
     }
     return Optional.empty();
   }
+  
 }

@@ -24,27 +24,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ListMutatorDecoratorTest {
-
+  
   private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
-
+  
   private List<ASTCDMethod> methods;
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
     LogStub.enableFailQuick(false);
     ASTMCType listType = MCTypeFacade.getInstance().createListTypeOf(String.class);
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        listType, "a");
     ListMutatorDecorator listMutatorDecorator = new ListMutatorDecorator(glex);
     this.methods = listMutatorDecorator.decorate(attribute);
   }
-
+  
   @Test
   public void testMethods() {
     assertEquals(15, methods.size());
   }
-
+  
   @Test
   public void testSetListMethod() {
     ASTCDMethod method = getMethodBy("setAList", 1, this.methods);
@@ -55,7 +55,7 @@ public class ListMutatorDecoratorTest {
     assertListOf(String.class, parameter.getMCType());
     assertEquals("a", parameter.getName());
   }
-
+  
   @Test
   public void testClearMethod() {
     ASTCDMethod method = getMethodBy("clearA", this.methods);
@@ -63,7 +63,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(PUBLIC, method.getModifier());
     assertTrue(method.getCDParameterList().isEmpty());
   }
-
+  
   @Test
   public void testAddMethod() {
     ASTCDMethod method = getMethodBy("addA", 1, this.methods);
@@ -75,7 +75,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(String.class, parameter.getMCType());
     assertEquals("element", parameter.getName());
   }
-
+  
   @Test
   public void testAddAllMethod() {
     ASTCDMethod method = getMethodBy("addAllA", 1, this.methods);
@@ -84,21 +84,19 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(PUBLIC, method.getModifier());
     assertEquals(1, method.getCDParameterList().size());
     ASTCDParameter parameter = method.getCDParameter(0);
-    ASTMCType expectedParameterType =
-        MCTypeFacade.getInstance().createCollectionTypeOf("? extends String");
+    ASTMCType expectedParameterType = MCTypeFacade.getInstance().createCollectionTypeOf(
+        "? extends String");
     assertDeepEquals(expectedParameterType, parameter.getMCType());
     assertEquals("collection", parameter.getName());
   }
-
+  
   @Test
   public void testRemoveMethod() {
     List<ASTCDMethod> methods = getMethodsBy("removeA", 1, this.methods);
     assertEquals(2, methods.size());
     ASTMCType expectedReturnType = MCTypeFacade.getInstance().createBooleanType();
-    methods =
-        methods.stream()
-            .filter(m -> m.getMCReturnType().getMCType().deepEquals(expectedReturnType))
-            .collect(Collectors.toList());
+    methods = methods.stream().filter(m -> m.getMCReturnType().getMCType().deepEquals(
+        expectedReturnType)).collect(Collectors.toList());
     assertEquals(1, methods.size());
     ASTCDMethod method = methods.get(0);
     assertTrue(method.getMCReturnType().isPresentMCType());
@@ -109,7 +107,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(Object.class, parameter.getMCType());
     assertEquals("element", parameter.getName());
   }
-
+  
   @Test
   public void testRemoveAllMethod() {
     ASTCDMethod method = getMethodBy("removeAllA", this.methods);
@@ -122,7 +120,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(expectedParameterType, parameter.getMCType());
     assertEquals("collection", parameter.getName());
   }
-
+  
   @Test
   public void testRetainAllMethod() {
     ASTCDMethod method = getMethodBy("retainAllA", this.methods);
@@ -135,7 +133,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(expectedParameterType, parameter.getMCType());
     assertEquals("collection", parameter.getName());
   }
-
+  
   @Test
   public void testRemoveIfMethod() {
     ASTCDMethod method = getMethodBy("removeIfA", this.methods);
@@ -147,7 +145,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals("Predicate<? super String>", parameter.getMCType());
     assertEquals("filter", parameter.getName());
   }
-
+  
   @Test
   public void testForEachMethod() {
     ASTCDMethod method = getMethodBy("forEachA", this.methods);
@@ -158,7 +156,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals("Consumer<? super String>", parameter.getMCType());
     assertEquals("action", parameter.getName());
   }
-
+  
   @Test
   public void testAddWithIndexMethod() {
     ASTCDMethod method = getMethodBy("addA", 2, this.methods);
@@ -172,7 +170,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(String.class, parameter.getMCType());
     assertEquals("element", parameter.getName());
   }
-
+  
   @Test
   public void testAddAllWithIndexMethod() {
     ASTCDMethod method = getMethodBy("addAllA", 2, this.methods);
@@ -184,22 +182,20 @@ public class ListMutatorDecoratorTest {
     assertInt(parameter.getMCType());
     assertEquals("index", parameter.getName());
     parameter = method.getCDParameter(1);
-    ASTMCType expectedParameterType =
-        MCTypeFacade.getInstance().createCollectionTypeOf("? extends String");
-
+    ASTMCType expectedParameterType = MCTypeFacade.getInstance().createCollectionTypeOf(
+        "? extends String");
+    
     assertDeepEquals(expectedParameterType, parameter.getMCType());
     assertEquals("collection", parameter.getName());
   }
-
+  
   @Test
   public void testRemoveWithIndexMethod() {
     List<ASTCDMethod> methods = getMethodsBy("removeA", 1, this.methods);
     assertEquals(2, methods.size());
     ASTMCType exptectedReturnType = MCTypeFacade.getInstance().createQualifiedType(String.class);
-    methods =
-        methods.stream()
-            .filter(m -> m.getMCReturnType().getMCType().deepEquals(exptectedReturnType))
-            .collect(Collectors.toList());
+    methods = methods.stream().filter(m -> m.getMCReturnType().getMCType().deepEquals(
+        exptectedReturnType)).collect(Collectors.toList());
     assertEquals(1, methods.size());
     ASTCDMethod method = methods.get(0);
     assertTrue(method.getMCReturnType().isPresentMCType());
@@ -210,7 +206,7 @@ public class ListMutatorDecoratorTest {
     assertInt(parameter.getMCType());
     assertEquals("index", parameter.getName());
   }
-
+  
   @Test
   public void testSetWithIndexMethod() {
     ASTCDMethod method = getMethodBy("setA", 2, this.methods);
@@ -225,7 +221,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals(String.class, parameter.getMCType());
     assertEquals("element", parameter.getName());
   }
-
+  
   @Test
   public void testReplaceAllMethod() {
     ASTCDMethod method = getMethodBy("replaceAllA", this.methods);
@@ -236,7 +232,7 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals("UnaryOperator<String>", parameter.getMCType());
     assertEquals("operator", parameter.getName());
   }
-
+  
   @Test
   public void testSortMethod() {
     ASTCDMethod method = getMethodBy("sortA", this.methods);
@@ -247,15 +243,16 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals("Comparator<? super String>", parameter.getMCType());
     assertEquals("comparator", parameter.getName());
   }
-
+  
   @Test
   public void testDerivedAttr() {
     ASTMCType listType = MCTypeFacade.getInstance().createListTypeOf(String.class);
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        listType, "a");
     attribute.getModifier().setDerived(true);
     ListMutatorDecorator listMutatorDecorator = new ListMutatorDecorator(glex);
     List<ASTCDMethod> methList = listMutatorDecorator.decorate(attribute);
     assertEquals(0, methList.size());
   }
+  
 }

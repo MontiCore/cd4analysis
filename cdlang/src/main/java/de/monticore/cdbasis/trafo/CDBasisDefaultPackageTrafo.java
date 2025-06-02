@@ -13,56 +13,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CDBasisDefaultPackageTrafo implements CDBasisVisitor2 {
-
+  
   List<String> artifactPackageParts;
-
+  
   @Override
   public void visit(ASTCDCompilationUnit node) {
     artifactPackageParts = new ArrayList<>();
-
+    
     // set artifact package parts to the default package
     if (node.isPresentMCPackageDeclaration()) {
-      artifactPackageParts.addAll(
-          node.getMCPackageDeclaration().getMCQualifiedName().getPartsList());
+      artifactPackageParts.addAll(node.getMCPackageDeclaration().getMCQualifiedName()
+          .getPartsList());
     }
   }
-
+  
   @Override
   public void visit(ASTCDDefinition node) {
     // add cd name (lower case) to the default package
     artifactPackageParts.add(node.getName());
-
+    
     // create the default package
-    ASTMCQualifiedName qualName =
-        CDBasisMill.mCQualifiedNameBuilder().addAllParts(artifactPackageParts).build();
+    ASTMCQualifiedName qualName = CDBasisMill.mCQualifiedNameBuilder().addAllParts(
+        artifactPackageParts).build();
     ASTCDPackage defPkg = CDBasisMill.cDPackageBuilder().setMCQualifiedName(qualName).build();
-
+    
     // add elements (that are not packages themselves) to the default package
     for (ASTCDElement e : node.getCDElementList()) {
       if (!(e instanceof ASTCDPackage)) {
         defPkg.addCDElement(e);
       }
     }
-
+    
     // remove these cd elements from cd definition
     node.removeAllCDElements(defPkg.getCDElementList());
-
+    
     // the remaining direct elements of the cd definition are all packages
     // extend the packge with the prefix of the default package
     for (ASTCDElement e : node.getCDElementList()) {
       ASTCDPackage pkg = (ASTCDPackage) e;
       pkg.getMCQualifiedName().getPartsList().addAll(0, defPkg.getMCQualifiedName().getPartsList());
     }
-
+    
     // add default package to cd elements of the diagram and
     // explicitly set the link towards the default package
     node.addCDElement(0, defPkg);
     node.setDefaultPackage(defPkg);
   }
-
+  
   public void transform(ASTCDCompilationUnit ast) {
     CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
     t.add4CDBasis(this);
     ast.accept(t);
   }
+  
 }

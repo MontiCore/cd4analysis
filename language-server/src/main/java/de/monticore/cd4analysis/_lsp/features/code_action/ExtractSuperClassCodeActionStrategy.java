@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.code_action;
 
 import de.mclsg.PositionUtils;
@@ -34,106 +35,84 @@ import org.eclipse.lsp4j.WorkspaceEdit;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
 
 public class ExtractSuperClassCodeActionStrategy implements CodeActionStrategy {
+  
   private final DocumentManager documentManager;
   private final AstPrettyPrinter<ASTCDCompilationUnit> prettyPrinter;
-
-  public ExtractSuperClassCodeActionStrategy(
-      DocumentManager documentManager, AstPrettyPrinter<ASTCDCompilationUnit> prettyPrinter) {
+  
+  public ExtractSuperClassCodeActionStrategy(DocumentManager documentManager,
+      AstPrettyPrinter<ASTCDCompilationUnit> prettyPrinter) {
     this.documentManager = documentManager;
     this.prettyPrinter = prettyPrinter;
   }
-
+  
   @Override
-  public Optional<Either<Command, CodeAction>> apply(
-      TextDocumentItem document, CodeActionContext context, Range range) {
-    Optional<DocumentInformation> documentInformation =
-        documentManager.getDocumentInformation(document);
-    if (documentInformation.isEmpty()) return Optional.empty();
-
-    List<CDTypeSymbol> symbols =
-        documentInformation.get().symbols.stream()
-            .filter(
-                symbol ->
-                    PositionUtils.toRange(symbol)
-                        .filter(symbolRange -> PositionUtils.contains(range, symbolRange))
-                        .isPresent())
-            .filter(CDTypeSymbol.class::isInstance)
-            .map(CDTypeSymbol.class::cast)
-            .filter(symbol -> symbol.getAstNode() instanceof ASTCDClass)
-            .filter(symbol -> !symbol.isPresentSuperClass())
-            .collect(Collectors.toList());
-
-    if (symbols.size() < 2) return Optional.empty();
-
+  public Optional<Either<Command, CodeAction>> apply(TextDocumentItem document,
+      CodeActionContext context, Range range) {
+    Optional<DocumentInformation> documentInformation = documentManager.getDocumentInformation(
+        document);
+    if (documentInformation.isEmpty())
+      return Optional.empty();
+    
+    List<CDTypeSymbol> symbols = documentInformation.get().symbols.stream().filter(
+        symbol -> PositionUtils.toRange(symbol).filter(symbolRange -> PositionUtils.contains(range,
+            symbolRange)).isPresent()).filter(CDTypeSymbol.class::isInstance).map(
+                CDTypeSymbol.class::cast).filter(symbol -> symbol
+                    .getAstNode() instanceof ASTCDClass).filter(symbol -> !symbol
+                        .isPresentSuperClass()).collect(Collectors.toList());
+    
+    if (symbols.size() < 2)
+      return Optional.empty();
+    
     // Only consider classes within the same level in the hierarchy.
     IScope firstScope = symbols.get(0).getEnclosingScope();
-    symbols =
-        symbols.stream()
-            .filter(symbol -> symbol.getEnclosingScope() == firstScope)
-            .collect(Collectors.toList());
-
-    if (symbols.size() < 2) return Optional.empty();
-
-    List<ASTField> equalFields =
-        symbols.get(0).getFieldList().stream()
-            .map(FieldSymbolTOP::getAstNode)
-            .collect(Collectors.toList());
-    BiPredicate<ASTField, ASTCDType> equalsFieldsContains =
-        (equalsField, symbol) ->
-            symbol.getCDAttributeList().stream().anyMatch(field -> field.deepEquals(equalsField));
-
-    List<ASTField> unequalFields =
-        symbols.stream()
-            .flatMap(
-                symbol ->
-                    equalFields.stream()
-                        .filter(
-                            field ->
-                                equalsFieldsContains.negate().test(field, symbol.getAstNode())))
-            .collect(Collectors.toList());
+    symbols = symbols.stream().filter(symbol -> symbol.getEnclosingScope() == firstScope).collect(
+        Collectors.toList());
+    
+    if (symbols.size() < 2)
+      return Optional.empty();
+    
+    List<ASTField> equalFields = symbols.get(0).getFieldList().stream().map(
+        FieldSymbolTOP::getAstNode).collect(Collectors.toList());
+    BiPredicate<ASTField, ASTCDType> equalsFieldsContains = (equalsField, symbol) -> symbol
+        .getCDAttributeList().stream().anyMatch(field -> field.deepEquals(equalsField));
+    
+    List<ASTField> unequalFields = symbols.stream().flatMap(symbol -> equalFields.stream().filter(
+        field -> equalsFieldsContains.negate().test(field, symbol.getAstNode()))).collect(Collectors
+            .toList());
     equalFields.removeAll(unequalFields);
-
-    if (equalFields.isEmpty()) return Optional.empty();
-
-    ASTCDClassBuilder builder =
-        new ASTCDClassBuilder().setModifier(new ASTModifierBuilder().build()).setName("SuperClass");
+    
+    if (equalFields.isEmpty())
+      return Optional.empty();
+    
+    ASTCDClassBuilder builder = new ASTCDClassBuilder().setModifier(new ASTModifierBuilder()
+        .build()).setName("SuperClass");
     equalFields.forEach(field -> builder.addCDMember((ASTCDMember) field));
-
+    
     ASTCDClass superClass = builder.build();
-    ASTCDCompilationUnit compilationUnit =
-        (ASTCDCompilationUnit) documentInformation.get().ast.deepClone();
+    ASTCDCompilationUnit compilationUnit = (ASTCDCompilationUnit) documentInformation.get().ast
+        .deepClone();
     compilationUnit.getCDDefinition().addCDElement(superClass);
-
+    
     for (CDTypeSymbol symbol : symbols) {
-      ASTCDClass clazz =
-          (ASTCDClass) FindClassVisitor.findClass(compilationUnit, symbol.getAstNode());
-      clazz
-          .getCDMemberList()
-          .removeIf(
-              member ->
-                  member instanceof ASTField
-                      && equalsFieldsContains.test((ASTField) member, superClass));
-      clazz.setCDExtendUsage(
-          new ASTCDExtendUsageBuilder()
-              .addSuperclass(
-                  new ASTMCQualifiedTypeBuilder()
-                      .setMCQualifiedName(
-                          new ASTMCQualifiedNameBuilder()
-                              .setPartsList(List.of(superClass.getName()))
-                              .build())
-                      .build())
-              .build());
+      ASTCDClass clazz = (ASTCDClass) FindClassVisitor.findClass(compilationUnit, symbol
+          .getAstNode());
+      clazz.getCDMemberList().removeIf(member -> member instanceof ASTField && equalsFieldsContains
+          .test((ASTField) member, superClass));
+      clazz.setCDExtendUsage(new ASTCDExtendUsageBuilder().addSuperclass(
+          new ASTMCQualifiedTypeBuilder().setMCQualifiedName(new ASTMCQualifiedNameBuilder()
+              .setPartsList(List.of(superClass.getName())).build()).build()).build());
     }
-
+    
     String printed = prettyPrinter.prettyPrint(compilationUnit);
-    TextEdit classEdit =
-        new TextEdit(PositionUtils.toRange(compilationUnit).orElseThrow(), printed);
+    TextEdit classEdit = new TextEdit(PositionUtils.toRange(compilationUnit).orElseThrow(),
+        printed);
     WorkspaceEdit workspaceEdit = new WorkspaceEdit(Map.of(document.getUri(), List.of(classEdit)));
-
+    
     CodeAction codeAction = new CodeAction("Extract Superclass");
     codeAction.setEdit(workspaceEdit);
     codeAction.setKind(CodeActionKind.Refactor);
-
+    
     return Optional.of(Either.forRight(codeAction));
   }
+  
 }

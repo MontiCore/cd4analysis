@@ -21,24 +21,24 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationDeSerTest extends CDAssociationTestBasis {
-
+  
   private static final String SYMBOL_PATH = "src/test/resources/";
-
+  
   @Test
   public void serializationTest() {
     String artifact = "cdassociation/symboltable/SerializationCD.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
     afterParseTrafo(ast);
-
+    
     ITestCDAssociationArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
-
+    
     // store symtab
     TestCDAssociationSymbols2Json symbols2Json = new TestCDAssociationSymbols2Json();
     String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
-
+    
     // check for contents
     assertTrue(serialized.contains("\"name\":\"A\""));
     assertTrue(serialized.contains("\"name\":\"B\""));
@@ -48,10 +48,10 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
     assertTrue(serialized.contains("\"name\":\"myB\""));
     assertTrue(serialized.contains("\"name\":\"D\""));
     assertTrue(serialized.contains("\"name\":\"directWithRole\""));
-
+    
     assertEquals(0, Log.getErrorCount());
   }
-
+  
   @Test
   public void deserializationTest() {
     ITestCDAssociationGlobalScope gs = TestCDAssociationMill.globalScope();
@@ -60,76 +60,71 @@ public class CDAssociationDeSerTest extends CDAssociationTestBasis {
     assertTrue(gs.getSubScopes().isEmpty());
     gs.loadFileForModelName("de.monticore.cdassociation.symboltable.SerializationCD");
     assertEquals(1, gs.getSubScopes().size());
-
+    
     // resolve for class A
-    Optional<CDTypeSymbol> a =
-        gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.A");
+    Optional<CDTypeSymbol> a = gs.resolveCDType(
+        "de.monticore.cdassociation.symboltable.SerializationCD.A");
     assertTrue(a.isPresent());
-    Optional<CDRoleSymbol> a_role1 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.b");
+    Optional<CDRoleSymbol> a_role1 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.A.b");
     assertTrue(a_role1.isPresent());
-    Optional<CDRoleSymbol> a_role2 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.myB");
+    Optional<CDRoleSymbol> a_role2 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.A.myB");
     assertTrue(a_role2.isPresent());
-    Optional<CDRoleSymbol> a_role3 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.A.d");
+    Optional<CDRoleSymbol> a_role3 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.A.d");
     assertTrue(a_role3.isPresent());
-
+    
     // resolve for class B
-    Optional<CDTypeSymbol> b =
-        gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.B");
+    Optional<CDTypeSymbol> b = gs.resolveCDType(
+        "de.monticore.cdassociation.symboltable.SerializationCD.B");
     assertTrue(b.isPresent());
-    Optional<CDRoleSymbol> b_role1 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.a");
+    Optional<CDRoleSymbol> b_role1 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.B.a");
     assertTrue(b_role1.isPresent());
-    Optional<CDRoleSymbol> b_role2 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.myA");
+    Optional<CDRoleSymbol> b_role2 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.B.myA");
     assertTrue(b_role2.isPresent());
-    Optional<CDRoleSymbol> b_role3 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.B.d");
+    Optional<CDRoleSymbol> b_role3 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.B.d");
     assertTrue(b_role3.isPresent());
-
+    
     // resolve for class D
-    Optional<CDTypeSymbol> d =
-        gs.resolveCDType("de.monticore.cdassociation.symboltable.SerializationCD.D");
+    Optional<CDTypeSymbol> d = gs.resolveCDType(
+        "de.monticore.cdassociation.symboltable.SerializationCD.D");
     assertTrue(d.isPresent());
-    Optional<CDRoleSymbol> d_role1 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.D.a");
+    Optional<CDRoleSymbol> d_role1 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.D.a");
     assertTrue(d_role1.isPresent());
-    Optional<CDRoleSymbol> d_role2 =
-        gs.resolveCDRole("de.monticore.cdassociation.symboltable.SerializationCD.D.directWithRole");
+    Optional<CDRoleSymbol> d_role2 = gs.resolveCDRole(
+        "de.monticore.cdassociation.symboltable.SerializationCD.D.directWithRole");
     assertTrue(d_role2.isPresent());
-
+    
     // resolve for assoc namedAssoc
-    Optional<CDAssociationSymbol> assoc1 =
-        gs.resolveCDAssociation(
-            "de.monticore.cdassociation.symboltable.SerializationCD.namedAssoc");
+    Optional<CDAssociationSymbol> assoc1 = gs.resolveCDAssociation(
+        "de.monticore.cdassociation.symboltable.SerializationCD.namedAssoc");
     assertTrue(assoc1.isPresent());
-
+    
     // resolve for assoc namedAssocWithRoles
-    Optional<CDAssociationSymbol> assoc2 =
-        gs.resolveCDAssociation(
-            "de.monticore.cdassociation.symboltable.SerializationCD.namedAssocWithRoles");
+    Optional<CDAssociationSymbol> assoc2 = gs.resolveCDAssociation(
+        "de.monticore.cdassociation.symboltable.SerializationCD.namedAssocWithRoles");
     assertTrue(assoc2.isPresent());
   }
-
+  
   /** Checks new cardinalities that are not [*], [1], [0..1], [1..*] */
   @Test
   public void testCreateCardinalityFromString() {
     // Single literals other than "*" or "1"
-    assertEquals(
-        "[2]",
-        CDAssociationMill.prettyPrint(new CDCardinalityDeSer().createFromString("[2]"), false));
-
+    assertEquals("[2]", CDAssociationMill.prettyPrint(new CDCardinalityDeSer().createFromString(
+        "[2]"), false));
+    
     // Finite ranges besides "[0..1]"
-    assertEquals(
-        "[13..20]",
-        CDAssociationMill.prettyPrint(
-            new CDCardinalityDeSer().createFromString("[13..20]"), false));
-
+    assertEquals("[13..20]", CDAssociationMill.prettyPrint(new CDCardinalityDeSer()
+        .createFromString("[13..20]"), false));
+    
     // Infinite ranges not starting from "1"
-    assertEquals(
-        "[9..*]",
-        CDAssociationMill.prettyPrint(new CDCardinalityDeSer().createFromString("[9..*]"), false));
+    assertEquals("[9..*]", CDAssociationMill.prettyPrint(new CDCardinalityDeSer().createFromString(
+        "[9..*]"), false));
   }
+  
 }

@@ -17,33 +17,34 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CDBasisTestBasis extends TestBasis {
+  
   protected TestCDBasisParser p;
   protected TestCDBasisCoCoChecker coCoChecker;
-
+  
   @BeforeEach
   public void initObjects() {
     // reset the log
     LogStub.init();
     Log.enableFailQuick(false);
-
+    
     TestCDBasisMill.reset();
     TestCDBasisMill.init();
-
+    
     p = new TestCDBasisParser();
-
+    
     final ITestCDBasisGlobalScope globalScope = TestCDBasisMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BasicSymbolsMill.initializePrimitives();
-
+    
     coCoChecker = new TestCDBasisCoCoChecker();
   }
-
+  
   protected ITestCDBasisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
     ITestCDBasisArtifactScope as = TestCDBasisMill.scopesGenitorDelegator().createFromAST(ast);
     return as;
   }
-
+  
   protected void completeSymTab(ASTCDCompilationUnit ast) {
     TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
@@ -51,4 +52,5 @@ public class CDBasisTestBasis extends TestBasis {
     t.add4OOSymbols(symTabComp);
     ast.accept(t);
   }
+  
 }

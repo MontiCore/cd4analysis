@@ -14,28 +14,25 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 public class JoinLinksTrafoTest extends CDDiffTestBasis {
-
+  
   @Test
   public void testEmployeesInstance() {
     try {
-      ASTCDCompilationUnit cd =
-          parseModel("src/test/resources/de/monticore/cddiff/Employees" + "/Employees2.cd");
-      Optional<ASTODArtifact> od =
-          new OD4ReportParser()
-              .parse("src/test/resources/de/monticore/cddiff/JoinLinksTrafo/EmployeesInstance.od");
-
+      ASTCDCompilationUnit cd = parseModel("src/test/resources/de/monticore/cddiff/Employees"
+          + "/Employees2.cd");
+      Optional<ASTODArtifact> od = new OD4ReportParser().parse(
+          "src/test/resources/de/monticore/cddiff/JoinLinksTrafo/EmployeesInstance.od");
+      
       assertTrue(od.isPresent());
       new JoinLinksTrafo(cd).transform(od.get());
-      assertEquals(
-          3,
-          od.get().getObjectDiagram().getODElementList().stream()
-              .filter(element -> element instanceof ASTODLink)
-              .collect(Collectors.toSet())
-              .size());
+      assertEquals(3, od.get().getObjectDiagram().getODElementList().stream().filter(
+          element -> element instanceof ASTODLink).collect(Collectors.toSet()).size());
       Log.print(System.lineSeparator() + OD4ReportMill.prettyPrint(od.get(), true));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail();
     }
   }
+  
 }

@@ -20,25 +20,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class MandatoryMutatorDecoratorTest {
-
+  
   private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
-
+  
   private List<ASTCDMethod> methods;
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        String.class, "a");
     MandatoryMutatorDecorator mandatoryMutatorDecorator = new MandatoryMutatorDecorator(glex);
     this.methods = mandatoryMutatorDecorator.decorate(attribute);
   }
-
+  
   @Test
   public void testMethods() {
     assertEquals(1, methods.size());
   }
-
+  
   @Test
   public void testGetMethod() {
     ASTCDMethod method = getMethodBy("setA", this.methods);
@@ -49,14 +49,15 @@ public class MandatoryMutatorDecoratorTest {
     assertDeepEquals(String.class, parameter.getMCType());
     assertEquals("a", parameter.getName());
   }
-
+  
   @Test
   public void testDerivedAttr() {
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        String.class, "a");
     attribute.getModifier().setDerived(true);
     MandatoryMutatorDecorator mandatoryMutatorDecorator = new MandatoryMutatorDecorator(glex);
     List<ASTCDMethod> methList = mandatoryMutatorDecorator.decorate(attribute);
     assertEquals(0, methList.size());
   }
+  
 }

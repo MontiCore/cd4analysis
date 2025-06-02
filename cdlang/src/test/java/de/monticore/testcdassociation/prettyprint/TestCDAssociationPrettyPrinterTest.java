@@ -11,18 +11,20 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDAssociationPrettyPrinterTest extends CDAssociationTestBasis {
+  
   final TestCDAssociationParser p = new TestCDAssociationParser();
-
+  
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(
+        getFilePath("cdassociation/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
-
+    
     String output = CDAssociationMill.prettyPrint(astcdCompilationUnit.get(), true);
-
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed =
-        p.parse_StringCDCompilationUnit(output);
+    
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p
+        .parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
   }
+  
 }

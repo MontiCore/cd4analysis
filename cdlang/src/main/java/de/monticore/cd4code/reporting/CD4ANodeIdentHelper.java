@@ -26,46 +26,46 @@ import java.util.List;
 
 /** TODO: Write me! */
 public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
-
+  
   public String getIdent(ASTCDDefinition a) {
     String type = Layouter.nodeName(a);
     String name = a.getName();
     return format(name, type);
   }
-
+  
   public String getIdent(ASTCDMethod a) {
     String type = Layouter.nodeName(a);
     String name = a.getName();
     return format(name, type);
   }
-
+  
   public String getIdent(ASTCDConstructor a) {
     String type = Layouter.nodeName(a);
     String name = a.getName();
     return format(name, type);
   }
-
+  
   public String getIdent(ASTCDInterface a) {
     String type = Layouter.nodeName(a);
     String name = a.getName();
     return format(name, type);
   }
-
+  
   public String getIdent(ASTCDQualifier a) {
     String type = Layouter.nodeName(a);
     return format(a.getName(), type);
   }
-
+  
   public String getIdent(ASTCDParameter a) {
     String type = Layouter.nodeName(a);
     String name = a.getName();
     return format(name, type);
   }
-
+  
   public String getIdent(ASTCDAttribute a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTStereotype a) {
     List<ASTStereoValue> l = a.getValuesList();
     String n = "-";
@@ -77,81 +77,97 @@ public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
     }
     return format(n, Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTStereoValue a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTModifier a) {
     return format("_", Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTCDClass a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTCDAssociation a) {
     String ident = "";
-    if (a.isPresentName()
-        && a.getLeftReferenceName() != null
-        && a.getRightReferenceName() != null) {
-      ident =
-          a.getLeftReferenceName().toString()
-              + "-"
-              + Layouter.unqualName(a.getRightReferenceName().toString());
+    if (a.isPresentName() && a.getLeftReferenceName() != null && a.getRightReferenceName()
+        != null) {
+      ident = a.getLeftReferenceName().toString() + "-" + Layouter.unqualName(a
+          .getRightReferenceName().toString());
     }
     return format(ident, Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTCDEnum a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
-
+  
   public String getIdent(ASTCDEnumConstant a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
-
+  
   @Override
   public String getIdent(ASTNode a) {
     if (a instanceof ASTCDDefinition) {
       return getIdent((ASTCDDefinition) a);
-    } else if (a instanceof ASTCDMethod) {
+    }
+    else if (a instanceof ASTCDMethod) {
       return getIdent((ASTCDMethod) a);
-    } else if (a instanceof ASTCDConstructor) {
+    }
+    else if (a instanceof ASTCDConstructor) {
       return getIdent((ASTCDConstructor) a);
-    } else if (a instanceof ASTCDInterface) {
+    }
+    else if (a instanceof ASTCDInterface) {
       return getIdent((ASTCDInterface) a);
-    } else if (a instanceof ASTCDQualifier) {
+    }
+    else if (a instanceof ASTCDQualifier) {
       return getIdent((ASTCDQualifier) a);
-    } else if (a instanceof ASTCDParameter) {
+    }
+    else if (a instanceof ASTCDParameter) {
       return getIdent((ASTCDParameter) a);
-    } else if (a instanceof ASTMCPrimitiveType) {
+    }
+    else if (a instanceof ASTMCPrimitiveType) {
       return getIdent((ASTMCPrimitiveType) a);
-    } else if (a instanceof ASTMCQualifiedName) {
+    }
+    else if (a instanceof ASTMCQualifiedName) {
       return getIdent((ASTMCQualifiedName) a);
-    } else if (a instanceof ASTCDAttribute) {
+    }
+    else if (a instanceof ASTCDAttribute) {
       return getIdent((ASTCDAttribute) a);
-    } else if (a instanceof ASTMCObjectType) {
+    }
+    else if (a instanceof ASTMCObjectType) {
       return getIdent((ASTMCObjectType) a);
-    } else if (a instanceof ASTStereotype) {
+    }
+    else if (a instanceof ASTStereotype) {
       return getIdent((ASTStereotype) a);
-    } else if (a instanceof ASTStereoValue) {
+    }
+    else if (a instanceof ASTStereoValue) {
       return getIdent((ASTStereoValue) a);
-    } else if (a instanceof ASTModifier) {
+    }
+    else if (a instanceof ASTModifier) {
       return getIdent((ASTModifier) a);
-    } else if (a instanceof ASTCDClass) {
+    }
+    else if (a instanceof ASTCDClass) {
       return getIdent((ASTCDClass) a);
-    } else if (a instanceof ASTCDAssociation) {
+    }
+    else if (a instanceof ASTCDAssociation) {
       return getIdent((ASTCDAssociation) a);
-    } else if (a instanceof ASTCDEnum) {
+    }
+    else if (a instanceof ASTCDEnum) {
       return getIdent((ASTCDEnum) a);
-    } else if (a instanceof ASTCDEnumConstant) {
+    }
+    else if (a instanceof ASTCDEnumConstant) {
       return getIdent((ASTCDEnumConstant) a);
-    } else if (a instanceof ASTNatLiteral) {
+    }
+    else if (a instanceof ASTNatLiteral) {
       return getIdent((ASTNatLiteral) a);
-    } else {
+    }
+    else {
       String type = Layouter.className(a);
       return format(type);
     }
   }
+  
 }

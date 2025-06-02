@@ -17,58 +17,53 @@ import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-public class CD4CodeEnumConstantParameterMatchConstructorArgumentsTest
-    extends CD4CodeBasisTestBasis {
-
+public class CD4CodeEnumConstantParameterMatchConstructorArgumentsTest extends
+    CD4CodeBasisTestBasis {
+  
   @Test
   public void testValid() throws IOException {
     // parse + create symtab
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(
-            getFilePath(
-                "cd4codebasis/cocos/CD4CodeEnumConstantParameterMatchConstructorArgumentsValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4codebasis/cocos/CD4CodeEnumConstantParameterMatchConstructorArgumentsValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
-
+    
     TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
     TestCD4CodeBasisSymbolTableCompleter completer = new TestCD4CodeBasisSymbolTableCompleter(ast);
     ast.accept(completer.getTraverser());
-
+    
     CD4CodeBasisCoCoChecker coCoChecker = new CD4CodeBasisCoCoChecker();
-    coCoChecker.addCoCo(
-        new CD4CodeEnumConstantParameterMatchConstructorArguments(
-            new FullDeriveFromTestCD4CodeBasis()));
-
+    coCoChecker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments(
+        new FullDeriveFromTestCD4CodeBasis()));
+    
     // check coco
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     // parse + create symtab
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(
-            getFilePath(
-                "cd4codebasis/cocos/CD4CodeEnumConstantParameterMatchConstructorArgumentsInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4codebasis/cocos/CD4CodeEnumConstantParameterMatchConstructorArgumentsInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
-
+    
     TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
     TestCD4CodeBasisSymbolTableCompleter completer = new TestCD4CodeBasisSymbolTableCompleter(ast);
     ast.accept(completer.getTraverser());
-
+    
     // check coco
     CD4CodeBasisCoCoChecker coCoChecker = new CD4CodeBasisCoCoChecker();
-    coCoChecker.addCoCo(
-        new CD4CodeEnumConstantParameterMatchConstructorArguments(
-            new FullDeriveFromTestCD4CodeBasis()));
+    coCoChecker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments(
+        new FullDeriveFromTestCD4CodeBasis()));
     coCoChecker.checkAll(ast);
     assertEquals(2, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCD2")); // for FOO
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDCD2")); // for BAR
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

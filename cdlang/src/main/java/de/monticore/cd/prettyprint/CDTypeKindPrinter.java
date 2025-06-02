@@ -14,27 +14,28 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 
-public class CDTypeKindPrinter extends PrettyPrintUtil
-    implements CDInterfaceAndEnumVisitor2, CDBasisVisitor2 {
+public class CDTypeKindPrinter extends PrettyPrintUtil implements CDInterfaceAndEnumVisitor2,
+    CDBasisVisitor2 {
+  
   protected final IndentPrinter printer;
   protected boolean followingSpace;
-
+  
   public CDTypeKindPrinter() {
     this(false);
   }
-
+  
   public CDTypeKindPrinter(boolean followingSpace) {
     this(new IndentPrinter());
   }
-
+  
   public CDTypeKindPrinter(IndentPrinter printer) {
     this(printer, false);
   }
-
+  
   public CDTypeKindPrinter(IndentPrinter printer, boolean followingSpace) {
     this.printer = printer;
   }
-
+  
   @Override
   public void visit(ASTCDClass node) {
     print("class");
@@ -42,7 +43,7 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
       print(" ");
     }
   }
-
+  
   @Override
   public void visit(ASTCDInterface node) {
     print("interface");
@@ -50,7 +51,7 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
       print(" ");
     }
   }
-
+  
   @Override
   public void visit(ASTCDEnum node) {
     print("enum");
@@ -58,14 +59,14 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
       print(" ");
     }
   }
-
+  
   public String print(ASTCDType type) {
     CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.inheritanceTraverser();
     t.add4CDInterfaceAndEnum(this);
     type.accept(t);
     return getPrinter().getContent();
   }
-
+  
   public String print(OOTypeSymbol type) {
     if (type.isIsClass()) {
       print("class");
@@ -85,19 +86,20 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
         print(" ");
       }
     }
-
+    
     return getPrinter().getContent();
   }
-
+  
   public String print(TypeSymbol type) {
     if (type instanceof OOTypeSymbol) {
       return print((OOTypeSymbol) type);
     }
-
+    
     return EMPTY_STRING;
   }
-
+  
   public String print(SymTypeExpression expression) {
     return print(expression.getTypeInfo());
   }
+  
 }

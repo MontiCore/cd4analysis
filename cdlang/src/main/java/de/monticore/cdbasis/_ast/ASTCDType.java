@@ -14,29 +14,29 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public interface ASTCDType extends ASTCDTypeTOP {
-
+  
   List<ASTMCObjectType> getSuperclassList();
-
+  
   String printSuperclasses();
-
+  
   List<ASTMCObjectType> getInterfaceList();
-
+  
   String printInterfaces();
-
+  
   ASTModifier getModifier();
-
+  
   void setModifier(ASTModifier modifier);
-
+  
   boolean addCDMember(ASTCDMember element);
-
+  
   boolean addAllCDMembers(Collection<? extends ASTCDMember> collection);
-
+  
   boolean removeCDMember(Object element);
-
+  
   ASTCDMember removeCDMember(int index);
-
+  
   boolean removeAllCDMembers(Collection<?> collection);
-
+  
   /**
    * get a list of the specific CDMember, configured by the options Example: <div> {@code
    * List<ASTCDAttribute> attributes = c.getCDMemberList(CDMemberVisitor.Options.ATTRIBUTES); }
@@ -50,18 +50,18 @@ public interface ASTCDType extends ASTCDTypeTOP {
    * @param <T> the type of the list to return
    * @return the list of collected CDMembers
    */
-  default <T extends ASTCDMember> List<T> getCDMemberList(
-      CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
+  default <T extends ASTCDMember> List<T> getCDMemberList(CDMemberVisitor.Options option,
+      CDMemberVisitor.Options... options) {
     List<CDMemberVisitor.Options> allOptions = new ArrayList<>();
     allOptions.add(option);
     allOptions.addAll(Arrays.asList(options));
-
+    
     Set<T> res = new LinkedHashSet<>();
-
+    
     if (allOptions.contains(ALL)) {
       res.addAll((Collection<? extends T>) getCDMemberList());
     }
-
+    
     if (allOptions.contains(FIELDS)) {
       for (ASTCDMember m : getCDMemberList()) {
         if (m.isField()) {
@@ -69,7 +69,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
         }
       }
     }
-
+    
     if (allOptions.contains(ATTRIBUTES)) {
       for (ASTCDMember m : getCDMemberList()) {
         if (m.isAttribute()) {
@@ -77,7 +77,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
         }
       }
     }
-
+    
     if (allOptions.contains(ROLES)) {
       for (ASTCDMember m : getCDMemberList()) {
         if (m.isRole()) {
@@ -85,7 +85,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
         }
       }
     }
-
+    
     if (allOptions.contains(METHOD_SIGNATURES)) {
       for (ASTCDMember m : getCDMemberList()) {
         if (m.isMethodSignature()) {
@@ -93,7 +93,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
         }
       }
     }
-
+    
     if (allOptions.contains(CONSTRUCTORS)) {
       for (ASTCDMember m : getCDMemberList()) {
         if (m.isConstructor()) {
@@ -101,7 +101,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
         }
       }
     }
-
+    
     if (allOptions.contains(METHODS)) {
       for (ASTCDMember m : getCDMemberList()) {
         if (m.isMethod()) {
@@ -109,63 +109,60 @@ public interface ASTCDType extends ASTCDTypeTOP {
         }
       }
     }
-
+    
     return new ArrayList<>(res);
   }
-
+  
   List<ASTCDMember> getCDMemberList();
-
-  default <T extends ASTCDMember> Iterator<T> iterateCDMembers(
-      CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
-    return this.<T>getCDMemberList(option, options).iterator();
+  
+  default <T extends ASTCDMember> Iterator<T> iterateCDMembers(CDMemberVisitor.Options option,
+      CDMemberVisitor.Options... options) {
+    return this.<T> getCDMemberList(option, options).iterator();
   }
-
-  default <T extends ASTCDMember> Stream<T> streamCDMembers(
-      CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
-    return this.<T>getCDMemberList(option, options).stream();
+  
+  default <T extends ASTCDMember> Stream<T> streamCDMembers(CDMemberVisitor.Options option,
+      CDMemberVisitor.Options... options) {
+    return this.<T> getCDMemberList(option, options).stream();
   }
-
+  
   default int sizeCDMembers(CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
     return getCDMemberList(option, options).size();
   }
-
+  
   default List<ASTCDAttribute> getCDAttributeList() {
     return getCDMemberList(CDMemberVisitor.Options.ATTRIBUTES);
   }
-
+  
   default void setCDAttributeList(List<ASTCDAttribute> attrList) {
     clearCDAttributeList();
     addAllCDMembers(attrList);
   }
-
+  
   default void clearCDAttributeList() {
     List<ASTCDAttribute> oldAttrMembers = getCDAttributeList();
     removeAllCDMembers(oldAttrMembers);
   }
-
-  default List<ASTCDRole> getCDRoleList() {
-    return getCDMemberList(CDMemberVisitor.Options.ROLES);
-  }
-
+  
+  default List<ASTCDRole> getCDRoleList() { return getCDMemberList(CDMemberVisitor.Options.ROLES); }
+  
   default List<ASTCDConstructor> getCDConstructorList() {
     return getCDMemberList(CDMemberVisitor.Options.CONSTRUCTORS);
   }
-
-  default List<ASTCDMethod> getCDMethodList() {
-    return getCDMemberList(METHODS);
-  }
-
+  
+  default List<ASTCDMethod> getCDMethodList() { return getCDMemberList(METHODS); }
+  
   default List<ASTCDMethodSignature> getCDMethodSignatureList() {
     return getCDMemberList(CDMemberVisitor.Options.METHOD_SIGNATURES);
   }
-
+  
   default void setCDMethodList(List<ASTCDMethod> methodList) {
     clearCDMethodList();
     addAllCDMembers(methodList);
   }
-
+  
   default void clearCDMethodList() {
     List<ASTCDMethod> oldMethodMembers = getCDMethodList();
     removeAllCDMembers(oldMethodMembers);
   }
+  
 }

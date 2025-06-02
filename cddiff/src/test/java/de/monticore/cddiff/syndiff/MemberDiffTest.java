@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -13,34 +14,34 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class MemberDiffTest extends CDDiffTestBasis {
-
+  
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
-
+  
   public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/MemberDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
-
+  
   @Test
   public void testMember1() {
     parseModels("Source1.cd", "Target1.cd");
-
+    
     ASTCDClass cNew = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("A", tgt.getCDDefinition());
-
+    
     ASTNode attributeNew = CDTestHelper.getAttribute(cNew, "a");
     ASTNode attributeOld = CDTestHelper.getAttribute(cOld, "a");
-
+    
     CDMemberDiff attrDiff = new CDMemberDiff(attributeNew, attributeOld);
     System.out.println(attrDiff.printSrcMember());
     System.out.println(attrDiff.printTgtMember());
     System.out.println(attrDiff.getBaseDiff());
   }
-
+  
   public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> src =
-          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
+          + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (src.isPresent() && tgt.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
@@ -49,12 +50,15 @@ public class MemberDiffTest extends CDDiffTestBasis {
         tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
         this.tgt = tgt.get();
         this.src = src.get();
-      } else {
+      }
+      else {
         fail("Could not parse CDs.");
       }
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       fail(e.getMessage());
     }
   }
+  
 }

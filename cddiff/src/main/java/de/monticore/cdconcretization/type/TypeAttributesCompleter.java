@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.type;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -18,34 +19,32 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
  * AST.
  */
 public class TypeAttributesCompleter extends AbstractTypeCompleter {
-
+  
   private final IAttributeInTypeCompleter attributeCompleter;
-
+  
   public TypeAttributesCompleter(IAttributeInTypeCompleter attributeCompleter) {
     this.attributeCompleter = attributeCompleter;
   }
-
+  
   @Override
-  protected void completeClassDetails(
-      ASTCDClass concreteType, ASTCDClass referenceType, TypeCompletionContext context)
-      throws CompletionException {
+  protected void completeClassDetails(ASTCDClass concreteType, ASTCDClass referenceType,
+      TypeCompletionContext context) throws CompletionException {
     completeAttributes(concreteType, referenceType, context);
     next(concreteType, referenceType, context);
   }
-
+  
   @Override
-  protected void completeInterfaceDetails(
-      ASTCDInterface concreteType, ASTCDInterface referenceType, TypeCompletionContext context)
-      throws CompletionException {
+  protected void completeInterfaceDetails(ASTCDInterface concreteType, ASTCDInterface referenceType,
+      TypeCompletionContext context) throws CompletionException {
     completeAttributes(concreteType, referenceType, context);
     next(concreteType, referenceType, context);
   }
-
-  protected void completeAttributes(
-      ASTCDType concreteType, ASTCDType referenceType, TypeCompletionContext context)
-      throws CompletionException {
+  
+  protected void completeAttributes(ASTCDType concreteType, ASTCDType referenceType,
+      TypeCompletionContext context) throws CompletionException {
     for (ASTCDAttribute rAttribute : referenceType.getCDAttributeList()) {
       attributeCompleter.completeAttributeInType(concreteType, rAttribute, context);
     }
   }
+  
 }
