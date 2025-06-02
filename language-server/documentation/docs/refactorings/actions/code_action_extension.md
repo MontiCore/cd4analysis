@@ -57,4 +57,3 @@ For simplicity, the entire content of a file is always replaced. Otherwise, the 
 Two elements necessary for a code action might not be present in the same file.
 For example, in the [Pull-Up Field](pull_up_field.md) strategy, the code action might be invoked on a child class, where the parent class is in a different file.
 With the `getLocation` method from the `documentManager`, the location can be compared so that in the case of another file, the other AST can be used to find the class needed.
-
