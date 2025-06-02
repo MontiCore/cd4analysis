@@ -42,7 +42,16 @@ class CDGenToolTest {
 
     String model =
         String.format(
-            "package %s;" + "%s" + "classdiagram %s {" + "  class %s { }" + "}",
+            "package %s;"
+                + "%s"
+                + "classdiagram %s {"
+                + "  class %s { "
+                + "void voidMethod();"
+                + "String stringMethod();"
+                + "static void staticVoidMethod();"
+                + "static String staticStringMethod();"
+                + " }"
+                + "}",
             packageName, importStatement, diagramName, className);
 
     createModelInInputDir(model, packageName, diagramName);

@@ -1,15 +1,23 @@
 package de.monticore.cddiff.syndiff;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odvalidity.OD2CDMatcher;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
@@ -120,18 +128,59 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("MaCoCo_v1.cd", "MaCoCo_v2.cd");
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
-    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     assertEquals(1, synDiff.getAddedClasses().size());
     assertEquals(1, synDiff.getAddedEnums().size());
     assertEquals(1, synDiff.getAddedAssocs().size());
 
+    // Conformance Checking without stereotype mapping constitutes a refinement check
+    boolean conform =
+        new CDConformanceChecker(
+                Set.of(
+                    CDConfParameter.STEREOTYPE_MAPPING,
+                    CDConfParameter.NAME_MAPPING,
+                    CDConfParameter.SRC_TARGET_ASSOC_MAPPING,
+                    CDConfParameter.ALLOW_CARD_RESTRICTION))
+            .checkConformance(src, tgt, "incarnates");
+
+    assertTrue(conform);
+
+    // Syn2SemDiff produces correct diff-witnesses
+    Syn2SemDiff semDiff = new Syn2SemDiff(src, tgt);
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    List<ASTODArtifact> ods = semDiff.generateODs(false);
+
+    assertFalse(ods.isEmpty());
+    assertTrue(
+        semDiff.generateODs(false).stream()
+            .allMatch(
+                od -> matcher.checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, src, tgt, od)));
+
     synDiff = new CDSyntaxDiff(tgt, src, List.of());
-    // sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     assertEquals(1, synDiff.getDeletedClasses().size());
     assertEquals(1, synDiff.getDeletedEnums().size());
     assertEquals(1, synDiff.getDeletedAssocs().size());
+
+    // Conformance Checking without stereotype mapping constitutes a refinement check
+    conform =
+        new CDConformanceChecker(
+                Set.of(
+                    CDConfParameter.STEREOTYPE_MAPPING,
+                    CDConfParameter.NAME_MAPPING,
+                    CDConfParameter.SRC_TARGET_ASSOC_MAPPING,
+                    CDConfParameter.ALLOW_CARD_RESTRICTION))
+            .checkConformance(tgt, src, "incarnates");
+
+    assertFalse(conform);
+
+    // Syn2SemDiff produces correct diff-witnesses
+    semDiff = new Syn2SemDiff(tgt, src);
+    ods = semDiff.generateODs(false);
+
+    assertTrue(ods.isEmpty());
   }
 
   public void parseModels(String concrete, String ref) {

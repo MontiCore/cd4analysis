@@ -49,9 +49,15 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
 
       // And for which a role symbol was present (before being transformed away) and which is
       // navigable in both directions
-      if (role == null
-          || !role.isIsDefinitiveNavigable()
-          || !role.getOtherSide().isIsDefinitiveNavigable()) return;
+      if (role == null || !role.isIsDefinitiveNavigable()) {
+        return;
+      }
+      if (!role.isPresentAssoc()) {
+        // happens in case trafos before STC are skipped
+        Log.error("Assoc of role " + role.getName() + " not present", role.getSourcePosition());
+        return;
+      }
+      if (!role.getOtherSide().isIsDefinitiveNavigable()) return;
 
       var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
       var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);

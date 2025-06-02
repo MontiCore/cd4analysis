@@ -2,14 +2,11 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
-import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
-import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
-import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
@@ -37,6 +34,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.cli.*;
@@ -97,16 +95,9 @@ public class CDGenTool extends CDGeneratorTool {
         return;
       }
 
-      BasicSymbolsMill.initializePrimitives();
-      MCCollectionSymTypeRelations.init();
-
       final boolean c2mc = cmd.hasOption("c2mc");
-      if (c2mc) {
-        initializeClass2MC();
-      } else {
-        BasicSymbolsMill.initializeString();
-        BasicSymbolsMill.initializeObject();
-      }
+
+      initializeSymbolTable(c2mc);
 
       Log.enableFailQuick(false);
       Collection<ASTCDCompilationUnit> asts =
@@ -154,114 +145,168 @@ public class CDGenTool extends CDGeneratorTool {
       }
 
       if (cmd.hasOption("o")) {
-        GlobalExtensionManagement glex = new GlobalExtensionManagement();
-        glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-        glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
-        glex.setGlobalValue("mcCollectionSymTypeRelations", new MCCollectionSymTypeRelations());
-        glex.setGlobalValue("cdGenService", new CDGenService());
-        GeneratorSetup setup = new GeneratorSetup();
-
-        if (cmd.hasOption("fp")) {
-          setup.setAdditionalTemplatePaths(
-              Arrays.stream(cmd.getOptionValues("fp"))
-                  .map(Paths::get)
-                  .map(Path::toFile)
-                  .collect(Collectors.toList()));
-        }
-
-        if (cmd.hasOption("hwc")) {
-          setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
-        }
-
+        // Where to load additional templates from
+        List<File> additionalTemplatePaths =
+            cmd.hasOption("fp")
+                ? Arrays.stream(cmd.getOptionValues("fp"))
+                    .map(Paths::get)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList())
+                : Collections.emptyList();
+        // Where handwritten code can be found
+        Optional<MCPath> handcodedPath =
+            cmd.hasOption("hwc")
+                ? Optional.of(new MCPath(Paths.get(cmd.getOptionValue("hwc"))))
+                : Optional.empty();
+        // output directory
         String outputPath =
             (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString() : "";
 
-        setup.setGlex(glex);
-        setup.setOutputDirectory(new File(outputPath));
+        GlobalExtensionManagement glex = new GlobalExtensionManagement();
+        GeneratorSetup generatorSetup =
+            newConfiguredGeneratorSetup(additionalTemplatePaths, handcodedPath, outputPath, glex);
 
-        CDGenerator generator = new CDGenerator(setup);
-        String configTemplate = cmd.getOptionValue("ct", "cd2java.init.CD2Pojo");
-        TemplateController tc = setup.getNewTemplateController(configTemplate);
-        TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
-
-        DecoratorConfig decSetup = new DecoratorConfig();
-
-        // Setup CLI config overrides
-        if (cmd.hasOption("cliconfig")) {
-          decSetup.withCLIConfig(Arrays.asList(cmd.getOptionValues("cliconfig")));
-        }
-
-        CDAssociationCreateFieldsFromAllRoles roleTrafo =
-            new CDAssociationCreateFieldsFromNavigableRoles();
-        final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
-        traverser.add4CDAssociation(roleTrafo);
-        traverser.setCDAssociationHandler(roleTrafo);
-        asts.forEach(roleTrafo::transform);
-
-        List<Object> configTemplateArgs = Arrays.asList(glex, decSetup);
-
-        hpp.processValue(tc, configTemplateArgs);
-
-        if (cmd.hasOption("sd")) {
-          // Prepare the global scope for decorated symbol table
-          this.initDecoratedGlobalScope(c2mc);
-        }
-
-        List<ASTCDCompilationUnit> decoratedASTs = new ArrayList<>();
-        for (ASTCDCompilationUnit ast : asts) {
-          // Prepare
-          glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-          glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
-          glex.setGlobalValue("cdGenService", new CDGenService());
-          glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
-
-          var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
-
-          if (decorated.isEmpty()) {
-            Log.error("0xCDD12: Failed generation for " + ast.getCDDefinition().getName());
-            continue;
-          }
-
-          // Post-Decorate: apply trafos needed for code generation
-          CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
-          t.add4CDBasis(new CDBasisDefaultPackageTrafo());
-          decorated.get().accept(t);
-          // Post-Decorate: make methods in interfaces abstract
-          this.makeMethodsInInterfacesAbstract(decorated.get());
-          // Post-Decorate: map import statements to classes
-          this.mapCD4CImports(decorated.get());
-
-          // The following imports (cf. Imports.ftl) have to be added
-          decorated
-              .get()
-              .addMCImportStatement(
-                  CDBasisMill.mCImportStatementBuilder()
-                      .setMCQualifiedName(
-                          MCTypeFacade.getInstance().createQualifiedName("java.util"))
-                      .setStar(true)
-                      .build());
-
-          if (cmd.hasOption("sd")) {
-            // If required, we also output the symbol table of the *decorated* AST
-            this.createAndExportDecoratedSymbolTable(decorated.get(), cmd.getOptionValue("sd"));
-          }
-
-          // Post-Decorate: TOP Decorator
-          // TODO: #4310 - make this TOP transformation configurable via the config
-          // template
-          TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
-          t = CD4CodeMill.inheritanceTraverser();
-          topTransformer.addToTraverser(t);
-          decorated.get().accept(t);
-
-          generator.generate(decorated.get());
-        }
+        // Finally, invoke the decorating generator
+        decorateAndGenerate(
+            glex,
+            // Initialize the decorator config
+            decoratorConfig -> initializeDecConf(glex, decoratorConfig, cmd, generatorSetup),
+            generatorSetup,
+            () -> {
+              // Just before decorating:
+              if (cmd.hasOption("sd")) {
+                // Prepare the global scope for decorated symbol table
+                this.initDecoratedGlobalScope(c2mc);
+              }
+            },
+            decorated -> {
+              // After each decoration, but before generation
+              if (cmd.hasOption("sd")) {
+                // If required, we also output the symbol table of the *decorated* AST
+                this.createAndExportDecoratedSymbolTable(decorated, cmd.getOptionValue("sd"));
+              }
+            },
+            asts);
       }
     } catch (ParseException e) {
       CD4CodeMill.globalScope().clear();
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
     CD4CodeMill.globalScope().clear();
+  }
+
+  public void initializeSymbolTable(boolean c2mc) {
+    BasicSymbolsMill.initializePrimitives();
+    MCCollectionSymTypeRelations.init();
+
+    if (c2mc) {
+      initializeClass2MC();
+    } else {
+      BasicSymbolsMill.initializeString();
+      BasicSymbolsMill.initializeObject();
+    }
+  }
+
+  public void initializeDecConf(
+      GlobalExtensionManagement glex,
+      DecoratorConfig decSetup,
+      CommandLine cmd,
+      GeneratorSetup setup) {
+    // Setup CLI config overrides
+    if (cmd.hasOption("cliconfig")) {
+      decSetup.withCLIConfig(Arrays.asList(cmd.getOptionValues("cliconfig")));
+    }
+    List<Object> configTemplateArgs = Arrays.asList(glex, decSetup);
+    String configTemplate = cmd.getOptionValue("ct", "cd2java.init.CD2Pojo");
+    TemplateController tc = setup.getNewTemplateController(configTemplate);
+    TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
+    hpp.processValue(tc, configTemplateArgs);
+  }
+
+  public void decorateAndGenerate(
+      GlobalExtensionManagement glex,
+      Consumer<DecoratorConfig> initializeDecConf,
+      GeneratorSetup setup,
+      Runnable initDecoratedGlobalScope,
+      Consumer<ASTCDCompilationUnit> postDecorate,
+      Collection<ASTCDCompilationUnit> asts) {
+    glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+
+    CDGenerator generator = new CDGenerator(setup);
+    DecoratorConfig decSetup = new DecoratorConfig();
+
+    CDAssociationCreateFieldsFromAllRoles roleTrafo = performFieldsFromRolesTrafo(asts);
+
+    // Load the initial decorator config
+    initializeDecConf.accept(decSetup);
+
+    // e.g., prepare the global scope for decorated symbol table
+    initDecoratedGlobalScope.run();
+
+    for (ASTCDCompilationUnit ast : asts) {
+      var decorated = decSetup.decorate(ast, roleTrafo.getFieldToRoles(), Optional.of(glex));
+
+      if (decorated.isEmpty()) {
+        Log.error("0xCDD12: Failed generation for " + ast.getCDDefinition().getName());
+        continue;
+      }
+
+      // Post-Decorate: apply trafos needed for code generation
+      CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
+      t.add4CDBasis(new CDBasisDefaultPackageTrafo());
+      decorated.get().accept(t);
+      // Post-Decorate: make methods in interfaces abstract
+      this.makeMethodsInInterfacesAbstract(decorated.get());
+      // Post-Decorate: map import statements to classes
+      this.mapCD4CImports(decorated.get());
+
+      // The following imports (cf. Imports.ftl) have to be added
+      decorated
+          .get()
+          .addMCImportStatement(
+              CDBasisMill.mCImportStatementBuilder()
+                  .setMCQualifiedName(MCTypeFacade.getInstance().createQualifiedName("java.util"))
+                  .setStar(true)
+                  .build());
+
+      // If required, we can also output the symbol table of the *decorated* AST
+      postDecorate.accept(decorated.get());
+
+      // Post-Decorate: TOP Decorator
+      // TODO: #4310 - make this TOP transformation configurable via the config
+      // template
+      TOPTrafo topTransformer = new TOPTrafo(setup.getHandcodedPath());
+      t = CD4CodeMill.inheritanceTraverser();
+      topTransformer.addToTraverser(t);
+      decorated.get().accept(t);
+
+      generator.generate(decorated.get());
+    }
+  }
+
+  public GeneratorSetup newConfiguredGeneratorSetup(
+      List<File> additionalTemplatePaths,
+      Optional<MCPath> handcodedPath,
+      String outputPath,
+      GlobalExtensionManagement glex) {
+    GeneratorSetup setup = new GeneratorSetup();
+
+    setup.setAdditionalTemplatePaths(additionalTemplatePaths);
+    handcodedPath.ifPresent(setup::setHandcodedPath);
+    setup.setGlex(glex);
+    setup.setOutputDirectory(new File(outputPath));
+    return setup;
+  }
+
+  public CDAssociationCreateFieldsFromAllRoles performFieldsFromRolesTrafo(
+      Collection<ASTCDCompilationUnit> asts) {
+    CDAssociationCreateFieldsFromAllRoles roleTrafo =
+        new CDAssociationCreateFieldsFromNavigableRoles();
+    final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    traverser.add4CDAssociation(roleTrafo);
+    traverser.setCDAssociationHandler(roleTrafo);
+    asts.forEach(roleTrafo::transform);
+    return roleTrafo;
   }
 
   /**
@@ -280,6 +325,7 @@ public class CDGenTool extends CDGeneratorTool {
               Set.class,
               Collection.class,
               Iterator.class,
+              ListIterator.class,
               Spliterator.class,
               Stream.class,
               Optional.class)) {
