@@ -27,11 +27,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CD2SMTGeneratorTest {
+  
   protected final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/cd2smt";
   ASTCDCompilationUnit astCD;
   CD2SMTGenerator cd2SMTGenerator;
   Context context;
-
+  
   @BeforeEach
   public void init() {
     Log.init();
@@ -42,33 +43,34 @@ public class CD2SMTGeneratorTest {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-
+  
   void setup(String fileName) {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     context = new Context(cfg);
-
+    
     try {
-      Optional<ASTCDCompilationUnit> optCD =
-          CD4CodeMill.parser().parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
+      Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(Paths.get(
+          RELATIVE_MODEL_PATH, fileName).toString());
       assertTrue(optCD.isPresent());
       astCD = optCD.get();
       (new CD4CodeAfterParseTrafo()).transform(astCD);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail(e.getMessage());
     }
     CD2SMTMill.initDefault();
     cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(astCD, context);
   }
-
+  
   @Test
   public void testDeclare_empty_class() {
     setup("car1.cd");
     Sort sort = cd2SMTGenerator.getSort(astCD.getCDDefinition().getCDClassesList().get(0));
     assertNotNull(sort);
   }
-
+  
   @Test
   public void testDeclareClass_with_attribute() {
     setup("car11.cd");
@@ -93,21 +95,22 @@ public class CD2SMTGeneratorTest {
       }
     }
   }
-
+  
   @Test
   public void EnumerationTest() {
     setup("car21.cd");
     ASTCDEnum astcdEnum = (ASTCDEnum) CDHelper.getASTCDType("Color", astCD.getCDDefinition());
     assertNotNull(astcdEnum);
-    Expr<? extends Sort> enumConstant =
-        cd2SMTGenerator.getEnumConstant(astcdEnum, astcdEnum.getCDEnumConstant(0));
+    Expr<? extends Sort> enumConstant = cd2SMTGenerator.getEnumConstant(astcdEnum, astcdEnum
+        .getCDEnumConstant(0));
     assertEquals("RED", enumConstant.toString());
   }
-
+  
   @AfterEach
   public void cleanUp() {
     if (context != null) {
       context.close();
     }
   }
+  
 }

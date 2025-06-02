@@ -1,9 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.datastructures;
 
 public enum AssocCardinality {
-  Optional,
-  Multiple,
-  AtLeastOne,
-
+  Optional, Multiple, AtLeastOne,
+  
   One
 }

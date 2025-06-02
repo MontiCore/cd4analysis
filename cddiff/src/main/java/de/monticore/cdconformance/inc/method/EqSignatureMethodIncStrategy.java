@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -16,41 +17,39 @@ import java.util.stream.Collectors;
  * type - the reference type is underspecified
  */
 public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
+  
   private final MCTypeMatcher typeMatcher;
   private final boolean strictParameterOrder;
-
+  
   private ASTCDType refType;
-
+  
   public EqSignatureMethodIncStrategy(MCTypeMatcher typeMatcher, boolean strictParameterOrder) {
     this.typeMatcher = typeMatcher;
     this.strictParameterOrder = strictParameterOrder;
   }
-
+  
   @Override
   public List<ASTCDMethod> getMatchedElements(ASTCDMethod concrete) {
-    return refType.getCDMethodList().stream()
-        .filter(method -> isMatched(concrete, method))
-        .collect(Collectors.toList());
+    return refType.getCDMethodList().stream().filter(method -> isMatched(concrete, method)).collect(
+        Collectors.toList());
   }
-
+  
   @Override
   public boolean isMatched(ASTCDMethod concrete, ASTCDMethod ref) {
-    if (ref.getName().equals(concrete.getName())
-        && ref.getCDParameterList().size() == concrete.getCDParameterList().size()) {
-      return strictParameterOrder
-          ? isStrictParameterMatch(concrete.getCDParameterList(), ref.getCDParameterList())
-          : isParameterMatchWithoutOrder(concrete.getCDParameterList(), ref.getCDParameterList());
+    if (ref.getName().equals(concrete.getName()) && ref.getCDParameterList().size() == concrete
+        .getCDParameterList().size()) {
+      return strictParameterOrder ? isStrictParameterMatch(concrete.getCDParameterList(), ref
+          .getCDParameterList()) : isParameterMatchWithoutOrder(concrete.getCDParameterList(), ref
+              .getCDParameterList());
     }
     return false;
   }
-
+  
   @Override
-  public void setReferenceType(ASTCDType refType) {
-    this.refType = refType;
-  }
-
-  private boolean isStrictParameterMatch(
-      List<ASTCDParameter> conParams, List<ASTCDParameter> refParams) {
+  public void setReferenceType(ASTCDType refType) { this.refType = refType; }
+  
+  private boolean isStrictParameterMatch(List<ASTCDParameter> conParams,
+      List<ASTCDParameter> refParams) {
     for (int i = 0; i < conParams.size(); i++) {
       ASTCDParameter conParam = conParams.get(i);
       ASTCDParameter refParam = refParams.get(i);
@@ -60,17 +59,16 @@ public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
     }
     return true;
   }
-
-  private boolean isParameterMatchWithoutOrder(
-      List<ASTCDParameter> conParams, List<ASTCDParameter> refParams) {
+  
+  private boolean isParameterMatchWithoutOrder(List<ASTCDParameter> conParams,
+      List<ASTCDParameter> refParams) {
     for (ASTCDParameter refParam : refParams) {
-      if (conParams.stream()
-          .noneMatch(
-              conParam ->
-                  typeMatcher.isMCTypeMatched(conParam.getMCType(), refParam.getMCType()))) {
+      if (conParams.stream().noneMatch(conParam -> typeMatcher.isMCTypeMatched(conParam.getMCType(),
+          refParam.getMCType()))) {
         return false;
       }
     }
     return true;
   }
+  
 }

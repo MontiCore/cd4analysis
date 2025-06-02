@@ -22,36 +22,38 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CDAssociationTestBasis extends TestBasis {
+  
   protected TestCDAssociationParser p;
   protected CDAssociationCoCoChecker coCoChecker;
-
+  
   @BeforeEach
   public void initObjects() {
     TestCDAssociationMill.reset();
     TestCDAssociationMill.init();
     p = TestCDAssociationMill.parser();
-
+    
     final ITestCDAssociationGlobalScope globalScope = TestCDAssociationMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
-
+    
     coCoChecker = new CDAssociationCoCoChecker();
   }
-
+  
   protected ASTCDCompilationUnit parseModel(String modelName) {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit;
     try {
       astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath(modelName));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("Failed while parsing the model `" + getFilePath(modelName) + "': " + e.getMessage());
       return null;
     }
-
+    
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();
   }
-
+  
   protected void afterParseTrafo(ASTCDCompilationUnit ast) {
     // first transform every direct composition into teal ones
     TestCDAssociationTraverser t1 = TestCDAssociationMill.inheritanceTraverser();
@@ -59,35 +61,36 @@ public class CDAssociationTestBasis extends TestBasis {
     t1.add4CDBasis(dirComp);
     t1.add4CDAssociation(dirComp);
     ast.accept(t1);
-
+    
     // in a second pass, a missing role names
     TestCDAssociationTraverser t2 = TestCDAssociationMill.inheritanceTraverser();
     CDAssociationRoleNameTrafo roleName = new CDAssociationRoleNameTrafo();
     t2.add4CDAssociation(roleName);
     ast.accept(t2);
   }
-
+  
   protected ITestCDAssociationArtifactScope createSymTab(
       ASTCDCompilationUnit astcdCompilationUnit) {
-    final ITestCDAssociationArtifactScope st =
-        TestCDAssociationMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    final ITestCDAssociationArtifactScope st = TestCDAssociationMill.scopesGenitorDelegator()
+        .createFromAST(astcdCompilationUnit);
     checkLogError();
     return st;
   }
-
+  
   protected void completeSymTab(ASTCDCompilationUnit ast) {
     TestCDAssociationTraverser t = TestCDAssociationMill.inheritanceTraverser();
-
+    
     // add 4 cd basis
     CDBasisSymbolTableCompleter symTabCompBasis = new CDBasisSymbolTableCompleter();
     t.add4CDBasis(symTabCompBasis);
     t.add4OOSymbols(symTabCompBasis);
-
+    
     // add 4 cd association
     CDAssociationSymbolTableCompleter symTabCompAssoc = new CDAssociationSymbolTableCompleter();
     t.add4CDAssociation(symTabCompAssoc);
     t.setCDAssociationHandler(symTabCompAssoc);
-
+    
     ast.accept(t);
   }
+  
 }

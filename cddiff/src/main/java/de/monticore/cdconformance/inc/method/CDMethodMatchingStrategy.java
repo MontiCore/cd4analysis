@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -9,6 +10,7 @@ import de.monticore.cdmatcher.MatchingStrategy;
  * to know a reference type against whose methods it matches the concrete methods.
  */
 public interface CDMethodMatchingStrategy extends MatchingStrategy<ASTCDMethod> {
-
+  
   void setReferenceType(ASTCDType refType);
+  
 }

@@ -18,13 +18,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CDGeneratorTest extends CD4CodeTestBasis {
-
+  
   private static final String MODEL_PATH = "src/test/resources/";
-
+  
   private GlobalExtensionManagement glex;
-
+  
   private ASTCDCompilationUnit compUnit;
-
+  
   @BeforeEach
   @Override
   public void initObjects() {
@@ -34,29 +34,29 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
     this.glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     CD4C.reset();
   }
-
+  
   @Test
   public void testOutput() {
     compUnit = parse("cd/codegen/GenAuction.cd");
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
-    this.glex.bindHookPoint(
-        "ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
-
+    this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint(
+        "de.monticore.cd.codegen.AuctionElements"));
+    
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/generated"));
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);
   }
-
+  
   @Test
   public void testOutput_WithMethods() {
     compUnit = parse("cd/codegen/GenAuction.cd");
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
-    this.glex.bindHookPoint(
-        "ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
-
+    this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint(
+        "de.monticore.cd.codegen.AuctionElements"));
+    
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/generated/methods"));
     MethodDecorator decorator = new MethodDecorator(glex);
@@ -68,17 +68,17 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);
   }
-
+  
   @Test
   public void testOutput_WithAssocsAndMethods() {
     compUnit = parse("cd/codegen/GenAuction.cd");
     prepareST(compUnit);
-
+    
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
-    this.glex.bindHookPoint(
-        "ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
-
+    this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint(
+        "de.monticore.cd.codegen.AuctionElements"));
+    
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/generated/assocsandmethods"));
     MethodDecorator decorator = new MethodDecorator(glex);
@@ -90,16 +90,17 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);
   }
-
+  
   @Test
   public void testEnum() {
     compUnit = parse("cd/codegen/GenAuction_WithEnum.cd");
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
-
+    
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/generated/auction_enum"));
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);
   }
+  
 }

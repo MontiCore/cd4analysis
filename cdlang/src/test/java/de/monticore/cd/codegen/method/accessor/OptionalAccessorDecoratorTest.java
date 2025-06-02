@@ -24,30 +24,30 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
-
+  
   private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
-
+  
   private List<ASTCDMethod> methods;
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
-
+    
     // dummy cd needed for a good generated error Code
     ASTCDCompilationUnit cd = this.parse("de", "monticore", "cd", "codegen", "Automaton");
-
+    
     ASTMCType optType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        optType, "a");
     OptionalAccessorDecorator optionalAccessorDecorator = new OptionalAccessorDecorator(glex);
     this.methods = optionalAccessorDecorator.decorate(attribute);
   }
-
+  
   @Test
   public void testMethods() {
     assertEquals(2, methods.size());
   }
-
+  
   @Test
   public void testGetMethod() {
     ASTCDMethod method = getMethodBy("getA", this.methods);
@@ -56,7 +56,7 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
     assertDeepEquals(String.class, method.getMCReturnType().getMCType());
     assertDeepEquals(PUBLIC, method.getModifier());
   }
-
+  
   @Test
   public void testIsPresentMethod() {
     ASTCDMethod method = getMethodBy("isPresentA", this.methods);
@@ -65,16 +65,17 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
     assertDeepEquals(PUBLIC, method.getModifier());
     assertTrue(method.getCDParameterList().isEmpty());
   }
-
+  
   @Test
   public void testDerivedAttr() {
     ASTMCType optType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        optType, "a");
     attribute.getModifier().setDerived(true);
     OptionalAccessorDecorator optionalAccessorDecorator = new OptionalAccessorDecorator(glex);
     List<ASTCDMethod> methList = optionalAccessorDecorator.decorate(attribute);
     assertEquals(1, methList.size());
     assertTrue(methList.get(0).getModifier().isAbstract());
   }
+  
 }

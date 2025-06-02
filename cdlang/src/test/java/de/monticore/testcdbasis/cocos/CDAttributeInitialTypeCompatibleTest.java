@@ -15,7 +15,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Analysis()));
@@ -28,12 +28,12 @@ public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Analysis()));
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdbasis/cocos/CDAttributeInitialTypeCompatibleInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdbasis/cocos/CDAttributeInitialTypeCompatibleInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -45,7 +45,8 @@ public class CDAttributeInitialTypeCompatibleTest extends CDBasisTestBasis {
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDC02"));
     assertTrue(Log.getFindings().get(2).getMsg().startsWith("0xCDC02"));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

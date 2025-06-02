@@ -16,86 +16,89 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class STAMatchingTest {
-  String[] validBaseCDModelsOpenWorld = {
-    "MultiBaseNoOpenDiff.cd", "MultiBaseOpenSubsetDiff.cd", "MultiBaseOpenCycleDiff.cd"
-  };
-
-  String[] validCompareCDModelsOpenWorld = {
-    "MultiCompNoOpenDiff.cd", "MultiCompOpenSubsetDiff.cd", "MultiCompOpenCycleDiff.cd"
-  };
-
+  
+  String[] validBaseCDModelsOpenWorld = { "MultiBaseNoOpenDiff.cd", "MultiBaseOpenSubsetDiff.cd",
+      "MultiBaseOpenCycleDiff.cd" };
+  
+  String[] validCompareCDModelsOpenWorld = { "MultiCompNoOpenDiff.cd", "MultiCompOpenSubsetDiff.cd",
+      "MultiCompOpenCycleDiff.cd" };
+  
   String validODModel = "/MultiOdNoStereotype.od";
-
-  boolean[] openDiff = {false, true, true};
-
-  String[] validBaseCDModelsClosedWorld = {"MultiBaseClosedDiff.cd", "MultiBaseClosedNoDiff.cd"};
-
-  String[] validCompareCDModelsClosedWorld = {"MultiCompClosedDiff.cd", "MultiCompClosedNoDiff.cd"};
-
-  boolean[] closedDiff = {true, false};
-
+  
+  boolean[] openDiff = { false, true, true };
+  
+  String[] validBaseCDModelsClosedWorld = { "MultiBaseClosedDiff.cd", "MultiBaseClosedNoDiff.cd" };
+  
+  String[] validCompareCDModelsClosedWorld = { "MultiCompClosedDiff.cd",
+      "MultiCompClosedNoDiff.cd" };
+  
+  boolean[] closedDiff = { true, false };
+  
   File cdBaseModel;
-
+  
   File cdCompareModel;
-
+  
   File odModel;
-
+  
   ModelLoader loader = new ModelLoader();
-
+  
   @BeforeEach
   public void loadModels() {
     LogStub.init();
     Log.enableFailQuick(false);
-
+    
     CD4CodeMill.reset();
     CD4CodeMill.globalScope().clear();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().init();
   }
-
+  
   @Test
   public void testMultiInstanceClosedWorldNoStereotype() throws FileNotFoundException {
-
+    
     STAObjectMatcher matcher = new STAObjectMatcher(new OD2CDMatcher());
-
+    
     String resources = "src/test/resources/de/monticore/odvalidity/STAObjectMatcher/";
     odModel = new File(resources + validODModel);
     ASTODArtifact od = loader.loadODModel(odModel).get();
-
+    
     for (int i = 0; i < validBaseCDModelsClosedWorld.length; i++) {
       cdBaseModel = new File(resources + validBaseCDModelsClosedWorld[i]);
       cdCompareModel = new File(resources + validCompareCDModelsClosedWorld[i]);
       ASTCDCompilationUnit baseCD = loader.loadCDModel(cdBaseModel).get();
       ASTCDCompilationUnit compCD = loader.loadCDModel(cdCompareModel).get();
-
+      
       if (closedDiff[i]) {
         assertTrue(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
-      } else {
+      }
+      else {
         assertFalse(matcher.isDiffWitness(CDSemantics.STA_CLOSED_WORLD, baseCD, compCD, od));
       }
     }
   }
-
+  
   @Test
   public void testMultiInstanceOpenWorldNoStereotype() throws FileNotFoundException {
-
+    
     STAObjectMatcher matcher = new STAObjectMatcher(new OD2CDMatcher());
-
+    
     String resources = "src/test/resources/de/monticore/odvalidity/STAObjectMatcher/";
     odModel = new File(resources + validODModel);
     ASTODArtifact od = loader.loadODModel(odModel).get();
-
+    
     for (int i = 0; i < validBaseCDModelsOpenWorld.length; i++) {
       cdBaseModel = new File(resources + validBaseCDModelsOpenWorld[i]);
       cdCompareModel = new File(resources + validCompareCDModelsOpenWorld[i]);
       ASTCDCompilationUnit baseCD = loader.loadCDModel(cdBaseModel).get();
       ASTCDCompilationUnit compCD = loader.loadCDModel(cdCompareModel).get();
-
+      
       if (openDiff[i]) {
         assertTrue(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
-      } else {
+      }
+      else {
         assertFalse(matcher.isDiffWitness(CDSemantics.STA_OPEN_WORLD, baseCD, compCD, od));
       }
     }
   }
+  
 }

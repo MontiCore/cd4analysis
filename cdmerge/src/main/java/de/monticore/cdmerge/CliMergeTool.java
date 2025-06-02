@@ -25,16 +25,16 @@ import java.util.Optional;
  */
 @Deprecated
 public class CliMergeTool {
-
+  
   public static void main(String[] args) throws FileNotFoundException, IOException {
-
+    
     PrintStream outStream = System.out;
-
+    
     if (args.length == 0) {
       printUsageShort();
       return;
     }
-
+    
     CDMergeConfig.Builder configBuilder = new CDMergeConfig.Builder(true);
     Optional<MergeParameter> currentParam = Optional.empty();
     for (String argument : args) {
@@ -55,39 +55,39 @@ public class CliMergeTool {
         // The parameter was specified in CLI so turn it on
         if (currentParam.get().isBooleanParameter()) {
           configBuilder.withParam(currentParam.get(), MergeParameter.ON);
-        } else {
+        }
+        else {
           // There will possibly be a value in the next iteration
           configBuilder.withParam(currentParam.get());
         }
-      } else {
+      }
+      else {
         // A parameter Value
         if (currentParam.isPresent()) {
           if (currentParam.get().isBooleanParameter()) {
-            System.out.println(
-                "Unexpected value " + argument + " for flag parameter " + currentParam);
+            System.out.println("Unexpected value " + argument + " for flag parameter "
+                + currentParam);
             return;
           }
           configBuilder.withParam(currentParam.get(), argument);
-        } else {
-          System.out.println(
-              "Unexpected value "
-                  + argument
-                  + "  was expecting parameter instead. Are you missing '-' or '--' as parameter "
-                  + "prefix?");
+        }
+        else {
+          System.out.println("Unexpected value " + argument
+              + "  was expecting parameter instead. Are you missing '-' or '--' as parameter "
+              + "prefix?");
         }
       }
     }
     if (!configBuilder.isDefinedParameter(MergeParameter.OUTPUT_PATH)) {
-      System.out.println(
-          String.format(
-              "Will use current directory '%s' as output directory",
-              System.getProperty("user.dir")));
+      System.out.println(String.format("Will use current directory '%s' as output directory", System
+          .getProperty("user.dir")));
       configBuilder.withParam(MergeParameter.OUTPUT_PATH, System.getProperty("user.dir"));
     }
     MergeTool merger;
     try {
       merger = new MergeTool(configBuilder.build());
-    } catch (ConfigurationException e) {
+    }
+    catch (ConfigurationException e) {
       System.out.println("Configuration error " + e.getMessage());
       return;
     }
@@ -95,7 +95,7 @@ public class CliMergeTool {
       if (merger.getConfig().isLogToStdErr()) {
         outStream = System.err;
       }
-
+      
       if (merger.getConfig().isVerbose()) {
         outStream.println("Running CD Merge with parameters:\n");
         Map<MergeParameter, String> parameters = configBuilder.getMergeParameters();
@@ -103,20 +103,21 @@ public class CliMergeTool {
         for (MergeParameter param : MergeParameter.values()) {
           if (parameters.containsKey(param)) {
             value = parameters.get(param).isEmpty() ? "ON" : parameters.get(param);
-          } else {
+          }
+          else {
             value = "OFF";
           }
           outStream.println("\t" + param.getCLIParameter() + ": " + value);
         }
       }
-
+      
       // Perform the actual cd mergings:
       MergeResult result = merger.mergeCDs();
       // Analyse the Reports...
       Iterator<MergeStepResult> reportIterator = result.getIntermediateResults().iterator();
       MergeStepResult mergeStepResult;
       int step = 0;
-
+      
       while (reportIterator.hasNext()) {
         step++;
         mergeStepResult = reportIterator.next();
@@ -126,37 +127,38 @@ public class CliMergeTool {
           outStream.println("==== END MERGE STEP " + step + " ====");
         }
       }
-
+      
       if (result.getMaxErrorLevel() != ErrorLevel.ERROR) {
         if (!merger.getConfig().isSilent()) {
           outStream.println("== MERGED CLASS DIAGRAM ==");
           outStream.println(CDMergeUtils.prettyPrint(result.getMergedCD().get()));
         }
         if (!merger.getConfig().checkOnly() && merger.getConfig().printToFile()) {
-          de.se_rwth.commons.Files.writeToTextFile(
-              new StringReader(CDMergeUtils.prettyPrint(result.getMergedCD().get())),
-              new File(
-                  merger.getConfig().getOutputPath() + merger.getConfig().getOutputName() + ".cd"));
-          outStream.println(
-              "Wrote successfully merged CD into file: "
-                  + merger.getConfig().getOutputPath()
-                  + merger.getConfig().getOutputName()
-                  + ".cd");
-        } else {
+          de.se_rwth.commons.Files.writeToTextFile(new StringReader(CDMergeUtils.prettyPrint(result
+              .getMergedCD().get())), new File(merger.getConfig().getOutputPath() + merger
+                  .getConfig().getOutputName() + ".cd"));
+          outStream.println("Wrote successfully merged CD into file: " + merger.getConfig()
+              .getOutputPath() + merger.getConfig().getOutputName() + ".cd");
+        }
+        else {
           outStream.println("Merging the class diagrams was succesfull!");
         }
-
-      } else {
+        
+      }
+      else {
         outStream.println("Unable to merge input CDs!");
       }
-
-    } catch (FailFastException e) {
+      
+    }
+    catch (FailFastException e) {
       outStream.println("FAIL FAST EXIT");
       outStream.println("Unable to merge class diagramms: " + e.getMessage());
       outStream.println();
-    } catch (ConfigurationException e) {
+    }
+    catch (ConfigurationException e) {
       outStream.println("Configuration error " + e.getMessage());
-    } catch (MergingException e) {
+    }
+    catch (MergingException e) {
       if (merger.getConfig().isVerbose()) {
         if (e.getReport().isPresent()) {
           outStream.println("== EXECUTION LOG ==");
@@ -170,43 +172,47 @@ public class CliMergeTool {
       outStream.println("Check the execution log for occurred merging problems.");
     }
   }
-
+  
   private static void printUsageShort() {
     System.out.println("Usage: java -jar CDMerge -m <InputModel1> <InputModel2>  ");
     System.out.println(
         " Call java - jar  CDMerge -help paramater to print full list of parameters");
   }
-
+  
   private static void printUsage() {
     URL usagedoc = CliMergeTool.class.getClassLoader().getResource("CDMergeUsage.md");
     if (usagedoc == null) {
       printUsageShort();
       System.out.println(".... could not find help doc resource 'CDMergeUsage.md' !");
-    } else {
+    }
+    else {
       try {
         StringBuilder buffer = new StringBuilder();
         File docFile = new File(usagedoc.toURI());
         if (docFile.exists() && docFile.canRead()) {
-
-          InputStreamReader isr =
-              new InputStreamReader(new FileInputStream(docFile), StandardCharsets.UTF_8);
-
+          
+          InputStreamReader isr = new InputStreamReader(new FileInputStream(docFile),
+              StandardCharsets.UTF_8);
+          
           BufferedReader reader = new BufferedReader(isr);
           String str;
           while ((str = reader.readLine()) != null) {
             buffer.append(str + System.lineSeparator());
           }
           reader.close();
-          System.out.println(
-              buffer.toString().replace("#", "").replace("**", "").replace("+ ", " "));
-        } else {
+          System.out.println(buffer.toString().replace("#", "").replace("**", "").replace("+ ",
+              " "));
+        }
+        else {
           throw new NoSuchFileException(docFile.getAbsolutePath());
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         printUsageShort();
         System.out.println(".... could not find help doc resource 'CDMergeUsage.md' !");
         System.out.println(e.getMessage());
       }
     }
   }
+  
 }

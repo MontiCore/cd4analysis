@@ -9,17 +9,17 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import java.util.Optional;
 
 public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
-
+  
   public CDAssociationScopesGenitor() {
     super();
   }
-
+  
   @Override
   public void visit(ASTCDDirectComposition node) {
     throw new IllegalStateException(
         "0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CDAssociationDirectCompositionTrafo.");
   }
-
+  
   public void endVisit(ASTCDAssociation node) {
     // create the SymAssociation connected to the CDAssociationSymbol
     // only if both role names are set
@@ -31,15 +31,12 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
         // the symAssociation is created
         symAssociation.get().setAssociationSymbol(node.getSymbol());
       }
-      symAssociation
-          .get()
-          .setLeftRole(node.getLeft().getSymbol())
-          .setRightRole(node.getRight().getSymbol())
-          .build();
+      symAssociation.get().setLeftRole(node.getLeft().getSymbol()).setRightRole(node.getRight()
+          .getSymbol()).build();
     }
     super.endVisit(node);
   }
-
+  
   public void createAndInit_SymAssociation(ASTCDAssociation node) {
     // create the SymAssociation connected to the CDAssociationSymbol
     // only if both role names are set
@@ -51,14 +48,11 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
         // the symAssociation is created
         symAssociation.get().setAssociationSymbol(node.getSymbol());
       }
-      symAssociation
-          .get()
-          .setLeftRole(node.getLeft().getSymbol())
-          .setRightRole(node.getRight().getSymbol())
-          .build();
+      symAssociation.get().setLeftRole(node.getLeft().getSymbol()).setRightRole(node.getRight()
+          .getSymbol()).build();
     }
   }
-
+  
   protected Optional<SymAssociationBuilder> create_SymAssociation(ASTCDAssociation node) {
     if (!node.getLeft().isPresentCDRole() || !node.getRight().isPresentCDRole()) {
       // cant create the symbol structure when the role has no name
@@ -67,7 +61,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     }
     return Optional.of(new SymAssociationBuilder());
   }
-
+  
   /**
    * this method can only be used, when both sides have a CDRole
    *
@@ -75,12 +69,13 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
    * @param node
    * @return
    */
-  protected boolean initialize_SymAssociation(
-      SymAssociationBuilder symAssociation, ASTCDAssociation node) {
+  protected boolean initialize_SymAssociation(SymAssociationBuilder symAssociation,
+      ASTCDAssociation node) {
     CDAssociationTraverser t = CDAssociationMill.inheritanceTraverser();
     t.add4CDAssociation(new CDAssocTypeForSymAssociationVisitor(symAssociation));
     node.getCDAssocType().accept(t);
-
+    
     return true;
   }
+  
 }

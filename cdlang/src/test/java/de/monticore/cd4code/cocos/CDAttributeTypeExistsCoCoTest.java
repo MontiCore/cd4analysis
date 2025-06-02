@@ -18,39 +18,34 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CDAttributeTypeExistsCoCoTest extends CD4CodeTestBasis {
+  
   @Test
   public void attributeTypeExists() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parse(getFilePath("cdbasis/parser/Types.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath(
+        "cdbasis/parser/Types.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-
+    
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
     checkLogError();
-
+    
     final CD4CodeCoCoChecker checker = cd4CodeCoCos.createNewChecker();
     checker.addCoCo(new CDAttributeTypeExists());
     checker.checkAll(node);
-
+    
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);
   }
-
+  
   @Test
   public void attributeTypeExists2() throws IOException, ParseException {
     final File file = new File(getFilePath("cdbasis/parser/Types.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-
-    CD4CodeTool.main(
-        new String[] {
-          "-i",
-          fileName,
-          "-pp",
-          getTmpFilePath("Types.cd").replaceAll("\\\\", "/"),
-          "-s",
-          "target/symbols/Types.sym"
-        });
+    
+    CD4CodeTool.main(new String[] { "-i", fileName, "-pp", getTmpFilePath("Types.cd").replaceAll(
+        "\\\\", "/"), "-s", "target/symbols/Types.sym" });
   }
+  
 }

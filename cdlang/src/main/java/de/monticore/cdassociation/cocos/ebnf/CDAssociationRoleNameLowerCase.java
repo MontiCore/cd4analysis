@@ -9,13 +9,13 @@ import de.se_rwth.commons.logging.Log;
 
 /** Checks that role names start lower-case. */
 public class CDAssociationRoleNameLowerCase implements CDAssociationASTCDAssociationCoCo {
-
+  
   @Override
   public void check(ASTCDAssociation assoc) {
     check(assoc.getLeft(), assoc);
     check(assoc.getRight(), assoc);
   }
-
+  
   /**
    * Does the actual check.
    *
@@ -27,11 +27,10 @@ public class CDAssociationRoleNameLowerCase implements CDAssociationASTCDAssocia
       return;
     }
     if (!Character.isLowerCase(side.getCDRole().getName().charAt(0))) {
-      Log.error(
-          String.format(
-              "0xCDC66: Role %s of association %s must start in lower-case.",
-              side.getCDRole().getName(), CDAssociationMill.prettyPrint(assoc, false)),
-          assoc.get_SourcePositionStart());
+      Log.error(String.format("0xCDC66: Role %s of association %s must start in lower-case.", side
+          .getCDRole().getName(), CDAssociationMill.prettyPrint(assoc, false)), assoc
+              .get_SourcePositionStart());
     }
   }
+  
 }

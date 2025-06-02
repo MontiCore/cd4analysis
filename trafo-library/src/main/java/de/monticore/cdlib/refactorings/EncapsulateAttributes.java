@@ -16,8 +16,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class EncapsulateAttributes implements Refactoring {
+  
   public EncapsulateAttributes() {}
-
+  
   /**
    * Makes all public attributes private and adds getter and setter methods
    *
@@ -34,10 +35,10 @@ public class EncapsulateAttributes implements Refactoring {
     if (encapsulateBoolean.doPatternMatching()) {
       encapsulateBoolean.doReplacement();
     }
-
+    
     return true;
   }
-
+  
   /**
    * Makes the given attributes {@code attributes} private and adds getter and setter methods
    *
@@ -51,14 +52,15 @@ public class EncapsulateAttributes implements Refactoring {
       encapsulateAttribute.set_$attrname(attributes.get(i));
       if (encapsulateAttribute.doPatternMatching()) {
         encapsulateAttribute.doReplacement();
-      } else {
+      }
+      else {
         EncapsulateAttributeBoolean encapsulateBoolean = new EncapsulateAttributeBoolean(ast);
         encapsulateBoolean.set_$attrname(attributes.get(i));
         if (encapsulateBoolean.doPatternMatching()) {
           encapsulateBoolean.doReplacement();
-        } else {
-          Log.info(
-              "0xF4061:Could not find attribute " + attributes.get(i),
+        }
+        else {
+          Log.info("0xF4061:Could not find attribute " + attributes.get(i),
               EncapsulateAttributes.class.getName());
           return false;
         }
@@ -67,4 +69,5 @@ public class EncapsulateAttributes implements Refactoring {
     }
     return false;
   }
+  
 }

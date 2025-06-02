@@ -2,12 +2,11 @@
 package de.monticore.cdassociation._symboltable;
 
 public class CDRoleSymbol extends CDRoleSymbolTOP {
-
+  
   public CDRoleSymbol(String name) {
     super(name);
   }
-
-  public CDRoleSymbol getOtherSide() {
-    return getAssoc().getOtherRole(this);
-  }
+  
+  public CDRoleSymbol getOtherSide() { return getAssoc().getOtherRole(this); }
+  
 }

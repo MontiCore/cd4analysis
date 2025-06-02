@@ -17,12 +17,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AmbiguousMatchTest extends BaseTest {
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Association/ambiguousMatch/A.cd";
-
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Association/ambiguousMatch/B.cd";
-
+  
+  private static final String INPUT_MODEL_1 = "src/test/resources/class_diagrams"
+      + "/Association/ambiguousMatch/A.cd";
+  
+  private static final String INPUT_MODEL_2 = "src/test/resources/class_diagrams"
+      + "/Association/ambiguousMatch/B.cd";
+  
   @Test
   public void testAssociationNonAssociative() throws IOException {
     List<String> inputModels = new ArrayList<>();
@@ -32,22 +33,21 @@ public class AmbiguousMatchTest extends BaseTest {
     try {
       cdMerger.mergeCDs();
       fail("Expected Merging Exception due to non associative input CDs");
-    } catch (MergingException e) {
+    }
+    catch (MergingException e) {
       assertTrue(e.getMessage().contains("Could not merge due to ambiguous match for"));
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder =
-        getConfigBuilder()
-            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
-            .withParam(MergeParameter.ASSERT_ASSOCIATIVITY)
-            .withParam(MergeParameter.FAIL_AMBIGUOUS)
-            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
+        MergeParameter.ON).withParam(MergeParameter.ASSERT_ASSOCIATIVITY).withParam(
+            MergeParameter.FAIL_AMBIGUOUS).withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
+  
 }

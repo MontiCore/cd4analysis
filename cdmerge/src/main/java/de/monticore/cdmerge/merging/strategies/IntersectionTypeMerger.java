@@ -10,15 +10,16 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
  * have been defined in both source diagrams
  */
 public class IntersectionTypeMerger extends TypeMerger {
-
-  public IntersectionTypeMerger(
-      MergeBlackBoard mergeBlackBoard, TypeMergeStrategy typeMergeStrategy) {
+  
+  public IntersectionTypeMerger(MergeBlackBoard mergeBlackBoard,
+      TypeMergeStrategy typeMergeStrategy) {
     super(mergeBlackBoard, typeMergeStrategy);
   }
-
+  
   @Override
   public void mergeTypes(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchResult) {
     // TODO - Implement Type Intersection Merger
     throw new UnsupportedOperationException("TypeIntersectionMerger NOT IMPLEMENTED");
   }
+  
 }

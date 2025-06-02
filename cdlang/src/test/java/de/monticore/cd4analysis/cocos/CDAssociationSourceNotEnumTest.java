@@ -19,12 +19,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationSourceNotEnum());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     roleNameTrafo(ast);
@@ -34,12 +34,12 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationSourceNotEnum());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/CDAssociationSourceNotEnumInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/CDAssociationSourceNotEnumInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     roleNameTrafo(ast);
@@ -50,22 +50,22 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC67"));
   }
-
+  
   protected void roleNameTrafo(ASTCDCompilationUnit ast) {
     CDAssociationRoleNameTrafo trafo = new CDAssociationRoleNameTrafo();
     final CDAssociationTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     traverser.add4CDAssociation(trafo);
     ast.accept(traverser);
   }
-
+  
   protected void completeSymTab(ASTCDCompilationUnit ast) {
-    CD4AnalysisSymbolTableCompleter c =
-        new CD4AnalysisSymbolTableCompleter(
-            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(ast
+        .getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
   }
-
+  
   @AfterEach
   @Override
   public void after() {}
+  
 }

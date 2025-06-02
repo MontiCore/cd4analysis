@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDPackageNameUniqueTest extends CDBasisTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDPackageNameUnique());
@@ -25,12 +25,12 @@ public class CDPackageNameUniqueTest extends CDBasisTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDPackageNameUnique());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdbasis/cocos/CDPackageNameUniqueInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdbasis/cocos/CDPackageNameUniqueInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -38,7 +38,8 @@ public class CDPackageNameUniqueTest extends CDBasisTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC0E"));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

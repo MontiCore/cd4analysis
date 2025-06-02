@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.syntax_highlighting.rule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,20 +18,20 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
 class HighlightEnumTest {
-
+  
   @Test
   void testClassDiagramName() throws IOException {
-    CD4AnalysisLexerProvider lexerProvider =
-        new CD4AnalysisLexerProvider(
-            new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
+    CD4AnalysisLexerProvider lexerProvider = new CD4AnalysisLexerProvider(
+        new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
     Path pathToModel = Paths.get("src/test/resources/highlighting/CDEnum.cd");
     String content = IOUtils.toString(pathToModel.toUri(), StandardCharsets.UTF_8);
-
+    
     List<Token> classifiedTokens = lexerProvider.getTokensForInput(content);
-
+    
     // Check enum name and members
     assertEquals(SemanticTokenTypesWrapper.Enum.value, classifiedTokens.get(4).getName());
     assertEquals(SemanticTokenTypesWrapper.EnumMember.value, classifiedTokens.get(6).getName());
     assertEquals(SemanticTokenTypesWrapper.EnumMember.value, classifiedTokens.get(8).getName());
   }
+  
 }

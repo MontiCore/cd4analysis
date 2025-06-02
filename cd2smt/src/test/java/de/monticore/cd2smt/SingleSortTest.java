@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt;
 
 import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
@@ -17,46 +18,40 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class SingleSortTest extends CD2SMTAbstractTest {
-
+  
   @BeforeEach
   public void setup() {
     Log.init();
     CD4CodeMill.init();
-
+    
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     ctx = new Context(cfg);
   }
-
+  
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void CheckTypeUnicity(String cdfile) {
-
+    
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator(SSCOMB, SE, DEFAULT);
     ASTCDCompilationUnit ast = parseModel(cdfile);
     cd2SMTGenerator.cd2smt(ast, ctx);
     List<BoolExpr> constraints = new ArrayList<>();
-    Expr<? extends Sort> obj =
-        ctx.mkConst(
-            "Obj", cd2SMTGenerator.getSort(ast.getCDDefinition().getCDClassesList().get(0)));
-    ast.getCDDefinition()
-        .getCDClassesList()
-        .forEach(astcdclass -> constraints.add(cd2SMTGenerator.hasType(obj, astcdclass)));
-
-    ast.getCDDefinition()
-        .getCDInterfacesList()
-        .forEach(astcdclass -> constraints.add(cd2SMTGenerator.hasType(obj, astcdclass)));
-
+    Expr<? extends Sort> obj = ctx.mkConst("Obj", cd2SMTGenerator.getSort(ast.getCDDefinition()
+        .getCDClassesList().get(0)));
+    ast.getCDDefinition().getCDClassesList().forEach(astcdclass -> constraints.add(cd2SMTGenerator
+        .hasType(obj, astcdclass)));
+    
+    ast.getCDDefinition().getCDInterfacesList().forEach(astcdclass -> constraints.add(
+        cd2SMTGenerator.hasType(obj, astcdclass)));
+    
     Set<IdentifiableBoolExpr> UNSATConstrList = new HashSet<>();
-
+    
     for (int i = 0; i < constraints.size(); i++) {
       for (int j = 0; j < constraints.size(); j++) {
         if (i != j) {
-          UNSATConstrList.add(
-              IdentifiableBoolExpr.buildIdentifiable(
-                  ctx.mkAnd(constraints.get(i), constraints.get(j)),
-                  null,
-                  Optional.of("[NONAME]")));
+          UNSATConstrList.add(IdentifiableBoolExpr.buildIdentifiable(ctx.mkAnd(constraints.get(i),
+              constraints.get(j)), null, Optional.of("[NONAME]")));
         }
       }
     }
@@ -65,4 +60,5 @@ public class SingleSortTest extends CD2SMTAbstractTest {
       assertEquals(Status.UNSATISFIABLE, solver.check());
     }
   }
+  
 }

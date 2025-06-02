@@ -10,11 +10,11 @@ import de.monticore.cdinterfaceandenum._util.ICDInterfaceAndEnumTypeDispatcher;
 import de.se_rwth.commons.logging.Log;
 
 public class CDAttributeInInterfaceIsPublic implements CDInterfaceAndEnumASTCDInterfaceCoCo {
-
+  
   public static final String ERROR_CODE = "0xCDCF7";
-
+  
   public static final String ERROR_MSG = "attributes in interface at %s must be public";
-
+  
   @Override
   public void check(ASTCDInterface node) {
     ICDInterfaceAndEnumTypeDispatcher typeDispatcher = CDInterfaceAndEnumMill.typeDispatcher();
@@ -27,4 +27,5 @@ public class CDAttributeInInterfaceIsPublic implements CDInterfaceAndEnumASTCDIn
       }
     }
   }
+  
 }

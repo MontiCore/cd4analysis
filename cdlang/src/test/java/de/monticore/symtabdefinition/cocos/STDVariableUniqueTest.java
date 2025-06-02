@@ -11,7 +11,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 public class STDVariableUniqueTest extends SymTabDefinitionTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new STDVariableUnique());
@@ -20,7 +20,7 @@ public class STDVariableUniqueTest extends SymTabDefinitionTestBasis {
     coCoChecker.checkAll(ast);
     checkLogError();
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new STDVariableUnique());
@@ -31,7 +31,8 @@ public class STDVariableUniqueTest extends SymTabDefinitionTestBasis {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xFDC23"));
     assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xFDC23"));
   }
-
+  
   @Override
   public void after() {}
+  
 }

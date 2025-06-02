@@ -26,246 +26,144 @@ import org.junit.jupiter.api.Test;
  * @author Philipp Nolte
  */
 public class CollapseHierarchyTest {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   /** Test method pushDown with methods */
   @Test
   public void testCollapseHierarchyMethod() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/EvaluationCollapseHierarchy");
     CollapseHierarchy refactoring = new CollapseHierarchy();
-
+    
     // Check input
-    ASTCDMethod firstMethodToMove =
-        (ASTCDMethod)
-            utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDMethodList().get(0);
-    ASTCDMethod secondMethodToMove =
-        (ASTCDMethod)
-            utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDMethodList().get(1);
-    ASTCDMethod existingMethodInDOverwrite =
-        (ASTCDMethod)
-            utility.getAst().getCDDefinition().getCDClassesList().get(3).getCDMethodList().get(0);
-    ASTCDMethod existingMethodInDNotOverwrite =
-        (ASTCDMethod)
-            utility.getAst().getCDDefinition().getCDClassesList().get(3).getCDMethodList().get(1);
+    ASTCDMethod firstMethodToMove = (ASTCDMethod) utility.getAst().getCDDefinition()
+        .getCDClassesList().get(0).getCDMethodList().get(0);
+    ASTCDMethod secondMethodToMove = (ASTCDMethod) utility.getAst().getCDDefinition()
+        .getCDClassesList().get(0).getCDMethodList().get(1);
+    ASTCDMethod existingMethodInDOverwrite = (ASTCDMethod) utility.getAst().getCDDefinition()
+        .getCDClassesList().get(3).getCDMethodList().get(0);
+    ASTCDMethod existingMethodInDNotOverwrite = (ASTCDMethod) utility.getAst().getCDDefinition()
+        .getCDClassesList().get(3).getCDMethodList().get(1);
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("ClassA", utility.getAst().getCDDefinition().getCDClassesList().get(1).getName());
     assertEquals("ClassB", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList().isEmpty());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList().isEmpty());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(3).getSuperclassList().isEmpty());
-
+    assertFalse(utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList()
+        .isEmpty());
+    assertFalse(utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList()
+        .isEmpty());
+    assertFalse(utility.getAst().getCDDefinition().getCDClassesList().get(3).getSuperclassList()
+        .isEmpty());
+    
     // Perform transformation (push down methods from ClassC
     // to ClassA and ClassB)
     assertTrue(refactoring.collapseHierarchy("ClassC", utility.getAst()));
-
+    
     // Check if ClassC is deleted and method added in ClassA and
     // ClassB
     assertEquals(3, utility.getAst().getCDDefinition().getCDClassesList().size());
     assertEquals("ClassA", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("ClassB", utility.getAst().getCDDefinition().getCDClassesList().get(1).getName());
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDMethodList()
-            .get(0)
-            .deepEquals(firstMethodToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDMethodList()
-            .get(1)
-            .deepEquals(secondMethodToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(1)
-            .getCDMethodList()
-            .get(0)
-            .deepEquals(firstMethodToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(1)
-            .getCDMethodList()
-            .get(1)
-            .deepEquals(secondMethodToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(2)
-            .getCDMethodList()
-            .get(0)
-            .deepEquals(existingMethodInDOverwrite));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(2)
-            .getCDMethodList()
-            .get(1)
-            .deepEquals(existingMethodInDNotOverwrite));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(2)
-            .getCDMethodList()
-            .get(2)
-            .deepEquals(secondMethodToMove));
-    assertTrue(
-        utility.getAst().getCDDefinition().getCDClassesList().get(0).getSuperclassList().isEmpty());
-    assertTrue(
-        utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList().isEmpty());
-    assertTrue(
-        utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList().isEmpty());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDMethodList().get(0)
+        .deepEquals(firstMethodToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDMethodList().get(1)
+        .deepEquals(secondMethodToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(1).getCDMethodList().get(0)
+        .deepEquals(firstMethodToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(1).getCDMethodList().get(1)
+        .deepEquals(secondMethodToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getCDMethodList().get(0)
+        .deepEquals(existingMethodInDOverwrite));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getCDMethodList().get(1)
+        .deepEquals(existingMethodInDNotOverwrite));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getCDMethodList().get(2)
+        .deepEquals(secondMethodToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getSuperclassList()
+        .isEmpty());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList()
+        .isEmpty());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList()
+        .isEmpty());
   }
-
+  
   /** Test method pushDown with attributes */
   @Test
   public void testCollapseHierarchyAttribute() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/EvaluationCollapseHierarchy");
     CollapseHierarchy refactoring = new CollapseHierarchy();
-
+    
     // Check input
-    ASTCDAttribute firstAttributeToMove =
-        utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().get(0);
-    ASTCDAttribute secondAttributeToMove =
-        utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().get(1);
-    ASTCDAttribute existingAttributeInDOverwrite =
-        utility.getAst().getCDDefinition().getCDClassesList().get(3).getCDAttributeList().get(0);
-    ASTCDAttribute existingAttributeInDNotOverwrite =
-        utility.getAst().getCDDefinition().getCDClassesList().get(3).getCDAttributeList().get(1);
+    ASTCDAttribute firstAttributeToMove = utility.getAst().getCDDefinition().getCDClassesList().get(
+        0).getCDAttributeList().get(0);
+    ASTCDAttribute secondAttributeToMove = utility.getAst().getCDDefinition().getCDClassesList()
+        .get(0).getCDAttributeList().get(1);
+    ASTCDAttribute existingAttributeInDOverwrite = utility.getAst().getCDDefinition()
+        .getCDClassesList().get(3).getCDAttributeList().get(0);
+    ASTCDAttribute existingAttributeInDNotOverwrite = utility.getAst().getCDDefinition()
+        .getCDClassesList().get(3).getCDAttributeList().get(1);
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("ClassA", utility.getAst().getCDDefinition().getCDClassesList().get(1).getName());
     assertEquals("ClassB", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList().isEmpty());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList().isEmpty());
-    assertFalse(
-        utility.getAst().getCDDefinition().getCDClassesList().get(3).getSuperclassList().isEmpty());
-
+    assertFalse(utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList()
+        .isEmpty());
+    assertFalse(utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList()
+        .isEmpty());
+    assertFalse(utility.getAst().getCDDefinition().getCDClassesList().get(3).getSuperclassList()
+        .isEmpty());
+    
     // Perform transformation (push down attributes from ClassC
     // to ClassA and ClassB)
     assertTrue(refactoring.collapseHierarchy("ClassC", utility.getAst()));
-
+    
     // Check if ClassC is deleted and attribute added in ClassA and
     // ClassB
     assertEquals(3, utility.getAst().getCDDefinition().getCDClassesList().size());
     assertEquals("ClassA", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
     assertEquals("ClassB", utility.getAst().getCDDefinition().getCDClassesList().get(1).getName());
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(2).getName());
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(0)
-            .deepEquals(firstAttributeToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(1)
-            .deepEquals(secondAttributeToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(1)
-            .getCDAttributeList()
-            .get(0)
-            .deepEquals(firstAttributeToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(1)
-            .getCDAttributeList()
-            .get(1)
-            .deepEquals(secondAttributeToMove));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(2)
-            .getCDAttributeList()
-            .get(0)
-            .deepEquals(existingAttributeInDOverwrite));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(2)
-            .getCDAttributeList()
-            .get(1)
-            .deepEquals(existingAttributeInDNotOverwrite));
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(2)
-            .getCDAttributeList()
-            .get(2)
-            .deepEquals(secondAttributeToMove));
-    assertTrue(
-        utility.getAst().getCDDefinition().getCDClassesList().get(0).getSuperclassList().isEmpty());
-    assertTrue(
-        utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList().isEmpty());
-    assertTrue(
-        utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList().isEmpty());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(0).deepEquals(firstAttributeToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(1).deepEquals(secondAttributeToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(1).getCDAttributeList()
+        .get(0).deepEquals(firstAttributeToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(1).getCDAttributeList()
+        .get(1).deepEquals(secondAttributeToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getCDAttributeList()
+        .get(0).deepEquals(existingAttributeInDOverwrite));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getCDAttributeList()
+        .get(1).deepEquals(existingAttributeInDNotOverwrite));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getCDAttributeList()
+        .get(2).deepEquals(secondAttributeToMove));
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getSuperclassList()
+        .isEmpty());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(1).getSuperclassList()
+        .isEmpty());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(2).getSuperclassList()
+        .isEmpty());
   }
+  
 }

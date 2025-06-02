@@ -9,37 +9,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodDecorator extends AbstractMethodDecorator {
-
+  
   protected final AbstractMethodDecorator accessorDecorator;
-
+  
   protected final AbstractMethodDecorator mutatorDecorator;
-
+  
   public MethodDecorator(final GlobalExtensionManagement glex) {
     this(glex, new AccessorDecorator(glex), new MutatorDecorator(glex), new CDGenService());
   }
-
-  public MethodDecorator(
-      final GlobalExtensionManagement glex,
+  
+  public MethodDecorator(final GlobalExtensionManagement glex,
       final AbstractMethodDecorator accessorDecorator,
-      final AbstractMethodDecorator mutatorDecorator,
-      final CDGenService service) {
+      final AbstractMethodDecorator mutatorDecorator, final CDGenService service) {
     super(glex, service);
     this.accessorDecorator = accessorDecorator;
     this.mutatorDecorator = mutatorDecorator;
   }
-
+  
   @Override
   public void enableTemplates() {
     accessorDecorator.enableTemplates();
     mutatorDecorator.enableTemplates();
   }
-
+  
   @Override
   public void disableTemplates() {
     accessorDecorator.disableTemplates();
     mutatorDecorator.disableTemplates();
   }
-
+  
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
     List<ASTCDMethod> result = new ArrayList<>();
@@ -47,12 +45,9 @@ public class MethodDecorator extends AbstractMethodDecorator {
     result.addAll(mutatorDecorator.decorate(ast));
     return result;
   }
-
-  public AbstractMethodDecorator getAccessorDecorator() {
-    return accessorDecorator;
-  }
-
-  public AbstractMethodDecorator getMutatorDecorator() {
-    return mutatorDecorator;
-  }
+  
+  public AbstractMethodDecorator getAccessorDecorator() { return accessorDecorator; }
+  
+  public AbstractMethodDecorator getMutatorDecorator() { return mutatorDecorator; }
+  
 }

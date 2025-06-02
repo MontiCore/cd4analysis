@@ -18,99 +18,79 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CDGenerator {
-
+  
   protected static final String JAVA_EXTENSION = ".java";
   protected final ASTCDPackage emptyPKG;
-
+  
   protected final GeneratorEngine generatorEngine;
   protected GeneratorSetup setup;
-
+  
   public CDGenerator(GeneratorSetup generatorSetup) {
     this.generatorEngine = new GeneratorEngine(generatorSetup);
     this.setup = generatorSetup;
     CD4C.init(setup);
     CD4C.getInstance().setEmptyBodyTemplate("cd2java.EmptyBody");
-    emptyPKG =
-        CD4CodeMill.cDPackageBuilder()
-            .setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder().addParts("").build())
-            .build();
+    emptyPKG = CD4CodeMill.cDPackageBuilder().setMCQualifiedName(CD4CodeMill
+        .mCQualifiedNameBuilder().addParts("").build()).build();
   }
-
+  
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
-    String packageName =
-        (compilationUnit.isPresentMCPackageDeclaration()
-            ? compilationUnit.getMCPackageDeclaration().getMCQualifiedName().getQName()
-            : "");
-
-    if (definition.getCDClassesList().isEmpty()
-        && definition.getCDEnumsList().isEmpty()
+    String packageName = (compilationUnit.isPresentMCPackageDeclaration() ? compilationUnit
+        .getMCPackageDeclaration().getMCQualifiedName().getQName() : "");
+    
+    if (definition.getCDClassesList().isEmpty() && definition.getCDEnumsList().isEmpty()
         && definition.getCDInterfacesList().isEmpty()) {
-      Path p =
-          Paths.get(
-              setup.getOutputDirectory().getAbsolutePath(),
-              packageName.replace('.', '/'),
-              compilationUnit.getCDDefinition().getName());
+      Path p = Paths.get(setup.getOutputDirectory().getAbsolutePath(), packageName.replace('.',
+          '/'), compilationUnit.getCDDefinition().getName());
       p.toFile().mkdirs();
     }
-
+    
     // generate packages
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
-      String packageAsPath =
-          String.join(File.separator, astPackage.getMCQualifiedName().getPartsList());
-
-      this.generateCDClasses(
-          packageAsPath,
-          astPackage,
-          astPackage.getCDElementList().stream()
-              .filter(e -> e instanceof ASTCDClass)
-              .map(e -> ((ASTCDClass) e))
-              .collect(Collectors.toList()));
-
-      this.generateCDInterfaces(
-          packageAsPath,
-          astPackage,
-          astPackage.getCDElementList().stream()
-              .filter(e -> e instanceof ASTCDInterface)
-              .map(e -> ((ASTCDInterface) e))
-              .collect(Collectors.toList()));
-
-      this.generateCDEnums(
-          packageAsPath,
-          astPackage,
-          astPackage.getCDElementList().stream()
-              .filter(e -> e instanceof ASTCDEnum)
-              .map(e -> ((ASTCDEnum) e))
-              .collect(Collectors.toList()));
+      String packageAsPath = String.join(File.separator, astPackage.getMCQualifiedName()
+          .getPartsList());
+      
+      this.generateCDClasses(packageAsPath, astPackage, astPackage.getCDElementList().stream()
+          .filter(e -> e instanceof ASTCDClass).map(e -> ((ASTCDClass) e)).collect(Collectors
+              .toList()));
+      
+      this.generateCDInterfaces(packageAsPath, astPackage, astPackage.getCDElementList().stream()
+          .filter(e -> e instanceof ASTCDInterface).map(e -> ((ASTCDInterface) e)).collect(
+              Collectors.toList()));
+      
+      this.generateCDEnums(packageAsPath, astPackage, astPackage.getCDElementList().stream().filter(
+          e -> e instanceof ASTCDEnum).map(e -> ((ASTCDEnum) e)).collect(Collectors.toList()));
     }
   }
-
+  
   protected Path getAsPath(String packageAsPath, String name) {
     return Paths.get(packageAsPath, name + JAVA_EXTENSION);
   }
-
-  protected void generateCDClasses(
-      String packageAsPath, ASTCDPackage astcdPackage, List<ASTCDClass> astcdClassList) {
+  
+  protected void generateCDClasses(String packageAsPath, ASTCDPackage astcdPackage,
+      List<ASTCDClass> astcdClassList) {
     for (ASTCDClass cdClass : astcdClassList) {
       Path filePath = getAsPath(packageAsPath, cdClass.getName());
       this.generatorEngine.generate(CD2JavaTemplates.CLASS, filePath, cdClass, astcdPackage);
     }
   }
-
-  protected void generateCDInterfaces(
-      String packageAsPath, ASTCDPackage astcdPackage, List<ASTCDInterface> astcdInterfaceList) {
+  
+  protected void generateCDInterfaces(String packageAsPath, ASTCDPackage astcdPackage,
+      List<ASTCDInterface> astcdInterfaceList) {
     for (ASTCDInterface cdInterface : astcdInterfaceList) {
       Path filePath = getAsPath(packageAsPath, cdInterface.getName());
-      this.generatorEngine.generate(
-          CD2JavaTemplates.INTERFACE, filePath, cdInterface, astcdPackage);
+      this.generatorEngine.generate(CD2JavaTemplates.INTERFACE, filePath, cdInterface,
+          astcdPackage);
     }
   }
-
-  protected void generateCDEnums(
-      String packageAsPath, ASTCDPackage astcdPackage, List<ASTCDEnum> astcdEnumList) {
+  
+  protected void generateCDEnums(String packageAsPath, ASTCDPackage astcdPackage,
+      List<ASTCDEnum> astcdEnumList) {
     for (ASTCDEnum cdEnum : astcdEnumList) {
       Path filePath = getAsPath(packageAsPath, cdEnum.getName());
       this.generatorEngine.generate(CD2JavaTemplates.ENUM, filePath, cdEnum, astcdPackage);
     }
   }
+  
 }

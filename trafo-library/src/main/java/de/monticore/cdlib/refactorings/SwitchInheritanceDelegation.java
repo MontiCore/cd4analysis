@@ -14,8 +14,9 @@ import de.monticore.cdlib.Refactoring.*;
  * @montitoolbox
  */
 public class SwitchInheritanceDelegation implements Refactoring {
+  
   public SwitchInheritanceDelegation() {}
-
+  
   /**
    * Replace an inheritance between two classes by an association
    *
@@ -24,9 +25,9 @@ public class SwitchInheritanceDelegation implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean replaceInheritanceByDelegation(
-      String superclassName, String subclassName, ASTCDCompilationUnit ast) {
-
+  public boolean replaceInheritanceByDelegation(String superclassName, String subclassName,
+      ASTCDCompilationUnit ast) {
+    
     ReplaceInheritanceByDelegation replace = new ReplaceInheritanceByDelegation(ast);
     replace.set_$subclassName(subclassName);
     replace.set_$superclass(superclassName);
@@ -36,7 +37,7 @@ public class SwitchInheritanceDelegation implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Replace an association by an inheritance between the classes
    *
@@ -45,9 +46,9 @@ public class SwitchInheritanceDelegation implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean replaceDelegationByInheritance(
-      String superclassName, String subclassName, ASTCDCompilationUnit ast) {
-
+  public boolean replaceDelegationByInheritance(String superclassName, String subclassName,
+      ASTCDCompilationUnit ast) {
+    
     ReplaceDelegationByInheritance replace = new ReplaceDelegationByInheritance(ast);
     replace.set_$subclassName(subclassName);
     replace.set_$superclassName(superclassName);
@@ -55,7 +56,8 @@ public class SwitchInheritanceDelegation implements Refactoring {
       replace.doReplacement();
       return true;
     }
-
+    
     return false;
   }
+  
 }

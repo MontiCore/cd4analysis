@@ -24,47 +24,47 @@ import org.junit.jupiter.api.Test;
  * @author KE
  */
 public class ChangeInheritanceClass {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   // Test method changeInheritanceClass
   @Test
   public void changeNameInExtend() throws IOException {
     FileUtility utility = new FileUtility("cdlib/A2");
     TransformationUtility refactoring = new TransformationUtility();
-
-    assertEquals(
-        "C", utility.getAst().getCDDefinition().getCDClassesList().get(2).printSuperclasses());
-    assertEquals(
-        "B", utility.getAst().getCDDefinition().getCDClassesList().get(3).printSuperclasses());
-
+    
+    assertEquals("C", utility.getAst().getCDDefinition().getCDClassesList().get(2)
+        .printSuperclasses());
+    assertEquals("B", utility.getAst().getCDDefinition().getCDClassesList().get(3)
+        .printSuperclasses());
+    
     // Change the inheritance From C to F
     while (refactoring.changeInheritanceClass("C", "F", utility.getAst()))
       ;
-
-    assertEquals(
-        "F", utility.getAst().getCDDefinition().getCDClassesList().get(2).printSuperclasses());
-    assertEquals(
-        "B", utility.getAst().getCDDefinition().getCDClassesList().get(3).printSuperclasses());
+    
+    assertEquals("F", utility.getAst().getCDDefinition().getCDClassesList().get(2)
+        .printSuperclasses());
+    assertEquals("B", utility.getAst().getCDDefinition().getCDClassesList().get(3)
+        .printSuperclasses());
   }
+  
 }

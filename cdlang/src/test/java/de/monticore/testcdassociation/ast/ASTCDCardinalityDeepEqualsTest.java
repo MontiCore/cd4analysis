@@ -13,7 +13,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class ASTCDCardinalityDeepEqualsTest {
-
+  
   @Test
   public void testDeepEqualsOpt() throws IOException {
     Optional<ASTCDCardOpt> optCard = TestCDAssociationMill.parser().parse_StringCDCardOpt("[0..1]");
@@ -22,7 +22,7 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardOpt cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
+  
   @Test
   public void testDeepEqualsOne() throws IOException {
     Optional<ASTCDCardOne> optCard = TestCDAssociationMill.parser().parse_StringCDCardOne("[1]");
@@ -31,17 +31,17 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardOne cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
+  
   @Test
   public void testDeepEqualsAtLeastOne() throws IOException {
-    Optional<ASTCDCardAtLeastOne> optCard =
-        TestCDAssociationMill.parser().parse_StringCDCardAtLeastOne("[1..*]");
+    Optional<ASTCDCardAtLeastOne> optCard = TestCDAssociationMill.parser()
+        .parse_StringCDCardAtLeastOne("[1..*]");
     assertTrue(optCard.isPresent());
     ASTCDCardAtLeastOne card1 = optCard.get();
     ASTCDCardAtLeastOne cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
-
+  
   @Test
   public void testDeepEqualsMult() throws IOException {
     Optional<ASTCDCardMult> optCard = TestCDAssociationMill.parser().parse_StringCDCardMult("[*]");
@@ -50,4 +50,5 @@ public class ASTCDCardinalityDeepEqualsTest {
     ASTCDCardMult cardClone = card1.deepClone();
     assertTrue(card1.deepEquals(cardClone));
   }
+  
 }
