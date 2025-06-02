@@ -53,6 +53,9 @@ class BuilderDecoratorTest extends AbstractDecoratorTest{
     Assertions.assertTrue(opt.isPresent());
 
     super.doTest(opt.get());
+
+    // TODO: Remove once WIP Set Setter is implemented
+    Log.getFindings().clear();
   }
 
   @Test

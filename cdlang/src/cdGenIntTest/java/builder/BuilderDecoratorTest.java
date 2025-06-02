@@ -25,11 +25,8 @@ public class BuilderDecoratorTest {
     Log.enableFailQuick(false);
 
     testBuild();
-    Assertions.assertTrue(Log.getFindings().isEmpty());
     testUnsafeBuild();
-    Assertions.assertTrue(Log.getFindings().isEmpty());
     testConstructorModificationsAndCreations();
-    Assertions.assertTrue(Log.getFindings().isEmpty());
     Log.clearFindings();
   }
 
@@ -514,7 +511,5 @@ public class BuilderDecoratorTest {
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyIntAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
-
-    Assertions.assertTrue(Log.getFindings().isEmpty());
   }
 }

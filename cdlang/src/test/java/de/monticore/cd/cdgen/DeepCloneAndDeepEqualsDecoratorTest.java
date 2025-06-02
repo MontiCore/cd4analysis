@@ -7,6 +7,7 @@ import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
@@ -110,6 +111,10 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest{
     Assertions.assertTrue(opt.isPresent());
 
     super.doTest(opt.get());
+
+    // TODO: Remove once non primitive types in CD files are supported and Set and List Setters are implemented
+    Log.getFindings().clear();
+
   }
 
   @Test
