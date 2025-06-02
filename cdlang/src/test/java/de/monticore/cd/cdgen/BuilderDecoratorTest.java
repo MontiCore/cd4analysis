@@ -1,8 +1,12 @@
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.generating.GeneratorSetup;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import java.nio.file.Paths;
@@ -12,27 +16,10 @@ import java.nio.file.Files;
 import org.junit.Assert;
 import java.util.List;
 
-class BuilderCDTest extends AbstractCDGenTest{
+class BuilderDecoratorTest extends AbstractDecoratorTest{
 
   @Test
   public void testBuilder() throws Exception {
-    setup.withCopyCreator().defaultApply();
-
-    setup.withDecorator(new SetterDecorator());
-    setup.configApplyMatchName(SetterDecorator.class, ("setter"));
-    setup.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));
-
-    setup.withDecorator(new GetterDecorator());
-    setup.configApplyMatchName(GetterDecorator.class, "getter");
-    setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
-
-    setup.withDecorator(new BuilderDecorator());
-    setup.configApplyMatchName(BuilderDecorator.class, "builder");
-    setup.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
-
-    setup.withDecorator(new CardinalityDefaultDecorator());
-    setup.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
-
     var opt =
       CD4CodeMill.parser()
         .parse_String(
@@ -78,7 +65,23 @@ class BuilderCDTest extends AbstractCDGenTest{
     templatePaths.add(Paths.get("src/main/resources/methods/builder/set.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/builder/setAbsent.ftl"));
     for (Path temPath: templatePaths) {
-      Assert.assertTrue(Files.exists(temPath));
+      Assertions.assertTrue(Files.exists(temPath));
     }
+  }
+
+  @Override
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+    config.withCopyCreator().defaultApply();
+    config.withDecorator(new SetterDecorator());
+    config.configApplyMatchName(SetterDecorator.class, ("setter"));
+    config.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));
+    config.withDecorator(new GetterDecorator());
+    config.configApplyMatchName(GetterDecorator.class, "getter");
+    config.configIgnoreMatchName(GetterDecorator.class, "noGetter");
+    config.withDecorator(new BuilderDecorator());
+    config.configApplyMatchName(BuilderDecorator.class, "builder");
+    config.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
+    config.withDecorator(new CardinalityDefaultDecorator());
+    config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }
 }

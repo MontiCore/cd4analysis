@@ -1,8 +1,11 @@
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.*;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.generating.GeneratorSetup;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -12,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-class ObserverCDTest extends AbstractCDGenTest {
+class ObserverDecoratorTest extends AbstractDecoratorTest {
 
   /**
    * Test the {@link ObserverDecorator} by applying it to a CD. The
@@ -20,22 +23,7 @@ class ObserverCDTest extends AbstractCDGenTest {
    */
   @Test
   void testObserver() throws Exception {
-    setup.withCopyCreator().defaultApply();
 
-    setup.withDecorator(new GetterDecorator());
-    setup.configApplyMatchName(GetterDecorator.class, "getter");
-    setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
-
-    setup.withDecorator(new SetterDecorator());
-    setup.configApplyMatchName(SetterDecorator.class, "setter");
-    setup.configIgnoreMatchName(SetterDecorator.class, "noSetter");
-
-    setup.withDecorator(new ObserverDecorator());
-    setup.configApplyMatchName(ObserverDecorator.class, "observer");
-    setup.configIgnoreMatchName(ObserverDecorator.class, "noObserver");
-
-    setup.withDecorator(new CardinalityDefaultDecorator());
-    setup.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
 
     var opt =
       CD4CodeMill.parser()
@@ -68,5 +56,21 @@ class ObserverCDTest extends AbstractCDGenTest {
     for (Path temPath: templatePaths) {
       Assert.assertTrue(Files.exists(temPath));
     }
+  }
+
+  @Override
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+    config.withCopyCreator().defaultApply();
+    config.withDecorator(new GetterDecorator());
+    config.configApplyMatchName(GetterDecorator.class, "getter");
+    config.configIgnoreMatchName(GetterDecorator.class, "noGetter");
+    config.withDecorator(new SetterDecorator());
+    config.configApplyMatchName(SetterDecorator.class, "setter");
+    config.configIgnoreMatchName(SetterDecorator.class, "noSetter");
+    config.withDecorator(new ObserverDecorator());
+    config.configApplyMatchName(ObserverDecorator.class, "observer");
+    config.configIgnoreMatchName(ObserverDecorator.class, "noObserver");
+    config.withDecorator(new CardinalityDefaultDecorator());
+    config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }
 }

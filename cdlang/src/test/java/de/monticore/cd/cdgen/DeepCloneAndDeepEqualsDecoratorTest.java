@@ -1,9 +1,12 @@
 package de.monticore.cd.cdgen;
 
+import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.decorators.CardinalityDefaultDecorator;
 import de.monticore.cd.codegen.decorators.DeepCloneAndDeepEqualsDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.generating.GeneratorSetup;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
@@ -12,18 +15,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
+public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest{
 
   @Test
   public void testDeepCopyAndDeepEquals() throws Exception {
-    setup.withCopyCreator().defaultApply();
-
-    setup.withDecorator(new CardinalityDefaultDecorator());
-    setup.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
-
-    setup.withDecorator(new DeepCloneAndDeepEqualsDecorator());
-    setup.configDefault(DeepCloneAndDeepEqualsDecorator.class, MatchResult.APPLY);
-
     var opt =
       CD4CodeMill.parser()
         .parse_String("classdiagram TestDeepCloneAndDeepEquals {\n" +
@@ -131,5 +126,14 @@ public class DeepCloneAndDeepEqualsCDTest extends AbstractCDGenTest{
     for (Path temPath: templatePaths) {
       Assertions.assertTrue(Files.exists(temPath));
     }
+  }
+
+  @Override
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+    config.withCopyCreator().defaultApply();
+    config.withDecorator(new CardinalityDefaultDecorator());
+    config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
+    config.withDecorator(new DeepCloneAndDeepEqualsDecorator());
+    config.configDefault(DeepCloneAndDeepEqualsDecorator.class, MatchResult.APPLY);
   }
 }

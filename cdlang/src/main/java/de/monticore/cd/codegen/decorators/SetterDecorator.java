@@ -42,9 +42,13 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         decorateList(decClazz, attribute);
         Log.warn("0xTODO: WIP List Setter", attribute.get_SourcePositionStart());
+        //TODO
+        //Log.clearFindings();
       } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
         decorateSet(decClazz, attribute);
         Log.warn("0xTODO: WIP Set Setter", attribute.get_SourcePositionStart());
+        //TODO
+        //Log.clearFindings();
       } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
       } else {

@@ -23,11 +23,14 @@ public class BuilderDecoratorTest {
     //we need to disable the fail quick mode, otherwise the test will be skipped
     // Afterward we will test for error messages
     Log.enableFailQuick(false);
-    Log.clearFindings();
 
     testBuild();
+    Assertions.assertTrue(Log.getFindings().isEmpty());
     testUnsafeBuild();
+    Assertions.assertTrue(Log.getFindings().isEmpty());
     testConstructorModificationsAndCreations();
+    Assertions.assertTrue(Log.getFindings().isEmpty());
+    Log.clearFindings();
   }
 
   @Test
@@ -412,12 +415,14 @@ public class BuilderDecoratorTest {
     //unsafeBuild with no arguments
     TestBuilderWithoutSetter unsafeBuildEmpty = new TestBuilderWithoutSetterBuilder().unsafeBuild();
     Assertions.assertNull(unsafeBuildEmpty.getManyB());
+    Assertions.assertSame(0, Log.getFindings().size());
   }
 
   @Test
   public void testConstructorModificationsAndCreations() {
     PrivateDefaultConstructor privateDefaultConstructor = new PrivateDefaultConstructorBuilder().unsafeBuild();
     NoDefaultConstructor noDefaultConstructorBuilder = new NoDefaultConstructorBuilder().unsafeBuild();
+
   }
 
   @Test
@@ -509,5 +514,7 @@ public class BuilderDecoratorTest {
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyIntAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
     Assertions.assertThrows(NoSuchMethodException.class, () -> TestBuilderWithoutSetterBuilder.class.getDeclaredMethod("setMyBoolAbsent"));
+
+    Assertions.assertTrue(Log.getFindings().isEmpty());
   }
 }
