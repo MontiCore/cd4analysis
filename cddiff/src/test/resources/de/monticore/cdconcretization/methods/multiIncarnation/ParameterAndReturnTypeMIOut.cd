@@ -1,0 +1,22 @@
+classdiagram ParameterAndReturnTypeMIConc {
+
+  <<ref="Account">> class PersonalAccount;
+  <<ref="Account">> class BusinessAccount;
+
+  <<ref="Transaction">> class NormalTransaction;
+  <<ref="Transaction">> class InstantTransaction;
+  
+  class Bank {
+    <<ref="Reference.Bank.createAccount">> void createAccount(PersonalAccount account);
+    <<ref="Reference.Bank.createAccount">> void createAccount(BusinessAccount account);
+    <<ref="Reference.Bank.transfer">> NormalTransaction transfer_NormalTransaction(PersonalAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> NormalTransaction transfer_NormalTransaction(PersonalAccount from, BusinessAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> NormalTransaction transfer_NormalTransaction(BusinessAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> NormalTransaction transfer_NormalTransaction(BusinessAccount from, BusinessAccount to, int amount);
+
+    <<ref="Reference.Bank.transfer">> InstantTransaction transfer_InstantTransaction(PersonalAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> InstantTransaction transfer_InstantTransaction(PersonalAccount from, BusinessAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> InstantTransaction transfer_InstantTransaction(BusinessAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> InstantTransaction transfer_InstantTransaction(BusinessAccount from, BusinessAccount to, int amount);
+  }
+}

@@ -93,10 +93,9 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
       // 2. set type of incarnation
       // use FQ name to avoid messing with imports / name conflicts
       attributeIncarnation.setMCType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-          MCQualifiedNameFacade.createQualifiedName(cAttributeType.getSymbol().getFullName()))
-          .build());
+          MCQualifiedNameFacade.createQualifiedName(cAttributeType.getSymbol()
+              .getInternalQualifiedName())).build());
       
-      // TODO maybe cut off the CD name from FQName?
       StereotypeUtil.addStereotype(attributeIncarnation.getModifier(), context.getMappingName(),
           referenceAttribute.getSymbol().getFullName());
       

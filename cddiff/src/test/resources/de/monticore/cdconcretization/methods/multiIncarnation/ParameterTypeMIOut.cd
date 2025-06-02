@@ -1,0 +1,16 @@
+classdiagram ParameterTypeMIConc {
+
+  <<ref="Account">> class PersonalAccount;
+  <<ref="Account">> class BusinessAccount;
+
+  class Transaction;
+
+  class Bank {
+    <<ref="Reference.Bank.createAccount">> void createAccount(PersonalAccount account);
+    <<ref="Reference.Bank.createAccount">> void createAccount(BusinessAccount account);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(PersonalAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(PersonalAccount from, BusinessAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(BusinessAccount from, PersonalAccount to, int amount);
+    <<ref="Reference.Bank.transfer">> Transaction transfer(BusinessAccount from, BusinessAccount to, int amount);
+  }
+}

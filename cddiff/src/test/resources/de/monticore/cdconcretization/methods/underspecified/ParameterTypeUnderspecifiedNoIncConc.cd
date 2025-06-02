@@ -1,0 +1,8 @@
+classdiagram ParameterTypeUnderspecifiedRef {
+
+  <<ref="Operator">> class MyOperator {
+    // NOTE: we have no incarnation of "operation(any)"
+    //  -> leads to error because a parameter is underspecified
+    void foo();
+  }
+}
