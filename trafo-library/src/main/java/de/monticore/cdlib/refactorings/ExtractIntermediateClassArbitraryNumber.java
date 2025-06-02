@@ -17,8 +17,9 @@ import de.monticore.cdlib.Refactoring.ClassMethod;
  * @montitoolbox
  */
 public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
+  
   public ExtractIntermediateClassArbitraryNumber() {}
-
+  
   /**
    * Extracts all super classes
    *
@@ -28,7 +29,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
   public boolean extractAllIntermediateClassesAttribute(ASTCDCompilationUnit ast) {
     PullUp pullUp = new PullUp();
     pullUp.pullUp(ast);
-
+    
     if (extractIntermediateClassAttribute(ast)) {
       pullUp.pullUp(ast);
       while (extractIntermediateClassAttribute(ast)) {
@@ -38,7 +39,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts all super classes
    *
@@ -48,7 +49,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
   public boolean extractAllIntermediateClassesMethod(ASTCDCompilationUnit ast) {
     PullUp pullUp = new PullUp();
     pullUp.pullUp(ast);
-
+    
     if (extractIntermediateClassMethod(ast)) {
       pullUp.pullUp(ast);
       while (extractIntermediateClassMethod(ast)) {
@@ -58,18 +59,18 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts all super classes
    *
    * @param ast - the class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean extractAllIntermediateClassesAttribute(
-      ASTCDCompilationUnit ast, String className) {
+  public boolean extractAllIntermediateClassesAttribute(ASTCDCompilationUnit ast,
+      String className) {
     PullUp pullUp = new PullUp();
     pullUp.pullUp(ast);
-
+    
     if (extractIntermediateClassManualNameAttribute(ast, className)) {
       pullUp.pullUp(ast);
       while (extractIntermediateClassManualNameAttribute(ast, className)) {
@@ -79,7 +80,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts all super classes
    *
@@ -89,7 +90,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
   public boolean extractAllIntermediateClassesMethod(ASTCDCompilationUnit ast, String className) {
     PullUp pullUp = new PullUp();
     pullUp.pullUp(ast);
-
+    
     if (extractIntermediateClassManualNameMethod(ast, className)) {
       pullUp.pullUp(ast);
       while (extractIntermediateClassManualNameMethod(ast, className)) {
@@ -99,7 +100,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts additional superclass for classes with same superclass and same attributes to avoid
    * adding useless classes use pullUp before
@@ -115,7 +116,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts additional superclass for classes with same superclass and same methods to avoid
    * adding useless classes use pullUp before
@@ -131,7 +132,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts additional superclass for classes with same superclass and same attributes to avoid
    * adding useless classes use pullUp before
@@ -140,8 +141,8 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
    * @param name The new name of the newly created class
    * @return <code>true</code> if the transformation was successful
    */
-  private boolean extractIntermediateClassManualNameAttribute(
-      ASTCDCompilationUnit ast, String name) {
+  private boolean extractIntermediateClassManualNameAttribute(ASTCDCompilationUnit ast,
+      String name) {
     ClassManualNameAttribute extract = new ClassManualNameAttribute(ast);
     extract.set_$newParent(name);
     if (extract.doPatternMatching()) {
@@ -150,7 +151,7 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Extracts additional superclass for classes with same superclass and same methods to avoid
    * adding useless classes use pullUp before
@@ -168,4 +169,5 @@ public class ExtractIntermediateClassArbitraryNumber implements Refactoring {
     }
     return false;
   }
+  
 }

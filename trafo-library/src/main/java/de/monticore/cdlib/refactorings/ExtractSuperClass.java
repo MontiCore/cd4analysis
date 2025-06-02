@@ -20,8 +20,9 @@ import java.util.ArrayList;
  * @montitoolbox
  */
 public class ExtractSuperClass implements Refactoring {
+  
   public ExtractSuperClass() {}
-
+  
   /**
    * Introduce a new superclass for classes with no superclass and same methods or attributes
    *
@@ -34,7 +35,7 @@ public class ExtractSuperClass implements Refactoring {
     }
     return false;
   }
-
+  
   /**
    * Introduce a new superclass for classes with no superclass and same attributes
    *
@@ -46,11 +47,12 @@ public class ExtractSuperClass implements Refactoring {
     if (extractClass.doPatternMatching()) {
       extractClass.doReplacement();
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
-
+  
   /**
    * Introduce a new superclass for classes with no superclass and same methods, where the
    * superclass is called by <code>classname</code>
@@ -63,11 +65,12 @@ public class ExtractSuperClass implements Refactoring {
     if (extractClass.doPatternMatching()) {
       extractClass.doReplacement();
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
-
+  
   /**
    * Introduce a new superclass for classes with no superclass and same methods or attributes, where
    * the superclass is called by <code>classname</code>
@@ -77,13 +80,13 @@ public class ExtractSuperClass implements Refactoring {
    * @return true, if applied successfully
    */
   public boolean extractSuperClassWithName(ASTCDCompilationUnit ast, String classname) {
-    if (extractSuperClassAttributeWithName(ast, classname)
-        || extractSuperClassMethodWithName(ast, classname)) {
+    if (extractSuperClassAttributeWithName(ast, classname) || extractSuperClassMethodWithName(ast,
+        classname)) {
       return true;
     }
     return false;
   }
-
+  
   /**
    * Introduce a new superclass for classes with no superclass and same attributes, where the
    * superclass is called by <code>classname</code>
@@ -100,13 +103,9 @@ public class ExtractSuperClass implements Refactoring {
       extractClass.get_$S().setName(classname);
       ArrayList<String> nameList = new ArrayList<String>();
       nameList.add(classname);
-      ASTMCQualifiedType reference =
-          CDBasisMill.mCQualifiedTypeBuilder()
-              .setMCQualifiedName(
-                  CDBasisMill.mCQualifiedNameBuilder()
-                      .addAllParts(Lists.newArrayList(Splitters.DOT.split(classname)))
-                      .build())
-              .build();
+      ASTMCQualifiedType reference = CDBasisMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+          CDBasisMill.mCQualifiedNameBuilder().addAllParts(Lists.newArrayList(Splitters.DOT.split(
+              classname))).build()).build();
       extractClass.get_$b().getSuperclassList().clear();
       extractClass.get_$b().getSuperclassList().add(reference);
       for (int i = 0; i < extractClass.get_$c().size(); i++) {
@@ -114,11 +113,12 @@ public class ExtractSuperClass implements Refactoring {
         extractClass.get_$c().get(i).getSuperclassList().add(reference);
       }
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
-
+  
   /**
    * Introduce a new superclass for classes with no superclass and same methods
    *
@@ -133,11 +133,8 @@ public class ExtractSuperClass implements Refactoring {
       extractClass.get_$S().setName(classname);
       ArrayList<String> nameList = new ArrayList<String>();
       nameList.add(classname);
-      ASTMCQualifiedType reference =
-          CDBasisMill.mCQualifiedTypeBuilder()
-              .setMCQualifiedName(
-                  CDBasisMill.mCQualifiedNameBuilder().addAllParts(nameList).build())
-              .build();
+      ASTMCQualifiedType reference = CDBasisMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+          CDBasisMill.mCQualifiedNameBuilder().addAllParts(nameList).build()).build();
       extractClass.get_$b().getSuperclassList().clear();
       extractClass.get_$b().getSuperclassList().add(reference);
       for (int i = 0; i < extractClass.get_$c().size(); i++) {
@@ -145,8 +142,10 @@ public class ExtractSuperClass implements Refactoring {
         extractClass.get_$c().get(i).getSuperclassList().add(reference);
       }
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
+  
 }
