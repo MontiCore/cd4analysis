@@ -1,17 +1,20 @@
 /* (c) https://github.com/MontiCore/monticore */
 package observer;
 
+import TestObserver.B;
+import TestObserver.IOtherCObservable;
+import TestObserver.IOtherCObserver;
+import TestObserver.OtherC;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import TestObserver.*;
 import java.util.*;
 
 /**
  * Test the result of the Getter Decorator.
  */
-public class ObserverDecoratorTest {
+public class ObserverDecoratorResultTest {
 
   @Test
   public void test() throws Exception {

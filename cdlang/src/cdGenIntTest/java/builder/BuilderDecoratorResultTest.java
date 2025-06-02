@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Test the result of the Builder Decorator.
  */
-public class BuilderDecoratorTest {
+public class BuilderDecoratorResultTest {
 
   @Test
   public void test() throws Exception {

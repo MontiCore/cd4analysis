@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Test the result of the DeepCloneAndDeepEquals Decorator.
  */
-public class DeepCloneAndDeepEqualsDecoratorTest {
+public class DeepCloneAndDeepEqualsDecoratorResultTest {
 
   @Test
   public void test() {
