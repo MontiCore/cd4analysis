@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -12,14 +13,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class ConfAbstractTest {
+  
   public static final String dir = "src/test/resources/de/monticore/cdconformance/";
-
+  
   protected ASTCDCompilationUnit refCD;
-
+  
   protected ASTCDCompilationUnit conCD;
-
+  
   protected CDConformanceChecker checker;
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
@@ -28,11 +30,11 @@ public abstract class ConfAbstractTest {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-
+  
   public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> conCD =
-          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> conCD = CD4CodeMill.parser().parseCDCompilationUnit(dir
+          + concrete);
       Optional<ASTCDCompilationUnit> refCD = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (conCD.isPresent() && refCD.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(conCD.get());
@@ -41,12 +43,15 @@ public abstract class ConfAbstractTest {
         refCD.get().accept(new CD4CodeSymbolTableCompleter(refCD.get()).getTraverser());
         this.refCD = refCD.get();
         this.conCD = conCD.get();
-      } else {
+      }
+      else {
         fail("Could not parse CDs.");
       }
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       fail(e.getMessage());
     }
   }
+  
 }

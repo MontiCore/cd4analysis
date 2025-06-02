@@ -36,17 +36,17 @@ import org.junit.jupiter.api.Test;
 
 /** Tests for parameterized calls of the {@link TemplateController} */
 public class CD4CTest extends CD4CodeTestBasis {
-
+  
   private GeneratorSetup config;
   private ASTCDCompilationUnit node;
-
+  
   @BeforeEach
   public void init() throws IOException {
     LogStub.init();
     Log.enableFailQuick(false);
     Log.clearFindings();
     CD4C.reset();
-
+    
     // Configure glex
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
@@ -54,388 +54,338 @@ public class CD4CTest extends CD4CodeTestBasis {
     config.setGlex(glex);
     config.setOutputDirectory(new File("target/generated/cd4c/de/monticore"));
     config.setTracing(false);
-    config.setAdditionalTemplatePaths(
-        Lists.newArrayList(new File("src/main/resources"), new File("src/test/resources")));
-
+    config.setAdditionalTemplatePaths(Lists.newArrayList(new File("src/main/resources"), new File(
+        "src/test/resources")));
+    
     // Configure CD4C
     CD4C.init(config);
     CD4C.getInstance().setEmptyBodyTemplate("cd2java.EmptyBody");
-
+    
     // create diagram
     node = p.parse(getFilePath("cd4code/generator/Simple.cd")).get();
   }
-
+  
   // =================================================
   // Tests with templates
   // =================================================
-
+  
   @Test
   public void testCreateMethod() {
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorld")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorld").setModifier(CD4CodeMill
+        .modifierBuilder().setPublic(true).build()).build();
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-
+    
     // testing createMethod
-    Optional<ASTCDMethodSignature> methSignature =
-        CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
-
+    Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(clazz,
+        "de.monticore.cd.methodtemplates.PrintMethod");
+    
     assertTrue(methSignature.isPresent());
     assertInstanceOf(ASTCDMethod.class, methSignature.get());
     ASTCDMethod meth = (ASTCDMethod) methSignature.get();
     assertEquals("print", meth.getName());
-
+    
     checkLogError();
   }
-
+  
   @Test
   public void testCreateMethodInInterfaces() {
-    ASTCDInterface ast =
-        CD4CodeMill.cDInterfaceBuilder()
-            .setName("IHelloWorld")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDInterface ast = CD4CodeMill.cDInterfaceBuilder().setName("IHelloWorld").setModifier(
+        CD4CodeMill.modifierBuilder().setPublic(true).build()).build();
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(ast);
-
+    
     // testing createMethod
-    Optional<ASTCDMethodSignature> methSignature =
-        CD4C.getInstance().createMethod(ast, "de.monticore.cd.methodtemplates.PrintMethod");
-
+    Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(ast,
+        "de.monticore.cd.methodtemplates.PrintMethod");
+    
     assertTrue(methSignature.isPresent());
     assertInstanceOf(ASTCDMethod.class, methSignature.get());
     ASTCDMethod meth = (ASTCDMethod) methSignature.get();
     assertEquals("print", meth.getName());
-
+    
     checkLogError();
   }
-
+  
   @Test
   public void testGenerateMethod() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorld")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorld").setModifier(CD4CodeMill
+        .modifierBuilder().setPublic(true).build()).build();
     final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-
+    
     // testing addMethod, .addConstructor
     // add the method that is described in template "PrintMethod"
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
     // add the constructor that is described in template "DefaultConstructor"
     CD4C.getInstance().addConstructor(clazz, "de.monticore.cd.methodtemplates.DefaultConstructor");
-
+    
     checkLogError();
-
+    
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorld.java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
-
+  
   @Test
   public void testGenerateMethodWithAllAttributes() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithConstructor")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorldWithConstructor")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build()).build();
+    
     //  testing .createAttribute
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-
-    clazz.addCDMember(
-        CDAttributeFacade.getInstance()
-            .createAttribute(new ASTModifierBuilder().PUBLIC().build(), String.class, "text"));
-    clazz.addCDMember(
-        CDAttributeFacade.getInstance()
-            .createAttribute(new ASTModifierBuilder().PROTECTED().build(), "int", "notPublic"));
-
+    
+    clazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(new ASTModifierBuilder()
+        .PUBLIC().build(), String.class, "text"));
+    clazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(new ASTModifierBuilder()
+        .PROTECTED().build(), "int", "notPublic"));
+    
     final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
+    
     // add the constructor that is described in template "DefaultConstructor"
-    CD4C.getInstance()
-        .addConstructor(clazz, "de.monticore.cd.methodtemplates.ConstructorWithAllAttributes");
-
+    CD4C.getInstance().addConstructor(clazz,
+        "de.monticore.cd.methodtemplates.ConstructorWithAllAttributes");
+    
     checkLogError();
-
+    
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorldWithConstructor.java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
-
+  
   @Test
   public void testGenerateAttributeFromTemplate() throws IOException {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("AttributeFromTemplate")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("AttributeFromTemplate").setModifier(
+        CD4CodeMill.modifierBuilder().setPublic(true).build()).build();
+    
     node.getCDDefinition().addCDElement(clazz);
-    ASTCDAttribute a =
-        CD4C.getInstance()
-            .addAttributeFromTemplate(clazz, "de.monticore.cd.methodtemplates.Attribute", "world");
-
-    ASTCDAttribute b =
-        CD4C.getInstance()
-            .addAttributeFromTemplate(
-                clazz, "de.monticore.cd.methodtemplates.AttributeWithComplexInit", "world");
-
+    ASTCDAttribute a = CD4C.getInstance().addAttributeFromTemplate(clazz,
+        "de.monticore.cd.methodtemplates.Attribute", "world");
+    
+    ASTCDAttribute b = CD4C.getInstance().addAttributeFromTemplate(clazz,
+        "de.monticore.cd.methodtemplates.AttributeWithComplexInit", "world");
+    
     checkLogError();
-
+    
     assertEquals(2, clazz.sizeCDMembers());
     ASTCDMember member = clazz.getCDMember(0);
     assertEquals(a, member);
-
+    
     ASTCDMember member2 = clazz.getCDMember(1);
     assertEquals(b, member2);
-
+    
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("AttributeFromTemplate.java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
-
+    
     Path outputFile = config.getOutputDirectory().toPath().resolve(output);
     String content = IOUtils.toString(outputFile.toUri(), StandardCharsets.UTF_8);
-
+    
     assertTrue(content.contains("\"Hello world\""));
     assertTrue(content.contains("= new String(\"Constructor use: world\");"));
   }
-
+  
   @Test
   public void testNoPredicates() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldNoPredicates")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-    clazz.addCDMember(
-        CDMethodFacade.getInstance()
-            .createMethod(new ASTModifierBuilder().PUBLIC().build(), String.class, "print"));
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorldNoPredicates").setModifier(
+        CD4CodeMill.modifierBuilder().setPublic(true).build()).build();
+    clazz.addCDMember(CDMethodFacade.getInstance().createMethod(new ASTModifierBuilder().PUBLIC()
+        .build(), String.class, "print"));
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-
+    
     // try to create a print method that already exists
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
-
+    
     checkLogError();
-
+    
     // generate Java-Code
     // Note: The syntax is incorrect, as 2 methods with the same signature are generated
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java.incorrectsyntax");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
-
+  
   @Test
   public void testWithClassPredicates() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithClassPredicates")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-    clazz.addCDMember(
-        CDMethodFacade.getInstance()
-            .createMethod(new ASTModifierBuilder().PUBLIC().build(), String.class, "print"));
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorldWithClassPredicates")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build()).build();
+    clazz.addCDMember(CDMethodFacade.getInstance().createMethod(new ASTModifierBuilder().PUBLIC()
+        .build(), String.class, "print"));
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
-
+    
     CD4C.getInstance().addDefaultClassPredicates();
-
+    
     // try to create a print method that already exists
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
-
+    
     assertEquals(2, Log.getFindingsCount());
     assertEquals(
-        "0x110C8: The class 'HelloWorldWithClassPredicates' already has a method named 'print'",
-        Log.getFindings().get(0).getMsg());
-    assertEquals(
-        "0x11011: A check for the class method failed for method 'print'",
-        Log.getFindings().get(1).getMsg());
-
+        "0x110C8: The class 'HelloWorldWithClassPredicates' already has a method named 'print'", Log
+            .getFindings().get(0).getMsg());
+    assertEquals("0x11011: A check for the class method failed for method 'print'", Log
+        .getFindings().get(1).getMsg());
+    
     Log.clearFindings();
   }
-
+  
   @Test
   public void testWithUnknownReturnTypePredicates() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithUnknownReturnTypePredicates")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName(
+        "HelloWorldWithUnknownReturnTypePredicates").setModifier(CD4CodeMill.modifierBuilder()
+            .setPublic(true).build()).build();
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
-
+    
     CD4C.getInstance().addDefaultPredicates();
-
+    
     // try to create a method with unkown type
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownReturnType");
-
+    
     assertEquals(1, Log.getFindingsCount());
     assertEquals("0xA0324 Cannot find symbol UnknownReturnType", Log.getFindings().get(0).getMsg());
-
+    
     Log.clearFindings();
   }
-
+  
   @Test
   public void testWithUnknownParameterTypePredicates() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithUnknownParameterTypePredicates")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName(
+        "HelloWorldWithUnknownParameterTypePredicates").setModifier(CD4CodeMill.modifierBuilder()
+            .setPublic(true).build()).build();
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     scope.addImports(new ImportStatement("java.lang", true));
-
+    
     CD4C.getInstance().addDefaultPredicates();
-
+    
     // try to create a print method that already exists
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownParameterType");
-
+    
     assertEquals(1, Log.getFindingsCount());
-    assertEquals(
-        "0xA0324 Cannot find symbol UnknownParameterType", Log.getFindings().get(0).getMsg());
-
+    assertEquals("0xA0324 Cannot find symbol UnknownParameterType", Log.getFindings().get(0)
+        .getMsg());
+    
     Log.clearFindings();
   }
-
+  
   @Test
   public void testWithAttrClassPredicates() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithClassPredicates")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-    clazz.addCDMember(
-        CDAttributeFacade.getInstance()
-            .createAttribute(CD4CodeMill.modifierBuilder().build(), "int", "counter"));
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorldWithClassPredicates")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build()).build();
+    clazz.addCDMember(CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder()
+        .build(), "int", "counter"));
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
-
+    
     CD4C.getInstance().addDefaultClassPredicates();
-
+    
     // Add an attributes
     CD4C.getInstance().addAttribute(clazz, "int counter;");
-
+    
     assertEquals(1, Log.getFindingsCount());
     assertEquals(
         "0x110C9: The class 'HelloWorldWithClassPredicates' already has a attribute named 'counter'",
         Log.getFindings().get(0).getMsg());
-
+    
     Log.clearFindings();
   }
-
+  
   @Test
   public void testWithUnknownAttributeTypePredicates() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithUnknownAttributeTypePredicates")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName(
+        "HelloWorldWithUnknownAttributeTypePredicates").setModifier(CD4CodeMill.modifierBuilder()
+            .setPublic(true).build()).build();
+    
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
-
+    
     CD4C.getInstance().addDefaultPredicates();
-
+    
     // try to create a method with unkown type
     CD4C.getInstance().addAttribute(clazz, "UnknownAttributeType unkwonAttributeType;");
-
+    
     assertEquals(1, Log.getFindingsCount());
-    assertEquals(
-        "0xA0324 Cannot find symbol UnknownAttributeType", Log.getFindings().get(0).getMsg());
-
+    assertEquals("0xA0324 Cannot find symbol UnknownAttributeType", Log.getFindings().get(0)
+        .getMsg());
+    
     Log.clearFindings();
   }
-
+  
   @Test
   public void testTypeParamsClass() {
     // Build class for testing
-    ASTCDClass clazz =
-        CD4CodeMill.cDClassBuilder()
-            .setName("HelloWorldWithTypeParams")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .setTypeParameters(
-                CD4CodeMill.typeParametersBuilder()
-                    .addTypeParameter(CD4CodeMill.typeParameterBuilder().setName("C").build())
-                    .build())
-            .build();
-
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder().setName("HelloWorldWithTypeParams").setModifier(
+        CD4CodeMill.modifierBuilder().setPublic(true).build()).setTypeParameters(CD4CodeMill
+            .typeParametersBuilder().addTypeParameter(CD4CodeMill.typeParameterBuilder().setName(
+                "C").build()).build()).build();
+    
     // Add a method with type params
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.TypeParamMethod");
     // and a constructor with refining type params
-    CD4C.getInstance()
-        .addConstructor(clazz, "de.monticore.cd.methodtemplates.TypeParamConstructor");
-
+    CD4C.getInstance().addConstructor(clazz,
+        "de.monticore.cd.methodtemplates.TypeParamConstructor");
+    
     CD4C.getInstance().addAttribute(clazz, "List<String> stringList;");
     CD4C.getInstance().addAttribute(clazz, "List<C> genericList;");
-
+    
     checkLogError();
-
+    
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java");
     generatorEngine.generate("cd2java.Class", output, clazz, createDeafaultPkg());
   }
-
+  
   @Test
   public void testTypeParamsInterface() {
     // Build interface for testing
-    ASTCDInterface interfaze =
-        CD4CodeMill.cDInterfaceBuilder()
-            .setName("IHelloWorldWithTypeParams")
-            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-            .setTypeParameters(
-                CD4CodeMill.typeParametersBuilder()
-                    .addTypeParameter(CD4CodeMill.typeParameterBuilder().setName("I").build())
-                    .build())
-            .build();
-
+    ASTCDInterface interfaze = CD4CodeMill.cDInterfaceBuilder().setName("IHelloWorldWithTypeParams")
+        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build()).setTypeParameters(
+            CD4CodeMill.typeParametersBuilder().addTypeParameter(CD4CodeMill.typeParameterBuilder()
+                .setName("I").build()).build()).build();
+    
     // add a method with type params and a default implementation
     CD4C.getInstance().addMethod(interfaze, "de.monticore.cd.methodtemplates.TypeParamMethod");
-
+    
     checkLogError();
-
+    
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(interfaze.getName() + ".java");
     generatorEngine.generate("cd2java.Interface", output, interfaze, createDeafaultPkg());
   }
-
+  
   protected ASTCDPackage createDeafaultPkg() {
-    return CD4CodeMill.cDPackageBuilder()
-        .setMCQualifiedName(
-            CD4CodeMill.mCQualifiedNameBuilder().addParts("de").addParts("monticore").build())
-        .build();
+    return CD4CodeMill.cDPackageBuilder().setMCQualifiedName(CD4CodeMill.mCQualifiedNameBuilder()
+        .addParts("de").addParts("monticore").build()).build();
   }
+  
 }

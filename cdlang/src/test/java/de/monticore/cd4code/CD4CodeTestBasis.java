@@ -25,12 +25,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CD4CodeTestBasis extends TestBasis {
+  
   protected CD4CodeParser p;
   protected CD4CodeCoCos cd4CodeCoCos;
   protected CD4CodeFullPrettyPrinter printer;
   protected CD4CodeSymbols2Json symbols2Json;
   protected CD4CodeCoCoChecker coCoChecker;
-
+  
   @BeforeEach
   public void initObjects() {
     LogStub.init();
@@ -38,41 +39,43 @@ public class CD4CodeTestBasis extends TestBasis {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     p = CD4CodeMill.parser();
-
+    
     final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
-
+    
     cd4CodeCoCos = new CD4CodeCoCos();
     printer = new CD4CodeFullPrettyPrinter(new IndentPrinter(), true);
     symbols2Json = new CD4CodeSymbols2Json();
     coCoChecker = new CD4CodeCoCoChecker();
   }
-
+  
   protected ASTCDCompilationUnit parse(String filePath) {
     Optional<ASTCDCompilationUnit> astcdCompilationUnit = Optional.empty();
     try {
       astcdCompilationUnit = p.parse(getFilePath(filePath));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("Exception during parsing");
     }
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-
+    
     // Trafos after parsing
     new CD4CodeAfterParseTrafo().transform(node);
     return node;
   }
-
+  
   protected void prepareST(ASTCDCompilationUnit node) {
     // First pass for symbol table
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
-
+    
     // Second pass for symbol table
     final CD4CodeTraverser traverser = new CD4CodeSymbolTableCompleter(node).getTraverser();
     node.accept(traverser);
     checkLogError();
   }
+  
 }

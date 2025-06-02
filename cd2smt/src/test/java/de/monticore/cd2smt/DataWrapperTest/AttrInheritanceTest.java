@@ -23,48 +23,49 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AttrInheritanceTest extends CD2SMTAbstractTest {
+  
   protected CD2SMTGenerator cd2SMTGenerator;
   protected Context ctx;
   protected ASTCDDefinition cd;
-
+  
   @BeforeEach
   public void setup() {
     Log.init();
     CD4CodeMill.init();
-
+    
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
-
-    ASTCDCompilationUnit ast =
-        parseModel(Paths.get("DataWrapper/inheritance/attribute/AttrInheritance.cd").toString());
+    
+    ASTCDCompilationUnit ast = parseModel(Paths.get(
+        "DataWrapper/inheritance/attribute/AttrInheritance.cd").toString());
     CD2SMTMill.initDefault();
     cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     ctx = cd2SMTGenerator.getContext();
     cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
   }
-
+  
   public void checkAttribute(ASTCDClass Class, String attrname, Expr<? extends Sort> obj) {
-    Optional<Expr<? extends Sort>> attribute =
-        Optional.ofNullable(cd2SMTGenerator.getAttribute(Class, attrname, obj));
+    Optional<Expr<? extends Sort>> attribute = Optional.ofNullable(cd2SMTGenerator.getAttribute(
+        Class, attrname, obj));
     assertTrue(attribute.isPresent());
   }
-
+  
   @Test
   public void test_Attribute_Inheritance_Hierarchy_1() {
     ASTCDClass Car = CDHelper.getClass("Car", cd);
     Expr<? extends Sort> car = ctx.mkConst("bigbigcar", cd2SMTGenerator.getSort(Car));
-
+    
     checkAttribute(Car, "isCarInterface1", car);
     checkAttribute(Car, "isCarInterface2", car);
     checkAttribute(Car, "isVehicle", car);
   }
-
+  
   @Test
   public void test_Attribute_Inheritance_Hierarchy_2() {
     ASTCDClass BigCar = CDHelper.getClass("BigCar", cd);
     Expr<? extends Sort> bigCar = ctx.mkConst("bigcar", cd2SMTGenerator.getSort(BigCar));
-
+    
     checkAttribute(BigCar, "isCarInterface1", bigCar);
     checkAttribute(BigCar, "isCarInterface2", bigCar);
     checkAttribute(BigCar, "isVehicle", bigCar);
@@ -72,12 +73,12 @@ public class AttrInheritanceTest extends CD2SMTAbstractTest {
     checkAttribute(BigCar, "isBigCarInterface", bigCar);
     checkAttribute(BigCar, "isBigCar", bigCar);
   }
-
+  
   @Test
   public void test_Attribute_Inheritance_Hierarchy_3() {
     ASTCDClass BigBigCar = CDHelper.getClass("BigBigCar", cd);
     Expr<? extends Sort> bigBigCar = ctx.mkConst("bigBigCar", cd2SMTGenerator.getSort(BigBigCar));
-
+    
     checkAttribute(BigBigCar, "isCarInterface1", bigBigCar);
     checkAttribute(BigBigCar, "isCarInterface2", bigBigCar);
     checkAttribute(BigBigCar, "isVehicle", bigBigCar);
@@ -86,4 +87,5 @@ public class AttrInheritanceTest extends CD2SMTAbstractTest {
     checkAttribute(BigBigCar, "isBigCar", bigBigCar);
     checkAttribute(BigBigCar, "isBigBigCar", bigBigCar);
   }
+  
 }

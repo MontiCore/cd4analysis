@@ -17,18 +17,18 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
-
+  
   protected static final String SET = "set%s";
-
+  
   public MandatoryMutatorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
   }
-
-  public MandatoryMutatorDecorator(
-      final GlobalExtensionManagement glex, final CDGenService service) {
+  
+  public MandatoryMutatorDecorator(final GlobalExtensionManagement glex,
+      final CDGenService service) {
     super(glex, service);
   }
-
+  
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
     if (ast.getModifier().isDerived() || ast.getModifier().isReadonly()) {
@@ -36,14 +36,14 @@ public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
     }
     return new ArrayList<>(Arrays.asList(createSetter(ast)));
   }
-
+  
   protected ASTCDMethod createSetter(final ASTCDAttribute ast) {
-    String name =
-        String.format(SET, StringUtils.capitalize(service.getNativeAttributeName(ast.getName())));
-    ASTCDMethod method =
-        this.getCDMethodFacade()
-            .createMethod(PUBLIC.build(), name, this.getCDParameterFacade().createParameters(ast));
+    String name = String.format(SET, StringUtils.capitalize(service.getNativeAttributeName(ast
+        .getName())));
+    ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), name, this
+        .getCDParameterFacade().createParameters(ast));
     this.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint("methods.Set", ast));
     return method;
   }
+  
 }

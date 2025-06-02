@@ -21,58 +21,61 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {
+  
   protected TestCDInterfaceAndEnumParser p;
   protected CDInterfaceAndEnumCoCoChecker coCoChecker;
-
+  
   @BeforeEach
   public void initObjects() {
     TestCDInterfaceAndEnumMill.reset();
     TestCDInterfaceAndEnumMill.init();
     Log.enableFailQuick(false);
-
+    
     p = TestCDInterfaceAndEnumMill.parser();
-
+    
     final ICDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
-
+    
     coCoChecker = new CDInterfaceAndEnumCoCoChecker();
   }
-
+  
   protected ASTCDCompilationUnit parseModel(String modelName) {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit;
     try {
       astcdCompilationUnit = p.parseCDCompilationUnit(Paths.get(modelName).toString());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("Failed while parsing the model `" + getFilePath(modelName) + "': " + e.getMessage());
       return null;
     }
-
+    
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();
   }
-
+  
   protected ITestCDInterfaceAndEnumArtifactScope createSymTab(
       ASTCDCompilationUnit astcdCompilationUnit) {
-    final ITestCDInterfaceAndEnumArtifactScope st =
-        TestCDInterfaceAndEnumMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    final ITestCDInterfaceAndEnumArtifactScope st = TestCDInterfaceAndEnumMill
+        .scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     checkLogError();
     return st;
   }
-
+  
   protected void completeSymTab(ASTCDCompilationUnit ast) {
     TestCDInterfaceAndEnumTraverser t = TestCDInterfaceAndEnumMill.inheritanceTraverser();
-
+    
     // add 4 cd basis
     CDBasisSymbolTableCompleter symTabCompBasis = new CDBasisSymbolTableCompleter();
     t.add4CDBasis(symTabCompBasis);
     t.add4OOSymbols(symTabCompBasis);
-
+    
     // add 4 cd interface and enum
     CDInterfaceAndEnumSymbolTableCompleter symTabCompIntEnum =
         new CDInterfaceAndEnumSymbolTableCompleter();
     t.add4CDInterfaceAndEnum(symTabCompIntEnum);
-
+    
     ast.accept(t);
   }
+  
 }

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.cd.type;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -12,13 +13,14 @@ import de.monticore.cdconcretization.cd.CDCompletionContext;
  * step because we first have to complete inheritance relations.
  */
 public interface ITypeInCDCompleter {
+  
   /**
    * Completes the given concrete CD such that it conforms with respect to the reference type.
    *
    * @param concreteCD
    * @param referenceType
    */
-  void completeTypeInCD(
-      ASTCDDefinition concreteCD, ASTCDType referenceType, CDCompletionContext context)
-      throws CompletionException;
+  void completeTypeInCD(ASTCDDefinition concreteCD, ASTCDType referenceType,
+      CDCompletionContext context) throws CompletionException;
+  
 }

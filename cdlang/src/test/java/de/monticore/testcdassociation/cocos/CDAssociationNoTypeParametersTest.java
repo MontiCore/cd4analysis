@@ -15,12 +15,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationNoTypeParametersTest extends CDAssociationTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationNoTypeParameters());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -28,12 +28,12 @@ public class CDAssociationNoTypeParametersTest extends CDAssociationTestBasis {
     coCoChecker.checkAll(ast);
     checkLogError();
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationNoTypeParameters());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/CDAssociationNoTypeParametersInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/CDAssociationNoTypeParametersInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     createSymTabAndAddTypeVariable(ast, true);
@@ -42,19 +42,18 @@ public class CDAssociationNoTypeParametersTest extends CDAssociationTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC72"));
   }
-
+  
   // adds TypeVariable to class A.
   protected void createSymTabAndAddTypeVariable(ASTCDCompilationUnit ast, boolean addVar) {
     ITestCDAssociationArtifactScope as = createSymTab(ast);
     completeSymTab(ast);
     if (addVar) {
-      as.resolveCDType("A")
-          .get()
-          .getSpannedScope()
-          .add(CDAssociationMill.typeVarSymbolBuilder().setName("T").build());
+      as.resolveCDType("A").get().getSpannedScope().add(CDAssociationMill.typeVarSymbolBuilder()
+          .setName("T").build());
     }
   }
-
+  
   @Override
   public void after() {}
+  
 }

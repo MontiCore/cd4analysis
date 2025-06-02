@@ -15,8 +15,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class ExtractClass implements Refactoring {
+  
   public ExtractClass() {}
-
+  
   /**
    * Moves the given methods {@code methods} and attributes {@code attributes} from an old class
    * {@code oldClass} to a new class {@code newClass} an creates an association
@@ -28,12 +29,8 @@ public class ExtractClass implements Refactoring {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean extractClass(
-      String oldClass,
-      String newClass,
-      List<String> attributes,
-      List<String> methods,
-      ASTCDCompilationUnit ast) {
+  public boolean extractClass(String oldClass, String newClass, List<String> attributes,
+      List<String> methods, ASTCDCompilationUnit ast) {
     Move move = new Move();
     if (transformationUtility.classIsPresent(oldClass, ast)) {
       if (transformationUtility.createSimpleClass(newClass, ast)) {
@@ -41,14 +38,14 @@ public class ExtractClass implements Refactoring {
           if (move.moveAttributes(oldClass, newClass, attributes, ast)) {
             if (move.moveMethods(oldClass, newClass, methods, ast)) {
               return true;
-            } else {
-              Log.info(
-                  "0xF4071: Extract Superclass: Didn't find Methods " + methods.toString(),
+            }
+            else {
+              Log.info("0xF4071: Extract Superclass: Didn't find Methods " + methods.toString(),
                   ExtractClass.class.getName());
             }
-          } else {
-            Log.info(
-                "0xF4072: Extract Superclass: Didn't find Attributes " + attributes.toString(),
+          }
+          else {
+            Log.info("0xF4072: Extract Superclass: Didn't find Attributes " + attributes.toString(),
                 ExtractClass.class.getName());
           }
         }
@@ -56,4 +53,5 @@ public class ExtractClass implements Refactoring {
     }
     return false;
   }
+  
 }

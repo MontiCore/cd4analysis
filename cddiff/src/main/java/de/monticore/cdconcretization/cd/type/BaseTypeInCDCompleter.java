@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.cd.type;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -9,41 +10,37 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 /** Completes the types of a CD by adding missing types from the reference CD. */
 public class BaseTypeInCDCompleter extends AbstractTypeInCDCompleter {
-
+  
   @Override
-  protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDClass referenceType, CDCompletionContext context)
-      throws CompletionException {
-    if (concreteCD.getCDClassesList().stream()
-        .noneMatch(cClass -> context.getTypeIncStrategy().isMatched(cClass, referenceType))) {
+  protected void completeType(ASTCDDefinition concreteCD, ASTCDClass referenceType,
+      CDCompletionContext context) throws CompletionException {
+    if (concreteCD.getCDClassesList().stream().noneMatch(cClass -> context.getTypeIncStrategy()
+        .isMatched(cClass, referenceType))) {
       addTypeIncarnation(concreteCD, referenceType);
     }
     next(concreteCD, referenceType, context);
   }
-
+  
   @Override
-  protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDInterface referenceType, CDCompletionContext context)
-      throws CompletionException {
-    if (concreteCD.getCDInterfacesList().stream()
-        .noneMatch(
-            cInterface -> context.getTypeIncStrategy().isMatched(cInterface, referenceType))) {
+  protected void completeType(ASTCDDefinition concreteCD, ASTCDInterface referenceType,
+      CDCompletionContext context) throws CompletionException {
+    if (concreteCD.getCDInterfacesList().stream().noneMatch(cInterface -> context
+        .getTypeIncStrategy().isMatched(cInterface, referenceType))) {
       addTypeIncarnation(concreteCD, referenceType);
     }
     next(concreteCD, referenceType, context);
   }
-
+  
   @Override
-  protected void completeType(
-      ASTCDDefinition concreteCD, ASTCDEnum referenceType, CDCompletionContext context)
-      throws CompletionException {
-    if (concreteCD.getCDEnumsList().stream()
-        .noneMatch(cEnum -> context.getTypeIncStrategy().isMatched(cEnum, referenceType))) {
+  protected void completeType(ASTCDDefinition concreteCD, ASTCDEnum referenceType,
+      CDCompletionContext context) throws CompletionException {
+    if (concreteCD.getCDEnumsList().stream().noneMatch(cEnum -> context.getTypeIncStrategy()
+        .isMatched(cEnum, referenceType))) {
       addTypeIncarnation(concreteCD, referenceType);
     }
     next(concreteCD, referenceType, context);
   }
-
+  
   private void addTypeIncarnation(ASTCDDefinition concreteCD, ASTCDClass referenceClass) {
     ASTCDClass clone = referenceClass.deepClone();
     clone.setCDExtendUsageAbsent();
@@ -54,18 +51,19 @@ public class BaseTypeInCDCompleter extends AbstractTypeInCDCompleter {
     clone.clearCDMembers();
     concreteCD.getCDElementList().add(clone);
   }
-
+  
   private void addTypeIncarnation(ASTCDDefinition concreteCD, ASTCDEnum referenceEnum) {
     ASTCDEnum clone = referenceEnum.deepClone();
     clone.setCDInterfaceUsageAbsent();
     clone.clearCDMembers();
     concreteCD.getCDElementList().add(clone);
   }
-
+  
   private void addTypeIncarnation(ASTCDDefinition concreteCD, ASTCDInterface referenceInterface) {
     ASTCDInterface clone = referenceInterface.deepClone();
     clone.setCDExtendUsageAbsent();
     clone.clearCDMembers();
     concreteCD.getCDElementList().add(clone);
   }
+  
 }

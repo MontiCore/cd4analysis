@@ -8,11 +8,11 @@ import de.monticore.cdmerge.util.JPrimitiveType;
 
 /** Matches only Attributes with same name and compatible type */
 public class TypeCompatibleAttributeMatcher extends AttributeMatcherBase {
-
+  
   public TypeCompatibleAttributeMatcher(MergeBlackBoard blackBoard) {
     super(blackBoard);
   }
-
+  
   /**
    * Matches only Attributes with same name and compatible type Does only check built in java types
    * - all other types are considered to be incompatible
@@ -22,7 +22,7 @@ public class TypeCompatibleAttributeMatcher extends AttributeMatcherBase {
     if (!attribute1.getName().equalsIgnoreCase(attribute2.getName())) {
       return false;
     }
-
+    
     String type1 = attribute1.getMCType().printType();
     String type2 = attribute2.getMCType().printType();
     if (type1.equals(type2)) {
@@ -30,21 +30,18 @@ public class TypeCompatibleAttributeMatcher extends AttributeMatcherBase {
     }
     if (JPrimitiveType.isPrimitiveType(type1) || JPrimitiveType.isPrimitiveType(type2)) {
       if (JPrimitiveType.isPrimitiveType(type1) && JPrimitiveType.isPrimitiveType(type2)) {
-        boolean match =
-            JPrimitiveType.getCommonSuperType(
-                    JPrimitiveType.getType(type1), JPrimitiveType.getType(type2))
-                .isPresent();
+        boolean match = JPrimitiveType.getCommonSuperType(JPrimitiveType.getType(type1),
+            JPrimitiveType.getType(type2)).isPresent();
         if (match) {
-          log(
-              ErrorLevel.FINE,
-              "Identified attributes with matching (super)types",
-              attribute1,
+          log(ErrorLevel.FINE, "Identified attributes with matching (super)types", attribute1,
               attribute2);
         }
         return match;
-      } else return false;
+      }
+      else
+        return false;
     }
-
+    
     // We don't know as external type references in the class diagram
     // are typically modeled as associations. So we have now information about
     // these,
@@ -53,4 +50,5 @@ public class TypeCompatibleAttributeMatcher extends AttributeMatcherBase {
     // Type. For now we say the attributes are not compatible
     return false;
   }
+  
 }

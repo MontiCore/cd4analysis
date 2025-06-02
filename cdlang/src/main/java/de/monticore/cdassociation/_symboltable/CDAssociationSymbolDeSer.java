@@ -8,23 +8,20 @@ import de.monticore.symboltable.serialization.json.JsonObject;
 import java.util.Optional;
 
 public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
+  
   @Override
   protected void serializeAssoc(Optional<SymAssociation> assoc, CDAssociationSymbols2Json s2j) {
     if (assoc != null && assoc.isPresent()) {
       s2j.printer.member("association", handleSymAssociation(assoc.get()));
     }
   }
-
+  
   @Override
   protected Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
-    return symbolJson
-        .getIntegerMemberOpt("association")
-        .flatMap(
-            a ->
-                Optional.ofNullable(
-                    CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
+    return symbolJson.getIntegerMemberOpt("association").flatMap(a -> Optional.ofNullable(
+        CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
   }
-
+  
   @Override
   public String serialize(CDAssociationSymbol toSerialize, CDAssociationSymbols2Json s2j) {
     // ============== copy from parent ============
@@ -32,7 +29,7 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
     p.beginObject();
     p.member(de.monticore.symboltable.serialization.JsonDeSers.KIND, getSerializedKind());
     p.member(de.monticore.symboltable.serialization.JsonDeSers.NAME, toSerialize.getName());
-
+    
     // serialize symbolrule attributes
     if (toSerialize.isPresentAssoc()) {
       serializeAssoc(Optional.of(toSerialize.getAssoc()), s2j);
@@ -45,10 +42,11 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
     //    }
     // ============== change end ========
     s2j.getTraverser().addTraversedElement(toSerialize.getSpannedScope());
-
+    
     serializeAddons(toSerialize, s2j);
     p.endObject();
-
+    
     return p.toString();
   }
+  
 }

@@ -15,25 +15,27 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 public class CDMergeTest extends BaseTest {
+  
   @Test
   public void testMerge() {
-
+    
     final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
     List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
     try {
       inputSet.add(loadModel(srcDir + "A.cd"));
       inputSet.add(loadModel(srcDir + "B.cd"));
       inputSet.add(loadModel(srcDir + "C.cd"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
-
+    
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new HashSet<>());
-
+    
     assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
-
+  
   @Test
   public void testMotivatingExample() {
     final String srcDir = "src/test/resources/class_diagrams/CDMergeTest/";
@@ -41,21 +43,22 @@ public class CDMergeTest extends BaseTest {
     try {
       inputSet.add(loadModel(srcDir + "Teaching.cd"));
       inputSet.add(loadModel(srcDir + "Management.cd"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
-
+    
     HashSet<MergeParameter> params = new HashSet<>();
-
+    
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);
-
+    
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
-
+    
     assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
   }
-
+  
   @Test
   public void testUMLPExample() {
     final String srcDir = "src/test/resources/class_diagrams/umlp/";
@@ -65,22 +68,23 @@ public class CDMergeTest extends BaseTest {
       expected = loadModel(srcDir + "MergeDriveAndEmployment.umlp");
       inputSet.add(loadModel(srcDir + "Driver.umlp"));
       inputSet.add(loadModel(srcDir + "Employment.umlp"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
-
+    
     HashSet<MergeParameter> params = new HashSet<>();
-
+    
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);
-
+    
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MergeDriveAndEmployment", params);
-
+    
     assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
     assertTrue(mergedCD.deepEquals(expected, false));
   }
-
+  
   @Test
   public void testCarRental_correct() {
     final String srcDir = "src/test/resources/class_diagrams/carrental/";
@@ -91,29 +95,27 @@ public class CDMergeTest extends BaseTest {
       inputSet.add(loadModel(srcDir + "Trucks.cd"));
       inputSet.add(loadModel(srcDir + "Cars.cd"));
       inputSet.add(loadModel(srcDir + "CustomerService.cd"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
-
+    
     // Test all permutations of the merging order
     for (List<ASTCDCompilationUnit> permutation : computeAllPermutations(inputSet)) {
       HashSet<MergeParameter> params = new HashSet<>();
-
-      System.out.println(
-          "Merging "
-              + permutation.stream()
-                  .map(cd -> cd.getCDDefinition().getName())
-                  .collect(Collectors.toList()));
-
+      
+      System.out.println("Merging " + permutation.stream().map(cd -> cd.getCDDefinition().getName())
+          .collect(Collectors.toList()));
+      
       params.add(MergeParameter.LOG_VERBOSE);
       params.add(MergeParameter.LOG_TO_CONSOLE);
-
+      
       ASTCDCompilationUnit mergedCD = CDMerge.merge(permutation, "CarRental", params);
-
+      
       assertNotNull(mergedCD);
     }
   }
-
+  
   // recursive helper function that produces all permutations of a list
   private Set<List<ASTCDCompilationUnit>> computeAllPermutations(
       List<ASTCDCompilationUnit> inputSet) {
@@ -141,7 +143,7 @@ public class CDMergeTest extends BaseTest {
     }
     return permutations;
   }
-
+  
   // Testet eine andere Reihenfolge der Eingabe-CDs (mit Kommentaren)
   @Test
   public void testCarRental_2() {
@@ -152,27 +154,26 @@ public class CDMergeTest extends BaseTest {
       inputSet.add(loadModel(srcDir + "Trucks.cd"));
       inputSet.add(loadModel(srcDir + "Cars.cd"));
       inputSet.add(loadModel(srcDir + "Renting.cd"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
-
+    
     HashSet<MergeParameter> params = new HashSet<>();
-
+    
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);
-
+    
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "CarRental", params);
-
+    
     assertNotNull(mergedCD);
   }
-
+  
   @Test
   public void testParseMrgConfig() {
     final String file = "src/test/resources/json/mrg-config.json";
-    assertTrue(
-        CDMerge.parseMrgConfig(file)
-            .containsAll(
-                Set.of(
-                    MergeParameter.MERGE_COMMENTS, MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS)));
+    assertTrue(CDMerge.parseMrgConfig(file).containsAll(Set.of(MergeParameter.MERGE_COMMENTS,
+        MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS)));
   }
+  
 }

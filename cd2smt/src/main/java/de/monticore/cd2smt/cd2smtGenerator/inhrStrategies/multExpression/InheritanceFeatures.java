@@ -14,47 +14,42 @@ import java.util.Map;
  * of a class/interface with other ones
  */
 public class InheritanceFeatures {
-
+  
   private final Map<ASTCDType, Constructor<? extends Sort>> subClassConstructorList;
   private final Map<ASTCDType, FuncDecl<Sort>> convert2SuperTypeFuncMap;
   private DatatypeSort<? extends Sort> subclassDatatype;
   private FuncDecl<Sort> getSubClass;
-
+  
   InheritanceFeatures() {
     this.subClassConstructorList = new HashMap<>();
     this.convert2SuperTypeFuncMap = new HashMap<>();
   }
-
-  public FuncDecl<Sort> getSubClass() {
-    return getSubClass;
-  }
-
-  public DatatypeSort<? extends Sort> getSubclassDatatype() {
-    return subclassDatatype;
-  }
-
+  
+  public FuncDecl<Sort> getSubClass() { return getSubClass; }
+  
+  public DatatypeSort<? extends Sort> getSubclassDatatype() { return subclassDatatype; }
+  
   public void setSubclassDatatype(DatatypeSort<? extends Sort> subclassDatatype) {
     this.subclassDatatype = subclassDatatype;
   }
-
+  
   public Map<ASTCDType, FuncDecl<Sort>> getConvert2SuperTypeFuncMap() {
     return convert2SuperTypeFuncMap;
   }
-
+  
   public Map<ASTCDType, Constructor<? extends Sort>> getSubClassConstructorList() {
     return subClassConstructorList;
   }
-
-  public void setGetSubClass(FuncDecl<Sort> getSubClass) {
-    this.getSubClass = getSubClass;
-  }
-
-  public void addSubclassConstructor(
-      ASTCDType astcdType, Constructor<? extends Sort> subClassConstructor) {
+  
+  public void setGetSubClass(FuncDecl<Sort> getSubClass) { this.getSubClass = getSubClass; }
+  
+  public void addSubclassConstructor(ASTCDType astcdType,
+      Constructor<? extends Sort> subClassConstructor) {
     subClassConstructorList.put(astcdType, subClassConstructor);
   }
-
+  
   public void addConvert2SuperTypeFunc(ASTCDType astcdType, FuncDecl<Sort> convertFunc) {
     convert2SuperTypeFuncMap.put(astcdType, convertFunc);
   }
+  
 }

@@ -6,7 +6,7 @@ import java.util.Optional;
 
 /** Interface for algorithms which merge two associations */
 public interface AssociationMergeStrategy {
-
+  
   /**
    * Merges the two Associations into one association
    *
@@ -14,6 +14,7 @@ public interface AssociationMergeStrategy {
    * @param association2 - input association 2
    * @return - the merged association
    */
-  Optional<ASTCDAssociation> mergeAssociation(
-      ASTCDAssociation association1, ASTCDAssociation association2);
+  Optional<ASTCDAssociation> mergeAssociation(ASTCDAssociation association1,
+      ASTCDAssociation association2);
+  
 }

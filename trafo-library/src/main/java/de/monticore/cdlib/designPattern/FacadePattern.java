@@ -15,9 +15,9 @@ import java.util.List;
  * @montitoolbox
  */
 public class FacadePattern implements DesignPattern {
-
+  
   public FacadePattern() {}
-
+  
   /**
    * Applies the facade pattern to the given classes {@code facadeClasses}
    *
@@ -35,7 +35,7 @@ public class FacadePattern implements DesignPattern {
     facadeClassNames += "Facade";
     return introduceFacadePattern(facadeClasses, facadeClassNames, ast);
   }
-
+  
   /**
    * Applies the facade pattern to the given classes {@code facadeClasses} and applies the facade
    * class name {@code facadeClassName}
@@ -45,28 +45,27 @@ public class FacadePattern implements DesignPattern {
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
-  public boolean introduceFacadePattern(
-      List<String> facadeClasses, String facadeClassName, ASTCDCompilationUnit ast)
-      throws IOException {
-
+  public boolean introduceFacadePattern(List<String> facadeClasses, String facadeClassName,
+      ASTCDCompilationUnit ast) throws IOException {
+    
     // Create Facade Class
     if (!transformationUtility.createSimpleClass(facadeClassName, ast)) {
       return false;
     }
-
+    
     // Create Association from Class to Facade
     if (!transformationUtility.createBiDirAssociations(facadeClassName, facadeClasses, ast)) {
       return false;
     }
-
+    
     while (changeAssociation(facadeClassName, ast))
       ;
     return true;
   }
-
+  
   private boolean changeAssociation(String fassadeClassName, ASTCDCompilationUnit ast)
       throws IOException {
-
+    
     // Change Name of FacadeClasses to FacadeClassName for bi directional
     // associations
     FacadeBiLeft biLeft = new FacadeBiLeft(ast);
@@ -75,14 +74,14 @@ public class FacadePattern implements DesignPattern {
       biLeft.doReplacement();
       return true;
     }
-
+    
     FacadeBiRight biRight = new FacadeBiRight(ast);
     biRight.set_$nameFacade(fassadeClassName);
     if (biRight.doPatternMatching()) {
       biRight.doReplacement();
       return true;
     }
-
+    
     // Change Name of FacadeClasses to FacadeClassName for uni directional
     // associations
     FacadeUniLeft uniLeft = new FacadeUniLeft(ast);
@@ -91,14 +90,14 @@ public class FacadePattern implements DesignPattern {
       uniLeft.doReplacement();
       return true;
     }
-
+    
     FacadeUniRight uniRight = new FacadeUniRight(ast);
     uniRight.set_$nameFacade(fassadeClassName);
     if (uniRight.doPatternMatching()) {
       uniRight.doReplacement();
       return true;
     }
-
+    
     // Change Name of FacadeClasses to FacadeClassName for right to left
     // directional associations
     FacadeRightDirLeft leftToRightLeft = new FacadeRightDirLeft(ast);
@@ -107,14 +106,14 @@ public class FacadePattern implements DesignPattern {
       leftToRightLeft.doReplacement();
       return true;
     }
-
+    
     FacadeRightDirRight leftToRightRight = new FacadeRightDirRight(ast);
     leftToRightRight.set_$nameFacade(fassadeClassName);
     if (leftToRightRight.doPatternMatching()) {
       leftToRightRight.doReplacement();
       return true;
     }
-
+    
     // Change Name of FacadeClasses to FacadeClassName for left to right
     // directional associations
     FacadeLeftDirLeft rightToLeftLeft = new FacadeLeftDirLeft(ast);
@@ -123,14 +122,15 @@ public class FacadePattern implements DesignPattern {
       rightToLeftLeft.doReplacement();
       return true;
     }
-
+    
     FacadeLeftDirRight rightToLeftRight = new FacadeLeftDirRight(ast);
     rightToLeftRight.set_$nameFacade(fassadeClassName);
     if (rightToLeftRight.doPatternMatching()) {
       rightToLeftRight.doReplacement();
       return true;
     }
-
+    
     return false;
   }
+  
 }

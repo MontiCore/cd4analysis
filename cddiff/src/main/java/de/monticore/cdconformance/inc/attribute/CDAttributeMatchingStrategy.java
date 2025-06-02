@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -9,5 +10,7 @@ import de.monticore.cdmatcher.MatchingStrategy;
  * needs to know a reference type against whose attributes it matches the concrete attributes.
  */
 public interface CDAttributeMatchingStrategy extends MatchingStrategy<ASTCDAttribute> {
+  
   void setReferenceType(ASTCDType refType);
+  
 }

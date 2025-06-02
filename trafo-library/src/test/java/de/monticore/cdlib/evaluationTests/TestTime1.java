@@ -23,35 +23,34 @@ import org.junit.jupiter.api.Test;
  * @author KE
  */
 public class TestTime1 {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   @Test
   public void testCase1() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/EvaluationCDs/TestCase1");
     ExtractIntermediateClass refactoring = new ExtractIntermediateClass();
-
+    
     // Perform transformation
     long start = new Date().getTime();
     refactoring.extractAllIntermediateClasses(utility.getAst());
@@ -59,4 +58,5 @@ public class TestTime1 {
     long runTime = end - start;
     System.out.println("Executiontime of Testcase 1: " + runTime + " Milliseconds");
   }
+  
 }

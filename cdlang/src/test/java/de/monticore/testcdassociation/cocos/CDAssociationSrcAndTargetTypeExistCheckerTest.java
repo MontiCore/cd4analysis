@@ -17,11 +17,11 @@ import org.junit.jupiter.api.Test;
  * of the symbol table.
  */
 public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CDAssociationTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -29,12 +29,11 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CDAssociation
     completeSymTab(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(
-            getFilePath("cdassociation/cocos/CDAssociationSrcAndTargetTypeExistCheckerInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/CDAssociationSrcAndTargetTypeExistCheckerInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -43,8 +42,9 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CDAssociation
     assertEquals(1, Log.getFindings().size(), Log.getFindings().toString());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
-
+  
   @AfterEach
   @Override
   public void after() {}
+  
 }

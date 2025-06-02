@@ -17,28 +17,29 @@ import java.util.*;
 
 /***
  * This class creates transform classes and interfaces of a class diagram in SMT.
- *1- For each class and interface a new Sort is declared
- *2- For each Enum a new datatype is defined
- *3- For each Attribute a new function is declared
+ * 1- For each class and interface a new Sort is declared
+ * 2- For each Enum a new datatype is defined
+ * 3- For each Attribute a new function is declared
  */
 public class DSClassStrategy implements ClassStrategy {
+  
   protected Map<ASTCDType, Sort> typeMap;
   private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new HashMap<>();
   protected Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap = new HashMap<>();
-
+  
   protected Context ctx;
-
+  
   protected ASTCDCompilationUnit ast;
-
+  
   public DSClassStrategy() {
     typeMap = new HashMap<>();
   }
-
+  
   @Override
   public Sort getSort(ASTCDType astcdType) {
     return typeMap.get(astcdType);
   }
-
+  
   @Override
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astCdType) {
     String sortName = expr.getSort().getName().toString();
@@ -47,53 +48,47 @@ public class DSClassStrategy implements ClassStrategy {
     }
     return ctx.mkFalse();
   }
-
+  
   @Override
-  public Expr<? extends Sort> getAttribute(
-      ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
+  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName,
+      Expr<? extends Sort> cDTypeExpr) {
     return attributeMap.get(CDHelper.getAttribute(astCdType, attributeName)).apply(cDTypeExpr);
   }
-
+  
   @Override
-  public ASTCDCompilationUnit getClassDiagram() {
-    return ast;
-  }
-
+  public ASTCDCompilationUnit getClassDiagram() { return ast; }
+  
   @Override
-  public Set<IdentifiableBoolExpr> getClassConstraints() {
-    return new HashSet<>();
-  }
-
+  public Set<IdentifiableBoolExpr> getClassConstraints() { return new HashSet<>(); }
+  
   @Override
-  public Context getContext() {
-    return ctx;
-  }
-
+  public Context getContext() { return ctx; }
+  
   @Override
   public Expr<? extends Sort> getEnumConstant(ASTCDEnum astcdEnum, ASTCDEnumConstant enumConstant) {
     return ctx.mkConst(enumConstantMap.get(enumConstant).ConstructorDecl());
   }
-
+  
   @Override
   public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
-    return ctx.mkForall(new Expr[] {var}, body, 0, null, null, null, null);
+    return ctx.mkForall(new Expr[] { var }, body, 0, null, null, null, null);
   }
-
+  
   @Override
   public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
-    return ctx.mkExists(new Expr[] {var}, body, 0, null, null, null, null);
+    return ctx.mkExists(new Expr[] { var }, body, 0, null, null, null, null);
   }
-
+  
   @Override
   public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
     return ctx.mkForall(vars.toArray(new Expr[0]), body, 0, null, null, null, null);
   }
-
+  
   @Override
   public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
     return ctx.mkExists(vars.toArray(new Expr[0]), body, 0, null, null, null, null);
   }
-
+  
   @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     this.ast = ast;
@@ -102,35 +97,36 @@ public class DSClassStrategy implements ClassStrategy {
     ast.getCDDefinition().getCDClassesList().forEach(this::declareCDType);
     ast.getCDDefinition().getCDInterfacesList().forEach(this::declareCDType);
   }
-
+  
   /***
-   * Transform Enumeration in smt by defining a new datatype containing the enum's constant as constructor.
-   * CD:  enum Color {RED, YELLOW, GREEN}
+   * Transform Enumeration in smt by defining a new datatype containing the enum's constant as
+   * constructor.
+   * CD: enum Color {RED, YELLOW, GREEN}
    * SMT: (declare-datatype ((RED) (YELLOW) (GREEN))
    */
   private void declareEnum(ASTCDEnum astcdEnum) {
-
+    
     List<Constructor<Sort>> constructorList = new ArrayList<>();
-
+    
     // create a constructor for each enum constant
     for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
-      Constructor<Sort> constructor =
-          ctx.mkConstructor(constant.getName(), constant.getName(), null, null, null);
+      Constructor<Sort> constructor = ctx.mkConstructor(constant.getName(), constant.getName(),
+          null, null, null);
       constructorList.add(constructor);
       enumConstantMap.put(constant, constructor);
     }
-
-    DatatypeSort<Sort> sort =
-        ctx.mkDatatypeSort(astcdEnum.getName(), constructorList.toArray(new Constructor[0]));
-
+    
+    DatatypeSort<Sort> sort = ctx.mkDatatypeSort(astcdEnum.getName(), constructorList.toArray(
+        new Constructor[0]));
+    
     typeMap.put(astcdEnum, sort);
   }
-
+  
   /***
    * Convert a class or an interface in SMT
    * CD:
    * class Auction {
-   *      String name;
+   * String name;
    * }
    * =====================================================
    * SMT:
@@ -138,46 +134,43 @@ public class DSClassStrategy implements ClassStrategy {
    * (declare-fun auction_attr_name (Auction_Obj) String)
    */
   private void declareCDType(ASTCDType astcdType) {
-
+    
     // declare the sort for the type
     Sort typeSort = declareSort(astcdType);
     typeMap.put(astcdType, typeSort);
-
+    
     // declare a function for each attribute
     for (ASTCDAttribute myAttribute : astcdType.getCDAttributeList()) {
       Sort sort;
       if (CDHelper.isPrimitiveType(myAttribute.getMCType())) {
         sort = CDHelper.mcType2Sort(ctx, myAttribute.getMCType());
-      } else if (CDHelper.isEnumType(ast.getCDDefinition(), myAttribute.getMCType().printType())) {
-        sort =
-            typeMap.get(
-                CDHelper.getEnum(myAttribute.getMCType().printType(), ast.getCDDefinition()));
-      } else if (CDHelper.isDateType(myAttribute.getMCType())) {
+      }
+      else if (CDHelper.isEnumType(ast.getCDDefinition(), myAttribute.getMCType().printType())) {
+        sort = typeMap.get(CDHelper.getEnum(myAttribute.getMCType().printType(), ast
+            .getCDDefinition()));
+      }
+      else if (CDHelper.isDateType(myAttribute.getMCType())) {
         sort = ctx.mkIntSort();
-      } else {
-        Log.info(
-            "conversion of  Attribute "
-                + myAttribute.getName()
-                + " of the ASTCDType  "
-                + astcdType.getName()
-                + " skipped because his type  "
-                + myAttribute.getMCType().printType()
-                + " is not supported yet ",
-            "Warning");
+      }
+      else {
+        Log.info("conversion of  Attribute " + myAttribute.getName() + " of the ASTCDType  "
+            + astcdType.getName() + " skipped because his type  " + myAttribute.getMCType()
+                .printType() + " is not supported yet ", "Warning");
         return;
       }
-
-      FuncDecl<Sort> attributeFunc =
-          ctx.mkFuncDecl(SMTHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
+      
+      FuncDecl<Sort> attributeFunc = ctx.mkFuncDecl(SMTHelper.printAttributeNameSMT(astcdType,
+          myAttribute), typeSort, sort);
       attributeMap.put(myAttribute, attributeFunc);
     }
-
+    
     typeMap.put(astcdType, typeSort);
   }
-
+  
   protected Sort declareSort(ASTCDType astcdType) {
     return ctx.mkUninterpretedSort(ctx.mkSymbol(printSMTCDTypeName(astcdType)));
   }
+  
   /**
    * evaluate the model produce by the SMT-Solver to get the attribute values of Objects. if partial
    * = true, on ly the attribute with non-trivial value will appear on the Object-diagram.
@@ -185,7 +178,7 @@ public class DSClassStrategy implements ClassStrategy {
   @Override
   public Set<MinObject> smt2od(Model model, Boolean partial) {
     Set<MinObject> objectSet = new HashSet<>();
-
+    
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
         objectSet.add(buildObject(mySort, smtExpr, model, partial));
@@ -193,12 +186,12 @@ public class DSClassStrategy implements ClassStrategy {
     }
     return objectSet;
   }
-
+  
   protected MinObject buildObject(Sort mySort, Expr<?> smtExpr, Model model, boolean partial) {
     ASTCDType astcdType = CDHelper.getASTCDType(getType(mySort.getName()), ast.getCDDefinition());
     assert astcdType != null;
     MinObject obj = new MinObject(CDHelper.mkType(astcdType), smtExpr, astcdType);
-
+    
     // evaluate each attribute
     for (ASTCDAttribute attribute : astcdType.getCDAttributeList()) {
       FuncDecl<? extends Sort> attrFunc = attributeMap.get(attribute);
@@ -209,15 +202,16 @@ public class DSClassStrategy implements ClassStrategy {
     }
     return obj;
   }
-
+  
   private String getType(Symbol symbol) {
     int length = symbol.toString().length();
     StringBuilder stringBuilder = new StringBuilder(symbol.toString());
     stringBuilder.delete(length - 4, length); // remove the 4 last Characters
     return stringBuilder.toString();
   }
-
+  
   protected String printSMTCDTypeName(ASTCDType myClass) {
     return myClass.getName() + "_obj";
   }
+  
 }

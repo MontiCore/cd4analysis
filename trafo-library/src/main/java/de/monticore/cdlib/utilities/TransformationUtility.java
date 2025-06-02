@@ -42,9 +42,9 @@ import java.util.List;
  * @author KE
  */
 public class TransformationUtility {
-
+  
   public TransformationUtility() {}
-
+  
   /**
    * Checks if a class is present
    *
@@ -57,7 +57,7 @@ public class TransformationUtility {
     classTest.set_$className(className);
     return classTest.doPatternMatching();
   }
-
+  
   /**
    * Replaces type in an attribute
    *
@@ -70,18 +70,18 @@ public class TransformationUtility {
     RenameClassInType renameClassInType = new RenameClassInType(ast);
     renameClassInType.set_$oldType(oldType);
     renameClassInType.set_$newType(newType);
-
+    
     if (renameClassInType.doPatternMatching()) {
       renameClassInType.doReplacement();
       return true;
     }
     return false;
   }
-
+  
   // Replace ReferenceName (oldName) by newName in all associations
-  public boolean changeRefNameInAllAssociations(
-      String oldName, String newName, ASTCDCompilationUnit ast) {
-
+  public boolean changeRefNameInAllAssociations(String oldName, String newName,
+      ASTCDCompilationUnit ast) {
+    
     if (!changeRefNameInOneAssociation(oldName, newName, ast)) {
       return false;
     }
@@ -89,22 +89,22 @@ public class TransformationUtility {
       ;
     return true;
   }
-
+  
   // Replace ReferenceName (oldName) by newName in one association
-  private boolean changeRefNameInOneAssociation(
-      String oldName, String newName, ASTCDCompilationUnit ast) {
+  private boolean changeRefNameInOneAssociation(String oldName, String newName,
+      ASTCDCompilationUnit ast) {
     // Replace Left Qualifier
-
+    
     // Bidirectional associations
     ChangeLeftQualifierBiDir leftBi = new ChangeLeftQualifierBiDir(ast);
     leftBi.set_$leftNew((newName));
     leftBi.set_$oldName(oldName);
-
+    
     if (leftBi.doPatternMatching()) {
       leftBi.doReplacement();
       return true;
     }
-
+    
     // Unidirectional associations
     ChangeLeftQualifierUniDir leftUni = new ChangeLeftQualifierUniDir(ast);
     leftUni.set_$leftNew((newName));
@@ -113,7 +113,7 @@ public class TransformationUtility {
       leftUni.doReplacement();
       return true;
     }
-
+    
     // Rightdirectional associations
     ChangeLeftQualifierRightDir leftRight = new ChangeLeftQualifierRightDir(ast);
     leftRight.set_$leftNew((newName));
@@ -122,7 +122,7 @@ public class TransformationUtility {
       leftRight.doReplacement();
       return true;
     }
-
+    
     // Rightdirectional associations
     ChangeLeftQualifierLeftDir leftLeft = new ChangeLeftQualifierLeftDir(ast);
     leftLeft.set_$leftNew((newName));
@@ -131,7 +131,7 @@ public class TransformationUtility {
       leftLeft.doReplacement();
       return true;
     }
-
+    
     // Replace Right Qualifier
     // Bidirectional associations
     ChangeRightQualifierBiDir rightBi = new ChangeRightQualifierBiDir(ast);
@@ -141,7 +141,7 @@ public class TransformationUtility {
       rightBi.doReplacement();
       return true;
     }
-
+    
     // Unidirectional associations
     ChangeRightQualifierUniDir rightUni = new ChangeRightQualifierUniDir(ast);
     rightUni.set_$rightNew((newName));
@@ -150,7 +150,7 @@ public class TransformationUtility {
       rightUni.doReplacement();
       return true;
     }
-
+    
     // Rightdirectional associations
     ChangeRightQualifierRightDir rightRight = new ChangeRightQualifierRightDir(ast);
     rightRight.set_$rightNew((newName));
@@ -159,7 +159,7 @@ public class TransformationUtility {
       rightRight.doReplacement();
       return true;
     }
-
+    
     // Rightdirectional associations
     ChangeRightQualifierLeftDir rightLeft = new ChangeRightQualifierLeftDir(ast);
     rightLeft.set_$rightNew((newName));
@@ -170,19 +170,19 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   // Create Associations
-
+  
   // Creates a Association with right direction for classes
-  public boolean createRightDirAssociation(
-      String leftReferenceName, String rightReferenceName, ASTCDCompilationUnit ast) {
-
+  public boolean createRightDirAssociation(String leftReferenceName, String rightReferenceName,
+      ASTCDCompilationUnit ast) {
+    
     CreateRightDirAssociation associate = new CreateRightDirAssociation(ast);
-
+    
     // Set rightReferenceName and leftReferenceName for transformation
     associate.set_$RightReferenceList(rightReferenceName);
     associate.set_$LeftReferenceList(leftReferenceName);
-
+    
     // create association between rightReferenceName and leftReferenceName
     if (associate.doPatternMatching()) {
       associate.doReplacement();
@@ -190,20 +190,20 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   // Associates a class to all classes in the list rightClasses with a
   // bi-directional association
-  public boolean createBiDirAssociations(
-      String leftClass, List<String> rightClasses, ASTCDCompilationUnit ast) throws IOException {
-
+  public boolean createBiDirAssociations(String leftClass, List<String> rightClasses,
+      ASTCDCompilationUnit ast) throws IOException {
+    
     for (String rightClass : rightClasses) {
       // Create Transformation
       CreateBiDirAssociation createAssociation = new CreateBiDirAssociation(ast);
-
+      
       // Set Variables
       createAssociation.set_$nameFassade(leftClass);
       createAssociation.set_$nameClass(rightClass);
-
+      
       // Apply Transformation and add association from classes to facade class
       if (createAssociation.doPatternMatching()) {
         createAssociation.doReplacement();
@@ -211,7 +211,7 @@ public class TransformationUtility {
     }
     return true;
   }
-
+  
   /**
    * Deletes an association
    *
@@ -221,10 +221,10 @@ public class TransformationUtility {
    */
   private boolean deleteAssociation(String className, ASTCDCompilationUnit ast) {
     DeleteAssociation association = new DeleteAssociation(ast);
-
+    
     // Set className for delete the association
     association.set_$className(className);
-
+    
     // create association between rightReferenceName and leftReferenceName
     if (association.doPatternMatching()) {
       association.doReplacement();
@@ -232,7 +232,7 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   /**
    * Deletes all associations
    *
@@ -248,7 +248,7 @@ public class TransformationUtility {
       ;
     return true;
   }
-
+  
   /**
    * Creates a new class
    *
@@ -265,7 +265,7 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   /**
    * Creates a new interface
    *
@@ -282,13 +282,13 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   // Adds to a class an inheritance to an interface, if no inheritance to an
   // interface is still there
-  public boolean createInheritanceToInterface(
-      String subclass, String interfaceName, ASTCDCompilationUnit ast) {
+  public boolean createInheritanceToInterface(String subclass, String interfaceName,
+      ASTCDCompilationUnit ast) {
     CreateInheritanceInterface createInheritance = new CreateInheritanceInterface(ast);
-
+    
     createInheritance.set_$subclass(subclass);
     createInheritance.set_$interfaceName(interfaceName);
     // Do Transformation
@@ -298,42 +298,44 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   // Creates an inheritance from a class to an interface
-  public boolean addInheritanceToInterface(
-      String className, String newInterface, ASTCDCompilationUnit ast) {
-
+  public boolean addInheritanceToInterface(String className, String newInterface,
+      ASTCDCompilationUnit ast) {
+    
     AddInheritanceToInterface interfaceI = new AddInheritanceToInterface(ast);
     // Set the Class Name
     interfaceI.set_$subclass(className);
-
+    
     // if the class has still interfaces to implement, newInterface is just
     // added to the interfaceList
     if (interfaceI.doPatternMatching()) {
       // Set the interface list
       if (interfaceI.get_$Sub().printInterfaces().equals("")) {
         interfaceI.set_$newInterfaces(newInterface);
-      } else {
+      }
+      else {
         interfaceI.set_$newInterfaces(interfaceI.get_$Sub().printInterfaces() + "," + newInterface);
       }
       // Replace interface list
       interfaceI.doReplacement();
       return true;
-
+      
       // if the class has no interfaces, to implement yet, create new
       // interfaceList for the class to inherit the interface
-    } else {
+    }
+    else {
       if (createInheritanceToInterface(className, newInterface, ast)) {
         return true;
       }
     }
     return false;
   }
-
+  
   // Introduces an inheritance between subclass and superclass
-  public boolean createInheritanceToClass(
-      String subclass, String superclass, ASTCDCompilationUnit ast) {
-
+  public boolean createInheritanceToClass(String subclass, String superclass,
+      ASTCDCompilationUnit ast) {
+    
     CreateInheritanceToClass addSuperclass = new CreateInheritanceToClass(ast);
     addSuperclass.set_$subclass(subclass);
     addSuperclass.set_$superclass(superclass);
@@ -343,11 +345,11 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   // Replaces all extend to oldClass by newClass
-  public boolean changeInheritanceClass(
-      String oldSuperclass, String newSuperclass, ASTCDCompilationUnit ast) {
-
+  public boolean changeInheritanceClass(String oldSuperclass, String newSuperclass,
+      ASTCDCompilationUnit ast) {
+    
     ChangeInheritanceClasses changeInheritance = new ChangeInheritanceClasses(ast);
     changeInheritance.set_$oldSuperclass(oldSuperclass);
     changeInheritance.set_$newSuperclass(newSuperclass);
@@ -357,7 +359,7 @@ public class TransformationUtility {
     }
     return false;
   }
-
+  
   /**
    * Gets a method
    *
@@ -367,7 +369,7 @@ public class TransformationUtility {
    * @return
    */
   public ASTCDMethod getMethod(String methodName, String className, ASTCDCompilationUnit ast) {
-
+    
     FindMethod findMethod = new FindMethod(ast);
     findMethod.set_$name(methodName);
     findMethod.set_$className(className);
@@ -377,7 +379,7 @@ public class TransformationUtility {
     Log.info("0xF4131: Not found method", TransformationUtility.class.getName());
     return null;
   }
-
+  
   /**
    * Gets the first method
    *
@@ -386,7 +388,7 @@ public class TransformationUtility {
    * @return
    */
   public ASTCDMethod getFirstMethod(String className, ASTCDCompilationUnit ast) {
-
+    
     GetMethod getMethod = new GetMethod(ast);
     getMethod.set_$className(className);
     if (getMethod.doPatternMatching() && getMethod.get_$Method() != null) {
@@ -394,7 +396,7 @@ public class TransformationUtility {
     }
     return null;
   }
-
+  
   /**
    * Gets the first attribute
    *
@@ -403,16 +405,16 @@ public class TransformationUtility {
    * @return
    */
   public ASTCDAttribute getFirstAttribute(String className, ASTCDCompilationUnit ast) {
-
+    
     GetAttribute getAttribute = new GetAttribute(ast);
     getAttribute.set_$className(className);
-
+    
     if (getAttribute.doPatternMatching()) {
       return getAttribute.get_$Attribute().deepClone();
     }
     return null;
   }
-
+  
   /**
    * Gets an attribute
    *
@@ -421,9 +423,9 @@ public class TransformationUtility {
    * @param ast
    * @return
    */
-  public ASTCDAttribute getAttribute(
-      String attributeName, String className, ASTCDCompilationUnit ast) {
-
+  public ASTCDAttribute getAttribute(String attributeName, String className,
+      ASTCDCompilationUnit ast) {
+    
     FindAttribute findAttribute = new FindAttribute(ast);
     findAttribute.set_$name(attributeName);
     findAttribute.set_$className(className);
@@ -433,7 +435,7 @@ public class TransformationUtility {
     Log.info("0xF4132: Not found attribute", TransformationUtility.class.getName());
     return null;
   }
-
+  
   /**
    * Adds a method to a class
    *
@@ -443,7 +445,7 @@ public class TransformationUtility {
    * @return
    */
   public boolean addMethod(ASTCDMethod method, String className, ASTCDCompilationUnit ast) {
-
+    
     AddMethod addMethod = new AddMethod(ast);
     addMethod.set_$className(className);
     addMethod.set_$Method(method.deepClone());
@@ -454,7 +456,7 @@ public class TransformationUtility {
     Log.info("0xF4133: Could not add method", TransformationUtility.class.getName());
     return false;
   }
-
+  
   /**
    * Adds a method to an interface
    *
@@ -463,9 +465,9 @@ public class TransformationUtility {
    * @param ast
    * @return
    */
-  public boolean addMethodToInterface(
-      ASTCDMethod method, String interfaceName, ASTCDCompilationUnit ast) {
-
+  public boolean addMethodToInterface(ASTCDMethod method, String interfaceName,
+      ASTCDCompilationUnit ast) {
+    
     AddMethodInterface addMethod = new AddMethodInterface(ast);
     addMethod.set_$interfaceName(interfaceName);
     addMethod.set_$Method(method.deepClone());
@@ -476,4 +478,5 @@ public class TransformationUtility {
     Log.info("0xF4134: Could not add method", TransformationUtility.class.getName());
     return false;
   }
+  
 }

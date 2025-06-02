@@ -9,7 +9,7 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 public class CDBasisPackageNameLowerCaseTrafo implements CDBasisVisitor2 {
-
+  
   @Override
   public void visit(ASTCDPackage node) {
     ASTMCQualifiedName qName = node.getMCQualifiedName();
@@ -17,10 +17,11 @@ public class CDBasisPackageNameLowerCaseTrafo implements CDBasisVisitor2 {
       qName.setParts(i, qName.getParts(i).toLowerCase());
     }
   }
-
+  
   public void transform(ASTCDCompilationUnit ast) {
     CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
     t.add4CDBasis(this);
     ast.accept(t);
   }
+  
 }

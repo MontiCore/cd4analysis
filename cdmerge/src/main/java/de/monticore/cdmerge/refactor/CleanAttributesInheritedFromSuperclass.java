@@ -18,15 +18,16 @@ import java.util.Set;
  * all attributes from class1 which are already present in the superclasses are removed
  */
 public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase {
-
+  
   public static class Builder extends ModelRefactoringBuilder {
-
+    
     @Override
     protected ModelRefactoring buildModelRefactoring(MergeBlackBoard blackBoard) {
       return new CleanAttributesInheritedFromSuperclass(blackBoard);
     }
+    
   }
-
+  
   /**
    * Constructor for de.monticore.umlcd4a.mergetool.refactor.CleanAttributesInheritedFromSuperclass
    *
@@ -35,7 +36,7 @@ public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase
   private CleanAttributesInheritedFromSuperclass(MergeBlackBoard mergeBlackBoard) {
     super(mergeBlackBoard);
   }
-
+  
   /** Removes identical attributes from a class hierarchy */
   @Override
   public void apply(ASTCDCompilationUnit cd) {
@@ -54,18 +55,16 @@ public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase
           ASTCDClass classInCD1;
           if (cdInput1.getClass(c.getName()).get().isPresentCDExtendUsage()) {
             classInCD1 = cdInput1.getClass(c.getName()).get();
-            cdInput1.retainUniqueAttributesFromSuperClasses(classInCD1).stream()
-                .map(a -> a.getName())
-                .forEach(attributesToCheck::add);
+            cdInput1.retainUniqueAttributesFromSuperClasses(classInCD1).stream().map(a -> a
+                .getName()).forEach(attributesToCheck::add);
           }
         }
         if (cdInput2.cdContainsClass(c.getName())) {
           ASTCDClass classInCD2;
           if (cdInput2.getClass(c.getName()).get().isPresentCDExtendUsage()) {
             classInCD2 = cdInput2.getClass(c.getName()).get();
-            cdInput2.retainUniqueAttributesFromSuperClasses(classInCD2).stream()
-                .map(a -> a.getName())
-                .forEach(attributesToCheck::add);
+            cdInput2.retainUniqueAttributesFromSuperClasses(classInCD2).stream().map(a -> a
+                .getName()).forEach(attributesToCheck::add);
           }
         }
         // Now we have the unique set of attributes from the source
@@ -73,48 +72,37 @@ public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase
         // so far.
         // Now it is safe to remove the attribute if its in the merged
         // super classes
-        cleanAttributes(
-            c,
-            getMergeBlackBoard().getASTCDHelperMergedCD().getLocalSuperClasses(c.getName()),
-            attributesToCheck);
+        cleanAttributes(c, getMergeBlackBoard().getASTCDHelperMergedCD().getLocalSuperClasses(c
+            .getName()), attributesToCheck);
       }
     }
   }
-
-  private void cleanAttributes(
-      ASTCDClass merged, List<ASTCDClass> superClasses, Set<String> attributesToCheck) {
+  
+  private void cleanAttributes(ASTCDClass merged, List<ASTCDClass> superClasses,
+      Set<String> attributesToCheck) {
     Set<ASTCDAttribute> remove = new HashSet<>();
     for (String attrName : attributesToCheck) {
       Optional<ASTCDAttribute> attr = CDMergeUtils.getAttributeFromClass(attrName, merged);
       if (attr.isPresent()) {
         for (ASTCDClass superClass : superClasses) {
-          Optional<ASTCDAttribute> attributeInSuperclass =
-              CDMergeUtils.getAttributeFromClass(attrName, superClass);
-          if (attributeInSuperclass.isPresent()
-              && CDMergeUtils.getTypeName(attr.get())
-                  .equals(CDMergeUtils.getTypeName(attributeInSuperclass.get().getMCType()))) {
-            getMergeBlackBoard()
-                .addLog(
-                    ErrorLevel.INFO,
-                    "Removing attribute '"
-                        + CDMergeUtils.getTypeName(attr.get().getMCType())
-                        + " "
-                        + attr.get().getName()
-                        + "' from class '"
-                        + merged.getName()
-                        + "' as it is now inherited by merged superclass '"
-                        + superClass.getName()
-                        + "'",
-                    PHASE);
+          Optional<ASTCDAttribute> attributeInSuperclass = CDMergeUtils.getAttributeFromClass(
+              attrName, superClass);
+          if (attributeInSuperclass.isPresent() && CDMergeUtils.getTypeName(attr.get()).equals(
+              CDMergeUtils.getTypeName(attributeInSuperclass.get().getMCType()))) {
+            getMergeBlackBoard().addLog(ErrorLevel.INFO, "Removing attribute '" + CDMergeUtils
+                .getTypeName(attr.get().getMCType()) + " " + attr.get().getName() + "' from class '"
+                + merged.getName() + "' as it is now inherited by merged superclass '" + superClass
+                    .getName() + "'", PHASE);
             remove.add(attr.get());
             break;
           }
         }
       }
     }
-
+    
     for (ASTCDAttribute attr : remove) {
       merged.removeCDMember(attr);
     }
   }
+  
 }

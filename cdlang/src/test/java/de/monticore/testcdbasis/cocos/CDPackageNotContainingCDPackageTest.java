@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDPackageNotContainingCDPackageTest extends CDBasisTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDPackageNotContainingCDPackage());
@@ -25,12 +25,12 @@ public class CDPackageNotContainingCDPackageTest extends CDBasisTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDPackageNotContainingCDPackage());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdbasis/cocos/CDPackageNotContainingCDPackageInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdbasis/cocos/CDPackageNotContainingCDPackageInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -38,7 +38,8 @@ public class CDPackageNotContainingCDPackageTest extends CDBasisTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC20"));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

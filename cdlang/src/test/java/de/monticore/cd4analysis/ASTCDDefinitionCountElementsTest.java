@@ -11,11 +11,11 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class ASTCDDefinitionCountElementsTest extends CD4AnalysisTestBasis {
-
+  
   @Test
   public void countElements() throws IOException {
-    Optional<ASTCDCompilationUnit> optASTCDCompilationUnit =
-        p.parseCDCompilationUnit(getFilePath("cd4analysis/Count.cd"));
+    Optional<ASTCDCompilationUnit> optASTCDCompilationUnit = p.parseCDCompilationUnit(getFilePath(
+        "cd4analysis/Count.cd"));
     checkNullAndPresence(p, optASTCDCompilationUnit);
     assertTrue(optASTCDCompilationUnit.isPresent());
     ASTCDDefinition astcdDefinition = optASTCDCompilationUnit.get().getCDDefinition();
@@ -23,8 +23,8 @@ public class ASTCDDefinitionCountElementsTest extends CD4AnalysisTestBasis {
     int interfaceCount = astcdDefinition.getCDInterfacesList().size();
     int enumCount = astcdDefinition.getCDEnumsList().size();
     int associationCount = astcdDefinition.getCDAssociationsList().size();
-    assertArrayEquals(
-        new int[] {2, 2, 2, 2},
-        new int[] {classCount, interfaceCount, enumCount, associationCount});
+    assertArrayEquals(new int[] { 2, 2, 2, 2 }, new int[] { classCount, interfaceCount, enumCount,
+        associationCount });
   }
+  
 }

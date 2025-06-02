@@ -6,15 +6,13 @@ import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
 public class CDDefinitionNameUpperCase implements CDBasisASTCDDefinitionCoCo {
-
+  
   @Override
   public void check(ASTCDDefinition cdDefinition) {
     if (!Character.isUpperCase(cdDefinition.getName().charAt(0))) {
-      Log.warn(
-          String.format(
-              "0xCDC0B: First character of the diagram name %s must be upper-case.",
-              cdDefinition.getName()),
-          cdDefinition.get_SourcePositionStart());
+      Log.warn(String.format("0xCDC0B: First character of the diagram name %s must be upper-case.",
+          cdDefinition.getName()), cdDefinition.get_SourcePositionStart());
     }
   }
+  
 }

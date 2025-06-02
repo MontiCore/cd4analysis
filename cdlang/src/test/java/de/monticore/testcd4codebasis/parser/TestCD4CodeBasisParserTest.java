@@ -13,54 +13,55 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class TestCD4CodeBasisParserTest extends CD4CodeBasisTestBasis {
-
+  
   @Test
   public void parseCDThrowsDeclaration() throws IOException {
-    final Optional<ASTCDThrowsDeclaration> astcdThrowsDeclaration =
-        p.parse_StringCDThrowsDeclaration("throws Exception1, Exception2");
+    final Optional<ASTCDThrowsDeclaration> astcdThrowsDeclaration = p
+        .parse_StringCDThrowsDeclaration("throws Exception1, Exception2");
     checkNullAndPresence(p, astcdThrowsDeclaration);
   }
-
+  
   @Test
   public void parseCDMethod() throws IOException {
     final Optional<ASTCDMethod> astcdMethod = p.parse_StringCDMethod("String getName();");
     checkNullAndPresence(p, astcdMethod);
   }
-
+  
   @Test
   public void parseCDConstructor() throws IOException {
-    final Optional<ASTCDConstructor> astcdConstructor =
-        p.parse_StringCDConstructor("A(String name);");
+    final Optional<ASTCDConstructor> astcdConstructor = p.parse_StringCDConstructor(
+        "A(String name);");
     checkNullAndPresence(p, astcdConstructor);
   }
-
+  
   @Test
   public void parseCDParameter() throws IOException {
-    final Optional<ASTCDParameter> astcdParameter =
-        p.parse_StringCDParameter("String name = \"blub\"");
+    final Optional<ASTCDParameter> astcdParameter = p.parse_StringCDParameter(
+        "String name = \"blub\"");
     checkNullAndPresence(p, astcdParameter);
   }
-
+  
   @Test
   public void parseCDParameter_withEllipsis() throws IOException {
     final Optional<ASTCDParameter> astcdParameter = p.parse_StringCDParameter("String... names");
     checkNullAndPresence(p, astcdParameter);
   }
-
+  
   @Test
   public void parseCDEnumConstant() throws IOException {
     final Optional<ASTCDEnumConstant> enumConstant = p.parse_StringCDEnumConstant("ENUM_CONSTANT");
     checkNullAndPresence(p, enumConstant);
-
-    final Optional<ASTCDEnumConstant> enumConstant_withArguments =
-        p.parse_StringCDEnumConstant("ENUM_CONSTANT(5, \"param\", a)");
+    
+    final Optional<ASTCDEnumConstant> enumConstant_withArguments = p.parse_StringCDEnumConstant(
+        "ENUM_CONSTANT(5, \"param\", a)");
     checkNullAndPresence(p, enumConstant_withArguments);
   }
-
+  
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse =
-        p.parseCDCompilationUnit(getFilePath("cd4codebasis/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath(
+        "cd4codebasis/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
   }
+  
 }

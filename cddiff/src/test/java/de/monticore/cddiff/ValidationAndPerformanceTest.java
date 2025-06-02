@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -25,9 +26,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class ValidationAndPerformanceTest {
-
+  
   private static final int diffsize = 3;
-
+  
   @BeforeEach
   public void init() {
     Log.init();
@@ -36,7 +37,7 @@ public class ValidationAndPerformanceTest {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-
+  
   /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
@@ -46,28 +47,29 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
       CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
-
+      
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
-
+      
       // reduction-based
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
-
+      
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
@@ -77,28 +79,29 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
       CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
-
+      
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
-
+      
       // reduction-based
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
-
+      
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
@@ -108,28 +111,29 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
       CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
-
+      
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
-
+      
       // reduction-based
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
-
+      
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
@@ -139,32 +143,33 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + "Performance/Empty.cd");
-
+      
       List<ASTODArtifact> witnesses;
-
+      
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
       witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
-
+      
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
       Assertions.assertTrue(witnesses.isEmpty());
-
+      
       // reduction-based
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
       witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
-
+      
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
       Assertions.assertTrue(witnesses.isEmpty());
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   /** Disabled for GitLab pipeline. */
   @Disabled
   @ParameterizedTest
@@ -173,17 +178,17 @@ public class ValidationAndPerformanceTest {
     String path = "src/test/resources/validation/";
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
-
+      
       List<ASTODArtifact> witnesses;
-
+      
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
       witnesses = CDDiff.computeAlloySemDiff(cd1, cd1, diffsize, 1, CDSemantics.STA_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
-
+      
       Log.println("alloy-based: " + (endTime_alloy - startTime_alloy));
       Assertions.assertTrue(witnesses.isEmpty());
-
+      
       // reduction-based
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
@@ -191,15 +196,16 @@ public class ValidationAndPerformanceTest {
       trafo.transform(cd1, cd2);
       CDDiff.computeAlloySemDiff(cd1, cd1, diffsize, 1, CDSemantics.STA_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
-
+      
       Log.println("reduction-based: " + (endTime_reduction - startTime_reduction));
       Assertions.assertTrue(witnesses.isEmpty());
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   @ParameterizedTest
   @MethodSource("performanceSet")
   public void testAlloyBasedOWDiff(String file1, String file2) {
@@ -207,25 +213,25 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
-
+      
       // add subclasses to interfaces and abstract classes
       ReductionTrafo.addSubClasses4Diff(cd1);
-
+      
       // add dummy-class for associations
       String dummyClassName = "Dummy4Diff";
       ReductionTrafo.addDummyClass4Associations(cd1, dummyClassName);
       ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
-
-      List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_OPEN_WORLD);
+      
+      List<ASTODArtifact> witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5,
+          CDSemantics.STA_OPEN_WORLD);
       Assertions.assertFalse(witnesses.isEmpty());
-
+      
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2,
+            od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -233,12 +239,13 @@ public class ValidationAndPerformanceTest {
       System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
       System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
       System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   @ParameterizedTest
   @MethodSource("performanceSet")
   public void testReductionBasedOWDiff(String file1, String file2) {
@@ -246,17 +253,17 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
-
+      
       // reduction-based
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_CLOSED_WORLD);
+      List<ASTODArtifact> witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5,
+          CDSemantics.STA_CLOSED_WORLD);
       Assertions.assertFalse(witnesses.isEmpty());
-
+      
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
@@ -264,8 +271,8 @@ public class ValidationAndPerformanceTest {
         }
       }
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2,
+            od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -273,12 +280,13 @@ public class ValidationAndPerformanceTest {
       System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
       System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
       System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   @ParameterizedTest
   @MethodSource("cddiffSet")
   public void testAlloyBasedOWDiff2(String file1, String file2, boolean diff) {
@@ -286,27 +294,27 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
-
+      
       // add subclasses to interfaces and abstract classes
       ReductionTrafo.addSubClasses4Diff(cd1);
-
+      
       // add dummy-class for associations
       String dummyClassName = "Dummy4Diff";
       ReductionTrafo.addDummyClass4Associations(cd1, dummyClassName);
       ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
-
-      List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_OPEN_WORLD);
+      
+      List<ASTODArtifact> witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5,
+          CDSemantics.STA_OPEN_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
-
+      
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2,
+            od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -314,12 +322,13 @@ public class ValidationAndPerformanceTest {
       System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
       System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
       System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   @ParameterizedTest
   @MethodSource("cddiffSet")
   public void testReductionBasedOWDiff2(String file1, String file2, boolean diff) {
@@ -327,29 +336,29 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
-
+      
       // reduction-based
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_CLOSED_WORLD);
+      List<ASTODArtifact> witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5,
+          CDSemantics.STA_CLOSED_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
-
+      
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
       }
-
+      
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2,
+            od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -357,12 +366,13 @@ public class ValidationAndPerformanceTest {
       System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
       System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
       System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   @ParameterizedTest
   @MethodSource("cd4analysisSet")
   public void testAlloyBasedOWDiff3(String file1, String file2, boolean diff) {
@@ -370,27 +380,27 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
-
+      
       // add subclasses to interfaces and abstract classes
       ReductionTrafo.addSubClasses4Diff(cd1);
-
+      
       // add dummy-class for associations
       String dummyClassName = "Dummy4Diff";
       ReductionTrafo.addDummyClass4Associations(cd1, dummyClassName);
       ReductionTrafo.addDummyClass4Associations(cd2, dummyClassName);
-
-      List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_OPEN_WORLD);
+      
+      List<ASTODArtifact> witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5,
+          CDSemantics.STA_OPEN_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
-
+      
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2,
+            od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -398,12 +408,13 @@ public class ValidationAndPerformanceTest {
       System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
       System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
       System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   @ParameterizedTest
   @MethodSource("cd4analysisSet")
   public void testReductionBasedOWDiff3(String file1, String file2, boolean diff) {
@@ -411,29 +422,29 @@ public class ValidationAndPerformanceTest {
     try {
       ASTCDCompilationUnit cd1 = CDDiffUtil.loadCD(path + file1);
       ASTCDCompilationUnit cd2 = CDDiffUtil.loadCD(path + file2);
-
+      
       ASTCDCompilationUnit original1 = cd1.deepClone();
       ASTCDCompilationUnit original2 = cd2.deepClone();
-
+      
       // reduction-based
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1, cd2);
-      List<ASTODArtifact> witnesses =
-          CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5, CDSemantics.STA_CLOSED_WORLD);
+      List<ASTODArtifact> witnesses = CDDiff.computeAlloySemDiff(cd1, cd2, diffsize, 5,
+          CDSemantics.STA_CLOSED_WORLD);
       if (diff) {
         Assertions.assertFalse(witnesses.isEmpty());
       }
-
+      
       for (ASTODArtifact od : witnesses) {
         if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_CLOSED_WORLD, cd1, cd2, od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
       }
-
+      
       for (ASTODArtifact od : witnesses) {
-        if (!new OD2CDMatcher()
-            .checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2, od)) {
+        if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.STA_OPEN_WORLD, original1, original2,
+            od)) {
           Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
           Assertions.fail();
         }
@@ -441,43 +452,37 @@ public class ValidationAndPerformanceTest {
       System.out.println("Objects per OD: " + getMeanNumberOfObjects(witnesses));
       System.out.println("Links per OD: " + getMeanNumberOfLinks(witnesses));
       System.out.println("Types per Object: " + getMeanNumberOfTypePerObject(witnesses));
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       Assertions.fail(e.getMessage());
     }
   }
-
+  
   protected float getMeanNumberOfObjects(Collection<ASTODArtifact> ods) {
     float i = 0;
     for (ASTODArtifact od : ods) {
-      i +=
-          od.getObjectDiagram().getODElementList().stream()
-              .filter(e -> e instanceof ASTODObject)
-              .count();
+      i += od.getObjectDiagram().getODElementList().stream().filter(e -> e instanceof ASTODObject)
+          .count();
     }
     return i / ods.size();
   }
-
+  
   protected float getMeanNumberOfLinks(Collection<ASTODArtifact> ods) {
     float i = 0;
     for (ASTODArtifact od : ods) {
-      i +=
-          od.getObjectDiagram().getODElementList().stream()
-              .filter(e -> e instanceof ASTODLink)
-              .count();
+      i += od.getObjectDiagram().getODElementList().stream().filter(e -> e instanceof ASTODLink)
+          .count();
     }
     return i / ods.size();
   }
-
+  
   protected float getMeanNumberOfTypePerObject(Collection<ASTODArtifact> ods) {
     float i = 0;
     for (ASTODArtifact od : ods) {
       float j = 0;
-      Set<ASTODObject> objects =
-          od.getObjectDiagram().getODElementList().stream()
-              .filter(e -> e instanceof ASTODObject)
-              .map(e -> (ASTODObject) e)
-              .collect(Collectors.toSet());
+      Set<ASTODObject> objects = od.getObjectDiagram().getODElementList().stream().filter(
+          e -> e instanceof ASTODObject).map(e -> (ASTODObject) e).collect(Collectors.toSet());
       for (ASTODObject object : objects) {
         j += STAObjectMatcher.getSuperSetFromStereotype(object).get().size();
       }
@@ -485,68 +490,44 @@ public class ValidationAndPerformanceTest {
     }
     return i / ods.size();
   }
-
+  
   protected static Stream<Arguments> performanceSet() {
-    return Stream.of(
-        Arguments.of("5A.cd", "5B.cd"),
-        Arguments.of("10A.cd", "10B.cd"),
-        Arguments.of("15A.cd", "15B.cd"),
-        Arguments.of("20A.cd", "20B.cd"),
-        Arguments.of("25A.cd", "25B.cd"));
+    return Stream.of(Arguments.of("5A.cd", "5B.cd"), Arguments.of("10A.cd", "10B.cd"), Arguments.of(
+        "15A.cd", "15B.cd"), Arguments.of("20A.cd", "20B.cd"), Arguments.of("25A.cd", "25B.cd"));
   }
-
+  
   protected static Stream<Arguments> cddiffSet() {
-    return Stream.of(
-        Arguments.of("DEv2.cd", "DEv1.cd", true),
-        Arguments.of("EAv2.cd", "EAv1.cd", true),
-        Arguments.of("EMTv1.cd", "EMTv2.cd", true),
-        Arguments.of("LibraryV2.cd", "LibraryV1.cd", true),
-        Arguments.of("LibraryV3.cd", "LibraryV2.cd", false),
-        Arguments.of("LibraryV4.cd", "LibraryV3.cd", true),
-        Arguments.of("LibraryV5.cd", "LibraryV4.cd", false));
+    return Stream.of(Arguments.of("DEv2.cd", "DEv1.cd", true), Arguments.of("EAv2.cd", "EAv1.cd",
+        true), Arguments.of("EMTv1.cd", "EMTv2.cd", true), Arguments.of("LibraryV2.cd",
+            "LibraryV1.cd", true), Arguments.of("LibraryV3.cd", "LibraryV2.cd", false), Arguments
+                .of("LibraryV4.cd", "LibraryV3.cd", true), Arguments.of("LibraryV5.cd",
+                    "LibraryV4.cd", false));
   }
-
+  
   protected static Stream<Arguments> cd4analysisSet() {
-    return Stream.of(
-        Arguments.of("ManagementV2.cd", "ManagementV1.cd", false),
-        Arguments.of("MyCompanyV2.cd", "MyCompanyV1.cd", false),
-        Arguments.of("MyExampleV2.cd", "MyExampleV1.cd", false),
-        Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true),
-        Arguments.of("TeachingV2.cd", "TeachingV1.cd", true));
+    return Stream.of(Arguments.of("ManagementV2.cd", "ManagementV1.cd", false), Arguments.of(
+        "MyCompanyV2.cd", "MyCompanyV1.cd", false), Arguments.of("MyExampleV2.cd", "MyExampleV1.cd",
+            false), Arguments.of("MyLifeV2.cd", "MyLifeV1.cd", true), Arguments.of("TeachingV2.cd",
+                "TeachingV1.cd", true));
   }
-
+  
   protected static Stream<Arguments> completeSet() {
-    return Stream.of(
-        Arguments.of("Performance/5A.cd"),
-        Arguments.of("Performance/5B.cd"),
-        Arguments.of("Performance/10A.cd"),
-        Arguments.of("Performance/10B.cd"),
-        Arguments.of("Performance/15A.cd"),
-        Arguments.of("Performance/15B.cd"),
-        Arguments.of("Performance/20A.cd"),
-        Arguments.of("Performance/20B.cd"),
-        Arguments.of("Performance/25A.cd"),
-        Arguments.of("Performance/25B.cd"),
-        Arguments.of("cddiff/DEv1.cd"),
-        Arguments.of("cddiff/DEv2.cd"),
-        Arguments.of("cddiff/EAv1.cd"),
-        Arguments.of("cddiff/EAv2.cd"),
-        Arguments.of("cddiff/EMTv1.cd"),
-        Arguments.of("cddiff/EMTv2.cd"),
-        Arguments.of("cddiff/LibraryV1.cd"),
-        Arguments.of("cddiff/LibraryV2.cd"),
-        Arguments.of("cddiff/LibraryV3.cd"),
-        Arguments.of("cddiff/LibraryV4.cd"),
-        Arguments.of("cddiff/LibraryV5.cd"),
-        Arguments.of("cd4analysis/ManagementV1.cd"),
-        Arguments.of("cd4analysis/ManagementV2.cd"),
-        Arguments.of("cd4analysis/MyCompanyV1.cd"),
-        Arguments.of("cd4analysis/MyCompanyV2.cd"),
-        Arguments.of("cd4analysis/MyExampleV1.cd"),
-        Arguments.of("cd4analysis/MyExampleV2.cd"),
-        Arguments.of("cd4analysis/MyLifeV1.cd"),
-        Arguments.of("cd4analysis/MyLifeV2.cd"),
-        Arguments.of("cd4analysis/TeachingV1.cd"),
+    return Stream.of(Arguments.of("Performance/5A.cd"), Arguments.of("Performance/5B.cd"), Arguments
+        .of("Performance/10A.cd"), Arguments.of("Performance/10B.cd"), Arguments.of(
+            "Performance/15A.cd"), Arguments.of("Performance/15B.cd"), Arguments.of(
+                "Performance/20A.cd"), Arguments.of("Performance/20B.cd"), Arguments.of(
+                    "Performance/25A.cd"), Arguments.of("Performance/25B.cd"), Arguments.of(
+                        "cddiff/DEv1.cd"), Arguments.of("cddiff/DEv2.cd"), Arguments.of(
+                            "cddiff/EAv1.cd"), Arguments.of("cddiff/EAv2.cd"), Arguments.of(
+                                "cddiff/EMTv1.cd"), Arguments.of("cddiff/EMTv2.cd"), Arguments.of(
+                                    "cddiff/LibraryV1.cd"), Arguments.of("cddiff/LibraryV2.cd"),
+        Arguments.of("cddiff/LibraryV3.cd"), Arguments.of("cddiff/LibraryV4.cd"), Arguments.of(
+            "cddiff/LibraryV5.cd"), Arguments.of("cd4analysis/ManagementV1.cd"), Arguments.of(
+                "cd4analysis/ManagementV2.cd"), Arguments.of("cd4analysis/MyCompanyV1.cd"),
+        Arguments.of("cd4analysis/MyCompanyV2.cd"), Arguments.of("cd4analysis/MyExampleV1.cd"),
+        Arguments.of("cd4analysis/MyExampleV2.cd"), Arguments.of("cd4analysis/MyLifeV1.cd"),
+        Arguments.of("cd4analysis/MyLifeV2.cd"), Arguments.of("cd4analysis/TeachingV1.cd"),
         Arguments.of("cd4analysis/TeachingV2.cd"));
   }
+  
 }

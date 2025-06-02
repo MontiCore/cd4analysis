@@ -15,12 +15,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDTypeModifierNotPrivateTest extends CD4AnalysisTestBasis {
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDTypeModifierNotPrivate());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cd4analysis/cocos/CDTypeModifierNotPrivateInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4analysis/cocos/CDTypeModifierNotPrivateInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -31,7 +31,8 @@ public class CDTypeModifierNotPrivateTest extends CD4AnalysisTestBasis {
     assertTrue(Log.getFindings().get(1).getMsg().startsWith(CDTypeModifierNotPrivate.ERROR_CODE));
     assertTrue(Log.getFindings().get(2).getMsg().startsWith(CDTypeModifierNotPrivate.ERROR_CODE));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

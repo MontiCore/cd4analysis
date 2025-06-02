@@ -35,4 +35,4 @@ jobs:
         uses: mikepenz/action-junit-report@a451de5ac1ff45e46508b6150cb4f51a287d0309
         with:
           commit: ${{github.event.workflow_run.head_sha}}
-          report_paths: '**/target/test-results/test/TEST-*.xml'
+          report_paths: '**/target/test-results/*/TEST-*.xml'
