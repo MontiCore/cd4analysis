@@ -6,7 +6,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   id "maven-publish"
   id "io.github.themrmilchmann.ecj" version "0.2.0" apply(false) // Eclipse compiler as it's much faster than javac
-  id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
+  id "de.se_rwth.codestyle" version "$mc_version"
 }
 
 description = "CD4Analysis"
@@ -40,6 +40,7 @@ subprojects {
   apply plugin: 'java-library'
   apply plugin: 'io.github.themrmilchmann.ecj'
   apply plugin: 'maven-publish'
+  apply plugin: 'de.se_rwth.codestyle'
 
   sourceCompatibility = JavaVersion.VERSION_11
 
@@ -113,28 +114,11 @@ subprojects {
       languageVersion = JavaLanguageVersion.of(11)
     }
   }
-
-
 }
 
-googleJavaFormat {
-  exclude '**/target/**'
-}
-
-verifyGoogleJavaFormat {
-  ignoreFailures true
-  exclude "**"
-}  // do not check format in "build"
-
-task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
-
-task fmt {
-  dependsOn tasks.named("googleJavaFormat")
-}
 
 evaluationDependsOnChildren()
 
-def withDSTLGen = ("true").equals(getProperty('genTR'))
 def withTagGen = ("true").equals(getProperty('genTagging'))
 
 publishing {

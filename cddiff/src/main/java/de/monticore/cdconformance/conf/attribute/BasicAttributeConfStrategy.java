@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -10,17 +11,18 @@ import de.monticore.cdconformance.inc.type.MCTypeMatcher;
  * of type conformance.
  */
 public class BasicAttributeConfStrategy extends CDAttributeChecker {
-
+  
   private final MCTypeMatcher typeMatcher;
-
-  public BasicAttributeConfStrategy(
-      CDAttributeMatchingStrategy attributeIncStrategy, MCTypeMatcher typeMatcher) {
+  
+  public BasicAttributeConfStrategy(CDAttributeMatchingStrategy attributeIncStrategy,
+      MCTypeMatcher typeMatcher) {
     super(attributeIncStrategy);
     this.typeMatcher = typeMatcher;
   }
-
+  
   @Override
   public boolean checkConformance(ASTCDAttribute concrete, ASTCDAttribute ref) {
     return typeMatcher.isMCTypeMatched(concrete.getMCType(), ref.getMCType());
   }
+  
 }

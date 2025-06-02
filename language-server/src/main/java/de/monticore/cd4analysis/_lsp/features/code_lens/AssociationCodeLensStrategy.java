@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.code_lens;
 
 import de.mclsg.PositionUtils;
@@ -21,80 +22,59 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.lsp4j.CodeLens;
 
 public class AssociationCodeLensStrategy implements CodeLensStrategy {
+  
   private final CommonReferencesProvider referencesProvider;
   private final DocumentManager documentManager;
   private final ISymbolUsageResolutionProvider symbolUsageResolutionProvider;
-
-  public AssociationCodeLensStrategy(
-      CommonReferencesProvider referencesProvider,
+  
+  public AssociationCodeLensStrategy(CommonReferencesProvider referencesProvider,
       DocumentManager documentManager,
       ISymbolUsageResolutionProvider symbolUsageResolutionProvider) {
     this.referencesProvider = referencesProvider;
     this.documentManager = documentManager;
     this.symbolUsageResolutionProvider = symbolUsageResolutionProvider;
   }
-
+  
   @Override
   public boolean matches(MatchedToken matchedToken) {
-    return CD4AnalysisParserInfo.stateDefinesName(matchedToken.parserState)
-        && matchedToken.tokenPathMatches(".*.cDClass.cDClass");
+    return CD4AnalysisParserInfo.stateDefinesName(matchedToken.parserState) && matchedToken
+        .tokenPathMatches(".*.cDClass.cDClass");
   }
-
+  
   @Override
   public Optional<CodeLens> apply(MatchedToken matchedToken) {
-    Optional<DocumentInformation> documentInformation =
-        documentManager.getDocumentInformation(matchedToken.uri);
-    if (documentInformation.isEmpty()) return Optional.empty();
-
-    return symbolUsageResolutionProvider
-        .getSymbols(documentInformation.get(), matchedToken)
-        .stream()
-        .filter(CDTypeSymbol.class::isInstance)
-        .map(CDTypeSymbol.class::cast)
-        .map(
+    Optional<DocumentInformation> documentInformation = documentManager.getDocumentInformation(
+        matchedToken.uri);
+    if (documentInformation.isEmpty())
+      return Optional.empty();
+    
+    return symbolUsageResolutionProvider.getSymbols(documentInformation.get(), matchedToken)
+        .stream().filter(CDTypeSymbol.class::isInstance).map(CDTypeSymbol.class::cast).map(
             symbol -> {
-              List<MatchedToken> associationTokens =
-                  Stream.concat(
-                          getSuperTypeMatchedTokens(symbol),
-                          Stream.of(Pair.of(matchedToken, symbol)))
-                      .flatMap(
-                          pair ->
-                              referencesProvider
-                                  .getReferencingTokens(pair.getKey(), pair.getValue(), false)
-                                  .stream())
-                      .filter(
-                          referencingToken ->
-                              referencingToken.tokenPathMatches(
+              List<MatchedToken> associationTokens = Stream.concat(getSuperTypeMatchedTokens(
+                  symbol), Stream.of(Pair.of(matchedToken, symbol))).flatMap(
+                      pair -> referencesProvider.getReferencingTokens(pair.getKey(), pair
+                          .getValue(), false).stream()).filter(referencingToken -> referencingToken
+                              .tokenPathMatches(
                                   ".*.cDAssoc(Left|Right)Side.mCQualifiedType.mCQualifiedName"))
-                      .collect(Collectors.toList());
-
-              if (associationTokens.isEmpty()) return null;
-
-              String title =
-                  "Part of "
-                      + associationTokens.size()
-                      + " Association"
-                      + (associationTokens.size() > 1 ? "s" : "");
+                  .collect(Collectors.toList());
+              
+              if (associationTokens.isEmpty())
+                return null;
+              
+              String title = "Part of " + associationTokens.size() + " Association"
+                  + (associationTokens.size() > 1 ? "s" : "");
               return new CD4AnalysisServerCommandCodeLens(matchedToken.range, title, "", List.of());
-            })
-        .filter(Objects::nonNull)
-        .map(cl -> (CodeLens) cl)
-        .findFirst();
+            }).filter(Objects::nonNull).map(cl -> (CodeLens) cl).findFirst();
   }
-
+  
   private Stream<Pair<MatchedToken, TypeSymbol>> getSuperTypeMatchedTokens(CDTypeSymbol symbol) {
-    return symbol.getSuperTypesList().stream()
-        .map(SymTypeExpression::getTypeInfo)
-        .flatMap(
-            typeSymbol ->
-                documentManager
-                    .getLocation(typeSymbol)
-                    .flatMap(documentManager::getDocumentInformation)
-                    .flatMap(
-                        documentInformation ->
-                            documentInformation.getMatchedToken(
-                                PositionUtils.toPosition(typeSymbol.getSourcePosition())))
-                    .map(matchedToken -> Pair.of(matchedToken, typeSymbol))
-                    .stream());
+    return symbol.getSuperTypesList().stream().map(SymTypeExpression::getTypeInfo).flatMap(
+        typeSymbol -> documentManager.getLocation(typeSymbol).flatMap(
+            documentManager::getDocumentInformation).flatMap(
+                documentInformation -> documentInformation.getMatchedToken(PositionUtils.toPosition(
+                    typeSymbol.getSourcePosition()))).map(matchedToken -> Pair.of(matchedToken,
+                        typeSymbol)).stream());
   }
+  
 }

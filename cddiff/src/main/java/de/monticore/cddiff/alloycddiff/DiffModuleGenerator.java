@@ -14,14 +14,15 @@ import java.util.Set;
  * diagrams
  */
 public class DiffModuleGenerator {
+  
   /** Helper function to create the diff module predicate. */
-  private static String diffPredicateGenerator(
-      ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, CDSemantics semantics) {
+  private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
+      CDSemantics semantics) {
     // Create inputs
     Set<ASTCDCompilationUnit> cds = new HashSet<>();
     cds.add(cd1);
     cds.add(cd2);
-
+    
     String alloyModule;
     // Generate general module
     switch (semantics) {
@@ -37,7 +38,7 @@ public class DiffModuleGenerator {
         alloyModule = CD2AlloyGenerator.getInstance().generateModule(cds, false);
         // code block
     }
-
+    
     // Generate diff predicate
     alloyModule += System.lineSeparator();
     alloyModule += System.lineSeparator();
@@ -47,10 +48,10 @@ public class DiffModuleGenerator {
     alloyModule += cd2.getCDDefinition().getName();
     alloyModule += System.lineSeparator() + "}" + System.lineSeparator();
     alloyModule += System.lineSeparator();
-
+    
     return alloyModule;
   }
-
+  
   /**
    * Generates alloy module to compare the class diagram cd1 with cd2 using scope k (maximal number
    * of objects in OD)
@@ -60,37 +61,34 @@ public class DiffModuleGenerator {
    * @param k Scope for the execution of the alloy module
    * @return String for an alloy module comparing cd1 and cd2
    */
-  public static String generateDiffPredicate(
-      ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, int k, CDSemantics semantics) {
+  public static String generateDiffPredicate(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
+      int k, CDSemantics semantics) {
     // Create module
     String alloyModule = diffPredicateGenerator(cd1, cd2, semantics);
-
+    
     // Add run command for predicate with k as object limit
     alloyModule += "run diff for " + k + System.lineSeparator();
-
+    
     return alloyModule;
   }
-
-  public static Path generateDiffPredicateToFile(
-      ASTCDCompilationUnit cd1,
-      ASTCDCompilationUnit cd2,
-      int k,
-      CDSemantics semantics,
-      File outputDirectory) {
-
+  
+  public static Path generateDiffPredicateToFile(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
+      int k, CDSemantics semantics, File outputDirectory) {
+    
     // Initialize set of asts
     Set<ASTCDCompilationUnit> asts = new HashSet<>();
     asts.add(cd1);
     asts.add(cd2);
-
+    
     // Generate the name of the module
     String moduleName = CD2AlloyGenerator.getInstance().generateModuleName(asts);
-
+    
     // Generate module
     String module = generateDiffPredicate(cd1, cd2, k, semantics);
-
+    
     // Save module in file
-
+    
     return CD2AlloyGenerator.getInstance().saveModulePath(module, moduleName, outputDirectory);
   }
+  
 }

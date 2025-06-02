@@ -27,150 +27,150 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
-
+  
   @BeforeAll
   public static void beforeClass() throws Exception {
     CD4CodeMill.reset();
     CD4CodeMill.init();
   }
-
+  
   @Test
   public void resolvingWithPackages() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Packages.cd");
-    ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
-    astcdCompilationUnit.accept(
-        new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+    ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(
+        astcdCompilationUnit);
+    astcdCompilationUnit.accept(new CD4CodeSymbolTableCompleter(astcdCompilationUnit)
+        .getTraverser());
     checkLogError();
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
-
+    
     final Optional<CDTypeSymbol> aType1 = artifactScope.resolveCDType("A");
     assertFalse(aType1.isPresent());
-
+    
     final Optional<CDTypeSymbol> aType2 = artifactScope.resolveCDType("a.A");
     assertTrue(aType2.isPresent());
-
+    
     final Optional<CDTypeSymbol> aType3 = gs.resolveCDType("Packages.a.A");
     assertTrue(aType3.isPresent());
-
+    
     final Optional<CDTypeSymbol> aType4 = artifactScope.resolveCDType("Packages.a.A");
     assertTrue(aType4.isPresent());
-
+    
     final Optional<CDTypeSymbol> aType5 = artifactScope.resolveCDTypeDown("a.A");
     assertTrue(aType5.isPresent());
-
+    
     final Optional<CDTypeSymbol> bType1 = aType3.get().getSpannedScope().resolveCDType("B");
     assertTrue(bType1.isPresent());
-
+    
     final Optional<CDTypeSymbol> bType2 = aType3.get().getEnclosingScope().resolveCDType("a.B");
     assertTrue(bType2.isPresent());
-
+    
     final Optional<CDTypeSymbol> cType1 = aType3.get().getSpannedScope().resolveCDType("C");
     assertFalse(cType1.isPresent());
   }
-
+  
   @Test
   public void resolvingTests() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cdassociation/parser/Simple.cd");
-    ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
-    astcdCompilationUnit.accept(
-        new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+    ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(
+        astcdCompilationUnit);
+    astcdCompilationUnit.accept(new CD4CodeSymbolTableCompleter(astcdCompilationUnit)
+        .getTraverser());
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
-
+    
     // Test Resolving CDTypeSymbol
     final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("Simple.A");
     assertTrue(aType1.isPresent());
-
+    
     final Optional<CDTypeSymbol> aType2 = artifactScope.resolveCDType("A");
     assertTrue(aType2.isPresent());
-
+    
     Optional<CDTypeSymbol> c1Type1 = artifactScope.resolveCDType("C1");
     assertTrue(c1Type1.isPresent());
-
+    
     Optional<CDTypeSymbol> c1Type2 = aType2.get().getEnclosingScope().resolveCDType("C1");
     assertTrue(c1Type2.isPresent());
-
+    
     // Test resolving CDRole
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());
-
+    
     final List<CDRoleSymbol> c2_1 = artifactScope.resolveCDRoleMany("C1.c2");
     assertEquals(1, c2_1.size());
-
+    
     final Optional<CDRoleSymbol> c2_2 = artifactScope.resolveCDRoleDown("C1.c2_custom");
     assertTrue(c2_2.isPresent());
   }
-
+  
   @Test
   public void resolveJavaTypes() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parse(getFilePath("cd4code/parser/UseJavaTypes.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath(
+        "cd4code/parser/UseJavaTypes.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
-
+    
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
-    final ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(
+        node);
     checkLogError();
     artifactScope.addImports(new ImportStatement("java.lang", true));
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
-
+    
     checkLogError();
-
+    
     final Optional<FieldSymbol> fieldSymbol = artifactScope.resolveFieldDown("A.l");
     assertTrue(fieldSymbol.isPresent());
     final SymTypeExpression type = fieldSymbol.get().getType();
     assertTrue(type.isGenericType());
     assertEquals("java.util.List", ((SymTypeOfGenerics) type).getFullName());
-    assertEquals(
-        "java.lang.String",
-        ((SymTypeOfGenerics) type).getArgumentList().get(0).getTypeInfo().getFullName());
-
+    assertEquals("java.lang.String", ((SymTypeOfGenerics) type).getArgumentList().get(0)
+        .getTypeInfo().getFullName());
+    
     final Optional<OOTypeSymbol> str1 = artifactScope.resolveOOType("java.lang.String");
     assertTrue(str1.isPresent());
-
+    
     final Optional<TypeSymbol> str2 = artifactScope.resolveType("String");
     assertTrue(str2.isPresent());
-
+    
     assertEquals(str1.get(), str2.get());
-
+    
     final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
     assertTrue(opt.isPresent());
   }
-
+  
   @Test
   public void resolving() throws IOException {
     final ASTCDCompilationUnit astcdCompilationUnit = parse("cd4code/parser/Complete.cd");
-    ICD4CodeArtifactScope artifactScope =
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
-    astcdCompilationUnit.accept(
-        new CD4CodeSymbolTableCompleter(astcdCompilationUnit).getTraverser());
+    ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(
+        astcdCompilationUnit);
+    astcdCompilationUnit.accept(new CD4CodeSymbolTableCompleter(astcdCompilationUnit)
+        .getTraverser());
     checkLogError();
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
-
+    
     final Optional<CDTypeSymbol> aType1 = gs.resolveCDType("cd4code.parser.Complete.A");
     assertTrue(aType1.isPresent());
-
+    
     final Optional<MethodSymbol> meth1 = aType1.get().getSpannedScope().resolveMethod("getName");
     assertTrue(meth1.isPresent());
-
+    
     final Optional<MethodSymbol> meth2 = aType1.get().getSpannedScope().resolveMethod("getX");
     assertFalse(meth2.isPresent());
-
+    
     final Optional<CDTypeSymbol> bType1 = gs.resolveCDType("cd4code.parser.Complete.B");
     assertTrue(aType1.isPresent());
-
+    
     final Optional<MethodSymbol> meth3 = bType1.get().getSpannedScope().resolveMethod("getName");
     assertTrue(meth3.isPresent());
-
+    
     final Optional<MethodSymbol> meth4 = bType1.get().getSpannedScope().resolveMethod("getX");
     assertTrue(meth4.isPresent());
-
+    
     final Optional<VariableSymbol> field1 = meth4.get().getSpannedScope().resolveVariable("a");
     assertTrue(field1.isPresent());
-
+    
     final Optional<VariableSymbol> field2 = meth4.get().getEnclosingScope().resolveVariable("a");
     assertFalse(field2.isPresent());
   }
+  
 }

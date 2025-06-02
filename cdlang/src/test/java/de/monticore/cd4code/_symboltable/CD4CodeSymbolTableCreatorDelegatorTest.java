@@ -11,18 +11,19 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeSymbolTableCreatorDelegatorTest extends CD4CodeTestBasis {
-
+  
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
-        p.parse(getFilePath("cd4code/parser/Complete.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath(
+        "cd4code/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
-
+    
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
-
+    
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);
   }
+  
 }

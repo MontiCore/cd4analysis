@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.type;
 
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -9,27 +10,31 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
 public class MCTypeMatcher {
-
+  
   private final String underspecifiedTypeName;
-  private final MatchingStrategy<ASTCDType> typeMatcher;
-
+  private MatchingStrategy<ASTCDType> typeMatcher;
+  
   public MCTypeMatcher(String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
     this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
   }
-
+  
+  public void setTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher) {
+    this.typeMatcher = typeMatcher;
+  }
+  
   public boolean isVoidType(ASTMCType type) {
     return type.printType().equals("void");
   }
-
+  
   public boolean isVoidType(ASTMCReturnType type) {
     return type.printType().equals("void");
   }
-
+  
   public boolean isUnderspecified(ASTMCType type) {
     return type.printType().equals(underspecifiedTypeName);
   }
-
+  
   /**
    * Checks if the return type is underspecified.<br>
    * Use this as {@link #isUnderspecified(ASTMCType)} throws an exception if the type is 'void'.
@@ -37,7 +42,7 @@ public class MCTypeMatcher {
   public boolean isUnderspecified(ASTMCReturnType type) {
     return type.printType().equals(underspecifiedTypeName);
   }
-
+  
   /**
    * Two types are matched if one of the following holds: - the concrete type has the exact same
    * type as the reference type - the concrete type is an incarnation of the reference type - the
@@ -56,7 +61,7 @@ public class MCTypeMatcher {
       // every type is allowed if the reference type is underspecified
       return true;
     }
-
+    
     if (conType.getDefiningSymbol().isPresent() && refType.getDefiningSymbol().isPresent()) {
       ISymbol conTypeSymbol = conType.getDefiningSymbol().get();
       ISymbol refTypeSymbol = refType.getDefiningSymbol().get();
@@ -71,7 +76,7 @@ public class MCTypeMatcher {
     }
     return conType.deepEquals(refType);
   }
-
+  
   /**
    * Returns if the concrete type is an incarnation of the reference type. If one of the types is
    * not a CD type, the method returns false since incarnation mapping is only defined between
@@ -82,10 +87,12 @@ public class MCTypeMatcher {
       CDTypeSymbol conCDType = (CDTypeSymbol) conType;
       CDTypeSymbol refCDType = (CDTypeSymbol) refType;
       if (conCDType.isPresentAstNode()) {
-        return typeMatcher.getMatchedElements(conCDType.getAstNode()).stream()
-            .anyMatch(r -> r.getSymbol().getFullName().equals(refCDType.getFullName()));
+        assert typeMatcher != null;
+        return typeMatcher.getMatchedElements(conCDType.getAstNode()).stream().anyMatch(r -> r
+            .getSymbol().getFullName().equals(refCDType.getFullName()));
       }
     }
     return false;
   }
+  
 }

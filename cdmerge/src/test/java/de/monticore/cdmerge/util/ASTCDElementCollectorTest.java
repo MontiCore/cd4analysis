@@ -11,28 +11,29 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
 public class ASTCDElementCollectorTest extends BaseTest {
-
+  
   public static final String INPUT_MODEL_FILE = "General/university/Staff.cd";
-
+  
   public final ASTCDCompilationUnit cd;
-
+  
   public final ASTCDElementCollector testant;
-
+  
   public final ASTCDHelper helper;
-
+  
   public ASTCDElementCollectorTest() throws IOException {
     this.cd = loadModel(Paths.get(MODEL_PATH, INPUT_MODEL_FILE).toString());
     this.helper = new ASTCDHelper(this.cd);
     this.testant = new ASTCDElementCollector(helper);
   }
-
+  
   @Test
   public void test() {
-
+    
     // The Element collector does not change the result
-
+    
     String oldCD = CD4CodeMill.prettyPrint(cd, false);
     testant.collect(cd);
     assertEquals(oldCD, CD4CodeMill.prettyPrint(cd, false));
   }
+  
 }

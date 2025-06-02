@@ -17,12 +17,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationUniqueInHierarchy());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cd4code/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4code/cocos/CDAssociationUniqueInHierarchyValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -30,12 +30,12 @@ public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationUniqueInHierarchy());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cd4code/cocos/CDAssociationUniqueInHierarchyInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4code/cocos/CDAssociationUniqueInHierarchyInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -44,16 +44,16 @@ public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCE1"));
   }
-
+  
   protected ICD4CodeArtifactScope createSymTab(ASTCDCompilationUnit ast) {
     ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    CD4CodeSymbolTableCompleter c =
-        new CD4CodeSymbolTableCompleter(
-            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(ast.getMCImportStatementList(),
+        MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
     return as;
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

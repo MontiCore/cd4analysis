@@ -19,9 +19,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBasis {
-
+  
   TestCDInterfaceAndEnumSymbols2Json symbols2Json;
-
+  
   @Test
   public void genitorTest() {
     TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(PATH)));
@@ -29,50 +29,49 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     ASTCDCompilationUnit ast = parseModel(artifact);
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
-
+    
     assertEquals(3, artifactScope.getSubScopes().size());
-
+    
     LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = artifactScope.getCDTypeSymbols();
     assertEquals(3, cdTypeSymbols.size());
     assertTrue(cdTypeSymbols.containsKey("C"));
     assertTrue(cdTypeSymbols.containsKey("D"));
     assertTrue(cdTypeSymbols.containsKey("MyInterface"));
-
+    
     assertEquals(1, cdTypeSymbols.get("D").size());
     CDTypeSymbol classD = cdTypeSymbols.get("D").get(0);
-
+    
     List<FieldSymbol> dFields = classD.getFieldList();
     assertEquals(4, dFields.size());
-
+    
     FieldSymbol cField = dFields.get(0);
-    assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.c", cField.getFullName());
+    assertEquals("cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.c", cField
+        .getFullName());
     assertEquals("C", cField.getType().getTypeInfo().getName());
-
+    
     FieldSymbol someImportedTypeField = dFields.get(1);
-    assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.x",
+    assertEquals("cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.x",
         someImportedTypeField.getFullName());
     assertEquals("SomeImportedType", someImportedTypeField.getType().getTypeInfo().getName());
-
+    
     FieldSymbol iField = dFields.get(2);
-    assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.i", iField.getFullName());
+    assertEquals("cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.i", iField
+        .getFullName());
     assertEquals("MyOtherInterface", iField.getType().getTypeInfo().getName());
-
+    
     FieldSymbol eField = dFields.get(3);
-    assertEquals(
-        "cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.e", eField.getFullName());
+    assertEquals("cdinterfaceandenum.symboltable.CorrectTypeUsagesEnumInterface.D.e", eField
+        .getFullName());
     assertEquals("MyEnum", eField.getType().getTypeInfo().getName());
-
+    
     assertEquals(1, cdTypeSymbols.get("MyInterface").size());
     CDTypeSymbol myInterfaceSymbol = cdTypeSymbols.get("MyInterface").get(0);
     assertTrue(myInterfaceSymbol.isIsInterface());
     assertEquals(1, myInterfaceSymbol.getSuperTypesList().size());
-
+    
     assertEquals(0, Log.getErrorCount());
   }
-
+  
   @Test
   public void resolvingTest() {
     TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(PATH)));
@@ -80,56 +79,54 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     ASTCDCompilationUnit ast = parseModel(artifact);
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
-
+    
     List<TypeSymbol> resolvedTypes1 = artifactScope.resolveTypeMany("C");
     assertEquals(1, resolvedTypes1.size());
-
+    
     List<TypeSymbol> resolvedTypes2 = artifactScope.resolveTypeMany("D");
     assertEquals(1, resolvedTypes2.size());
-
+    
     List<TypeSymbol> resolvedTypes3 = artifactScope.resolveTypeMany("E");
     assertEquals(0, resolvedTypes3.size());
-
+    
     List<TypeSymbol> resolvedTypes4 = artifactScope.resolveTypeMany("MyInterface");
     assertEquals(1, resolvedTypes4.size());
-
+    
     assertEquals(1, resolvedTypes4.get(0).getSuperTypesList().size());
-    assertEquals(
-        "MyOtherInterface",
-        resolvedTypes4.get(0).getSuperTypesList().get(0).getTypeInfo().getName());
-
-    List<DiagramSymbol> resolvedDiagram =
-        artifactScope.resolveDiagramMany("CorrectTypeUsagesEnumInterface");
+    assertEquals("MyOtherInterface", resolvedTypes4.get(0).getSuperTypesList().get(0).getTypeInfo()
+        .getName());
+    
+    List<DiagramSymbol> resolvedDiagram = artifactScope.resolveDiagramMany(
+        "CorrectTypeUsagesEnumInterface");
     assertEquals(1, resolvedDiagram.size());
-
+    
     TestCDInterfaceAndEnumMill.globalScope().addSubScope(artifactScope);
     assertSame(artifactScope, TestCDInterfaceAndEnumMill.globalScope().getSubScopes().get(0));
-
+    
     String asPkg = "cdinterfaceandenum.symboltable.";
-    List<TypeSymbol> resolvedTypesGS1 =
-        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "C");
+    List<TypeSymbol> resolvedTypesGS1 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(
+        asPkg + "C");
     assertEquals(1, resolvedTypesGS1.size());
-
-    List<TypeSymbol> resolvedTypesGS2 =
-        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "D");
+    
+    List<TypeSymbol> resolvedTypesGS2 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(
+        asPkg + "D");
     assertEquals(1, resolvedTypesGS2.size());
-
-    List<TypeSymbol> resolvedTypesGS3 =
-        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "E");
+    
+    List<TypeSymbol> resolvedTypesGS3 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(
+        asPkg + "E");
     assertEquals(0, resolvedTypesGS3.size());
-
-    List<TypeSymbol> resolvedTypesGS4 =
-        TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(asPkg + "MyInterface");
+    
+    List<TypeSymbol> resolvedTypesGS4 = TestCDInterfaceAndEnumMill.globalScope().resolveTypeMany(
+        asPkg + "MyInterface");
     assertEquals(1, resolvedTypesGS4.size());
-
-    List<DiagramSymbol> resolvedDiagramGS =
-        TestCDInterfaceAndEnumMill.globalScope()
-            .resolveDiagramMany(asPkg + "CorrectTypeUsagesEnumInterface");
+    
+    List<DiagramSymbol> resolvedDiagramGS = TestCDInterfaceAndEnumMill.globalScope()
+        .resolveDiagramMany(asPkg + "CorrectTypeUsagesEnumInterface");
     assertEquals(1, resolvedDiagramGS.size());
-
+    
     assertEquals(0, Log.getErrorCount());
   }
-
+  
   @Test
   public void serializationTest() {
     symbols2Json = new TestCDInterfaceAndEnumSymbols2Json();
@@ -142,34 +139,35 @@ public class CDInterfaceAndEnumSTCompleterTest extends CDInterfaceAndEnumTestBas
     assertNotEquals("", serialized);
     assertEquals(0, Log.getErrorCount());
   }
-
+  
   @Test
   public void symbolTableCompleterNoErrorTest() {
     TestCDInterfaceAndEnumMill.globalScope().setSymbolPath(new MCPath(Paths.get(PATH)));
     String artifact = PATH + "cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
-
+    
     completeSymTab(ast);
-
+    
     assertEquals(0, Log.getErrorCount());
   }
-
+  
   @Test
   public void constantsTest() {
     String artifact = PATH + "cdinterfaceenum/symboltable/EnumConstants.cd";
     ASTCDCompilationUnit ast = parseModel(artifact);
-
+    
     ITestCDInterfaceAndEnumArtifactScope artifactScope = createSymTab(ast);
     completeSymTab(ast);
-
+    
     Optional<FieldSymbol> idleSym = artifactScope.resolveField("DrivingState.IDLE");
     Optional<FieldSymbol> drivingSym = artifactScope.resolveField("DrivingState.DRIVING");
-
+    
     assertTrue(idleSym.isPresent());
     assertTrue(drivingSym.isPresent());
-
+    
     assertEquals("DrivingState", idleSym.get().getType().getTypeInfo().getName());
     assertEquals("DrivingState", drivingSym.get().getType().getTypeInfo().getName());
   }
+  
 }

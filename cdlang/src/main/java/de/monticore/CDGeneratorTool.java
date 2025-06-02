@@ -64,7 +64,7 @@ import org.apache.commons.cli.ParseException;
  */
 @Deprecated
 public class CDGeneratorTool extends CD4CodeTool {
-
+  
   /**
    * main method of the CDGeneratorTool
    *
@@ -74,7 +74,7 @@ public class CDGeneratorTool extends CD4CodeTool {
     CDGeneratorTool tool = new CDGeneratorTool();
     tool.run(args);
   }
-
+  
   /**
    * executes the arguments stated in the command line like parsing a given model to an ast,
    * creating and printing out a corresponding symbol table, checking cocos or generating java files
@@ -83,215 +83,183 @@ public class CDGeneratorTool extends CD4CodeTool {
    * @param args array of the command line arguments
    */
   public void run(String[] args) {
-
+    
     this.init();
-
+    
     Options options = initOptions();
-
+    
     try {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
-
+      
       if (cmd.hasOption("v")) {
         printVersion();
         // do not continue when version is printed
         return;
-      } else if (!cmd.hasOption("i") || cmd.hasOption("h")) {
+      }
+      else if (!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
       }
-
+      
       BasicSymbolsMill.initializePrimitives();
-
+      
       final boolean c2mc = cmd.hasOption("c2mc");
       if (c2mc) {
         initializeClass2MC();
-      } else {
+      }
+      else {
         BasicSymbolsMill.initializeString();
         BasicSymbolsMill.initializeObject();
       }
-
+      
       Log.enableFailQuick(false);
-      Collection<ASTCDCompilationUnit> asts =
-          this.parse(".cd", this.createModelPath(cmd).getEntries());
+      Collection<ASTCDCompilationUnit> asts = this.parse(".cd", this.createModelPath(cmd)
+          .getEntries());
       Log.enableFailQuick(true);
-
+      
       // apply trafos needed for symbol table creation
       asts = this.trafoBeforeSymtab(asts);
-
+      
       if (cmd.hasOption("path")) {
         String[] paths = splitPathEntries(cmd.getOptionValue("path"));
         CD4CodeMill.globalScope().setSymbolPath(new MCPath(paths));
       }
-
+      
       // Create the symbol-table (symbol table creation phase 1)
       List<ICD4CodeArtifactScope> scopes = new ArrayList<>(asts.size());
       for (ASTCDCompilationUnit ast : asts) {
         scopes.add(this.createSymbolTable(ast, c2mc));
       }
-
+      
       // Complete the symbol-table (symbol table creation phase 2)
       for (ASTCDCompilationUnit ast : asts) {
         this.completeSymbolTable(ast);
       }
-
+      
       if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         asts.forEach(this::runCoCos);
         Log.enableFailQuick(true);
       }
-
-      String fieldFromRole =
-          cmd.hasOption("fieldfromrole") ? cmd.getOptionValue("fieldfromrole") : "navigable";
+      
+      String fieldFromRole = cmd.hasOption("fieldfromrole") ? cmd.getOptionValue("fieldfromrole")
+          : "navigable";
       switch (fieldFromRole) {
-        case "all":
-          { // add FieldSymbols for all the CDRoleSymbols
-            final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
-                new CDAssociationCreateFieldsFromAllRoles();
-            final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
-            traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
-            traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
-            asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
-            break;
-          }
-        case "navigable":
-          { // add FieldSymbols only for navigable CDRoleSymbols
-            final CDAssociationCreateFieldsFromNavigableRoles
-                cdAssociationCreateFieldsFromNavigableRoles =
-                    new CDAssociationCreateFieldsFromNavigableRoles();
-            final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
-            traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
-            traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
-            asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
-            break;
-          }
+        case "all": { // add FieldSymbols for all the CDRoleSymbols
+          final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
+              new CDAssociationCreateFieldsFromAllRoles();
+          final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+          asts.forEach(cdAssociationCreateFieldsFromAllRoles::transform);
+          break;
+        }
+        case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
+          final CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromNavigableRoles =
+              new CDAssociationCreateFieldsFromNavigableRoles();
+          final CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+          asts.forEach(cdAssociationCreateFieldsFromNavigableRoles::transform);
+          break;
+        }
         case "none":
         default:
-          Log.error(
-              String.format(
-                  "0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.",
-                  fieldFromRole));
+          Log.error(String.format(
+              "0xA7105 Invalid value %s for option --fieldfromrole. Options are all, navigable or none.",
+              fieldFromRole));
       }
-
+      
       if (cmd.hasOption("s")) {
         for (ICD4CodeArtifactScope scope : scopes) {
           this.storeSymTab(scope, cmd.getOptionValue("s"));
         }
       }
-
+      
       if (cmd.hasOption("o")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
-
+        
         // apply trafos needed for code generation
         asts = this.trafoBeforeCodegen(asts);
-
+        
         if (cmd.hasOption("tp")) {
-          setup.setAdditionalTemplatePaths(
-              Arrays.stream(cmd.getOptionValues("tp"))
-                  .map(Paths::get)
-                  .map(Path::toFile)
-                  .collect(Collectors.toList()));
+          setup.setAdditionalTemplatePaths(Arrays.stream(cmd.getOptionValues("tp")).map(Paths::get)
+              .map(Path::toFile).collect(Collectors.toList()));
         }
-
+        
         if (cmd.hasOption("hwc")) {
           setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
           TopDecorator topDecorator = new TopDecorator(setup.getHandcodedPath());
           asts.forEach(topDecorator::decorate);
         }
-
-        String outputPath =
-            (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString() : "";
-
+        
+        String outputPath = (cmd.hasOption("o")) ? Paths.get(cmd.getOptionValue("o")).toString()
+            : "";
+        
         setup.setGlex(glex);
         setup.setOutputDirectory(new File(outputPath));
-
+        
         CDGenerator generator = new CDGenerator(setup);
         String configTemplate = cmd.getOptionValue("ct", "cd2java.CD2Java");
         TemplateController tc = setup.getNewTemplateController(configTemplate);
         TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
         List<Object> configTemplateArgs = Arrays.asList(glex, generator);
-
+        
         asts.forEach(this::mapCD4CImports);
-
+        
         asts.forEach(ast -> addGettersAndSetters(ast, glex));
         asts.forEach(this::makeMethodsInInterfacesAbstract);
-
+        
         asts.forEach(ast -> hpp.processValue(tc, ast, configTemplateArgs));
       }
-
-    } catch (ParseException e) {
+      
+    }
+    catch (ParseException e) {
       CD4CodeMill.globalScope().clear();
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
     CD4CodeMill.globalScope().clear();
   }
-
+  
   public void addDefaultImports(ICD4CodeArtifactScope scope, boolean java) {
-    if (java) scope.addImports(new ImportStatement("java.lang", true));
+    if (java)
+      scope.addImports(new ImportStatement("java.lang", true));
   }
-
+  
   /**
    * adds additional options to the cli tool
    *
    * @param options collection of all the possible options
    */
   public Options addAdditionalOptions(Options options) {
-
-    options.addOption(
-        Option.builder("c")
-            .longOpt("checkcococs")
-            .desc("Checks all CoCos on the given mode.")
-            .build());
-
-    options.addOption(
-        Option.builder("o")
-            .longOpt("output")
-            .argName("dir")
-            .hasArg()
-            .desc("Sets the output path.")
-            .build());
-
-    options.addOption(
-        Option.builder("ct")
-            .longOpt("configtemplate")
-            .hasArg()
-            .argName("template")
-            .desc("Sets a template for configuration.")
-            .build());
-
-    options.addOption(
-        Option.builder("tp")
-            .longOpt("template")
-            .hasArg()
-            .argName("path")
-            .desc("Sets the path for additional templates.")
-            .build());
-
-    options.addOption(
-        Option.builder("hwc")
-            .longOpt("handwrittencode")
-            .hasArg()
-            .argName("hwcpath")
-            .desc("Sets the path for additional, handwritten classes.")
-            .build());
-
-    options.addOption(
-        Option.builder("c2mc")
-            .longOpt("class2mc")
-            .desc("Enables to resolve java classes in the model path")
-            .build());
-
-    options.addOption(
-        Option.builder("fieldfromrole")
-            .desc("Configures if explicit field symbols should be added for associations")
-            .hasArg()
-            .build());
-
+    
+    options.addOption(Option.builder("c").longOpt("checkcococs").desc(
+        "Checks all CoCos on the given mode.").build());
+    
+    options.addOption(Option.builder("o").longOpt("output").argName("dir").hasArg().desc(
+        "Sets the output path.").build());
+    
+    options.addOption(Option.builder("ct").longOpt("configtemplate").hasArg().argName("template")
+        .desc("Sets a template for configuration.").build());
+    
+    options.addOption(Option.builder("tp").longOpt("template").hasArg().argName("path").desc(
+        "Sets the path for additional templates.").build());
+    
+    options.addOption(Option.builder("hwc").longOpt("handwrittencode").hasArg().argName("hwcpath")
+        .desc("Sets the path for additional, handwritten classes.").build());
+    
+    options.addOption(Option.builder("c2mc").longOpt("class2mc").desc(
+        "Enables to resolve java classes in the model path").build());
+    
+    options.addOption(Option.builder("fieldfromrole").desc(
+        "Configures if explicit field symbols should be added for associations").hasArg().build());
+    
     return options;
   }
-
+  
   /**
    * checks all cocos on the current ast
    *
@@ -301,7 +269,7 @@ public class CDGeneratorTool extends CD4CodeTool {
     CD4CodeCoCoChecker checker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
     checker.checkAll(ast);
   }
-
+  
   /**
    * prints the symboltable of the given scope out to a file
    *
@@ -311,18 +279,18 @@ public class CDGeneratorTool extends CD4CodeTool {
   public void storeSymTab(ICD4CodeArtifactScope scope, String path) {
     if (Path.of(path).toFile().isFile()) {
       this.storeSymbols(scope, path);
-    } else {
-      this.storeSymbols(
-          scope,
-          Paths.get(path, Names.getPathFromPackage(scope.getFullName()) + ".cdsym").toString());
+    }
+    else {
+      this.storeSymbols(scope, Paths.get(path, Names.getPathFromPackage(scope.getFullName())
+          + ".cdsym").toString());
     }
   }
-
+  
   /**
    * Applies the transformations prerequisite to symbol table creation.
    *
    * @deprecated this method in no longer supported and scheduled for removal.
-   *     <p>Use {@link #trafoBeforeSymtab(Collection)} instead.
+   * <p>Use {@link #trafoBeforeSymtab(Collection)} instead.
    * @param ast The input AST
    * @return The transformed AST
    */
@@ -332,7 +300,7 @@ public class CDGeneratorTool extends CD4CodeTool {
     ast.accept(trafo.getTraverser());
     return ast;
   }
-
+  
   /**
    * Applies the transformations (trafos) prerequisite to symbol table creation. Trafos are applied
    * in place, that is, the input asts are mutated.
@@ -345,7 +313,7 @@ public class CDGeneratorTool extends CD4CodeTool {
     asts.forEach(ast -> ast.accept(trafo.getTraverser()));
     return asts;
   }
-
+  
   /**
    * Applies the transformations (trafos) prerequisite to code generation. Trafos are applied in
    * place, that is, the input asts are mutated.
@@ -359,14 +327,14 @@ public class CDGeneratorTool extends CD4CodeTool {
     asts.forEach(ast -> ast.accept(trafo));
     return asts;
   }
-
+  
   /** @return traverser with the trafos needed for codegeneration */
   protected CD4CodeTraverser createBeforeCodegenTrafo() {
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
     return t;
   }
-
+  
   /**
    * creates the symboltable for the given ast
    *
@@ -380,7 +348,7 @@ public class CDGeneratorTool extends CD4CodeTool {
     this.addDefaultImports(scope, java);
     return scope;
   }
-
+  
   /**
    * completes the symboltable for the given ast
    *
@@ -389,12 +357,12 @@ public class CDGeneratorTool extends CD4CodeTool {
   public void completeSymbolTable(ASTCDCompilationUnit ast) {
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
-
+  
   public void initializeClass2MC() {
     CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
     CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
   }
-
+  
   /**
    * adds default getter and setter methods to a class for every attribute in case if none have been
    * added so far
@@ -406,18 +374,12 @@ public class CDGeneratorTool extends CD4CodeTool {
     for (ASTCDClass c : ast.getCDDefinition().getCDClassesList()) {
       for (ASTCDAttribute attribute : c.getCDAttributeList()) {
         List<ASTCDMethod> result = methodDecorator.decorate(attribute);
-        result.stream()
-            .filter(
-                m ->
-                    !c.getCDMethodList().stream()
-                        .map(ASTCDMethod::getName)
-                        .collect(Collectors.toList())
-                        .contains(m.getName()))
-            .forEach(c::addCDMember);
+        result.stream().filter(m -> !c.getCDMethodList().stream().map(ASTCDMethod::getName).collect(
+            Collectors.toList()).contains(m.getName())).forEach(c::addCDMember);
       }
     }
   }
-
+  
   public void makeMethodsInInterfacesAbstract(ASTCDCompilationUnit ast) {
     for (ASTCDInterface cdInterface : ast.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDMethod method : cdInterface.getCDMethodList()) {
@@ -425,21 +387,19 @@ public class CDGeneratorTool extends CD4CodeTool {
       }
     }
   }
-
+  
   public String[] splitPathEntries(String composedPath) {
     Preconditions.checkNotNull(composedPath);
-
+    
     return composedPath.split(Pattern.quote(File.pathSeparator));
   }
-
+  
   public final String[] splitPathEntries(String[] composedPaths) {
     Preconditions.checkNotNull(composedPaths);
-    return Arrays.stream(composedPaths)
-        .map(this::splitPathEntries)
-        .flatMap(Arrays::stream)
-        .toArray(String[]::new);
+    return Arrays.stream(composedPaths).map(this::splitPathEntries).flatMap(Arrays::stream).toArray(
+        String[]::new);
   }
-
+  
   /**
    * Updates the map of cd types to import statement in the given cd4c object, adding the imports
    * for each cd type (classes, enums, and interfaces) defined in the given ast.
@@ -449,13 +409,10 @@ public class CDGeneratorTool extends CD4CodeTool {
   public void mapCD4CImports(ASTCDCompilationUnit ast) {
     CD4C cd4c = CD4C.getInstance();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-
-    imports.add(
-        MCBasicTypesMill.mCImportStatementBuilder()
-            .setMCQualifiedName(
-                MCQualifiedNameFacade.createQualifiedName("de.se_rwth.commons.logging.Log"))
-            .build());
-
+    
+    imports.add(MCBasicTypesMill.mCImportStatementBuilder().setMCQualifiedName(MCQualifiedNameFacade
+        .createQualifiedName("de.se_rwth.commons.logging.Log")).build());
+    
     for (ASTCDClass cdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTMCImportStatement i : imports) {
         String qName = i.getQName();
@@ -475,32 +432,32 @@ public class CDGeneratorTool extends CD4CodeTool {
       }
     }
   }
-
+  
   public MCPath createModelPath(CommandLine cl) {
     if (cl.hasOption("i")) {
       return new MCPath(splitPathEntries(cl.getOptionValues("i")));
-    } else {
+    }
+    else {
       return new MCPath();
     }
   }
-
+  
   public Collection<ASTCDCompilationUnit> parse(String file, Collection<Path> dirs) {
-    return dirs.stream()
-        .flatMap(directory -> this.parse(file, directory).stream())
-        .collect(Collectors.toList());
+    return dirs.stream().flatMap(directory -> this.parse(file, directory).stream()).collect(
+        Collectors.toList());
   }
-
+  
   public Collection<ASTCDCompilationUnit> parse(String fileExt, Path directory) {
-    try (Stream<Path> paths = Files.walk(directory)) {
-      return paths
-          .filter(Files::isRegularFile)
-          .filter(file -> file.getFileName().toString().endsWith(fileExt))
-          .map(Path::toString)
-          .map(this::parse)
-          .collect(Collectors.toSet());
-    } catch (IOException e) {
+    try (
+        Stream<Path> paths = Files.walk(directory)
+    ) {
+      return paths.filter(Files::isRegularFile).filter(file -> file.getFileName().toString()
+          .endsWith(fileExt)).map(Path::toString).map(this::parse).collect(Collectors.toSet());
+    }
+    catch (IOException e) {
       Log.error("0xA1063 Error while traversing the file structure `" + directory + "`.", e);
     }
     return Collections.emptySet();
   }
+  
 }

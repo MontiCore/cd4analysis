@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListMutatorDecorator extends ListMethodDecorator {
-
+  
   protected static final String SET_LIST = "public void set%sList(List<%s> %s);";
   protected static final String CLEAR = "public void clear%s();";
   protected static final String ADD = "public boolean add%s(%s element);";
@@ -36,15 +36,15 @@ public class ListMutatorDecorator extends ListMethodDecorator {
   protected static final String REPLACE_ALL =
       "public void replaceAll%s(UnaryOperator<%s> operator);";
   protected static final String SORT = "public void sort%s(Comparator<? super %s> comparator);";
-
+  
   public ListMutatorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
   }
-
+  
   public ListMutatorDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
-
+  
   @Override
   public List<ASTCDMethod> decorate(ASTCDAttribute ast) {
     if (ast.getModifier().isDerived() || ast.getModifier().isReadonly()) {
@@ -54,35 +54,35 @@ public class ListMutatorDecorator extends ListMethodDecorator {
     methods.add(createSetListMethod(ast));
     return methods;
   }
-
+  
   protected ASTCDMethod createSetListMethod(ASTCDAttribute ast) {
-    String signature =
-        String.format(SET_LIST, capitalizedAttributeNameWithOutS, attributeType, ast.getName());
+    String signature = String.format(SET_LIST, capitalizedAttributeNameWithOutS, attributeType, ast
+        .getName());
     ASTCDMethod getList = this.getCDMethodFacade().createMethodByDefinition(signature);
     this.replaceTemplate(EMPTY_BODY, getList, new TemplateHookPoint("methods.Set", ast));
     return getList;
   }
-
+  
   protected List<ASTCDMethod> createSetter(ASTCDAttribute ast) {
     return super.decorate(ast);
   }
-
+  
   @Override
   protected List<String> getMethodSignatures() {
-    return Arrays.asList(
-        String.format(CLEAR, capitalizedAttributeNameWithS),
-        String.format(ADD, capitalizedAttributeNameWithOutS, attributeType),
-        String.format(ADD_ALL, capitalizedAttributeNameWithS, attributeType),
-        String.format(REMOVE, capitalizedAttributeNameWithOutS),
-        String.format(REMOVE_ALL, capitalizedAttributeNameWithS),
-        String.format(RETAIN_ALL, capitalizedAttributeNameWithS),
-        String.format(REMOVE_IF, capitalizedAttributeNameWithOutS, attributeType),
-        String.format(FOR_EACH, capitalizedAttributeNameWithS, attributeType),
-        String.format(ADD_, capitalizedAttributeNameWithOutS, attributeType),
-        String.format(ADD_ALL_, capitalizedAttributeNameWithS, attributeType),
-        String.format(REMOVE_, attributeType, capitalizedAttributeNameWithOutS),
-        String.format(SET, attributeType, capitalizedAttributeNameWithOutS, attributeType),
-        String.format(REPLACE_ALL, capitalizedAttributeNameWithS, attributeType),
-        String.format(SORT, capitalizedAttributeNameWithS, attributeType));
+    return Arrays.asList(String.format(CLEAR, capitalizedAttributeNameWithS), String.format(ADD,
+        capitalizedAttributeNameWithOutS, attributeType), String.format(ADD_ALL,
+            capitalizedAttributeNameWithS, attributeType), String.format(REMOVE,
+                capitalizedAttributeNameWithOutS), String.format(REMOVE_ALL,
+                    capitalizedAttributeNameWithS), String.format(RETAIN_ALL,
+                        capitalizedAttributeNameWithS), String.format(REMOVE_IF,
+                            capitalizedAttributeNameWithOutS, attributeType), String.format(
+                                FOR_EACH, capitalizedAttributeNameWithS, attributeType), String
+                                    .format(ADD_, capitalizedAttributeNameWithOutS, attributeType),
+        String.format(ADD_ALL_, capitalizedAttributeNameWithS, attributeType), String.format(
+            REMOVE_, attributeType, capitalizedAttributeNameWithOutS), String.format(SET,
+                attributeType, capitalizedAttributeNameWithOutS, attributeType), String.format(
+                    REPLACE_ALL, capitalizedAttributeNameWithS, attributeType), String.format(SORT,
+                        capitalizedAttributeNameWithS, attributeType));
   }
+  
 }

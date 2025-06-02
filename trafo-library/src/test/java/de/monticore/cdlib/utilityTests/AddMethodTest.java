@@ -26,29 +26,28 @@ import org.junit.jupiter.api.Test;
  * @author KE
  */
 public class AddMethodTest {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   // Test method addMethod
   @Test
   public void testAddMethod() throws IOException {
@@ -56,35 +55,21 @@ public class AddMethodTest {
     FileUtility utility2 = new FileUtility("cdlib/AWithMethod");
     TransformationUtility refactoring = new TransformationUtility();
     TransformationUtility refactoring2 = new TransformationUtility();
-
+    
     // Get Method from classdiagram "AWithMethod"
     ASTCDMethod a = refactoring2.getMethod("a", "A", utility2.getAst());
-
+    
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
-
+    
     // Add method to classdiagramm "AAttribute"
     assertTrue(refactoring.addMethod(a, "A", utility.getAst()));
-
+    
     // Check if Method was added
     assertEquals("A", utility.getAst().getCDDefinition().getCDClassesList().get(0).getName());
-    assertEquals(
-        "a",
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(0)
-            .getName());
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDMethodList()
-            .get(0)
-            .deepEquals(a));
+    assertEquals("a", utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDAttributeList().get(0).getName());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDMethodList().get(0)
+        .deepEquals(a));
   }
+  
 }

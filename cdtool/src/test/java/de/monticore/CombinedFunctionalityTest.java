@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class CombinedFunctionalityTest {
-
+  
   @BeforeEach
   public void init() {
     Log.init();
@@ -36,52 +37,51 @@ public class CombinedFunctionalityTest {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-
+  
   protected static ASTCDCompilationUnit parseCDModel(String cdFilePath) {
     CD4CodeParser cdParser = CD4CodeMill.parser();
     final Optional<ASTCDCompilationUnit> optCdAST;
     try {
       optCdAST = cdParser.parse(cdFilePath);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail();
       throw new RuntimeException(e);
     }
     assert (optCdAST.isPresent());
     return optCdAST.get();
   }
-
+  
   /** Fails in GitLab pipeline for unknown reason; could not reproduce failure locally. */
   @Test // Fixed test
   @Disabled // TODO
   public void testMaCoCo() {
     String base_path = "src/test/resources/de/monticore/macoco/";
-
-    List<ASTCDCompilationUnit> mergeSet =
-        Arrays.stream(Paths.get(base_path, "parts").toFile().listFiles())
-            .map(f -> parseCDModel(f.getAbsolutePath()))
-            .collect(Collectors.toList());
-
+    
+    List<ASTCDCompilationUnit> mergeSet = Arrays.stream(Paths.get(base_path, "parts").toFile()
+        .listFiles()).map(f -> parseCDModel(f.getAbsolutePath())).collect(Collectors.toList());
+    
     Set<MergeParameter> paramSet = new HashSet<>();
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);
-
+    
     ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", paramSet);
     assertNotNull(merged);
-
+    
     CDDiffUtil.refreshSymbolTable(merged);
-
-    ASTCDCompilationUnit expected =
-        parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath().toString());
+    
+    ASTCDCompilationUnit expected = parseCDModel(Path.of(base_path, "MaCoCo.cd").toAbsolutePath()
+        .toString());
     new CD4CodeDirectCompositionTrafo().transform(expected);
     CDDiffUtil.refreshSymbolTable(expected);
-
+    
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(merged, expected, List.of());
     Assertions.assertEquals(new ArrayList<>(), syntaxDiff.getBaseDiff());
-
+    
     // witnesses should be empty
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(merged, expected);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
     OD4ReportMill.init();
-
+    
     if (!witnesses.isEmpty()) {
       for (ASTODArtifact witness : witnesses) {
         System.out.println(OD4ReportMill.prettyPrint(witness, true));
@@ -90,4 +90,5 @@ public class CombinedFunctionalityTest {
       fail();
     }
   }
+  
 }

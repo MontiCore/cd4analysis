@@ -24,79 +24,59 @@ import org.junit.jupiter.api.Test;
  * @author KE
  */
 public class PullUpAssociationTest {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   /** Test method pullUpAssociations */
   @Test
   public void testPullUpAssociation() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/PullUpAssociation");
     PullUp refactoring = new PullUp();
-
+    
     // Get right reference name
-    String rightName =
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDAssociationsList()
-            .get(0)
-            .getRightQualifiedName()
-            .getQName();
-
+    String rightName = utility.getAst().getCDDefinition().getCDAssociationsList().get(0)
+        .getRightQualifiedName().getQName();
+    
     // Perform transformation
     assertTrue(refactoring.pullUpAssociations(utility.getAst()));
-
+    
     // Check if association is now associated to Class C
     assertEquals(1, utility.getAst().getCDDefinition().getCDAssociationsList().size());
-    assertEquals(
-        "C",
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDAssociationsList()
-            .get(0)
-            .getLeftQualifiedName()
-            .getQName());
-    assertEquals(
-        rightName,
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDAssociationsList()
-            .get(0)
-            .getRightQualifiedName()
-            .getQName());
+    assertEquals("C", utility.getAst().getCDDefinition().getCDAssociationsList().get(0)
+        .getLeftQualifiedName().getQName());
+    assertEquals(rightName, utility.getAst().getCDDefinition().getCDAssociationsList().get(0)
+        .getRightQualifiedName().getQName());
   }
-
+  
   /** Test method pullUpAssociations with counter example */
   @Test
   public void testPullUpAssociationCounterExample() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/PullUpAssociationCounter");
     PullUp refactoring = new PullUp();
-
+    
     // Should be false because there is no association to move
     assertFalse(refactoring.pullUpAssociations(utility.getAst()));
   }
+  
 }

@@ -19,68 +19,69 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AssociationsMatcherTest {
-
+  
   String validCDModel = "/Family.cd";
-
+  
   String validODModel = "/Family.od";
-
+  
   File cdModel1;
-
+  
   File odModel1;
-
+  
   List<ASTODLink> odLinks;
-
+  
   List<ASTCDAssociation> cdAssociations;
-
+  
   ASTODArtifact od;
-
+  
   ASTCDCompilationUnit cd;
-
+  
   AssociationsMatcher matcher;
-
+  
   @BeforeEach
   public void before() {
-
+    
     LogStub.init();
     Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
-
+    
     matcher = new AssociationsMatcher();
   }
-
+  
   void loadModels(String odName, String cdName) throws FileNotFoundException {
-
+    
     String resources = "src/test/resources/de/monticore/odvalidity";
     cdModel1 = new File(resources + cdName);
     odModel1 = new File(resources + odName);
-
+    
     ModelLoader loader = new ModelLoader();
-
+    
     Optional<ASTCDCompilationUnit> cd = loader.loadCDModel(cdModel1);
     Optional<ASTODArtifact> od = loader.loadODModel(odModel1);
     this.od = od.get();
     this.cd = cd.get();
-
+    
     odLinks = ODHelper.getAllLinks(od.get().getObjectDiagram());
     cdAssociations = cd.get().getCDDefinition().getCDAssociationsList();
   }
-
+  
   @Test
   public void validAssociationForLinkTest() throws FileNotFoundException {
     assert (true);
-
+    
     /*
     loadModels(validODModel, validCDModel);
     assertTrue(matcher.checkAssociations(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
      */
   }
-
+  
   @Test
   public void associationWithCardinalityDiff() throws FileNotFoundException {
     assert (true);
-
+    
     loadModels("/Cardinality.od", "/Cardinality.cd");
     assertTrue(matcher.checkAssociations(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
   }
+  
 }

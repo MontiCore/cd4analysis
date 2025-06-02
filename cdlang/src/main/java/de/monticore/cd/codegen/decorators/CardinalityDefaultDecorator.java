@@ -13,6 +13,7 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 /** Sets an initial value of an empty optional, list or set for suitable elements */
 public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     implements CDBasisVisitor2 {
-
+  
   @Override
   public void visit(ASTCDAttribute attribute) {
     // First, check if we should decorate the given object
@@ -30,88 +31,73 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
       //
       var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz);
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
+      }
+      else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         decorateList(decClazz, attribute);
-      } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+      }
+      else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
         decorateSet(decClazz, attribute);
-      } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
+      }
+      else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
       }
     }
   }
-
+  
   protected void decorateOptional(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
-    getOrCreateDecConstructors(decoratedClazz)
-        .forEach(
-            c ->
-                glexOpt.ifPresent(
-                    glex ->
-                        // Note: we only handle EMPTY_BODY here and MIGHT have to add the
-                        // instantiation to other constructors as well?
-                        // Idea 1: Default constructor template with hookpoints?
-                        // Setting the initial value of the attribute fails, as
-                        // "new"/CreatorExpression is not part of CD4C
-                        glex.addAfterTemplate(
-                            EMPTY_BODY,
-                            c,
-                            new TemplateHookPoint(
-                                "methods.InstantiationEmptyOptional", attribute.getName()))));
+    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
+    // Note: we only handle EMPTY_BODY here and MIGHT have to add the
+    // instantiation to other constructors as well?
+    // Idea 1: Default constructor template with hookpoints?
+    // Setting the initial value of the attribute fails, as
+    // "new"/CreatorExpression is not part of CD4C
+    glex.addAfterTemplate(EMPTY_BODY, c, new TemplateHookPoint("methods.InstantiationEmptyOptional",
+        attribute.getName()))));
   }
-
+  
   protected void decorateSet(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
-    getOrCreateDecConstructors(decoratedClazz)
-        .forEach(
-            c ->
-                glexOpt.ifPresent(
-                    glex ->
-                        // Note: we only handle EMPTY_BODY here and MIGHT have to add the
-                        // instantiation to other constructors as well?
-                        // Idea 1: Default constructor template with hookpoints?
-                        // Setting the initial value of the attribute fails, as
-                        // "new"/CreatorExpression is not part of CD4C
-                        glex.addAfterTemplate(
-                            EMPTY_BODY,
-                            c,
-                            new TemplateHookPoint(
-                                "methods.Instantiation",
-                                attribute.getName(),
-                                HashSet.class.getName()))));
+    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
+    // Note: we only handle EMPTY_BODY here and MIGHT have to add the
+    // instantiation to other constructors as well?
+    // Idea 1: Default constructor template with hookpoints?
+    // Setting the initial value of the attribute fails, as
+    // "new"/CreatorExpression is not part of CD4C
+    glex.addAfterTemplate(EMPTY_BODY, c, new TemplateHookPoint("methods.Instantiation", attribute
+        .getName(), HashSet.class.getName()))));
   }
-
+  
   protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
-    getOrCreateDecConstructors(decoratedClazz)
-        .forEach(
-            c ->
-                glexOpt.ifPresent(
-                    glex ->
-                        // Note: we only handle EMPTY_BODY here and MIGHT have to add the
-                        // instantiation to other constructors as well?
-                        // Idea 1: Default constructor template with hookpoints?
-                        // Setting the initial value of the attribute fails, as
-                        // "new"/CreatorExpression is not part of CD4C
-                        glex.addAfterTemplate(
-                            EMPTY_BODY,
-                            c,
-                            new TemplateHookPoint(
-                                "methods.Instantiation",
-                                attribute.getName(),
-                                ArrayList.class.getName()))));
+    getOrCreateDecConstructors(decoratedClazz).forEach(c -> glexOpt.ifPresent(glex ->
+    // Note: we only handle EMPTY_BODY here and MIGHT have to add the
+    // instantiation to other constructors as well?
+    // Idea 1: Default constructor template with hookpoints?
+    // Setting the initial value of the attribute fails, as
+    // "new"/CreatorExpression is not part of CD4C
+    glex.addAfterTemplate(EMPTY_BODY, c, new TemplateHookPoint("methods.Instantiation", attribute
+        .getName(), ArrayList.class.getName()))));
   }
-
+  
+  protected ASTModifier createModifier(ASTModifier original) {
+    // Turn the modifier of a class into the modifier of its constructor
+    var ret = original.deepClone();
+    ret.setAbstract(false); // constructors may not be abstract!
+    return ret;
+  }
+  
   protected List<ASTCDConstructor> getOrCreateDecConstructors(ASTCDClass decoratedClazz) {
     List<ASTCDConstructor> constructors = new ArrayList<>(decoratedClazz.getCDConstructorList());
     if (constructors.isEmpty()) {
-      var c =
-          CDConstructorFacade.getInstance()
-              .createDefaultConstructor(decoratedClazz.getModifier().deepClone(), decoratedClazz);
+      var c = CDConstructorFacade.getInstance().createDefaultConstructor(createModifier(
+          decoratedClazz.getModifier()), decoratedClazz);
       addToClass(decoratedClazz, c);
       constructors.add(c);
     }
     return constructors;
   }
-
+  
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
+  
 }

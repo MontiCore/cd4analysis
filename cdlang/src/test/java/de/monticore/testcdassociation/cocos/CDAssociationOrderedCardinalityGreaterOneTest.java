@@ -14,25 +14,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDAssociationOrderedCardinalityGreaterOneTest extends CDAssociationTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationOrderedCardinalityGreaterOne());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationOrderedCardinalityGreaterOne());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(
-            getFilePath("cdassociation/cocos/CDAssociationOrderedCardinalityGreaterOneInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdassociation/cocos/CDAssociationOrderedCardinalityGreaterOneInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -40,8 +39,9 @@ public class CDAssociationOrderedCardinalityGreaterOneTest extends CDAssociation
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC65"));
   }
-
+  
   @AfterEach
   @Override
   public void after() {}
+  
 }

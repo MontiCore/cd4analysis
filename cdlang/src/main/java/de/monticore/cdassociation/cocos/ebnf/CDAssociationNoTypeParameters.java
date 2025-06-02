@@ -12,13 +12,13 @@ import java.util.Optional;
 
 /** Checks that the Types connected by the association are not generic */
 public class CDAssociationNoTypeParameters implements CDAssociationASTCDAssociationCoCo {
-
+  
   @Override
   public void check(ASTCDAssociation assoc) {
     checkNoTypeParameters(assoc.getLeft());
     checkNoTypeParameters(assoc.getRight());
   }
-
+  
   protected void checkNoTypeParameters(ASTCDAssocSide side) {
     ASTMCQualifiedType type = side.getMCQualifiedType();
     String qName = Names.constructQualifiedName(type.getNameList());
@@ -26,12 +26,11 @@ public class CDAssociationNoTypeParameters implements CDAssociationASTCDAssociat
     if (typeSymbolOpt.isPresent()) {
       TypeSymbol typeSymbol = typeSymbolOpt.get();
       if (!typeSymbol.getSpannedScope().getTypeVarSymbols().isEmpty()) {
-        Log.error(
-            "0xCDC72 The association refers to a generic type."
-                + " This is (currently) not supported.",
-            side.getMCQualifiedType().get_SourcePositionStart(),
-            side.getMCQualifiedType().get_SourcePositionEnd());
+        Log.error("0xCDC72 The association refers to a generic type."
+            + " This is (currently) not supported.", side.getMCQualifiedType()
+                .get_SourcePositionStart(), side.getMCQualifiedType().get_SourcePositionEnd());
       }
     }
   }
+  
 }

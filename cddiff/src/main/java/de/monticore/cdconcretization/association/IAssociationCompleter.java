@@ -1,10 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdconcretization.CompletionException;
 
 public interface IAssociationCompleter {
-
+  
   /**
    * Completes the details of the given concrete association based on the reference association.
    * <br>
@@ -19,9 +20,7 @@ public interface IAssociationCompleter {
    * @param referenceAssoc the reference association to be used for completion
    * @throws CompletionException
    */
-  void completeAssociation(
-      ASTCDAssociation concreteAssoc,
-      ASTCDAssociation referenceAssoc,
-      AssocMatchDirection matchDirection)
-      throws CompletionException;
+  void completeAssociation(ASTCDAssociation concreteAssoc, ASTCDAssociation referenceAssoc,
+      AssocMatchDirection matchDirection) throws CompletionException;
+  
 }

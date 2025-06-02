@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -14,66 +15,64 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class AssocDiffTest extends CDDiffTestBasis {
-
+  
   @Test
   public void testCD5() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD51.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD52.cd");
-
+    ASTCDCompilationUnit compilationUnitNew = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD51.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/AssocDeletedMerging/CD52.cd");
+    
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-
+    
     // todo: fix me
     // Assertions.assertTrue(witnesses.isEmpty());
   }
-
+  
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
-
+  
   public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/AssocDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
-
+  
   @Test
   public void testAssoc1() {
     parseModels("Source1.cd", "Target1.cd");
-
+    
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(synDiff.printDiff());
   }
-
+  
   @Test
   public void testAssoc2() {
     parseModels("Source2.cd", "Target2.cd");
-
+    
     CDSyntaxDiff associationDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(associationDiff.printDiff());
     // System.out.println(associationDiff.getBaseDiff());
     // System.out.println(associationDiff.getMatchedAssocs());
   }
-
+  
   @Test
   public void testAssoc3() {
     parseModels("Source3.cd", "Target3.cd");
-
+    
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(syntaxDiff.printSrcCD());
     // System.out.println(syntaxDiff.printTgtCD());
     // System.out.println(syntaxDiff.getBaseDiff());
   }
-
+  
   @Test
   public void testAssoc4() {
     parseModels("Source4.cd", "Target4.cd");
-
+    
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, List.of());
     System.out.println(syntaxDiff.getBaseDiff());
   }
-
+  
   @Test
   public void testAssoc5() {
     parseModels("Source5.cd", "Target5.cd");
@@ -82,11 +81,11 @@ public class AssocDiffTest extends CDDiffTestBasis {
     SyntaxDiffPrinter sb = new SyntaxDiffPrinter(src, tgt);
     System.out.println(sb.printDiff());
   }
-
+  
   public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> src =
-          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
+          + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (src.isPresent() && tgt.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
@@ -95,12 +94,15 @@ public class AssocDiffTest extends CDDiffTestBasis {
         tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
         this.tgt = tgt.get();
         this.src = src.get();
-      } else {
+      }
+      else {
         fail("Could not parse CDs.");
       }
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       fail(e.getMessage());
     }
   }
+  
 }

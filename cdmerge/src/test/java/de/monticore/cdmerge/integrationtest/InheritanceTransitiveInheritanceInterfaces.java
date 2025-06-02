@@ -19,21 +19,21 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class InheritanceTransitiveInheritanceInterfaces extends BaseTest {
-
+  
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
-
-  private static final String INPUT_MODEL_1 =
-      INPUT_MODEL_DIR + "/transitiveInheritanceInterfaces/A.cd";
-
-  private static final String INPUT_MODEL_2 =
-      INPUT_MODEL_DIR + "/transitiveInheritanceInterfaces/B.cd";
-
-  private static final String EXPECTED =
-      INPUT_MODEL_DIR + "/transitiveInheritanceInterfaces/mergedCD.cd";
-
+  
+  private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR
+      + "/transitiveInheritanceInterfaces/A.cd";
+  
+  private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR
+      + "/transitiveInheritanceInterfaces/B.cd";
+  
+  private static final String EXPECTED = INPUT_MODEL_DIR
+      + "/transitiveInheritanceInterfaces/mergedCD.cd";
+  
   @Test
-  public void testInheritanceTransitiveInheritanceInterfaces()
-      throws IOException, MergingException {
+  public void testInheritanceTransitiveInheritanceInterfaces() throws IOException,
+      MergingException {
     List<String> inputModels = new ArrayList<>();
     inputModels.add(INPUT_MODEL_1);
     inputModels.add(INPUT_MODEL_2);
@@ -41,21 +41,19 @@ public class InheritanceTransitiveInheritanceInterfaces extends BaseTest {
     final MergeTool cdMerger = new MergeTool(getConfig(inputModels));
     MergeResult results = cdMerger.mergeCDs();
     processResult(results);
-    assertTrue(
-        parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get()))
-            .deepEquals(expectedCD, false));
+    assertTrue(parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD,
+        false));
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder =
-        getConfigBuilder()
-            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
-            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
-
+    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
+        MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+    
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
+  
 }

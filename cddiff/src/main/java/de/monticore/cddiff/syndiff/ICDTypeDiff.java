@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -10,65 +11,66 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ICDTypeDiff {
+  
   List<CDMemberDiff> getChangedMembers();
-
+  
   List<ASTCDAttribute> getAddedAttributes();
-
+  
   List<ASTCDAttribute> getInheritedAttributes();
-
+  
   List<ASTCDAttribute> getDeletedAttributes();
-
+  
   List<ASTCDEnumConstant> getAddedConstants();
-
+  
   List<ASTCDEnumConstant> getDeletedConstants();
-
+  
   List<Pair<ASTCDAttribute, ASTCDAttribute>> getMatchedAttributes();
-
+  
   List<Pair<ASTCDEnumConstant, ASTCDEnumConstant>> getMatchedConstants();
-
+  
   ASTCDType getSrcElem();
-
+  
   ASTCDType getTgtElem();
-
+  
   void setChangedMembers(List<CDMemberDiff> changedMembers);
-
+  
   void setAddedAttributes(List<ASTCDAttribute> addedAttributes);
-
+  
   void setDeletedAttributes(List<ASTCDAttribute> deletedAttribute);
-
+  
   void setInheritedAttributes(List<ASTCDAttribute> deletedAttribute);
-
+  
   void setAddedConstants(List<ASTCDEnumConstant> addedConstants);
-
+  
   void setDeletedConstants(List<ASTCDEnumConstant> deletedConstants);
-
+  
   List<DiffTypes> getBaseDiff();
-
+  
   void setBaseDiff(List<DiffTypes> baseDiff);
-
+  
   /**
    * Compute all changed attributes in all classes.
    *
    * @return list of pairs of classes and changed attributes.
    */
   List<Pair<ASTCDClass, ASTCDAttribute>> changedAttribute();
-
+  
   /**
    * Check for each attribute in the list deletedAttribute if it has been really deleted.
    *
    * @return list of pairs of the class with a deleted attribute.
    */
   List<Pair<ASTCDClass, ASTCDAttribute>> deletedAttributes();
-
+  
   /**
    * Check if an attribute is really deleted.
    *
    * @param attribute from list deletedAttributes.
    * @return false if found in inheritance hierarchy (superclass) or the class is now abstract and
-   *     the structure is refactored
+   * the structure is refactored
    */
   Optional<ASTCDClass> isDeleted(ASTCDAttribute attribute);
-
+  
   /**
    * Check for each attribute in the list addedAttributes if it has been really added and add it to
    * a list.
@@ -76,7 +78,7 @@ public interface ICDTypeDiff {
    * @return list of pairs of the class with an added (new) attribute.
    */
   List<Pair<ASTCDClass, ASTCDAttribute>> addedAttributes();
-
+  
   /**
    * Check if an attribute is really added.
    *
@@ -84,14 +86,14 @@ public interface ICDTypeDiff {
    * @return false if found in all 'old' subclasses or in some 'old' superClass
    */
   Optional<ASTCDClass> isAdded(ASTCDAttribute attribute);
-
+  
   /**
    * Get all added constants to an enum
    *
    * @return list of added constants
    */
   Pair<ASTCDEnum, List<ASTCDEnumConstant>> newConstants();
-
+  
   /**
    * Get all attributes with changed types.
    *
@@ -99,7 +101,7 @@ public interface ICDTypeDiff {
    * @return list of pairs of the class (or subclass) and changed attribute.
    */
   Pair<ASTCDClass, ASTCDAttribute> findMemberDiff(CDMemberDiff memberDiff);
-
+  
   /**
    * Find if a change of a modifier has a meaning for a diagram. From abstract to non-abstract:
    * semantic difference - class can now be instantiated. From non-abstract to abstract: possible
@@ -108,4 +110,5 @@ public interface ICDTypeDiff {
    * @return true if we have a semantic difference.
    */
   boolean isClassNeeded();
+  
 }
