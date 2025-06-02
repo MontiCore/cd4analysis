@@ -43,8 +43,8 @@ public class CDRefSymbolHandlerDelegator {
     // TODO Support method, and association references
     if (!processed) {
       // TODO Rework error logging/reporting & exception usage
-      throw new CompletionException("Unsupported forEach reference referenceSymbol"
-          + referenceSymbol + " at " + sourcePosition);
+      throw new CompletionException("Unsupported forEach reference referenceSymbol '"
+          + referenceSymbol + "' at " + sourcePosition);
     }
   }
   

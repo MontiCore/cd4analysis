@@ -76,7 +76,7 @@ public class StereotypeUtil {
       if (stereotype.contains(name)) {
         String value = stereotype.getValue(name);
         if (value == null || value.isEmpty()) {
-          Log.warn(noValueWarning);
+          Log.warn(noValueWarning, modifier.get_SourcePositionStart());
           return Optional.empty();
         }
         return Optional.of(value);

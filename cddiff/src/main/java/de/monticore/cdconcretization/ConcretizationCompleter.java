@@ -23,6 +23,7 @@ import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeComple
 import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
 import de.monticore.cdconcretization.type.method.AbstractMethodInTypeCompleter;
 import de.monticore.cdconcretization.type.method.BaseMethodInTypeCompleter;
+import de.monticore.cdconcretization.type.method.ForEachMethodCompleter;
 import de.monticore.cdconcretization.type.method.IMethodInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconcretization.util.SymbolUtil;
@@ -117,7 +118,7 @@ public class ConcretizationCompleter {
         .add(new ForEachAttributeInTypeCompleter()).add(new BaseAttributeInTypeCompleter()).build();
     
     IMethodInTypeCompleter methodInTypeCompleter = new ChainBuilder<AbstractMethodInTypeCompleter>()
-        .add(new BaseMethodInTypeCompleter()).build();
+        .add(new ForEachMethodCompleter()).add(new BaseMethodInTypeCompleter()).build();
     
     ITypeCompleter typeCompleter = new ChainBuilder<AbstractTypeCompleter>().add(
         new ClassModifierCompleter()).add(new TypeAttributesCompleter(attributeInType)).add(

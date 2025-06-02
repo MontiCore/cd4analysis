@@ -36,6 +36,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cClass, rType);
+        context.getScopedIncarnationBindings().addTypeBinding(cClass.getSymbol(), rType.getSymbol(),
+            cClass.getSymbol());
         typeDetailsCompleter.completeType(cClass, rType, typeCompletionContext);
       }
     }
@@ -44,6 +46,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cInterface)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cInterface, rType);
+        context.getScopedIncarnationBindings().addTypeBinding(cInterface.getSymbol(), rType
+            .getSymbol(), cInterface.getSymbol());
         typeDetailsCompleter.completeType(cInterface, rType, typeCompletionContext);
       }
     }
@@ -51,6 +55,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cEnum)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cEnum, rType);
+        context.getScopedIncarnationBindings().addTypeBinding(cEnum.getSymbol(), rType.getSymbol(),
+            cEnum.getSymbol());
         typeDetailsCompleter.completeType(cEnum, rType, typeCompletionContext);
       }
     }

@@ -3,6 +3,7 @@ package de.monticore.cdconcretization;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import de.monticore.cdconformance.CDConfParameter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -106,6 +107,90 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
         "methods/underspecified/ParameterTypeUnderspecifiedIncarnatedConc.cd",
         "methods/underspecified/ParameterTypeUnderspecifiedRef.cd",
         "methods/underspecified/ParameterTypeUnderspecifiedIncarnatedOut.cd");
+  }
+  
+  // --- ForEach: attribute parameter element ---
+  
+  @Test
+  void testMethodForEachAttribute() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut("methods/forEach/ForEachAttributeConc.cd",
+        "methods/forEach/ForEachAttributeRef.cd", "methods/forEach/ForEachAttributeOut.cd");
+  }
+  
+  @Test
+  void testMethodForEachAttributeDifferentReturnType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeDifferentReturnTypeConc.cd",
+        "methods/forEach/ForEachAttributeDifferentReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeDifferentReturnTypeOut.cd");
+  }
+  
+  /**
+   * Multiple parameters. One matches the name of the attribute and is therefore adapted, the other
+   * one stays the same for all incarnations.
+   */
+  @Test
+  void testMethodForEachAttributeMultipleParameters() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeMultipleParametersConc.cd",
+        "methods/forEach/ForEachAttributeMultipleParametersRef.cd",
+        "methods/forEach/ForEachAttributeMultipleParametersOut.cd");
+  }
+  
+  @Test
+  void testMethodForEachAttributeSameReturnType() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeOut.cd");
+  }
+  
+  @Test
+  void testMethodForEachAttributeSameReturnTypeClassMI() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachAttributeSameReturnTypeClassMIConc.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachAttributeSameReturnTypeClassMIOut.cd");
+  }
+  
+  // --- ForEach: type parameter element ---
+  
+  @Test
+  void testMethodForEachTypeSameReturnType() {
+    testConcretizedConformsToRefAndExpectedOut("methods/forEach/ForEachTypeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeRef.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeOut.cd");
+  }
+  
+  @Test
+  void testMethodForEachTypeSameReturnTypeNoNameMatch() {
+    testConcretizedConformsToRefAndExpectedOut("methods/forEach/ForEachTypeSameReturnTypeConc.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeNoNameMatchRef.cd",
+        "methods/forEach/ForEachTypeSameReturnTypeNoNameMatchOut.cd");
+  }
+  
+  @Test
+  void testMethodForEachTypeSameParameterType() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeRef.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeOut.cd");
+  }
+  
+  @Test
+  void testMethodForEachTypeSameParameterTypeNoNameMatch() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameParameterTypeConc.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeNoNameMatchRef.cd",
+        "methods/forEach/ForEachTypeSameParameterTypeNoNameMatchOut.cd");
   }
   
 }
