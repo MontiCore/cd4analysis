@@ -30,8 +30,8 @@ public class STMethodIncStrategy implements CDMethodMatchingStrategy {
         .contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
       // TODO resolving the signature String every tme is not efficient
-      Optional<MethodSymbol> matchingSymbol =
-          MethodSignatureString.resolveMethodSignature(refType.getSpannedScope(), refName);
+      Optional<MethodSymbol> matchingSymbol = MethodSignatureString.resolveMethodSignature(refType
+          .getSpannedScope(), refName);
       return matchingSymbol.isPresent() && matchingSymbol.get().equals(ref.getSymbol());
     }
     return false;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.util;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,9 +20,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class MethodSignatureStringTest {
-
+  
   private static IOOSymbolsScope scope;
-
+  
   @BeforeAll
   public static void setup() {
     Log.init();
@@ -32,27 +33,23 @@ class MethodSignatureStringTest {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     UnderspecifiedPlaceholderType.addPlaceholderType(CD4CodeMill.globalScope());
-
-    ASTCDCompilationUnit cd =
-        AbstractCDConcretizationTest.parseCD("util/MethodSignatureStrings.cd");
+    
+    ASTCDCompilationUnit cd = AbstractCDConcretizationTest.parseCD(
+        "util/MethodSignatureStrings.cd");
     scope = cd.getEnclosingScope();
   }
-
+  
   @ParameterizedTest
   @MethodSource
-  void testResolveValidExistingSignatures(
-      String signatureString, String symbolName, List<String> parameterTypes) {
-    Optional<MethodSymbol> resolvedSymbol =
-        MethodSignatureString.resolveMethodSignature(scope, signatureString);
+  void testResolveValidExistingSignatures(String signatureString, String symbolName,
+      List<String> parameterTypes) {
+    Optional<MethodSymbol> resolvedSymbol = MethodSignatureString.resolveMethodSignature(scope,
+        signatureString);
     assertTrue(Log.getFindings().isEmpty(), "There should not be any errors!");
     assertTrue(resolvedSymbol.isPresent(), "Signature string should resolve to a symbol");
-    assertEquals(
-        "MethodSignatureStrings." + symbolName,
-        resolvedSymbol.get().getFullName(),
+    assertEquals("MethodSignatureStrings." + symbolName, resolvedSymbol.get().getFullName(),
         "Resolved symbol name should match");
-    assertEquals(
-        parameterTypes.size(),
-        resolvedSymbol.get().getParameterList().size(),
+    assertEquals(parameterTypes.size(), resolvedSymbol.get().getParameterList().size(),
         "Number of parameters should match");
     for (int i = 0; i < parameterTypes.size(); i++) {
       String expectedType = parameterTypes.get(i);
@@ -60,66 +57,51 @@ class MethodSignatureStringTest {
       assertEquals(expectedType, actualType, "Parameter type at index " + i + " should match");
     }
   }
-
+  
   private static Stream<Arguments> testResolveValidExistingSignatures() {
-    return Stream.of(
-        Arguments.of("A.m1()", "A.m1", List.of()),
-        Arguments.of("A.m1(int)", "A.m1", List.of("int")),
-        Arguments.of("A.m1(String)", "A.m1", List.of("String")),
-        Arguments.of("A.m1(int, String)", "A.m1", List.of("int", "String")),
-        Arguments.of("A.m1(int, String, double)", "A.m1", List.of("int", "String", "double")),
-        Arguments.of(
-            "A.m1(int, String, double, boolean)",
-            "A.m1",
-            List.of("int", "String", "double", "boolean")),
+    return Stream.of(Arguments.of("A.m1()", "A.m1", List.of()), Arguments.of("A.m1(int)", "A.m1",
+        List.of("int")), Arguments.of("A.m1(String)", "A.m1", List.of("String")), Arguments.of(
+            "A.m1(int, String)", "A.m1", List.of("int", "String")), Arguments.of(
+                "A.m1(int, String, double)", "A.m1", List.of("int", "String", "double")), Arguments
+                    .of("A.m1(int, String, double, boolean)", "A.m1", List.of("int", "String",
+                        "double", "boolean")),
         // ensure whitespace is ignored
-        Arguments.of("A.m1(       )", "A.m1", List.of()),
-        Arguments.of(
-            "A.m1(int,      String,   double,  boolean)",
-            "A.m1",
-            List.of("int", "String", "double", "boolean")),
+        Arguments.of("A.m1(       )", "A.m1", List.of()), Arguments.of(
+            "A.m1(int,      String,   double,  boolean)", "A.m1", List.of("int", "String", "double",
+                "boolean")),
         // ensure whitespace is mot required
-        Arguments.of(
-            "A.m1(int,String,double,boolean)",
-            "A.m1",
-            List.of("int", "String", "double", "boolean")),
-        Arguments.of("A.m2", "A.m2", List.of()),
-        Arguments.of("A.m2()", "A.m2", List.of()),
-        Arguments.of("A.m3", "A.m3", List.of("int", "String")),
-        Arguments.of("A.m3(int, String)", "A.m3", List.of("int", "String")));
+        Arguments.of("A.m1(int,String,double,boolean)", "A.m1", List.of("int", "String", "double",
+            "boolean")), Arguments.of("A.m2", "A.m2", List.of()), Arguments.of("A.m2()", "A.m2",
+                List.of()), Arguments.of("A.m3", "A.m3", List.of("int", "String")), Arguments.of(
+                    "A.m3(int, String)", "A.m3", List.of("int", "String")));
   }
-
+  
   @ParameterizedTest
   @MethodSource
   void testResolveValidUnknownSignatures(String signatureString) {
-    Optional<MethodSymbol> resolvedSymbol =
-        MethodSignatureString.resolveMethodSignature(scope, signatureString);
+    Optional<MethodSymbol> resolvedSymbol = MethodSignatureString.resolveMethodSignature(scope,
+        signatureString);
     assertTrue(Log.getFindings().isEmpty(), "There should not be any errors!");
     assertTrue(resolvedSymbol.isEmpty(), "Signature string should not resolve to a symbol");
   }
-
+  
   private static Stream<String> testResolveValidUnknownSignatures() {
-    return Stream.of(
-        "B.foo",
-        "B.foo()",
-        "A.unknown",
-        "A.unknown()",
-        "A.m2(int)" // m2 exists but not with parameters
-        );
+    return Stream.of("B.foo", "B.foo()", "A.unknown", "A.unknown()", "A.m2(int)" // m2 exists but not with parameters
+    );
   }
-
+  
   @ParameterizedTest
   @MethodSource
   void testResolveInvalidSignatures(String signatureString) {
-    Optional<MethodSymbol> resolvedSymbol =
-        MethodSignatureString.resolveMethodSignature(scope, signatureString);
+    Optional<MethodSymbol> resolvedSymbol = MethodSignatureString.resolveMethodSignature(scope,
+        signatureString);
     assertFalse(Log.getFindings().isEmpty(), "There should be an error!");
     assertTrue(resolvedSymbol.isEmpty(), "Invalid signature string should not resolve to a symbol");
   }
-
+  
   private static Stream<String> testResolveInvalidSignatures() {
-    return Stream.of(
-        "B.foo(", "B.foo)", "A.m1(UnknownType)", "A.m1" // not unique
-        );
+    return Stream.of("B.foo(", "B.foo)", "A.m1(UnknownType)", "A.m1" // not unique
+    );
   }
+  
 }
