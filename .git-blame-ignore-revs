@@ -1,0 +1,6 @@
+# This file contains the hashes of all commits that should be excluded from
+# git blame (e.g. large-scale format changes).
+# apply se-codestyle to java
+097eac4cafda645b044f6a6d2ec0e37e16b09956
+# apply se-codestyle to markdowns
+76d22281a94eed0248c83f9eb2d6ee5e9405e9ad
