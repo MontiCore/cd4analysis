@@ -32,6 +32,10 @@ public class BuilderDecoratorTest {
 
   @Test
   public void testBuild() {
+    //we need to disable the fail quick mode, otherwise the test will be skipped
+    // Afterward we will test for error messages
+    Log.enableFailQuick(false);
+
     Set<B> manyBTest = Set.of(new B(), new B());
     B optBTest = new B();
     B oneBTest = new B();
@@ -226,6 +230,10 @@ public class BuilderDecoratorTest {
 
   @Test
   public void testUnsafeBuild() {
+    //we need to disable the fail quick mode, otherwise the test will be skipped
+    // Afterward we will test for error messages
+    Log.enableFailQuick(false);
+
     Set<B> manyBTest = Set.of(new B(), new B());
     B optBTest = new B();
     B oneBTest = new B();

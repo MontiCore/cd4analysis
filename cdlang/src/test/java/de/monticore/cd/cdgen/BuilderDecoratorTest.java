@@ -6,6 +6,7 @@ import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.nio.file.Files;
 import org.junit.Assert;
 import java.util.List;
+import java.util.Optional;
 
 class BuilderDecoratorTest extends AbstractDecoratorTest{
 
@@ -70,6 +72,11 @@ class BuilderDecoratorTest extends AbstractDecoratorTest{
     for (Path temPath: templatePaths) {
       Assertions.assertTrue(Files.exists(temPath));
     }
+  }
+
+  @Override
+  protected Optional<MCPath> getHandWrittenPath() {
+    return Optional.of(new MCPath("src/cdGenIntTestHwc/java"));
   }
 
   @Override
