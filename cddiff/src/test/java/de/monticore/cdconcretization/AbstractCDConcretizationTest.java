@@ -135,7 +135,7 @@ public abstract class AbstractCDConcretizationTest {
     this.conCD = parseCD(concrete);
   }
   
-  protected ASTCDCompilationUnit parseCD(String filePath) {
+  public static ASTCDCompilationUnit parseCD(String filePath) {
     ASTCDCompilationUnit cd;
     try {
       cd = CD4CodeMill.parser().parseCDCompilationUnit(TEST_RES_DIR + filePath).orElseThrow(

@@ -28,4 +28,12 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
         "evaluation/getter-setter/SetterRef.cd", "evaluation/getter-setter/SetterOut.cd");
   }
   
+  @Test
+  void testVisitorPattern() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut("evaluation/visitor/VisitorConc.cd",
+        "evaluation/visitor/VisitorRef.cd", "evaluation/visitor/VisitorOut.cd");
+  }
+  
 }

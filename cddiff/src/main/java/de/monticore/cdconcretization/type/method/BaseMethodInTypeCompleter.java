@@ -11,6 +11,7 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
+import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.ISynthesize;
@@ -159,7 +160,7 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
         if (returnTypeIncarnations.size() > 1 || parameterCombinations.size() > 1) {
           // only add the stereotype if we have multiple incarnations
           StereotypeUtil.addStereotype(methodClone.getModifier(), context.getMappingName(),
-              referenceMethod.getSymbol().getFullName());
+              MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
         }
         
         concreteType.addCDMember(methodClone);

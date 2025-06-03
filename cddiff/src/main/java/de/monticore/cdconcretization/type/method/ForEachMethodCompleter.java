@@ -12,6 +12,7 @@ import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
+import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
@@ -119,7 +120,7 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
         // original method
         StereotypeUtil.removeForEachStereotype(newMethod.getModifier());
         StereotypeUtil.addStereotype(newMethod.getModifier(), context.getMappingName(),
-            referenceMethod.getSymbol().getFullName());
+            MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
         
         String newMethodQualifier = paramIncarnationDeclaringType.getFullName();
         String newMethodFullName = Names.getQualifiedName(newMethodQualifier, newMethod.getName());
@@ -202,7 +203,7 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
       // original method
       StereotypeUtil.removeForEachStereotype(newMethod.getModifier());
       StereotypeUtil.addStereotype(newMethod.getModifier(), context.getMappingName(),
-          referenceMethod.getSymbol().getFullName());
+          MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
       
       // 5. pass the new method to the next completer
       super.completeMethodInType(context.getConcreteType(), newMethod, context);
