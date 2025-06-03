@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.cd;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -35,6 +36,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cClass, rType);
+        context.getScopedIncarnationBindings().addTypeBinding(cClass.getSymbol(), rType.getSymbol(),
+            cClass.getSymbol());
         typeDetailsCompleter.completeType(cClass, rType, typeCompletionContext);
       }
     }
@@ -43,6 +46,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cInterface)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cInterface, rType);
+        context.getScopedIncarnationBindings().addTypeBinding(cInterface.getSymbol(), rType
+            .getSymbol(), cInterface.getSymbol());
         typeDetailsCompleter.completeType(cInterface, rType, typeCompletionContext);
       }
     }
@@ -50,6 +55,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cEnum)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cEnum, rType);
+        context.getScopedIncarnationBindings().addTypeBinding(cEnum.getSymbol(), rType.getSymbol(),
+            cEnum.getSymbol());
         typeDetailsCompleter.completeType(cEnum, rType, typeCompletionContext);
       }
     }
@@ -59,12 +66,10 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
   static class DefaultTypeCompletionContext implements TypeCompletionContext {
     
     private final CDCompletionContext parentContext;
-    
     private final ASTCDType concreteType;
-    
     private final ASTCDType referenceType;
-    
     private final MatchingStrategy<ASTCDAttribute> attributeIncStrategy;
+    private final MatchingStrategy<ASTCDMethod> methodIncStrategy;
     
     DefaultTypeCompletionContext(CDCompletionContext parentContext, ASTCDType concreteType,
         ASTCDType referenceType) {
@@ -73,6 +78,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       this.referenceType = referenceType;
       
       attributeIncStrategy = parentContext.createAttributeIncStrategy(referenceType);
+      methodIncStrategy = parentContext.createMethodIncStrategy(referenceType);
     }
     
     @Override
@@ -130,6 +136,14 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     @Override
     public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
       return parentContext.createAttributeIncStrategy(referenceType);
+    }
+    
+    @Override
+    public MatchingStrategy<ASTCDMethod> getMethodIncStrategy() { return methodIncStrategy; }
+    
+    @Override
+    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
+      return parentContext.createMethodIncStrategy(referenceType);
     }
     
     @Override

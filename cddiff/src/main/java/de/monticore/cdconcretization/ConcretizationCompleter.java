@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -20,6 +21,10 @@ import de.monticore.cdconcretization.type.attribute.AbstractAttributeInTypeCompl
 import de.monticore.cdconcretization.type.attribute.BaseAttributeInTypeCompleter;
 import de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter;
 import de.monticore.cdconcretization.type.attribute.IAttributeInTypeCompleter;
+import de.monticore.cdconcretization.type.method.AbstractMethodInTypeCompleter;
+import de.monticore.cdconcretization.type.method.BaseMethodInTypeCompleter;
+import de.monticore.cdconcretization.type.method.ForEachMethodCompleter;
+import de.monticore.cdconcretization.type.method.IMethodInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
@@ -27,6 +32,10 @@ import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
+import de.monticore.cdconformance.inc.method.CompMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.EqNameMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
@@ -106,13 +115,15 @@ public class ConcretizationCompleter {
         new ForEachTypeInCDCompleter()).add(new BaseTypeInCDCompleter()).build();
     
     IAttributeInTypeCompleter attributeInType = new ChainBuilder<AbstractAttributeInTypeCompleter>()
-        // TODO add name stereotype support here
         .add(new ForEachAttributeInTypeCompleter()).add(new BaseAttributeInTypeCompleter()).build();
     
+    IMethodInTypeCompleter methodInTypeCompleter = new ChainBuilder<AbstractMethodInTypeCompleter>()
+        .add(new ForEachMethodCompleter()).add(new BaseMethodInTypeCompleter()).build();
+    
     ITypeCompleter typeCompleter = new ChainBuilder<AbstractTypeCompleter>().add(
-        new ClassModifierCompleter()).add(new TypeAttributesCompleter(attributeInType))
-        // TODO add method completer here
-        .add(new DefaultEnumConstantsCompleter()).build();
+        new ClassModifierCompleter()).add(new TypeAttributesCompleter(attributeInType)).add(
+            new TypeMethodsCompleter(methodInTypeCompleter)).add(
+                new DefaultEnumConstantsCompleter()).build();
     
     IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
     IAssociationCompleter assocCompleter = new DefaultAssocCompleter(concreteCD,
@@ -296,6 +307,25 @@ public class ConcretizationCompleter {
       }
       attributeIncStrategy.setReferenceType(referenceType);
       return attributeIncStrategy;
+    }
+    
+    @Override
+    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
+      CompMethodIncStrategy methodIncStrategy = new CompMethodIncStrategy();
+      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
+        methodIncStrategy.addIncStrategy(new STMethodIncStrategy(mapping));
+      }
+      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
+        if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
+          methodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(mcTypeMatcher,
+              conformanceParams.contains(CDConfParameter.STRICT_PARAMETER_ORDER)));
+        }
+        else {
+          methodIncStrategy.addIncStrategy(new EqNameMethodIncStrategy());
+        }
+      }
+      methodIncStrategy.setReferenceType(referenceType);
+      return methodIncStrategy;
     }
     
     @Override

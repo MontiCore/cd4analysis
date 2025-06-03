@@ -1,0 +1,5 @@
+classdiagram ReturnTypeMIConc {
+
+  <<ref="Transaction">> class NormalTransaction;
+  <<ref="Transaction">> class InstantTransaction;
+}

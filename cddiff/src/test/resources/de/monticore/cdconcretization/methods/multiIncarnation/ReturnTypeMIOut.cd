@@ -1,0 +1,13 @@
+classdiagram ReturnTypeMIConc {
+
+  <<ref="Transaction">> class NormalTransaction;
+  <<ref="Transaction">> class InstantTransaction;
+
+  class Account;
+
+  class Bank {
+    void createAccount(Account account);
+    <<ref="Reference.Bank.transfer">> NormalTransaction transfer_NormalTransaction(Account from, Account to, int amount);
+    <<ref="Reference.Bank.transfer">> InstantTransaction transfer_InstantTransaction(Account from, Account to, int amount);
+  }
+}

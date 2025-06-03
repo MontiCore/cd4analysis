@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-public class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
+class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
   
   @Test
   void testEvaluation() {

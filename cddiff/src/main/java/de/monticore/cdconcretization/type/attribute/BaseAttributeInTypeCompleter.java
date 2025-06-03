@@ -8,7 +8,6 @@ import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
-import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
@@ -77,9 +76,7 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
     }
     
     ASTCDType rAttributeType = (ASTCDType) rAttributeTypeOpt.get();
-    Set<ASTCDType> typeIncarnations = ConcretizationHelper.getCDTypes(context.getConcreteCD())
-        .stream().filter(type -> context.getTypeIncStrategy().isMatched(type, rAttributeType))
-        .collect(Collectors.toSet());
+    Set<ASTCDType> typeIncarnations = context.getTypeIncarnations(rAttributeType);
     
     for (ASTCDType cAttributeType : typeIncarnations) {
       ASTCDAttribute attributeIncarnation = referenceAttribute.deepClone();
@@ -93,10 +90,9 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
       // 2. set type of incarnation
       // use FQ name to avoid messing with imports / name conflicts
       attributeIncarnation.setMCType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-          MCQualifiedNameFacade.createQualifiedName(cAttributeType.getSymbol().getFullName()))
-          .build());
+          MCQualifiedNameFacade.createQualifiedName(cAttributeType.getSymbol()
+              .getInternalQualifiedName())).build());
       
-      // TODO maybe cut off the CD name from FQName?
       StereotypeUtil.addStereotype(attributeIncarnation.getModifier(), context.getMappingName(),
           referenceAttribute.getSymbol().getFullName());
       

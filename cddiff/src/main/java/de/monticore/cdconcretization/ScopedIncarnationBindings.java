@@ -6,8 +6,10 @@ import com.google.common.collect.Multimap;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symboltable.IGlobalScope;
 import de.monticore.symboltable.IScope;
+import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,9 +34,23 @@ public class ScopedIncarnationBindings {
   
   private final Map<String, Multimap<String, FieldSymbol>> fieldBindings = new HashMap<>();
   
+  private final Map<String, Multimap<String, MethodSymbol>> methodBindings = new HashMap<>();
+  
   public void addTypeBinding(String scopeSpanningSymbolName, TypeSymbol referenceType,
       TypeSymbol concreteTypes) {
     addTypeBinding(scopeSpanningSymbolName, referenceType, Set.of(concreteTypes));
+  }
+  
+  /**
+   * Adds a type binding for the scope spanned by the given symbol.
+   *
+   * @param symbol
+   * @param referenceType
+   * @param concreteTypes
+   */
+  public void addTypeBinding(IScopeSpanningSymbol symbol, TypeSymbol referenceType,
+      TypeSymbol concreteTypes) {
+    addTypeBinding(symbol.getFullName(), referenceType, Set.of(concreteTypes));
   }
   
   /**
@@ -59,6 +75,14 @@ public class ScopedIncarnationBindings {
         scopeSpanningSymbolName, (k) -> ArrayListMultimap.create());
     // TODO future: make sure the binding we add does not conflict with existing ones
     fieldBinding.putAll(referenceField.getFullName(), concreteFields);
+  }
+  
+  public void addMethodBinding(String scopeSpanningSymbolName, MethodSymbol referenceMethod,
+      Set<MethodSymbol> concreteMethods) {
+    Multimap<String, MethodSymbol> methodBinding = methodBindings.computeIfAbsent(
+        scopeSpanningSymbolName, (k) -> ArrayListMultimap.create());
+    // TODO future: make sure the binding we add does not conflict with existing ones
+    methodBinding.putAll(referenceMethod.getFullName(), concreteMethods);
   }
   
   public Optional<Collection<TypeSymbol>> getScopedTypeIncarnations(IScope concreteScope,
