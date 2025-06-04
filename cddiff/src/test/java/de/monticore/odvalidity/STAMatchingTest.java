@@ -48,7 +48,6 @@ public class STAMatchingTest {
     Log.enableFailQuick(false);
     
     CD4CodeMill.reset();
-    CD4CodeMill.globalScope().clear();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().init();
   }
