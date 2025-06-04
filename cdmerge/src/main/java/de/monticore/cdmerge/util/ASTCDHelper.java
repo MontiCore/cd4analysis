@@ -16,40 +16,40 @@ import java.util.stream.Collectors;
  * concrete implementation of the CD4Code Symboltable
  */
 public class ASTCDHelper {
-
+  
   private Map<String, List<ASTCDAssociation>> associationPerReference;
-
+  
   private List<ASTCDAssociation> associationsCDInternalTypes;
-
+  
   private List<ASTCDAssociation> associationsWithExternalReference;
-
+  
   private Map<String, List<ASTCDAttribute>> attributesForClass;
-
+  
   private ASTCDCompilationUnit cdFile;
-
+  
   private final Map<String, List<ASTCDElement>> cdPackages;
-
+  
   private Map<ASTCDElement, ASTCDPackage> cdPackagesLookup;
-
+  
   private final Map<String, ASTCDClass> classes;
-
+  
   private final Map<String, ASTCDEnum> enums;
-
+  
   private final Map<String, ASTCDInterface> interfaces;
-
+  
   private final Map<String, ASTCDAssociation> namedAssociations;
-
+  
   private final Map<String, String> superClasses;
-
+  
   private final Map<String, List<String>> superInterfaces;
-
+  
   public ASTCDHelper(ASTCDCompilationUnit cd) {
     this();
     this.cdFile = cd;
-
+    
     // Start resolving all the stuff
     new ASTCDElementCollector(this).collect(cd);
-
+    
     // We need to check consistent type hierarchy here, otherwise resolving of
     // super-classes will not terminate later
     if (this.superClasses.size() > 1) {
@@ -58,45 +58,35 @@ public class ASTCDHelper {
         String clazz = iter.next();
         List<String> typeHiearchy = new ArrayList<String>();
         if (checkIsInheritanceCycle(this.superClasses.get(clazz), typeHiearchy)) {
-          throw new ConfigurationException(
-              "Class Diagram "
-                  + cd.getCDDefinition().getName()
-                  + " introduces a cyclic dependence in super class hierachy of "
-                  + clazz
-                  + " > "
-                  + String.join(" > ", typeHiearchy)
-                  + " !");
+          throw new ConfigurationException("Class Diagram " + cd.getCDDefinition().getName()
+              + " introduces a cyclic dependence in super class hierachy of " + clazz + " > "
+              + String.join(" > ", typeHiearchy) + " !");
         }
       }
     }
-
+    
     if (this.superInterfaces.size() > 1) {
       Iterator<String> iter = this.superInterfaces.keySet().iterator();
       while (iter.hasNext()) {
         String type = iter.next();
         List<String> typeHiearchy = new ArrayList<String>();
         if (checkIsTypeHierarchyCycle(this.superInterfaces.get(type), typeHiearchy)) {
-          throw new ConfigurationException(
-              "Class Diagram "
-                  + cd.getCDDefinition().getName()
-                  + " introduces a cyclic dependence in type hierachy of "
-                  + type
-                  + " > "
-                  + String.join(" > ", typeHiearchy)
-                  + "!");
+          throw new ConfigurationException("Class Diagram " + cd.getCDDefinition().getName()
+              + " introduces a cyclic dependence in type hierachy of " + type + " > " + String.join(
+                  " > ", typeHiearchy) + "!");
         }
       }
     }
-
+    
     // CleanUp Interfaces and Superclasses - we only want to have local
     // stuff
     cleanSuperclasses();
     cleanInterfaces();
     cleanAssociations();
   }
-
+  
   private ASTCDHelper() {
-
+    
     this.classes = new HashMap<String, ASTCDClass>();
     this.interfaces = new HashMap<String, ASTCDInterface>();
     this.enums = new HashMap<String, ASTCDEnum>();
@@ -110,7 +100,7 @@ public class ASTCDHelper {
     this.cdPackages = new HashMap<String, List<ASTCDElement>>();
     this.cdPackagesLookup = new HashMap<ASTCDElement, ASTCDPackage>();
   }
-
+  
   public boolean cdContainsClass(final String className) {
     if (isFullyQualifiedName(className)) {
       Optional<ASTCDType> type = getLocalTypeReference(className);
@@ -120,7 +110,7 @@ public class ASTCDHelper {
     }
     return this.classes.containsKey(className);
   }
-
+  
   public boolean cdContainsEnum(final String className) {
     if (isFullyQualifiedName(className)) {
       Optional<ASTCDType> type = getLocalTypeReference(className);
@@ -130,7 +120,7 @@ public class ASTCDHelper {
     }
     return this.enums.containsKey(className);
   }
-
+  
   public boolean cdContainsInterface(final String className) {
     if (isFullyQualifiedName(className)) {
       Optional<ASTCDType> type = getLocalTypeReference(className);
@@ -140,11 +130,11 @@ public class ASTCDHelper {
     }
     return this.interfaces.containsKey(className);
   }
-
+  
   public boolean cdContainsType(final String typeName) {
     return cdContainsClass(typeName) || cdContainsInterface(typeName) || cdContainsEnum(typeName);
   }
-
+  
   /** Checks if theInterface extends the superInterfacs */
   public boolean checkExtendsInterface(final String theInterface, final String superInteface) {
     List<ASTCDInterface> superInterfaces = getLocalSuperInterfaces(theInterface);
@@ -155,29 +145,27 @@ public class ASTCDHelper {
     }
     return false;
   }
-
+  
   public List<ASTCDAssociation> getAllAssociations() {
     return this.cdFile.getCDDefinition().getCDAssociationsList();
   }
-
+  
   public List<ASTCDClass> getAllClasses() {
     return this.cdFile.getCDDefinition().getCDClassesList();
   }
-
-  public List<ASTCDEnum> getAllEnums() {
-    return this.cdFile.getCDDefinition().getCDEnumsList();
-  }
-
+  
+  public List<ASTCDEnum> getAllEnums() { return this.cdFile.getCDDefinition().getCDEnumsList(); }
+  
   public List<ASTCDInterface> getAllInterfaces() {
     return this.cdFile.getCDDefinition().getCDInterfacesList();
   }
-
+  
   /**
    * Resolves Association for a type
    *
    * @param typeName - the type which is referred to either of the association end
    * @return all associations which are associated with type name (ignoring navigation!) or empty if
-   *     no association refers to this type
+   * no association refers to this type
    */
   public Optional<List<ASTCDAssociation>> getAssociationsForType(final String typeName) {
     if (this.associationPerReference.containsKey(typeName)) {
@@ -185,28 +173,28 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /**
    * Associations with external references
    *
    * @return all associations which are associated with at least one external type, i.e. an imported
-   *     or fully qualified type which is not defined within this class diagram
+   * or fully qualified type which is not defined within this class diagram
    */
   public Optional<List<ASTCDAssociation>> getAssociationsWithExternalReferences() {
-
+    
     return Optional.of(this.associationsWithExternalReference);
   }
-
+  
   /**
    * resolves an attribute in a class
    *
    * @param attrName the name of the attribute to be resolved
    * @param className class to be searched in
    * @return the found attribute's ASTNode or empty if the class does not contain this attribute or
-   *     the class doesn't exist
+   * the class doesn't exist
    */
-  public Optional<ASTCDAttribute> getAttributeFromClass(
-      final String attrName, final String className) {
+  public Optional<ASTCDAttribute> getAttributeFromClass(final String attrName,
+      final String className) {
     if (this.attributesForClass.containsKey(className)) {
       for (ASTCDAttribute attribute : this.attributesForClass.get(className)) {
         if (attribute.getName().equalsIgnoreCase(attrName)) {
@@ -216,28 +204,25 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
-  public ASTCDDefinition getCDDefinition() {
-    return this.cdFile.getCDDefinition();
-  }
-
-  public ASTCDCompilationUnit getCDFile() {
-    return this.cdFile;
-  }
-
+  
+  public ASTCDDefinition getCDDefinition() { return this.cdFile.getCDDefinition(); }
+  
+  public ASTCDCompilationUnit getCDFile() { return this.cdFile; }
+  
   public Optional<ASTCDPackage> getCDPackage(ASTCDElement element) {
     if (this.cdPackagesLookup.containsKey(element)) {
       return Optional.of(this.cdPackagesLookup.get(element));
-    } else {
-      Optional<ASTCDElement> keyElement =
-          this.cdPackagesLookup.keySet().stream().filter(el -> el.deepEquals(element)).findAny();
+    }
+    else {
+      Optional<ASTCDElement> keyElement = this.cdPackagesLookup.keySet().stream().filter(el -> el
+          .deepEquals(element)).findAny();
       if (keyElement.isPresent()) {
         return Optional.of(this.cdPackagesLookup.get(keyElement.get()));
       }
     }
     return Optional.empty();
   }
-
+  
   public Optional<String> getCDPackageName(ASTCDElement element) {
     Optional<ASTCDPackage> cdPackage = getCDPackage(element);
     if (cdPackage.isPresent()) {
@@ -245,7 +230,7 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /**
    * resolves a type in a class diagram
    *
@@ -258,12 +243,12 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /** Returns the names of all classes declared in this class diagram */
   public Set<String> getClassNames() {
     return this.classes.keySet();
   }
-
+  
   /**
    * resolves an enum in a class diagram
    *
@@ -276,18 +261,18 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /** Returns the names of all enums declared in this class diagram */
   public Set<String> getEnumNames() {
     return this.enums.keySet();
   }
-
+  
   /**
    * Returns the first common Super Class of these classes ore empty if the classes don't share a
    * common superclass
    */
-  public Optional<ASTCDClass> getFirstCommonSuperClass(
-      final ASTCDClass class1, final ASTCDClass class2) {
+  public Optional<ASTCDClass> getFirstCommonSuperClass(final ASTCDClass class1,
+      final ASTCDClass class2) {
     String clazz;
     List<String> allSuperClasses1 = new ArrayList<String>();
     if (superClasses.containsKey(class1.getName()) && superClasses.containsKey(class2.getName())) {
@@ -306,20 +291,20 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /**
    * Returns the ASTReference to the first common Super Class of these classes ore empty if the
    * classes don't share a common superclass in this class diagram
    */
-  public Optional<ASTMCObjectType> getFirstCommonSuperClassReference(
-      final ASTCDClass class1, final ASTCDClass class2) {
+  public Optional<ASTMCObjectType> getFirstCommonSuperClassReference(final ASTCDClass class1,
+      final ASTCDClass class2) {
     Optional<ASTCDClass> superclass = getFirstCommonSuperClass(class1, class2);
     if (superclass.isPresent()) {
       // We have to find one subclass to reconstruct the ASTReference....
       String clazz = class1.getName();
       String directSubclass = "";
-      while (superClasses.containsKey(clazz)
-          && !clazz.equalsIgnoreCase(superclass.get().getName())) {
+      while (superClasses.containsKey(clazz) && !clazz.equalsIgnoreCase(superclass.get()
+          .getName())) {
         directSubclass = clazz;
         clazz = superClasses.get(clazz);
       }
@@ -329,7 +314,7 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /**
    * resolves a type in a class diagram
    *
@@ -342,23 +327,23 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /** Returns the names of all interfaces declared in this class diagram */
   public Set<String> getInterfaceNames() {
     return this.interfaces.keySet();
   }
-
+  
   /**
    * Associations with only cd internal references
    *
    * @return all associations which are associated with internal types, i.e. both referenced types
-   *     are declared in this cd
+   * are declared in this cd
    */
   public List<ASTCDAssociation> getLocalAssociations() {
-
+    
     return this.associationsCDInternalTypes;
   }
-
+  
   public List<ASTCDInterface> getLocalImplementedInterfaces(final String className) {
     List<ASTCDInterface> interfaces = new ArrayList<>();
     Optional<ASTCDClass> clazz = getClass(className);
@@ -368,22 +353,21 @@ public class ASTCDHelper {
           interfaces.add(getInterface(CDMergeUtils.getName(iface)).get());
         }
         interfaces.addAll(getLocalSuperInterfaces(CDMergeUtils.getName(iface)));
-
+        
         if (clazz.get().getSuperclassList().size() == 1) {
           // Consider the implemented interfaces of the superclasses
-          interfaces.addAll(
-              getLocalImplementedInterfaces(
-                  CDMergeUtils.getName(clazz.get().getSuperclassList().get(0))));
+          interfaces.addAll(getLocalImplementedInterfaces(CDMergeUtils.getName(clazz.get()
+              .getSuperclassList().get(0))));
         }
       }
     }
     return interfaces;
   }
-
+  
   public List<ASTCDClass> getLocalSuperClasses(final String className) {
     List<ASTCDClass> sc = new ArrayList<ASTCDClass>();
-    if (this.superClasses.containsKey(className)
-        && getClass(this.superClasses.get(className)).isPresent()) {
+    if (this.superClasses.containsKey(className) && getClass(this.superClasses.get(className))
+        .isPresent()) {
       ASTCDClass clazz = getClass(this.superClasses.get(className)).get();
       sc.add(clazz);
       // Add transitive Superclasses
@@ -393,7 +377,7 @@ public class ASTCDHelper {
     }
     return sc;
   }
-
+  
   public List<ASTCDInterface> getLocalSuperInterfaces(final String typeName) {
     List<ASTCDInterface> interfaces = new ArrayList<ASTCDInterface>();
     if (this.superInterfaces.containsKey(typeName)) {
@@ -407,7 +391,7 @@ public class ASTCDHelper {
     }
     return interfaces;
   }
-
+  
   /**
    * Returns the local Name if the provided fullyQualifiedName refers to type declared in this class
    * diagram. Compares fully qualified path with cd.package and checks if the type is known
@@ -419,36 +403,36 @@ public class ASTCDHelper {
     if (fullyQualifiedNameParts.size() == 0) {
       return Optional.empty();
     }
-
+    
     if (this.cdFile.getCDPackageList() == null || this.cdFile.getCDPackageList().isEmpty()) {
       if (fullyQualifiedNameParts.size() > 1) {
         return Optional.empty();
       }
-    } else {
+    }
+    else {
       // Compare package: skip the typename on index size-1
-      if (!fullyQualifiedNameParts
-          .subList(0, fullyQualifiedNameParts.size() - 2)
-          .equals(this.cdFile.getCDPackageList())) {
+      if (!fullyQualifiedNameParts.subList(0, fullyQualifiedNameParts.size() - 2).equals(this.cdFile
+          .getCDPackageList())) {
         return Optional.empty();
       }
     }
     return getType(fullyQualifiedNameParts.get(fullyQualifiedNameParts.size() - 1));
   }
-
+  
   public Optional<ASTCDType> getLocalTypeReference(String fullyQualifiedName) {
     if (!fullyQualifiedName.contains(".")) {
       return getType(fullyQualifiedName);
     }
-    return getLocalTypeReference(
-        Arrays.stream(fullyQualifiedName.split(".")).collect(Collectors.toList()));
+    return getLocalTypeReference(Arrays.stream(fullyQualifiedName.split(".")).collect(Collectors
+        .toList()));
   }
-
+  
   /**
    * Resolves an Association by name
    *
    * @param associatioName - the name of the association
    * @return the association with the specified name or empty if no associaition was found with this
-   *     name
+   * name
    */
   public Optional<ASTCDAssociation> getNamedAssociations(final String associatioName) {
     if (this.namedAssociations.containsKey(associatioName)) {
@@ -456,7 +440,7 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /**
    * resolves a type in a class diagram
    *
@@ -475,7 +459,7 @@ public class ASTCDHelper {
     }
     return Optional.empty();
   }
-
+  
   /**
    * Returns the names of all types inn (Classes, Interfaces, Enums) declared in this class diagram
    */
@@ -486,11 +470,11 @@ public class ASTCDHelper {
     types.addAll(getEnumNames());
     return types;
   }
-
+  
   public boolean isInDefaultPackage(ASTCDElement element) {
     return !getCDPackage(element).isPresent();
   }
-
+  
   /**
    * Returns true if the provided fullyQualifiedName refers to type declared in this class diagram.
    * Compares fully qualified path with cd.package and checks if the type is known
@@ -501,15 +485,15 @@ public class ASTCDHelper {
   public boolean isLocalTypeReference(List<String> fullyQualifiedNameParts) {
     return getLocalTypeReference(fullyQualifiedNameParts).isPresent();
   }
-
+  
   public boolean isLocalTypeReference(String fullyQualifiedName) {
     if (!fullyQualifiedName.contains(".")) {
       return true;
     }
-    return (isLocalTypeReference(
-        Arrays.stream(fullyQualifiedName.split(".")).collect(Collectors.toList())));
+    return (isLocalTypeReference(Arrays.stream(fullyQualifiedName.split(".")).collect(Collectors
+        .toList())));
   }
-
+  
   /**
    * returns the list of attributes from class which are not included in any of it's superclasses
    */
@@ -520,69 +504,69 @@ public class ASTCDHelper {
     for (ASTCDClass superClass : superclasses) {
       common.addAll(CDMergeUtils.commonAttributeNames(clazz, superClass));
     }
-    unique.removeIf(
-        attr ->
-            common.stream().filter(a -> a.getName().equals(attr.getName())).findAny().isPresent());
+    unique.removeIf(attr -> common.stream().filter(a -> a.getName().equals(attr.getName()))
+        .findAny().isPresent());
     return unique;
   }
-
-  protected void addAssociationForTypeReference(
-      final String typeName, final ASTCDAssociation association) {
-
+  
+  protected void addAssociationForTypeReference(final String typeName,
+      final ASTCDAssociation association) {
+    
     if (!this.associationPerReference.containsKey(typeName)) {
       this.associationPerReference.put(typeName, new LinkedList<ASTCDAssociation>());
     }
     this.associationPerReference.get(typeName).add(association);
   }
-
+  
   protected void addAssociationWithExternalReferences(final ASTCDAssociation association) {
     this.associationsWithExternalReference.add(association);
   }
-
-  protected void addAttributesForClass(
-      final String clazzName, final List<ASTCDAttribute> attributes) {
+  
+  protected void addAttributesForClass(final String clazzName,
+      final List<ASTCDAttribute> attributes) {
     this.attributesForClass.put(clazzName, attributes);
   }
-
+  
   protected void addClass(final String name, final ASTCDClass clazz) {
     this.classes.put(name, clazz);
   }
-
+  
   protected void addEnum(final String name, final ASTCDEnum en) {
     this.enums.put(name, en);
   }
-
+  
   protected void addInterface(final String name, final ASTCDInterface iface) {
     this.interfaces.put(name, iface);
   }
-
+  
   protected void addInternalAssociation(final ASTCDAssociation association) {
     this.associationsCDInternalTypes.add(association);
   }
-
+  
   protected void addNamedAssociation(final String name, final ASTCDAssociation association) {
     this.namedAssociations.put(name, association);
   }
-
+  
   protected void addPackageScope(ASTCDPackage node) {
     if (node != null && !node.getMCQualifiedName().toString().isEmpty()) {
       this.cdPackages.put(node.getMCQualifiedName().getBaseName(), node.getCDElementList());
       for (ASTCDElement element : node.getCDElementList()) {
         this.cdPackagesLookup.put(element, node);
       }
-    } else {
+    }
+    else {
       // NO PACKAGE? OR DEFAULT PACKAGE?
     }
   }
-
+  
   protected void addSuperclass(final String className, final String superClass) {
     this.superClasses.put(className, superClass);
   }
-
+  
   protected void addSuperInterfaces(final String typeName, final List<String> ifaces) {
     this.superInterfaces.put(typeName, ifaces);
   }
-
+  
   private boolean checkIsInheritanceCycle(String className, List<String> visited) {
     if (visited.stream().filter(i -> i.equals(className)).findAny().isPresent()) {
       return true;
@@ -590,11 +574,12 @@ public class ASTCDHelper {
     if (this.superClasses.containsKey(className)) {
       visited.add(className);
       return checkIsInheritanceCycle(this.superClasses.get(className), visited);
-    } else {
+    }
+    else {
       return false;
     }
   }
-
+  
   private boolean checkIsTypeHierarchyCycle(List<String> interfaces, List<String> visited) {
     for (String iface : interfaces) {
       if (visited.stream().filter(i -> i.equals(iface)).findAny().isPresent()) {
@@ -607,15 +592,15 @@ public class ASTCDHelper {
     }
     return false;
   }
-
+  
   private void cleanAssociations() {
     // Move all the associations which do not refer to a type declared
     // in this class diagramm (i.e. imported Types)
     List<String> externalRefs = new ArrayList<String>();
     for (String referenceName : associationPerReference.keySet()) {
       if (!getType(referenceName).isPresent()) {
-        this.associationsWithExternalReference.addAll(
-            this.associationPerReference.get(referenceName));
+        this.associationsWithExternalReference.addAll(this.associationPerReference.get(
+            referenceName));
         externalRefs.add(referenceName);
       }
     }
@@ -628,11 +613,12 @@ public class ASTCDHelper {
         assoc = it.next();
         this.associationsCDInternalTypes.remove(assoc);
         String refName = assoc.getLeftReferenceName().get(assoc.getLeftReferenceName().size() - 1);
-
+        
         if (getType(refName).isPresent()) {
           // Remove all associations referring to the foreign type
           this.associationPerReference.get(refName).remove(assoc);
-        } else {
+        }
+        else {
           refName = assoc.getRightReferenceName().get(assoc.getLeftReferenceName().size() - 1);
           if (getType(refName).isPresent()) {
             // Remove all associations referring to the foreign type
@@ -644,7 +630,7 @@ public class ASTCDHelper {
       this.associationPerReference.remove(referenceName);
     }
   }
-
+  
   private void cleanInterfaces() {
     List<String> removeKeys = new ArrayList<String>(this.superInterfaces.keySet().size());
     for (String type : superInterfaces.keySet()) {
@@ -658,7 +644,7 @@ public class ASTCDHelper {
       }
     }
   }
-
+  
   private void cleanSuperclasses() {
     List<String> removeKeys = new ArrayList<String>(this.superClasses.keySet().size());
     for (String clazz : superClasses.keySet()) {
@@ -670,20 +656,20 @@ public class ASTCDHelper {
       this.superClasses.remove(key);
     }
   }
-
+  
   private Optional<String> getDefaultCDPackageName() {
     if (this.cdFile.isPresentMCPackageDeclaration()) {
-      return Optional.of(
-          String.join(
-              ".", this.cdFile.getMCPackageDeclaration().getMCQualifiedName().getPartsList()));
+      return Optional.of(String.join(".", this.cdFile.getMCPackageDeclaration().getMCQualifiedName()
+          .getPartsList()));
     }
     return Optional.empty();
   }
-
+  
   private boolean isFullyQualifiedName(String name) {
     if (name == null) {
       name = "";
     }
     return name.contains(".");
   }
+  
 }

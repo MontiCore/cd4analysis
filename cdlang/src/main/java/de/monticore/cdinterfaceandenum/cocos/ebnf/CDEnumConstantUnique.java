@@ -10,18 +10,18 @@ import java.util.HashSet;
 
 /** Checks uniqueness among the enum constants. */
 public class CDEnumConstantUnique implements CDInterfaceAndEnumASTCDEnumCoCo {
-
+  
   @Override
   public void check(ASTCDEnum node) {
     Collection<String> usedNames = new HashSet<>();
     for (ASTCDEnumConstant constant : node.getCDEnumConstantList()) {
       String name = constant.getName();
       if (usedNames.contains(name)) {
-        Log.error(
-            String.format("0xCDC30: Duplicate enum constant: %s.", name),
-            constant.get_SourcePositionStart());
+        Log.error(String.format("0xCDC30: Duplicate enum constant: %s.", name), constant
+            .get_SourcePositionStart());
       }
       usedNames.add(name);
     }
   }
+  
 }

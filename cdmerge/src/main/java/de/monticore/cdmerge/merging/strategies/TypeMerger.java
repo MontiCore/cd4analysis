@@ -11,13 +11,14 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
  * reconfigures references (super class, implemented interfaces)
  */
 public abstract class TypeMerger extends MergerBase {
-
+  
   protected final TypeMergeStrategy typeMergeStrategy;
-
+  
   public TypeMerger(MergeBlackBoard mergeBlackBoard, TypeMergeStrategy typeMergeStrategy) {
     super(mergeBlackBoard, MergePhase.TYPE_MERGING);
     this.typeMergeStrategy = typeMergeStrategy;
   }
-
+  
   public abstract void mergeTypes(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchResult);
+  
 }

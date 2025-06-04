@@ -15,34 +15,34 @@ import java.util.Optional;
  * @param <D>
  */
 public abstract class AbstractDecorator<D> implements IDecorator<D> {
+  
   protected DecoratorData decoratorData;
   protected Optional<GlobalExtensionManagement> glexOpt;
-
+  
   @Override
   public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
     this.decoratorData = util;
     this.glexOpt = glexOpt;
   }
-
+  
   protected void addElementToParent(ASTNode decoratedParent, ASTCDElement newElem) {
     if (decoratedParent instanceof ASTCDDefinition)
       ((ASTCDDefinition) decoratedParent).addCDElement(newElem);
     else if (decoratedParent instanceof ASTCDPackage)
       ((ASTCDPackage) decoratedParent).addCDElement(newElem);
     else
-      throw new IllegalStateException(
-          "Unhandled addElementToParent " + decoratedParent.getClass().getName());
+      throw new IllegalStateException("Unhandled addElementToParent " + decoratedParent.getClass()
+          .getName());
   }
-
+  
   protected void addToClass(ASTCDClass clazz, ASTCDMember member) {
     // TODO: Only add iff not yet present (#4310)
     clazz.addCDMember(member);
   }
-
-  public CDGenService getCDGenService() {
-    return decoratorData.cdGenService;
-  }
-
+  
+  public CDGenService getCDGenService() { return decoratorData.cdGenService; }
+  
   /** For Decorators not specifying any additional data */
   public static class NoData {}
+  
 }

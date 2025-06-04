@@ -37,23 +37,23 @@ import java.util.Set;
  * inheritance-strategy to convert inheritance
  */
 public class CD2SMTGenerator {
-
+  
   private ClassStrategy classStrategy;
   private InheritanceStrategy inheritanceStrategy;
   private AssociationStrategy associationStrategy;
   private DataWrapper dataWrapper;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
-
-  public CD2SMTGenerator(
-      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as) {
+  
+  public CD2SMTGenerator(ClassStrategy.Strategy cs, InheritanceData.Strategy is,
+      AssociationStrategy.Strategy as) {
     if (is == InheritanceData.Strategy.SE && cs != ClassStrategy.Strategy.SSCOMB) {
-
+      
       Log.error(
           "The Class Strategy Single Sort Combined (SSCOMB) can only be combine with The inheritance Strategy"
               + " Single Sort Composed (SECOMB) ");
     }
-
+    
     // set classtrategy
     switch (cs) {
       case DS:
@@ -71,7 +71,7 @@ public class CD2SMTGenerator {
       case FINITESS:
         this.classStrategy = new FiniteSSClassStrategy();
     }
-
+    
     // set association Strategy
     switch (as) {
       case ONE2ONE:
@@ -81,7 +81,7 @@ public class CD2SMTGenerator {
         this.associationStrategy = new DefaultAssocStrategy();
         break;
     }
-
+    
     // set Inheritance Strategy
     switch (is) {
       case ME:
@@ -91,29 +91,23 @@ public class CD2SMTGenerator {
         this.inheritanceStrategy = (SEInheritanceStrategy) (this.classStrategy);
     }
   }
-
+  
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
     Solver solver = ctx.mkSolver();
-    inheritanceStrategy
-        .getInheritanceConstraints()
-        .forEach(
-            c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
-
-    associationStrategy
-        .getAssociationsConstraints()
-        .forEach(
-            c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
-
-    classStrategy
-        .getClassConstraints()
-        .forEach(
-            c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
-
-    constraints.forEach(
-        c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
+    inheritanceStrategy.getInheritanceConstraints().forEach(c -> solver.assertAndTrack(c.getValue(),
+        ctx.mkBoolConst(String.valueOf(c.getId()))));
+    
+    associationStrategy.getAssociationsConstraints().forEach(c -> solver.assertAndTrack(c
+        .getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
+    
+    classStrategy.getClassConstraints().forEach(c -> solver.assertAndTrack(c.getValue(), ctx
+        .mkBoolConst(String.valueOf(c.getId()))));
+    
+    constraints.forEach(c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c
+        .getId()))));
     return solver;
   }
-
+  
   /**
    * this function convert class diagram into SMT using the three different Strategies
    *
@@ -125,88 +119,80 @@ public class CD2SMTGenerator {
     // set All Associations Role
     dataWrapper = new DataWrapper(classStrategy, associationStrategy, inheritanceStrategy, astCd);
     classStrategy.cd2smt(astCd, ctx);
-
+    
     inheritanceStrategy.cd2smt(astCd, ctx, classStrategy);
-
+    
     associationStrategy.cd2smt(astCd, ctx, classStrategy, inheritanceStrategy);
   }
-
+  
   public Sort getSort(ASTCDType astcdType) {
     return dataWrapper.getSort(astcdType);
   }
-
+  
   public BoolExpr hasType(Expr<? extends Sort> expr, ASTCDType astcdType) {
     return dataWrapper.hasType(expr, astcdType);
   }
-
-  public Expr<? extends Sort> getAttribute(
-      ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
+  
+  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName,
+      Expr<? extends Sort> cDTypeExpr) {
     return dataWrapper.getAttribute(astCdType, attributeName, cDTypeExpr);
   }
-
+  
   public Set<IdentifiableBoolExpr> getClassConstraints() {
     return dataWrapper.getClassConstraints();
   }
-
-  public Expr<? extends Sort> getEnumConstant(
-      ASTCDEnum enumeration, ASTCDEnumConstant enumConstant) {
+  
+  public Expr<? extends Sort> getEnumConstant(ASTCDEnum enumeration,
+      ASTCDEnumConstant enumConstant) {
     return dataWrapper.getEnumConstant(enumeration, enumConstant);
   }
-
+  
   public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
     return dataWrapper.mkForall(type, var, body);
   }
-
+  
   public BoolExpr mkExists(ASTCDType type, Expr<?> var, BoolExpr body) {
     return dataWrapper.mkExists(type, var, body);
   }
-
+  
   public BoolExpr mkForall(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
     return dataWrapper.mkForall(types, vars, body);
   }
-
+  
   public BoolExpr mkExists(List<ASTCDType> types, List<Expr<?>> vars, BoolExpr body) {
     return dataWrapper.mkExists(types, vars, body);
   }
-
-  public BoolExpr evaluateLink(
-      ASTCDAssociation association,
-      ASTCDType type1,
-      ASTCDType type2,
-      Expr<? extends Sort> expr1,
-      Expr<? extends Sort> expr2) {
+  
+  public BoolExpr evaluateLink(ASTCDAssociation association, ASTCDType type1, ASTCDType type2,
+      Expr<? extends Sort> expr1, Expr<? extends Sort> expr2) {
     return dataWrapper.evaluateLink(association, type1, type2, expr1, expr2);
   }
-
+  
   public Set<IdentifiableBoolExpr> getAssociationsConstraints() {
     return dataWrapper.getAssociationsConstraints();
   }
-
-  public Expr<? extends Sort> getSuperInstance(
-      ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
+  
+  public Expr<? extends Sort> getSuperInstance(ASTCDType objType, ASTCDType superType,
+      Expr<? extends Sort> objExpr) {
     return dataWrapper.getSuperInstance(objType, superType, objExpr);
   }
-
+  
   public BoolExpr instanceOf(Expr<? extends Sort> obj, ASTCDType objType) {
     return dataWrapper.instanceOf(obj, objType);
   }
-
+  
   public BoolExpr filterObject(Expr<? extends Sort> obj, ASTCDType type) {
     return dataWrapper.filterObject(obj, type);
   }
-
+  
   public Set<IdentifiableBoolExpr> getInheritanceConstraints() {
     return dataWrapper.getInheritanceConstraints();
   }
-
-  public Context getContext() {
-    return ctx;
-  }
-
-  public ASTCDCompilationUnit getClassDiagram() {
-    return dataWrapper.getClassDiagram();
-  }
-
+  
+  public Context getContext() { return ctx; }
+  
+  public ASTCDCompilationUnit getClassDiagram() { return dataWrapper.getClassDiagram(); }
+  
   public Optional<ASTODArtifact> smt2od(Model model, Boolean partial, String odName) {
     // get all objects
     Set<MinObject> minObjects = classStrategy.smt2od(model, partial);
@@ -215,13 +201,13 @@ public class CD2SMTGenerator {
     for (MinObject entry : minObjects) {
       objectSet2.add(new SMTObject(entry));
     }
-
+    
     // get the superclass instances
     objectSet2 = inheritanceStrategy.smt2od(model, objectSet2);
-
+    
     // get link between Objects
     objectSet2 = associationStrategy.smt2od(model, objectSet2);
-
+    
     // remove the subclass instances and their links and Interface  objects
     Set<SMTObject> objectSet = new HashSet<>();
     for (SMTObject entry : objectSet2) {
@@ -231,4 +217,5 @@ public class CD2SMTGenerator {
     }
     return smt2ODGenerator.buildOd(objectSet, odName, model, dataWrapper);
   }
+  
 }

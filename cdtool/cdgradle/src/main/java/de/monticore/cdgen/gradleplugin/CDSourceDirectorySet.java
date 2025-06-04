@@ -8,19 +8,22 @@ import org.gradle.api.tasks.SourceSet;
 
 /** A set of source files */
 public interface CDSourceDirectorySet extends SourceDirectorySet {
-
+  
   /** Constant of where this SourceDirectorySet can be found (similar to java or resources) */
   final String SOURCEDIRSET_NAME = "cds";
-
+  
   static CDSourceDirectorySet getCDs(@Nonnull SourceSet sourceSet) {
     return sourceSet.getExtensions().getByType(CDSourceDirectorySet.class);
   }
-
+  
   // Default implementation class
-  class DefaultCDSourceDirectorySet extends DefaultSourceDirectorySet
-      implements CDSourceDirectorySet {
+  class DefaultCDSourceDirectorySet extends DefaultSourceDirectorySet implements
+      CDSourceDirectorySet {
+    
     public DefaultCDSourceDirectorySet(SourceDirectorySet sourceSet) {
       super(sourceSet);
     }
+    
   }
+  
 }

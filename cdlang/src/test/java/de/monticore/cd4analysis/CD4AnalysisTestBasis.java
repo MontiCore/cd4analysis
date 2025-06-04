@@ -24,11 +24,12 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 
 public class CD4AnalysisTestBasis extends TestBasis {
+  
   protected CD4AnalysisCoCoChecker coCoChecker;
   protected CD4AnalysisParser p;
   protected CD4AnalysisFullPrettyPrinter printer;
   protected CD4AnalysisSymbols2Json symbols2Json;
-
+  
   @BeforeEach
   public void initObjects() {
     LogStub.init();
@@ -39,31 +40,32 @@ public class CD4AnalysisTestBasis extends TestBasis {
     final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
-
+    
     coCoChecker = new CD4AnalysisCoCoChecker();
     printer = new CD4AnalysisFullPrettyPrinter(new IndentPrinter());
     symbols2Json = new CD4AnalysisSymbols2Json();
   }
-
+  
   protected ASTCDCompilationUnit parse(String filePath) throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath(filePath));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-
+    
     // Trafos after parsing
     new CD4AnalysisAfterParseTrafo().transform(node);
     return node;
   }
-
+  
   protected void prepareST(ASTCDCompilationUnit node) throws IOException {
     // First pass for symbol table
     ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     scope.addImports(new ImportStatement("java.lang", true));
     checkLogError();
-
+    
     // Second pass for symbol table
     final CD4AnalysisTraverser traverser = new CD4AnalysisSymbolTableCompleter(node).getTraverser();
     node.accept(traverser);
     checkLogError();
   }
+  
 }

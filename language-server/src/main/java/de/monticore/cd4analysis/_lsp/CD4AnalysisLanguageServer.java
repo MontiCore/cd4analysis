@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp;
 
 import de.mclsg.lsp.ISymbolUsageResolutionProvider;
@@ -11,33 +12,24 @@ import de.monticore.cd4analysis._lsp.language_access.CD4AnalysisScopeManager;
 import de.monticore.io.paths.MCPath;
 
 public class CD4AnalysisLanguageServer extends CD4AnalysisLanguageServerTOP {
-
-  public CD4AnalysisLanguageServer(
-      DocumentManager documentManager,
-      MCPath modelPath,
+  
+  public CD4AnalysisLanguageServer(DocumentManager documentManager, MCPath modelPath,
       CD4AnalysisScopeManager scopeManager,
       ISymbolUsageResolutionProvider symbolUsageResolutionProvider) {
     super(documentManager, modelPath, scopeManager, symbolUsageResolutionProvider);
-
-    CD4AnalysisCodeActionProvider codeActionProvider =
-        new CD4AnalysisCodeActionProvider(
-            documentManager, languageAccess.getPrettyPrinter().orElseThrow());
-    codeActionProvider.addCodeActionStrategy(
-        new PullUpFieldCodeActionStrategy(
-            documentManager,
-            symbolUsageResolutionProvider,
-            languageAccess.getPrettyPrinter().orElseThrow()));
-    codeActionProvider.addCodeActionStrategy(
-        new ExtractSuperClassCodeActionStrategy(
-            documentManager, languageAccess.getPrettyPrinter().orElseThrow()));
-    codeActionProvider.addCodeActionStrategy(
-        new CollapseHierarchyCodeActionStrategy(
-            documentManager,
-            languageAccess.getPrettyPrinter().orElseThrow(),
-            symbolUsageResolutionProvider));
-    codeActionProvider.addCodeActionStrategy(
-        new UnfoldByAttributesStrategy(
-            documentManager, languageAccess.getPrettyPrinter().orElseThrow()));
+    
+    CD4AnalysisCodeActionProvider codeActionProvider = new CD4AnalysisCodeActionProvider(
+        documentManager, languageAccess.getPrettyPrinter().orElseThrow());
+    codeActionProvider.addCodeActionStrategy(new PullUpFieldCodeActionStrategy(documentManager,
+        symbolUsageResolutionProvider, languageAccess.getPrettyPrinter().orElseThrow()));
+    codeActionProvider.addCodeActionStrategy(new ExtractSuperClassCodeActionStrategy(
+        documentManager, languageAccess.getPrettyPrinter().orElseThrow()));
+    codeActionProvider.addCodeActionStrategy(new CollapseHierarchyCodeActionStrategy(
+        documentManager, languageAccess.getPrettyPrinter().orElseThrow(),
+        symbolUsageResolutionProvider));
+    codeActionProvider.addCodeActionStrategy(new UnfoldByAttributesStrategy(documentManager,
+        languageAccess.getPrettyPrinter().orElseThrow()));
     textDocumentService.register(codeActionProvider);
   }
+  
 }

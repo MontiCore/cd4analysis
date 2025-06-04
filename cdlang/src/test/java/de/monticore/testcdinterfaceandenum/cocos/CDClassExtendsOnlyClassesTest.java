@@ -14,12 +14,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDClassExtendsOnlyClassesTest extends CDInterfaceAndEnumTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDClassExtendsOnlyClasses());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdinterfaceenum/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -28,12 +28,12 @@ public class CDClassExtendsOnlyClassesTest extends CDInterfaceAndEnumTestBasis {
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDClassExtendsOnlyClasses());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdinterfaceenum/cocos/CDClassExtendsOnlyClassesInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/CDClassExtendsOnlyClassesInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -43,7 +43,8 @@ public class CDClassExtendsOnlyClassesTest extends CDInterfaceAndEnumTestBasis {
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC08"));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

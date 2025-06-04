@@ -1,0 +1,17 @@
+classdiagram VisitorConc {
+
+	<<ref="Visitable">> interface Node {
+    void accept(NodeVisitor visitor);
+  }
+
+	<<ref="ConcreteVisitable">> class RootNode implements Node;
+	<<ref="ConcreteVisitable">> class InnerNode implements Node;
+	<<ref="ConcreteVisitable">> class LeafNode implements Node;
+
+  <<ref="VisitorRef.VisitableVisitor">> interface NodeVisitor {
+    void visit(Node visitable);
+    <<ref="VisitorRef.VisitableVisitor.visit(ConcreteVisitable)">> void visit(RootNode rootNode);
+    <<ref="VisitorRef.VisitableVisitor.visit(ConcreteVisitable)">> void visit(InnerNode innerNode);
+    <<ref="VisitorRef.VisitableVisitor.visit(ConcreteVisitable)">> void visit(LeafNode leafNode);
+  }
+}

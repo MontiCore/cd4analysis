@@ -12,25 +12,26 @@ import java.util.List;
  * semantically conflicting entries.
  */
 public class PostMergeRefactoring {
-
+  
   private MergeBlackBoard mergeBlackBoard;
-
+  
   private List<ModelRefactoring> refactorings;
-
+  
   public PostMergeRefactoring(MergeBlackBoard mergeBlackBoard) {
     this.refactorings = new ArrayList<ModelRefactoring>();
     this.mergeBlackBoard = mergeBlackBoard;
   }
-
+  
   public void removeAllRefactorings() {
     this.refactorings.clear();
   }
-
+  
   public void addRefactoring(ModelRefactoringBuilder refactoring) {
     this.refactorings.add(refactoring.build(this.mergeBlackBoard));
   }
-
+  
   public void execute(ASTCDCompilationUnit cd) {
     this.refactorings.forEach(r -> r.apply(cd));
   }
+  
 }

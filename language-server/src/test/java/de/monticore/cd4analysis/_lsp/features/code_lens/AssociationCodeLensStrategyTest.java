@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.code_lens;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,54 +13,55 @@ import org.eclipse.lsp4j.Range;
 import org.junit.jupiter.api.Test;
 
 class AssociationCodeLensStrategyTest extends AbstractCodeLensTest {
+  
   private static final String TITLE = "Part of 1 Association";
-
+  
   @Override
   protected Path getPath() {
     return Paths.get("src", "test", "resources", "code-lens", "association");
   }
-
+  
   @Override
   protected CodeLensStrategy getCodeLensStrategy() {
-    return new AssociationCodeLensStrategy(
-        referencesProvider, documentManager, symbolUsageResolutionProvider);
+    return new AssociationCodeLensStrategy(referencesProvider, documentManager,
+        symbolUsageResolutionProvider);
   }
-
+  
   @Test
   void testSimple() {
     String modelUri = getPath().resolve("Simple.cd").toUri().toString();
     List<? extends CodeLens> codeLenses = codeLens(modelUri);
-
+    
     assertEquals(2, codeLenses.size());
-
+    
     Range firstLine = new Range(new Position(1, 8), new Position(1, 9));
     Range secondLine = new Range(new Position(2, 8), new Position(2, 9));
-
+    
     assertEquals(firstLine, codeLenses.get(0).getRange());
     assertEquals(TITLE, codeLenses.get(0).getCommand().getTitle());
     assertEquals(secondLine, codeLenses.get(1).getRange());
     assertEquals(TITLE, codeLenses.get(1).getCommand().getTitle());
   }
-
+  
   @Test
   void testNoAssociation() {
     String modelUri = getPath().resolve("NoAssociation.cd").toUri().toString();
     List<? extends CodeLens> codeLenses = codeLens(modelUri);
-
+    
     assertEquals(0, codeLenses.size());
   }
-
+  
   @Test
   void testSuperclass() {
     String modelUri = getPath().resolve("Superclass.cd").toUri().toString();
     List<? extends CodeLens> codeLenses = codeLens(modelUri);
-
+    
     assertEquals(3, codeLenses.size());
-
+    
     Range firstLine = new Range(new Position(1, 8), new Position(1, 9));
     Range secondLine = new Range(new Position(2, 8), new Position(2, 9));
     Range thirdLine = new Range(new Position(3, 8), new Position(3, 9));
-
+    
     assertEquals(firstLine, codeLenses.get(0).getRange());
     assertEquals(TITLE, codeLenses.get(0).getCommand().getTitle());
     assertEquals(secondLine, codeLenses.get(1).getRange());
@@ -67,21 +69,19 @@ class AssociationCodeLensStrategyTest extends AbstractCodeLensTest {
     assertEquals(thirdLine, codeLenses.get(2).getRange());
     assertEquals(TITLE, codeLenses.get(2).getCommand().getTitle());
   }
-
+  
   @Test
   void testDifferentArtifact() {
-    String modelUri =
-        getPath()
-            .resolve(Paths.get("different-artifacts", "DifferentArtifact.cd"))
-            .toUri()
-            .toString();
+    String modelUri = getPath().resolve(Paths.get("different-artifacts", "DifferentArtifact.cd"))
+        .toUri().toString();
     List<? extends CodeLens> codeLenses = codeLens(modelUri);
-
+    
     assertEquals(1, codeLenses.size());
-
+    
     Range firstLine = new Range(new Position(3, 8), new Position(3, 9));
-
+    
     assertEquals(firstLine, codeLenses.get(0).getRange());
     assertEquals(TITLE, codeLenses.get(0).getCommand().getTitle());
   }
+  
 }

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,116 +24,105 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class TypeDIffTest extends CDDiffTestBasis {
-
+  
   @Test
   public void testCD2() {
-
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
-
+    
+    ASTCDCompilationUnit compilationUnitNew = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd");
+    
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-
+    
     Assertions.assertTrue(witnesses.isEmpty());
   }
-
+  
   @Test
   public void testCD1() {
-
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
-
+    
+    ASTCDCompilationUnit compilationUnitNew = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD11.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/DeletedAttribute/CD12.cd");
+    
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-
+    
     Assertions.assertFalse(witnesses.isEmpty());
-
+    
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD,
+          compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         fail();
       }
     }
   }
-
+  
   @Test
   public void testCD3() {
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
-
+    ASTCDCompilationUnit compilationUnitNew = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd");
+    
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-
+    
     Assertions.assertFalse(witnesses.isEmpty());
-
+    
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD,
+          compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         fail();
       }
     }
   }
-
+  
   @Test
   public void testCD7() {
-
-    ASTCDCompilationUnit compilationUnitNew =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
-    ASTCDCompilationUnit compilationUnitOld =
-        parseModel(
-            "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
-
+    
+    ASTCDCompilationUnit compilationUnitNew = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD71.cd");
+    ASTCDCompilationUnit compilationUnitOld = parseModel(
+        "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/ChangedAttribute/CD72.cd");
+    
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(compilationUnitNew, compilationUnitOld);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(false);
-
+    
     Assertions.assertFalse(witnesses.isEmpty());
-
+    
     for (ASTODArtifact od : witnesses) {
-      if (!new OD2CDMatcher()
-          .checkIfDiffWitness(
-              CDSemantics.SIMPLE_CLOSED_WORLD, compilationUnitNew, compilationUnitOld, od)) {
+      if (!new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD,
+          compilationUnitNew, compilationUnitOld, od)) {
         Log.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
         fail();
       }
     }
   }
-
+  
   /*--------------------------------------------------------------------*/
   // Syntax Diff Tests
-
+  
   public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/TypeDiff/";
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
-
+  
   // Test for all kinds of changes in attributes
   @Test
   public void testType1() {
     parseModels("Source1.cd", "Target1.cd");
-
+    
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
-
+    
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(src, tgt, List.of());
     // System.out.println(syntaxDiff.printDiff());
   }
-
+  
   // Tests for all kinds of changes in enum constants
   @Test
   public void testType2() {
@@ -144,34 +134,34 @@ public class TypeDIffTest extends CDDiffTestBasis {
     ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
     CDDiffUtil.refreshSymbolTable(src);
     CDDiffUtil.refreshSymbolTable(tgt);
-
+    
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt, List.of());
     CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, src, diff.getHelper());
     CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, src, diff.getHelper());
-
+    
     // System.out.println(diff.printOnlyAdded());
-
+    
     /*System.out.println(typeDiff1.printSrcCD());
     System.out.println(typeDiff2.printSrcCD());
     System.out.println("--------------------------------");
     System.out.println(typeDiff1.printTgtCD());
     System.out.println(typeDiff2.printTgtCD());*/
   }
-
+  
   // Test for change of modifiers, extensions, and implementations
   @Test
   public void testType3() {
     parseModels("Source3.cd", "Target3.cd");
-
+    
     ASTCDClass astcdClass11 = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass astcdClass12 = CDTestHelper.getClass("A", tgt.getCDDefinition());
     ASTCDClass astcdClass21 = CDTestHelper.getClass("B", src.getCDDefinition());
     ASTCDClass astcdClass22 = CDTestHelper.getClass("B", tgt.getCDDefinition());
     ASTCDClass astcdClass31 = CDTestHelper.getClass("C", src.getCDDefinition());
     ASTCDClass astcdClass32 = CDTestHelper.getClass("C", tgt.getCDDefinition());
-
+    
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt, List.of());
-
+    
     CDTypeDiff typeDiff1 = new CDTypeDiff(astcdClass11, astcdClass12, tgt, src, diff.getHelper());
     CDTypeDiff typeDiff2 = new CDTypeDiff(astcdClass21, astcdClass22, tgt, src, diff.getHelper());
     CDTypeDiff typeDiff3 = new CDTypeDiff(astcdClass31, astcdClass32, tgt, src, diff.getHelper());
@@ -187,25 +177,25 @@ public class TypeDIffTest extends CDDiffTestBasis {
     System.out.println(typeDiff2.getBaseDiff());
     System.out.println(typeDiff3.getBaseDiff());
   }
-
+  
   // Test for inherited attributes
   @Test
   public void testType4() {
     parseModels("Source4.cd", "Target4.cd");
-
+    
     ASTCDClass astcdClass = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass astcdClass1 = CDTestHelper.getClass("A", tgt.getCDDefinition());
-
+    
     CDSyntaxDiff diff = new CDSyntaxDiff(src, tgt, List.of());
     CDTypeDiff typeDiff = new CDTypeDiff(astcdClass, astcdClass1, tgt, src, diff.getHelper());
     System.out.println(typeDiff.printSrcCD());
     System.out.println(typeDiff.printTgtCD());
   }
-
+  
   public void parseModels(String concrete, String ref) {
     try {
-      Optional<ASTCDCompilationUnit> src =
-          CD4CodeMill.parser().parseCDCompilationUnit(dir + concrete);
+      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
+          + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (src.isPresent() && tgt.isPresent()) {
         CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
@@ -214,12 +204,15 @@ public class TypeDIffTest extends CDDiffTestBasis {
         tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
         this.tgt = tgt.get();
         this.src = src.get();
-      } else {
+      }
+      else {
         fail("Could not parse CDs.");
       }
-
-    } catch (IOException e) {
+      
+    }
+    catch (IOException e) {
       fail(e.getMessage());
     }
   }
+  
 }

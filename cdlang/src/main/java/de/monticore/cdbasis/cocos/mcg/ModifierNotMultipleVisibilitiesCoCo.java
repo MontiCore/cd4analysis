@@ -7,7 +7,7 @@ import de.se_rwth.commons.logging.Log;
 
 /** Modifiers may only have none or exactly one visibility. */
 public class ModifierNotMultipleVisibilitiesCoCo implements UMLModifierASTModifierCoCo {
-
+  
   /** @see UMLModifierASTModifierCoCo#check(ASTModifier) */
   @Override
   public void check(ASTModifier mod) {
@@ -27,4 +27,5 @@ public class ModifierNotMultipleVisibilitiesCoCo implements UMLModifierASTModifi
           mod.get_SourcePositionStart());
     }
   }
+  
 }

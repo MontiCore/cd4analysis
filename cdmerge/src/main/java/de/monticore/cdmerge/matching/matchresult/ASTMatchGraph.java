@@ -14,11 +14,11 @@ import java.util.function.Predicate;
  * Graph is most likely not completely connected, all nodes can be accessed by their parents
  */
 public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
-
+  
   private List<P> parents;
-
+  
   private Map<P, List<MatchNode<E, P>>> matches;
-
+  
   public ASTMatchGraph(Collection<P> parents) {
     this.parents = new ArrayList<P>(parents);
     this.matches = new HashMap<P, List<MatchNode<E, P>>>();
@@ -26,7 +26,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
       matches.put(parent, new ArrayList<MatchNode<E, P>>());
     }
   }
-
+  
   private int getIndexForParent(P parent) {
     for (int i = 0; i < parents.size(); i++) {
       // We deliberately check equals only via object id
@@ -36,7 +36,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return -1;
   }
-
+  
   /**
    * Adds a Node {@link MatchNode} to this MatchResult containing the specified ModelElement. No new
    * node is created if this MatchResult already contains a node for the specified element. Thus,
@@ -49,7 +49,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
   public MatchNode<E, P> addElement(E element, P parent) {
     return this.addElement(element, parent, Optional.empty());
   }
-
+  
   /**
    * Adds a Node {@link MatchNode} to this MatchResult containing the specified ModelElement. No new
    * node is created if this MatchResult already contains a node for the specified element. Thus,
@@ -79,7 +79,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     this.matches.get(parent).add(node);
     return node;
   }
-
+  
   /**
    * Returns the node containing the specified Element or Optional.empty() if no Node with this
    * element was found
@@ -104,34 +104,34 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return Optional.empty();
   }
-
+  
   /** @return the sequence of Parents for this match result */
   public ImmutableList<P> getParents() {
     return ImmutableList.copyOf(this.parents);
   }
-
+  
   /**
    * Returns the matching nodes for the specified parent node (thus a vertical slice through this
    * match-result graph) or Optional.empty() if the match could not be resolved.
    *
    * @param parent as stored in this MatchResult
    * @return the matching nodes for the specified parent node and the matchIdentifier or
-   *     Optional.empty() if the match could not be resolved
+   * Optional.empty() if the match could not be resolved
    */
   public List<MatchNode<E, P>> getAllNodesForParent(P parent) {
-
+    
     int idx = getIndexForParent(parent);
     if (idx < 0) {
       throw new IllegalArgumentException("No such parent " + parent);
     }
     return this.matches.get(parent);
   }
-
+  
   /** Returns an iterator that allows to iterate over all matchings nodes */
   public Iterator<List<MatchNode<E, P>>> getMatchNodeIterator() {
     return this.matches.values().iterator();
   }
-
+  
   /** Returns an iterator that allows to iterate over all matchings nodes */
   public Iterator<MatchNode<E, P>> getMatchNodeIterator(P parent) {
     int idx = getIndexForParent(parent);
@@ -140,7 +140,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return this.matches.get(parent).iterator();
   }
-
+  
   /**
    * Computes the parent of a match
    *
@@ -155,7 +155,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return Optional.empty();
   }
-
+  
   /**
    * Computes the elements of a match
    *
@@ -173,7 +173,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return matches;
   }
-
+  
   /**
    * Computes the nodes of a match
    *
@@ -191,7 +191,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return matchedNodes;
   }
-
+  
   /**
    * Checks if the parent of a match is present
    *
@@ -201,7 +201,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
   public boolean hasParent(Predicate<P> match) {
     return getParent(match).isPresent();
   }
-
+  
   /**
    * Checks if a given parent is present
    *
@@ -211,7 +211,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
   public boolean hasParent(P parent) {
     return getIndexForParent(parent) >= 0;
   }
-
+  
   @Override
   public String toString() {
     Set<MatchNode<E, P>> visitedNodes = new HashSet<MatchNode<E, P>>();
@@ -223,15 +223,12 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
       for (MatchNode<E, P> node : this.matches.get(parent)) {
         if (!visitedNodes.contains(node)) {
           visitedNodes.add(node);
-          sb.append(
-              "[" + CDMergeUtils.getName(parent) + "] " + CDMergeUtils.getName(node.getElement()));
+          sb.append("[" + CDMergeUtils.getName(parent) + "] " + CDMergeUtils.getName(node
+              .getElement()));
           for (MatchNode<E, P> matchNode : node.getMatchedNodes()) {
             visitedNodes.add(matchNode);
-            sb.append(
-                " -> ["
-                    + CDMergeUtils.getName(matchNode.getParent())
-                    + "] "
-                    + CDMergeUtils.getName(matchNode.getElement()));
+            sb.append(" -> [" + CDMergeUtils.getName(matchNode.getParent()) + "] " + CDMergeUtils
+                .getName(matchNode.getElement()));
           }
           sb.append("\n");
         }
@@ -243,4 +240,5 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return sb.toString();
   }
+  
 }

@@ -5,11 +5,11 @@ import de.monticore.symboltable.IArtifactScope;
 import de.monticore.symboltable.IScope;
 
 public class CDPackageSymbol extends CDPackageSymbolTOP {
-
+  
   public CDPackageSymbol(String name) {
     super(name);
   }
-
+  
   @Override
   protected String determinePackageName() {
     IScope optCurrentScope = enclosingScope;
@@ -20,14 +20,15 @@ public class CDPackageSymbol extends CDPackageSymbolTOP {
         // package name. This check is important, since the package name of the
         // enclosing symbol might be set manually.
         return currentScope.getSpanningSymbol().getPackageName();
-      } else if (currentScope instanceof IArtifactScope) {
+      }
+      else if (currentScope instanceof IArtifactScope) {
         return ((IArtifactScope) currentScope).getFullName();
       }
       optCurrentScope = currentScope.getEnclosingScope();
     }
     return "";
   }
-
+  
   public String getInternalQualifiedName() {
     String internalName = getFullName();
     IScope as = getEnclosingScope();
@@ -40,4 +41,5 @@ public class CDPackageSymbol extends CDPackageSymbolTOP {
     }
     return internalName;
   }
+  
 }

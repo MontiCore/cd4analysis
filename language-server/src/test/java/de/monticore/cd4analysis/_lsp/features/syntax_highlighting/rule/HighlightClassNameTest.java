@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._lsp.features.syntax_highlighting.rule;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,38 +22,37 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class HighlightClassNameTest {
-
+  
   static Stream<Arguments> provideTestData() {
     String basePath = "src/test/resources/highlighting/";
-    return Stream.of(
-        Arguments.arguments(basePath + "CDName.cd", List.of(1)),
-        Arguments.arguments(basePath + "ClassNamesNested.cd", List.of(1, 7)),
-        Arguments.arguments(basePath + "ExtendClassName.cd", List.of(1, 5, 8, 10)));
+    return Stream.of(Arguments.arguments(basePath + "CDName.cd", List.of(1)), Arguments.arguments(
+        basePath + "ClassNamesNested.cd", List.of(1, 7)), Arguments.arguments(basePath
+            + "ExtendClassName.cd", List.of(1, 5, 8, 10)));
   }
-
+  
   @ParameterizedTest
   @MethodSource("provideTestData")
   void testClassDiagramName(String path, List<Integer> tokenIndices) throws IOException {
-    CD4AnalysisLexerProvider lexerProvider =
-        new CD4AnalysisLexerProvider(
-            new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
+    CD4AnalysisLexerProvider lexerProvider = new CD4AnalysisLexerProvider(
+        new CD4AnalysisLanguageAccess(new DocumentManager(), new CD4AnalysisScopeManager()));
     Path pathToModel = Paths.get(path);
     String content = IOUtils.toString(pathToModel.toUri(), StandardCharsets.UTF_8);
-
+    
     List<Token> classifiedTokens = lexerProvider.getTokensForInput(content);
-
+    
     // CD Name is Class Type
     for (Integer tokenIndex : tokenIndices) {
-      assertEquals(
-          SemanticTokenTypesWrapper.Class.value, classifiedTokens.get(tokenIndex).getName());
+      assertEquals(SemanticTokenTypesWrapper.Class.value, classifiedTokens.get(tokenIndex)
+          .getName());
     }
-
+    
     // All other name tokens are not Class Type
-
+    
     for (int i = 0; i < classifiedTokens.size(); i++) {
       if (!tokenIndices.contains(i)) {
         assertNotEquals(SemanticTokenTypesWrapper.Class.value, classifiedTokens.get(i).getName());
       }
     }
   }
+  
 }

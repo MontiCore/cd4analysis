@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeSameReturnTypeRef {
+  class DataClass {
+    any attribute;
+    <<forEach="attribute">> any getAttribute();
+  }
+}

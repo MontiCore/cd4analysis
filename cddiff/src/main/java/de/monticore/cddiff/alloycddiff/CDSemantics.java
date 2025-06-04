@@ -7,9 +7,7 @@ package de.monticore.cddiff.alloycddiff;
  * objects list all types they instantiate via the `instanceof`-stereotype.
  */
 public enum CDSemantics {
-  SIMPLE_CLOSED_WORLD,
-  STA_CLOSED_WORLD,
-
-  SIMPLE_OPEN_WORLD,
-  STA_OPEN_WORLD
+  SIMPLE_CLOSED_WORLD, STA_CLOSED_WORLD,
+  
+  SIMPLE_OPEN_WORLD, STA_OPEN_WORLD
 }

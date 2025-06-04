@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.datastructures;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -17,6 +18,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
  * such isn't found, the association is deleted because of overlapping.
  */
 public class AssocStruct {
+  
   ASTCDAssociation association;
   AssocDirection direction;
   ClassSide side;
@@ -25,17 +27,12 @@ public class AssocStruct {
   private boolean toBeProcessed = true;
   private ASTCDType originalType;
   private ASTCDType originalTgtType;
-
+  
   private ASTCDAssociation sourceAssoc = null;
   private AssocType usedAs = null;
-
-  public AssocStruct(
-      ASTCDAssociation association,
-      AssocDirection direction,
-      ClassSide side,
-      ASTCDType astcdType,
-      ASTCDType astcdTgtType,
-      ASTCDAssociation originalAssoc) {
+  
+  public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side,
+      ASTCDType astcdType, ASTCDType astcdTgtType, ASTCDAssociation originalAssoc) {
     this.association = association;
     this.direction = direction;
     this.side = side;
@@ -43,14 +40,9 @@ public class AssocStruct {
     this.originalType = astcdType;
     this.originalTgtType = astcdTgtType;
   }
-
-  public AssocStruct(
-      ASTCDAssociation association,
-      AssocDirection direction,
-      ClassSide side,
-      boolean isSuperAssoc,
-      ASTCDType astcdType,
-      ASTCDType astcdTgtType,
+  
+  public AssocStruct(ASTCDAssociation association, AssocDirection direction, ClassSide side,
+      boolean isSuperAssoc, ASTCDType astcdType, ASTCDType astcdTgtType,
       ASTCDAssociation sourceAssoc) {
     this.association = association;
     this.direction = direction;
@@ -61,95 +53,54 @@ public class AssocStruct {
     this.originalTgtType = astcdTgtType;
     this.sourceAssoc = sourceAssoc;
   }
-
+  
   public AssocStruct deepClone() {
-    return new AssocStruct(
-        this.association.deepClone(),
-        this.direction,
-        this.side,
-        this.isSuperAssoc,
-        this.originalType,
-        this.originalTgtType,
-        this.sourceAssoc);
+    return new AssocStruct(this.association.deepClone(), this.direction, this.side,
+        this.isSuperAssoc, this.originalType, this.originalTgtType, this.sourceAssoc);
   }
-
-  public ASTCDAssociation getAssociation() {
-    return association;
-  }
-
-  public void setAssociation(ASTCDAssociation association) {
-    this.association = association;
-  }
-
-  public AssocDirection getDirection() {
-    return direction;
-  }
-
-  public void setDirection(AssocDirection direction) {
-    this.direction = direction;
-  }
-
-  public ClassSide getSide() {
-    return side;
-  }
-
-  public void setSide(ClassSide side) {
-    this.side = side;
-  }
-
-  public boolean isSuperAssoc() {
-    return isSuperAssoc;
-  }
-
-  public void setSuperAssoc(boolean superAssoc) {
-    isSuperAssoc = superAssoc;
-  }
-
-  public ASTCDAssociation getUnmodifiedAssoc() {
-    return unmodifiedAssoc;
-  }
-
+  
+  public ASTCDAssociation getAssociation() { return association; }
+  
+  public void setAssociation(ASTCDAssociation association) { this.association = association; }
+  
+  public AssocDirection getDirection() { return direction; }
+  
+  public void setDirection(AssocDirection direction) { this.direction = direction; }
+  
+  public ClassSide getSide() { return side; }
+  
+  public void setSide(ClassSide side) { this.side = side; }
+  
+  public boolean isSuperAssoc() { return isSuperAssoc; }
+  
+  public void setSuperAssoc(boolean superAssoc) { isSuperAssoc = superAssoc; }
+  
+  public ASTCDAssociation getUnmodifiedAssoc() { return unmodifiedAssoc; }
+  
   public void setUnmodifiedAssoc(ASTCDAssociation unmodifiedAssoc) {
     this.unmodifiedAssoc = unmodifiedAssoc;
   }
-
-  public boolean isToBeProcessed() {
-    return toBeProcessed;
-  }
-
-  public void setToBeProcessed(boolean toBeProcessed) {
-    this.toBeProcessed = toBeProcessed;
-  }
-
-  public ASTCDType getOriginalType() {
-    return originalType;
-  }
-
-  public void setOriginalType(ASTCDType originalType) {
-    this.originalType = originalType;
-  }
-
-  public ASTCDType getOriginalTgtType() {
-    return originalTgtType;
-  }
-
+  
+  public boolean isToBeProcessed() { return toBeProcessed; }
+  
+  public void setToBeProcessed(boolean toBeProcessed) { this.toBeProcessed = toBeProcessed; }
+  
+  public ASTCDType getOriginalType() { return originalType; }
+  
+  public void setOriginalType(ASTCDType originalType) { this.originalType = originalType; }
+  
+  public ASTCDType getOriginalTgtType() { return originalTgtType; }
+  
   public void setOriginalTgtType(ASTCDType originalTgtType) {
     this.originalTgtType = originalTgtType;
   }
-
-  public AssocType getUsedAs() {
-    return usedAs;
-  }
-
-  public void setUsedAs(AssocType usedAs) {
-    this.usedAs = usedAs;
-  }
-
-  public ASTCDAssociation getSourceAssoc() {
-    return sourceAssoc;
-  }
-
-  public void setSourceAssoc(ASTCDAssociation sourceAssoc) {
-    this.sourceAssoc = sourceAssoc;
-  }
+  
+  public AssocType getUsedAs() { return usedAs; }
+  
+  public void setUsedAs(AssocType usedAs) { this.usedAs = usedAs; }
+  
+  public ASTCDAssociation getSourceAssoc() { return sourceAssoc; }
+  
+  public void setSourceAssoc(ASTCDAssociation sourceAssoc) { this.sourceAssoc = sourceAssoc; }
+  
 }

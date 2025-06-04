@@ -19,13 +19,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class InheritanceConflictSuperclasses extends BaseTest {
-
-  private static final String INPUT_MODEL_1 =
-      "src/test/resources/class_diagrams" + "/Inheritance/conflictSuperclasses/A.cd";
-
-  private static final String INPUT_MODEL_2 =
-      "src/test/resources/class_diagrams" + "/Inheritance/conflictSuperclasses/B.cd";
-
+  
+  private static final String INPUT_MODEL_1 = "src/test/resources/class_diagrams"
+      + "/Inheritance/conflictSuperclasses/A.cd";
+  
+  private static final String INPUT_MODEL_2 = "src/test/resources/class_diagrams"
+      + "/Inheritance/conflictSuperclasses/B.cd";
+  
   @Test
   public void testInheritanceConflictSuperclasses() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -35,27 +35,24 @@ public class InheritanceConflictSuperclasses extends BaseTest {
     try {
       MergeResult result = cdMerger.mergeCDs();
       processResult(result);
-      fail(
-          "Expected Merging Exception:  Merged classes have incompatible superclasses 'Staff' and"
-              + " 'Person'");
-    } catch (FailFastException expected) {
-      assertTrue(
-          expected
-              .getMessage()
-              .contains(" Merged classes have incompatible superclasses 'Staff' and 'Person'"));
+      fail("Expected Merging Exception:  Merged classes have incompatible superclasses 'Staff' and"
+          + " 'Person'");
+    }
+    catch (FailFastException expected) {
+      assertTrue(expected.getMessage().contains(
+          " Merged classes have incompatible superclasses 'Staff' and 'Person'"));
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder =
-        getConfigBuilder()
-            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
-            .withParam(MergeParameter.FAIL_FAST)
-            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
+        MergeParameter.ON).withParam(MergeParameter.FAIL_FAST).withParam(MergeParameter.OUTPUT_NAME,
+            "mergedCD");
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
+  
 }

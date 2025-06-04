@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Set;
 
 public class DefaultCDMerger extends CDMerger {
-
-  public DefaultCDMerger(
-      MergeBlackBoard blackboard, TypeMerger typeMerger, AssociationMerger associationMerger) {
+  
+  public DefaultCDMerger(MergeBlackBoard blackboard, TypeMerger typeMerger,
+      AssociationMerger associationMerger) {
     super(blackboard, typeMerger, associationMerger);
   }
-
+  
   @Override
   public void mergeComments(ASTCD4CodeNode left, ASTCD4CodeNode right, ASTCD4CodeNode merged) {
     // Clean up anything from possibly cloned AST Nodes
@@ -30,14 +30,14 @@ public class DefaultCDMerger extends CDMerger {
     comments.addAll(right.get_PreCommentList());
     merged.addAll_PreComments(comments);
   }
-
+  
   @Override
   public void mergeComments(ASTCDBasisNode left, ASTCDBasisNode right, ASTCDBasisNode merged) {
     // Clean up anything from possibly cloned AST Nodes
     merged.clear_PreComments();
     merged.clear_PostComments();
     Set<Comment> comments = new HashSet<Comment>();
-
+    
     // merge PreComments
     List<Comment> preComments = left.get_PreCommentList();
     if (preComments == null) {
@@ -59,7 +59,7 @@ public class DefaultCDMerger extends CDMerger {
       }
     }
     merged.addAll_PreComments(preComments);
-
+    
     // merge PostComments
     List<Comment> postComments = left.get_PostCommentList();
     if (postComments == null) {
@@ -67,7 +67,7 @@ public class DefaultCDMerger extends CDMerger {
     }
     comments.addAll(postComments);
     if (right.get_PostCommentList() != null && right.get_PostCommentList().size() > 0) {
-
+      
       boolean newComment = true;
       for (Comment cR : right.get_PostCommentList()) {
         for (Comment cL : comments) {
@@ -83,4 +83,5 @@ public class DefaultCDMerger extends CDMerger {
     }
     merged.addAll_PostComments(postComments);
   }
+  
 }

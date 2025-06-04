@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 /** TODO: Write me! */
 public class JPrimitiveTypeTest extends BaseTest {
-
+  
   @Test
   public void testGetType() {
     assertSame(JPrimitiveType.BYTE, JPrimitiveType.getType("byte"));
@@ -22,15 +22,16 @@ public class JPrimitiveTypeTest extends BaseTest {
     assertSame(JPrimitiveType.BOOLEAN, JPrimitiveType.getType("boolean"));
     assertSame(JPrimitiveType.CHAR, JPrimitiveType.getType("char"));
     assertSame(JPrimitiveType.STRING, JPrimitiveType.getType("string"));
-
+    
     try {
       JPrimitiveType.getType("Date");
       fail("NoSuchElementException expected!");
-    } catch (NoSuchElementException e) {
+    }
+    catch (NoSuchElementException e) {
       assertEquals("JPrimitiveType does not contain a type with name Date", e.getMessage());
     }
   }
-
+  
   @Test
   public void testIsPrimitive() {
     assertTrue(JPrimitiveType.isPrimitiveType("byte"));
@@ -45,32 +46,33 @@ public class JPrimitiveTypeTest extends BaseTest {
     assertFalse(JPrimitiveType.isPrimitiveType("Date"));
     assertFalse(JPrimitiveType.isPrimitiveType("AE"));
   }
-
+  
   @Test
   public void testGetCommonSuperType() {
     // Two booleans
-    Optional<JPrimitiveType> type =
-        JPrimitiveType.getCommonSuperType(JPrimitiveType.BOOLEAN, JPrimitiveType.BOOLEAN);
+    Optional<JPrimitiveType> type = JPrimitiveType.getCommonSuperType(JPrimitiveType.BOOLEAN,
+        JPrimitiveType.BOOLEAN);
     assertTrue(type.isPresent());
     assertSame(JPrimitiveType.BOOLEAN, type.get());
-
+    
     // One boolean
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.BOOLEAN, JPrimitiveType.CHAR);
     assertFalse(type.isPresent());
-
+    
     // Chars and Strings
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.STRING, JPrimitiveType.CHAR);
     assertTrue(type.isPresent());
     assertSame(JPrimitiveType.STRING, type.get());
-
+    
     // Float and double
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.FLOAT, JPrimitiveType.DOUBLE);
     assertTrue(type.isPresent());
     assertSame(JPrimitiveType.DOUBLE, type.get());
-
+    
     // String and double
     type = JPrimitiveType.getCommonSuperType(JPrimitiveType.STRING, JPrimitiveType.DOUBLE);
     assertTrue(type.isPresent());
     assertSame(JPrimitiveType.STRING, type.get());
   }
+  
 }

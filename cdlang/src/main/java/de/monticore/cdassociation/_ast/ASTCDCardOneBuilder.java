@@ -2,7 +2,9 @@
 package de.monticore.cdassociation._ast;
 
 public class ASTCDCardOneBuilder extends ASTCDCardOneBuilderTOP {
+  
   public ASTCDCardOneBuilder() {
     this.setDigits("1");
   }
+  
 }

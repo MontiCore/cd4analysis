@@ -47,8 +47,8 @@ public class BuilderDecorator  extends AbstractDecorator<AbstractDecorator.NoDat
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     // We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    return Iterables.concat(
-        super.getMustRunAfter(), Collections.singletonList(SetterDecorator.class));
+    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
+        SetterDecorator.class));
   }
 
   Stack<ASTCDClass> decoratedBuilderClasses = new Stack<>();

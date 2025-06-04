@@ -24,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 public class CDGenGradlePluginTest {
-  @TempDir File testProjectDir;
+
+  @TempDir
+  File testProjectDir;
   File settingsFile;
   File propertiesFile;
   File buildFile;
@@ -97,23 +99,18 @@ public class CDGenGradlePluginTest {
             + "\" \n "
             + "}";
     writeFile(buildFile, buildFileContent);
-    Files.copy(
-        new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd").toPath());
-    Files.copy(
-        new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd").toPath());
+    Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
+        .toPath());
+    Files.copy(new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd")
+        .toPath());
     var myCDJava = new File(javaMainDir, "MyCD");
     myCDJava.mkdirs();
-    Files.copy(
-        new File("src/test/resources/IncompleteA.java").toPath(),
-        new File(myCDJava, "IncompleteA.java").toPath());
+    Files.copy(new File("src/test/resources/IncompleteA.java").toPath(), new File(myCDJava,
+        "IncompleteA.java").toPath());
 
-    BuildResult result =
-        GradleRunner.create()
-            .withPluginClasspath()
-            .withGradleVersion(version)
-            .withProjectDir(testProjectDir)
-            .withArguments(withProperties("build", "--info", "--stacktrace"))
-            .build();
+    BuildResult result = GradleRunner.create().withPluginClasspath().withGradleVersion(version)
+        .withProjectDir(testProjectDir).withArguments(withProperties("build", "--info",
+            "--stacktrace")).build();
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
 
@@ -173,72 +170,43 @@ public class CDGenGradlePluginTest {
     File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
 
     assertTrue(libs.exists());
-    String buildFileContent =
-        "plugins {"
-            + "    id 'de.rwth.se.cdgen' "
-            + "}\n "
-            + "repositories {\n"
-            + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
-            + "  mavenLocal()\n"
-            + " }\n"
-            + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
-            + " mavenCentral()\n"
-            + "}\n"
-            +
-            // Define a sourceset in which we write our own decorator
-            "sourceSets{\n"
-            + "  decorators {\n"
-            + "   java.srcDir('src/dec/java') \n"
-            + " }"
-            + "}\n"
-            +
-            // We have to inject the cdlang jar for this project (as it is not yet published)
-            "dependencies {\n"
-            + " cdTool files('"
-            + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
-            + "')\n"
-            +
-            // Along with the transitive dependencies
-            " cdTool \"de.monticore:monticore-grammar:"
-            + projVersion
-            + "\" \n "
-            + "}\n"
-            +
-            // the decorator sourceset requires the same dependencies as cdTool
-            "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
-            + "generateClassDiagrams {\n"
-            + "  configTemplate='CD2OwnDecorator' \n "
-            + "  tmplDir=file('src/main/resources') \n "
-            + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n "
-            + "}\n"
-            + "\n";
+    String buildFileContent = "plugins {" + "    id 'de.rwth.se.cdgen' " + "}\n "
+        + "repositories {\n" + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
+        + "  mavenLocal()\n" + " }\n"
+        + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
+        + " mavenCentral()\n" + "}\n" +
+        // Define a sourceset in which we write our own decorator
+        "sourceSets{\n" + "  decorators {\n" + "   java.srcDir('src/dec/java') \n" + " }" + "}\n" +
+        // We have to inject the cdlang jar for this project (as it is not yet published)
+        "dependencies {\n" + " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
+        + "')\n" +
+        // Along with the transitive dependencies
+        " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n " + "}\n" +
+        // the decorator sourceset requires the same dependencies as cdTool
+        "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
+        + "generateClassDiagrams {\n" + "  configTemplate='CD2OwnDecorator' \n "
+        + "  tmplDir=file('src/main/resources') \n "
+        + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n " + "}\n" + "\n";
     writeFile(buildFile, buildFileContent);
-    Files.copy(
-        new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd").toPath());
-    Files.copy(
-        new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd").toPath());
+    Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
+        .toPath());
+    Files.copy(new File("src/test/resources/MyCD2.cd").toPath(), new File(cdsDir, "MyCD2.cd")
+        .toPath());
     File srcSet = new File(testProjectDir, "src/dec/java/mc");
     srcSet.mkdirs();
-    Files.copy(
-        new File("src/test/resources/MyOwnDecorator.java").toPath(),
-        new File(srcSet, "MyOwnDecorator.java").toPath());
-    Files.copy(
-        new File("src/test/resources/CD2OwnDecorator.ftl").toPath(),
-        new File(resourceMainDir, "CD2OwnDecorator.ftl").toPath());
+    Files.copy(new File("src/test/resources/MyOwnDecorator.java").toPath(), new File(srcSet,
+        "MyOwnDecorator.java").toPath());
+    Files.copy(new File("src/test/resources/CD2OwnDecorator.ftl").toPath(), new File(
+        resourceMainDir, "CD2OwnDecorator.ftl").toPath());
 
     var myCDJava = new File(javaMainDir, "MyCD");
     myCDJava.mkdirs();
-    Files.copy(
-        new File("src/test/resources/IncompleteA.java").toPath(),
-        new File(myCDJava, "IncompleteA.java").toPath());
+    Files.copy(new File("src/test/resources/IncompleteA.java").toPath(), new File(myCDJava,
+        "IncompleteA.java").toPath());
 
-    BuildResult result =
-        GradleRunner.create()
-            .withPluginClasspath()
-            .withGradleVersion(version)
-            .withProjectDir(testProjectDir)
-            .withArguments(withProperties("build", "--info", "--stacktrace"))
-            .build();
+    BuildResult result = GradleRunner.create().withPluginClasspath().withGradleVersion(version)
+        .withProjectDir(testProjectDir).withArguments(withProperties("build", "--info",
+            "--stacktrace")).build();
     assertEquals(TaskOutcome.SUCCESS, result.task(":generateClassDiagrams").getOutcome());
     assertEquals(TaskOutcome.SUCCESS, result.task(":compileJava").getOutcome());
 
@@ -258,7 +226,8 @@ public class CDGenGradlePluginTest {
     Properties properties = new Properties();
     try {
       properties.load(this.getClass().getClassLoader().getResourceAsStream("buildInfo.properties"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException(e);
     }
     return properties;
@@ -270,14 +239,17 @@ public class CDGenGradlePluginTest {
 
   List<String> withProperties(List<String> runnerArgs) {
     List<String> ret = new ArrayList<>(runnerArgs);
-    @Nullable String mavenRepo = System.getProperty("maven.repo.local");
+    @Nullable
+    String mavenRepo = System.getProperty("maven.repo.local");
     if (mavenRepo != null && !mavenRepo.isEmpty()) {
       ret.add("-Dmaven.repo.local=" + mavenRepo + "");
     }
-    @Nullable String useLocalRepo = System.getProperty("useLocalRepo");
+    @Nullable
+    String useLocalRepo = System.getProperty("useLocalRepo");
     if (useLocalRepo != null && !useLocalRepo.isEmpty()) {
       ret.add("-PuseLocalRepo=" + useLocalRepo);
     }
     return ret;
   }
+
 }

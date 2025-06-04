@@ -22,11 +22,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CDBasisDeSerTest {
-
+  
   private static final String SYMBOL_PATH = "src/test/resources/";
   TestCDBasisParser parser;
   TestCDBasisSymbols2Json symbols2Json;
-
+  
   @BeforeEach
   public void setup() {
     // reset the GlobalScope
@@ -34,40 +34,40 @@ public class CDBasisDeSerTest {
     TestCDBasisMill.init();
     TestCDBasisMill.globalScope().clear();
     TestCDBasisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
-
+    
     // reset the logger
     Log.init();
     Log.enableFailQuick(false);
-
+    
     this.parser = TestCDBasisMill.parser();
     symbols2Json = new TestCDBasisSymbols2Json();
   }
-
+  
   @Test
   public void serializationTest() {
     String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/SerializationCD.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
-
+    
     // after parse trafo
     TestCDBasisTraverser t = TestCDBasisMill.inheritanceTraverser();
     CDBasisCombinePackagesTrafo trafo = new CDBasisCombinePackagesTrafo();
     t.add4CDBasis(trafo);
     ast.accept(t);
-
+    
     // create symbol table
     ITestCDBasisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-
+    
     // complete symbol table
     TestCDBasisTraverser t2 = TestCDBasisMill.inheritanceTraverser();
     CDBasisSymbolTableCompleter symTabComp = new CDBasisSymbolTableCompleter();
     t2.add4CDBasis(symTabComp);
     t2.add4OOSymbols(symTabComp);
     ast.accept(t2);
-
+    
     String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
-
+    
     // check for contents
     assertTrue(serialized.contains("\"name\":\"A\""));
     assertTrue(serialized.contains("\"name\":\"B\""));
@@ -76,10 +76,10 @@ public class CDBasisDeSerTest {
     assertTrue(serialized.contains("\"name\":\"E\""));
     assertTrue(serialized.contains("\"name\":\"f.g.h\""));
     assertTrue(serialized.contains("\"name\":\"J\""));
-
+    
     assertEquals(0, Log.getErrorCount());
   }
-
+  
   @Test
   public void deserializationTest() {
     ITestCDBasisGlobalScope gs = TestCDBasisMill.globalScope();
@@ -88,64 +88,65 @@ public class CDBasisDeSerTest {
     assertTrue(gs.getSubScopes().isEmpty());
     gs.loadFileForModelName("de.monticore.cdbasis.symtabs.SerializationCD");
     assertEquals(1, gs.getSubScopes().size());
-
+    
     // resolve for class A
     Optional<CDTypeSymbol> a = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.A");
     assertTrue(a.isPresent());
-
+    
     // resolve for class B
     Optional<CDTypeSymbol> b = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.B");
     assertTrue(b.isPresent());
-    Optional<FieldSymbol> a_field =
-        gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.B.a");
+    Optional<FieldSymbol> a_field = gs.resolveField(
+        "de.monticore.cdbasis.symtabs.SerializationCD.B.a");
     assertTrue(a_field.isPresent());
-
+    
     // resolve for class D
     Optional<CDTypeSymbol> d = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.c.D");
     assertTrue(d.isPresent());
-
+    
     // resolve for class D
     Optional<CDTypeSymbol> e = gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.c.E");
     assertTrue(e.isPresent());
-    Optional<FieldSymbol> a1_field =
-        gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.c.E.a1");
+    Optional<FieldSymbol> a1_field = gs.resolveField(
+        "de.monticore.cdbasis.symtabs.SerializationCD.c.E.a1");
     assertTrue(a1_field.isPresent());
-
+    
     // resolve for class I
-    Optional<CDTypeSymbol> i =
-        gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.I");
+    Optional<CDTypeSymbol> i = gs.resolveCDType(
+        "de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.I");
     assertTrue(i.isPresent());
-
+    
     // resolve for class J
-    Optional<CDTypeSymbol> j =
-        gs.resolveCDType("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J");
+    Optional<CDTypeSymbol> j = gs.resolveCDType(
+        "de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J");
     assertTrue(j.isPresent());
-    Optional<FieldSymbol> a2_field =
-        gs.resolveField("de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J.a2");
+    Optional<FieldSymbol> a2_field = gs.resolveField(
+        "de.monticore.cdbasis.symtabs.SerializationCD.f.g.h.J.a2");
     assertTrue(a2_field.isPresent());
   }
-
+  
   protected ASTCDCompilationUnit loadModel(String pathToArtifact) {
     try {
-      return parser
-          .parse(Paths.get(pathToArtifact).toString())
-          .orElseThrow(NoSuchElementException::new);
-    } catch (IOException | NoSuchElementException e) {
+      return parser.parse(Paths.get(pathToArtifact).toString()).orElseThrow(
+          NoSuchElementException::new);
+    }
+    catch (IOException | NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }
     throw new IllegalStateException("Something went wrong..");
   }
-
+  
   protected ITestCDBasisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
     ITestCDBasisArtifactScope as = TestCDBasisMill.scopesGenitorDelegator().createFromAST(ast);
-
+    
     // add imports
     List<ImportStatement> imports = Lists.newArrayList();
-    ast.getMCImportStatementList()
-        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    ast.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i
+        .isStar())));
     as.setImportsList(imports);
-
+    
     return as;
   }
+  
 }

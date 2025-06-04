@@ -1,0 +1,9 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeMultipleParametersRef {
+  class DataClass {
+    any attribute;
+    // the first parameter is adapted to the attribute and the second always stays the same
+    <<forEach="attribute">> void updateAttribute(any attribute, String changedBy);
+  }
+}

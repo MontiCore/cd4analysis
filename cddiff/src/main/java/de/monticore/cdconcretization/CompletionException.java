@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
 /**
@@ -6,7 +7,9 @@ package de.monticore.cdconcretization;
  * incompatible attribute types or incompatible associations with the same name.
  */
 public class CompletionException extends Exception {
+  
   public CompletionException(String message) {
     super(message);
   }
+  
 }

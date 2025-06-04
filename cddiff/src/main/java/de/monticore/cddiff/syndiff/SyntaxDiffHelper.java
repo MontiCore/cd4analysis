@@ -1,20 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cdmatcher.*;
 import java.util.*;
 
 public class SyntaxDiffHelper implements ICDPrintDiff {
-
+  
   protected static final String COLOR_DELETE = "\033[1;31m";
-
+  
   protected static final String COLOR_ADD = "\033[1;32m";
-
+  
   protected static final String COLOR_INHERITED = "\033[1;35m";
-
+  
   protected static final String COLOR_CHANGE = "\033[1;33m";
-
+  
   protected static final String RESET = "\033[0m";
-
+  
   /**
    * Concatenates a list of strings with spaces in between.
    *
@@ -24,7 +25,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStrings(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(field).append(" ");
@@ -35,7 +36,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Concatenates a list of strings with spaces in between and applies a green color to each string.
    *
@@ -45,7 +46,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStringsAndGreen(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_ADD).append(field).append(" ");
@@ -56,7 +57,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Concatenates a list of strings with spaces in between and applies a red color to each string.
    *
@@ -66,7 +67,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStringsAndRed(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_DELETE).append(field).append(" ");
@@ -77,7 +78,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Concatenates a list of strings with spaces in between and applies a red color to each string.
    *
@@ -87,7 +88,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
   @Override
   public String insertSpaceBetweenStringsAndPurple(List<String> stringList) {
     StringBuilder output = new StringBuilder();
-
+    
     for (String field : stringList) {
       if (!(field == null)) {
         output.append(COLOR_INHERITED).append(field).append(" ");
@@ -98,7 +99,7 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     }
     return output.toString();
   }
-
+  
   /**
    * Gets the color code based on the action associated with the difference.
    *
@@ -109,12 +110,15 @@ public class SyntaxDiffHelper implements ICDPrintDiff {
     if (diff.getAction().isPresent()) {
       if (diff.getAction().get().equals(Actions.REMOVED)) {
         return COLOR_DELETE;
-      } else if (diff.getAction().get().equals(Actions.ADDED)) {
+      }
+      else if (diff.getAction().get().equals(Actions.ADDED)) {
         return COLOR_ADD;
-      } else if (diff.getAction().get().equals(Actions.CHANGED)) {
+      }
+      else if (diff.getAction().get().equals(Actions.CHANGED)) {
         return COLOR_CHANGE;
       }
     }
     return "";
   }
+  
 }

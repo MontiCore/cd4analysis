@@ -12,19 +12,20 @@ import java.util.Optional;
 
 /** Extend {@link AbstractDecorator} for shared */
 public interface IDecorator<D> extends IVisitor {
-
+  
   /**
    * Add your decorator-visitor to the given traverser
    *
    * @param traverser the traverser
    */
   void addToTraverser(CD4CodeTraverser traverser);
-
+  
   void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt);
-
+  
   /** @return the list of decorators which MUST traverse the AST before */
   @SuppressWarnings("rawtypes")
   default Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     return Collections.singletonList(ICreator.class);
   }
+  
 }

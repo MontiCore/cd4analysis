@@ -7,10 +7,11 @@ import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 
 public class CDCardinalityDeSer {
+  
   public static ASTCDCardinality fromString(String cardinality) {
     return new CDCardinalityDeSer().createFromString(cardinality);
   }
-
+  
   public ASTCDCardinality createFromString(String cardinality) {
     switch (cardinality) {
       case "[*]":
@@ -25,7 +26,7 @@ public class CDCardinalityDeSer {
         return createNonStandardCardinality(cardinality);
     }
   }
-
+  
   protected ASTCDCardinality createNonStandardCardinality(String cardinality) {
     String card = cardinality.replaceAll("\\s", "").replace("[", "").replace("]", "");
     ASTCardinalityBuilder builder = CardinalityMill.cardinalityBuilder();
@@ -34,24 +35,26 @@ public class CDCardinalityDeSer {
       return null;
     }
     try {
-      builder
-          .setMany(false)
-          .setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits(bounds[0]).build());
+      builder.setMany(false).setLowerBoundLit(CardinalityMill.natLiteralBuilder().setDigits(
+          bounds[0]).build());
       if (bounds.length == 2) {
         if (bounds[1].equals("*")) {
           builder.setNoUpperLimit(true).setUpperBoundLitAbsent();
-        } else {
-          builder
-              .setNoUpperLimit(false)
-              .setUpperBoundLit(CardinalityMill.natLiteralBuilder().setDigits(bounds[1]).build());
         }
-      } else {
+        else {
+          builder.setNoUpperLimit(false).setUpperBoundLit(CardinalityMill.natLiteralBuilder()
+              .setDigits(bounds[1]).build());
+        }
+      }
+      else {
         builder.setNoUpperLimit(false).setUpperBoundLitAbsent();
       }
       return CDAssociationMill.cDCardOtherBuilder().setCardinality(builder.build()).build();
-    } catch (NumberFormatException e) {
+    }
+    catch (NumberFormatException e) {
       e.printStackTrace();
     }
     return null;
   }
+  
 }

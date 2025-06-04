@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
-public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterData>
-    implements CDBasisVisitor2 {
+public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterData> implements
+    CDBasisVisitor2 {
 
   @Override
   public void visit(ASTCDAttribute attribute) {
-    if (attribute.getModifier().isDerived()
-        || attribute.getModifier().isReadonly()
-        || attribute.getModifier().isFinal()) return;
+    if (attribute.getModifier().isDerived() || attribute.getModifier().isReadonly() || attribute
+        .getModifier().isFinal())
+      return;
 
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
       var originalClazz = decoratorData.getParent(attribute);
@@ -39,40 +39,32 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
 
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
-      } else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
+      }
+      else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
         decorateList(decClazz, attribute);
         Log.warn("0xTODO: WIP List Setter", attribute.get_SourcePositionStart());
-        //TODO
-        //Log.clearFindings();
-      } else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+      }
+      else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
         decorateSet(decClazz, attribute);
         Log.warn("0xTODO: WIP Set Setter", attribute.get_SourcePositionStart());
-        //TODO
-        //Log.clearFindings();
-      } else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
+      }
+      else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
         decorateOptional(decClazz, attribute);
-      } else {
+      }
+      else {
         decorateMandatory(decClazz, attribute);
       }
     }
   }
 
   protected void decorateMandatory(ASTCDClass clazz, ASTCDAttribute attribute) {
-    String name =
-        "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute.getName()));
+    String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
+        .getName()));
     ASTMCType type = attribute.getMCType().deepClone();
-    ASTCDMethod method =
-        CDMethodFacade.getInstance()
-            .createMethod(
-                attribute.getModifier().deepClone(),
-                name,
-                CDParameterFacade.getInstance().createParameters(attribute));
-    glexOpt.ifPresent(
-        glex ->
-            glex.replaceTemplate(
-                EMPTY_BODY,
-                method,
-                new ForwardingTemplateHookPoint("methods.Set", glex, attribute)));
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
+        .deepClone(), name, CDParameterFacade.getInstance().createParameters(attribute));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
+        new ForwardingTemplateHookPoint("methods.Set", glex, attribute)));
 
     addToClass(clazz, method);
 
@@ -83,21 +75,14 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
   }
 
   protected void decorateOptional(ASTCDClass clazz, ASTCDAttribute attribute) {
-    String name =
-        "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute.getName()));
+    String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
+        .getName()));
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-    ASTCDMethod method =
-        CDMethodFacade.getInstance()
-            .createMethod(
-                attribute.getModifier().deepClone(),
-                name,
-                CDParameterFacade.getInstance().createParameter(type, attribute.getName()));
-    glexOpt.ifPresent(
-        glex ->
-            glex.replaceTemplate(
-                EMPTY_BODY,
-                method,
-                new ForwardingTemplateHookPoint("methods.opt.Set4Opt", glex, attribute, "")));
+    ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
+        .deepClone(), name, CDParameterFacade.getInstance().createParameter(type, attribute
+            .getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
+        new ForwardingTemplateHookPoint("methods.opt.Set4Opt", glex, attribute, "")));
 
     addToClass(clazz, method);
 
@@ -111,18 +96,11 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     String name = "set" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
 
-    ASTCDMethod setListMethod =
-        CDMethodFacade.getInstance()
-            .createMethod(
-                attribute.getModifier().deepClone(),
-                name,
-                CDParameterFacade.getInstance()
-                    .createParameter(
-                        MCTypeFacade.getInstance().createSetTypeOf(type), attribute.getName()));
-    glexOpt.ifPresent(
-        glex ->
-            glex.replaceTemplate(
-                EMPTY_BODY, setListMethod, new TemplateHookPoint("methods.Set", attribute)));
+    ASTCDMethod setListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
+        .deepClone(), name, CDParameterFacade.getInstance().createParameter(MCTypeFacade
+            .getInstance().createSetTypeOf(type), attribute.getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, setListMethod, new TemplateHookPoint(
+        "methods.Set", attribute)));
     setListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedClazz, setListMethod);
 
@@ -135,18 +113,11 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     String name = "set" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
 
-    ASTCDMethod getListMethod =
-        CDMethodFacade.getInstance()
-            .createMethod(
-                attribute.getModifier().deepClone(),
-                name,
-                CDParameterFacade.getInstance()
-                    .createParameter(
-                        MCTypeFacade.getInstance().createListTypeOf(type), attribute.getName()));
-    glexOpt.ifPresent(
-        glex ->
-            glex.replaceTemplate(
-                EMPTY_BODY, getListMethod, new TemplateHookPoint("methods.Set", attribute)));
+    ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
+        .deepClone(), name, CDParameterFacade.getInstance().createParameter(MCTypeFacade
+            .getInstance().createListTypeOf(type), attribute.getName()));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, getListMethod, new TemplateHookPoint(
+        "methods.Set", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedClazz, getListMethod);
 
@@ -156,9 +127,8 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
   }
 
   public SetterData getData() {
-    return (SetterData)
-        decoratorData.decoratorDataMap.computeIfAbsent(
-            SetterDecorator.class, aClass -> new SetterData());
+    return (SetterData) decoratorData.decoratorDataMap.computeIfAbsent(SetterDecorator.class,
+        aClass -> new SetterData());
   }
 
   protected void updateModifier(ASTCDAttribute attribute) {
@@ -174,10 +144,13 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
   }
 
   public static class SetterData {
+
     Map<ASTCDAttribute, List<ASTCDMethod>> methods = new HashMap<>();
 
     protected void addMethod(ASTCDAttribute attribute, ASTCDMethod method) {
       this.methods.computeIfAbsent(attribute, a -> new ArrayList<>()).add(method);
     }
+
   }
+
 }

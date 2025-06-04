@@ -15,12 +15,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDTypeModifierNotProtectedTest extends CD4AnalysisTestBasis {
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDTypeModifierNotProtected());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cd4analysis/cocos/CDTypeModifierNotProtectedInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cd4analysis/cocos/CDTypeModifierNotProtectedInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -31,7 +31,8 @@ public class CDTypeModifierNotProtectedTest extends CD4AnalysisTestBasis {
     assertTrue(Log.getFindings().get(1).getMsg().startsWith(CDTypeModifierNotProtected.ERROR_CODE));
     assertTrue(Log.getFindings().get(2).getMsg().startsWith(CDTypeModifierNotProtected.ERROR_CODE));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

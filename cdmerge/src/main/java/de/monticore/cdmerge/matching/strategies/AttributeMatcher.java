@@ -9,9 +9,10 @@ import java.util.Map;
 
 /** Determines if to attributes match */
 public interface AttributeMatcher {
-
+  
   boolean matchAttribute(ASTCDAttribute attribute1, ASTCDAttribute attribute2);
-
+  
   Map<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>> findMatchingAttributes(
       ASTMatchGraph<ASTCDClass, ASTCDDefinition> matchedClasses);
+  
 }

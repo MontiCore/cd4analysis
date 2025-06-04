@@ -28,80 +28,62 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class CDGenTest {
-
+  
   @Test
   public void doTest() throws Exception {
     LogStub.initPlusLog();
     DecoratorConfig setup = new DecoratorConfig();
-
-    String[] options =
-        new String[] {
-          "MyCD.CliC:noGetter", "MyCD.CliC.f:getter", "MyCD.CliC:attributesFromRoles=all",
-        };
-
+    
+    String[] options = new String[] { "MyCD.CliC:noGetter", "MyCD.CliC.f:getter",
+        "MyCD.CliC:attributesFromRoles=all", };
+    
     setup.withCopyCreator().defaultApply();
-
+    
     setup.withDecorator(new GetterDecorator());
     setup.configApplyMatchName(GetterDecorator.class, "getter");
     setup.configIgnoreMatchName(GetterDecorator.class, "noGetter");
-
+    
     setup.withDecorator(new SetterDecorator());
     setup.configApplyMatchName(SetterDecorator.class, ("setter"));
     setup.configIgnoreMatchName(SetterDecorator.class, ("noSetter"));
-
+    
     setup.withDecorator(new NavigableSetterDecorator());
     setup.configApplyMatchName(NavigableSetterDecorator.class, "setter");
     setup.configIgnoreMatchName(NavigableSetterDecorator.class, "noSetter");
-
+    
     setup.withDecorator(new BuilderDecorator());
     setup.configApplyMatchName(BuilderDecorator.class, "builder");
     setup.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
-
+    
     setup.withDecorator(new ObserverDecorator());
     setup.configApplyMatchName(ObserverDecorator.class, "observable");
     setup.configIgnoreMatchName(ObserverDecorator.class, "notObservable");
-
+    
     setup.withCLIConfig(Arrays.asList(options));
-
+    
     CD4CodeMill.reset();
     CD4CodeMill.init();
-    var opt =
-        CD4CodeMill.parser()
-            .parse_String(
-                "classdiagram MyCD {\n"
-                    + " <<getter>> public class  MyC { \n"
-                    + " boolean myBool;"
-                    + " public int myInt;"
-                    + " <<noGetter>> public int pubX;"
-                    + " }"
-                    + " public class CliC { \n"
-                    + "   int f;\n"
-                    + "   int e;\n"
-                    + " }\n"
-                    + "<<setter,getter,builder,observable>> public class OtherC { \n"
-                    + " public int myInt;\n"
-                    + " -> (manyB) B [*];\n"
-                    + " -> (optB) B [0..1] ;\n"
-                    + " -> (oneB) B [1]; \n"
-                    + " }\n"
-                    + "<<setter>>public class B { "
-                    + "}\n "
-                    + "association OtherC (binavC) <-> (binavB) B;"
-                    + "}");
-
+    var opt = CD4CodeMill.parser().parse_String("classdiagram MyCD {\n"
+        + " <<getter>> public class  MyC { \n" + " boolean myBool;" + " public int myInt;"
+        + " <<noGetter>> public int pubX;" + " }" + " public class CliC { \n" + "   int f;\n"
+        + "   int e;\n" + " }\n" + "<<setter,getter,builder,observable>> public class OtherC { \n"
+        + " public int myInt;\n" + " -> (manyB) B [*];\n" + " -> (optB) B [0..1] ;\n"
+        + " -> (oneB) B [1]; \n" + " }\n" + "<<setter>>public class B { " + "}\n "
+        + "association OtherC (binavC) <-> (binavB) B;" + "}");
+    
     // After parse Trafos
     var afterParseTrafo = new CD4AnalysisAfterParseTrafo();
     afterParseTrafo.transform(opt.get());
-
+    
     BasicSymbolsMill.initializePrimitives();
     MCCollectionSymTypeRelations.init();
-
+    
     // Create ST
     CD4CodeMill.scopesGenitorDelegator().createFromAST(opt.get());
-
+    
     // Complete ST
     opt.get().accept(new CD4CodeSymbolTableCompleter(opt.get()).getTraverser());
-
+    
     // Transform with ST
     CDAssociationCreateFieldsFromAllRoles roleTrafo =
         new CDAssociationCreateFieldsFromNavigableRoles();
@@ -109,7 +91,7 @@ public class CDGenTest {
     traverser.add4CDAssociation(roleTrafo);
     traverser.setCDAssociationHandler(roleTrafo);
     roleTrafo.transform(opt.get());
-
+    
     // Prepare
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
@@ -119,23 +101,24 @@ public class CDGenTest {
     GeneratorSetup generatorSetup = new GeneratorSetup();
     generatorSetup.setGlex(glex);
     generatorSetup.setOutputDirectory(new File("target/outtest"));
-
+    
     generatorSetup.getOutputDirectory().mkdirs();
-
+    
     CDGenerator generator = new CDGenerator(generatorSetup);
-
+    
     var decoratedOpt = setup.decorate(opt.get(), roleTrafo.getFieldToRoles(), Optional.of(glex));
-
+    
     Assertions.assertTrue(decoratedOpt.isPresent());
-
+    
     System.err.println(CD4CodeMill.prettyPrint(decoratedOpt.get(), true));
-
+    
     // Post-Decorate
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDBasis(new CDBasisDefaultPackageTrafo());
     decoratedOpt.get().accept(t);
-
+    
     generator.generate(decoratedOpt.get());
     System.err.println(generatorSetup.getOutputDirectory().getAbsolutePath());
   }
+  
 }

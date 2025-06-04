@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 /** Provides some helpers for tests. */
 public abstract class CDDiffTestBasis {
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
@@ -32,7 +32,7 @@ public abstract class CDDiffTestBasis {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-
+  
   /**
    * Parses a model and ensures that the root node is present.
    *
@@ -49,14 +49,15 @@ public abstract class CDDiffTestBasis {
       assertTrue(optModel.isPresent());
       (new CD4AnalysisAfterParseTrafo()).transform(optModel.get());
       return optModel.get();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
-
+    
     return null;
   }
-
+  
   protected void prepareAST(ASTCDCompilationUnit ast) {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
@@ -66,7 +67,7 @@ public abstract class CDDiffTestBasis {
     CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
     cocos.checkAll(ast);
   }
-
+  
   /**
    * Checks if a String matches a legal alloy struct
    *
@@ -80,22 +81,23 @@ public abstract class CDDiffTestBasis {
       fail();
       return;
     }
-
+    
     // Set default to 0
     int start = (startIndex.length == 1) ? startIndex[0] : 0;
-
+    
     // All skipped indexes must be comments
     for (int i = 0; i < start; i++) {
       assertTrue(structs[i].matches(".*\\/\\/.*"));
     }
-
+    
     // Check structure
     for (int i = start; i < structs.length; i++) {
       // Remove all white spaces
       String currentLine = structs[i].replaceAll("\\p{Space}", "");
-
+      
       // Check the general structure of the String
       assertTrue(currentLine.matches(prefix + "\\[.*[\\]]"));
     }
   }
+  
 }

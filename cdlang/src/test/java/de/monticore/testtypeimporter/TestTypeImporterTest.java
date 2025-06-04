@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 public class TestTypeImporterTest extends TestBasis {
+  
   @Test
   public void createST() throws IOException {
     CD4CodeMill.reset();
@@ -30,13 +31,13 @@ public class TestTypeImporterTest extends TestBasis {
     TestTypeImporterMill.init();
     final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.globalScope();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
-
+    
     BuiltInTypes.addBuiltInTypes(globalScope);
-
+    
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.clear();
     cdGlobalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
-
+    
     final CD4CodeResolver c = new CD4CodeResolver(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolver(c);
     globalScope.addAdaptedTypeSymbolResolver(c);
@@ -44,33 +45,32 @@ public class TestTypeImporterTest extends TestBasis {
     globalScope.addAdaptedVariableSymbolResolver(c);
     globalScope.addAdaptedMethodSymbolResolver(c);
     globalScope.addAdaptedFunctionSymbolResolver(c);
-
+    
     final TestTypeImporterParser parser = new TestTypeImporterParser();
-    final Optional<ASTCompilationUnit> cu =
-        parser.parse(getFilePath("testtypeimporter/Simple.def"));
+    final Optional<ASTCompilationUnit> cu = parser.parse(getFilePath(
+        "testtypeimporter/Simple.def"));
     assertTrue(cu.isPresent());
-
+    
     final ASTCompilationUnit compilationUnit = cu.get();
-    final ITestTypeImporterArtifactScope symbolTable =
-        TestTypeImporterMill.scopesGenitorDelegator().createFromAST(compilationUnit);
-
+    final ITestTypeImporterArtifactScope symbolTable = TestTypeImporterMill.scopesGenitorDelegator()
+        .createFromAST(compilationUnit);
+    
     final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("java.lang.String");
     assertTrue(stringOOType.isPresent());
     assertEquals("java.lang.String", stringOOType.get().getFullName());
-
+    
     final Optional<TypeSymbol> stringType = symbolTable.resolveType("java.lang.String");
     assertTrue(stringType.isPresent());
     assertEquals("java.lang.String", stringType.get().getFullName());
-
+    
     assertEquals(stringOOType.get(), stringType.get());
-
+    
     final Optional<FieldSymbol> a = symbolTable.resolveField("a");
     assertTrue(a.isPresent());
     assertEquals("java.lang.String", a.get().getType().getTypeInfo().getFullName());
-
-    compilationUnit
-        .getDefinition()
-        .streamElements()
-        .forEach(e -> assertNotNull(e.getSymbol().getType().getTypeInfo()));
+    
+    compilationUnit.getDefinition().streamElements().forEach(e -> assertNotNull(e.getSymbol()
+        .getType().getTypeInfo()));
   }
+  
 }
