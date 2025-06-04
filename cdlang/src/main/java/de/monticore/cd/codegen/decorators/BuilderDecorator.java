@@ -40,7 +40,6 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
   CD4AnalysisTypeDispatcher dispatcher = new CD4AnalysisTypeDispatcher();
   
   @Override
-  
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     // We check that the SetterDecorator has added a Setter for an attribute,
