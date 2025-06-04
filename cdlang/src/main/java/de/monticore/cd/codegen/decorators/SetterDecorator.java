@@ -26,17 +26,17 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterData> implements
     CDBasisVisitor2 {
-
+  
   @Override
   public void visit(ASTCDAttribute attribute) {
     if (attribute.getModifier().isDerived() || attribute.getModifier().isReadonly() || attribute
         .getModifier().isFinal())
       return;
-
+    
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
       var originalClazz = decoratorData.getParent(attribute);
       var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz.get());
-
+      
       if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
         decorateMandatory(decClazz, attribute);
       }
@@ -56,7 +56,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
       }
     }
   }
-
+  
   protected void decorateMandatory(ASTCDClass clazz, ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
@@ -65,15 +65,15 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
         .deepClone(), name, CDParameterFacade.getInstance().createParameters(attribute));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
         new ForwardingTemplateHookPoint("methods.Set", glex, attribute)));
-
+    
     addToClass(clazz, method);
-
+    
     updateModifier(attribute);
-
+    
     // Also track this data
     getData().addMethod(attribute, method);
   }
-
+  
   protected void decorateOptional(ASTCDClass clazz, ASTCDAttribute attribute) {
     String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(attribute
         .getName()));
@@ -83,19 +83,19 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
             .getName()));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
         new ForwardingTemplateHookPoint("methods.opt.Set4Opt", glex, attribute, "")));
-
+    
     addToClass(clazz, method);
-
+    
     updateModifier(attribute);
-
+    
     // Also track this data
     getData().addMethod(attribute, method);
   }
-
+  
   protected void decorateSet(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
     String name = "set" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-
+    
     ASTCDMethod setListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), name, CDParameterFacade.getInstance().createParameter(MCTypeFacade
             .getInstance().createSetTypeOf(type), attribute.getName()));
@@ -103,16 +103,16 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
         "methods.Set", attribute)));
     setListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedClazz, setListMethod);
-
+    
     getData().addMethod(attribute, setListMethod);
-
+    
     this.updateModifier(attribute);
   }
-
+  
   protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {
     String name = "set" + StringTransformations.capitalize(attribute.getName());
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
-
+    
     ASTCDMethod getListMethod = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), name, CDParameterFacade.getInstance().createParameter(MCTypeFacade
             .getInstance().createListTypeOf(type), attribute.getName()));
@@ -120,37 +120,37 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
         "methods.Set", attribute)));
     getListMethod.getModifier().setAbstract(attribute.getModifier().isDerived());
     addToClass(decoratedClazz, getListMethod);
-
+    
     getData().addMethod(attribute, getListMethod);
-
+    
     this.updateModifier(attribute);
   }
-
+  
   public SetterData getData() {
     return (SetterData) decoratorData.decoratorDataMap.computeIfAbsent(SetterDecorator.class,
         aClass -> new SetterData());
   }
-
+  
   protected void updateModifier(ASTCDAttribute attribute) {
     var decoratedModifier = decoratorData.getAsDecorated(attribute).getModifier();
     decoratedModifier.setProtected(true);
     decoratedModifier.setPublic(false);
     decoratedModifier.setPrivate(false);
   }
-
+  
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
-
+  
   public static class SetterData {
-
+    
     Map<ASTCDAttribute, List<ASTCDMethod>> methods = new HashMap<>();
-
+    
     protected void addMethod(ASTCDAttribute attribute, ASTCDMethod method) {
       this.methods.computeIfAbsent(attribute, a -> new ArrayList<>()).add(method);
     }
-
+    
   }
-
+  
 }

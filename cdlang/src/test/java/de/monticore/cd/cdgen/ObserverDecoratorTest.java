@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.DecoratorConfig;
@@ -17,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ObserverDecoratorTest extends AbstractDecoratorTest {
-
+  
   /**
    * Test the {@link ObserverDecorator} by applying it to a CD. The
    * cdlang/src/cdGenIntTest/java/observer/ObserverDecoratorTest then tests the generated result
    */
   @Test
   void testObserver() throws Exception {
-    var opt =
+    var opt = // @formatter:off
       CD4CodeMill.parser()
         .parse_String("classdiagram TestObserver {\n" +
         " <<setter,observer>> public class OtherC { \n" +
@@ -38,30 +39,33 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
         "<<setter>>public class B { " +
         "}\n " +
         "}");
-
+    // @formatter:on
+    
     Assertions.assertTrue(opt.isPresent());
-
+    
     super.doTest(opt.get());
-
+    
     // TODO: Remove once WIP Set Setter is implemented
     Log.getFindings().remove(0);
   }
-
+  
   @Test
   public void testTemplateExistence() {
     //test existence of the templates
-    List<Path> templatePaths= new ArrayList<>();
+    List<Path> templatePaths = new ArrayList<>();
     templatePaths.add(Paths.get("src/main/resources/methods/observer/addObserver.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/observer/removeObserver.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/observer/notifyObserver.ftl"));
-    templatePaths.add(Paths.get("src/main/resources/methods/observer/notifyObserverAttributeSpecific.ftl"));
-    for (Path temPath: templatePaths) {
+    templatePaths.add(Paths.get(
+        "src/main/resources/methods/observer/notifyObserverAttributeSpecific.ftl"));
+    for (Path temPath : templatePaths) {
       Assert.assertTrue(Files.exists(temPath));
     }
   }
-
+  
   @Override
-  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
+      GeneratorSetup setup) {
     config.withCopyCreator().defaultApply();
     config.withDecorator(new GetterDecorator());
     config.configApplyMatchName(GetterDecorator.class, "getter");
@@ -75,4 +79,5 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
     config.withDecorator(new CardinalityDefaultDecorator());
     config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }
+  
 }

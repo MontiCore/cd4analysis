@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.DecoratorConfig;
@@ -14,17 +15,15 @@ import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.nio.file.Files;
-import org.junit.Assert;
 import java.util.List;
 import java.util.Optional;
 
-class BuilderDecoratorTest extends AbstractDecoratorTest{
-
+class BuilderDecoratorTest extends AbstractDecoratorTest {
+  
   @Test
   public void testBuilder() throws Exception {
-    var opt =
-      CD4CodeMill.parser()
-        .parse_String(
+    var opt = CD4CodeMill.parser()
+        .parse_String( // @formatter:off
           "classdiagram TestBuilder {\n"
             + " <<setter,getter,builder>> public class TestBuilderWithSetter { \n"
             + " public int myInt;\n"
@@ -51,36 +50,38 @@ class BuilderDecoratorTest extends AbstractDecoratorTest{
             + " int i; \n"
             + " } \n"
             + "}");
-
+    // @formatter:on
+    
     Assertions.assertTrue(opt.isPresent());
-
+    
     super.doTest(opt.get());
-
+    
     // TODO: Remove once WIP Set Setter is implemented
     Log.getFindings().clear();
   }
-
+  
   @Test
   public void testTemplateExistence() {
     //test existence of the templates
-    List<Path> templatePaths= new ArrayList<>();
+    List<Path> templatePaths = new ArrayList<>();
     templatePaths.add(Paths.get("src/main/resources/methods/builder/unsafeBuild.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/builder/build.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/builder/isValid.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/builder/set.ftl"));
     templatePaths.add(Paths.get("src/main/resources/methods/builder/setAbsent.ftl"));
-    for (Path temPath: templatePaths) {
+    for (Path temPath : templatePaths) {
       Assertions.assertTrue(Files.exists(temPath));
     }
   }
-
+  
   @Override
   protected Optional<MCPath> getHandWrittenPath() {
     return Optional.of(new MCPath("src/cdGenIntTestHwc/java"));
   }
-
+  
   @Override
-  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup) {
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
+      GeneratorSetup setup) {
     config.withCopyCreator().defaultApply();
     config.withDecorator(new SetterDecorator());
     config.configApplyMatchName(SetterDecorator.class, ("setter"));
@@ -94,4 +95,5 @@ class BuilderDecoratorTest extends AbstractDecoratorTest{
     config.withDecorator(new CardinalityDefaultDecorator());
     config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }
+  
 }

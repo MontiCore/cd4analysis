@@ -1,9 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators.data;
 
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -16,35 +14,30 @@ import java.util.Set;
  * It ensures that only one instance of this class exists globally.
  */
 public class CDTypeCollector implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
+  
   private final Set<ASTCDClass> classes = new HashSet<>();
   private final Set<ASTCDInterface> interfaces = new HashSet<>();
   private final Set<ASTCDEnum> enums = new HashSet<>();
-
+  
   @Override
   public void visit(ASTCDClass node) {
     classes.add(node);
   }
-
+  
   @Override
   public void visit(ASTCDInterface node) {
     interfaces.add(node);
   }
-
+  
   @Override
   public void visit(ASTCDEnum node) {
     enums.add(node);
   }
-
-  public Set<ASTCDClass> getClasses() {
-    return classes;
-  }
-
-  public Set<ASTCDInterface> getInterfaces() {
-    return interfaces;
-  }
-
-  public Set<ASTCDEnum> getEnums() {
-    return enums;
-  }
+  
+  public Set<ASTCDClass> getClasses() { return classes; }
+  
+  public Set<ASTCDInterface> getInterfaces() { return interfaces; }
+  
+  public Set<ASTCDEnum> getEnums() { return enums; }
+  
 }
-
