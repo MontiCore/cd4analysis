@@ -16,6 +16,8 @@ import de.monticore.cdmerge.util.CDMergeUtils;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -35,7 +37,7 @@ public class BaseTest {
   
   protected static final String MODEL_PATH = "src/test/resources/class_diagrams";
   
-  protected final CD4CodeParser parser;
+  protected CD4CodeParser parser;
   
   protected ICD4CodeGlobalScope globalScope;
   
@@ -44,16 +46,18 @@ public class BaseTest {
     MCLoggerWrapper.init(ErrorLevel.WARNING, true);
   }
   
-  public BaseTest() {
-    parser = CD4CodeMill.parser();
-  }
-  
   @BeforeEach
   public void initBefore() {
     CD4CodeMill.reset();
     CD4CodeMill.init();
+    parser = CD4CodeMill.parser();
     globalScope = CD4CodeMill.globalScope();
     BuiltInTypes.addBuiltInTypes(globalScope);
+  }
+  
+  @AfterEach
+  public void tearDown() {
+    CD4CodeMill.reset();
   }
   
   protected ASTCDCompilationUnit loadModel(String filename) throws IOException {

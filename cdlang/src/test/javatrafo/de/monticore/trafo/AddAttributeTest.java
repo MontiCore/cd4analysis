@@ -17,6 +17,7 @@ public class AddAttributeTest {
   
   @BeforeAll
   public static void init() {
+    CD4CodeMill.reset();
     CD4CodeMill.init();
   }
   
