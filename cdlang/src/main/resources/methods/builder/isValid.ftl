@@ -13,7 +13,7 @@ ${tc.signature("attributes","staticErrorCode")}
   <#-- as primitive types cannot be check for == null we need to ignore them -->
   <#if (!(CD4AnalysisTypeDispatcher.isMCBasicTypesASTMCPrimitiveType(attribute.getMCType())))>
 if (this.${attribute.getName()} == null) {
-  Log.error("${errorCode}");
+  Log.error("${errorCode} ${attribute.getName()} of type ${attribute.printType()} must not be null");
   return false;
 }
   </#if>
