@@ -14,30 +14,30 @@ import java.util.Set;
  * It ensures that only one instance of this class exists globally.
  */
 public class CDTypeCollector implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
-
+  
   protected final Set<ASTCDClass> classes = new HashSet<>();
   protected final Set<ASTCDInterface> interfaces = new HashSet<>();
   protected final Set<ASTCDEnum> enums = new HashSet<>();
-
+  
   @Override
   public void visit(ASTCDClass node) {
     classes.add(node);
   }
-
+  
   @Override
   public void visit(ASTCDInterface node) {
     interfaces.add(node);
   }
-
+  
   @Override
   public void visit(ASTCDEnum node) {
     enums.add(node);
   }
-
+  
   public Set<ASTCDClass> getClasses() { return classes; }
-
+  
   public Set<ASTCDInterface> getInterfaces() { return interfaces; }
-
+  
   public Set<ASTCDEnum> getEnums() { return enums; }
-
+  
 }
