@@ -3,7 +3,7 @@ package de.monticore.cdmatcher.matching.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.ow2cw.CDAttributeHelper;
-import de.monticore.cdmatcher.matching.CachedMatches;
+import de.monticore.cdmatcher.matching.caching.CachedMatches;
 import de.monticore.cdmatcher.matching.MatchingStrategy;
 
 import static com.google.common.math.DoubleMath.mean;

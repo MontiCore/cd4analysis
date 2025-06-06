@@ -1,4 +1,4 @@
-package de.monticore.cdmatcher.matching;
+package de.monticore.cdmatcher.matching.caching;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;

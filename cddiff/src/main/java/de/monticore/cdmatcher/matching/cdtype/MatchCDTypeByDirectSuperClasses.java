@@ -4,6 +4,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cdmatcher.matching.MultipleMatchingStrategy;
+import de.monticore.cdmatcher.matching.caching.StructureCache;
 
 public class MatchCDTypeByDirectSuperClasses extends MultipleMatchingStrategy<ASTCDType, ASTCDType> {
 
@@ -13,7 +14,7 @@ public class MatchCDTypeByDirectSuperClasses extends MultipleMatchingStrategy<AS
     return getBestMatchingScore(
       srcElem,
       tgtElem,
-      cdType -> CDInheritanceHelper.getDirectSuperClasses(cdType, (ICD4CodeArtifactScope) cdType.getEnclosingScope()),
+      StructureCache::getDirectSuperTypes,
       new MatchCDTypeFromCache()
     );
   }

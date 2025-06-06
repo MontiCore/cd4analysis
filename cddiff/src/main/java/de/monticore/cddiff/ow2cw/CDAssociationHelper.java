@@ -281,30 +281,31 @@ public class CDAssociationHelper {
   }
 
   public static ASTCDType getCDTypeSymbol(ASTCDAssocSide assoc) {
-    if(!assoc.isPresentSymbol()){
-      return null;
-    }
+    Optional<TypeSymbol> typeSymbol = Optional.empty();
     // Depending on the symbol table completion a single type for both cds may exist, in which case the type can be resolved by "name"
     // or one type for each cd, in which case the full name "packageName.name" must be used.
-    Optional<TypeSymbol> typeSymbol = getCD4CodeArtifactScope(assoc.getSymbol().getEnclosingScope())
-      .resolveType(assoc.getSymbol().getType().getTypeInfo().getName());
-    if(typeSymbol.isEmpty()) {
-      typeSymbol = getCD4CodeArtifactScope(assoc.getSymbol().getEnclosingScope())
-        .resolveType(assoc.getSymbol().getType().getTypeInfo().getFullName());
+    if(assoc.isPresentSymbol()) {
+      typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope())
+        .resolveType(assoc.getSymbol().getType().getTypeInfo().getName());
+      if(typeSymbol.isEmpty()) {
+        typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope())
+          .resolveType(assoc.getSymbol().getType().getTypeInfo().getFullName());
+      }
     }
-    if (typeSymbol.isPresent() && typeSymbol.get().getAstNode().isPresentSymbol()
+    else {
+      typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope())
+        .resolveType(assoc.getMCQualifiedType().getMCQualifiedName().getQName());
+    }
+    if (typeSymbol.isPresent() && typeSymbol.get().isPresentAstNode()
         && typeSymbol.get().getAstNode() instanceof ASTCDType) {
       return (ASTCDType) typeSymbol.get().getAstNode();
     }
     return null;
   }
 
-  public static Set<ASTCDAssociation> getAssociations(ASTCDType type) {
-    return getCD4CodeArtifactScope(type.getEnclosingScope()).getCDAssociationSymbols().asMap().values()
+  public static Set<ASTCDAssociation> getDirectAssociations(ASTCDType type, ASTCDCompilationUnit cD) {
+    return cD.getCDDefinition().getCDAssociationsList()
       .stream()
-      .flatMap(Collection::stream)
-      .filter(CDAssociationSymbolTOP::isPresentAstNode)
-      .map(CDAssociationSymbolTOP::getAstNode)
       .filter((assoc) -> typeHasAssociation(type, assoc))
       .collect(Collectors.toSet());
   }

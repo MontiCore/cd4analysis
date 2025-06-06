@@ -4,6 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.matching.MultipleMatchingStrategy;
+import de.monticore.cdmatcher.matching.caching.StructureCache;
 
 public class MatchCDTypeByDirectSubClasses extends MultipleMatchingStrategy<ASTCDType, ASTCDType> {
   ASTCDDefinition ast;
@@ -17,7 +18,7 @@ public class MatchCDTypeByDirectSubClasses extends MultipleMatchingStrategy<ASTC
     return getBestMatchingScore(
       srcElem,
       tgtElem,
-      cdType -> CDDiffUtil.getAllStrictSubTypes(cdType, ast), // expensive, check if needed
+      StructureCache::getDirectSubTypes,
       new MatchCDTypeFromCache()
     );
   }

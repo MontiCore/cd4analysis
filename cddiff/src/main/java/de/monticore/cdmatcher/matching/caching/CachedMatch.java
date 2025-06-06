@@ -1,4 +1,4 @@
-package de.monticore.cdmatcher.matching;
+package de.monticore.cdmatcher.matching.caching;
 
 import org.antlr.v4.runtime.misc.Pair;
 

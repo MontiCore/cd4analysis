@@ -3,8 +3,11 @@ package de.monticore.cdmatcher.matching.association;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
-import de.monticore.cdmatcher.matching.CachedMatches;
+import de.monticore.cdmatcher.matching.caching.CachedMatches;
 import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.caching.StructureCache;
+
+import java.util.Optional;
 
 import static com.google.common.math.DoubleMath.mean;
 
@@ -13,20 +16,22 @@ public class MatchCDAssoc implements MatchingStrategy<ASTCDAssociation> {
 
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
-    ASTCDType srcRightType = CDAssociationHelper.getCDTypeSymbol(srcElem.getRight());
-    ASTCDType srcLeftType = CDAssociationHelper.getCDTypeSymbol(srcElem.getLeft());
-    ASTCDType tgtRightType = CDAssociationHelper.getCDTypeSymbol(tgtElem.getRight());
-    ASTCDType tgtLeftType = CDAssociationHelper.getCDTypeSymbol(tgtElem.getLeft());
-
-    if(srcRightType == null || srcLeftType == null || tgtRightType == null || tgtLeftType == null) {
-      return new MatchCDAssocByName().getScore(srcElem, tgtElem);
-    }
+    Optional<ASTCDType> srcRightType = StructureCache.getRightType(srcElem);
+    Optional<ASTCDType> srcLeftType = StructureCache.getLeftType(srcElem);
+    Optional<ASTCDType> tgtRightType = StructureCache.getRightType(tgtElem);
+    Optional<ASTCDType> tgtLeftType = StructureCache.getLeftType(tgtElem);
 
     double nameScore = new MatchCDAssocByName().getScore(srcElem, tgtElem);
     double typeScore = -1;
+    Double leftTypeScore = null;
+    Double rightTypeScore = null;
 
-    Double leftTypeScore = CachedMatches.getMatch(srcLeftType, tgtLeftType);
-    Double rightTypeScore = CachedMatches.getMatch(srcRightType, tgtRightType);
+    if(srcLeftType.isPresent() && tgtLeftType.isPresent()){
+      leftTypeScore = CachedMatches.getMatch(srcLeftType.get(), tgtLeftType.get());
+    }
+    if(srcRightType.isPresent() && tgtRightType.isPresent()){
+      rightTypeScore = CachedMatches.getMatch(srcRightType.get(), tgtRightType.get());
+    }
 
     if(leftTypeScore != null) {
       typeScore = leftTypeScore;
