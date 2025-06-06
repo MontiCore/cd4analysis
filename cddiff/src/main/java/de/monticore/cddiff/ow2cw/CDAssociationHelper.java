@@ -4,9 +4,6 @@ package de.monticore.cddiff.ow2cw;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdassociation._symboltable.CDAssociationSymbolTOP;
-import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
@@ -14,7 +11,10 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CDAssociationHelper {
@@ -293,8 +293,17 @@ public class CDAssociationHelper {
       }
     }
     else {
-      typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope())
-        .resolveType(assoc.getMCQualifiedType().getMCQualifiedName().getQName());
+      List<TypeSymbol> resolvedTypes = getCD4CodeArtifactScope(assoc.getEnclosingScope())
+        .resolveTypeMany(assoc.getMCQualifiedType().getMCQualifiedName().getQName());
+      if(resolvedTypes.size() == 1) {
+        typeSymbol = Optional.of(resolvedTypes.get(0));
+      }
+      else {
+        // If there are multiple symbols of the same name both the source and target contain the same type.
+        // In this case the type must be resolved only in current cd. This cannot be done always as the symbol is sometimes combined and reused. In this case resolving down would not find the symbol.
+        typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope())
+          .resolveTypeDown(assoc.getMCQualifiedType().getMCQualifiedName().getQName());
+      }
     }
     if (typeSymbol.isPresent() && typeSymbol.get().isPresentAstNode()
         && typeSymbol.get().getAstNode() instanceof ASTCDType) {
