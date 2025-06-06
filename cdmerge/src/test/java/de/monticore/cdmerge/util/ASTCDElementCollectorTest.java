@@ -8,19 +8,22 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import java.io.IOException;
 import java.nio.file.Paths;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class ASTCDElementCollectorTest extends BaseTest {
   
   public static final String INPUT_MODEL_FILE = "General/university/Staff.cd";
   
-  public final ASTCDCompilationUnit cd;
+  public ASTCDCompilationUnit cd;
   
-  public final ASTCDElementCollector testant;
+  public ASTCDElementCollector testant;
   
-  public final ASTCDHelper helper;
+  public ASTCDHelper helper;
   
-  public ASTCDElementCollectorTest() throws IOException {
+  @BeforeEach
+  public void setup() throws IOException {
     this.cd = loadModel(Paths.get(MODEL_PATH, INPUT_MODEL_FILE).toString());
     this.helper = new ASTCDHelper(this.cd);
     this.testant = new ASTCDElementCollector(helper);

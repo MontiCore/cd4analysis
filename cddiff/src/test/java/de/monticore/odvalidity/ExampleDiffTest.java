@@ -20,6 +20,7 @@ public class ExampleDiffTest extends CDDiffTestBasis {
     final String cd1 = "src/test/resources/de/monticore/odvalidity/ExampleDiff/CD12.cd";
     final String cd2 = "src/test/resources/de/monticore/odvalidity/ExampleDiff/CD11.cd";
     
+    CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());

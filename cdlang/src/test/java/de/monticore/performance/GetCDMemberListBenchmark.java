@@ -54,6 +54,7 @@ public class GetCDMemberListBenchmark {
   
   private static ASTCDClass constructClass(int size) {
     LogStub.init();
+    CD4CodeMill.reset();
     CD4CodeMill.init();
     
     ASTCDClassBuilder builder = CD4CodeMill.cDClassBuilder().setModifier(CDModifier.PUBLIC.build())

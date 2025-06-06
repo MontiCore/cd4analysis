@@ -47,8 +47,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("Source1.cd", "Target1.cd");
     
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
-    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     
     // check added / deleted classes
     assertEquals(2, synDiff.getAddedClasses().size());
@@ -65,6 +65,10 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assertEquals(2, synDiff.getChangedAssocs().size());
     assertEquals(2, synDiff.getAddedAssocs().size());
     assertEquals(2, synDiff.getDeletedAssocs().size());
+    
+    // check no changes
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
   }
   
   @Test
@@ -72,9 +76,10 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("Source2.cd", "Target2.cd");
     
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
-    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     
+    // check changes
     assertEquals(2, synDiff.getAddedClasses().size());
     assertEquals(2, synDiff.getDeletedClasses().size());
     
@@ -83,6 +88,12 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     
     assertEquals(1, synDiff.getAddedAssocs().size());
     assertEquals(1, synDiff.getDeletedAssocs().size());
+    
+    // check no changes
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getChangedTypes().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
   }
   
   @Test
@@ -90,8 +101,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("TechStoreV2.cd", "TechStoreV1.cd");
     
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
-    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     
     assertEquals(2, synDiff.getDeletedClasses().size());
     assertEquals(3, synDiff.getChangedTypes().size());
@@ -99,6 +110,13 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assertEquals(5, synDiff.getChangedAssocs().size());
     assertEquals(4, synDiff.getAddedAssocs().size());
     assertEquals(2, synDiff.getDeletedAssocs().size());
+    
+    // check no changes
+    assertTrue(synDiff.getAddedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedEnums().isEmpty());
+    assertTrue(synDiff.getDeletedEnums().isEmpty());
   }
   
   @Test
@@ -106,10 +124,22 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("TechStoreV9.cd", "TechStoreV10.cd");
     
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
-    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     
+    // check changes
     assertEquals(1, synDiff.getDeletedAssocs().size());
+    
+    // check no changes
+    assertTrue(synDiff.getAddedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedEnums().isEmpty());
+    assertTrue(synDiff.getDeletedEnums().isEmpty());
+    assertTrue(synDiff.getChangedTypes().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
+    assertTrue(synDiff.getAddedAssocs().isEmpty());
+    
   }
   
   @Test
@@ -117,10 +147,21 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     parseModels("TechStoreV11.cd", "TechStoreV12.cd");
     
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
-    // SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
-    // System.out.println(sb.printDiff());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
     
+    // check changes
     assertEquals(3, synDiff.getChangedTypes().size());
+    
+    // check no changes
+    assertTrue(synDiff.getAddedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedEnums().isEmpty());
+    assertTrue(synDiff.getDeletedEnums().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
+    assertTrue(synDiff.getAddedAssocs().isEmpty());
+    assertTrue(synDiff.getDeletedAssocs().isEmpty());
   }
   
   @Test
@@ -131,9 +172,18 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
     SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
     Log.println(sb.printDiff());
+    
     assertEquals(1, synDiff.getAddedClasses().size());
     assertEquals(1, synDiff.getAddedEnums().size());
     assertEquals(1, synDiff.getAddedAssocs().size());
+    
+    assertTrue(synDiff.getDeletedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedEnums().isEmpty());
+    assertTrue(synDiff.getChangedTypes().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
+    assertTrue(synDiff.getDeletedAssocs().isEmpty());
     
     // Conformance Checking without stereotype mapping constitutes a refinement check
     boolean conform = new CDConformanceChecker(Set.of(CDConfParameter.STEREOTYPE_MAPPING,
@@ -157,6 +207,14 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assertEquals(1, synDiff.getDeletedClasses().size());
     assertEquals(1, synDiff.getDeletedEnums().size());
     assertEquals(1, synDiff.getDeletedAssocs().size());
+    
+    assertTrue(synDiff.getAddedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getChangedTypes().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
+    assertTrue(synDiff.getAddedAssocs().isEmpty());
     
     // Conformance Checking without stereotype mapping constitutes a refinement check
     conform = new CDConformanceChecker(Set.of(CDConfParameter.STEREOTYPE_MAPPING,
