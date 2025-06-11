@@ -18,15 +18,25 @@ public class MethodSignatureString {
   public static Optional<MethodSymbol> resolveMethodSignature(IOOSymbolsScope scope,
       String signatureString) {
     if (signatureString.contains("(")) {
-      return resolveMethodSignatureWithArgs(scope, signatureString);
+      return resolveMethodSignatureWithArgs(scope, signatureString, false);
     }
     else {
-      return resolvePlainMethodSymbol(scope, signatureString);
+      return resolvePlainMethodSymbol(scope, signatureString, false);
+    }
+  }
+  
+  public static Optional<MethodSymbol> resolveMethodSignatureDown(IOOSymbolsScope scope,
+      String signatureString) {
+    if (signatureString.contains("(")) {
+      return resolveMethodSignatureWithArgs(scope, signatureString, true);
+    }
+    else {
+      return resolvePlainMethodSymbol(scope, signatureString, true);
     }
   }
   
   private static Optional<MethodSymbol> resolveMethodSignatureWithArgs(IOOSymbolsScope scope,
-      String signatureString) {
+      String signatureString, boolean resolveDown) {
     String methodName = signatureString.substring(0, signatureString.indexOf("("));
     if (signatureString.charAt(signatureString.length() - 1) != ')') {
       Log.error("Method signature: '" + signatureString
@@ -38,7 +48,8 @@ public class MethodSignatureString {
     List<String> argTypes = argsString.isBlank() ? List.of() : List.of(argsString.split(","))
         .stream().map(String::trim).collect(Collectors.toList());
     List<Optional<TypeSymbol>> optTypeSymbols = argTypes.stream().map(typeName -> {
-      Optional<TypeSymbol> symbolOpt = scope.resolveType(typeName);
+      Optional<TypeSymbol> symbolOpt = resolveDown ? scope.resolveTypeDown(typeName) : scope
+          .resolveType(typeName);
       if (symbolOpt.isEmpty()) {
         Log.error("Type symbol: '" + typeName + "' is not found in scope " + scope.getName());
       }
@@ -50,9 +61,10 @@ public class MethodSignatureString {
     List<TypeSymbol> typeSymbols = optTypeSymbols.stream().map(Optional::get).collect(Collectors
         .toList());
     
-    List<MethodSymbol> matchingSymbols = scope.resolveMethodMany(methodName).stream().filter(
-        method -> isParameterSignatureMatching(method.getParameterList(), typeSymbols)).collect(
-            Collectors.toList());
+    List<MethodSymbol> matchingSymbols = (resolveDown ? scope.resolveMethodDownMany(methodName)
+        : scope.resolveMethodMany(methodName)).stream().filter(
+            method -> isParameterSignatureMatching(method.getParameterList(), typeSymbols)).collect(
+                Collectors.toList());
     if (matchingSymbols.size() <= 1) {
       return matchingSymbols.stream().findFirst();
     }
@@ -77,8 +89,9 @@ public class MethodSignatureString {
   }
   
   private static Optional<MethodSymbol> resolvePlainMethodSymbol(IOOSymbolsScope scope,
-      String symbol) {
-    List<MethodSymbol> matchingSymbols = scope.resolveMethodMany(symbol);
+      String symbol, boolean resolveDown) {
+    List<MethodSymbol> matchingSymbols = resolveDown ? scope.resolveMethodDownMany(symbol) : scope
+        .resolveMethodMany(symbol);
     if (matchingSymbols.size() <= 1) {
       return matchingSymbols.stream().findFirst();
     }

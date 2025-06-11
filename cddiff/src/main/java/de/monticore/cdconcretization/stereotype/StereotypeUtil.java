@@ -6,10 +6,29 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
+import java.util.Set;
 
 public class StereotypeUtil {
   
   public static final String FOR_EACH_STEREOTYPE = "forEach";
+  
+  /**
+   * Stereotype for binding a reference to a concrete type. This can be used by modelers to
+   * manually inform other tools about the specific type incarnation to use in a certain scope of
+   * the model.<br>
+   * <b>NOTE:</b> By default this is not necessary if "forEach" is used in the reference model.
+   * Tools try to derive the parameter element incarnation from the elements name, e.g. if we have
+   * a reference type <code>DataClassBuilder</code> and concrete type <code>EmployeeBuilder</code>,
+   * we know the incarnation of <code>DataClass</code> in this context is <code>Employee</code>.
+   * <br>
+   * // TODO update example to something where deriving by name does not work
+   * <b>Example:</b> Assuming we have a reference model defining a 'DataClass' and a 'Builder' class
+   * where the 'Builder' class is annotated with <code>forEach="DataClass"</code>. This means that
+   * within the scope of a specific 'Builder' class incarnation, the reference to 'DataClass' is
+   * bound to a specific incarnation as well. This is useful for tools that need to know the
+   * specific type to use in a certain context, e.g., OCL or reference code adaptation.
+   */
+  public static final String BIND_STEREOTYPE = "bind";
   
   private StereotypeUtil() {}
   
@@ -24,6 +43,18 @@ public class StereotypeUtil {
   public static Optional<String> getForEachStereotypeValue(ASTModifier modifier,
       String valueEmptyWarning) {
     return getStereotypeValue(modifier, FOR_EACH_STEREOTYPE, valueEmptyWarning);
+  }
+  
+  public static void addIncarnationBindingStereotype(ASTModifier modifier, String referenceElement,
+      String concreteElement) {
+    addStereotype(modifier, BIND_STEREOTYPE, new BindingValue(referenceElement, Set.of(
+        concreteElement)).print());
+  }
+  
+  public static Optional<BindingValue> getIncarnationBindingStereotypeValue(ASTModifier modifier,
+      String valueEmptyWarning) {
+    return getStereotypeValue(modifier, BIND_STEREOTYPE, valueEmptyWarning).map(
+        BindingValue::parseFromString);
   }
   
   /**

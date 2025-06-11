@@ -4,6 +4,7 @@ package de.monticore.cdconformance;
 import static de.monticore.cdconformance.CDConfParameter.*;
 
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
@@ -17,6 +18,8 @@ import de.monticore.cdconformance.conf.method.BasicMethodConfStrategy;
 import de.monticore.cdconformance.conf.type.BasicTypeConfStrategy;
 import de.monticore.cdconformance.conf.type.DeepTypeConfStrategy;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
+import de.monticore.cdconformance.inc.ForEachBindingDerivingVisitor;
+import de.monticore.cdconformance.inc.STBindingDerivingVisitor;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.logging.Log;
@@ -26,6 +29,8 @@ import java.util.*;
  * Tool for automatic conformance checking of concrete CDs to reference CDs given a set of mappings.
  */
 public class CDConformanceChecker {
+  
+  private static final String LOG_NAME = CDConformanceChecker.class.getName();
   
   protected Set<CDConfParameter> params;
   protected String underspecifiedTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
@@ -62,6 +67,28 @@ public class CDConformanceChecker {
         mapping, underspecifiedTypeName, params);
     incMapping = context.getIncarnationMapping();
     typeMatcher = context.getMCTypeMatcher();
+    
+    // 1. introduce incarnation bindings for each incarnation
+    CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    STBindingDerivingVisitor stBindingDerivingVisitor = new STBindingDerivingVisitor(incMapping);
+    stBindingDerivingVisitor.addToTraverser(traverser);
+    ForEachBindingDerivingVisitor nameBindingDerivingVisitor = new ForEachBindingDerivingVisitor(
+        incMapping);
+    nameBindingDerivingVisitor.addToTraverser(traverser);
+    concreteCD.accept(traverser);
+    
+    if (nameBindingDerivingVisitor.hasMissingBinding()) {
+      Log.info("The concrete CD has missing incarnation bindings for reference elements"
+          + " using 'forEach'", LOG_NAME);
+      // TODO Should we continue conformance check anyway?
+      return false;
+    }
+    if (nameBindingDerivingVisitor.hasFoundInvalidBinding() || stBindingDerivingVisitor
+        .hasFoundInvalidBinding()) {
+      Log.info("The concrete CD has invalid incarnation bindings", LOG_NAME);
+      // TODO Should we continue conformance check anyway?
+      return false;
+    }
     
     // init Conformance Checker
     ConformanceStrategy<ASTCDCompilationUnit> cdChecker = getBasicCDConfStrategy(concreteCD,

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -28,6 +30,9 @@ import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceContext;
 import de.monticore.cdconformance.DefaultCDConformanceContext;
+import de.monticore.cdconformance.inc.ForEachBindingDerivingVisitor;
+import de.monticore.cdconformance.inc.STBindingDerivingVisitor;
+import de.se_rwth.commons.logging.Log;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
@@ -97,6 +102,28 @@ public class ConcretizationCompleter {
      */
     CDCompletionContext context = DefaultCompletionContext.create(concreteCD, referenceCD, mapping,
         underspecifiedPlaceholderTypeName, forEachNameAdaptationEnabled, conformanceParams);
+    
+    // 1. introduce incarnation bindings for each incarnation
+    CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    STBindingDerivingVisitor stBindingDerivingVisitor = new STBindingDerivingVisitor(context
+        .getIncarnationMapping());
+    stBindingDerivingVisitor.addToTraverser(traverser);
+    ForEachBindingDerivingVisitor nameBindingDerivingVisitor = new ForEachBindingDerivingVisitor(
+        context.getIncarnationMapping());
+    nameBindingDerivingVisitor.addToTraverser(traverser);
+    concreteCD.accept(traverser);
+    
+    if (nameBindingDerivingVisitor.hasMissingBinding()) {
+      Log.warn("The concrete CD has missing incarnation bindings for reference elements"
+          + " using 'forEach'");
+      // TODO Should we continue conformance check anyway?
+      return;
+    }
+    if (nameBindingDerivingVisitor.hasFoundInvalidBinding()) {
+      Log.warn("The concrete CD has invalid incarnation bindings");
+      // TODO Should we continue conformance check anyway?
+      return;
+    }
     
     ITypeInCDCompleter typeInCDCompleter = new ChainBuilder<AbstractTypeInCDCompleter>().add(
         new ForEachTypeInCDCompleter()).add(new BaseTypeInCDCompleter()).build();
