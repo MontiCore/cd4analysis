@@ -2,17 +2,18 @@ package de.monticore.cdmatcher.matching.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.ow2cw.CDAssociationHelper;
-import de.monticore.cdmatcher.matching.caching.CachedMatches;
 import de.monticore.cdmatcher.matching.MatchingStrategy;
+import de.monticore.cdmatcher.matching.MultipleMatchingStrategy;
+import de.monticore.cdmatcher.matching.caching.CachedMatches;
 import de.monticore.cdmatcher.matching.caching.StructureCache;
+import de.monticore.cdmatcher.matching.cdtype.MatchCDTypeFromCache;
 
 import java.util.Optional;
 
 import static com.google.common.math.DoubleMath.mean;
 
 
-public class MatchCDAssoc implements MatchingStrategy<ASTCDAssociation> {
+public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociation> {
 
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {

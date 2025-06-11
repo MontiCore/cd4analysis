@@ -13,10 +13,10 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
     double directionSimilarity = srcElem.getCDAssocDir().getClass().equals(tgtElem.getCDAssocDir().getClass()) ? 1.0 : 0.0; //ASTCDAssocDir does not implement equals
     double typeSimilarity = srcElem.getCDAssocType().getClass().equals(tgtElem.getCDAssocType().getClass()) ? 1.0 : 0.0; //ASTCDAssocType does not implement equals
 
-    return nameSimilarity * 0.1
+    return nameSimilarity * 0.4
       + leftNameSimilarity * 0.05
       + rightNameSimilarity * 0.05
-      + typeSimilarity * 0.6
+      + typeSimilarity * 0.3
       + directionSimilarity * 0.2;
 
   }

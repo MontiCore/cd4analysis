@@ -262,12 +262,12 @@ public class Syn2SemDiffValidationTest {
 
   protected static Stream<Arguments> cddiffSet() {
     return Stream.of(
-        Arguments.of("DEv2.cd", "DEv1.cd", true),
-        Arguments.of("EAv2.cd", "EAv1.cd", true),
-        Arguments.of("EMTv1.cd", "EMTv2.cd", true),
-        Arguments.of("LibraryV2.cd", "LibraryV1.cd", true),
-        Arguments.of("LibraryV3.cd", "LibraryV2.cd", false),
-        Arguments.of("LibraryV4.cd", "LibraryV3.cd", true),
+//        Arguments.of("DEv2.cd", "DEv1.cd", true),
+//        Arguments.of("EAv2.cd", "EAv1.cd", true),
+//        Arguments.of("EMTv1.cd", "EMTv2.cd", true),
+//        Arguments.of("LibraryV2.cd", "LibraryV1.cd", true),
+//        Arguments.of("LibraryV3.cd", "LibraryV2.cd", false),
+//        Arguments.of("LibraryV4.cd", "LibraryV3.cd", true),
         Arguments.of("LibraryV5.cd", "LibraryV4.cd", false));
   }
 

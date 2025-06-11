@@ -9,6 +9,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDAttributeHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
+import de.monticore.cdmatcher.matching.association.MatchCDAssocByBestSuperType;
 import de.monticore.cdmatcher.matching.caching.CachedMatch;
 import de.monticore.cdmatcher.matching.MatchingStrategy;
 import de.monticore.cdmatcher.matching.caching.CachedMatches;
@@ -49,11 +50,16 @@ public class CDSynDiffMatches {
 
     Set<MatchingStrategy<ASTCDType>> matchingStrategies = new HashSet<>((Set.of(
       new MatchCDTypeByName(),
-      new MatchCDTypeByDirectAssocs(),
+      new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType()),
       new MatchCDTypeByDirectAttributes()
     )));
     if(matchStructure) {
-      new MatchCDTypeByDirectSuperClasses();
+      matchingStrategies.addAll(
+        Set.of(
+          new MatchCDTypeByDirectSubClasses(),
+          new MatchCDTypeByDirectSuperClasses()
+        )
+      );
     }
 
     StructureCache.clear();
@@ -158,16 +164,17 @@ public class CDSynDiffMatches {
     ).collect(Collectors.toList());
     Iterator<Map.Entry<Pair<T, T>, Double>> iterator = matchScores.iterator();
 
+    Set<T> matchedMapValues = new HashSet<>();
+
     while (iterator.hasNext()) {
       Map.Entry<Pair<T, T>, Double> entry = iterator.next();
       if(entry.getValue() < threshold) {
         break;
       }
       Pair<T, T> pair = entry.getKey();
-      if (!matching.containsKey(pair.a)) {
+      if (!matching.containsKey(pair.a) && !matchedMapValues.contains(pair.b)) {
         matching.put(pair.a, pair.b);
-      } else {
-        iterator.remove();
+        matchedMapValues.add(pair.b);
       }
     }
     return matching;
