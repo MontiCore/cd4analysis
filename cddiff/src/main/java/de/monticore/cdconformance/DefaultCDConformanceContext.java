@@ -3,6 +3,7 @@ package de.monticore.cdconformance;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.inc.CDIncarnationBindings;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.DefaultCDIncarnationBindings;
@@ -12,16 +13,16 @@ import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
-import de.monticore.cdconformance.inc.method.CompMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.EqNameMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
+import de.monticore.cdconformance.inc.method.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.syndiff.CDSynDiffMatches;
+import de.monticore.cdmatcher.CachedMultiMatches;
 
 import java.util.Set;
 
@@ -33,53 +34,74 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
   
   private final String underspecifiedPlaceholderTypeName;
   private final Set<CDConfParameter> conformanceParams;
-  private final CompTypeIncStrategy typeIncStrategy;
-  private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
-  private final CompAssocIncStrategy assocIncStrategy;
+  private final ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy;
+  private final ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes;
+  private final ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocIncStrategy;
   
-  private final CompAttributeIncStrategy attributeIncStrategy;
-  private final CompMethodIncStrategy methodIncStrategy;
+  private final CDAttributeMatchingStrategy attributeIncStrategy;
+  private final CDMethodMatchingStrategy methodIncStrategy;
   
   private final MCTypeMatcher mcTypeMatcher;
   
   private final CDIncarnationMapping incarnationMapping;
   
-  public DefaultCDConformanceContext(ASTCDCompilationUnit concreteCD,
+  protected DefaultCDConformanceContext(ASTCDCompilationUnit concreteCD,
       ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
-      Set<CDConfParameter> conformanceParams) {
+      Set<CDConfParameter> conformanceParams,
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes,
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocIncStrategy,
+      CDAttributeMatchingStrategy attributeIncStrategy, CDMethodMatchingStrategy methodIncStrategy,
+      MCTypeMatcher mcTypeMatcher) {
     this.concreteCD = concreteCD;
     this.referenceCD = referenceCD;
     this.mapping = mapping;
     this.underspecifiedPlaceholderTypeName = underspecifiedPlaceholderTypeName;
     this.conformanceParams = conformanceParams;
+    this.typeIncStrategy = typeIncStrategy;
+    this.typeIncStrategyMatchingSubTypes = typeIncStrategyMatchingSubTypes;
+    this.assocIncStrategy = assocIncStrategy;
+    this.attributeIncStrategy = attributeIncStrategy;
+    this.methodIncStrategy = methodIncStrategy;
+    this.mcTypeMatcher = mcTypeMatcher;
     
-    typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
-    assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
-    attributeIncStrategy = new CompAttributeIncStrategy();
-    methodIncStrategy = new CompMethodIncStrategy();
+    CDIncarnationBindings incarnationBinding = new DefaultCDIncarnationBindings();
+    // TODO provide bindings impl supporting method overloading
+    incarnationMapping = new DefaultCDIncarnationMapping(concreteCD, typeIncStrategy,
+        attributeIncStrategy, methodIncStrategy, assocIncStrategy, incarnationBinding);
+  }
+  
+  public static CDConformanceContext create(ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
+      Set<CDConfParameter> conformanceParams) {
+    CompTypeIncStrategy compTypeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
+    CompAssocIncStrategy compAssocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
+    CompAttributeIncStrategy compAttributeIncStrategy = new CompAttributeIncStrategy();
+    CompMethodIncStrategy compMethodIncStrategy = new CompMethodIncStrategy();
     
-    mcTypeMatcher = new MCTypeMatcher(underspecifiedPlaceholderTypeName, typeIncStrategy);
+    MCTypeMatcher mcTypeMatcher = new MCTypeMatcher(underspecifiedPlaceholderTypeName,
+        compTypeIncStrategy);
     
     /*
      * We configure the matching strategies depending on the conformance checker parameter as we
      * want to have the same matching behavior during concretization as the conformance checker.
      */
     if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-      typeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
-      assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
-      attributeIncStrategy.addIncStrategy(new STAttributeIncStrategy(mapping));
-      methodIncStrategy.addIncStrategy(new STMethodIncStrategy(mapping));
+      compTypeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
+      compAssocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
+      compAttributeIncStrategy.addIncStrategy(new STAttributeIncStrategy(mapping));
+      compMethodIncStrategy.addIncStrategy(new STMethodIncStrategy(mapping));
     }
     if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-      typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
-      assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
-      attributeIncStrategy.addIncStrategy(new EqNameAttributeIncStrategy());
+      compTypeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
+      compAssocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
+      compAttributeIncStrategy.addIncStrategy(new EqNameAttributeIncStrategy());
       if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
-        methodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(mcTypeMatcher,
+        compMethodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(mcTypeMatcher,
             conformanceParams.contains(CDConfParameter.STRICT_PARAMETER_ORDER)));
       }
       else {
-        methodIncStrategy.addIncStrategy(new EqNameMethodIncStrategy());
+        compMethodIncStrategy.addIncStrategy(new EqNameMethodIncStrategy());
       }
     }
     
@@ -107,33 +129,83 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     //   class B;
     //   A -> B;
     // }
-    typeIncStrategyMatchingSubTypes = new CompTypeIncStrategy(referenceCD, mapping);
-    typeIncStrategyMatchingSubTypes.addIncStrategy(typeIncStrategy);
+    CompTypeIncStrategy compSubTypeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
+    compSubTypeIncStrategy.addIncStrategy(compTypeIncStrategy);
     if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
-      typeIncStrategyMatchingSubTypes.addIncStrategy(new MatchCDTypesToSubTypes(typeIncStrategy,
+      compSubTypeIncStrategy.addIncStrategy(new MatchCDTypesToSubTypes(compTypeIncStrategy,
           concreteCD, referenceCD));
     }
     
     if (conformanceParams.contains(CDConfParameter.SRC_TARGET_ASSOC_MAPPING)) {
       if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
-        assocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(
-            typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
-        assocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(
-            typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
+        compAssocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(
+            compSubTypeIncStrategy, concreteCD, referenceCD));
+        compAssocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(
+            compSubTypeIncStrategy, concreteCD, referenceCD));
       }
       else {
-        assocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(typeIncStrategy,
+        compAssocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(compTypeIncStrategy,
             concreteCD, referenceCD));
-        assocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(typeIncStrategy,
+        compAssocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(compTypeIncStrategy,
             concreteCD, referenceCD));
       }
     }
     
-    CDIncarnationBindings incarnationBinding = new DefaultCDIncarnationBindings();
-    // TODO provide bidnigns impl supporting method overloading
+    return new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,
+        underspecifiedPlaceholderTypeName, conformanceParams, compTypeIncStrategy,
+        compSubTypeIncStrategy, compAssocIncStrategy, compAttributeIncStrategy,
+        compMethodIncStrategy, mcTypeMatcher);
+  }
+  
+  /**
+   * Creates a cached context optimizing performance. Caches the results of matching strategies
+   * to avoid recomputation during conformance checks.<br>
+   * <br>
+   * NOTE: Currently, supports caching for type and association matching strategies.
+   *
+   * @param concreteCD the concrete CD
+   * @param referenceCD the reference CD
+   * @param mapping the mapping name
+   * @param underspecifiedPlaceholderTypeName the name of the underspecified placeholder type
+   * @param conformanceParams the conformance parameters to use
+   * @return a CDConformanceContext with cached matching strategies
+   */
+  public static CDConformanceContext createCached(ASTCDCompilationUnit concreteCD,
+      ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
+      Set<CDConfParameter> conformanceParams) {
+    CDConformanceContext context = create(concreteCD, referenceCD, mapping,
+        underspecifiedPlaceholderTypeName, conformanceParams);
+    return createCached(context);
+  }
+  
+  /**
+   * Creates a cached conformance context from the given context.
+   *
+   * @param context the original conformance context to cache
+   * @return a new CDConformanceContext with cached matching strategies
+   */
+  public static CDConformanceContext createCached(CDConformanceContext context) {
+    // we compute and cache all type matches to optimize performanceAdd commentMore actions
+    Set<ASTCDType> concTypes = CDDiffUtil.getAllTypesFromCD(context.getConcreteCD());
+    CachedMultiMatches<ASTCDType> cachedTypeIncStrategy = new CachedMultiMatches<>(CDSynDiffMatches
+        .computeMultiMatching(concTypes, context.getTypeIncStrategy()));
+    MCTypeMatcher mcTypeMatcher = new MCTypeMatcher(context.getUnderspecifiedPlaceholderTypeName(),
+        cachedTypeIncStrategy);
     
-    incarnationMapping = new DefaultCDIncarnationMapping(concreteCD, typeIncStrategy,
-        attributeIncStrategy, methodIncStrategy, assocIncStrategy, incarnationBinding);
+    CachedMultiMatches<ASTCDType> cachedSubtypeIncStrategy = new CachedMultiMatches<>(
+        CDSynDiffMatches.computeMultiMatching(concTypes, context
+            .getTypeIncStrategyMatchingSubTypes()));
+    
+    // we compute and cache all association matches to optimize performanceAdd commentMore actions
+    Set<ASTCDAssociation> concAssocs = CDDiffUtil.getAllAssocsFromCD(context.getConcreteCD());
+    CachedMultiMatches<ASTCDAssociation> cachedAssocIncStrategy = new CachedMultiMatches<>(
+        CDSynDiffMatches.computeMultiMatching(concAssocs, context.getAssociationIncStrategy()));
+    
+    return new DefaultCDConformanceContext(context.getConcreteCD(), context.getReferenceCD(),
+        context.getMappingName(), context.getUnderspecifiedPlaceholderTypeName(), context
+            .getConformanceParams(), cachedTypeIncStrategy, cachedSubtypeIncStrategy,
+        cachedAssocIncStrategy, context.getAttributeIncStrategy(), context.getMethodIncStrategy(),
+        mcTypeMatcher);
   }
   
   @Override
@@ -152,10 +224,12 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
   public Set<CDConfParameter> getConformanceParams() { return conformanceParams; }
   
   @Override
-  public CompTypeIncStrategy getTypeIncStrategy() { return typeIncStrategy; }
+  public ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategy() {
+    return typeIncStrategy;
+  }
   
   @Override
-  public CompTypeIncStrategy getTypeIncStrategyMatchingSubTypes() {
+  public ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategyMatchingSubTypes() {
     return typeIncStrategyMatchingSubTypes;
   }
   
@@ -168,7 +242,7 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
   public CDAttributeMatchingStrategy getAttributeIncStrategy() { return attributeIncStrategy; }
   
   @Override
-  public CompMethodIncStrategy getMethodIncStrategy() { return methodIncStrategy; }
+  public CDMethodMatchingStrategy getMethodIncStrategy() { return methodIncStrategy; }
   
   @Override
   public MCTypeMatcher getMCTypeMatcher() { return mcTypeMatcher; }

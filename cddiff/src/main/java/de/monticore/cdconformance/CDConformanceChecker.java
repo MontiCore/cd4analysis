@@ -58,8 +58,8 @@ public class CDConformanceChecker {
     
     // TODO Context is not used in the same way as in concretization tool
     //  here it is rather used as a factory for the strategies and incarnation mapping
-    CDConformanceContext context = new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,
-        underspecifiedTypeName, params);
+    CDConformanceContext context = DefaultCDConformanceContext.createCached(concreteCD, referenceCD,
+        mapping, underspecifiedTypeName, params);
     incMapping = context.getIncarnationMapping();
     typeMatcher = context.getMCTypeMatcher();
     

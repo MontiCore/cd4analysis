@@ -2,6 +2,7 @@
 package de.monticore.cdconcretization;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -25,7 +26,12 @@ import de.monticore.cdconcretization.type.method.ForEachMethodCompleter;
 import de.monticore.cdconcretization.type.method.IMethodInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.CDConformanceContext;
 import de.monticore.cdconformance.DefaultCDConformanceContext;
+import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cdconformance.inc.type.MCTypeMatcher;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 
 import java.util.Set;
 
@@ -89,7 +95,7 @@ public class ConcretizationCompleter {
      * that are responsible for completing the different aspects of the CD. These completers are then used
      * to perform the actual concretization.
      */
-    CDCompletionContext context = new DefaultCompletionContext(concreteCD, referenceCD, mapping,
+    CDCompletionContext context = DefaultCompletionContext.create(concreteCD, referenceCD, mapping,
         underspecifiedPlaceholderTypeName, forEachNameAdaptationEnabled, conformanceParams);
     
     ITypeInCDCompleter typeInCDCompleter = new ChainBuilder<AbstractTypeInCDCompleter>().add(
@@ -163,11 +169,43 @@ public class ConcretizationCompleter {
     
     private final boolean forEachNameAdaptationEnabled;
     
-    public DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
+    protected DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
+        ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
+        Set<CDConfParameter> conformanceParams,
+        ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
+        ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes,
+        ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocIncStrategy,
+        CDAttributeMatchingStrategy attributeIncStrategy,
+        CDMethodMatchingStrategy methodIncStrategy, MCTypeMatcher mcTypeMatcher,
+        boolean forEachNameAdaptationEnabled) {
+      super(concreteCD, referenceCD, mapping, underspecifiedPlaceholderTypeName, conformanceParams,
+          typeIncStrategy, typeIncStrategyMatchingSubTypes, assocIncStrategy, attributeIncStrategy,
+          methodIncStrategy, mcTypeMatcher);
+      this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
+    }
+    
+    /**
+     * Creates a new {@link DefaultCompletionContext} for the given concretization scenario
+     * and configuration parameters.
+     *
+     * @param concreteCD the concrete CD to be completed
+     * @param referenceCD the reference CD to be used for completion
+     * @param mapping the mapping name to be used for the completion
+     * @param underspecifiedPlaceholderTypeName the name of the underspecified type
+     * @param forEachNameAdaptationEnabled if names should be treated as templates
+     * @param conformanceParams the conformance parameters to be used for the completion
+     * @return a new {@link DefaultCompletionContext} instance
+     */
+    public static DefaultCompletionContext create(ASTCDCompilationUnit concreteCD,
         ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
         boolean forEachNameAdaptationEnabled, Set<CDConfParameter> conformanceParams) {
-      super(concreteCD, referenceCD, mapping, underspecifiedPlaceholderTypeName, conformanceParams);
-      this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
+      CDConformanceContext context = DefaultCDConformanceContext.create(concreteCD, referenceCD,
+          mapping, underspecifiedPlaceholderTypeName, conformanceParams);
+      return new DefaultCompletionContext(concreteCD, referenceCD, mapping,
+          underspecifiedPlaceholderTypeName, conformanceParams, context.getTypeIncStrategy(),
+          context.getTypeIncStrategyMatchingSubTypes(), context.getAssociationIncStrategy(), context
+              .getAttributeIncStrategy(), context.getMethodIncStrategy(), context
+                  .getMCTypeMatcher(), forEachNameAdaptationEnabled);
     }
     
     @Override
