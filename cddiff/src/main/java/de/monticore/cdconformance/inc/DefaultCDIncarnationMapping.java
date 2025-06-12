@@ -257,4 +257,9 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
     bindings.addBinding(contextSymbolName, referenceElement, concreteElements);
   }
   
+  @Override
+  public String computeSymbolKey(ISymbol symbol) {
+    return bindings.computeSymbolKey(symbol);
+  }
+  
 }

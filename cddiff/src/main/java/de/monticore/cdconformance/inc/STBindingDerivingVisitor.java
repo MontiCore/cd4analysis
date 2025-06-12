@@ -138,8 +138,7 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
         //  incarnation of the reference attribute -> maybe in CDIncarnationMapping?
         if (incMapping.getReferenceElements(incarnationType.get().getAstNode()).contains(
             referenceType)) {
-          incMapping.addBinding(annotatedSymbol.getFullName(), referenceType.getSymbol(),
-              incarnationType.get());
+          incMapping.addBinding(annotatedSymbol, referenceType.getSymbol(), incarnationType.get());
           Log.info("Added binding from stereotype @ '" + annotatedSymbol.getFullName() + "':  "
               + referenceType.getSymbol().getFullName() + "=" + incarnationType.get().getFullName(),
               LOG_NAME);
@@ -178,8 +177,8 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
         //  incarnation of the reference attribute -> maybe in CDIncarnationMapping?
         if (incMapping.getReferenceElements(SymbolUtil.cdAttributeFromFieldSymbol(incarnationField
             .get())).contains(referenceAttribute)) {
-          incMapping.addBinding(annotatedSymbol.getFullName(), referenceAttribute.getSymbol(),
-              incarnationField.get());
+          incMapping.addBinding(annotatedSymbol, referenceAttribute.getSymbol(), incarnationField
+              .get());
           Log.info("Added binding from stereotype @ '" + annotatedSymbol.getFullName() + "':  "
               + referenceAttribute.getSymbol().getFullName() + "=" + incarnationField.get()
                   .getFullName(), LOG_NAME);

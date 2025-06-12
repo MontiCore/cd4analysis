@@ -17,6 +17,21 @@ import java.util.Set;
  * always be resolved in the scope of a concrete class diagram (CD) or some sub scope.
  */
 public interface CDIncarnationBindings {
+  /*
+   * TODO Add documentation for all methods in this interface & highlight danger of using addBinding(String, ..., ...)
+   *
+   */
+  
+  /**
+   * Computes the unique name of a symbol, which is used as key in the bindings maps.<br>
+   * <br>
+   * Usually, this is the full name of the symbol, but it can be overridden in subclasses
+   * to provide a different naming scheme if necessary.
+   *
+   * @param symbol the symbol for which the unique key is computed
+   * @return the unique key for the symbol
+   */
+  String computeSymbolKey(ISymbol symbol);
   
   // --------------------------
   // ----- Type Binding -------
@@ -24,7 +39,11 @@ public interface CDIncarnationBindings {
   
   /**
    * Adds a type binding for a specific scope. After calling this, within the scope, the reference
-   * type is only incarnated by the given concrete types.
+   * type is only incarnated by the given concrete types.<br>
+   * <br>
+   * <b>NOTE: Prefer using {@link #addBinding(ISymbol, TypeSymbol, Set)}</b>. In case
+   * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
+   * as key anymore!
    *
    * @param contextSymbolName the name of the concrete type spanning the scope
    * @param referenceType
@@ -33,19 +52,31 @@ public interface CDIncarnationBindings {
   void addBinding(String contextSymbolName, TypeSymbol referenceType,
       Set<TypeSymbol> concreteTypes);
   
-  default void addBinding(String contextSymbolName, TypeSymbol referenceElement,
-      TypeSymbol concreteElement) {
-    addBinding(contextSymbolName, referenceElement, Set.of(concreteElement));
+  /**
+   * Adds a type binding for a specific scope. After calling this, within the scope, the reference
+   * type is only incarnated by the given concrete types.<br>
+   * <br>
+   * <b>NOTE: Prefer using {@link #addBinding(ISymbol, TypeSymbol, TypeSymbol)}</b>. In case
+   * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
+   * as key anymore!
+   *
+   * @param contextSymbolName the name of the concrete type spanning the scope
+   * @param referenceType
+   * @param concreteType
+   */
+  default void addBinding(String contextSymbolName, TypeSymbol referenceType,
+      TypeSymbol concreteType) {
+    addBinding(contextSymbolName, referenceType, Set.of(concreteType));
   }
   
   default void addBinding(ISymbol contextSymbol, TypeSymbol referenceElement,
       Set<TypeSymbol> concreteElements) {
-    addBinding(contextSymbol.getFullName(), referenceElement, concreteElements);
+    addBinding(computeSymbolKey(contextSymbol), referenceElement, concreteElements);
   }
   
   default void addBinding(ISymbol contextSymbol, TypeSymbol referenceElement,
       TypeSymbol concreteElement) {
-    addBinding(contextSymbol.getFullName(), referenceElement, Set.of(concreteElement));
+    addBinding(contextSymbol, referenceElement, Set.of(concreteElement));
   }
   
   /**
@@ -84,12 +115,12 @@ public interface CDIncarnationBindings {
   
   default void addBinding(ISymbol contextSymbol, FieldSymbol referenceElement,
       Set<FieldSymbol> concreteElements) {
-    addBinding(contextSymbol.getFullName(), referenceElement, concreteElements);
+    addBinding(computeSymbolKey(contextSymbol), referenceElement, concreteElements);
   }
   
   default void addBinding(ISymbol contextSymbol, FieldSymbol referenceElement,
       FieldSymbol concreteElement) {
-    addBinding(contextSymbol.getFullName(), referenceElement, Set.of(concreteElement));
+    addBinding(contextSymbol, referenceElement, Set.of(concreteElement));
   }
   
   Set<FieldSymbol> getBindings(ISymbol contextSymbol, FieldSymbol referenceElement);
@@ -105,7 +136,7 @@ public interface CDIncarnationBindings {
   
   default void addBinding(ISymbol contextSymbol, MethodSymbol referenceElement,
       Set<MethodSymbol> concreteElements) {
-    addBinding(contextSymbol.getFullName(), referenceElement, concreteElements);
+    addBinding(computeSymbolKey(contextSymbol), referenceElement, concreteElements);
   }
   
   Set<MethodSymbol> getBindings(ISymbol contextSymbol, MethodSymbol referenceElement);
@@ -121,7 +152,7 @@ public interface CDIncarnationBindings {
   
   default void addBinding(ISymbol contextSymbol, CDAssociationSymbol referenceElement,
       Set<CDAssociationSymbol> concreteElements) {
-    addBinding(contextSymbol.getFullName(), referenceElement, concreteElements);
+    addBinding(computeSymbolKey(contextSymbol), referenceElement, concreteElements);
   }
   
 }

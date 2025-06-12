@@ -177,8 +177,7 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
         () -> incMapping.getIncarnations(concreteSymbol.getEnclosingScope(), referenceParamType)
             .stream().map(ASTCDType::getSymbol).collect(Collectors.toSet()));
     if (derivedBinding.isPresent()) {
-      incMapping.addBinding(concreteSymbol.getFullName(), referenceParamType.getSymbol(),
-          derivedBinding.get());
+      incMapping.addBinding(concreteSymbol, referenceParamType.getSymbol(), derivedBinding.get());
     }
   }
   
@@ -208,8 +207,7 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
                         .getEnclosingScope(), referenceParamAttr).stream().map(
                             ASTCDAttribute::getSymbol).collect(Collectors.toSet()));
     if (derivedBinding.isPresent()) {
-      incMapping.addBinding(annotatedSymbol.getFullName(), referenceParamAttr.getSymbol(),
-          derivedBinding.get());
+      incMapping.addBinding(annotatedSymbol, referenceParamAttr.getSymbol(), derivedBinding.get());
     }
   }
   

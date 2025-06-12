@@ -71,7 +71,7 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   /**
    * Returns all incarnations of the given reference type in a certain scope. <br>
    * The incarnation mapping in a certain scope can be limited to a subset of the incarnations using
-   * {@link DefaultCDIncarnationBindings#addFieldBinding(String, FieldSymbol, Set)}
+   * {@link DefaultCDIncarnationBindings#addBinding(String, FieldSymbol, Set)}
    *
    * @param scope the scope in which incarnations are searched
    * @param referenceAttribute the reference attribute for which incarnations are searched

@@ -120,13 +120,25 @@ public class MethodSignatureString {
   }
   
   public static String printSignature(CDMethodSignatureSymbol methodSymbol) {
+    return printSignature(methodSymbol.getFullName(), methodSymbol.getParameterList().stream().map(
+        param -> param.getType().print()).collect(Collectors.toList()));
+  }
+  
+  /**
+   * Prints the full signature of a method symbol, including its name and parameter types.
+   * This method can be used without any symbol table available, since it only relies on strings.
+   *
+   * @param fullSymbolName the full name of the method symbol, including the class name
+   * @param parameterTypes the list of parameter types of the method
+   * @return the full signature of the method symbol
+   */
+  public static String printSignature(String fullSymbolName, List<String> parameterTypes) {
     StringBuilder builder = new StringBuilder();
-    builder.append(methodSymbol.getFullName());
+    builder.append(fullSymbolName);
     builder.append("(");
-    for (int i = 0; i < methodSymbol.getParameterList().size(); i++) {
-      VariableSymbol param = methodSymbol.getParameterList().get(i);
-      builder.append(param.getType().print());
-      if (i < methodSymbol.getParameterList().size() - 1) {
+    for (int i = 0; i < parameterTypes.size(); i++) {
+      builder.append(parameterTypes.get(i));
+      if (i < parameterTypes.size() - 1) {
         builder.append(",");
       }
     }

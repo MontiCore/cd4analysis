@@ -15,10 +15,7 @@ import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -42,12 +39,17 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
   private final Map<String, SetMultimap<String, MethodSymbol>> methodBindings = new HashMap<>();
   
   @Override
+  public String computeSymbolKey(ISymbol symbol) {
+    return symbol.getFullName();
+  }
+  
+  @Override
   public void addBinding(String contextSymbolName, TypeSymbol referenceType,
       Set<TypeSymbol> concreteTypes) {
     Multimap<String, TypeSymbol> typeBinding = typeBindings.computeIfAbsent(contextSymbolName,
         k -> HashMultimap.create());
     // TODO future: make sure the binding we add does not conflict with existing ones
-    typeBinding.putAll(referenceType.getFullName(), concreteTypes);
+    typeBinding.putAll(computeSymbolKey(referenceType), concreteTypes);
   }
   
   @Override
@@ -56,7 +58,7 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
     Multimap<String, FieldSymbol> fieldBinding = fieldBindings.computeIfAbsent(contextSymbolName,
         k -> HashMultimap.create());
     // TODO future: make sure the binding we add does not conflict with existing ones
-    fieldBinding.putAll(referenceField.getFullName(), concreteFields);
+    fieldBinding.putAll(computeSymbolKey(referenceField), concreteFields);
   }
   
   @Override
@@ -65,7 +67,7 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
     Multimap<String, MethodSymbol> methodBinding = methodBindings.computeIfAbsent(contextSymbolName,
         k -> HashMultimap.create());
     // TODO future: make sure the binding we add does not conflict with existing ones
-    methodBinding.putAll(referenceMethod.getFullName(), concreteMethods);
+    methodBinding.putAll(computeSymbolKey(referenceMethod), concreteMethods);
   }
   
   @Override
@@ -91,13 +93,14 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
   
   @Override
   public Set<TypeSymbol> getBindings(ISymbol contextSymbol, TypeSymbol referenceType) {
-    String symbolName = contextSymbol.getFullName();
+    String symbolName = computeSymbolKey(contextSymbol);
     Log.debug("Checking for type incarnations in context of symbol: " + symbolName, LOG_NAME);
     
     SetMultimap<String, TypeSymbol> localTypeMapping = typeBindings.get(symbolName);
-    if (localTypeMapping != null && localTypeMapping.containsKey(referenceType.getFullName())) {
+    String referenceTypeKey = computeSymbolKey(referenceType);
+    if (localTypeMapping != null && localTypeMapping.containsKey(referenceTypeKey)) {
       // incarnation is locally defined in that scope
-      return localTypeMapping.get(referenceType.getFullName());
+      return localTypeMapping.get(referenceTypeKey);
     }
     else {
       // search higher in the scope hierarchy
@@ -120,7 +123,7 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
   
   @Override
   public Set<FieldSymbol> getBindings(ISymbol contextSymbol, FieldSymbol referenceField) {
-    String symbolName = contextSymbol.getFullName();
+    String symbolName = computeSymbolKey(contextSymbol);
     Log.debug("Checking for field incarnations in scope spanned by: " + symbolName, LOG_NAME);
     
     // 1. resolve the type of the field
@@ -131,9 +134,10 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
     SetMultimap<String, FieldSymbol> localFieldMapping = fieldBindings.get(symbolName);
     
     Set<FieldSymbol> fieldIncarnations;
-    if (localFieldMapping != null && localFieldMapping.containsKey(referenceField.getFullName())) {
+    String referenceFieldKey = computeSymbolKey(referenceField);
+    if (localFieldMapping != null && localFieldMapping.containsKey(referenceFieldKey)) {
       // incarnation is locally defined in that scope
-      fieldIncarnations = localFieldMapping.get(referenceField.getFullName());
+      fieldIncarnations = localFieldMapping.get(referenceFieldKey);
     }
     else {
       // search higher in the scope hierarchy
@@ -169,7 +173,7 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
   
   @Override
   public Set<MethodSymbol> getBindings(ISymbol contextSymbol, MethodSymbol referenceMethod) {
-    String symbolName = contextSymbol.getFullName();
+    String symbolName = computeSymbolKey(contextSymbol);
     Log.debug("Checking for method incarnations in scope spanned by: " + symbolName, LOG_NAME);
     
     // 1. resolve the declaring type of the method
@@ -180,10 +184,10 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
     SetMultimap<String, MethodSymbol> localMethodMapping = methodBindings.get(symbolName);
     
     Set<MethodSymbol> methodIncarnations;
-    if (localMethodMapping != null && localMethodMapping.containsKey(referenceMethod
-        .getFullName())) {
+    String referenceMethodKey = computeSymbolKey(referenceMethod);
+    if (localMethodMapping != null && localMethodMapping.containsKey(referenceMethodKey)) {
       // incarnation is locally defined in that scope
-      methodIncarnations = localMethodMapping.get(referenceMethod.getFullName());
+      methodIncarnations = localMethodMapping.get(referenceMethodKey);
     }
     else {
       // search higher in the scope hierarchy

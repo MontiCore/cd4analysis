@@ -16,6 +16,7 @@ import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.inc.MethodOverloadingCDIncBindings;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -124,8 +125,15 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
             MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
         
         String newMethodQualifier = paramIncarnationDeclaringType.getFullName();
-        String newMethodFullName = Names.getQualifiedName(newMethodQualifier, newMethod.getName());
-        context.getIncarnationMapping().addBinding(newMethodFullName, paramAttribute.getSymbol(),
+        String bindingContextKey;
+        if (context.getConformanceParams().contains(CDConfParameter.METHOD_OVERLOADING)) {
+          bindingContextKey = MethodOverloadingCDIncBindings.computeMethodSymbolKey(
+              newMethodQualifier, newMethod);
+        }
+        else {
+          bindingContextKey = Names.getQualifiedName(newMethodQualifier, newMethod.getName());
+        }
+        context.getIncarnationMapping().addBinding(bindingContextKey, paramAttribute.getSymbol(),
             paramAttributeInc.getSymbol());
         // TODO Should we also add a TYPE binding for the type of the parameter attribute?
         // alternative: is the ScopedIncarnationBindings class so "intelligent" that it looks up

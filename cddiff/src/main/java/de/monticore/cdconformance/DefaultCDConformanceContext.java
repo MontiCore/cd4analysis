@@ -4,10 +4,7 @@ package de.monticore.cdconformance;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.inc.CDIncarnationBindings;
-import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.cdconformance.inc.DefaultCDIncarnationBindings;
-import de.monticore.cdconformance.inc.DefaultCDIncarnationMapping;
+import de.monticore.cdconformance.inc.*;
 import de.monticore.cdconformance.inc.association.*;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
@@ -65,8 +62,13 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     this.methodIncStrategy = methodIncStrategy;
     this.mcTypeMatcher = mcTypeMatcher;
     
-    CDIncarnationBindings incarnationBinding = new DefaultCDIncarnationBindings();
-    // TODO provide bindings impl supporting method overloading
+    CDIncarnationBindings incarnationBinding;
+    if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
+      incarnationBinding = new MethodOverloadingCDIncBindings();
+    }
+    else {
+      incarnationBinding = new DefaultCDIncarnationBindings();
+    }
     incarnationMapping = new DefaultCDIncarnationMapping(concreteCD, typeIncStrategy,
         attributeIncStrategy, methodIncStrategy, assocIncStrategy, incarnationBinding);
   }
