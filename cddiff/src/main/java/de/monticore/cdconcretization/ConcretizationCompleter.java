@@ -32,12 +32,11 @@ import de.monticore.cdconformance.CDConformanceContext;
 import de.monticore.cdconformance.DefaultCDConformanceContext;
 import de.monticore.cdconformance.inc.ForEachBindingDerivingVisitor;
 import de.monticore.cdconformance.inc.STBindingDerivingVisitor;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
-
 import java.util.Set;
 
 /**
@@ -203,11 +202,11 @@ public class ConcretizationCompleter {
         ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes,
         ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocIncStrategy,
         CDAttributeMatchingStrategy attributeIncStrategy,
-        CDMethodMatchingStrategy methodIncStrategy, MCTypeMatcher mcTypeMatcher,
+        CDMethodMatchingStrategy methodIncStrategy, MCTypeMatchingStrategy mcTypeIncStrategy,
         boolean forEachNameAdaptationEnabled) {
       super(concreteCD, referenceCD, mapping, underspecifiedPlaceholderTypeName, conformanceParams,
           typeIncStrategy, typeIncStrategyMatchingSubTypes, assocIncStrategy, attributeIncStrategy,
-          methodIncStrategy, mcTypeMatcher);
+          methodIncStrategy, mcTypeIncStrategy);
       this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
     }
     
@@ -232,7 +231,7 @@ public class ConcretizationCompleter {
           underspecifiedPlaceholderTypeName, conformanceParams, context.getTypeIncStrategy(),
           context.getTypeIncStrategyMatchingSubTypes(), context.getAssociationIncStrategy(), context
               .getAttributeIncStrategy(), context.getMethodIncStrategy(), context
-                  .getMCTypeMatcher(), forEachNameAdaptationEnabled);
+                  .getMCTypeIncStrategy(), forEachNameAdaptationEnabled);
     }
     
     @Override

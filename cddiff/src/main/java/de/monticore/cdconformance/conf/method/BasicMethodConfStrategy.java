@@ -6,8 +6,8 @@ import static de.monticore.cdconformance.CDConfParameter.*;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
+import de.monticore.cdconformance.CDConformanceContext;
+import de.monticore.cdconformance.inc.mctype.MCTypeUtil;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -17,22 +17,17 @@ import java.util.stream.IntStream;
 
 public class BasicMethodConfStrategy extends CDMethodChecker {
   
-  @Deprecated
-  private final MCTypeMatcher typeMatcher;
   private final Set<CDConfParameter> params;
   
-  public BasicMethodConfStrategy(CDIncarnationMapping incMapping, MCTypeMatcher typeMatcher,
-      Set<CDConfParameter> params) {
-    super(incMapping);
-    this.typeMatcher = typeMatcher;
+  public BasicMethodConfStrategy(CDConformanceContext context, Set<CDConfParameter> params) {
+    super(context);
     this.params = params;
   }
   
   @Override
   public boolean checkConformance(ASTCDMethod concrete, ASTCDMethod ref) {
-    return checkReturnTypeConformance(concrete.getMCReturnType(), ref.getMCReturnType())
-        && checkParameterListConformance(concrete.getCDParameterList(), ref.getCDParameterList(),
-            concrete.get_SourcePositionStart());
+    return checkReturnTypeConformance(concrete, ref) && checkParameterListConformance(concrete
+        .getCDParameterList(), ref.getCDParameterList(), concrete.get_SourcePositionStart());
   }
   
   /**
@@ -102,7 +97,7 @@ public class BasicMethodConfStrategy extends CDMethodChecker {
    * parameter conforms to the reference parameter iff:
    *
    * <ol>
-   * <li>the type conforms to the reference type (see {@link MCTypeMatcher#isMCTypeMatched})
+   * <li>the type conforms to the reference type
    * <li>(only if NOT {@link CDConfParameter#STRICT_PARAMETER_ORDER}) the parameter name is the
    * same
    * </ol>
@@ -115,7 +110,7 @@ public class BasicMethodConfStrategy extends CDMethodChecker {
     if (!params.contains(STRICT_PARAMETER_ORDER) && !conPar.getName().equals(refPar.getName())) {
       return false;
     }
-    return typeMatcher.isMCTypeMatched(conPar.getMCType(), refPar.getMCType());
+    return incMapping.isIncarnation(conPar.getMCType(), refPar.getMCType());
   }
   
   /**
@@ -125,33 +120,42 @@ public class BasicMethodConfStrategy extends CDMethodChecker {
    * <ol>
    * <li>the reference type is underspecified
    * <li>both return types are void
-   * <li>the type conforms to the reference type (see {@link MCTypeMatcher#isMCTypeMatched})
+   * <li>the type conforms to the reference type
    * </ol>
    *
-   * @param conReturn
-   * @param refReturn
-   * @return
+   * @param conMethod the concrete method
+   * @param refMethod the reference method
+   * @return true if the concrete return type conforms to the reference return type, false
    */
-  protected boolean checkReturnTypeConformance(ASTMCReturnType conReturn,
-      ASTMCReturnType refReturn) {
-    if (typeMatcher.isVoidType(refReturn)) {
+  protected boolean checkReturnTypeConformance(ASTCDMethod conMethod, ASTCDMethod refMethod) {
+    ASTMCReturnType conReturn = conMethod.getMCReturnType();
+    ASTMCReturnType refReturn = refMethod.getMCReturnType();
+    if (MCTypeUtil.isVoidType(refReturn)) {
       /*
        * For methods, we treat 'void' as underspecification of the return type. Therefore, any
        * concrete return type is allowed.
        */
       return true;
     }
-    if (typeMatcher.isVoidType(conReturn)) {
+    if (MCTypeUtil.isVoidType(conReturn)) {
       // a void return type is only allowed if the reference type is either void or underspecified
-      return typeMatcher.isUnderspecified(refReturn);
+      return MCTypeUtil.isUnderspecified(context, refReturn);
     }
-    if (typeMatcher.isMCTypeMatched(conReturn.getMCType(), refReturn.getMCType())) {
+    /*
+     * Here we check if the concrete return type conforms to the reference return type with respect
+     * to the incarnation bindings on context of the method.
+     * e.g., in context of an 'EmployeeBuilder' class, the concrete type 'Employee' is a valid
+     * incarnation of 'DataClass' while 'Department' is not, although both are incarnations of
+     * 'DataClass' in the global context.
+     */
+    if (incMapping.isIncarnation(conMethod.getSymbol(), conReturn.getMCType(), refReturn
+        .getMCType())) {
       return true;
     }
     else {
-      // TODO move this to MCTypeMatcher -> rename to MCTypeConformance strategy
-      if (
-      /* is concrete type an incarnation of ref type (ignoring bindings)? */ false) {
+      // For precise error logs, we check if the concrete type an incarnation of ref type
+      // (ignoring bindings)
+      if (incMapping.isIncarnation(conReturn.getMCType(), refReturn.getMCType())) {
         Log.error("The incarnation '" + conReturn.getMCType().printType() + "' of the return type '"
             + refReturn.getMCType().printType() + "' is not allowed in this scope", conReturn
                 .get_SourcePositionStart());

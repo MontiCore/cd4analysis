@@ -20,7 +20,6 @@ import de.monticore.cdconformance.conf.type.DeepTypeConfStrategy;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.ForEachBindingDerivingVisitor;
 import de.monticore.cdconformance.inc.STBindingDerivingVisitor;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
@@ -35,7 +34,6 @@ public class CDConformanceChecker {
   protected Set<CDConfParameter> params;
   protected String underspecifiedTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
   protected CDIncarnationMapping incMapping;
-  protected MCTypeMatcher typeMatcher;
   
   public CDConformanceChecker(Set<CDConfParameter> params) {
     this.params = params;
@@ -66,7 +64,6 @@ public class CDConformanceChecker {
     CDConformanceContext context = DefaultCDConformanceContext.createCached(concreteCD, referenceCD,
         mapping, underspecifiedTypeName, params);
     incMapping = context.getIncarnationMapping();
-    typeMatcher = context.getMCTypeMatcher();
     
     // 1. introduce incarnation bindings for each incarnation
     CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
@@ -91,8 +88,8 @@ public class CDConformanceChecker {
     }
     
     // init Conformance Checker
-    ConformanceStrategy<ASTCDCompilationUnit> cdChecker = getBasicCDConfStrategy(concreteCD,
-        referenceCD);
+    ConformanceStrategy<ASTCDCompilationUnit> cdChecker = getBasicCDConfStrategy(context,
+        concreteCD, referenceCD);
     
     // check conformance
     boolean multiInc = !params.contains(NO_MULTI_INC);
@@ -100,16 +97,14 @@ public class CDConformanceChecker {
         multiInc);
   }
   
-  protected BasicCDConfStrategy getBasicCDConfStrategy(ASTCDCompilationUnit concreteCD,
-      ASTCDCompilationUnit referenceCD) {
+  protected BasicCDConfStrategy getBasicCDConfStrategy(CDConformanceContext context,
+      ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD) {
     BasicTypeConfStrategy typeChecker;
     BasicAssocConfStrategy assocChecker;
     boolean cardRestriction = params.contains(ALLOW_CARD_RESTRICTION);
     
-    BasicAttributeConfStrategy attrChecker = new BasicAttributeConfStrategy(incMapping,
-        typeMatcher);
-    BasicMethodConfStrategy methodChecker = new BasicMethodConfStrategy(incMapping, typeMatcher,
-        params);
+    BasicAttributeConfStrategy attrChecker = new BasicAttributeConfStrategy(incMapping);
+    BasicMethodConfStrategy methodChecker = new BasicMethodConfStrategy(context, params);
     
     if (params.contains(INHERITANCE)) {
       assocChecker = new DeepAssocConfStrategy(concreteCD, referenceCD, incMapping,

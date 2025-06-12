@@ -6,10 +6,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
-
 import java.util.Set;
 
 public interface CDConformanceContext {
@@ -58,7 +57,7 @@ public interface CDConformanceContext {
   
   CDMethodMatchingStrategy getMethodIncStrategy();
   
-  MCTypeMatcher getMCTypeMatcher();
+  MCTypeMatchingStrategy getMCTypeIncStrategy();
   
   CDIncarnationMapping getIncarnationMapping();
   

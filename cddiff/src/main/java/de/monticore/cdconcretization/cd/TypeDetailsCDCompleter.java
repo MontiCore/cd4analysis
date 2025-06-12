@@ -13,8 +13,8 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
@@ -158,7 +158,9 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
     
     @Override
-    public MCTypeMatcher getMCTypeMatcher() { return parentContext.getMCTypeMatcher(); }
+    public MCTypeMatchingStrategy getMCTypeIncStrategy() {
+      return parentContext.getMCTypeIncStrategy();
+    }
     
     @Override
     public CDIncarnationMapping getIncarnationMapping() {

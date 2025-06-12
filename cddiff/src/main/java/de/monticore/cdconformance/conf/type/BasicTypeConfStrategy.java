@@ -88,13 +88,11 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     
     // check if all necessary attributes are present
     attributeInc.setReferenceType(ref);
-    attributeChecker.setReferenceType(ref);
     boolean attributes = checkAttributeIncarnation(concrete, ref) && checkAttributeConformance(
         concrete);
     
     // check if all necessary methods are present
     methodInc.setReferenceType(ref);
-    methodChecker.setReferenceType(ref);
     boolean methods = checkMethodIncarnation(concrete, ref) && checkMethodConformance(concrete);
     
     // check if reference associations are incarnated

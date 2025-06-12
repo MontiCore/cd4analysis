@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -17,6 +18,7 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,6 +28,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   private final ASTCDCompilationUnit concreteCD;
   private final ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy;
+  private final MCTypeMatchingStrategy mcTypeIncStrategy;
   private final CDAttributeMatchingStrategy attributeIncStrategy;
   private final CDMethodMatchingStrategy methodIncStrategy;
   private final ExternalCandidatesMatchingStrategy<ASTCDAssociation> associationIncStrategy;
@@ -34,11 +37,13 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   public DefaultCDIncarnationMapping(ASTCDCompilationUnit concreteCD,
       ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
-      CDAttributeMatchingStrategy attributeIncStrategy, CDMethodMatchingStrategy methodIncStrategy,
+      MCTypeMatchingStrategy mcTypeIncStrategy, CDAttributeMatchingStrategy attributeIncStrategy,
+      CDMethodMatchingStrategy methodIncStrategy,
       ExternalCandidatesMatchingStrategy<ASTCDAssociation> associationIncStrategy,
       CDIncarnationBindings bindings) {
     this.concreteCD = concreteCD;
     this.typeIncStrategy = typeIncStrategy;
+    this.mcTypeIncStrategy = mcTypeIncStrategy;
     this.attributeIncStrategy = attributeIncStrategy;
     this.methodIncStrategy = methodIncStrategy;
     this.associationIncStrategy = associationIncStrategy;
@@ -49,6 +54,9 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   public ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategy() {
     return typeIncStrategy;
   }
+  
+  @Override
+  public MCTypeMatchingStrategy getMCTypeIncStrategy() { return mcTypeIncStrategy; }
   
   @Override
   public CDAttributeMatchingStrategy getAttributeIncStrategy() { return attributeIncStrategy; }
@@ -74,11 +82,34 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public Set<ASTCDType> getIncarnations(IScope scope, ASTCDType referenceType) {
+    return getIncarnations(bindings.getBindings(scope, referenceType.getSymbol()), referenceType);
+  }
+  
+  @Override
+  public Set<ASTCDType> getIncarnations(ISymbol contextSymbol, ASTCDType referenceType) {
+    return getIncarnations(bindings.getBindings(contextSymbol, referenceType.getSymbol()),
+        referenceType);
+  }
+  
+  protected boolean isIncarnation(ISymbol contextSymbol, ASTCDType conType, ASTCDType refType) {
+    Set<TypeSymbol> typeBindings = bindings.getBindings(contextSymbol, refType.getSymbol());
     // 1. check for scoped incarnation bindings
-    Set<TypeSymbol> typeIncarnationsOpt = bindings.getBindings(scope, referenceType.getSymbol());
-    if (!typeIncarnationsOpt.isEmpty()) {
+    if (!typeBindings.isEmpty()) {
       // map symbols back to AST nodes
-      return typeIncarnationsOpt.stream().map(SymbolUtil::cdTypeFromTypeSymbol).collect(Collectors
+      return typeBindings.stream().map(SymbolUtil::cdTypeFromTypeSymbol).anyMatch(c -> c.equals(
+          conType));
+    }
+    else {
+      // 2. use usual incarnation strategies
+      return getTypeIncStrategy().isMatched(conType, refType);
+    }
+  }
+  
+  protected Set<ASTCDType> getIncarnations(Set<TypeSymbol> typeBindings, ASTCDType referenceType) {
+    // 1. check for scoped incarnation bindings
+    if (!typeBindings.isEmpty()) {
+      // map symbols back to AST nodes
+      return typeBindings.stream().map(SymbolUtil::cdTypeFromTypeSymbol).collect(Collectors
           .toSet());
     }
     else {
@@ -260,6 +291,21 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   @Override
   public String computeSymbolKey(ISymbol symbol) {
     return bindings.computeSymbolKey(symbol);
+  }
+  
+  @Override
+  public boolean isIncarnation(ASTMCType conType, ASTMCType refType) {
+    MCTypeMatchingStrategy mcTypeIncStrategy = getMCTypeIncStrategy();
+    mcTypeIncStrategy.setTypeMatcher(getTypeIncStrategy()::isMatched);
+    return mcTypeIncStrategy.isMatched(conType, refType);
+  }
+  
+  @Override
+  public boolean isIncarnation(ISymbol contextSymbol, ASTMCType conType, ASTMCType refType) {
+    MCTypeMatchingStrategy mcTypeIncStrategy = getMCTypeIncStrategy();
+    mcTypeIncStrategy.setTypeMatcher((conCDType, refCDType) -> isIncarnation(contextSymbol,
+        conCDType, refCDType));
+    return mcTypeIncStrategy.isMatched(conType, refType);
   }
   
 }

@@ -7,11 +7,14 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IScope;
+import de.monticore.symboltable.ISymbol;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,7 +25,11 @@ import java.util.stream.Collectors;
  */
 public interface CDIncarnationMapping extends CDIncarnationBindings {
   
+  // TODO Consider renaming the "global" getIncarnations/isIncarnation methods to avoid confusion with the scope-based methods
+  
   ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategy();
+  
+  MCTypeMatchingStrategy getMCTypeIncStrategy();
   
   CDAttributeMatchingStrategy getAttributeIncStrategy();
   
@@ -54,6 +61,8 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
    * @return all incarnations of the given reference type in the given scope
    */
   Set<ASTCDType> getIncarnations(IScope scope, ASTCDType referenceType);
+  
+  Set<ASTCDType> getIncarnations(ISymbol contextSymbol, ASTCDType referenceType);
   
   default Set<TypeSymbol> getIncarnations(IScope scope, TypeSymbol referenceElement) {
     return getIncarnations(scope, SymbolUtil.cdTypeFromTypeSymbol(referenceElement)).stream().map(
@@ -98,5 +107,13 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   Set<ASTCDAssociation> getIncarnations(ASTCDAssociation referenceElement);
   
   Set<ASTCDAssociation> getIncarnations(IScope scope, ASTCDAssociation referenceElement);
+  
+  // -------------------------------
+  // ----- MCType Mapping -----
+  // -------------------------------
+  
+  boolean isIncarnation(ASTMCType conType, ASTMCType refType);
+  
+  boolean isIncarnation(ISymbol contextSymbol, ASTMCType conType, ASTMCType refType);
   
 }
