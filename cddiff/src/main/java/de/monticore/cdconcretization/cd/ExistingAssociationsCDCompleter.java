@@ -16,21 +16,21 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Set;
 
 public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
-
+  
   private static final String LOG_NAME = ExistingAssociationsCDCompleter.class.getName();
-
+  
   private final IAssociationCompleter assocDetailsCompleter;
-
+  
   public ExistingAssociationsCDCompleter(IAssociationCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
-
+  
   @Override
   public void complete(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd,
       CDCompletionContext context) throws CompletionException {
     // First: complete the incarnations, so add stuff to the underspecified incarnation
     // or do nothing to the over-specified incarnation
-
+    
     Log.debug("=== START completing existing associations ===", LOG_NAME);
     // Iterate through all concrete associations
     for (ASTCDAssociation cAssoc : ccd.getCDDefinition().getCDAssociationsList()) {
@@ -46,7 +46,7 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     Log.debug("=== DONE completing existing associations ===", LOG_NAME);
     super.complete(ccd, rcd, context);
   }
-
+  
   /**
    * Checks in what direction the concrete association matches the reference association. If the
    * direction cannot be determined, an exception is thrown.
@@ -63,16 +63,16 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
     // Extract the left and right types of the concrete association
     ASTCDType cLeftType = ConcretizationHelper.getAssocLeftType(ccd, cAssoc);
     ASTCDType cRightType = ConcretizationHelper.getAssocRightType(ccd, cAssoc);
-
+    
     // Extract the left and right types of the reference association
     ASTCDType rLeftType = ConcretizationHelper.getAssocLeftType(rcd, rAssoc);
     ASTCDType rRightType = ConcretizationHelper.getAssocRightType(rcd, rAssoc);
-
+    
     // Get all supertypes of the left type and right type of the concrete association
     Set<ASTCDType> cLeftSuperTypes = CDDiffUtil.getAllSuperTypes(cLeftType, ccd.getCDDefinition());
     Set<ASTCDType> cRightSuperTypes = CDDiffUtil.getAllSuperTypes(rRightType, ccd
         .getCDDefinition());
-
+    
     BooleanMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes = context
         .getTypeIncStrategyMatchingSubTypes();
     // Determine if the concrete association matches the reference association in the standard
@@ -85,7 +85,7 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
                 rRightType) || cRightSuperTypes.stream().anyMatch(
                     sRightType -> typeIncStrategyMatchingSubTypes.isMatched(sRightType,
                         rRightType)));
-
+    
     // Determine if the concrete association matches the reference association in the reverse
     // direction.
     // A match in reverse occurs if the left type of the concrete association matches the right type
@@ -96,12 +96,12 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
                 rLeftType) || cRightSuperTypes.stream().anyMatch(
                     sRightType -> typeIncStrategyMatchingSubTypes.isMatched(sRightType,
                         rLeftType)));
-
+    
     if (!match && !matchInReverse) {
       // If no match is found, throw an exception as the associations could not be completed.
       throw new CompletionException("Associations could not be completed.");
     }
-
+    
     // Check for potential role name conflicts if a match is found in both directions.
     // If the role name on one side of the association matches the role name on the opposite side of
     // the reference association, the match is invalidated.
@@ -113,8 +113,8 @@ public class ExistingAssociationsCDCompleter extends AbstractCDCompleter {
         match = false;
       }
     }
-
+    
     return match ? AssocMatchDirection.SAME_DIRECTION : AssocMatchDirection.REVERSE_DIRECTION;
   }
-
+  
 }

@@ -10,12 +10,12 @@ import de.monticore.cddiff.CDDiffUtil;
  * concrete type is an incarnation of the reference type.
  */
 public class MatchCDTypesToSubTypes extends MatchCDTypeInHierarchy {
-
-  public MatchCDTypesToSubTypes(BooleanMatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  
+  public MatchCDTypesToSubTypes(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
-
+  
   /**
    * A boolean method which checks if a subtype of srcElem matches to tgtCD
    *
@@ -27,5 +27,5 @@ public class MatchCDTypesToSubTypes extends MatchCDTypeInHierarchy {
     return CDDiffUtil.getAllStrictSubTypes(srcElem, srcCD.getCDDefinition()).stream().anyMatch(
         srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
   }
-
+  
 }

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmatcher.iterative.matching.cdtype;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -6,22 +7,18 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.cdmatcher.MultipleMatchingStrategy;
 import de.monticore.cdmatcher.iterative.matching.caching.StructureCache;
 
-public class MatchCDTypeByDirectAssocs extends MultipleMatchingStrategy<ASTCDType, ASTCDAssociation> {
-
+public class MatchCDTypeByDirectAssocs extends
+    MultipleMatchingStrategy<ASTCDType, ASTCDAssociation> {
+  
   private final MatchingStrategy<ASTCDAssociation> strategy;
-
+  
   public MatchCDTypeByDirectAssocs(MatchingStrategy<ASTCDAssociation> associationMatchingStrategy) {
     this.strategy = associationMatchingStrategy;
   }
-
-
+  
   @Override
   public double getScore(ASTCDType srcElem, ASTCDType tgtElem) {
-    return getBestMatchingScore(
-      srcElem,
-      tgtElem,
-      StructureCache::getAssociations,
-      strategy
-    );
+    return getBestMatchingScore(srcElem, tgtElem, StructureCache::getAssociations, strategy);
   }
+  
 }

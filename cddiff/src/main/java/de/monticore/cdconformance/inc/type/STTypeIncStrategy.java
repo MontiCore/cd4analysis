@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class STTypeIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDType> {
-
+  
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
-
+  
   public STTypeIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
     this.mapping = mapping;
   }
-
+  
   @Override
   public List<ASTCDType> getMatchedElements(ASTCDType concrete) {
     List<ASTCDType> refTypes = new ArrayList<>();
@@ -31,7 +31,7 @@ public class STTypeIncStrategy implements ExternalCandidatesMatchingStrategy<AST
     }
     return refTypes;
   }
-
+  
   @Override
   public boolean isMatched(ASTCDType concrete, ASTCDType ref) {
     if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype()
@@ -41,5 +41,5 @@ public class STTypeIncStrategy implements ExternalCandidatesMatchingStrategy<AST
     }
     return false;
   }
-
+  
 }

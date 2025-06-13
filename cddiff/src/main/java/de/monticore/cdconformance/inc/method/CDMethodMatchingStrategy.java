@@ -11,7 +11,7 @@ import de.monticore.cdmatcher.MatchingStrategy;
  * to know a reference type against whose methods it matches the concrete methods.
  */
 public interface CDMethodMatchingStrategy extends ExternalCandidatesMatchingStrategy<ASTCDMethod> {
-
+  
   void setReferenceType(ASTCDType refType);
-
+  
 }

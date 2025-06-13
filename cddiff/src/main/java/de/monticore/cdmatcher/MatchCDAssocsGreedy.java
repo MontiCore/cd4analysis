@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
  * (CDMerge-compliant)
  */
 public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
-
-  public MatchCDAssocsGreedy(BooleanMatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  
+  public MatchCDAssocsGreedy(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
-
+  
   @Override
   public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation srcElem) {
     return tgtCD.getCDDefinition().getCDAssociationsList().stream().filter(tgtElem -> isMatched(
         srcElem, tgtElem)).collect(Collectors.toList());
   }
-
+  
   /**
    * Associations are matched iff (1) referenced types match (2) association names match if present
    * (3) role-names match if present
@@ -37,7 +37,7 @@ public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
     }
     return check(srcElem, tgtElem) || checkReverse(srcElem, tgtElem);
   }
-
+  
   @Override
   protected boolean check(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (srcElem.getLeft().isPresentCDRole() && tgtElem.getLeft().isPresentCDRole() && !srcElem
@@ -52,7 +52,7 @@ public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
         .getQName()) && checkReference(srcElem.getRightQualifiedName().getQName(), tgtElem
             .getRightQualifiedName().getQName());
   }
-
+  
   @Override
   protected boolean checkReverse(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     if (srcElem.getLeft().isPresentCDRole() && tgtElem.getRight().isPresentCDRole() && !srcElem
@@ -67,5 +67,5 @@ public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
         .getQName()) && checkReference(srcElem.getRightQualifiedName().getQName(), tgtElem
             .getLeftQualifiedName().getQName());
   }
-
+  
 }

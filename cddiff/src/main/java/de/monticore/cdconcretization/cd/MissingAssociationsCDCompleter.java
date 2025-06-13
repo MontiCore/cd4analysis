@@ -27,95 +27,95 @@ import java.util.stream.Collectors;
  * reference class diagram.
  */
 public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
-
+  
   private static final String LOG_NAME = MissingAssociationsCDCompleter.class.getName();
-
+  
   private final IAssociationCompleter assocDetailsCompleter;
-
+  
   private boolean greedyMatcherEnabled = true; // TODO remove! only for testing
-
+  
   public MissingAssociationsCDCompleter(IAssociationCompleter assocDetailsCompleter) {
     this.assocDetailsCompleter = assocDetailsCompleter;
   }
-
+  
   @Override
   public void complete(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd,
       CDCompletionContext context) throws CompletionException {
     Log.debug("=== START finding missing associations ===", LOG_NAME);
     CDDiffUtil.refreshSymbolTable(ccd);
-
+    
     // Iterate over all associations in the reference class diagram
     for (ASTCDAssociation rAssoc : rcd.getCDDefinition().getCDAssociationsList()) {
       Log.debug("Finding matches for assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
-
-      ExternalCandidatesMatchingStrategy<ASTCDAssociation> greedyMatching = new MatchCDAssocsGreedy(context
-          .getTypeIncStrategyMatchingSubTypes(), ccd, rcd);
-
+      
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> greedyMatching = new MatchCDAssocsGreedy(
+          context.getTypeIncStrategyMatchingSubTypes(), ccd, rcd);
+      
       // Find all associations in the concrete class diagram that match the reference association
       Set<ASTCDAssociation> assocIncarnations = ccd.getCDDefinition().getCDAssociationsList()
           .stream().filter(cAssoc -> context.getAssociationIncStrategy().isMatched(cAssoc, rAssoc))
           .collect(Collectors.toSet());
-
+      
       Log.debug("Found normal matches: " + assocIncarnations.stream().map(a -> CD4CodeMill
           .prettyPrint(a, false)).collect(Collectors.toList()), LOG_NAME);
-
+      
       // Find associations that match greedily , but ensure that they don't match more than one
       // element
       Set<ASTCDAssociation> assocGreedyMatches = ccd.getCDDefinition().getCDAssociationsList()
           .stream().filter(cAssoc -> greedyMatching.isMatched(cAssoc, rAssoc) && greedyMatching
               .getMatchedElements(cAssoc).size() < 2).collect(Collectors.toSet());
-
+      
       Log.debug("Found greedy matches: " + assocGreedyMatches.stream().map(a -> CD4CodeMill
           .prettyPrint(a, false)).collect(Collectors.toList()), LOG_NAME);
-
+      
       // Resolve the left and right types of the reference association in the reference class
       // diagram
       ASTCDType rLeftType = ConcretizationHelper.getAssocLeftType(rcd, rAssoc);
       ASTCDType rRightType = ConcretizationHelper.getAssocRightType(rcd, rAssoc);
-
+      
       // Collect all type incarnations in the concrete class diagram that match the left and right
       // types
       Set<ASTCDType> rLeftTypeIncarnations = ConcretizationHelper.getCDTypes(ccd).stream().filter(
           type -> context.getTypeIncStrategy().isMatched(type, rLeftType)).collect(Collectors
               .toSet());
-
+      
       Set<ASTCDType> rRightTypeIncarnations = ConcretizationHelper.getCDTypes(ccd).stream().filter(
           type -> context.getTypeIncStrategy().isMatched(type, rRightType)).collect(Collectors
               .toSet());
-
+      
       // Initialize sets to track which type incarnations still need processing
       Set<ASTCDType> leftTypeInc2Process = new HashSet<>(rLeftTypeIncarnations);
       Set<ASTCDType> rightTypeInc2Process = new HashSet<>(rRightTypeIncarnations);
-
+      
       // Process the type incarnations to find and handle matching associations
       // First, process left-type incarnations against right-type incarnations
       processTypeIncarnations(rLeftTypeIncarnations, rRightTypeIncarnations, leftTypeInc2Process,
           assocIncarnations, assocGreedyMatches, ccd.getCDDefinition(), rAssoc, true);
-
+      
       // Then, process right-type incarnations against left-type incarnations
       processTypeIncarnations(rRightTypeIncarnations, rLeftTypeIncarnations, rightTypeInc2Process,
           assocIncarnations, assocGreedyMatches, ccd.getCDDefinition(), rAssoc, false);
-
+      
       CDDiffUtil.refreshSymbolTable(ccd);
-
+      
       Log.debug("DONE finding matches for assoc: " + CD4CodeMill.prettyPrint(rAssoc, false),
           LOG_NAME);
       Log.debug("remaining left type incarnations: " + leftTypeInc2Process.stream().map(
           ASTCDType::getName).collect(Collectors.toList()), LOG_NAME);
       Log.debug("remaining right type incarnations: " + rightTypeInc2Process.stream().map(
           ASTCDType::getName).collect(Collectors.toList()), LOG_NAME);
-
+      
       // Finally, process any remaining type incarnations that still need to be handled
       // Process the remaining left-type incarnations against right-type incarnations
       addAssociationIncarnations(ccd, leftTypeInc2Process, rRightTypeIncarnations, rAssoc);
-
+      
       // Process the remaining right-type incarnations against left-type incarnations
       addAssociationIncarnations(ccd, rLeftTypeIncarnations, rightTypeInc2Process, rAssoc);
       Log.debug("=== DONE processing assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
     }
     super.complete(ccd, rcd, context);
   }
-
+  
   /**
    * Process the type incarnations to find and handle matching associations. -> so we still try to
    * find more matches than we found in the step before.
@@ -138,16 +138,16 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       Set<ASTCDType> rOppositeTypeIncarnations, Set<ASTCDType> typeInc2Process,
       Set<ASTCDAssociation> assocIncarnations, Set<ASTCDAssociation> assocGreedyMatches,
       ASTCDDefinition cd, ASTCDAssociation rAssoc, boolean leftToRight) throws CompletionException {
-
+    
     // Iterate over each type incarnation in rTypeIncarnation
     for (ASTCDType typeInc : rTypeIncarnation) {
       // Retrieve all supertypes for the current type incarnation from the cd
       Set<ASTCDType> superTypes = CDDiffUtil.getAllSuperTypes(typeInc, cd);
-
+      
       // First, attempt to find a match among the specific association incarnations
       Optional<AssociationMatch> match = findAssociationToAnyOppositeTypeInc(superTypes,
           rOppositeTypeIncarnations, assocIncarnations, cd, leftToRight);
-
+      
       // If a match is found, remove the current type incarnation from the set to be processed and
       // continue
       if (match.isPresent()) {
@@ -160,12 +160,12 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
             LOG_NAME);
         continue;
       }
-
+      
       if (greedyMatcherEnabled) {
         // If no match is found in specific incarnations, try matching against the greedy matches
         match = findAssociationToAnyOppositeTypeInc(superTypes, rOppositeTypeIncarnations,
             assocGreedyMatches, cd, leftToRight);
-
+        
         // If a match is found among the greedy matches, remove the current type incarnation from
         // the
         // set to be processed
@@ -186,7 +186,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       }
     }
   }
-
+  
   /**
    * Finds any association in the given set that "associates" one of the superTypes with one if the
    * "oppositeTypeIncarnations".
@@ -205,11 +205,11 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
   private Optional<AssociationMatch> findAssociationToAnyOppositeTypeInc(Set<ASTCDType> superTypes,
       Set<ASTCDType> oppositeTypeIncarnations, Set<ASTCDAssociation> associations,
       ASTCDDefinition cd, boolean leftToRight) throws CompletionException {
-
+    
     // For each type in the oppositeTypeIncarnations set we also check the super types
     Set<ASTCDType> oppositeTypeIncarnationSuperTypes = oppositeTypeIncarnations.stream().flatMap(
         oType -> CDDiffUtil.getAllSuperTypes(oType, cd).stream()).collect(Collectors.toSet());
-
+    
     for (ASTCDAssociation assoc : associations) {
       // Check if the association "assoc" relates any of the superTypes with any of the
       // oppositeTypeIncarnations (or its super types) (??)
@@ -222,7 +222,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
     }
     return Optional.empty(); // No match found, return empty
   }
-
+  
   /**
    * Creates incarnations of a reference association for the given sets of left and right type
    * incarnations. For each pair of left and right type incarnations, a new association is created.
@@ -235,11 +235,11 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
   private void addAssociationIncarnations(ASTCDCompilationUnit concreteCD,
       Set<ASTCDType> leftTypesIncs, Set<ASTCDType> rightTypeIncs,
       ASTCDAssociation referenceAssociation) {
-
+    
     for (ASTCDType leftTypeInc : leftTypesIncs) {
       for (ASTCDType rightTypeInc : rightTypeIncs) {
         ASTCDAssociation association = referenceAssociation.deepClone();
-
+        
         // Set the left and right types of the association based on the type incarnations
         association.getLeft().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(leftTypeInc.getSymbol()
@@ -247,7 +247,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
         association.getRight().setMCQualifiedType(CD4CodeMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(rightTypeInc.getSymbol()
                 .getInternalQualifiedName())).build());
-
+        
         // If the right type does not have a role name, it is implicitly the type incarnation's
         // name (first character lowercase) anyway.
         if (association.getRight().isPresentCDRole()) {
@@ -259,7 +259,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
           association.getLeft().getCDRole().setName(association.getLeft().getCDRole().getName()
               + "_" + leftTypeInc.getName());
         }
-
+        
         // Only add it if it is not already present. This can happen if the same type incarnation
         // occurs in the "leftType2Process" set while processing "left types" missing an association
         // and after that in the "allLeftTypeIncs" set while processing the "right types" missing
@@ -271,7 +271,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       }
     }
   }
-
+  
   /**
    * Checks if the given concrete association relates any of the types from set A with any of the
    * types from set B.
@@ -288,9 +288,9 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
   private Optional<AssocMatchDirection> checkAssociationMatchesTypes(Set<ASTCDType> typesSideA,
       Set<ASTCDType> typesSideB, ASTCDAssociation assoc, boolean leftToRight)
       throws CompletionException {
-
+    
     boolean fail = false;
-
+    
     if (typesSideA.stream().anyMatch(superType ->
     // Compare the qualified name of the supertype with the qualified name of the
     // left side of the association
@@ -336,5 +336,5 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
     }
     return Optional.empty();
   }
-
+  
 }

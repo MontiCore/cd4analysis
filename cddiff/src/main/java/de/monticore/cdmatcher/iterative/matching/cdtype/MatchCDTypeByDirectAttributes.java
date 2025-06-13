@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmatcher.iterative.matching.cdtype;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -6,15 +7,13 @@ import de.monticore.cdmatcher.iterative.matching.attribute.MatchCDAttribute;
 import de.monticore.cdmatcher.MultipleMatchingStrategy;
 import de.monticore.cdmatcher.iterative.matching.caching.StructureCache;
 
-public class MatchCDTypeByDirectAttributes extends MultipleMatchingStrategy<ASTCDType, ASTCDAttribute> {
-
+public class MatchCDTypeByDirectAttributes extends
+    MultipleMatchingStrategy<ASTCDType, ASTCDAttribute> {
+  
   @Override
   public double getScore(ASTCDType srcElem, ASTCDType tgtElem) {
-    return getBestMatchingScore(
-        srcElem,
-        tgtElem,
-      StructureCache::getAttributes,
-      new MatchCDAttribute()
-    );
+    return getBestMatchingScore(srcElem, tgtElem, StructureCache::getAttributes,
+        new MatchCDAttribute());
   }
+  
 }

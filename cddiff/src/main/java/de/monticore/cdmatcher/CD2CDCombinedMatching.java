@@ -6,14 +6,14 @@ import java.util.*;
 import org.antlr.v4.runtime.misc.Triple;
 
 public abstract class CD2CDCombinedMatching<T> {
-
+  
   List<ExternalCandidatesMatchingStrategy<T>> matcherList;
   List<Triple<T, T, Double>> listWithAllWeights = new ArrayList<>();
   Map<T, T> matches;
   List<T> listToMatch;
   ASTCDCompilationUnit srcCD;
   ASTCDCompilationUnit tgtCD;
-
+  
   public CD2CDCombinedMatching(List<T> listToMatch, ASTCDCompilationUnit srcCD,
       ASTCDCompilationUnit tgtCD, List<ExternalCandidatesMatchingStrategy<T>> matcherList) {
     this.listToMatch = listToMatch;
@@ -23,9 +23,9 @@ public abstract class CD2CDCombinedMatching<T> {
     this.matches = new HashMap<>();
     getMatchMap();
   }
-
+  
   public Map<T, T> getMatches() { return matches; }
-
+  
   protected void fillUpWeightList() {
     for (T srcElem : listToMatch) {
       for (ExternalCandidatesMatchingStrategy<T> matcher : matcherList) {
@@ -37,7 +37,7 @@ public abstract class CD2CDCombinedMatching<T> {
       }
     }
   }
-
+  
   protected void getMatchMap() {
     fillUpWeightList();
     List<T> foundSource = new ArrayList<>();
@@ -50,7 +50,7 @@ public abstract class CD2CDCombinedMatching<T> {
         foundTarget.add(x.b);
       }
     }
-
+    
     for (Triple<T, T, Double> x : listWithAllWeights) {
       if (!foundSource.contains(x.a) && !foundTarget.contains(x.b)) {
         matches.put(x.a, x.b);
@@ -59,7 +59,7 @@ public abstract class CD2CDCombinedMatching<T> {
       }
     }
   }
-
+  
   public abstract Double computeValueForMatching(T srcElem, T tgtElem);
-
+  
 }
