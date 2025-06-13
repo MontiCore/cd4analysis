@@ -36,9 +36,6 @@ import java.util.stream.Collectors;
  * used in the reference model.
  * The binding of a forEach-parameter element is derived using different strategies:
  * <ol>
- * <li><b>Binding hints:</b> If all incarnations in the subtree starting from the concrete element
- * are the same for the forEach-parameter element, we can use the this incarnation as binding.
- * </li>
  * <li><b>Templated name:</b> Checking the concrete name against a regex pattern built form the
  * reference name. e.g., parameter element <code>DataClass</code> is bound to <code>Employee/code>
  * if the reference name is <code>DataClassBuilder</code> and the concrete name is
@@ -48,6 +45,9 @@ import java.util.stream.Collectors;
  * element name. e.g., if the reference name is <code>Builder</code> and the concrete name is
  * <code>Builder_Employee</code>, we know that the parameter element <code>DataClass</code> is
  * bound to <code>Employee</code> in this context.
+ * </li>
+ * <li><b>Binding hints:</b> If all incarnations in the subtree starting from the concrete element
+ * are the same for the forEach-parameter element, we can use the this incarnation as binding.
  * </li>
  * <li><b>Fallback:</b> If there is only one incarnation of the forEach-parameter element anyway,
  * this incarnation must be the binding.</li>
@@ -259,9 +259,9 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
   /**
    * Derives a binding for a forEach-parameter element using different strategies:
    * <ol>
-   * <li>Binding hints, if they are unambiguous</li>
    * <li>Template variables replacements in the concrete name</li>
    * <li>Suffix added to the concrete name</li>
+   * <li>Binding hints, if they are unambiguous</li>
    * <li>Fallback to the only possible incarnation of the parameter type</li>
    * </ol>
    * This method defines the abstract logic for deriving a binding for a certain model element and
@@ -285,26 +285,26 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
       String referenceElementName, S referenceParamSymbol, Optional<S> uniqueBindingHint,
       Function<String, Optional<S>> resolveSymbol, Predicate<S> isIncarnation,
       Supplier<Set<S>> getIncarnations) {
-    // 1. check binding hints
-    if (uniqueBindingHint.isPresent()) {
-      S binding = uniqueBindingHint.get();
-      Log.info("Using binding hint @ '" + concreteSymbol.getFullName() + "':  "
-          + referenceParamSymbol.getFullName() + "=" + binding.getFullName(), LOG_NAME);
-      return uniqueBindingHint;
-    }
-    
-    // 2. try to derive binding from name template
+    // 1. try to derive binding from name template
     Optional<S> paramIncarnationSymbol = deriveBindingFromNameTemplate(concreteSymbol,
         referenceElementName, referenceParamSymbol, resolveSymbol, isIncarnation);
     if (paramIncarnationSymbol.isPresent()) {
       return paramIncarnationSymbol;
     }
     
-    // 3. try to derive binding from suffix
+    // 2. try to derive binding from suffix
     paramIncarnationSymbol = deriveBindingFromSuffix(concreteSymbol, referenceParamSymbol,
         resolveSymbol, isIncarnation);
     if (paramIncarnationSymbol.isPresent()) {
       return paramIncarnationSymbol;
+    }
+    
+    // 3. check unique binding hint
+    if (uniqueBindingHint.isPresent()) {
+      S binding = uniqueBindingHint.get();
+      Log.info("Fallback to unique binding hint @ '" + concreteSymbol.getFullName() + "':  "
+          + referenceParamSymbol.getFullName() + "=" + binding.getFullName(), LOG_NAME);
+      return uniqueBindingHint;
     }
     
     // 4. check if there is only one incarnation anyway
@@ -313,7 +313,7 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
       S onlyIncarnation = paramTypeIncarnations.iterator().next();
       // there is only one incarnation of the parameter type, we can use it as binding
       // (in fact it is not even necessary to derive a binding here, but we do it for consistency in conformance checking)
-      Log.info("Fallback to only possible binding @ '" + concreteSymbol.getFullName() + "':  "
+      Log.info("Fallback to only incarnation @ '" + concreteSymbol.getFullName() + "':  "
           + referenceParamSymbol.getFullName() + "=" + onlyIncarnation.getFullName(), LOG_NAME);
       return Optional.of(onlyIncarnation);
     }
