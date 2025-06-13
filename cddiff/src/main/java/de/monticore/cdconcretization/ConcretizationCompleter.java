@@ -11,7 +11,6 @@ import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cdconcretization.cd.*;
-import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
@@ -40,12 +39,16 @@ import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
-import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IScope;
-import java.util.*;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -56,43 +59,43 @@ import java.util.stream.Collectors;
  * #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
  */
 public class ConcretizationCompleter {
-  
+
   private final String mapping;
-  
+
   /**
    * If true, the conformance checker is used to check the conformance of the concretization result.
    */
   private boolean checkConformance = true;
-  
+
   /**
    * If true, redundant attributes, methods etc. introduced by the completer are removed from the
    * concretization result, even if they were part of the concrete CD input.
    */
   private boolean removeRedundancies = true;
-  
+
   /** If true, the elements in the concretization result are reordered for consistent results. */
   private boolean reorderElements = true;
-  
+
   /**
    * If true, the name of the parameter element is replaced with its incarnation name in reference
    * elements annotated with 'forEach'.
    */
   private boolean forEachNameAdaptationEnabled = true;
-  
+
   /**
    * Name of the placeholder type that is used to mark underspecified types in the reference CD. See
    * {@link UnderspecifiedPlaceholderType}.
    */
   private String underspecifiedPlaceholderTypeName =
       UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
-  
+
   protected Set<CDConfParameter> conformanceParams;
-  
+
   public ConcretizationCompleter(String mapping, Set<CDConfParameter> conformanceParams) {
     this.mapping = mapping;
     this.conformanceParams = conformanceParams;
   }
-  
+
   /**
    * Completes the given concrete CD such that it conforms to a given reference CD.
    *
@@ -102,7 +105,7 @@ public class ConcretizationCompleter {
    */
   public void completeCD(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
       throws CompletionException {
-    
+
     /*
      * Basically we do a couple of dependency initialization here. We create a chain of completers
      * that are responsible for completing the different aspects of the CD. These completers are then used
@@ -110,31 +113,31 @@ public class ConcretizationCompleter {
      */
     CDCompletionContext context = new DefaultCompletionContext(concreteCD, referenceCD, mapping,
         conformanceParams);
-    
+
     ITypeInCDCompleter typeInCDCompleter = new ChainBuilder<AbstractTypeInCDCompleter>().add(
         new ForEachTypeInCDCompleter()).add(new BaseTypeInCDCompleter()).build();
-    
+
     IAttributeInTypeCompleter attributeInType = new ChainBuilder<AbstractAttributeInTypeCompleter>()
         .add(new ForEachAttributeInTypeCompleter()).add(new BaseAttributeInTypeCompleter()).build();
-    
+
     IMethodInTypeCompleter methodInTypeCompleter = new ChainBuilder<AbstractMethodInTypeCompleter>()
         .add(new ForEachMethodCompleter()).add(new BaseMethodInTypeCompleter()).build();
-    
+
     ITypeCompleter typeCompleter = new ChainBuilder<AbstractTypeCompleter>().add(
         new ClassModifierCompleter()).add(new TypeAttributesCompleter(attributeInType)).add(
             new TypeMethodsCompleter(methodInTypeCompleter)).add(
                 new DefaultEnumConstantsCompleter()).build();
-    
+
     IAssocSideCompleter assocSideCompleter = new DefaultAssocSideCompleter();
     IAssociationCompleter assocCompleter = new DefaultAssocCompleter(concreteCD,
         assocSideCompleter);
-    
+
     ChainBuilder<AbstractCDCompleter> completerChainBuilder =
         new ChainBuilder<AbstractCDCompleter>().add(new ImportsCompleter()).add(
             new MissingTypesCDCompleter(typeInCDCompleter)).add(new InheritanceCompleter()).add(
                 new TypeDetailsCDCompleter(typeCompleter)).add(new ExistingAssociationsCDCompleter(
                     assocCompleter)).add(new MissingAssociationsCDCompleter(assocCompleter));
-    
+
     // add configurable,optional steps
     if (removeRedundancies) {
       completerChainBuilder.add(new RemoveRedundanciesCompletionStep());
@@ -146,11 +149,11 @@ public class ConcretizationCompleter {
       completerChainBuilder.add(new ConformanceCheckCompletionStep(mapping, conformanceParams,
           "Completion result is not conform"));
     }
-    
+
     // perform the actual concretization
     completerChainBuilder.build().complete(concreteCD, referenceCD, context);
   }
-  
+
   /**
    * Configures if the conformance checker should be used to check the conformance of the
    * concretization result.
@@ -158,7 +161,7 @@ public class ConcretizationCompleter {
   public void setCheckConformance(boolean checkConformance) {
     this.checkConformance = checkConformance;
   }
-  
+
   /**
    * Changes the default name of the placeholder type, which is {@link
    * UnderspecifiedPlaceholderType#DEFAULT_TYPE_NAME}.<br>
@@ -169,16 +172,16 @@ public class ConcretizationCompleter {
   public void setUnderspecifiedPlaceholderTypeName(String underspecifiedPlaceholderTypeName) {
     this.underspecifiedPlaceholderTypeName = underspecifiedPlaceholderTypeName;
   }
-  
+
   public void setForEachNameAdaptationEnabled(boolean forEachNameAdaptationEnabled) {
     this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
   }
-  
+
   /***
    * Provides default configurations for the matching strategies used in the concretization process.
    */
   class DefaultCompletionContext implements CDCompletionContext {
-    
+
     private final ASTCDCompilationUnit concreteCD;
     private final ASTCDCompilationUnit referenceCD;
     private final String mapping;
@@ -187,22 +190,22 @@ public class ConcretizationCompleter {
     private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
     private final CompAssocIncStrategy assocIncStrategy;
     private final MCTypeMatcher mcTypeMatcher;
-    
+
     private final ScopedIncarnationBindings scopedIncarnationBindings =
         new ScopedIncarnationBindings();
-    
+
     public DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
         ASTCDCompilationUnit referenceCD, String mapping, Set<CDConfParameter> conformanceParams) {
       this.concreteCD = concreteCD;
       this.referenceCD = referenceCD;
       this.mapping = mapping;
       this.conformanceParams = conformanceParams;
-      
+
       typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
       assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
-      
+
       mcTypeMatcher = new MCTypeMatcher(underspecifiedPlaceholderTypeName, typeIncStrategy);
-      
+
       /*
        * We configure the matching strategies depending on the conformance checker parameter as we
        * want to have the same matching behavior during concretization as the conformance checker.
@@ -215,7 +218,7 @@ public class ConcretizationCompleter {
         typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
         assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       }
-      
+
       // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference
       // type
       // themselves or have a subclass which is an incarnation of the reference type.
@@ -246,7 +249,7 @@ public class ConcretizationCompleter {
         typeIncStrategyMatchingSubTypes.addIncStrategy(new MatchCDTypesToSubTypes(typeIncStrategy,
             concreteCD, referenceCD));
       }
-      
+
       if (conformanceParams.contains(CDConfParameter.SRC_TARGET_ASSOC_MAPPING)) {
         if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
           assocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(
@@ -262,42 +265,42 @@ public class ConcretizationCompleter {
         }
       }
     }
-    
+
     @Override
     public ASTCDCompilationUnit getConcreteCD() { return concreteCD; }
-    
+
     @Override
     public ASTCDCompilationUnit getReferenceCD() { return referenceCD; }
-    
+
     @Override
     public String getMappingName() { return mapping; }
-    
+
     @Override
     public String getUnderspecifiedPlaceholderTypeName() {
       return underspecifiedPlaceholderTypeName;
     }
-    
+
     @Override
     public boolean isForEachNameAdaptationEnabled() { return forEachNameAdaptationEnabled; }
-    
+
     @Override
     public Set<CDConfParameter> getConformanceParams() { return conformanceParams; }
-    
+
     @Override
     public CompTypeIncStrategy getTypeIncStrategy() { return typeIncStrategy; }
-    
+
     @Override
     public CompTypeIncStrategy getTypeIncStrategyMatchingSubTypes() {
       return typeIncStrategyMatchingSubTypes;
     }
-    
+
     @Override
-    public MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
+    public ExternalCandidatesMatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
       return assocIncStrategy;
     }
-    
+
     @Override
-    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
+    public ExternalCandidatesMatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
       CompAttributeIncStrategy attributeIncStrategy = new CompAttributeIncStrategy();
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
         attributeIncStrategy.addIncStrategy(new STAttributeIncStrategy(mapping));
@@ -308,9 +311,9 @@ public class ConcretizationCompleter {
       attributeIncStrategy.setReferenceType(referenceType);
       return attributeIncStrategy;
     }
-    
+
     @Override
-    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
+    public ExternalCandidatesMatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
       CompMethodIncStrategy methodIncStrategy = new CompMethodIncStrategy();
       if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
         methodIncStrategy.addIncStrategy(new STMethodIncStrategy(mapping));
@@ -327,17 +330,17 @@ public class ConcretizationCompleter {
       methodIncStrategy.setReferenceType(referenceType);
       return methodIncStrategy;
     }
-    
+
     @Override
     public ScopedIncarnationBindings getScopedIncarnationBindings() {
       return scopedIncarnationBindings;
     }
-    
+
     @Override
     public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {
       return getTypeIncarnations(concreteCD.getEnclosingScope(), referenceType);
     }
-    
+
     @Override
     public Set<ASTCDType> getTypeIncarnations(IScope scope, ASTCDType referenceType) {
       // TODO improve readability...
@@ -356,12 +359,12 @@ public class ConcretizationCompleter {
                 .toSet());
       }
     }
-    
+
     @Override
     public Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute) {
       return getAttributeIncarnations(concreteCD.getEnclosingScope(), referenceAttribute);
     }
-    
+
     @Override
     public Set<ASTCDAttribute> getAttributeIncarnations(IScope scope,
         ASTCDAttribute referenceAttribute) {
@@ -376,10 +379,10 @@ public class ConcretizationCompleter {
         // 2. Find all incarnations using the usual incarnation strategies
         ASTCDType attributeDeclaringType = (ASTCDType) referenceAttribute.getSymbol()
             .getEnclosingScope().getAstNode();
-        
+
         return getTypeIncarnations(scope, attributeDeclaringType).stream().flatMap((
             cAttributeDeclaringType) -> {
-          MatchingStrategy<ASTCDAttribute> attributeIncStrategy = createAttributeIncStrategy(
+          BooleanMatchingStrategy<ASTCDAttribute> attributeIncStrategy = createAttributeIncStrategy(
               attributeDeclaringType);
           return cAttributeDeclaringType.getCDAttributeList().stream().filter(
               attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
@@ -387,7 +390,7 @@ public class ConcretizationCompleter {
         }).collect(Collectors.toSet());
       }
     }
-    
+
   }
-  
+
 }

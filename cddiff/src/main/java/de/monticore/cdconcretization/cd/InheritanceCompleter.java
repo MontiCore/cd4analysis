@@ -12,12 +12,13 @@ import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class InheritanceCompleter extends AbstractCDCompleter {
-  
+
   @Override
   public void complete(ASTCDCompilationUnit tgtCD, ASTCDCompilationUnit srcCD,
       CDCompletionContext context) throws CompletionException {
@@ -25,22 +26,22 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     CDDiffUtil.refreshSymbolTable(tgtCD);
     ICD4CodeArtifactScope srcCDScope = (ICD4CodeArtifactScope) srcCD.getEnclosingScope();
     ICD4CodeArtifactScope tgtCDScope = (ICD4CodeArtifactScope) tgtCD.getEnclosingScope();
-    
+
     // Create a map that maps each type to all its supertypes according to both CDs
     Map<ASTCDType, Set<ASTCDType>> inheritanceGraph = new HashMap<>();
-    
+
     List<ASTCDClass> classes = tgtCD.getCDDefinition().getCDClassesList();
     List<ASTCDInterface> interfaces = tgtCD.getCDDefinition().getCDInterfacesList();
-    
+
     Set<ASTCDType> typeSet = new HashSet<>();
     typeSet.addAll(classes);
     typeSet.addAll(interfaces);
-    
-    MatchingStrategy<ASTCDType> typeMatcher = context.getTypeIncStrategy();
-    
+
+    ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher = context.getTypeIncStrategy();
+
     for (ASTCDType type : typeSet) {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, tgtCDScope)));
-      
+
       // for all matching types
       for (ASTCDType matchingTypeInsrcCD : typeMatcher.getMatchedElements(type)) {
         // add all incarnations of super-types
@@ -55,22 +56,22 @@ public class InheritanceCompleter extends AbstractCDCompleter {
           }
         }
       }
-      
+
       inheritanceGraph.get(type).remove(type);
     }
-    
+
     // make sure interfaces do not extend classes
     for (ASTCDInterface current : interfaces) {
       inheritanceGraph.get(current).removeAll(inheritanceGraph.get(current).stream().filter(
           superType -> !(interfaces.contains(superType))).collect(Collectors.toSet()));
     }
-    
+
     // remove cyclical inheritance
     for (ASTCDType type : typeSet) {
       inheritanceGraph.get(type).removeIf(superType -> inheritanceGraph.get(superType).contains(
           type) && !CDInheritanceHelper.getAllSuper(type, tgtCDScope).contains(superType));
     }
-    
+
     // remove redundant inheritance
     for (ASTCDType type : typeSet) {
       Set<ASTCDType> superSet = new HashSet<>(inheritanceGraph.get(type));
@@ -79,10 +80,10 @@ public class InheritanceCompleter extends AbstractCDCompleter {
       }
       inheritanceGraph.put(type, superSet);
     }
-    
+
     // update targetAST (distinguish between extends vs implements)
     FullExpander expander = new FullExpander(new VariableExpander(tgtCD));
-    
+
     for (ASTCDInterface current : interfaces) {
       Set<String> extendsSet = new HashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
@@ -108,8 +109,8 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     }
     CDDiffUtil.refreshSymbolTable(tgtCD);
     ReductionTrafo.removeRedundantAttributes(tgtCD);
-    
+
     super.complete(tgtCD, srcCD, context);
   }
-  
+
 }

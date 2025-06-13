@@ -6,24 +6,25 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilationUnit> {
-  
+
   protected ASTCDCompilationUnit refCD;
-  protected MatchingStrategy<ASTCDType> typeInc;
-  protected MatchingStrategy<ASTCDAssociation> assocInc;
+  protected BooleanMatchingStrategy<ASTCDType> typeInc;
+  protected BooleanMatchingStrategy<ASTCDAssociation> assocInc;
   protected ConformanceStrategy<ASTCDType> typeChecker;
   protected ConformanceStrategy<ASTCDAssociation> assocChecker;
-  
+
   protected String optTag = "optional";
-  
-  public BasicCDConfStrategy(ASTCDCompilationUnit refCD, MatchingStrategy<ASTCDType> typeInc,
-      MatchingStrategy<ASTCDAssociation> assocInc, ConformanceStrategy<ASTCDType> typeChecker,
+
+  public BasicCDConfStrategy(ASTCDCompilationUnit refCD, BooleanMatchingStrategy<ASTCDType> typeInc,
+                             BooleanMatchingStrategy<ASTCDAssociation> assocInc, ConformanceStrategy<ASTCDType> typeChecker,
       ConformanceStrategy<ASTCDAssociation> assocChecker) {
     this.refCD = refCD;
     this.typeInc = typeInc;
@@ -31,20 +32,20 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     this.typeChecker = typeChecker;
     this.assocChecker = assocChecker;
   }
-  
+
   @Override
   public boolean checkConformance(ASTCDCompilationUnit concrete) {
     return checkTypeIncarnation(concrete) & checkAssocIncarnation(concrete) & checkTypeConformance(
         concrete) & checkAssocConformance(concrete);
   }
-  
+
   protected boolean checkAssocConformance(ASTCDCompilationUnit concrete) {
     Set<ASTCDAssociation> nonConforming = concrete.getCDDefinition().getCDAssociationsList()
         .stream().filter(conAssoc -> !assocChecker.checkConformance(conAssoc)).collect(Collectors
             .toSet());
     return nonConforming.isEmpty();
   }
-  
+
   protected boolean checkTypeConformance(ASTCDCompilationUnit concrete) {
     boolean classConformance = concrete.getCDDefinition().getCDClassesList().stream().allMatch(
         conClass -> typeChecker.checkConformance(conClass));
@@ -54,18 +55,18 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
         conEnum -> typeChecker.checkConformance(conEnum));
     return classConformance && interfaceConformance && enumConformance;
   }
-  
+
   protected boolean checkTypeIncarnation(ASTCDCompilationUnit concrete) {
     Set<ASTCDType> refTypes = new HashSet<>(refCD.getCDDefinition().getCDClassesList());
     refTypes.addAll(refCD.getCDDefinition().getCDInterfacesList());
     refTypes.addAll(refCD.getCDDefinition().getCDEnumsList());
-    
+
     Set<ASTCDType> conTypes = new HashSet<>(concrete.getCDDefinition().getCDClassesList());
     conTypes.addAll(concrete.getCDDefinition().getCDInterfacesList());
     conTypes.addAll(concrete.getCDDefinition().getCDEnumsList());
-    
+
     boolean conform = true;
-    
+
     for (ASTCDType refType : refTypes) {
       if (!(refType.getModifier().isPresentStereotype() && refType.getModifier().getStereotype()
           .contains(optTag)) && conTypes.stream().noneMatch(conType -> typeInc.isMatched(conType,
@@ -76,11 +77,11 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     }
     return conform;
   }
-  
+
   protected boolean checkAssocIncarnation(ASTCDCompilationUnit concrete) {
-    
+
     boolean conform = true;
-    
+
     for (ASTCDAssociation refAssoc : refCD.getCDDefinition().getCDAssociationsList()) {
       if (!(refAssoc.getModifier().isPresentStereotype() && refAssoc.getModifier().getStereotype()
           .contains(optTag)) && concrete.getCDDefinition().getCDAssociationsList().stream()
@@ -91,5 +92,5 @@ public class BasicCDConfStrategy implements ConformanceStrategy<ASTCDCompilation
     }
     return conform;
   }
-  
+
 }

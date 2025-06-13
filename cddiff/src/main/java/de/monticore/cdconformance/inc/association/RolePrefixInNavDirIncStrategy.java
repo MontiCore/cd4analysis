@@ -4,16 +4,16 @@ package de.monticore.cdconformance.inc.association;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
-import de.monticore.cdmatcher.MatchingStrategy;
 
 public class RolePrefixInNavDirIncStrategy extends MatchCDAssocsBySrcTypeAndTgtRole {
-  
-  public RolePrefixInNavDirIncStrategy(MatchingStrategy<ASTCDType> typeMatcher,
-      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+
+  public RolePrefixInNavDirIncStrategy(ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher,
+                                       ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
-  
+
   @Override
   protected boolean checkRole(ASTCDAssocSide srcElem, ASTCDAssocSide tgtElem) {
     if (srcElem.isPresentCDRole() && tgtElem.isPresentCDRole()) {
@@ -21,5 +21,5 @@ public class RolePrefixInNavDirIncStrategy extends MatchCDAssocsBySrcTypeAndTgtR
     }
     return false;
   }
-  
+
 }
