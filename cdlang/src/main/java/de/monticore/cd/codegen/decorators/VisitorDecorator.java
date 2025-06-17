@@ -23,6 +23,7 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 
 import java.util.Collections;
@@ -85,18 +86,11 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
         .setMCReturnType(CD4CodeMill.mCReturnTypeBuilder().setMCVoidType(CD4CodeMill.mCVoidTypeBuilder().build()).build())
         .setCDParametersList(List.of(parameterOfPojo.peek()))
         .build();
-      glexOpt.ifPresent(glex -> glex.addAfterTemplate(ANNOTATIONS, handleMethodHeader,new StringHookPoint("default")));
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, handleMethodHeader,
           new TemplateHookPoint("methods.visitor.handle", pojoClassParameter, pojoInterfaceClassParameter)));
 
 
       visitorInterface.addCDMember(handleMethodHeader);
-
-
-      IndentPrinter printer = new IndentPrinter();
-      System.out.println(new CD4AnalysisFullPrettyPrinter(printer).prettyprint(handleMethodHeader));
-      // public void ${name}>
-      // aber weil es ein interface ist wird es automatisch abstract
 
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, visitMethodHeader,
           new TemplateHookPoint("methods.visitor.handle")));
@@ -148,11 +142,24 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       visitorInterfaceParameter = CD4CodeMill.cDParameterBuilder().setName("visitor").setMCType(
           visitorInterfaceQualifiedType).build();
 
-      // add getTraversedElements Set<Object> attribute
+      // add getTraversedElements Set<Object> method to the visitor interface
       ASTMCSetType setType = MCTypeFacade.getInstance().createSetTypeOf("Object");
-      ASTCDAttribute getTraversedElementsAttribute = CDAttributeFacade.getInstance()
-        .createAttribute(CD4CodeMill.modifierBuilder().build(),setType, "getTraversedElements");
-      visitorInterface.addCDMember(getTraversedElementsAttribute);
+      ASTMCReturnType returnType = CD4CodeMill.mCReturnTypeBuilder()
+        .setMCType(setType).build();
+      ASTCDMethod getTraversedElementsMethod = CDMethodFacade.getInstance()
+        .createDefaultMethod(CD4CodeMill.modifierBuilder().build(),returnType, "getTraversedElements");
+      visitorInterface.addCDMember(getTraversedElementsMethod);
+
+      // add addTraversedElement method to the visitor interface
+      ASTMCReturnType returnTypeAddTraversedElement = CD4CodeMill.mCReturnTypeBuilder()
+        .setMCVoidType(CD4CodeMill.mCVoidTypeBuilder().build()).build();
+      ASTCDParameter addTraversedElementParameter = CD4CodeMill.cDParameterBuilder()
+        .setName("element").setMCType(MCTypeFacade.getInstance().createQualifiedType("Object")).build();
+      ASTCDMethod addTraversedElementMethod = CDMethodFacade.getInstance()
+        .createDefaultMethod(CD4CodeMill.modifierBuilder().build(), returnTypeAddTraversedElement, "addTraversedElement", addTraversedElementParameter);
+      visitorInterface.addCDMember(addTraversedElementMethod);
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, addTraversedElementMethod,
+          new TemplateHookPoint("methods.visitor.addTraversedElement")));
     }
   }
 
