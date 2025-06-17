@@ -66,6 +66,8 @@ public class CDSynDiffMatches {
     setupStructureCache(srcCD);
     setupStructureCache(tgtCD);
 
+    preCalculateExactMatches(srcCD, tgtCD);
+
     MatchCDType matcher = new MatchCDType(matchingStrategies);
 
     for(int i = 0; i < matchingIterations; i++) {
@@ -82,7 +84,7 @@ public class CDSynDiffMatches {
     attributeMatches = computeMatching(CachedMatches.getAttributeMatches(), threshold);
   }
 
-  public static void setupStructureCache(ASTCDCompilationUnit cD) {
+  private static void setupStructureCache(ASTCDCompilationUnit cD) {
 
     boolean success = getAllCDTypes(cD).stream().map(StructureCache::addType).reduce(Boolean::logicalAnd).orElse(true);
     if (!success) {
@@ -144,6 +146,63 @@ public class CDSynDiffMatches {
         Log.warn("StructureCache already contains association: " + assoc.getName());
       }
     }
+  }
+
+  private static void preCalculateExactMatches(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
+    List<ASTCDType> srcTypes = getAllCDTypes(srcCD);
+    List<ASTCDType> tgtTypes = getAllCDTypes(tgtCD);
+
+    // Consider Types to be the same if Names are identical and Attribute Types and Names are the same
+    srcTypes.stream()
+      .flatMap(src -> tgtTypes.stream().map(tgt -> new Pair<>(src, tgt)))
+      .filter(match -> match.a.isPresentSymbol() && match.b.isPresentSymbol())
+      .filter(match -> match.a.getSymbol().getInternalQualifiedName().equals(match.b.getSymbol().getInternalQualifiedName()))
+      .filter(match -> hasSameAttributes(match.a, match.b))
+      .forEach(
+        match -> CachedMatches.putMatch(match.a, match.b, 1.0)
+      );
+
+    List<ASTCDAssociation> srcAssocs = srcCD.getCDDefinition().getCDAssociationsList();
+    List<ASTCDAssociation> tgtAssocs = tgtCD.getCDDefinition().getCDAssociationsList();
+
+    // Consider Assocs to be the same if direction, type, left name, right name and name (if present) are the identical
+    srcAssocs.stream()
+      .flatMap(src -> tgtAssocs.stream().map(tgt -> new Pair<>(src, tgt)))
+      .filter(match -> match.a.isPresentName() == match.b.isPresentName())
+      .filter(match -> !match.a.isPresentName() || match.a.getName().equals(match.b.getName()))
+      .filter(match -> match.a.getLeft().getName().equals(match.b.getLeft().getName()))
+      .filter(match -> match.a.getRight().getName().equals(match.b.getRight().getName()))
+      .filter(match -> match.a.getCDAssocDir().getClass().equals(match.b.getCDAssocDir().getClass()))
+      .filter(match -> match.a.getCDAssocType().getClass().equals(match.b.getCDAssocType().getClass()))
+      .forEach(match -> CachedMatches.putMatch(match.a, match.b, 1.0));
+  }
+
+  private static boolean hasSameAttributes(ASTCDType src, ASTCDType tgt) {
+    Set<ASTCDAttribute> srcAttributes = StructureCache.getDirectAttributes(src);
+    Set<ASTCDAttribute> tgtAttributes = StructureCache.getDirectAttributes(tgt);
+
+    if(srcAttributes.size() != tgtAttributes.size()) { return false; }
+
+    Set<Pair<String, String>> srcAttrNameAndType = srcAttributes.stream()
+      .map(
+        attr -> new Pair<>(attr.getName(), CDAttributeHelper.resolveClass(attr))
+      )
+      .filter(pair -> pair.b != null && pair.b.isPresentSymbol())
+      .map(pair -> new Pair<>(pair.a, pair.b.getSymbol().getInternalQualifiedName()))
+      .collect(Collectors.toSet());
+
+    if(srcAttributes.size() != srcAttrNameAndType.size()) { return false; }
+
+    Set<Pair<String, String>> tgtAttrNameAndType = tgtAttributes.stream()
+      .map(
+        attr -> new Pair<>(attr.getName(), CDAttributeHelper.resolveClass(attr))
+      ).filter(pair -> pair.b != null && pair.b.isPresentSymbol())
+      .map(pair -> new Pair<>(pair.a, pair.b.getSymbol().getInternalQualifiedName()))
+      .collect(Collectors.toSet());
+
+    if(tgtAttributes.size() != tgtAttrNameAndType.size()) { return false; }
+
+    return srcAttrNameAndType.equals(tgtAttrNameAndType);
   }
 
   public static Set<ASTCDType> getAllSuperSuperTypesFromCache(ASTCDType type) {
