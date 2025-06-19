@@ -11,7 +11,6 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
-import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
@@ -132,24 +131,19 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
           bindingHintsVisitor.collectHints(concreteElement);
         }
         
-        CDRefSymbolHandlerDelegator delegator = new CDRefSymbolHandlerDelegator();
+        CDRefSymbolHandlerDelegator<RuntimeException> delegator =
+            new CDRefSymbolHandlerDelegator<>();
         final BindingHintsVisitor finalBindingHintsVisitor = bindingHintsVisitor;
         // TODO maybe refactor and return BindingHints result object from the visitor instead of passing the visitor to the derive methods
         
-        delegator.setTypeHandler((refParamType) -> deriveTypeBinding(enclosingScope, concreteSymbol,
-            getName.apply(refElement), refParamType, finalBindingHintsVisitor));
-        delegator.setAttributeHandler((refParamAttribute) -> deriveAttributeBinding(enclosingScope,
+        delegator.onType((refParamType) -> deriveTypeBinding(enclosingScope, concreteSymbol, getName
+            .apply(refElement), refParamType, finalBindingHintsVisitor));
+        delegator.onAttribute((refParamAttribute) -> deriveAttributeBinding(enclosingScope,
             concreteSymbol, getName.apply(refElement), refParamAttribute,
             finalBindingHintsVisitor));
         // TODO support method & association references
-        try {
-          delegator.resolveSymbol((ICDBasisScope) refElement.getEnclosingScope(), forEachRefElement
-              .get(), concreteElement.get_SourcePositionStart());
-        }
-        catch (CompletionException e) {
-          // TODO refactor
-          throw new RuntimeException(e);
-        }
+        delegator.resolveSymbol((ICDBasisScope) refElement.getEnclosingScope(), forEachRefElement
+            .get(), concreteElement.get_SourcePositionStart());
       }
     }
   }

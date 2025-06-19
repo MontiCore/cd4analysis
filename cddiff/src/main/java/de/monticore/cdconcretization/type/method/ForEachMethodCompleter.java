@@ -35,10 +35,11 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
     Optional<String> stereotypeValue = StereotypeUtil.getForEachStereotypeValue(referenceMethod
         .getModifier(), "Stereotype value must not be empty for stereotype 'forEach'");
     if (stereotypeValue.isPresent()) {
-      CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
-      symbolHandler.setAttributeHandler(paramAttr -> completeMethodUsingAttribute(referenceMethod,
+      CDRefSymbolHandlerDelegator<CompletionException> symbolHandler =
+          new CDRefSymbolHandlerDelegator<>();
+      symbolHandler.onAttribute(paramAttr -> completeMethodUsingAttribute(referenceMethod,
           paramAttr, context));
-      symbolHandler.setTypeHandler(paramType -> completeMethodUsingType(referenceMethod, paramType,
+      symbolHandler.onType(paramType -> completeMethodUsingType(referenceMethod, paramType,
           context));
       symbolHandler.resolveSymbol(context.getReferenceType().getSpannedScope(), stereotypeValue
           .get(), referenceMethod.get_SourcePositionStart());

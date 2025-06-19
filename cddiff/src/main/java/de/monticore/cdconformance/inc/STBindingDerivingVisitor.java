@@ -14,7 +14,6 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
-import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.stereotype.BindingValue;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
@@ -103,20 +102,14 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
     Optional<BindingValue> binding = StereotypeUtil.getIncarnationBindingStereotypeValue(modifier,
         "Bind stereotype without value");
     if (binding.isPresent()) {
-      CDRefSymbolHandlerDelegator handler = new CDRefSymbolHandlerDelegator();
-      handler.setTypeHandler((refType) -> handleTypeBinding(concreteScope, cdSymbol, refType,
-          binding.get()));
-      handler.setAttributeHandler((refAttribute) -> handleAttributeBinding(concreteScope, cdSymbol,
+      CDRefSymbolHandlerDelegator<RuntimeException> handler = new CDRefSymbolHandlerDelegator<>();
+      handler.onType((refType) -> handleTypeBinding(concreteScope, cdSymbol, refType, binding
+          .get()));
+      handler.onAttribute((refAttribute) -> handleAttributeBinding(concreteScope, cdSymbol,
           refAttribute, binding.get()));
       // TODO support methods & associations
-      try {
-        handler.resolveSymbol(concreteScope, binding.get().getReferenceName(), modifier
-            .get_SourcePositionStart());
-      }
-      catch (CompletionException e) {
-        // TODO refactor to not throw completion exception for "user errors", e.g. invalid model -> Log.error instead
-        throw new RuntimeException(e);
-      }
+      handler.resolveSymbol(concreteScope, binding.get().getReferenceName(), modifier
+          .get_SourcePositionStart());
     }
   }
   
