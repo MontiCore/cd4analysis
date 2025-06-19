@@ -23,6 +23,7 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -87,21 +88,25 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
   @Override
   public void visit(ASTCDType concreteType) {
     deriveBindings(concreteType.getEnclosingScope(), concreteType, concreteType.getSymbol(),
-        incMapping.getReferenceElements(concreteType), ASTCDType::getModifier, ASTCDType::getName);
+        incMapping.getReferenceElements(concreteType), ASTCDType::getModifier, ASTCDType::getName, (
+            refElement) -> incMapping.addBinding(concreteType.getSymbol(), refElement.getSymbol(),
+                concreteType.getSymbol()));
   }
   
   @Override
   public void visit(ASTCDAttribute concreteAttribute) {
     deriveBindings(concreteAttribute.getEnclosingScope(), concreteAttribute, concreteAttribute
         .getSymbol(), incMapping.getReferenceElements(concreteAttribute),
-        ASTCDAttribute::getModifier, ASTCDAttribute::getName);
+        ASTCDAttribute::getModifier, ASTCDAttribute::getName, (refElement) -> incMapping.addBinding(
+            concreteAttribute.getSymbol(), refElement.getSymbol(), concreteAttribute.getSymbol()));
   }
   
   @Override
   public void visit(ASTCDMethod concreteMethod) {
     deriveBindings(concreteMethod.getEnclosingScope(), concreteMethod, concreteMethod.getSymbol(),
         incMapping.getReferenceElements(concreteMethod), ASTCDMethod::getModifier,
-        ASTCDMethod::getName);
+        ASTCDMethod::getName, (refElement) -> incMapping.addBinding(concreteMethod.getSymbol(),
+            refElement.getSymbol(), concreteMethod.getSymbol()));
   }
   
   /**
@@ -117,7 +122,8 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
    */
   protected <T extends ASTCDBasisNode> void deriveBindings(ICDBasisScope enclosingScope,
       ASTCDBasisNode concreteElement, ISymbol concreteSymbol, Set<T> referenceElements,
-      Function<T, ASTModifier> getModifierFun, Function<T, String> getName) {
+      Function<T, ASTModifier> getModifierFun, Function<T, String> getName,
+      Consumer<T> addBindingForRefElement) {
     BindingHintsVisitor bindingHintsVisitor = null;
     
     // we are only interested in elements where the reference element is annotated with "forEach"
@@ -130,6 +136,10 @@ public class ForEachBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBa
           bindingHintsVisitor = new BindingHintsVisitor(incMapping);
           bindingHintsVisitor.collectHints(concreteElement);
         }
+        
+        // Add binding refElement=concreteElement to the concrete element. We expect the incarnations
+        // of a forEach-annotated element to be independent of each other.
+        addBindingForRefElement.accept(refElement);
         
         CDRefSymbolHandlerDelegator<RuntimeException> delegator =
             new CDRefSymbolHandlerDelegator<>();

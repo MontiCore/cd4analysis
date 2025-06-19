@@ -262,6 +262,19 @@ public interface CDIncarnationBindings {
   }
   
   /**
+   * Adds a method binding for the given context symbol.
+   *
+   * @param contextSymbol the symbol at which the binding is added
+   * @param referenceMethod the reference method for which a binding is added
+   * @param concreteMethod the concrete method to which the reference method is bound to in the
+   * context
+   */
+  default void addBinding(ISymbol contextSymbol, MethodSymbol referenceMethod,
+      MethodSymbol concreteMethod) {
+    addBinding(contextSymbol, referenceMethod, Set.of(concreteMethod));
+  }
+  
+  /**
    * Returns all concrete methods that are bound to the given reference method at the given context
    * symbol.<br>
    * <b>Note:</b> If no bindings are found, the method returns an empty set. This does not mean that
