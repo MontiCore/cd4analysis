@@ -71,8 +71,8 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, CDAssociationSymbol referenceElement,
-      Set<CDAssociationSymbol> concreteElements) {
+  public void addBinding(String contextSymbolName, CDAssociationSymbol refAssociation,
+      Set<CDAssociationSymbol> conAssociations) {
     // TODO implement association binding support
     throw new NotImplementedException();
   }

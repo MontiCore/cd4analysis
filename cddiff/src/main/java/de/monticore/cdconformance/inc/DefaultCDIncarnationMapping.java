@@ -107,14 +107,14 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, TypeSymbol referenceElement,
-      Set<TypeSymbol> concreteElements) {
-    bindings.addBinding(contextSymbolName, referenceElement, concreteElements);
+  public void addBinding(String contextSymbolName, TypeSymbol referenceType,
+      Set<TypeSymbol> concreteTypes) {
+    bindings.addBinding(contextSymbolName, referenceType, concreteTypes);
   }
   
   @Override
-  public Set<TypeSymbol> getBindings(ISymbol contextSymbol, TypeSymbol referenceElement) {
-    return bindings.getBindings(contextSymbol, referenceElement);
+  public Set<TypeSymbol> getBindings(ISymbol contextSymbol, TypeSymbol referenceType) {
+    return bindings.getBindings(contextSymbol, referenceType);
   }
   
   @Override
@@ -123,20 +123,21 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute conAttribute) {
-    ASTCDType concreteType = (ASTCDType) conAttribute.getSymbol().getEnclosingScope().getAstNode();
+  public Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute concreteAttribute) {
+    ASTCDType concreteType = (ASTCDType) concreteAttribute.getSymbol().getEnclosingScope()
+        .getAstNode();
     Set<ASTCDAttribute> refElements = new HashSet<>();
     for (ASTCDType declaringRefType : getReferenceElements(concreteType)) {
-      refElements.addAll(getReferenceElements(conAttribute, declaringRefType));
+      refElements.addAll(getReferenceElements(concreteAttribute, declaringRefType));
     }
     return refElements;
   }
   
   @Override
-  public Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute conAttribute,
+  public Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute concreteAttribute,
       ASTCDType declaringRefType) {
     attributeIncStrategy.setReferenceType(declaringRefType);
-    return new HashSet<>(attributeIncStrategy.getMatchedElements(conAttribute));
+    return new HashSet<>(attributeIncStrategy.getMatchedElements(concreteAttribute));
   }
   
   @Override
@@ -165,13 +166,13 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
       
       // TODO What about the "deep" case where attributes are matched in supertypes?
       
-      return getIncarnations(scope, attributeDeclaringType).stream().flatMap((
-          cAttributeDeclaringType) -> {
-        attributeIncStrategy.setReferenceType(attributeDeclaringType);
-        return cAttributeDeclaringType.getCDAttributeList().stream().filter(
-            attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
-                referenceAttribute));
-      }).collect(Collectors.toSet());
+      return getIncarnations(scope, attributeDeclaringType).stream().flatMap(
+          cAttributeDeclaringType -> {
+            attributeIncStrategy.setReferenceType(attributeDeclaringType);
+            return cAttributeDeclaringType.getCDAttributeList().stream().filter(
+                attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
+                    referenceAttribute));
+          }).collect(Collectors.toSet());
     }
   }
   
@@ -197,53 +198,53 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, FieldSymbol referenceElement,
-      Set<FieldSymbol> concreteElements) {
-    bindings.addBinding(contextSymbolName, referenceElement, concreteElements);
+  public void addBinding(String contextSymbolName, FieldSymbol referenceField,
+      Set<FieldSymbol> concreteFields) {
+    bindings.addBinding(contextSymbolName, referenceField, concreteFields);
   }
   
   @Override
-  public Set<FieldSymbol> getBindings(ISymbol contextSymbol, FieldSymbol referenceElement) {
-    return bindings.getBindings(contextSymbol, referenceElement);
+  public Set<FieldSymbol> getBindings(ISymbol contextSymbol, FieldSymbol referenceField) {
+    return bindings.getBindings(contextSymbol, referenceField);
   }
   
   @Override
-  public Set<FieldSymbol> getBindings(IScope concreteScope, FieldSymbol referenceElement) {
-    return bindings.getBindings(concreteScope, referenceElement);
+  public Set<FieldSymbol> getBindings(IScope concreteScope, FieldSymbol referenceField) {
+    return bindings.getBindings(concreteScope, referenceField);
   }
   
   @Override
-  public Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteElement) {
-    ASTCDType concreteType = (ASTCDType) concreteElement.getSymbol().getEnclosingScope()
+  public Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteMethod) {
+    ASTCDType concreteType = (ASTCDType) concreteMethod.getSymbol().getEnclosingScope()
         .getAstNode();
     Set<ASTCDMethod> refElements = new HashSet<>();
     for (ASTCDType declaringRefType : getReferenceElements(concreteType)) {
-      refElements.addAll(getReferenceElements(concreteElement, declaringRefType));
+      refElements.addAll(getReferenceElements(concreteMethod, declaringRefType));
     }
     return refElements;
   }
   
   @Override
-  public Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteElement,
+  public Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteMethod,
       ASTCDType declaringRefType) {
     methodIncStrategy.setReferenceType(declaringRefType);
-    return new HashSet<>(methodIncStrategy.getMatchedElements(concreteElement));
+    return new HashSet<>(methodIncStrategy.getMatchedElements(concreteMethod));
   }
   
   @Override
-  public Set<ASTCDMethod> getIncarnations(ASTCDMethod referenceElement) {
-    ASTCDType declaringType = (ASTCDType) referenceElement.getSymbol().getEnclosingScope()
+  public Set<ASTCDMethod> getIncarnations(ASTCDMethod referenceMethod) {
+    ASTCDType declaringType = (ASTCDType) referenceMethod.getSymbol().getEnclosingScope()
         .getAstNode();
-    return getIncarnations(declaringType).stream().flatMap((cMethodDeclaringType) -> {
+    return getIncarnations(declaringType).stream().flatMap(cMethodDeclaringType -> {
       methodIncStrategy.setReferenceType(declaringType);
       return cMethodDeclaringType.getCDMethodList().stream().filter(
-          methodIncarnation -> methodIncStrategy.isMatched(methodIncarnation, referenceElement));
+          methodIncarnation -> methodIncStrategy.isMatched(methodIncarnation, referenceMethod));
     }).collect(Collectors.toSet());
   }
   
   @Override
-  public Set<ASTCDMethod> getIncarnations(IScope scope, ASTCDMethod referenceElement) {
-    Set<MethodSymbol> methodIncarnationsOpt = bindings.getBindings(scope, referenceElement
+  public Set<ASTCDMethod> getIncarnations(IScope scope, ASTCDMethod referenceMethod) {
+    Set<MethodSymbol> methodIncarnationsOpt = bindings.getBindings(scope, referenceMethod
         .getSymbol());
     if (!methodIncarnationsOpt.isEmpty()) {
       // map symbols back to AST nodes
@@ -252,16 +253,15 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
     }
     else {
       // 2. Find all incarnations using the usual incarnation strategies
-      ASTCDType methodDeclaringType = (ASTCDType) referenceElement.getSymbol().getEnclosingScope()
+      ASTCDType methodDeclaringType = (ASTCDType) referenceMethod.getSymbol().getEnclosingScope()
           .getAstNode();
       
       // TODO What about the "deep" case where methods are matched in supertypes?
       
-      return getIncarnations(scope, methodDeclaringType).stream().flatMap((
-          cMethodDeclaringType) -> {
+      return getIncarnations(scope, methodDeclaringType).stream().flatMap(cMethodDeclaringType -> {
         methodIncStrategy.setReferenceType(methodDeclaringType);
         return cMethodDeclaringType.getCDMethodList().stream().filter(
-            methodIncarnation -> methodIncStrategy.isMatched(methodIncarnation, referenceElement));
+            methodIncarnation -> methodIncStrategy.isMatched(methodIncarnation, referenceMethod));
       }).collect(Collectors.toSet());
     }
   }
@@ -288,19 +288,19 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, MethodSymbol referenceElement,
-      Set<MethodSymbol> concreteElements) {
-    bindings.addBinding(contextSymbolName, referenceElement, concreteElements);
+  public void addBinding(String contextSymbolName, MethodSymbol referenceMethod,
+      Set<MethodSymbol> concreteMethods) {
+    bindings.addBinding(contextSymbolName, referenceMethod, concreteMethods);
   }
   
   @Override
-  public Set<MethodSymbol> getBindings(ISymbol contextSymbol, MethodSymbol referenceElement) {
-    return bindings.getBindings(contextSymbol, referenceElement);
+  public Set<MethodSymbol> getBindings(ISymbol contextSymbol, MethodSymbol referenceMethod) {
+    return bindings.getBindings(contextSymbol, referenceMethod);
   }
   
   @Override
-  public Set<MethodSymbol> getBindings(IScope scope, MethodSymbol referenceElement) {
-    return bindings.getBindings(scope, referenceElement);
+  public Set<MethodSymbol> getBindings(IScope scope, MethodSymbol referenceMethod) {
+    return bindings.getBindings(scope, referenceMethod);
   }
   
   @Override
@@ -316,7 +316,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public Set<ASTCDAssociation> getIncarnations(IScope scope, ASTCDAssociation referenceElement) {
+  public Set<ASTCDAssociation> getIncarnations(IScope scope, ASTCDAssociation refAssociation) {
     // TODO implement association support
     throw new NotImplementedException();
   }
@@ -334,9 +334,9 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, CDAssociationSymbol referenceElement,
-      Set<CDAssociationSymbol> concreteElements) {
-    bindings.addBinding(contextSymbolName, referenceElement, concreteElements);
+  public void addBinding(String contextSymbolName, CDAssociationSymbol refAssociation,
+      Set<CDAssociationSymbol> conAssociations) {
+    bindings.addBinding(contextSymbolName, refAssociation, conAssociations);
   }
   
   @Override
