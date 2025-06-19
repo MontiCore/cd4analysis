@@ -127,10 +127,7 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
     for (String incarnationName : binding.getIncarnationNames()) {
       Optional<CDTypeSymbol> incarnationType = concreteScope.resolveCDType(incarnationName);
       if (incarnationType.isPresent()) {
-        // TODO refactor by introducing a separate method for checking if the field is an
-        //  incarnation of the reference attribute -> maybe in CDIncarnationMapping?
-        if (incMapping.getReferenceElements(incarnationType.get().getAstNode()).contains(
-            referenceType)) {
+        if (incMapping.isIncarnation(incarnationType.get().getAstNode(), referenceType)) {
           incMapping.addBinding(annotatedSymbol, referenceType.getSymbol(), incarnationType.get());
           Log.info("Added binding from stereotype @ '" + annotatedSymbol.getFullName() + "':  "
               + referenceType.getSymbol().getFullName() + "=" + incarnationType.get().getFullName(),
@@ -166,10 +163,8 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
     for (String incarnationName : binding.getIncarnationNames()) {
       Optional<FieldSymbol> incarnationField = scope.resolveField(incarnationName);
       if (incarnationField.isPresent()) {
-        // TODO refactor by introducing a separate method for checking if the field is an
-        //  incarnation of the reference attribute -> maybe in CDIncarnationMapping?
-        if (incMapping.getReferenceElements(SymbolUtil.cdAttributeFromFieldSymbol(incarnationField
-            .get())).contains(referenceAttribute)) {
+        if (incMapping.isIncarnation(SymbolUtil.cdAttributeFromFieldSymbol(incarnationField.get()),
+            referenceAttribute)) {
           incMapping.addBinding(annotatedSymbol, referenceAttribute.getSymbol(), incarnationField
               .get());
           Log.info("Added binding from stereotype @ '" + annotatedSymbol.getFullName() + "':  "

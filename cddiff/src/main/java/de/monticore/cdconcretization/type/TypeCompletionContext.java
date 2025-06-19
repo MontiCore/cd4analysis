@@ -3,8 +3,6 @@ package de.monticore.cdconcretization.type;
 
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
-import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 
 /** A {@link CDCompletionContext} with additional information when completing a single type. */
 public interface TypeCompletionContext extends CDCompletionContext {
@@ -14,21 +12,5 @@ public interface TypeCompletionContext extends CDCompletionContext {
   
   /** @return the reference type that is used to complete the concrete type. */
   ASTCDType getReferenceType();
-  
-  /**
-   * Returns the matching strategy for the attribute incarnations. The strategy returned here is
-   * only valid in the current type context!
-   *
-   * @return the matching strategy for the attribute incarnations.
-   */
-  CDAttributeMatchingStrategy getAttributeIncStrategy();
-  
-  /**
-   * Returns the matching strategy for the method incarnations. The strategy returned here is only
-   * valid in the current type context!
-   *
-   * @return the matching strategy for the method incarnations.
-   */
-  CDMethodMatchingStrategy getMethodIncStrategy();
   
 }

@@ -31,9 +31,8 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
   
   @Override
   public boolean checkConformance(ASTCDAssociation concrete) {
-    Set<ASTCDAssociation> nonConformingTo = incMapping.getAssociationIncStrategy()
-        .getMatchedElements(concrete).stream().filter(ref -> !checkConformance(concrete, ref))
-        .collect(Collectors.toSet());
+    Set<ASTCDAssociation> nonConformingTo = incMapping.getReferenceElements(concrete).stream()
+        .filter(ref -> !checkConformance(concrete, ref)).collect(Collectors.toSet());
     for (ASTCDAssociation ref : nonConformingTo) {
       System.out.println(CD4CodeMill.prettyPrint(concrete, false)
           + " is not a valid incarnation of " + CD4CodeMill.prettyPrint(ref, false));
@@ -122,7 +121,7 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
     if (conTypeSymbol.isPresent() && refTypeSymbol.isPresent()) {
       ASTCDType conType = conTypeSymbol.get().getAstNode();
       ASTCDType refType = refTypeSymbol.get().getAstNode();
-      return incMapping.getTypeIncStrategy().isMatched(conType, refType);
+      return incMapping.isIncarnation(conType, refType);
     }
     Log.error("0xCDD17: Could not resolve association reference!");
     return false;

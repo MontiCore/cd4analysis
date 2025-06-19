@@ -34,14 +34,15 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
   }
   
   @Override
-  protected boolean checkAttributeConformance(ASTCDType concrete) {
+  protected boolean checkAttributeConformance(ASTCDType concrete, ASTCDType refType) {
     return checkAttributeConformance(new HashSet<>(CDSymbolTables.getAttributesInHierarchy(
-        concrete)));
+        concrete)), refType);
   }
   
   @Override
-  protected boolean checkMethodConformance(ASTCDType concrete) {
-    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)));
+  protected boolean checkMethodConformance(ASTCDType concrete, ASTCDType refType) {
+    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)),
+        refType);
   }
   
   @Override

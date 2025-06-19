@@ -6,10 +6,6 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.util.SymbolUtil;
-import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
-import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
-import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.IScope;
@@ -27,19 +23,13 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   
   // TODO Consider renaming the "global" getIncarnations/isIncarnation methods to avoid confusion with the scope-based methods
   
-  ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategy();
-  
-  MCTypeMatchingStrategy getMCTypeIncStrategy();
-  
-  CDAttributeMatchingStrategy getAttributeIncStrategy();
-  
-  CDMethodMatchingStrategy getMethodIncStrategy();
-  
-  ExternalCandidatesMatchingStrategy<ASTCDAssociation> getAssociationIncStrategy();
-  
   // ------------------------
   // ----- Type Mapping -----
   // ------------------------
+  
+  boolean isIncarnation(ASTCDType conType, ASTCDType refType);
+  
+  boolean isIncarnation(ISymbol contextSymbol, ASTCDType conType, ASTCDType refType);
   
   Set<ASTCDType> getReferenceElements(ASTCDType concreteElement);
   
@@ -73,7 +63,23 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   // ----- Attribute Mapping -----
   // -----------------------------
   
+  boolean isIncarnation(ASTCDAttribute conAttribute, ASTCDAttribute refAttribute);
+  
+  boolean isIncarnation(ISymbol contextSymbol, ASTCDAttribute conAttribute,
+      ASTCDAttribute refAttribute);
+  
   Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute concreteElement);
+  
+  /**
+   * Returns all reference attributes incarnated by the given concrete element that are declared
+   * in the given reference type.<br>
+   *
+   * @param concreteElement
+   * @param declaringRefType
+   * @return
+   */
+  Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute concreteElement,
+      ASTCDType declaringRefType);
   
   Set<ASTCDAttribute> getIncarnations(ASTCDAttribute referenceElement);
   
@@ -94,9 +100,23 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   
   Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteElement);
   
+  /**
+   * Returns all reference methods incarnated by the given concrete element that are declared
+   * in the given reference type.<br>
+   *
+   * @param concreteElement
+   * @param declaringRefType
+   * @return
+   */
+  Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteElement, ASTCDType declaringRefType);
+  
   Set<ASTCDMethod> getIncarnations(ASTCDMethod referenceElement);
   
   Set<ASTCDMethod> getIncarnations(IScope scope, ASTCDMethod referenceElement);
+  
+  boolean isIncarnation(ASTCDMethod conMethod, ASTCDMethod refMethod);
+  
+  boolean isIncarnation(ISymbol contextSymbol, ASTCDMethod conMethod, ASTCDMethod refMethod);
   
   // -------------------------------
   // ----- Association Mapping -----
@@ -107,6 +127,11 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   Set<ASTCDAssociation> getIncarnations(ASTCDAssociation referenceElement);
   
   Set<ASTCDAssociation> getIncarnations(IScope scope, ASTCDAssociation referenceElement);
+  
+  boolean isIncarnation(ASTCDAssociation conAssociation, ASTCDAssociation refAssociation);
+  
+  boolean isIncarnation(ISymbol contextSymbol, ASTCDAssociation conAssociation,
+      ASTCDAssociation refAssociation);
   
   // -------------------------------
   // ----- MCType Mapping -----

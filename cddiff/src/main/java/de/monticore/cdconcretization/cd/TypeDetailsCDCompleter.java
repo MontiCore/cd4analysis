@@ -70,20 +70,12 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     private final CDCompletionContext parentContext;
     private final ASTCDType concreteType;
     private final ASTCDType referenceType;
-    private final CDAttributeMatchingStrategy attributeIncStrategy;
-    private final CDMethodMatchingStrategy methodIncStrategy;
     
     DefaultTypeCompletionContext(CDCompletionContext parentContext, ASTCDType concreteType,
         ASTCDType referenceType) {
       this.parentContext = parentContext;
       this.concreteType = concreteType;
       this.referenceType = referenceType;
-      
-      // TODO this is not save for multi threading
-      attributeIncStrategy = parentContext.getAttributeIncStrategy();
-      attributeIncStrategy.setReferenceType(referenceType);
-      methodIncStrategy = parentContext.getMethodIncStrategy();
-      methodIncStrategy.setReferenceType(referenceType);
     }
     
     @Override
@@ -125,6 +117,16 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       return parentContext.getAssociationIncStrategy();
     }
     
+    @Override
+    public CDAttributeMatchingStrategy getAttributeIncStrategy() {
+      return parentContext.getAttributeIncStrategy();
+    }
+    
+    @Override
+    public CDMethodMatchingStrategy getMethodIncStrategy() {
+      return parentContext.getMethodIncStrategy();
+    }
+    
     // === TypeCompletionContext specific ===
     
     @Override
@@ -132,12 +134,6 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     
     @Override
     public ASTCDType getReferenceType() { return referenceType; }
-    
-    @Override
-    public CDAttributeMatchingStrategy getAttributeIncStrategy() { return attributeIncStrategy; }
-    
-    @Override
-    public CDMethodMatchingStrategy getMethodIncStrategy() { return methodIncStrategy; }
     
     @Override
     public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {

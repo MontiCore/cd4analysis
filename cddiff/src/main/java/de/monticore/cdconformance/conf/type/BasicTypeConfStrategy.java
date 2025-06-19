@@ -11,8 +11,6 @@ import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.method.CDMethodChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -29,8 +27,6 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected final CDAttributeChecker attributeChecker;
   protected final CDMethodChecker methodChecker;
   protected final CDIncarnationMapping incMapping;
-  protected final CDAttributeMatchingStrategy attributeInc;
-  protected final CDMethodMatchingStrategy methodInc;
   
   public BasicTypeConfStrategy(ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker, CDMethodChecker methodChecker,
@@ -40,14 +36,12 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     this.attributeChecker = attributeChecker;
     this.methodChecker = methodChecker;
     this.incMapping = incMapping;
-    this.attributeInc = incMapping.getAttributeIncStrategy();
-    this.methodInc = incMapping.getMethodIncStrategy();
   }
   
   @Override
   public boolean checkConformance(ASTCDType concrete) {
-    Set<ASTCDType> nonConformingTo = incMapping.getTypeIncStrategy().getMatchedElements(concrete)
-        .stream().filter(ref -> !checkConformance(concrete, ref)).collect(Collectors.toSet());
+    Set<ASTCDType> nonConformingTo = incMapping.getReferenceElements(concrete).stream().filter(
+        ref -> !checkConformance(concrete, ref)).collect(Collectors.toSet());
     return nonConformingTo.isEmpty();
   }
   
@@ -87,13 +81,12 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     }
     
     // check if all necessary attributes are present
-    attributeInc.setReferenceType(ref);
     boolean attributes = checkAttributeIncarnation(concrete, ref) && checkAttributeConformance(
-        concrete);
+        concrete, ref);
     
     // check if all necessary methods are present
-    methodInc.setReferenceType(ref);
-    boolean methods = checkMethodIncarnation(concrete, ref) && checkMethodConformance(concrete);
+    boolean methods = checkMethodIncarnation(concrete, ref) && checkMethodConformance(concrete,
+        ref);
     
     // check if reference associations are incarnated
     boolean associations = checkAssocIncarnation(concrete, ref);
@@ -101,8 +94,8 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     // check if all reference super-types are incarnated
     boolean superTypes = CDDiffUtil.getAllSuperTypes(ref, refCD.getCDDefinition()).stream()
         .allMatch(refSuper -> CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition())
-            .stream().anyMatch(conSuper -> incMapping.getTypeIncStrategy().getMatchedElements(
-                conSuper).contains(refSuper)));
+            .stream().anyMatch(conSuper -> incMapping.getReferenceElements(conSuper).contains(
+                refSuper)));
     if (attributes && methods && associations && superTypes) {
       return true;
     }
@@ -157,13 +150,13 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   }
   
   /** check if all attributes that are incarnations are conformed to the references */
-  protected boolean checkAttributeConformance(ASTCDType con) {
-    return checkAttributeConformance(new HashSet<>(con.getCDAttributeList()));
+  protected boolean checkAttributeConformance(ASTCDType con, ASTCDType refType) {
+    return checkAttributeConformance(new HashSet<>(con.getCDAttributeList()), refType);
   }
   
   /** check if all methods that are incarnations are conformed to the references */
-  protected boolean checkMethodConformance(ASTCDType con) {
-    return checkMethodConformance(new HashSet<>(con.getCDMethodList()));
+  protected boolean checkMethodConformance(ASTCDType con, ASTCDType refType) {
+    return checkMethodConformance(new HashSet<>(con.getCDMethodList()), refType);
   }
   
   /** check if all associations of the reference type are incarnated */
@@ -175,30 +168,29 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected boolean checkAssocIncarnation(Set<ASTCDAssociation> con, Set<ASTCDAssociation> ref) {
     return ref.stream().allMatch(refAssoc -> (refAssoc.getModifier().isPresentStereotype()
         && refAssoc.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            cAssoc -> incMapping.getAssociationIncStrategy().getMatchedElements(cAssoc).contains(
-                refAssoc)));
+            cAssoc -> incMapping.isIncarnation(cAssoc, refAssoc)));
   }
   
   protected boolean checkAttributeIncarnation(Set<ASTCDAttribute> con, Set<ASTCDAttribute> ref) {
     return ref.stream().allMatch(refAttr -> (refAttr.getModifier().isPresentStereotype() && refAttr
         .getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            conAttr -> attributeInc.isMatched(conAttr, refAttr)));
+            conAttr -> incMapping.isIncarnation(conAttr, refAttr)));
   }
   
   protected boolean checkMethodIncarnation(Set<ASTCDMethod> con, Set<ASTCDMethod> ref) {
     return ref.stream().allMatch(refMethod -> (refMethod.getModifier().isPresentStereotype()
         && refMethod.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            conMethod -> methodInc.isMatched(conMethod, refMethod)));
+            conMethod -> incMapping.isIncarnation(conMethod, refMethod)));
   }
   
-  protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete) {
-    return concrete.stream().allMatch(conAttr -> attributeInc.getMatchedElements(conAttr).isEmpty()
-        || attributeChecker.checkConformance(conAttr));
+  protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete, ASTCDType refType) {
+    return concrete.stream().allMatch(conAttr -> incMapping.getReferenceElements(conAttr, refType)
+        .isEmpty() || attributeChecker.checkConformance(conAttr));
   }
   
-  protected boolean checkMethodConformance(Set<ASTCDMethod> concrete) {
-    return concrete.stream().allMatch(conMethod -> methodInc.getMatchedElements(conMethod).isEmpty()
-        || methodChecker.checkConformance(conMethod));
+  protected boolean checkMethodConformance(Set<ASTCDMethod> concrete, ASTCDType refType) {
+    return concrete.stream().allMatch(conMethod -> incMapping.getReferenceElements(conMethod,
+        refType).isEmpty() || methodChecker.checkConformance(conMethod));
   }
   
 }

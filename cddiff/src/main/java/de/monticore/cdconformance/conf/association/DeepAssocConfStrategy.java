@@ -102,9 +102,9 @@ public class DeepAssocConfStrategy extends BasicAssocConfStrategy {
     if (conTypeSymbol.isPresent() && refTypeSymbol.isPresent()) {
       ASTCDType conType = conTypeSymbol.get().getAstNode();
       ASTCDType refType = refTypeSymbol.get().getAstNode();
-      return incMapping.getTypeIncStrategy().isMatched(conType, refType) || CDDiffUtil
-          .getAllStrictSubTypes(conType, conCD.getCDDefinition()).stream().anyMatch(
-              conSub -> incMapping.getTypeIncStrategy().isMatched(conSub, refType));
+      return incMapping.isIncarnation(conType, refType) || CDDiffUtil.getAllStrictSubTypes(conType,
+          conCD.getCDDefinition()).stream().anyMatch(conSub -> incMapping.isIncarnation(conSub,
+              refType));
     }
     Log.error("0xCDD17: Could not resolve association reference!");
     return false;
@@ -133,7 +133,7 @@ public class DeepAssocConfStrategy extends BasicAssocConfStrategy {
    * the concrete type incarnate the reference type.
    */
   protected boolean checkRule1(ASTCDType concrete, ASTCDType ref) {
-    return incMapping.getTypeIncStrategy().isMatched(concrete, ref);
+    return incMapping.isIncarnation(concrete, ref);
   }
   
   /***
@@ -144,7 +144,7 @@ public class DeepAssocConfStrategy extends BasicAssocConfStrategy {
   protected boolean checkRule2(ASTCDType concrete, ASTCDType ref) {
     return (concrete.getModifier().isAbstract() || ref.getSymbol().isIsInterface()) && CDDiffUtil
         .getAllStrictSubTypes(concrete, conCD.getCDDefinition()).stream().anyMatch(
-            subtype -> incMapping.getTypeIncStrategy().isMatched(subtype, ref));
+            subtype -> incMapping.isIncarnation(subtype, ref));
   }
   
   /***
@@ -152,7 +152,7 @@ public class DeepAssocConfStrategy extends BasicAssocConfStrategy {
    */
   protected boolean checkRule3(ASTCDType concrete, ASTCDType ref) {
     return CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition()).stream().anyMatch(
-        supertype -> incMapping.getTypeIncStrategy().isMatched(supertype, ref));
+        supertype -> incMapping.isIncarnation(supertype, ref));
   }
   
 }
