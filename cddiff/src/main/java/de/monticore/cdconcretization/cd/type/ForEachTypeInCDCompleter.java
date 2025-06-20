@@ -93,7 +93,7 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
       // TODO we do not support packages at the moment (see issue 29)
       String newTypeQualifier = context.getConcreteCD().getCDDefinition().getSymbol().getFullName();
       String newTypeFullName = Names.getQualifiedName(newTypeQualifier, newType.getName());
-      context.getScopedIncarnationBindings().addTypeBinding(newTypeFullName, paramType.getSymbol(),
+      context.getIncarnationMapping().addBinding(newTypeFullName, paramType.getSymbol(),
           paramTypeInc.getSymbol());
       
       // 4. pass the new type to the next completer

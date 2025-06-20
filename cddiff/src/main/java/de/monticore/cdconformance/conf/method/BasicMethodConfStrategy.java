@@ -6,7 +6,7 @@ import static de.monticore.cdconformance.CDConfParameter.*;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.se_rwth.commons.SourcePosition;
@@ -17,12 +17,13 @@ import java.util.stream.IntStream;
 
 public class BasicMethodConfStrategy extends CDMethodChecker {
   
+  @Deprecated
   private final MCTypeMatcher typeMatcher;
   private final Set<CDConfParameter> params;
   
-  public BasicMethodConfStrategy(CDMethodMatchingStrategy methodIncStrategy,
-      MCTypeMatcher typeMatcher, Set<CDConfParameter> params) {
-    super(methodIncStrategy);
+  public BasicMethodConfStrategy(CDIncarnationMapping incMapping, MCTypeMatcher typeMatcher,
+      Set<CDConfParameter> params) {
+    super(incMapping);
     this.typeMatcher = typeMatcher;
     this.params = params;
   }
@@ -144,7 +145,24 @@ public class BasicMethodConfStrategy extends CDMethodChecker {
       // a void return type is only allowed if the reference type is either void or underspecified
       return typeMatcher.isUnderspecified(refReturn);
     }
-    return typeMatcher.isMCTypeMatched(conReturn.getMCType(), refReturn.getMCType());
+    if (typeMatcher.isMCTypeMatched(conReturn.getMCType(), refReturn.getMCType())) {
+      return true;
+    }
+    else {
+      // TODO move this to MCTypeMatcher -> rename to MCTypeConformance strategy
+      if (
+      /* is concrete type an incarnation of ref type (ignoring bindings)? */ false) {
+        Log.error("The incarnation '" + conReturn.getMCType().printType() + "' of the return type '"
+            + refReturn.getMCType().printType() + "' is not allowed in this scope", conReturn
+                .get_SourcePositionStart());
+      }
+      else {
+        Log.error("The return type '" + conReturn.getMCType().printType()
+            + "' is no incarnation of return type '" + refReturn.getMCType().printType() + "'",
+            conReturn.get_SourcePositionStart());
+      }
+      return false;
+    }
   }
   
 }

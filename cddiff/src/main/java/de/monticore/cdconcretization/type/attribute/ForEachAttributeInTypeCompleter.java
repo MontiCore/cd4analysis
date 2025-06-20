@@ -14,7 +14,6 @@ import de.se_rwth.commons.Names;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -141,8 +140,8 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
         
         String newAttrQualifier = paramIncarnationDeclaringType.getFullName();
         String newAttrFullName = Names.getQualifiedName(newAttrQualifier, newAttribute.getName());
-        context.getScopedIncarnationBindings().addFieldBinding(newAttrFullName, paramAttribute
-            .getSymbol(), Set.of(paramAttributeInc.getSymbol()));
+        context.getIncarnationMapping().addBinding(newAttrFullName, paramAttribute.getSymbol(),
+            paramAttributeInc.getSymbol());
         
         // 4. pass the new attribute to the next completer
         super.completeAttributeInType(context.getConcreteType(), newAttribute, context);

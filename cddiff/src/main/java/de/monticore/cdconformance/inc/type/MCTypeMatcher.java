@@ -88,7 +88,7 @@ public class MCTypeMatcher {
       CDTypeSymbol conCDType = (CDTypeSymbol) conType;
       CDTypeSymbol refCDType = (CDTypeSymbol) refType;
       if (conCDType.isPresentAstNode()) {
-        assert typeMatcher != null;
+        // TODO changed to respect scoped mapping
         return typeMatcher.getMatchedElements(conCDType.getAstNode()).stream().anyMatch(r -> r
             .getSymbol().getFullName().equals(refCDType.getFullName()));
       }

@@ -125,8 +125,8 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
         
         String newMethodQualifier = paramIncarnationDeclaringType.getFullName();
         String newMethodFullName = Names.getQualifiedName(newMethodQualifier, newMethod.getName());
-        context.getScopedIncarnationBindings().addFieldBinding(newMethodFullName, paramAttribute
-            .getSymbol(), Set.of(paramAttributeInc.getSymbol()));
+        context.getIncarnationMapping().addBinding(newMethodFullName, paramAttribute.getSymbol(),
+            paramAttributeInc.getSymbol());
         // TODO Should we also add a TYPE binding for the type of the parameter attribute?
         // alternative: is the ScopedIncarnationBindings class so "intelligent" that it looks up
         // type bindings by checking field symbol types, method return & parameter types? -> sounds

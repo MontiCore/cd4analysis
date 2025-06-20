@@ -2,7 +2,7 @@
 package de.monticore.cdconformance.conf.attribute;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.type.MCTypeMatcher;
 
 /**
@@ -14,9 +14,8 @@ public class BasicAttributeConfStrategy extends CDAttributeChecker {
   
   private final MCTypeMatcher typeMatcher;
   
-  public BasicAttributeConfStrategy(CDAttributeMatchingStrategy attributeIncStrategy,
-      MCTypeMatcher typeMatcher) {
-    super(attributeIncStrategy);
+  public BasicAttributeConfStrategy(CDIncarnationMapping incMapping, MCTypeMatcher typeMatcher) {
+    super(incMapping);
     this.typeMatcher = typeMatcher;
   }
   

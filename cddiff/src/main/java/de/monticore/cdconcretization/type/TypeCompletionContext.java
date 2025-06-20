@@ -1,11 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.type;
 
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.cd.CDCompletionContext;
-import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 
 /** A {@link CDCompletionContext} with additional information when completing a single type. */
 public interface TypeCompletionContext extends CDCompletionContext {
@@ -22,7 +21,7 @@ public interface TypeCompletionContext extends CDCompletionContext {
    *
    * @return the matching strategy for the attribute incarnations.
    */
-  BooleanMatchingStrategy<ASTCDAttribute> getAttributeIncStrategy();
+  CDAttributeMatchingStrategy getAttributeIncStrategy();
   
   /**
    * Returns the matching strategy for the method incarnations. The strategy returned here is only
@@ -30,6 +29,6 @@ public interface TypeCompletionContext extends CDCompletionContext {
    *
    * @return the matching strategy for the method incarnations.
    */
-  BooleanMatchingStrategy<ASTCDMethod> getMethodIncStrategy();
+  CDMethodMatchingStrategy getMethodIncStrategy();
   
 }

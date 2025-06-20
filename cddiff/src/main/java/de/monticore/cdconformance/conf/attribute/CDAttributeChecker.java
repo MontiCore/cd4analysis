@@ -4,14 +4,17 @@ package de.monticore.cdconformance.conf.attribute;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 
 public abstract class CDAttributeChecker implements ConformanceStrategy<ASTCDAttribute> {
   
-  private final CDAttributeMatchingStrategy attributeIncStrategy;
+  protected final CDIncarnationMapping incMapping;
+  protected final CDAttributeMatchingStrategy attributeIncStrategy;
   
-  protected CDAttributeChecker(CDAttributeMatchingStrategy attributeIncStrategy) {
-    this.attributeIncStrategy = attributeIncStrategy;
+  protected CDAttributeChecker(CDIncarnationMapping incMapping) {
+    this.incMapping = incMapping;
+    this.attributeIncStrategy = incMapping.getAttributeIncStrategy();
   }
   
   @Override
