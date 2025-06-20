@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 /** Matches classes / interfaces by structure. */
 @Deprecated
-public class MatchCDTypeByStructure implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypeByStructure implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   
   protected final ASTCDCompilationUnit tgtCD;
   protected double threshold = 0.5;

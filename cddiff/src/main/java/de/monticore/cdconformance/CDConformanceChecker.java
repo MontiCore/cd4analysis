@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance;
 
-import static de.monticore.cdconformance.CDConfParameter.*;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.UnderspecifiedPlaceholderType;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.association.BasicAssocConfStrategy;
@@ -31,10 +31,13 @@ import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.CDSynDiffMatches;
 import de.monticore.cdmatcher.CachedMultiMatches;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
-import de.monticore.cdmatcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.*;
+
+import static de.monticore.cdconformance.CDConfParameter.*;
 
 /**
  * Tool for automatic conformance checking of concrete CDs to reference CDs given a set of mappings.
@@ -43,9 +46,9 @@ public class CDConformanceChecker {
   
   protected Set<CDConfParameter> params;
   protected String underspecifiedTypeName = UnderspecifiedPlaceholderType.DEFAULT_TYPE_NAME;
-  protected MatchingStrategy<ASTCDType> typeInc;
+  protected ExternalCandidatesMatchingStrategy<ASTCDType> typeInc;
   protected MCTypeMatcher typeMatcher;
-  protected MatchingStrategy<ASTCDAssociation> assocInc;
+  protected ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc;
   protected CompAttributeIncStrategy attrInc;
   
   protected CompMethodIncStrategy methInc;

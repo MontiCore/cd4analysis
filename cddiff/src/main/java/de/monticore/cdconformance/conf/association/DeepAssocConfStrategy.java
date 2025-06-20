@@ -6,16 +6,17 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
 import java.util.Set;
 
 public class DeepAssocConfStrategy extends BasicAssocConfStrategy {
   
   public DeepAssocConfStrategy(ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD,
-      MatchingStrategy<ASTCDType> typeInc, MatchingStrategy<ASTCDAssociation> assocInc,
-      boolean allowCardRefinement) {
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeInc,
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc, boolean allowCardRefinement) {
     super(conCD, refCD, typeInc, assocInc, allowCardRefinement);
   }
   

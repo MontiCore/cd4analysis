@@ -3,23 +3,23 @@ package de.monticore.cdconformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
+public class CompAssocIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
   
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
   
-  List<MatchingStrategy<ASTCDAssociation>> incStrategies = new ArrayList<>();
+  List<ExternalCandidatesMatchingStrategy<ASTCDAssociation>> incStrategies = new ArrayList<>();
   
   public CompAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
     this.mapping = mapping;
   }
   
-  public void addIncStrategy(MatchingStrategy<ASTCDAssociation> strategy) {
+  public void addIncStrategy(ExternalCandidatesMatchingStrategy<ASTCDAssociation> strategy) {
     incStrategies.add(strategy);
   }
   
@@ -27,7 +27,7 @@ public class CompAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> 
   public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
     List<ASTCDAssociation> refElements = new ArrayList<>();
     
-    for (MatchingStrategy<ASTCDAssociation> strategy : incStrategies) {
+    for (ExternalCandidatesMatchingStrategy<ASTCDAssociation> strategy : incStrategies) {
       refElements.addAll(strategy.getMatchedElements(concrete));
       if (!refElements.isEmpty()) {
         return refElements;

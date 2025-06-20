@@ -3,7 +3,7 @@ package de.monticore.cdconformance.inc.type;
 
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -12,14 +12,15 @@ import de.se_rwth.commons.logging.Log;
 public class MCTypeMatcher {
   
   private final String underspecifiedTypeName;
-  private MatchingStrategy<ASTCDType> typeMatcher;
+  private ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher;
   
-  public MCTypeMatcher(String underspecifiedTypeName, MatchingStrategy<ASTCDType> typeMatcher) {
+  public MCTypeMatcher(String underspecifiedTypeName,
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher) {
     this.underspecifiedTypeName = underspecifiedTypeName;
     this.typeMatcher = typeMatcher;
   }
   
-  public void setTypeMatcher(MatchingStrategy<ASTCDType> typeMatcher) {
+  public void setTypeMatcher(ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher) {
     this.typeMatcher = typeMatcher;
   }
   

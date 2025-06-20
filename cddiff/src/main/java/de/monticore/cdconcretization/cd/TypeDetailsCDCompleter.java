@@ -14,8 +14,10 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.symboltable.IScope;
+
 import java.util.Set;
 
 /** Completes the details of types (attributes, methods, etc.) in a CD. */
@@ -30,7 +32,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
   @Override
   public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD,
       CDCompletionContext context) throws CompletionException {
-    MatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
+    ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
     // complete member incarnations
     for (ASTCDClass cClass : concreteCD.getCDDefinition().getCDClassesList()) {
       for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
@@ -68,8 +70,8 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     private final CDCompletionContext parentContext;
     private final ASTCDType concreteType;
     private final ASTCDType referenceType;
-    private final MatchingStrategy<ASTCDAttribute> attributeIncStrategy;
-    private final MatchingStrategy<ASTCDMethod> methodIncStrategy;
+    private final BooleanMatchingStrategy<ASTCDAttribute> attributeIncStrategy;
+    private final BooleanMatchingStrategy<ASTCDMethod> methodIncStrategy;
     
     DefaultTypeCompletionContext(CDCompletionContext parentContext, ASTCDType concreteType,
         ASTCDType referenceType) {
@@ -106,17 +108,17 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
     
     @Override
-    public MatchingStrategy<ASTCDType> getTypeIncStrategy() {
+    public ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategy() {
       return parentContext.getTypeIncStrategy();
     }
     
     @Override
-    public MatchingStrategy<ASTCDType> getTypeIncStrategyMatchingSubTypes() {
+    public ExternalCandidatesMatchingStrategy<ASTCDType> getTypeIncStrategyMatchingSubTypes() {
       return parentContext.getTypeIncStrategyMatchingSubTypes();
     }
     
     @Override
-    public MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
+    public ExternalCandidatesMatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
       return parentContext.getAssociationIncStrategy();
     }
     
@@ -129,20 +131,22 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     public ASTCDType getReferenceType() { return referenceType; }
     
     @Override
-    public MatchingStrategy<ASTCDAttribute> getAttributeIncStrategy() {
+    public BooleanMatchingStrategy<ASTCDAttribute> getAttributeIncStrategy() {
       return attributeIncStrategy;
     }
     
     @Override
-    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
+    public ExternalCandidatesMatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
+        ASTCDType referenceType) {
       return parentContext.createAttributeIncStrategy(referenceType);
     }
     
     @Override
-    public MatchingStrategy<ASTCDMethod> getMethodIncStrategy() { return methodIncStrategy; }
+    public BooleanMatchingStrategy<ASTCDMethod> getMethodIncStrategy() { return methodIncStrategy; }
     
     @Override
-    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
+    public ExternalCandidatesMatchingStrategy<ASTCDMethod> createMethodIncStrategy(
+        ASTCDType referenceType) {
       return parentContext.createMethodIncStrategy(referenceType);
     }
     

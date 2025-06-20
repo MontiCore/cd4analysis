@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  * Newer version of MatchCDTypeByStructure that avoids traverser usage. Matches types if their
  * similarity-score exceeds the threshold.
  */
-public class MatchCDTypeByStructure2Set implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypeByStructure2Set implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   
   protected LinkedHashSet<ASTCDType> tgtSet;
   protected double threshold = 0.5;

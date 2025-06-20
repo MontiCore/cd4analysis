@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
  * Matches a type to all sub- and supertypes of any other type that is matched via an existing type
  * matching.
  */
-public class MatchCDTypeHierarchies implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypeHierarchies implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   
-  protected MatchingStrategy<ASTCDType> typeMatcher;
+  protected BooleanMatchingStrategy<ASTCDType> typeMatcher;
   protected Set<ASTCDType> srcTypes;
   protected Set<ASTCDType> tgtTypes;
   protected Map<ASTCDType, Set<ASTCDType>> srcCDType2Hierarchy = new HashMap<>();
   protected Map<ASTCDType, Set<ASTCDType>> tgtCDType2Hierarchy = new HashMap<>();
   
-  public MatchCDTypeHierarchies(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  public MatchCDTypeHierarchies(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
     
     srcTypes = CDDiffUtil.getAllTypesFromCD(srcCD);

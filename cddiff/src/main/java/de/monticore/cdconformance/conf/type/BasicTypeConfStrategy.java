@@ -15,8 +15,9 @@ import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,13 +30,14 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected CDMethodChecker methodChecker;
   protected CDAttributeMatchingStrategy attributeInc;
   protected CDMethodMatchingStrategy methodInc;
-  protected MatchingStrategy<ASTCDType> typeInc;
-  protected MatchingStrategy<ASTCDAssociation> assocInc;
+  protected ExternalCandidatesMatchingStrategy<ASTCDType> typeInc;
+  protected ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc;
   
   public BasicTypeConfStrategy(ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker, CDMethodChecker methodChecker,
       CDAttributeMatchingStrategy attributeInc, CDMethodMatchingStrategy methodInc,
-      MatchingStrategy<ASTCDType> typeInc, MatchingStrategy<ASTCDAssociation> assocInc) {
+      ExternalCandidatesMatchingStrategy<ASTCDType> typeInc,
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc) {
     this.refCD = refCD;
     this.conCD = conCD;
     this.attributeChecker = attributeChecker;

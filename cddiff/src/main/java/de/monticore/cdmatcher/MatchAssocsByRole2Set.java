@@ -13,8 +13,8 @@ public class MatchAssocsByRole2Set extends MatchCDAssocsBySrcTypeAndTgtRole {
   
   protected LinkedHashSet<ASTCDAssociation> tgtSet;
   
-  public MatchAssocsByRole2Set(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD, Collection<ASTCDAssociation> tgtSet) {
+  public MatchAssocsByRole2Set(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, Collection<ASTCDAssociation> tgtSet) {
     super(typeMatcher, srcCD, tgtCD);
     this.tgtSet = new LinkedHashSet<>(tgtSet);
   }
