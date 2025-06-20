@@ -6,13 +6,13 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,22 +37,22 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     typeSet.addAll(classes);
     typeSet.addAll(interfaces);
     
-    ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher = context.getTypeIncStrategy();
+    CDIncarnationMapping incMapping = context.getIncarnationMapping();
     
     for (ASTCDType type : typeSet) {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, tgtCDScope)));
       
       // for all matching types
-      for (ASTCDType matchingTypeInsrcCD : typeMatcher.getMatchedElements(type)) {
+      for (ASTCDType matchingTypeInsrcCD : incMapping.getReferenceElements(type)) {
         // add all incarnations of super-types
         for (ASTCDType superType : CDInheritanceHelper.getAllSuper(matchingTypeInsrcCD,
             srcCDScope)) {
           // only add super-incarnation if one does not already exist
-          if (inheritanceGraph.get(type).stream().noneMatch(superInc -> typeMatcher.isMatched(
+          if (inheritanceGraph.get(type).stream().noneMatch(superInc -> incMapping.isIncarnation(
               superInc, superType))) {
             // inherit from all super-incarnations
-            inheritanceGraph.get(type).addAll(typeSet.stream().filter(superInc -> typeMatcher
-                .isMatched(superInc, superType)).collect(Collectors.toSet()));
+            inheritanceGraph.get(type).addAll(typeSet.stream().filter(superInc -> incMapping
+                .isIncarnation(superInc, superType)).collect(Collectors.toSet()));
           }
         }
       }

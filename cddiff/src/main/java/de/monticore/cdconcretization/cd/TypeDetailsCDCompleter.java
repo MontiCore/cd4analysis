@@ -18,6 +18,7 @@ import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
+
 import java.util.Set;
 
 /** Completes the details of types (attributes, methods, etc.) in a CD. */
@@ -32,10 +33,10 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
   @Override
   public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD,
       CDCompletionContext context) throws CompletionException {
-    ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
+    CDIncarnationMapping incMapping = context.getIncarnationMapping();
     // complete member incarnations
     for (ASTCDClass cClass : concreteCD.getCDDefinition().getCDClassesList()) {
-      for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
+      for (ASTCDType rType : incMapping.getReferenceElements(cClass)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cClass, rType);
         context.getIncarnationMapping().addBinding(cClass.getSymbol(), rType.getSymbol(), cClass
@@ -45,7 +46,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     }
     
     for (ASTCDInterface cInterface : concreteCD.getCDDefinition().getCDInterfacesList()) {
-      for (ASTCDType rType : typeIncStrategy.getMatchedElements(cInterface)) {
+      for (ASTCDType rType : incMapping.getReferenceElements(cInterface)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cInterface, rType);
         context.getIncarnationMapping().addBinding(cInterface.getSymbol(), rType.getSymbol(),
@@ -54,7 +55,7 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       }
     }
     for (ASTCDEnum cEnum : concreteCD.getCDDefinition().getCDEnumsList()) {
-      for (ASTCDType rType : typeIncStrategy.getMatchedElements(cEnum)) {
+      for (ASTCDType rType : incMapping.getReferenceElements(cEnum)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cEnum, rType);
         context.getIncarnationMapping().addBinding(cEnum.getSymbol(), rType.getSymbol(), cEnum
