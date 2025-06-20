@@ -9,14 +9,20 @@ import de.monticore.cdmatcher.iterative.matching.caching.CachedMatches;
 
 import static com.google.common.math.DoubleMath.mean;
 
-public class MatchCDAttribute implements MatchingStrategy<ASTCDAttribute> {
+public class MatchCDAttributeByNameAndType implements MatchingStrategy<ASTCDAttribute> {
+  
+  public CachedMatches cachedMatches;
+  
+  public MatchCDAttributeByNameAndType(CachedMatches cachedMatches) {
+    this.cachedMatches = cachedMatches;
+  }
   
   @Override
   public double getScore(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
     ASTCDType srcAttributeClassType = CDAttributeHelper.resolveClass(srcElem);
     ASTCDType tgtAttributeClassType = CDAttributeHelper.resolveClass(tgtElem);
     
-    Double attributeClassType = CachedMatches.getMatch(srcAttributeClassType,
+    Double attributeClassType = cachedMatches.getMatch(srcAttributeClassType,
         tgtAttributeClassType);
     
     double score = new MatchCDAttributeByName().getScore(srcElem, tgtElem);
@@ -25,7 +31,7 @@ public class MatchCDAttribute implements MatchingStrategy<ASTCDAttribute> {
       score = mean(score, attributeClassType);
     }
     
-    CachedMatches.putMatch(srcElem, tgtElem, score);
+    cachedMatches.putMatch(srcElem, tgtElem, score);
     return score;
   }
   

@@ -11,12 +11,15 @@ import java.util.stream.Collectors;
 
 import static com.google.common.math.DoubleMath.mean;
 
-public class MatchCDType implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypeComposite implements MatchingStrategy<ASTCDType> {
   
   Set<MatchingStrategy<ASTCDType>> strategies;
+  public CachedMatches cachedMatches;
   
-  public MatchCDType(Set<MatchingStrategy<ASTCDType>> strategies) {
+  public MatchCDTypeComposite(Set<MatchingStrategy<ASTCDType>> strategies,
+      CachedMatches cachedMatches) {
     this.strategies = strategies;
+    this.cachedMatches = cachedMatches;
   }
   
   @Override
@@ -25,7 +28,7 @@ public class MatchCDType implements MatchingStrategy<ASTCDType> {
         Collectors.toList());
     
     double score = scores.isEmpty() ? 0.0 : mean(scores);
-    CachedMatches.putMatch(srcElem, tgtElem, score);
+    cachedMatches.putMatch(srcElem, tgtElem, score);
     return score;
     
   }

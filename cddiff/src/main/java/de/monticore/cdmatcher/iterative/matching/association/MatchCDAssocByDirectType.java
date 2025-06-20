@@ -13,12 +13,20 @@ import static com.google.common.math.DoubleMath.mean;
 
 public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociation> {
   
+  public CachedMatches cachedMatches;
+  public StructureCache structureCache;
+  
+  public MatchCDAssocByDirectType(CachedMatches cachedMatches, StructureCache structureCache) {
+    this.cachedMatches = cachedMatches;
+    this.structureCache = structureCache;
+  }
+  
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
-    Optional<ASTCDType> srcRightType = StructureCache.getRightType(srcElem);
-    Optional<ASTCDType> srcLeftType = StructureCache.getLeftType(srcElem);
-    Optional<ASTCDType> tgtRightType = StructureCache.getRightType(tgtElem);
-    Optional<ASTCDType> tgtLeftType = StructureCache.getLeftType(tgtElem);
+    Optional<ASTCDType> srcRightType = structureCache.getRightType(srcElem);
+    Optional<ASTCDType> srcLeftType = structureCache.getLeftType(srcElem);
+    Optional<ASTCDType> tgtRightType = structureCache.getRightType(tgtElem);
+    Optional<ASTCDType> tgtLeftType = structureCache.getLeftType(tgtElem);
     
     double nameScore = new MatchCDAssocByName().getScore(srcElem, tgtElem);
     double typeScore = -1;
@@ -26,10 +34,10 @@ public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociati
     Double rightTypeScore = null;
     
     if (srcLeftType.isPresent() && tgtLeftType.isPresent()) {
-      leftTypeScore = CachedMatches.getMatch(srcLeftType.get(), tgtLeftType.get());
+      leftTypeScore = cachedMatches.getMatch(srcLeftType.get(), tgtLeftType.get());
     }
     if (srcRightType.isPresent() && tgtRightType.isPresent()) {
-      rightTypeScore = CachedMatches.getMatch(srcRightType.get(), tgtRightType.get());
+      rightTypeScore = cachedMatches.getMatch(srcRightType.get(), tgtRightType.get());
     }
     
     if (leftTypeScore != null) {
@@ -41,7 +49,7 @@ public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociati
     
     double score = typeScore < 0 ? nameScore : nameScore * 0.2 + typeScore * 0.8;
     
-    CachedMatches.putMatch(srcElem, tgtElem, score);
+    cachedMatches.putMatch(srcElem, tgtElem, score);
     return score;
   }
   

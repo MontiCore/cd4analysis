@@ -11,40 +11,34 @@ public class CachedMatches {
   private static final CachedMatch<ASTCDAttribute> attributeMatches = new CachedMatch<>();
   private static final CachedMatch<ASTCDAssociation> assocMatches = new CachedMatch<>();
   
-  public static void putMatch(ASTCDType srcElem, ASTCDType tgtElem, Double value) {
+  public void putMatch(ASTCDType srcElem, ASTCDType tgtElem, Double value) {
     typeMatches.putMatch(srcElem, tgtElem, value);
   }
   
-  public static void putMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem, Double value) {
+  public void putMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem, Double value) {
     attributeMatches.putMatch(srcElem, tgtElem, value);
   }
   
-  public static void putMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, Double value) {
+  public void putMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, Double value) {
     assocMatches.putMatch(srcElem, tgtElem, value);
   }
   
-  public static Double getMatch(ASTCDType srcElem, ASTCDType tgtElem) {
+  public Double getMatch(ASTCDType srcElem, ASTCDType tgtElem) {
     return typeMatches.getMatch(srcElem, tgtElem);
   }
   
-  public static Double getMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
+  public Double getMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
     return attributeMatches.getMatch(srcElem, tgtElem);
   }
   
-  public static Double getMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
+  public Double getMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     return assocMatches.getMatch(srcElem, tgtElem);
   }
   
-  public static CachedMatch<ASTCDType> getTypeMatches() { return typeMatches; }
+  public CachedMatch<ASTCDType> getTypeMatches() { return typeMatches; }
   
-  public static CachedMatch<ASTCDAttribute> getAttributeMatches() { return attributeMatches; }
+  public CachedMatch<ASTCDAttribute> getAttributeMatches() { return attributeMatches; }
   
-  public static CachedMatch<ASTCDAssociation> getAssocMatches() { return assocMatches; }
-  
-  public static void clear() {
-    typeMatches.clear();
-    attributeMatches.clear();
-    assocMatches.clear();
-  }
+  public CachedMatch<ASTCDAssociation> getAssocMatches() { return assocMatches; }
   
 }

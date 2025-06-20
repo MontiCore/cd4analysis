@@ -7,9 +7,15 @@ import de.monticore.cdmatcher.iterative.matching.caching.CachedMatches;
 
 public class MatchCDTypeFromCache implements MatchingStrategy<ASTCDType> {
   
+  public CachedMatches cachedMatches;
+  
+  public MatchCDTypeFromCache(CachedMatches cachedMatches) {
+    this.cachedMatches = cachedMatches;
+  }
+  
   @Override
   public double getScore(ASTCDType srcElem, ASTCDType tgtElem) {
-    Double cachedScore = CachedMatches.getMatch(srcElem, tgtElem);
+    Double cachedScore = cachedMatches.getMatch(srcElem, tgtElem);
     
     return cachedScore != null ? cachedScore : new MatchCDTypeByName().getScore(srcElem, tgtElem);
   }

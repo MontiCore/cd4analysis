@@ -4,7 +4,7 @@ package de.monticore.cdmatcher.iterative.similarity;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdmatcher.CDSimilarity;
 
-public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
+public class CDAssocSimilarityNormalized implements CDSimilarity<ASTCDAssociation> {
   
   @Override
   public Double computeWeight(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {

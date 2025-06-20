@@ -11,14 +11,17 @@ public class MatchCDTypeByDirectAssocs extends
     MultipleMatchingStrategy<ASTCDType, ASTCDAssociation> {
   
   private final MatchingStrategy<ASTCDAssociation> strategy;
+  public StructureCache structureCache;
   
-  public MatchCDTypeByDirectAssocs(MatchingStrategy<ASTCDAssociation> associationMatchingStrategy) {
+  public MatchCDTypeByDirectAssocs(MatchingStrategy<ASTCDAssociation> associationMatchingStrategy,
+      StructureCache structureCache) {
     this.strategy = associationMatchingStrategy;
+    this.structureCache = structureCache;
   }
   
   @Override
   public double getScore(ASTCDType srcElem, ASTCDType tgtElem) {
-    return getBestMatchingScore(srcElem, tgtElem, StructureCache::getAssociations, strategy);
+    return getBestMatchingScore(srcElem, tgtElem, structureCache::getAssociations, strategy);
   }
   
 }

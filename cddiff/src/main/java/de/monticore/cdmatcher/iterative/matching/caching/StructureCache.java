@@ -12,11 +12,10 @@ import java.util.Set;
 
 public class StructureCache {
   
-  private static final Map<ASTCDAssociation, CachedAssoc> assocCache = new HashMap<>();
-  private static final Map<ASTCDType, CachedType> typeCache = new HashMap<>();
+  private final Map<ASTCDAssociation, CachedAssoc> assocCache = new HashMap<>();
+  private final Map<ASTCDType, CachedType> typeCache = new HashMap<>();
   
-  public static boolean addAssociation(ASTCDAssociation assoc, ASTCDType leftType,
-      ASTCDType rightType) {
+  public boolean addAssociation(ASTCDAssociation assoc, ASTCDType leftType, ASTCDType rightType) {
     if (assocCache.containsKey(assoc)) {
       return false;
     }
@@ -24,7 +23,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Optional<ASTCDType> getLeftType(ASTCDAssociation assoc) {
+  public Optional<ASTCDType> getLeftType(ASTCDAssociation assoc) {
     if (assocCache.containsKey(assoc)) {
       ASTCDType leftType = assocCache.get(assoc).getLeftType();
       if (leftType == null) {
@@ -35,7 +34,7 @@ public class StructureCache {
     return Optional.empty();
   }
   
-  public static Optional<ASTCDType> getRightType(ASTCDAssociation assoc) {
+  public Optional<ASTCDType> getRightType(ASTCDAssociation assoc) {
     if (assocCache.containsKey(assoc)) {
       ASTCDType rightType = assocCache.get(assoc).getRightType();
       if (rightType == null) {
@@ -46,7 +45,7 @@ public class StructureCache {
     return Optional.empty();
   }
   
-  public static boolean addType(ASTCDType type) {
+  public boolean addType(ASTCDType type) {
     if (typeCache.containsKey(type)) {
       return false;
     }
@@ -54,7 +53,7 @@ public class StructureCache {
     return true;
   }
   
-  public static boolean addAllAssociations(ASTCDType type, Set<ASTCDAssociation> associations) {
+  public boolean addAllAssociations(ASTCDType type, Set<ASTCDAssociation> associations) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -65,7 +64,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDAssociation> getAssociations(ASTCDType type) {
+  public Set<ASTCDAssociation> getAssociations(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getAssociations();
@@ -73,8 +72,7 @@ public class StructureCache {
     return Set.of();
   }
   
-  public static boolean addAllDirectAssociations(ASTCDType type,
-      Set<ASTCDAssociation> associations) {
+  public boolean addAllDirectAssociations(ASTCDType type, Set<ASTCDAssociation> associations) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -85,7 +83,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDAssociation> getDirectAssociations(ASTCDType type) {
+  public Set<ASTCDAssociation> getDirectAssociations(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getDirectAssociations();
@@ -93,7 +91,7 @@ public class StructureCache {
     return Set.of();
   }
   
-  public static boolean addAllAttributes(ASTCDType type, Set<ASTCDAttribute> attribute) {
+  public boolean addAllAttributes(ASTCDType type, Set<ASTCDAttribute> attribute) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -104,7 +102,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDAttribute> getAttributes(ASTCDType type) {
+  public Set<ASTCDAttribute> getAttributes(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getAttributes();
@@ -112,7 +110,7 @@ public class StructureCache {
     return Set.of();
   }
   
-  public static boolean addAllDirectAttributes(ASTCDType type, Set<ASTCDAttribute> attributes) {
+  public boolean addAllDirectAttributes(ASTCDType type, Set<ASTCDAttribute> attributes) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -123,7 +121,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDAttribute> getDirectAttributes(ASTCDType type) {
+  public Set<ASTCDAttribute> getDirectAttributes(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getDirectAttributes();
@@ -131,7 +129,7 @@ public class StructureCache {
     return Set.of();
   }
   
-  public static boolean addAllSuperTypes(ASTCDType type, Set<ASTCDType> superTypes) {
+  public boolean addAllSuperTypes(ASTCDType type, Set<ASTCDType> superTypes) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -142,7 +140,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDType> getSuperTypes(ASTCDType type) {
+  public Set<ASTCDType> getSuperTypes(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getSuperTypes();
@@ -150,7 +148,7 @@ public class StructureCache {
     return Set.of();
   }
   
-  public static boolean addAllDirectSuperTypes(ASTCDType type, Set<ASTCDType> superTypes) {
+  public boolean addAllDirectSuperTypes(ASTCDType type, Set<ASTCDType> superTypes) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -161,7 +159,7 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDType> getDirectSuperTypes(ASTCDType type) {
+  public Set<ASTCDType> getDirectSuperTypes(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getDirectSuperTypes();
@@ -169,7 +167,7 @@ public class StructureCache {
     return Set.of();
   }
   
-  public static boolean addAllDirectSubTypes(ASTCDType type, Set<ASTCDType> subTypes) {
+  public boolean addAllDirectSubTypes(ASTCDType type, Set<ASTCDType> subTypes) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {
       return false;
@@ -180,17 +178,12 @@ public class StructureCache {
     return true;
   }
   
-  public static Set<ASTCDType> getDirectSubTypes(ASTCDType type) {
+  public Set<ASTCDType> getDirectSubTypes(ASTCDType type) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getDirectSubTypes();
     }
     return Set.of();
-  }
-  
-  public static void clear() {
-    assocCache.clear();
-    typeCache.clear();
   }
   
 }

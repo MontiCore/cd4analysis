@@ -15,33 +15,41 @@ import static com.google.common.math.DoubleMath.mean;
 public class MatchCDAssocByBestSuperType extends
     MultipleMatchingStrategy<ASTCDAssociation, ASTCDType> {
   
+  public CachedMatches cachedMatches;
+  public StructureCache structureCache;
+  
+  public MatchCDAssocByBestSuperType(CachedMatches cachedMatches, StructureCache structureCache) {
+    this.cachedMatches = cachedMatches;
+    this.structureCache = structureCache;
+  }
+  
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     
     double nameScore = new MatchCDAssocByName().getScore(srcElem, tgtElem);
     double typeScore = -1;
     
-    if (StructureCache.getLeftType(srcElem).isPresent() && StructureCache.getLeftType(tgtElem)
+    if (structureCache.getLeftType(srcElem).isPresent() && structureCache.getLeftType(tgtElem)
         .isPresent()) {
       typeScore = getBestMatchingScore(srcElem, tgtElem, (assoc) -> getSuperIncludingSelf(
-          StructureCache.getLeftType(assoc).get()), new MatchCDTypeFromCache());
+          structureCache.getLeftType(assoc).get()), new MatchCDTypeFromCache(cachedMatches));
     }
-    if (StructureCache.getRightType(srcElem).isPresent() && StructureCache.getRightType(tgtElem)
+    if (structureCache.getRightType(srcElem).isPresent() && structureCache.getRightType(tgtElem)
         .isPresent()) {
       double rightTypeScore = getBestMatchingScore(srcElem, tgtElem, (
-          assoc) -> getSuperIncludingSelf(StructureCache.getRightType(assoc).get()),
-          new MatchCDTypeFromCache());
+          assoc) -> getSuperIncludingSelf(structureCache.getRightType(assoc).get()),
+          new MatchCDTypeFromCache(cachedMatches));
       typeScore = typeScore < 0 ? rightTypeScore : mean(typeScore, rightTypeScore);
     }
     
     double score = typeScore < 0 ? nameScore : nameScore * 0.2 + typeScore * 0.8;
     
-    CachedMatches.putMatch(srcElem, tgtElem, score);
+    cachedMatches.putMatch(srcElem, tgtElem, score);
     return score;
   }
   
   private Set<ASTCDType> getSuperIncludingSelf(ASTCDType type) {
-    Set<ASTCDType> associations = StructureCache.getSuperTypes(type);
+    Set<ASTCDType> associations = structureCache.getSuperTypes(type);
     associations.add(type);
     return associations;
   }
