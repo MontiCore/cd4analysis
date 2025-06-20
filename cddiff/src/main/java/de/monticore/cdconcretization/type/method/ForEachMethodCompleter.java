@@ -15,6 +15,7 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -192,9 +193,11 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
       if (context.isForEachNameAdaptationEnabled() && adaptedName.isPresent()) {
         newMethod.setName(adaptedName.get());
       }
-      else if (!parameterSignatureAdapted) {
+      else if (!parameterSignatureAdapted || !context.getConformanceParams().contains(
+          CDConfParameter.METHOD_OVERLOADING)) {
         // Default: add the param incarnation name as suffix
-        // We only have to add a suffix if we have not changed the parameter signature!
+        // If method overloading is enabled, we only have to add a suffix if we have not changed
+        // the parameter signature. If method overloading is not allowed, we always add a suffix
         String typeSuffix = paramTypeIncarnations.size() > 1 ? "_" + paramTypeInc.getName() : "";
         newMethod.setName(referenceMethod.getName() + typeSuffix);
       }
