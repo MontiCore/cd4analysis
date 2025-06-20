@@ -32,6 +32,7 @@ public class CDSynDiffMatches {
   protected Map<ASTCDType, ASTCDType> typeMatches;
   protected Map<ASTCDAssociation, ASTCDAssociation> assocMatches;
   protected Map<ASTCDAttribute, ASTCDAttribute> attributeMatches;
+  private static final double MINIMUM_CHANGE_THRESHOLD = 0.001;
 
   /**
    * The constructor call computes all matches of types and associations between srcCD and tgtCD.
@@ -71,11 +72,13 @@ public class CDSynDiffMatches {
     MatchCDType matcher = new MatchCDType(matchingStrategies);
 
     for(int i = 0; i < matchingIterations; i++) {
+      CachedMatches.resetBiggestChange();
       for (ASTCDType srcType : srcTypes) {
         for (ASTCDType tgtType : tgtTypes) {
           matcher.getScore(srcType, tgtType);
         }
       }
+      if(CachedMatches.getBiggestChange() < MINIMUM_CHANGE_THRESHOLD) break;
     }
 
     // compute a matching of types by name

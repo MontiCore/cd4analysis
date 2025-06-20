@@ -8,17 +8,33 @@ public class CachedMatches {
   private static final CachedMatch<ASTCDType> typeMatches = new CachedMatch<>();
   private static final CachedMatch<ASTCDAttribute> attributeMatches = new CachedMatch<>();
   private static final CachedMatch<ASTCDAssociation> assocMatches = new CachedMatch<>();
+  private static Double biggestChange = 0.0;
 
   public static void putMatch(ASTCDType srcElem, ASTCDType tgtElem, Double value) {
-    typeMatches.putMatch(srcElem, tgtElem, value);
+    Double old = typeMatches.putMatch(srcElem, tgtElem, value);
+    if(old == null){
+      biggestChange = value;
+    } else if (Math.abs(old - value) > biggestChange) {
+      biggestChange = Math.abs(old - value);
+    }
   }
 
   public static void putMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem, Double value) {
-    attributeMatches.putMatch(srcElem, tgtElem, value);
+    Double old = attributeMatches.putMatch(srcElem, tgtElem, value);
+    if(old == null){
+      biggestChange = value;
+    } else if (Math.abs(old - value) > biggestChange) {
+      biggestChange = Math.abs(old - value);
+    }
   }
 
   public static void putMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, Double value) {
-    assocMatches.putMatch(srcElem, tgtElem, value);
+    Double old = assocMatches.putMatch(srcElem, tgtElem, value);
+    if(old == null){
+      biggestChange = value;
+    } else if (Math.abs(old - value) > biggestChange) {
+      biggestChange = Math.abs(old - value);
+    }
   }
 
   public static Double getMatch(ASTCDType srcElem, ASTCDType tgtElem) {
@@ -45,9 +61,18 @@ public class CachedMatches {
     return assocMatches;
   }
 
+  public static Double getBiggestChange() {
+    return biggestChange;
+  }
+
+  public static void resetBiggestChange(){
+    biggestChange = 0.0;
+  }
+
   public static void clear() {
     typeMatches.clear();
     attributeMatches.clear();
     assocMatches.clear();
+    biggestChange = 0.0;
   }
 }
