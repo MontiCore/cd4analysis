@@ -6,11 +6,11 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.cdmatcher.iterative.similarity.CDAssocSimilarity4Iterative;
 
 public class MatchCDAssocByName implements MatchingStrategy<ASTCDAssociation> {
-
+  
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     CDAssocSimilarity4Iterative similarity = new CDAssocSimilarity4Iterative();
     return similarity.computeWeight(srcElem, tgtElem);
   }
-
+  
 }
