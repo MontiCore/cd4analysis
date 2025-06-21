@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
-import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.facade.CDConstructorFacade;
@@ -88,18 +87,10 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() { return super.getMustRunAfter(); }
   
-  protected void initClassesFromClassDiagramAsString(ASTNode node) {
+  protected void initClassesFromClassDiagramAsString(ASTCDCompilationUnit compilationUnit) {
     if (isInitialized) {
       return;
     }
-    ASTNode parent = decoratorData.getParent(node).get();
-    while (!(parent instanceof ASTCDDefinition)) {
-      parent = decoratorData.getParent(parent).get();
-    }
-    ASTCDDefinition def = (ASTCDDefinition) parent;
-    ASTCDCompilationUnit compilationUnit = new ASTCDCompilationUnitBuilder().setCDDefinition(def)
-        .setMCPackageDeclarationAbsent().build();
-    
     //visitor to get all classes from the class diagram
     CDTypeCollector cdTypeCollector = new CDTypeCollector();
     CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
@@ -116,6 +107,15 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   }
   
   /**
+   * Used to init the list of all artifacts defined in the cd
+   *
+   * @param compilationUnit the compilationUnit containing all artifacts
+   */
+  public void visit(ASTCDCompilationUnit compilationUnit) {
+    initClassesFromClassDiagramAsString(compilationUnit);
+  }
+  
+  /**
    * Only when visiting a class node, we add the deepClone and deepEquals methods to the decorated
    * class.
    *
@@ -123,8 +123,6 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    */
   @Override
   public void visit(ASTCDClass node) {
-    initClassesFromClassDiagramAsString(node);
-    
     ASTCDClass decClazz = decoratorData.getAsDecorated(node);
     
     //the numbers correspond to arguments of the deepClone and deepEquals methods
