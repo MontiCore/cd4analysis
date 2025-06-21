@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 public class VisitorDecoratorResultTest {
-
+  
   Visitor visitor;
-
+  
   @Test
   public void test() {
     testPrimitiveTypes();
@@ -26,7 +26,7 @@ public class VisitorDecoratorResultTest {
     testAllTogether();
     testClassToBeTopped();
   }
-
+  
   @Test
   public void testPrimitiveTypes() {
     ClassWithPrimitiveType classWithPrimitiveType = new ClassWithPrimitiveType();
@@ -36,7 +36,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countVisitClassWithPrimitiveType);
     Assertions.assertSame(1, visitor.countEndVisitClassWithPrimitiveType);
   }
-
+  
   @Test
   public void testStringTypes() {
     ClassWithString classWithString = new ClassWithString();
@@ -47,7 +47,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countVisitClassWithString);
     Assertions.assertSame(1, visitor.countEndVisitClassWithString);
   }
-
+  
   @Test
   public void testArrayTypes() {
     ClassWithArray classWithArray = new ClassWithArray();
@@ -66,7 +66,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithArray);
     Assertions.assertSame(2, visitor.countVisitClassWithPrimitiveType);
     Assertions.assertSame(2, visitor.countEndVisitClassWithPrimitiveType);
-
+    
     ClassWith3DimArray classWith3DimArray = new ClassWith3DimArray();
     classWith3DimArray.threeDimArrayOfString = new ClassWithPrimitiveType[][][] { { {
         classWithPrimitiveType }, { classWithPrimitiveType } } };
@@ -85,7 +85,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(4, visitor.countEndVisitClassWithPrimitiveType);
     Assertions.assertSame(4, visitor.countVisitClassWithPrimitiveType);
   }
-
+  
   @Test
   public void testPojoClassTypes() {
     ClassWithPojoClassType classWithPojoClassType = new ClassWithPojoClassType();
@@ -105,7 +105,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countVisitClassWithPrimitiveType);
     Assertions.assertSame(2, visitor.countEndVisitClassWithPrimitiveType);
   }
-
+  
   @Test
   public void testListTypes() {
     ArrayList<Integer> oneDimArrayList = new ArrayList<>();
@@ -116,7 +116,7 @@ public class VisitorDecoratorResultTest {
     classWithList.accept(visitor);
     Assertions.assertSame(1, visitor.countVisitClassWithList);
     Assertions.assertSame(1, visitor.countEndVisitClassWithList);
-
+    
     ClassWith2DimList classWith2DimList = new ClassWith2DimList();
     classWith2DimList.my2dimList = twoDimArrayList;
     visitor = new Visitor();
@@ -124,7 +124,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countVisitClassWith2DimList);
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimList);
   }
-
+  
   @Test
   public void testSetTypes() {
     ClassWithSet classWithSet = new ClassWithSet();
@@ -136,7 +136,7 @@ public class VisitorDecoratorResultTest {
     classWithSet.accept(visitor);
     Assertions.assertSame(1, visitor.countVisitClassWithSet);
     Assertions.assertSame(1, visitor.countEndVisitClassWithSet);
-
+    
     ClassWith2DimSet classWith2DimSet = new ClassWith2DimSet();
     classWith2DimSet.my2dimSet = twoDimHashSet;
     visitor = new Visitor();
@@ -144,7 +144,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countVisitClassWith2DimSet);
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimSet);
   }
-
+  
   @Test
   public void testOptionalTypes() {
     ClassWithOptional classWithOptional = new ClassWithOptional();
@@ -153,13 +153,13 @@ public class VisitorDecoratorResultTest {
     classWithOptional.accept(visitor);
     Assertions.assertSame(1, visitor.countVisitClassWithOptional);
     Assertions.assertSame(1, visitor.countEndVisitClassWithOptional);
-
+    
     classWithOptional.myOptionalInteger2 = Optional.empty();
     visitor = new Visitor();
     classWithOptional.accept(visitor);
     Assertions.assertSame(1, visitor.countVisitClassWithOptional);
     Assertions.assertSame(1, visitor.countEndVisitClassWithOptional);
-
+    
     ClassWith2DimOptional classWith2DimOptional = new ClassWith2DimOptional();
     classWith2DimOptional.my2DimOptional = Optional.empty();
     classWith2DimOptional.my2DimOptional2 = Optional.of(Optional.empty());
@@ -167,7 +167,7 @@ public class VisitorDecoratorResultTest {
     classWith2DimOptional.accept(visitor);
     Assertions.assertSame(1, visitor.countVisitClassWith2DimOptional);
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimOptional);
-
+    
     classWith2DimOptional.my2DimOptional = Optional.of(Optional.of(new B()));
     visitor = new Visitor();
     classWith2DimOptional.accept(visitor);
@@ -175,7 +175,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimOptional);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     classWith2DimOptional.my2DimOptional2 = Optional.of(Optional.of(new B()));
     visitor = new Visitor();
     classWith2DimOptional.accept(visitor);
@@ -184,7 +184,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countVisitB);
     Assertions.assertSame(2, visitor.countEndVisitB);
   }
-
+  
   @Test
   public void testMapTypes() {
     ClassWithMap classWithMap = new ClassWithMap();
@@ -199,7 +199,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithMap);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     classWithMap.myMap2 = oneDimHashMap;
     visitor = new Visitor();
     classWithMap.accept(visitor);
@@ -207,7 +207,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithMap);
     Assertions.assertSame(2, visitor.countVisitB);
     Assertions.assertSame(2, visitor.countEndVisitB);
-
+    
     ClassWith2DimMap classWith2DimMap = new ClassWith2DimMap();
     classWith2DimMap.myMap = twoDimHashMap;
     visitor = new Visitor();
@@ -216,7 +216,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimMap);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     classWith2DimMap.myMap2 = twoDimHashMap;
     visitor = new Visitor();
     classWith2DimMap.accept(visitor);
@@ -225,7 +225,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countVisitB);
     Assertions.assertSame(2, visitor.countEndVisitB);
   }
-
+  
   @Test
   public void testAssociationTypes() {
     ClassWithAssociation classWithAssociation = new ClassWithAssociation();
@@ -238,7 +238,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithAssociation);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     classWithAssociation.owns2 = setOfB;
     visitor = new Visitor();
     classWithAssociation.accept(visitor);
@@ -247,7 +247,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countVisitB);
     Assertions.assertSame(2, visitor.countEndVisitB);
   }
-
+  
   @Test
   public void testCompositionTypes() {
     ClassWithComposition classWithComposition = new ClassWithComposition();
@@ -260,7 +260,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithComposition);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     classWithComposition.many = setOfB;
     visitor = new Visitor();
     classWithComposition.accept(visitor);
@@ -268,7 +268,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithComposition);
     Assertions.assertSame(2, visitor.countVisitB);
     Assertions.assertSame(2, visitor.countEndVisitB);
-
+    
     classWithComposition.opt = Optional.of(new B());
     visitor = new Visitor();
     classWithComposition.accept(visitor);
@@ -276,7 +276,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithComposition);
     Assertions.assertSame(3, visitor.countVisitB);
     Assertions.assertSame(3, visitor.countEndVisitB);
-
+    
     classWithComposition.opt = Optional.empty();
     visitor = new Visitor();
     classWithComposition.accept(visitor);
@@ -284,7 +284,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWithComposition);
     Assertions.assertSame(2, visitor.countVisitB);
     Assertions.assertSame(2, visitor.countEndVisitB);
-
+    
     classWithComposition.opt = Optional.of(new B());
     classWithComposition.opt2 = Optional.of(new B());
     classWithComposition.many2 = setOfB;
@@ -296,7 +296,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(6, visitor.countVisitB);
     Assertions.assertSame(6, visitor.countEndVisitB);
   }
-
+  
   @Test
   public void testCircularRelations() {
     ClassCircular1 classCircular1 = new ClassCircular1();
@@ -315,7 +315,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassCircular1);
     Assertions.assertSame(1, visitor.countVisitClassCircular2);
     Assertions.assertSame(1, visitor.countEndVisitClassCircular2);
-
+    
     ClassCircular1 classCircular12 = new ClassCircular1();
     ClassCircular2 classCircular22 = new ClassCircular2();
     classCircular1.myClassCircular2 = classCircular2;
@@ -329,7 +329,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countVisitClassCircular2);
     Assertions.assertSame(2, visitor.countEndVisitClassCircular2);
   }
-
+  
   @Test
   public void testAllTogether() {
     AllTogether allTogether = new AllTogether();
@@ -345,7 +345,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitAllTogether);
     Assertions.assertSame(1, visitor.countVisitClassWith2DimList);
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimList);
-
+    
     allTogether.owns = setOfB;
     visitor = new Visitor();
     allTogether.accept(visitor);
@@ -355,7 +355,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassWith2DimList);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     allTogether.oneClassWith2DimList = classWith2DimList;
     visitor = new Visitor();
     allTogether.accept(visitor);
@@ -365,7 +365,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countEndVisitClassWith2DimList);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     allTogether.optClassWith2DimList = Optional.empty();
     visitor = new Visitor();
     allTogether.accept(visitor);
@@ -375,7 +375,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(2, visitor.countEndVisitClassWith2DimList);
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
-
+    
     allTogether.optClassWith2DimList = Optional.of(classWith2DimList);
     visitor = new Visitor();
     allTogether.accept(visitor);
@@ -425,7 +425,7 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countVisitB);
     Assertions.assertSame(1, visitor.countEndVisitB);
   }
-
+  
   @Test
   public void testClassToBeTopped() {
     ClassToBeTopped classToBeTopped = new ClassToBeTopped();
@@ -437,5 +437,5 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countVisitClassWithPrimitiveType);
     Assertions.assertSame(1, visitor.countEndVisitClassWithPrimitiveType);
   }
-
+  
 }
