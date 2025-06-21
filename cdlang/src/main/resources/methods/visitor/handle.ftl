@@ -4,4 +4,5 @@ if (!getTraversedElements().contains(node)) {
   visit(node);
   traverse(node);
   endVisit(node);
+  removeTraversedElement(node);
 }

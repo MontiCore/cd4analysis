@@ -69,7 +69,6 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest {
     
     // TODO: Remove once non primitive types in CD files are supported and Set and List Setters are implemented
     Log.getFindings().clear();
-    
   }
   
   @Test
