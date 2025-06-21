@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Matches types iff they have the same qualified name. */
-public class MatchCDTypesByQName2Set implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypesByQName2Set implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   
   protected LinkedHashSet<ASTCDType> tgtSet;
   

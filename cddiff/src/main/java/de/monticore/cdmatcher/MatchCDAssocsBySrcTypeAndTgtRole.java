@@ -7,17 +7,19 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MatchCDAssocsBySrcTypeAndTgtRole implements MatchingStrategy<ASTCDAssociation> {
+public class MatchCDAssocsBySrcTypeAndTgtRole implements
+    ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
   
-  protected final MatchingStrategy<ASTCDType> typeMatcher;
+  protected final BooleanMatchingStrategy<ASTCDType> typeMatcher;
   protected final ASTCDCompilationUnit srcCD;
   protected final ASTCDCompilationUnit tgtCD;
   
-  public MatchCDAssocsBySrcTypeAndTgtRole(MatchingStrategy<ASTCDType> typeMatcher,
+  public MatchCDAssocsBySrcTypeAndTgtRole(BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
     this.srcCD = srcCD;

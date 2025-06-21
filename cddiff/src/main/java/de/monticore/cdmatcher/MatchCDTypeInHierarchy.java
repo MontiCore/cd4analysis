@@ -7,14 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class MatchCDTypeInHierarchy implements MatchingStrategy<ASTCDType> {
+public abstract class MatchCDTypeInHierarchy implements
+    ExternalCandidatesMatchingStrategy<ASTCDType> {
   
-  protected MatchingStrategy<ASTCDType> typeMatcher;
+  protected BooleanMatchingStrategy<ASTCDType> typeMatcher;
   protected final ASTCDCompilationUnit srcCD;
   protected final ASTCDCompilationUnit tgtCD;
   
-  public MatchCDTypeInHierarchy(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  public MatchCDTypeInHierarchy(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.typeMatcher = typeMatcher;
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;

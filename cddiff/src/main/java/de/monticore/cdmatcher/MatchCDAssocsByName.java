@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MatchCDAssocsByName implements MatchingStrategy<ASTCDAssociation> {
+public class MatchCDAssocsByName implements ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
   
   private final ASTCDCompilationUnit tgtCD;
   

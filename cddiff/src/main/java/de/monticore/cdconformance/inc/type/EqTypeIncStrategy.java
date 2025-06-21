@@ -4,11 +4,11 @@ package de.monticore.cdconformance.inc.type;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolTOP;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EqTypeIncStrategy implements MatchingStrategy<ASTCDType> {
+public class EqTypeIncStrategy implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   
   protected ASTCDCompilationUnit refCD;
   protected String mapping;

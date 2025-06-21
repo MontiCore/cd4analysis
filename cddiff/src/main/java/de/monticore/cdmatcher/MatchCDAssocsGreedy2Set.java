@@ -13,7 +13,7 @@ public class MatchCDAssocsGreedy2Set extends MatchCDAssocsGreedy {
   
   protected LinkedHashSet<ASTCDAssociation> tgtSet;
   
-  public MatchCDAssocsGreedy2Set(MatchingStrategy<ASTCDType> typeMatcher,
+  public MatchCDAssocsGreedy2Set(BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, Collection<ASTCDAssociation> tgtSet) {
     super(typeMatcher, srcCD, tgtCD);
     this.tgtSet = new LinkedHashSet<>(tgtSet);
