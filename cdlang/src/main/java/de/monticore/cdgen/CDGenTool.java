@@ -248,6 +248,7 @@ public class CDGenTool extends CDGeneratorTool {
       t.add4CDBasis(new CDBasisDefaultPackageTrafo());
       decorated.get().accept(t);
       // Post-Decorate: make methods in interfaces abstract
+      //this.makeMethodsInInterfacesAbstract(decorated.get());
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
       
