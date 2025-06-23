@@ -13,8 +13,8 @@ import static com.google.common.math.DoubleMath.mean;
 
 public class MatchCDTypeComposite implements MatchingStrategy<ASTCDType> {
   
-  Set<MatchingStrategy<ASTCDType>> strategies;
-  public CachedMatches cachedMatches;
+  private final Set<MatchingStrategy<ASTCDType>> strategies;
+  private final CachedMatches cachedMatches;
   
   public MatchCDTypeComposite(Set<MatchingStrategy<ASTCDType>> strategies,
       CachedMatches cachedMatches) {

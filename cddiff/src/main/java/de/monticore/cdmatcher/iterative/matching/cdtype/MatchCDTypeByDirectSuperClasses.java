@@ -9,8 +9,8 @@ import de.monticore.cdmatcher.iterative.matching.caching.StructureCache;
 public class MatchCDTypeByDirectSuperClasses extends
     MultipleMatchingStrategy<ASTCDType, ASTCDType> {
   
-  public CachedMatches cachedMatches;
-  public StructureCache structureCache;
+  private final CachedMatches cachedMatches;
+  private final StructureCache structureCache;
   
   public MatchCDTypeByDirectSuperClasses(CachedMatches cachedMatches,
       StructureCache structureCache) {

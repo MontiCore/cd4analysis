@@ -11,7 +11,7 @@ public class MatchCDTypeByDirectAssocs extends
     MultipleMatchingStrategy<ASTCDType, ASTCDAssociation> {
   
   private final MatchingStrategy<ASTCDAssociation> strategy;
-  public StructureCache structureCache;
+  private final StructureCache structureCache;
   
   public MatchCDTypeByDirectAssocs(MatchingStrategy<ASTCDAssociation> associationMatchingStrategy,
       StructureCache structureCache) {

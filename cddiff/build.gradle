@@ -15,15 +15,44 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
-    requireCapability("de.monticore:monticore-runtime-tests") }
+  testImplementation("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
+    requireCapability("de.monticore:monticore-runtime-tests")
+  }
   testImplementation "de.monticore:monticore-grammar-trafo:$mc_version"
 
   // dependencies for cddiff
   implementation("de.monticore.lang:od:$mc_version") {
-    exclude group: 'de.monticore.lang', module:'cd4analysis'
+    exclude group: 'de.monticore.lang', module: 'cd4analysis'
   }
   implementation "edu.mit.alloy:alloy:6"
+  implementation "com.github.vinhkhuc:jfasttext:0.5"
 }
 
+tasks.register('downloadVectors') {
+  description = "Downloads the FastText vectors, including subword vectors"
 
+  def resourceDir = "src/main/resources/"
+
+  def vectors = file("$resourceDir/crawl-300d-2M-subword.bin")
+  if (!vectors.exists()) {
+
+    def zipFile = file("$resourceDir/vectors.zip")
+    if(zipFile.exists()){
+      zipFile.delete()
+    }
+    zipFile.createNewFile()
+    println("Downloading vectors into ${zipFile.absolutePath}")
+    new URL("https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip").withInputStream { input -> zipFile.withOutputStream { it << input } }
+
+    copy {
+      from zipTree(zipFile)
+      into resourceDir
+    }
+    zipFile.delete()
+    file("$resourceDir/crawl-300d-2M-subword.vec").delete()
+    println("Vectors downloaded and extracted to $resourceDir")
+  } else {
+    println("Vectors already exist at $resourceDir")
+  }
+
+}
