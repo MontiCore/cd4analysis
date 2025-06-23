@@ -19,18 +19,19 @@ import org.gradle.api.tasks.OutputDirectory;
  * B.cd is allowed
  */
 public abstract class CDGenTask extends MCAllFilesTask {
+  
   public CDGenTask() {
     super("CDGenTask", null);
   }
-
+  
   @Optional
   @Input
   abstract ListProperty<String> getOptions();
-
+  
   @Optional
   @Input
   abstract Property<Boolean> getClass2MC();
-
+  
   /**
    * Whether CoCos should be checked, default is true
    *
@@ -39,7 +40,7 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Optional
   @Input
   abstract Property<Boolean> getCoCos();
-
+  
   /**
    * If present, the original symbol tables will be exported into this directory
    *
@@ -48,7 +49,7 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Optional
   @OutputDirectory
   abstract DirectoryProperty getOriginalSymbolOutput();
-
+  
   /**
    * If present, the decorated symbol tables will be exported into this directory
    *
@@ -57,7 +58,7 @@ public abstract class CDGenTask extends MCAllFilesTask {
   @Optional
   @OutputDirectory
   abstract DirectoryProperty getDecoratedSymbolOutput();
-
+  
   @Override
   protected List<String> createArgList(Function<Path, String> handlePath) {
     var list = super.createArgList(handlePath);
@@ -83,21 +84,19 @@ public abstract class CDGenTask extends MCAllFilesTask {
     }
     return list;
   }
-
+  
   @Override
   public void startGeneration(List<String> args, String progressName) {
     // Do not run for no inputs
-    if (this.getInput().getAsFileTree().getFiles().isEmpty()) return;
+    if (this.getInput().getAsFileTree().getFiles().isEmpty())
+      return;
     super.startGeneration(args, progressName);
   }
-
+  
   @Override
-  protected Class<? extends AToolAction> getToolAction() {
-    return CDGenAction.class;
-  }
-
+  protected Class<? extends AToolAction> getToolAction() { return CDGenAction.class; }
+  
   @Override
-  protected Consumer<String[]> getRunMethod() {
-    return CDGenToolInvoker::run;
-  }
+  protected Consumer<String[]> getRunMethod() { return CDGenToolInvoker::run; }
+  
 }

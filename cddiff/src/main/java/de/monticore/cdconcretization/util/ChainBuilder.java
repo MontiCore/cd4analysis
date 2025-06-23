@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.util;
 
 /**
@@ -6,10 +7,10 @@ package de.monticore.cdconcretization.util;
  * @param <T> the type of the elements in the chain
  */
 public class ChainBuilder<T extends IChainable<T>> {
-
+  
   private T head;
   private T tail;
-
+  
   /**
    * Adds an element to the chain
    *
@@ -19,13 +20,14 @@ public class ChainBuilder<T extends IChainable<T>> {
   public ChainBuilder<T> add(T completer) {
     if (head == null) {
       head = completer;
-    } else {
+    }
+    else {
       tail.setNext(completer);
     }
     tail = completer;
     return this;
   }
-
+  
   /**
    * Returns the head of the chain, i.e. the element that can be passed to client code to call the
    * whole chain.
@@ -35,4 +37,5 @@ public class ChainBuilder<T extends IChainable<T>> {
   public T build() {
     return head;
   }
+  
 }

@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Test;
 
 /** Testing that the models can be parsed. */
 public class ParserTest extends CDDiffTestBasis {
-
+  
   @Test
   public void test() {
-    ASTCDCompilationUnit cd1 =
-        parseModel("src/test/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+    ASTCDCompilationUnit cd1 = parseModel(
+        "src/test/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
     assertNotNull(cd1);
   }
+  
 }

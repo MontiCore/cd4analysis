@@ -1,28 +1,29 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EqNameAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
-
+public class EqNameAssocIncStrategy implements
+    ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
+  
   protected ASTCDCompilationUnit refCD;
   protected String mapping;
-
+  
   public EqNameAssocIncStrategy(ASTCDCompilationUnit refCD, String mapping) {
     this.refCD = refCD;
     this.mapping = mapping;
   }
-
+  
   @Override
   public List<ASTCDAssociation> getMatchedElements(ASTCDAssociation concrete) {
-    return refCD.getCDDefinition().getCDAssociationsList().stream()
-        .filter(assoc -> isMatched(concrete, assoc))
-        .collect(Collectors.toList());
+    return refCD.getCDDefinition().getCDAssociationsList().stream().filter(assoc -> isMatched(
+        concrete, assoc)).collect(Collectors.toList());
   }
-
+  
   @Override
   public boolean isMatched(ASTCDAssociation concrete, ASTCDAssociation ref) {
     if (concrete.isPresentName() && ref.isPresentName()) {
@@ -30,4 +31,5 @@ public class EqNameAssocIncStrategy implements MatchingStrategy<ASTCDAssociation
     }
     return false;
   }
+  
 }

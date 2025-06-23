@@ -23,86 +23,73 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /** Visitor to collect all CDMembers of specific types */
-public class CDMemberVisitor
-    implements CD4CodeVisitor2,
-        CDBasisVisitor2,
-        CDInterfaceAndEnumVisitor2,
-        CD4CodeBasisVisitor2,
-        CDAssociationVisitor2 {
+public class CDMemberVisitor implements CD4CodeVisitor2, CDBasisVisitor2,
+    CDInterfaceAndEnumVisitor2, CD4CodeBasisVisitor2, CDAssociationVisitor2 {
+  
   protected final Set<Options> options;
   protected final List<ASTCDMember> elements;
-
+  
   public CDMemberVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
     if (this.options.isEmpty()) {
       this.options.add(Options.ALL);
     }
-
+    
     this.elements = new ArrayList<>();
   }
-
-  public List<ASTCDMember> getCDMemberList() {
-    return elements;
-  }
-
+  
+  public List<ASTCDMember> getCDMemberList() { return elements; }
+  
   @Override
   public void visit(ASTCDAttribute node) {
-    if (options.contains(Options.ALL)
-        || options.contains(Options.FIELDS)
-        || options.contains(Options.ATTRIBUTES)) {
+    if (options.contains(Options.ALL) || options.contains(Options.FIELDS) || options.contains(
+        Options.ATTRIBUTES)) {
       elements.add(node);
     }
   }
-
+  
   @Override
   public void visit(ASTCDMethodSignature node) {
     if (options.contains(Options.ALL) || options.contains(Options.METHOD_SIGNATURES)) {
       elements.add(node);
     }
   }
-
+  
   @Override
   public void visit(ASTCDMethod node) {
     if (options.contains(Options.METHODS)) {
       elements.add(node);
     }
   }
-
+  
   @Override
   public void visit(ASTCDConstructor node) {
     if (options.contains(Options.CONSTRUCTORS)) {
       elements.add(node);
     }
   }
-
+  
   @Override
   public void visit(ASTCDRole node) {
-    if (options.contains(Options.ALL)
-        || options.contains(Options.FIELDS)
-        || options.contains(Options.ROLES)) {
+    if (options.contains(Options.ALL) || options.contains(Options.FIELDS) || options.contains(
+        Options.ROLES)) {
       elements.add(node);
     }
   }
-
+  
   @SuppressWarnings("unchecked")
   public <T extends ASTCDMember> List<T> getElements() {
     return elements.stream().map(e -> (T) e).collect(Collectors.toList());
   }
-
+  
   public enum Options {
-    ALL,
-    FIELDS,
-    ATTRIBUTES,
-    ROLES,
-    METHOD_SIGNATURES,
-    CONSTRUCTORS,
-    METHODS,
+    ALL, FIELDS, ATTRIBUTES, ROLES, METHOD_SIGNATURES, CONSTRUCTORS, METHODS,
   }
-
+  
   public void run(ASTCDBasisNode ast) { // TBD: How to achieve this without downcasts?
     CDBasisTraverser t = CDBasisMill.inheritanceTraverser();
     t.add4CDBasis(this);
-
+    
     if (t instanceof CD4CodeTraverser) {
       ((CD4CodeTraverser) t).add4CD4Code(this);
     }
@@ -120,4 +107,5 @@ public class CDMemberVisitor
     }
     ast.accept(t);
   }
+  
 }

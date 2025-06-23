@@ -6,19 +6,18 @@ import de.monticore.prettyprint.IndentPrinter;
 import java.util.Optional;
 
 public class PlantUMLCommentPrinter {
+  
   public static void printCommentToNote(ASTNode a, PlantUMLConfig config, IndentPrinter printer) {
     printCommentToNote(a, Optional.empty(), config, printer);
   }
-
-  public static void printCommentToNote(
-      ASTNode a,
+  
+  public static void printCommentToNote(ASTNode a,
       @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<String> connectTo,
-      PlantUMLConfig config,
-      IndentPrinter printer) {
+      PlantUMLConfig config, IndentPrinter printer) {
     if (!config.getShowComments()) {
       return;
     }
-
+    
     // TODO SVa: write comment (pre and post)
     /*
     note as N1
@@ -29,4 +28,5 @@ public class PlantUMLCommentPrinter {
     end note
      */
   }
+  
 }

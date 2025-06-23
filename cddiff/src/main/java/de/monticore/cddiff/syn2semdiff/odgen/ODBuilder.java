@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.odgen;
 
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
@@ -17,6 +18,7 @@ import java.util.*;
 
 /** This class is used to generate elements for object diagrams. */
 public class ODBuilder implements IODBuilder {
+  
   /**
    * Creates a new attribute with a given value. This is used only when a constant is added to an
    * enumeration.
@@ -30,15 +32,16 @@ public class ODBuilder implements IODBuilder {
   public ASTODAttribute buildAttr(String type, String name, String value) {
     Optional<ASTODAttribute> attribute = Optional.empty();
     try {
-      attribute =
-          OD4ReportMill.parser().parse_StringODAttribute(type + " " + name + "=" + value + ";");
-    } catch (Exception exception) {
+      attribute = OD4ReportMill.parser().parse_StringODAttribute(type + " " + name + "=" + value
+          + ";");
+    }
+    catch (Exception exception) {
       Log.error("Attributes couldn't be created");
     }
     assert Objects.requireNonNull(attribute).isPresent();
     return attribute.get();
   }
-
+  
   /**
    * Creates a new attribute without a value.
    *
@@ -51,13 +54,14 @@ public class ODBuilder implements IODBuilder {
     Optional<ASTODAttribute> attribute = Optional.empty();
     try {
       attribute = OD4ReportMill.parser().parse_StringODAttribute(type + " " + name + ";");
-    } catch (Exception exception) {
+    }
+    catch (Exception exception) {
       Log.error("Attributes couldn't be created");
     }
     assert Objects.requireNonNull(attribute).isPresent();
     return attribute.get();
   }
-
+  
   /**
    * Create a new ASTODObject.
    *
@@ -68,43 +72,26 @@ public class ODBuilder implements IODBuilder {
    * @return The created object.
    */
   @Override
-  public ASTODObject buildObj(
-      String id, String type, Collection<String> types, Collection<ASTODAttribute> attrs) {
-    ASTODNamedObjectBuilder objectBuilder =
-        ODBasisMill.oDNamedObjectBuilder()
-            .setModifier(ODBasisMill.modifierBuilder().build())
-            .setName(id);
-
+  public ASTODObject buildObj(String id, String type, Collection<String> types,
+      Collection<ASTODAttribute> attrs) {
+    ASTODNamedObjectBuilder objectBuilder = ODBasisMill.oDNamedObjectBuilder().setModifier(
+        ODBasisMill.modifierBuilder().build()).setName(id);
+    
     objectBuilder.setName(id);
-
-    objectBuilder.setModifier(
-        OD4ReportMill.modifierBuilder()
-            .setStereotype(
-                OD4ReportMill.stereotypeBuilder()
-                    .addValues(
-                        OD4ReportMill.stereoValueBuilder()
-                            .setName("instanceof")
-                            .setContent(String.join(", ", types))
-                            .setText(
-                                OD4ReportMill.stringLiteralBuilder()
-                                    .setSource(String.join(", ", types))
-                                    .build())
-                            .build())
-                    .build())
-            .build());
-
-    objectBuilder.setMCObjectType(
-        ODBasisMill.mCQualifiedTypeBuilder()
-            .setMCQualifiedName(
-                ODBasisMill.mCQualifiedNameBuilder()
-                    .setPartsList(Collections.singletonList(type))
-                    .build())
-            .build());
-
+    
+    objectBuilder.setModifier(OD4ReportMill.modifierBuilder().setStereotype(OD4ReportMill
+        .stereotypeBuilder().addValues(OD4ReportMill.stereoValueBuilder().setName("instanceof")
+            .setContent(String.join(", ", types)).setText(OD4ReportMill.stringLiteralBuilder()
+                .setSource(String.join(", ", types)).build()).build()).build()).build());
+    
+    objectBuilder.setMCObjectType(ODBasisMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+        ODBasisMill.mCQualifiedNameBuilder().setPartsList(Collections.singletonList(type)).build())
+        .build());
+    
     objectBuilder.setODAttributesList(new ArrayList<>(attrs));
     return objectBuilder.build();
   }
-
+  
   /**
    * Create a new link between two objects.
    *
@@ -116,44 +103,36 @@ public class ODBuilder implements IODBuilder {
    * @return The created link.
    */
   @Override
-  public ASTODLink buildLink(
-      ASTODObject srcObj,
-      String roleNameSrc,
-      String roleNameTgt,
-      ASTODObject trgObj,
-      AssocDirection direction) {
+  public ASTODLink buildLink(ASTODObject srcObj, String roleNameSrc, String roleNameTgt,
+      ASTODObject trgObj, AssocDirection direction) {
     ASTODLinkBuilder linkBuilder = ODLinkMill.oDLinkBuilder();
-
-    ASTODLinkLeftSideBuilder leftSideBuilder =
-        ODLinkMill.oDLinkLeftSideBuilder()
-            .setModifier(ODBasisMill.modifierBuilder().build())
-            .setODLinkQualifierAbsent()
-            .setRole(roleNameSrc);
-    ASTODLinkRightSideBuilder rightSideBuilder =
-        ODLinkMill.oDLinkRightSideBuilder()
-            .setModifier(ODBasisMill.modifierBuilder().build())
-            .setODLinkQualifierAbsent()
-            .setRole(roleNameTgt);
-
+    
+    ASTODLinkLeftSideBuilder leftSideBuilder = ODLinkMill.oDLinkLeftSideBuilder().setModifier(
+        ODBasisMill.modifierBuilder().build()).setODLinkQualifierAbsent().setRole(roleNameSrc);
+    ASTODLinkRightSideBuilder rightSideBuilder = ODLinkMill.oDLinkRightSideBuilder().setModifier(
+        ODBasisMill.modifierBuilder().build()).setODLinkQualifierAbsent().setRole(roleNameTgt);
+    
     ASTODNameBuilder nameBuilder = ODBasisMill.oDNameBuilder().setName(srcObj.getName());
     ASTODNameBuilder nameBuilder1 = ODBasisMill.oDNameBuilder().setName(trgObj.getName());
-
+    
     leftSideBuilder.setReferenceNamesList(Collections.singletonList(nameBuilder.build()));
     rightSideBuilder.setReferenceNamesList(Collections.singletonList(nameBuilder1.build()));
-
+    
     linkBuilder.setODLinkLeftSide(leftSideBuilder.build());
     linkBuilder.setODLinkRightSide(rightSideBuilder.build());
-
+    
     if (direction == AssocDirection.BiDirectional)
       linkBuilder.setODLinkDirection(ODLinkMill.oDBiDirBuilder().build()); // bidirektional
     else if (direction == AssocDirection.LeftToRight) {
       linkBuilder.setODLinkDirection(ODLinkMill.oDLeftToRightDirBuilder().build());
-    } else if (direction == AssocDirection.RightToLeft) {
+    }
+    else if (direction == AssocDirection.RightToLeft) {
       linkBuilder.setODLinkDirection(ODLinkMill.oDRightToLeftDirBuilder().build());
     }
-
+    
     linkBuilder.setLink(true); // nur links
-
+    
     return linkBuilder.build();
   }
+  
 }

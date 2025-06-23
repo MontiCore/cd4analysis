@@ -1,0 +1,20 @@
+import java.lang.String;
+
+classdiagram BuilderAndMillRef {
+  class DataClass {
+    // TODO use <<matchStructure>> here once it is implemented
+    any attribute;
+  }
+
+  <<forEach="DataClass">> class DataClassBuilder {
+    // Incarnations will have the same name as the referenced attribute incarnations by convention
+    // because the referenced attribute has the same name as the annotated attribute!
+    <<forEach="DataClass.attribute">> any attribute;
+    <<forEach="DataClass.attribute">> DataClassBuilder attribute(any attribute);
+    DataClass build();
+  }
+
+  class Mill {
+    <<forEach="DataClassBuilder">> DataClassBuilder dataClassBuilder();
+  }
+}

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
@@ -8,7 +9,8 @@ import de.monticore.cdconcretization.CompletionException;
  * side.
  */
 public interface IAssocSideCompleter {
-
+  
   void completeAssocSide(ASTCDAssocSide concreteAssocSide, ASTCDAssocSide referenceAssocSide)
       throws CompletionException;
+  
 }

@@ -14,12 +14,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 public class CDClassImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestBasis {
-
+  
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDClassImplementsOnlyInterfaces());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdinterfaceenum/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -28,12 +28,12 @@ public class CDClassImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestB
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDClassImplementsOnlyInterfaces());
-    final Optional<ASTCDCompilationUnit> optAST =
-        p.parse(getFilePath("cdinterfaceenum/cocos/CDClassImplementsOnlyInterfacesInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/CDClassImplementsOnlyInterfacesInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -43,7 +43,8 @@ public class CDClassImplementsOnlyInterfacesTest extends CDInterfaceAndEnumTestB
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDCF4"));
   }
-
+  
   @AfterEach
   public void after() {}
+  
 }

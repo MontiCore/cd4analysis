@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.cd;
 
 import static de.monticore.cdconformance.CDConfParameter.*;
@@ -16,25 +17,22 @@ import java.util.Set;
  * CD.
  */
 public class ConformanceCheckCompletionStep extends AbstractCDCompleter {
-
+  
   private final String mapping;
-
+  
   private final String errorMessage;
   private final CDConformanceChecker conformanceChecker;
-
-  public ConformanceCheckCompletionStep(
-      String mapping, Set<CDConfParameter> params, String errorMessage) {
+  
+  public ConformanceCheckCompletionStep(String mapping, Set<CDConfParameter> params,
+      String errorMessage) {
     this.mapping = mapping;
     this.errorMessage = errorMessage;
     this.conformanceChecker = new CDConformanceChecker(params);
   }
-
+  
   @Override
-  public void complete(
-      ASTCDCompilationUnit concreteCD,
-      ASTCDCompilationUnit referenceCD,
-      CDCompletionContext context)
-      throws CompletionException {
+  public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD,
+      CDCompletionContext context) throws CompletionException {
     if (!conformanceChecker.checkConformance(concreteCD, referenceCD, mapping)) {
       Log.warn("Conformance check failed");
       Log.warn("Concretized CD:");
@@ -43,4 +41,5 @@ public class ConformanceCheckCompletionStep extends AbstractCDCompleter {
     }
     super.complete(concreteCD, referenceCD, context);
   }
+  
 }

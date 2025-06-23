@@ -8,11 +8,11 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
  * class diagram.
  */
 public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
-
+  
   public CDBasisScopesGenitor() {
     super();
   }
-
+  
   @Override
   public void visit(ASTCDDefinition node) {
     final ICDBasisScope artifactScope = scopeStack.peekLast();
@@ -20,4 +20,5 @@ public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
     artifactScope.setName(node.getName());
     super.visit(node);
   }
+  
 }

@@ -10,21 +10,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CDPackageNameUnique implements CDBasisASTCDDefinitionCoCo {
+  
   @Override
   public void check(ASTCDDefinition node) {
-    final List<ASTCDPackage> packages =
-        node.streamCDElements()
-            .filter(e -> e instanceof ASTCDPackage)
-            .map(e -> (ASTCDPackage) e)
-            .collect(Collectors.toList());
-
-    CoCoHelper.findDuplicatesBy(packages, p -> p.getMCQualifiedName().getQName())
-        .forEach(
-            e ->
-                Log.error(
-                    String.format(
-                        "0xCDC0E: The package name \"%s\" is used several times. Packages need to have a unique name.",
-                        e.getMCQualifiedName().getQName()),
-                    e.get_SourcePositionStart()));
+    final List<ASTCDPackage> packages = node.streamCDElements().filter(
+        e -> e instanceof ASTCDPackage).map(e -> (ASTCDPackage) e).collect(Collectors.toList());
+    
+    CoCoHelper.findDuplicatesBy(packages, p -> p.getMCQualifiedName().getQName()).forEach(e -> Log
+        .error(String.format(
+            "0xCDC0E: The package name \"%s\" is used several times. Packages need to have a unique name.",
+            e.getMCQualifiedName().getQName()), e.get_SourcePositionStart()));
   }
+  
 }

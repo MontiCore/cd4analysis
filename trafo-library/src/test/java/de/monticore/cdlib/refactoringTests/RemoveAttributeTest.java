@@ -24,67 +24,67 @@ import org.junit.jupiter.api.Test;
  * @author Ahmed Diab
  */
 public class RemoveAttributeTest {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   @Test
   public void testRemoveAttribute() {
     FileUtility utility = new FileUtility("cdlib/RemoveAttribute");
     Remove refactoring = new Remove();
-
+    
     // Check input, namely there should be two overloading occurrences of
     // getUserName attribute
     ASTCDClass classA = utility.getAst().getCDDefinition().getCDClassesList().get(0);
     assertEquals("A", classA.getName());
     assertEquals(3, classA.getCDAttributeList().size());
-
+    
     ASTCDAttribute attributeFirst = classA.getCDAttributeList().get(0);
     assertEquals("a", attributeFirst.getName());
     assertEquals("int", attributeFirst.getMCType().printType());
     assertTrue(attributeFirst.getModifier().isPublic());
-
+    
     ASTCDAttribute attributeSecond = classA.getCDAttributeList().get(1);
     assertEquals("b", attributeSecond.getName());
     assertEquals("String", attributeSecond.getMCType().printType());
     assertTrue(attributeSecond.getModifier().isPrivate());
-
+    
     ASTCDAttribute attributeThird = classA.getCDAttributeList().get(2);
     assertEquals("c", attributeThird.getName());
     assertEquals("int", attributeThird.getMCType().printType());
-
+    
     // remove an attribute
     refactoring.removeAttribute("A", "b", utility.getAst());
-
+    
     // Check output, namely only the second attribute should be removed
     assertEquals(2, classA.getCDAttributeList().size());
-
+    
     attributeFirst = classA.getCDAttributeList().get(0);
     assertEquals("a", attributeFirst.getName());
     assertEquals("int", attributeFirst.getMCType().printType());
     assertTrue(attributeFirst.getModifier().isPublic());
-
+    
     attributeSecond = classA.getCDAttributeList().get(1);
     assertEquals("c", attributeThird.getName());
     assertEquals("int", attributeThird.getMCType().printType());
   }
+  
 }

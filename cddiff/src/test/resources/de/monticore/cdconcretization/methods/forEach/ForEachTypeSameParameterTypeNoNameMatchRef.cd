@@ -1,0 +1,7 @@
+classdiagram ForEachTypeSameParameterTypeNoNameMatchRef {
+  class Message;
+
+  class MessageBus {
+    <<forEach="Message">> void send(Message message);
+  }
+}

@@ -14,9 +14,9 @@ import de.monticore.cdlib.Refactoring.DeleteSuperclass;
  * @montitoolbox
  */
 public class CollapseHierarchy implements Refactoring {
-
+  
   public CollapseHierarchy() {}
-
+  
   /**
    * Move all attributes and methods to all subclasses and delete superclass
    *
@@ -26,34 +26,34 @@ public class CollapseHierarchy implements Refactoring {
    */
   public boolean collapseHierarchy(String classname, ASTCDCompilationUnit ast) {
     boolean success = false;
-
+    
     if (collapseHierarchyAttribute(classname, ast)) {
       while (collapseHierarchyAttribute(classname, ast))
         ;
       success = true;
     }
-
+    
     if (collapseHierarchyMethod(classname, ast)) {
       while (collapseHierarchyMethod(classname, ast))
         ;
       success = true;
     }
-
+    
     if (deleteInheritance(classname, ast)) {
       while (deleteInheritance(classname, ast))
         ;
       success = true;
     }
-
+    
     if (deleteSuperclass(classname, ast)) {
       while (deleteSuperclass(classname, ast))
         ;
       success = true;
     }
-
+    
     return success;
   }
-
+  
   /**
    * Move down all methods from the superclass to all subclasses
    *
@@ -63,17 +63,17 @@ public class CollapseHierarchy implements Refactoring {
    */
   public boolean collapseHierarchyMethod(String classname, ASTCDCompilationUnit ast) {
     boolean success = false;
-
+    
     CollapseHierarchyMethod collapseMethod = new CollapseHierarchyMethod(ast);
     collapseMethod.set_$superclass1(classname);
     if (collapseMethod.doPatternMatching()) {
       collapseMethod.doReplacement();
       success = true;
     }
-
+    
     return success;
   }
-
+  
   /**
    * Move down all attributes from the superclass to all subclasses
    *
@@ -92,7 +92,7 @@ public class CollapseHierarchy implements Refactoring {
     }
     return success;
   }
-
+  
   /**
    * Delete the given superclass
    *
@@ -110,7 +110,7 @@ public class CollapseHierarchy implements Refactoring {
     }
     return success;
   }
-
+  
   public boolean deleteInheritance(String classname, ASTCDCompilationUnit ast) {
     boolean success = false;
     DeleteInheritance delete = new DeleteInheritance(ast);
@@ -121,4 +121,5 @@ public class CollapseHierarchy implements Refactoring {
     }
     return success;
   }
+  
 }

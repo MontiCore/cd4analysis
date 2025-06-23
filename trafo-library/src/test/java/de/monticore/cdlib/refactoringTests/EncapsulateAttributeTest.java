@@ -27,291 +27,135 @@ import org.junit.jupiter.api.Test;
  * @author KE
  */
 public class EncapsulateAttributeTest {
-
+  
   @BeforeAll
   public static void disableFailQuick() {
     Log.enableFailQuick(false);
     CD4CodeMill.init();
-    ReportManager.ReportManagerFactory factory =
-        new ReportManager.ReportManagerFactory() {
-          @Override
-          public ReportManager provide(String modelName) {
-            ReportManager reports = new ReportManager("target/generated-sources");
-            TransformationReporter transformationReporter =
-                new TransformationReporter(
-                    "target/generated-sources",
-                    modelName,
-                    new ReportingRepository(new ASTNodeIdentHelper()));
-            reports.addReportEventHandler(transformationReporter);
-            return reports;
-          }
-        };
-
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      
+      @Override
+      public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+            "target/generated-sources", modelName, new ReportingRepository(
+                new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+      
+    };
+    
     Reporting.init("target/generated-sources", "target/reports", factory);
   }
-
+  
   /** Test method encapsulateAttributes */
   @Test
   public void testEncapsulateAttribute() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/AAttribute");
     EncapsulateAttributes refactoring = new EncapsulateAttributes();
-
+    
     // Encapsulate attributes
     assertTrue(refactoring.encapsulateAttributes(utility.getAst()));
-
+    
     // test if attributes are encapsulated
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(0)
-            .getModifier()
-            .isPrivate());
-    assertEquals(
-        "getA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(0))
-            .getName());
-    assertEquals(
-        "setA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(1))
-            .getName());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(0).getModifier().isPrivate());
+    assertEquals("getA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(0)).getName());
+    assertEquals("setA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(1)).getName());
   }
-
+  
   /** Test method encapsulateAttributes with two attributes */
   @Test
   public void testEncapsulateAttribute2() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/AAttribute2");
     EncapsulateAttributes refactoring = new EncapsulateAttributes();
-
+    
     // Encapsulate attributes
     assertTrue(refactoring.encapsulateAttributes(utility.getAst()));
-
+    
     // test if attribute are encapsulated
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(0)
-            .getModifier()
-            .isPrivate());
-    assertEquals(
-        "getA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(0))
-            .getName());
-    assertEquals(
-        "setA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(1))
-            .getName());
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(1)
-            .getModifier()
-            .isPrivate());
-    assertEquals(
-        "getB",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(2))
-            .getName());
-    assertEquals(
-        "setB",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(3))
-            .getName());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(0).getModifier().isPrivate());
+    assertEquals("getA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(0)).getName());
+    assertEquals("setA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(1)).getName());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(1).getModifier().isPrivate());
+    assertEquals("getB", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(2)).getName());
+    assertEquals("setB", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(3)).getName());
   }
-
+  
   /** Test method encapsulateAttributes with boolean */
   @Test
   public void testEncapsulateBoolean() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/AttributeBooleanAndInt");
     EncapsulateAttributes refactoring = new EncapsulateAttributes();
-
+    
     // Encapsulate attributes
     assertTrue(refactoring.encapsulateAttributes(utility.getAst()));
-
+    
     // test if attributes are encapsulated
-    assertEquals(
-        "getA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(0))
-            .getName());
-    assertEquals(
-        "setA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(1))
-            .getName());
-
-    assertEquals(
-        "isB",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(2))
-            .getName());
-    assertEquals(
-        "setB",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(3))
-            .getName());
+    assertEquals("getA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(0)).getName());
+    assertEquals("setA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(1)).getName());
+    
+    assertEquals("isB", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(2)).getName());
+    assertEquals("setB", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(3)).getName());
   }
-
+  
   /** Test method encapsulateAttributes for a concrete attribute */
   @Test
   public void testEncapsulateAttributesWithConcreteAttribute() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/AAttribute2");
     EncapsulateAttributes refactoring = new EncapsulateAttributes();
-
+    
     // Encapsulate attributes
     assertTrue(refactoring.encapsulateAttributes(Lists.newArrayList("a"), utility.getAst()));
-
+    
     // test if attributes are encapsulated
-    assertEquals(
-        "a",
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(0)
-            .getName());
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(0)
-            .getModifier()
-            .isPrivate());
-    assertEquals(
-        "getA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(0))
-            .getName());
-    assertEquals(
-        "setA",
-        ((ASTCDMethod)
-                utility
-                    .getAst()
-                    .getCDDefinition()
-                    .getCDClassesList()
-                    .get(0)
-                    .getCDMethodList()
-                    .get(1))
-            .getName());
-
+    assertEquals("a", utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDAttributeList().get(0).getName());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(0).getModifier().isPrivate());
+    assertEquals("getA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(0)).getName());
+    assertEquals("setA", ((ASTCDMethod) utility.getAst().getCDDefinition().getCDClassesList().get(0)
+        .getCDMethodList().get(1)).getName());
+    
     // test if attribute b was not changed
-    assertTrue(
-        utility
-            .getAst()
-            .getCDDefinition()
-            .getCDClassesList()
-            .get(0)
-            .getCDAttributeList()
-            .get(1)
-            .getModifier()
-            .isPublic());
+    assertTrue(utility.getAst().getCDDefinition().getCDClassesList().get(0).getCDAttributeList()
+        .get(1).getModifier().isPublic());
   }
-
+  
   /** Test method encapsulateAttributes counterexample */
   @Test
   public void testEncapsulateAttributeCounterExample() throws IOException {
-
+    
     FileUtility utility = new FileUtility("cdlib/APrivate");
     EncapsulateAttributes refactoring = new EncapsulateAttributes();
     ASTCDCompilationUnit oldAst = utility.getAst();
     System.out.println("Expect error: ");
-
+    
     // Encapsulate attributes
     assertFalse(refactoring.encapsulateAttributes(Lists.newArrayList("a"), utility.getAst()));
     assertEquals(oldAst, utility.getAst());
-
+    
     // Check, if ast with private attributes isn't changed
     assertTrue(refactoring.encapsulateAttributes(utility.getAst()));
     assertEquals(oldAst, utility.getAst());
   }
+  
 }

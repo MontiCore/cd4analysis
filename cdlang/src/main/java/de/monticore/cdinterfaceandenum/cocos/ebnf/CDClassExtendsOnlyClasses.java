@@ -12,29 +12,24 @@ import java.util.Optional;
 
 /** Checks that classes do only extend other classes. */
 public class CDClassExtendsOnlyClasses implements CDBasisASTCDClassCoCo {
-
+  
   // TODO SVa: provide printer for the types,
   //  so that a user can provide their own printer
-
+  
   @Override
   public void check(ASTCDClass clazz) {
     OOTypeSymbol symbol = clazz.getSymbol();
-
+    
     if (!clazz.isPresentCDExtendUsage()) {
       return;
     }
     final List<ASTMCObjectType> superclassList = clazz.getCDExtendUsage().getSuperclassList();
-    superclassList.stream()
-        .map(s -> symbol.getEnclosingScope().resolveOOType(s.printType()))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .filter(e -> !e.isIsClass())
-        .forEach(
-            e ->
-                Log.error(
-                    String.format(
-                        "0xCDC08: Class %s cannot extend %s %s. A class may only extend classes.",
-                        clazz.getName(), CDMill.cDTypeKindPrinter().print(e), e.getName()),
-                    clazz.get_SourcePositionStart()));
+    superclassList.stream().map(s -> symbol.getEnclosingScope().resolveOOType(s.printType()))
+        .filter(Optional::isPresent).map(Optional::get).filter(e -> !e.isIsClass()).forEach(e -> Log
+            .error(String.format(
+                "0xCDC08: Class %s cannot extend %s %s. A class may only extend classes.", clazz
+                    .getName(), CDMill.cDTypeKindPrinter().print(e), e.getName()), clazz
+                        .get_SourcePositionStart()));
   }
+  
 }

@@ -1,0 +1,9 @@
+classdiagram VisitorConc {
+
+	<<ref="Visitable">> interface Node;
+
+  // TODO remove incarnation mappings once <<matchStructure>> is implemented
+	<<ref="ConcreteVisitable">> class RootNode implements Node;
+	<<ref="ConcreteVisitable">> class InnerNode implements Node;
+	<<ref="ConcreteVisitable">> class LeafNode implements Node;
+}

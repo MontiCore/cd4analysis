@@ -20,13 +20,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class AssocStrategiesTest extends CD2SMTAbstractTest {
-
+  
   @BeforeEach
   public void setup() {
     Log.init();
+    CD4CodeMill.reset();
     CD4CodeMill.init();
   }
-
+  
   @Test
   public void testOptionalCard() {
     Map<String, String> cfg = new HashMap<>();
@@ -43,26 +44,15 @@ public class AssocStrategiesTest extends CD2SMTAbstractTest {
     Expr<? extends Sort> motor1 = ctx.mkConst("motor1", Motor);
     Expr<? extends Sort> motor2 = ctx.mkConst("motor2", Motor);
     Expr<? extends Sort> car = ctx.mkConst("car", Car);
-
-    BoolExpr two =
-        ctx.mkAnd(
-            ctx.mkNot(ctx.mkEq(motor1, motor2)),
-            cd2SMTGenerator.evaluateLink(
-                ast.getCDDefinition().getCDAssociationsList().get(0),
-                ClassCar,
-                MotorClass,
-                car,
-                motor2),
-            cd2SMTGenerator.evaluateLink(
-                ast.getCDDefinition().getCDAssociationsList().get(0),
-                ClassCar,
-                MotorClass,
-                car,
-                motor1));
-
-    Solver solver =
-        cd2SMTGenerator.makeSolver(
-            List.of(IdentifiableBoolExpr.buildIdentifiable(two, null, Optional.of("Two_Motor"))));
+    
+    BoolExpr two = ctx.mkAnd(ctx.mkNot(ctx.mkEq(motor1, motor2)), cd2SMTGenerator.evaluateLink(ast
+        .getCDDefinition().getCDAssociationsList().get(0), ClassCar, MotorClass, car, motor2),
+        cd2SMTGenerator.evaluateLink(ast.getCDDefinition().getCDAssociationsList().get(0), ClassCar,
+            MotorClass, car, motor1));
+    
+    Solver solver = cd2SMTGenerator.makeSolver(List.of(IdentifiableBoolExpr.buildIdentifiable(two,
+        null, Optional.of("Two_Motor"))));
     assertEquals(Status.UNSATISFIABLE, solver.check());
   }
+  
 }

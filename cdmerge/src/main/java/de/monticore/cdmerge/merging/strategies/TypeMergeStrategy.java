@@ -9,7 +9,7 @@ import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 
 /** Interface for algorithms which merge two types */
 public interface TypeMergeStrategy {
-
+  
   /**
    * Merges the two classes into one
    *
@@ -17,9 +17,9 @@ public interface TypeMergeStrategy {
    * @param class2 - input class 2
    * @return - the merged class
    */
-  ASTCDClass merge(
-      ASTCDClass class1, ASTCDClass class2, ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult);
-
+  ASTCDClass merge(ASTCDClass class1, ASTCDClass class2,
+      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult);
+  
   /**
    * Merges the two enums into one
    *
@@ -28,7 +28,7 @@ public interface TypeMergeStrategy {
    * @return - the merged enum
    */
   ASTCDEnum merge(ASTCDEnum enum1, ASTCDEnum enum2);
-
+  
   /**
    * Merges the two interfaces into one
    *
@@ -37,7 +37,7 @@ public interface TypeMergeStrategy {
    * @return - the merged interfaces
    */
   ASTCDInterface merge(ASTCDInterface left, ASTCDInterface right);
-
+  
   /**
    * Returns true if this strategy offers support to merge heterogeneous types, i.e. classes with
    * interfaces Thus returns true if the operation {@link mergeClassWithInterface} is implemented
@@ -45,7 +45,7 @@ public interface TypeMergeStrategy {
   default boolean canMergeHeterogeneousTypes() {
     return false;
   }
-
+  
   /**
    * Executes a heterogeneous merge of class and interface
    *
@@ -57,7 +57,7 @@ public interface TypeMergeStrategy {
     throw new UnsupportedOperationException(
         "This Strategy does not support heterogeneous type merges");
   }
-
+  
   /**
    * Executes a heterogeneous merge of class and interface
    *
@@ -69,7 +69,7 @@ public interface TypeMergeStrategy {
     throw new UnsupportedOperationException(
         "This Strategy does not support heterogeneous type merges");
   }
-
+  
   /**
    * Executes a heterogeneous merge of class and enum
    *
@@ -81,4 +81,5 @@ public interface TypeMergeStrategy {
     throw new UnsupportedOperationException(
         "This Strategy does not support heterogeneous type merges");
   }
+  
 }

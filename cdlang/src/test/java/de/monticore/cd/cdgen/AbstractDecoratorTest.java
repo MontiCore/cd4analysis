@@ -26,10 +26,10 @@ import org.junit.jupiter.api.BeforeEach;
  * the {@link #doTest(ASTCDCompilationUnit)} with your CD.
  */
 public abstract class AbstractDecoratorTest {
-
+  
   protected File outputDir;
   protected CDGenTool tool;
-
+  
   @BeforeEach
   public void init() {
     LogStub.initPlusLog();
@@ -38,12 +38,12 @@ public abstract class AbstractDecoratorTest {
     tool = new CDGenTool();
     this.outputDir = new File("target/cdGenOutTest/" + getClass().getSimpleName());
   }
-
+  
   @AfterEach
   public void finish() {
     Assertions.assertEquals(0, LogStub.getFindingsCount());
   }
-
+  
   /**
    * Initialize the {@link DecoratorConfig}, e.g. using {@link
    * DecoratorConfig#withDecorator(IDecorator)}
@@ -52,89 +52,76 @@ public abstract class AbstractDecoratorTest {
    * @param config the {@link DecoratorConfig} used for decorating the CD
    * @param setup the {@link GeneratorSetup} used for generating the decorated CD
    */
-  public abstract void initializeDecConf(
-      GlobalExtensionManagement glex, DecoratorConfig config, GeneratorSetup setup);
-
-  protected List<File> getAdditionalTemplatesPath() {
-    return new ArrayList<>();
-  }
-
-  protected Optional<MCPath> getHandWrittenPath() {
-    return Optional.empty();
-  }
-
+  public abstract void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
+      GeneratorSetup setup);
+  
+  protected List<File> getAdditionalTemplatesPath() { return new ArrayList<>(); }
+  
+  protected Optional<MCPath> getHandWrittenPath() { return Optional.empty(); }
+  
   protected boolean withClass2MC() {
     return false;
   }
-
+  
   public TestResult doTest(ASTCDCompilationUnit cd) {
     outputDir.mkdirs();
-
+    
     tool.trafoBeforeSymtab(Collections.singletonList(cd));
-
+    
     final boolean class2mc = this.withClass2MC();
     tool.initializeSymbolTable(class2mc);
-
+    
     // Create ST
     tool.createSymbolTable(cd);
-
+    
     // Complete ST
     tool.completeSymbolTable(cd);
-
+    
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
-    GeneratorSetup generatorSetup =
-        tool.newConfiguredGeneratorSetup(
-            getAdditionalTemplatesPath(),
-            getHandWrittenPath(),
-            this.outputDir.getAbsolutePath(),
-            glex);
-
+    GeneratorSetup generatorSetup = tool.newConfiguredGeneratorSetup(getAdditionalTemplatesPath(),
+        getHandWrittenPath(), this.outputDir.getAbsolutePath(), glex);
+    
     List<TestResult> results = new ArrayList<>();
-
+    
     // Finally, invoke the decorating generator
-    tool.decorateAndGenerate(
-        glex,
+    tool.decorateAndGenerate(glex,
         // Initialize the decorator config
-        decoratorConfig -> initializeDecConf(glex, decoratorConfig, generatorSetup),
-        generatorSetup,
+        decoratorConfig -> initializeDecConf(glex, decoratorConfig, generatorSetup), generatorSetup,
         () -> {
           // Just before decorating:
           // Prepare the global scope for decorated symbol table
           tool.initDecoratedGlobalScope(class2mc);
-        },
-        decorated -> {
+        }, decorated -> {
           // After each decoration, but before generation
           // If required, we also output the symbol table of the *decorated* AST
           var decoratedScope = tool.createSymbolTable(decorated, true);
-
+          
           // Complete the symbol-table (symbol table creation phase 2)
           tool.completeSymbolTable(decorated);
-
+          
           results.add(new TestResult(decorated, decoratedScope));
-        },
-        List.of(cd));
-
+        }, List.of(cd));
+    
     System.out.println("Wrote CDGenTest results to " + outputDir.getAbsolutePath());
-
+    
     Assertions.assertFalse(results.isEmpty(), "Did not decorate any CD");
     return results.get(0);
   }
-
+  
   public static class TestResult {
+    
     private final ASTCDCompilationUnit decoratedCD;
     private final ICD4CodeArtifactScope decoratedScope;
-
+    
     TestResult(ASTCDCompilationUnit decoratedCD, ICD4CodeArtifactScope decoratedScope) {
       this.decoratedCD = decoratedCD;
       this.decoratedScope = decoratedScope;
     }
-
-    public ASTCDCompilationUnit getDecoratedCD() {
-      return decoratedCD;
-    }
-
-    public ICD4CodeArtifactScope getDecoratedScope() {
-      return decoratedScope;
-    }
+    
+    public ASTCDCompilationUnit getDecoratedCD() { return decoratedCD; }
+    
+    public ICD4CodeArtifactScope getDecoratedScope() { return decoratedScope; }
+    
   }
+  
 }

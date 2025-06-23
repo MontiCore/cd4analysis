@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.cd.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -8,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
  * association.
  */
 public interface IAssocInCDCompleter {
-
+  
   void completeAssocInCD(ASTCDDefinition concreteCD, ASTCDAssociation referenceAssoc);
+  
 }

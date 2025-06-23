@@ -22,26 +22,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OptionalMutatorDecoratorTest {
-
+  
   private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
-
+  
   private List<ASTCDMethod> methods;
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
     ASTMCType optionalType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute =
-        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optionalType, "a");
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(),
+        optionalType, "a");
     OptionalMutatorDecorator optionalMutatorDecorator = new OptionalMutatorDecorator(glex);
     this.methods = optionalMutatorDecorator.decorate(attribute);
   }
-
+  
   @Test
   public void testMethods() {
     assertEquals(2, methods.size());
   }
-
+  
   @Test
   public void testGetMethod() {
     ASTCDMethod method = getMethodBy("setA", this.methods);
@@ -52,7 +52,7 @@ public class OptionalMutatorDecoratorTest {
     assertDeepEquals(String.class, parameter.getMCType());
     assertEquals("a", parameter.getName());
   }
-
+  
   @Test
   public void testIsPresentMethod() {
     ASTCDMethod method = getMethodBy("setAAbsent", this.methods);
@@ -60,4 +60,5 @@ public class OptionalMutatorDecoratorTest {
     assertDeepEquals(PUBLIC, method.getModifier());
     assertTrue(method.getCDParameterList().isEmpty());
   }
+  
 }
