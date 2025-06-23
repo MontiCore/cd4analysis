@@ -32,8 +32,8 @@ public class CDClassImplementsNotCyclicTest extends CDInterfaceAndEnumTestBasis 
   @Test
   public void testValidDiamond() throws IOException {
     coCoChecker.addCoCo(new CDClassImplementsNotCyclic());
-    final Optional<ASTCDCompilationUnit> optAST =
-      p.parse(getFilePath("cdinterfaceenum/cocos/MixedDiamondInheritance.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath(
+        "cdinterfaceenum/cocos/MixedDiamondInheritance.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -42,7 +42,7 @@ public class CDClassImplementsNotCyclicTest extends CDInterfaceAndEnumTestBasis 
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
-
+  
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDClassImplementsNotCyclic());
