@@ -7,19 +7,24 @@ import de.monticore.cdbasis._cocos.CDBasisASTCDClassCoCo;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-/** Checks that there are no cycles in the the class hierarchy. */
+/**
+ * Checks that there are no cycles in the the class hierarchy.
+ */
 public class CDClassImplementsNotCyclic implements CDBasisASTCDClassCoCo {
 
   // TODO SVa: braucht man das überhaupt, wird das nicht schon im cycle von interfaces geprüft?
 
-  /** @param node class to check. */
+  /**
+   * @param node class to check.
+   */
   @Override
   public void check(ASTCDClass node) {
-      findCycle(node.getSymbol(), new HashSet<>(), new HashSet<>());
+    findCycle(node.getSymbol(), new HashSet<>(), new HashSet<>());
   }
 
   /**

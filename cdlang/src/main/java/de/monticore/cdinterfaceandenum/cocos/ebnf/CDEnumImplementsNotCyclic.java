@@ -7,11 +7,14 @@ import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
 
-/** Checks that there are no inheritance cycles. */
+/**
+ * Checks that there are no inheritance cycles.
+ */
 public class CDEnumImplementsNotCyclic implements CDInterfaceAndEnumASTCDEnumCoCo {
 
   @Override
