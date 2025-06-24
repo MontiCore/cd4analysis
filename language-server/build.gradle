@@ -70,3 +70,4 @@ compileJava.dependsOn autoconfigure
 
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsJar)
 tasks.generateCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.grammarsForVariantJar)
+tasks.packCD4AnalysisLanguageServer.dependsOn(project(":cdlang").tasks.jar)

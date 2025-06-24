@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "6.0.0"
+  id "com.github.johnrengelman.shadow" version "$shadow_plugin_version"
 }
 
 description = "CD4Analysis: Tool"
@@ -58,15 +58,14 @@ task toolJar(type: Jar) {
 }
 
 
-apply plugin: "com.github.johnrengelman.shadow"
-  shadowJar {
-    configurations = [project.configurations.implementationWithoutExtras]
-    manifest {
-      attributes "Main-Class": "de.monticore.CD4CodeTool"
-    }
-    archiveFileName = "MCCD.jar"
-    archiveClassifier = "mc-tool"
+shadowJar {
+  configurations = [project.configurations.implementationWithoutExtras]
+  manifest {
+    attributes "Main-Class": "de.monticore.CD4CodeTool"
   }
+  archiveFileName = "MCCD.jar"
+  archiveClassifier = "mc-tool"
+}
 assemble.dependsOn(shadowJar)
 
 
