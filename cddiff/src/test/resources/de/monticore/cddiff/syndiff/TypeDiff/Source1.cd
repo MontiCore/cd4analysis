@@ -6,6 +6,11 @@ classdiagram Source1 {
   class A {
     int a;
     String d;
+    / String der;
+  }
+
+  class D extends A {
+    String i;
   }
 
   class C{

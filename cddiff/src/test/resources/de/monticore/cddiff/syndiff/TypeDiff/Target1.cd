@@ -5,10 +5,12 @@ classdiagram Target1 {
   enum MatchedEnum{k,l;}
   class A{
     double a;
+    String i;
     String f;
+    String der;
   }
 
-  class D{}
+  class D extends A {}
 
   class K{
     int j;

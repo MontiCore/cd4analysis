@@ -1,64 +1,40 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiffTestBasis;
-import java.io.IOException;
-import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class MemberDiffTest extends CDDiffTestBasis {
-  
-  /*--------------------------------------------------------------------*/
-  // Syntax Diff Tests
-  
-  public static final String dir = "src/test/resources/de/monticore/cddiff/syndiff/MemberDiff/";
-  protected ASTCDCompilationUnit tgt;
-  protected ASTCDCompilationUnit src;
-  
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MemberDiffTest extends SynDiffTestBasis {
+
+  @BeforeAll
+  public static void init() {
+    SynDiffTestBasis.dir = "src/test/resources/de/monticore/cddiff/syndiff/MemberDiff/";
+  }
+
   @Test
   public void testMember1() {
     parseModels("Source1.cd", "Target1.cd");
-    
+
     ASTCDClass cNew = CDTestHelper.getClass("A", src.getCDDefinition());
     ASTCDClass cOld = CDTestHelper.getClass("A", tgt.getCDDefinition());
-    
+
+    Assertions.assertNotNull(cNew);
+    Assertions.assertNotNull(cOld);
+
     ASTNode attributeNew = CDTestHelper.getAttribute(cNew, "a");
     ASTNode attributeOld = CDTestHelper.getAttribute(cOld, "a");
-    
+
     CDMemberDiff attrDiff = new CDMemberDiff(attributeNew, attributeOld);
-    System.out.println(attrDiff.printSrcMember());
-    System.out.println(attrDiff.printTgtMember());
-    System.out.println(attrDiff.getBaseDiff());
+
+    assertEquals(new HashSet<>(attrDiff.getBaseDiff()), Set.of(DiffTypes.CHANGED_ATTRIBUTE_TYPE, DiffTypes.CHANGED_ATTRIBUTE_MODIFIER));
   }
-  
-  public void parseModels(String concrete, String ref) {
-    try {
-      Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
-          + concrete);
-      Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
-      if (src.isPresent() && tgt.isPresent()) {
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(src.get());
-        CD4CodeMill.scopesGenitorDelegator().createFromAST(tgt.get());
-        src.get().accept(new CD4CodeSymbolTableCompleter(src.get()).getTraverser());
-        tgt.get().accept(new CD4CodeSymbolTableCompleter(tgt.get()).getTraverser());
-        this.tgt = tgt.get();
-        this.src = src.get();
-      }
-      else {
-        fail("Could not parse CDs.");
-      }
-      
-    }
-    catch (IOException e) {
-      fail(e.getMessage());
-    }
-  }
-  
+
 }
