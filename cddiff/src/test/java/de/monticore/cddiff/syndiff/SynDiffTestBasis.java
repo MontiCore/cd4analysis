@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class SynDiffTestBasis {
-
+  
   @BeforeEach
   public void setup() {
     LogStub.init();
@@ -29,15 +30,15 @@ public abstract class SynDiffTestBasis {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
-
+  
   public static String dir;
   protected ASTCDCompilationUnit tgt;
   protected ASTCDCompilationUnit src;
-
+  
   public void parseModels(String concrete, String ref) {
     try {
       Optional<ASTCDCompilationUnit> src = CD4CodeMill.parser().parseCDCompilationUnit(dir
-        + concrete);
+          + concrete);
       Optional<ASTCDCompilationUnit> tgt = CD4CodeMill.parser().parseCDCompilationUnit(dir + ref);
       if (src.isPresent() && tgt.isPresent()) {
         (new CD4AnalysisAfterParseTrafo()).transform(src.get());
@@ -50,22 +51,19 @@ public abstract class SynDiffTestBasis {
         this.src = src.get();
       }
       else {
-        fail(String.format("Parsing src: '%s', tgt: '%s'.", src.isPresent() ? "success" : "failure", tgt.isPresent() ? "success" : "failure"));
+        fail(String.format("Parsing src: '%s', tgt: '%s'.", src.isPresent() ? "success" : "failure",
+            tgt.isPresent() ? "success" : "failure"));
       }
-
+      
     }
     catch (IOException e) {
       fail(e.getMessage());
     }
   }
-
+  
   public Map<DiffTypes, Long> getDiffTypesCount(CDSyntaxDiff synDiff) {
-    return synDiff.getBaseDiff().stream().collect(
-      Collectors.groupingBy(
-        Function.identity(),
-        Collectors.counting()
-      )
-    );
+    return synDiff.getBaseDiff().stream().collect(Collectors.groupingBy(Function.identity(),
+        Collectors.counting()));
   }
-
+  
 }
