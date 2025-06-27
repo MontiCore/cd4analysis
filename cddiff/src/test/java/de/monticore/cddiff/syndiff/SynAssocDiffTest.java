@@ -23,12 +23,14 @@ public class SynAssocDiffTest extends SynDiffTestBasis {
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
 
-    assertEquals(1, synDiff.getChangedAssocs().size());
-    assertEquals(1, synDiff.getAddedAssocs().size());
-    assertEquals(1, synDiff.getDeletedAssocs().size());
-    assertEquals(1, synDiff.getAddedClasses().size());
-    assertEquals(3, synDiff.getMatchedClasses().size());
-    assertEquals(1, synDiff.getMatchedAssocs().size());
+    new AssertSynDiff(synDiff)
+      .assertAddedClasses(1)
+      .assertMatchedClasses(3)
+      .assertAddedAssocs(1)
+      .assertDeletedAssocs(1)
+      .assertChangedAssocs(1)
+      .assertMatchedAssocs(1)
+      .assertRemainingEmpty();
 
     // Check that no other diffs exist
     Map<DiffTypes, Long> expectedDiffTypes = new HashMap<>();
@@ -47,9 +49,11 @@ public class SynAssocDiffTest extends SynDiffTestBasis {
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
 
-    assertEquals(1, synDiff.getChangedAssocs().size());
-    assertEquals(1, synDiff.getMatchedAssocs().size());
-    assertEquals(3, synDiff.getMatchedClasses().size());
+    new AssertSynDiff(synDiff)
+      .assertMatchedClasses(3)
+      .assertChangedAssocs(1)
+      .assertMatchedAssocs(1)
+      .assertRemainingEmpty();
 
     Map<DiffTypes, Long> expectedDiffTypes = new HashMap<>();
     expectedDiffTypes.put(DiffTypes.CHANGED_ASSOCIATION_CARDINALITY, 1L);
@@ -64,10 +68,12 @@ public class SynAssocDiffTest extends SynDiffTestBasis {
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
 
-    assertEquals(2, synDiff.getChangedTypes().size());
-    assertEquals(3, synDiff.getChangedAssocs().size());
-    assertEquals(3, synDiff.getMatchedAssocs().size());
-    assertEquals(4, synDiff.getMatchedClasses().size());
+    new AssertSynDiff(synDiff)
+      .assertMatchedClasses(4)
+      .assertChangedTypes(2)
+      .assertChangedAssocs(3)
+      .assertMatchedAssocs(3)
+      .assertRemainingEmpty();
 
     Map<DiffTypes, Long> expectedDiffTypes = new HashMap<>();
     expectedDiffTypes.put(DiffTypes.CHANGED_ASSOCIATION_CARDINALITY, 3L);
@@ -85,10 +91,11 @@ public class SynAssocDiffTest extends SynDiffTestBasis {
 
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
 
-    assertEquals(4, synDiff.getAddedAssocs().size());
-    assertEquals(4, synDiff.getDeletedAssocs().size());
-    assertEquals(0, synDiff.getMatchedAssocs().size());
-    assertEquals(4, synDiff.getMatchedClasses().size());
+    new AssertSynDiff(synDiff)
+      .assertMatchedClasses(4)
+      .assertAddedAssocs(4)
+      .assertDeletedAssocs(4)
+      .assertRemainingEmpty();
 
     Map<DiffTypes, Long> expectedDiffTypes = new HashMap<>();
     expectedDiffTypes.put(DiffTypes.ADDED_ASSOCIATION, 1L);
@@ -102,9 +109,11 @@ public class SynAssocDiffTest extends SynDiffTestBasis {
     parseModels("Source5.cd", "Target5.cd");
     CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
 
-    assertEquals(1, synDiff.getChangedAssocs().size());
-    assertEquals(1, synDiff.getMatchedAssocs().size());
-    assertEquals(2, synDiff.getMatchedClasses().size());
+    new AssertSynDiff(synDiff)
+      .assertMatchedClasses(2)
+      .assertChangedAssocs(1)
+      .assertMatchedAssocs(1)
+      .assertRemainingEmpty();
 
     Map<DiffTypes, Long> expectedDiffTypes = new HashMap<>();
     expectedDiffTypes.put(DiffTypes.CHANGED_ASSOCIATION_CARDINALITY, 1L);

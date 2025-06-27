@@ -1,0 +1,588 @@
+
+import java.lang.*;
+
+classdiagram CD1 {
+
+  enum G1 {e11, e12, e13;}
+
+  abstract class A1 {
+    String s;
+  }
+
+  class B1 extends A1 {
+    E1 e;
+  }
+
+  class C1 {
+    B1 b1;
+  }
+
+  class D1 extends A1 {
+    String s;
+  }
+
+  class E1 {
+    Double d;
+  }
+
+  association [1] A1 <-> E1 [1..*];
+  association [1..*] B1 -> C1 [0..1];
+  association [1] C1 <-> D1 [1..*];
+  association [*] E1 <- C1 [0..1];
+  association [1] E1 -> D1 [1..*];
+
+
+  enum G2 {e11, e12, e13;}
+
+  abstract class A2 {
+    String s;
+  }
+
+  class B2 extends A2 {
+    E2 e;
+  }
+
+  class C2 {
+    B2 b2;
+  }
+
+  class D2 extends A2 {
+    String s;
+  }
+
+  class E2 {
+    Double d;
+  }
+
+  association [1] A2 <-> E2 [1..*];
+  association [1..*] B2 -> C2 [0..1];
+  association [1] C2 <-> D2 [1..*];
+  association [*] E2 <- C2 [0..1];
+  association [1] E2 -> D2 [1..*];
+
+
+  enum G3 {e11, e12, e13;}
+
+  abstract class A3 {
+    String s;
+  }
+
+  class B3 extends A3 {
+    E3 e;
+  }
+
+  class C3 {
+    B3 b3;
+  }
+
+  class D3 extends A3 {
+    String s;
+  }
+
+  class E3 {
+    Double d;
+  }
+
+  association [1] A3 <-> E3 [1..*];
+  association [1..*] B3 -> C3 [0..1];
+  association [1] C3 <-> D3 [1..*];
+  association [*] E3 <- C3 [0..1];
+  association [1] E3 -> D3 [1..*];
+
+
+  enum G4 {e11, e12, e13;}
+
+  abstract class A4 {
+    String s;
+  }
+
+  class B4 extends A4 {
+    E4 e;
+  }
+
+  class C4 {
+    B4 b4;
+  }
+
+  class D4 extends A4 {
+    String s;
+  }
+
+  class E4 {
+    Double d;
+  }
+
+  association [1] A4 <-> E4 [1..*];
+  association [1..*] B4 -> C4 [0..1];
+  association [1] C4 <-> D4 [1..*];
+  association [*] E4 <- C4 [0..1];
+  association [1] E4 -> D4 [1..*];
+
+
+  enum G5 {e11, e12, e13;}
+
+  abstract class A5 {
+    String s;
+  }
+
+  class B5 extends A5 {
+    E5 e;
+  }
+
+  class C5 {
+    B5 b5;
+  }
+
+  class D5 extends A5 {
+    String s;
+  }
+
+  class E5 {
+    Double d;
+  }
+
+  association [1] A5 <-> E5 [1..*];
+  association [1..*] B5 -> C5 [0..1];
+  association [1] C5 <-> D5 [1..*];
+  association [*] E5 <- C5 [0..1];
+  association [1] E5 -> D5 [1..*];
+
+
+  enum G6 {e11, e12, e13;}
+
+  abstract class A6 {
+    String s;
+  }
+
+  class B6 extends A6 {
+    E6 e;
+  }
+
+  class C6 {
+    B6 b6;
+  }
+
+  class D6 extends A6 {
+    String s;
+  }
+
+  class E6 {
+    Double d;
+  }
+
+  association [1] A6 <-> E6 [1..*];
+  association [1..*] B6 -> C6 [0..1];
+  association [1] C6 <-> D6 [1..*];
+  association [*] E6 <- C6 [0..1];
+  association [1] E6 -> D6 [1..*];
+
+
+  enum G7 {e11, e12, e13;}
+
+  abstract class A7 {
+    String s;
+  }
+
+  class B7 extends A7 {
+    E7 e;
+  }
+
+  class C7 {
+    B7 b7;
+  }
+
+  class D7 extends A7 {
+    String s;
+  }
+
+  class E7 {
+    Double d;
+  }
+
+  association [1] A7 <-> E7 [1..*];
+  association [1..*] B7 -> C7 [0..1];
+  association [1] C7 <-> D7 [1..*];
+  association [*] E7 <- C7 [0..1];
+  association [1] E7 -> D7 [1..*];
+
+
+  enum G8 {e11, e12, e13;}
+
+  abstract class A8 {
+    String s;
+  }
+
+  class B8 extends A8 {
+    E8 e;
+  }
+
+  class C8 {
+    B8 b8;
+  }
+
+  class D8 extends A8 {
+    String s;
+  }
+
+  class E8 {
+    Double d;
+  }
+
+  association [1] A8 <-> E8 [1..*];
+  association [1..*] B8 -> C8 [0..1];
+  association [1] C8 <-> D8 [1..*];
+  association [*] E8 <- C8 [0..1];
+  association [1] E8 -> D8 [1..*];
+
+
+  enum G9 {e11, e12, e13;}
+
+  abstract class A9 {
+    String s;
+  }
+
+  class B9 extends A9 {
+    E9 e;
+  }
+
+  class C9 {
+    B9 b9;
+  }
+
+  class D9 extends A9 {
+    String s;
+  }
+
+  class E9 {
+    Double d;
+  }
+
+  association [1] A9 <-> E9 [1..*];
+  association [1..*] B9 -> C9 [0..1];
+  association [1] C9 <-> D9 [1..*];
+  association [*] E9 <- C9 [0..1];
+  association [1] E9 -> D9 [1..*];
+
+
+  enum G10 {e11, e12, e13;}
+
+  abstract class A10 {
+    String s;
+  }
+
+  class B10 extends A10 {
+    E10 e;
+  }
+
+  class C10 {
+    B10 b10;
+  }
+
+  class D10 extends A10 {
+    String s;
+  }
+
+  class E10 {
+    Double d;
+  }
+
+  association [1] A10 <-> E10 [1..*];
+  association [1..*] B10 -> C10 [0..1];
+  association [1] C10 <-> D10 [1..*];
+  association [*] E10 <- C10 [0..1];
+  association [1] E10 -> D10 [1..*];
+
+
+  enum G11 {e11, e12, e13;}
+
+  abstract class A11 {
+    String s;
+  }
+
+  class B11 extends A11 {
+    E11 e;
+  }
+
+  class C11 {
+    B11 b11;
+  }
+
+  class D11 extends A11 {
+    String s;
+  }
+
+  class E11 {
+    Double d;
+  }
+
+  association [1] A11 <-> E11 [1..*];
+  association [1..*] B11 -> C11 [0..1];
+  association [1] C11 <-> D11 [1..*];
+  association [*] E11 <- C11 [0..1];
+  association [1] E11 -> D11 [1..*];
+
+
+  enum G12 {e11, e12, e13;}
+
+  abstract class A12 {
+    String s;
+  }
+
+  class B12 extends A12 {
+    E12 e;
+  }
+
+  class C12 {
+    B12 b12;
+  }
+
+  class D12 extends A12 {
+    String s;
+  }
+
+  class E12 {
+    Double d;
+  }
+
+  association [1] A12 <-> E12 [1..*];
+  association [1..*] B12 -> C12 [0..1];
+  association [1] C12 <-> D12 [1..*];
+  association [*] E12 <- C12 [0..1];
+  association [1] E12 -> D12 [1..*];
+
+
+  enum G13 {e11, e12, e13;}
+
+  abstract class A13 {
+    String s;
+  }
+
+  class B13 extends A13 {
+    E13 e;
+  }
+
+  class C13 {
+    B13 b13;
+  }
+
+  class D13 extends A13 {
+    String s;
+  }
+
+  class E13 {
+    Double d;
+  }
+
+  association [1] A13 <-> E13 [1..*];
+  association [1..*] B13 -> C13 [0..1];
+  association [1] C13 <-> D13 [1..*];
+  association [*] E13 <- C13 [0..1];
+  association [1] E13 -> D13 [1..*];
+
+
+  enum G14 {e11, e12, e13;}
+
+  abstract class A14 {
+    String s;
+  }
+
+  class B14 extends A14 {
+    E14 e;
+  }
+
+  class C14 {
+    B14 b14;
+  }
+
+  class D14 extends A14 {
+    String s;
+  }
+
+  class E14 {
+    Double d;
+  }
+
+  association [1] A14 <-> E14 [1..*];
+  association [1..*] B14 -> C14 [0..1];
+  association [1] C14 <-> D14 [1..*];
+  association [*] E14 <- C14 [0..1];
+  association [1] E14 -> D14 [1..*];
+
+
+  enum G15 {e11, e12, e13;}
+
+  abstract class A15 {
+    String s;
+  }
+
+  class B15 extends A15 {
+    E15 e;
+  }
+
+  class C15 {
+    B15 b15;
+  }
+
+  class D15 extends A15 {
+    String s;
+  }
+
+  class E15 {
+    Double d;
+  }
+
+  association [1] A15 <-> E15 [1..*];
+  association [1..*] B15 -> C15 [0..1];
+  association [1] C15 <-> D15 [1..*];
+  association [*] E15 <- C15 [0..1];
+  association [1] E15 -> D15 [1..*];
+
+
+  enum G16 {e11, e12, e13;}
+
+  abstract class A16 {
+    String s;
+  }
+
+  class B16 extends A16 {
+    E16 e;
+  }
+
+  class C16 {
+    B16 b16;
+  }
+
+  class D16 extends A16 {
+    String s;
+  }
+
+  class E16 {
+    Double d;
+  }
+
+  association [1] A16 <-> E16 [1..*];
+  association [1..*] B16 -> C16 [0..1];
+  association [1] C16 <-> D16 [1..*];
+  association [*] E16 <- C16 [0..1];
+  association [1] E16 -> D16 [1..*];
+
+
+  enum G17 {e11, e12, e13;}
+
+  abstract class A17 {
+    String s;
+  }
+
+  class B17 extends A17 {
+    E17 e;
+  }
+
+  class C17 {
+    B17 b17;
+  }
+
+  class D17 extends A17 {
+    String s;
+  }
+
+  class E17 {
+    Double d;
+  }
+
+  association [1] A17 <-> E17 [1..*];
+  association [1..*] B17 -> C17 [0..1];
+  association [1] C17 <-> D17 [1..*];
+  association [*] E17 <- C17 [0..1];
+  association [1] E17 -> D17 [1..*];
+
+
+  enum G18 {e11, e12, e13;}
+
+  abstract class A18 {
+    String s;
+  }
+
+  class B18 extends A18 {
+    E18 e;
+  }
+
+  class C18 {
+    B18 b18;
+  }
+
+  class D18 extends A18 {
+    String s;
+  }
+
+  class E18 {
+    Double d;
+  }
+
+  association [1] A18 <-> E18 [1..*];
+  association [1..*] B18 -> C18 [0..1];
+  association [1] C18 <-> D18 [1..*];
+  association [*] E18 <- C18 [0..1];
+  association [1] E18 -> D18 [1..*];
+
+
+  enum G19 {e11, e12, e13;}
+
+  abstract class A19 {
+    String s;
+  }
+
+  class B19 extends A19 {
+    E19 e;
+  }
+
+  class C19 {
+    B19 b19;
+  }
+
+  class D19 extends A19 {
+    String s;
+  }
+
+  class E19 {
+    Double d;
+  }
+
+  association [1] A19 <-> E19 [1..*];
+  association [1..*] B19 -> C19 [0..1];
+  association [1] C19 <-> D19 [1..*];
+  association [*] E19 <- C19 [0..1];
+  association [1] E19 -> D19 [1..*];
+
+
+  enum G20 {e11, e12, e13;}
+
+  abstract class A20 {
+    String s;
+  }
+
+  class B20 extends A20 {
+    E20 e;
+  }
+
+  class C20 {
+    B20 b20;
+  }
+
+  class D20 extends A20 {
+    String s;
+  }
+
+  class E20 {
+    Double d;
+  }
+
+  association [1] A20 <-> E20 [1..*];
+  association [1..*] B20 -> C20 [0..1];
+  association [1] C20 <-> D20 [1..*];
+  association [*] E20 <- C20 [0..1];
+  association [1] E20 -> D20 [1..*];
+
+
+
+
+}

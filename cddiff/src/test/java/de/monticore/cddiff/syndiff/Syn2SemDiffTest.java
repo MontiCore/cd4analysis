@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static de.monticore.cddiff.alloycddiff.CDSemantics.SIMPLE_CLOSED_WORLD;
+import static de.monticore.cddiff.alloycddiff.CDSemantics.SIMPLE_OPEN_WORLD;
 import static de.monticore.cddiff.alloycddiff.CDSemantics.STA_CLOSED_WORLD;
 import static de.monticore.cddiff.alloycddiff.CDSemantics.STA_OPEN_WORLD;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,32 +34,41 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
 
   public static Stream<Arguments> emptyWitnesses() {
     return Stream.of(
-        Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", false, false),
-        Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", false, false),
-        Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", false, false),
-        Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", false, false),
-        Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", false, true),
-        Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", false, true),
-        Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin3.cd", false, false),
-        Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd", false, false),
-        Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin1.cd", true, true),
-        Arguments.of(cddiffDir, "Employees/Employees2.cd", "Employees/Employees1.cd", true, true),
-        Arguments.of(cddiffDir, "Employees/Employees8.cd", "Employees/Employees7.cd", true, true),
-        Arguments.of(validationDir, "cddiff/LibraryV3.cd", "cddiff/LibraryV2.cd", true, true),
-        Arguments.of(validationDir, "cddiff/LibraryV5.cd", "cddiff/LibraryV4.cd", true, true),
-        Arguments.of(validationDir, "cd4analysis/ManagementV2.cd", "cd4analysis/ManagementV1.cd", true, true),
-        Arguments.of(validationDir, "cd4analysis/MyCompanyV2.cd", "cd4analysis/MyCompanyV1.cd", true, true),
-        Arguments.of(validationDir, "cd4analysis/MyExampleV2.cd", "cd4analysis/MyExampleV1.cd", true, true)
+      Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", false, false),
+      Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", false, false),
+      Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", false, false),
+      Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", false, false),
+      Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", false, true),
+      Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", false, true),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/ChangedAttribute/CD71.cd", "syndiff/TypeDiff/ChangedAttribute/CD71.cd", false, false),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/ChangedAttribute/CD71.cd", "syndiff/TypeDiff/ChangedAttribute/CD71.cd", false, true),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd", "syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd", false, false),
+      Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MaCoCo_v2.cd", "syndiff/SyntaxDiff/MaCoCo_v1.cd", false, false),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin3.cd", false, false),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd", false, false),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin1.cd", true, true),
+      Arguments.of(cddiffDir, "Employees/Employees2.cd", "Employees/Employees1.cd", true, true),
+      Arguments.of(cddiffDir, "Employees/Employees2.cd", "Employees/Employees1.cd", false, true),
+      Arguments.of(cddiffDir, "Employees/Employees8.cd", "Employees/Employees7.cd", true, true),
+      Arguments.of(validationDir, "cddiff/LibraryV3.cd", "cddiff/LibraryV2.cd", true, true),
+      Arguments.of(validationDir, "cddiff/LibraryV5.cd", "cddiff/LibraryV4.cd", true, true),
+      Arguments.of(validationDir, "cd4analysis/ManagementV2.cd", "cd4analysis/ManagementV1.cd", true, true),
+      Arguments.of(validationDir, "cd4analysis/MyCompanyV2.cd", "cd4analysis/MyCompanyV1.cd", true, true),
+      Arguments.of(validationDir, "cd4analysis/MyExampleV2.cd", "cd4analysis/MyExampleV1.cd", true, true),
+      Arguments.of(validationDir, "cd4analysis/MyExampleV1.cd", "cd4analysis/MyExampleV2.cd", true, true),
+      Arguments.of(validationDir, "cd4analysis/ManagementV2.cd", "cd4analysis/ManagementV1.cd", true, false),
+      Arguments.of(validationDir, "cd4analysis/MyExampleV2.cd", "cd4analysis/MyExampleV1.cd", true, false),
+      Arguments.of(validationDir, "cd4analysis/MyExampleV1.cd", "cd4analysis/MyExampleV2.cd", true, false)
     );
   }
 
   @ParameterizedTest
   @MethodSource("emptyWitnesses")
-  public void testEmptyWitnesses(String baseDir, String srcPath, String tgtPath, boolean staDiff, boolean reduction ) {
+  public void testEmptyWitnesses(String baseDir, String srcPath, String tgtPath, boolean staDiff, boolean reduction) {
     dir = baseDir;
     parseModels(srcPath, tgtPath);
 
-    if(reduction){
+    if (reduction) {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(src, tgt);
     }
@@ -72,16 +82,38 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
   public static Stream<Arguments> witnesses() {
     return Stream.of(
       //Arguments.of("syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", SIMPLE_CLOSED_WORLD, true),
+      //Arguments.of(validationDir, "cddiff/LibraryV5.cd", "cddiff/LibraryV4.cd", STA_CLOSED_WORLD, false),
+      //Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd", SIMPLE_CLOSED_WORLD, true),
       Arguments.of(cddiffDir, "syndiff/SyntaxDiff/AddedDeletedAssocs/CD31.cd", "syndiff/SyntaxDiff/AddedDeletedAssocs/CD32.cd", SIMPLE_CLOSED_WORLD, false),
       Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD12.cd", "syndiff/SyntaxDiff/MoveAttributes/CD11.cd", SIMPLE_CLOSED_WORLD, true),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/DeletedAttribute/CD11.cd", "syndiff/TypeDiff/DeletedAttribute/CD12.cd", SIMPLE_CLOSED_WORLD, false),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/DeletedAttribute/CD11.cd", "syndiff/TypeDiff/DeletedAttribute/CD12.cd", SIMPLE_CLOSED_WORLD, true),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd", "syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd", SIMPLE_CLOSED_WORLD, false),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/RemovedAddedAttributeDiff/CD31.cd", "syndiff/TypeDiff/RemovedAddedAttributeDiff/CD32.cd", SIMPLE_CLOSED_WORLD, true),
+      Arguments.of(cddiffDir, "syndiff/TypeDiff/RemovedAttributeNoDiff/CD21.cd", "syndiff/TypeDiff/RemovedAttributeNoDiff/CD22.cd", SIMPLE_CLOSED_WORLD, true),
+      Arguments.of(cddiffDir, "syndiff/SyntaxDiff/MaCoCo_v1.cd", "syndiff/SyntaxDiff/MaCoCo_v2.cd", SIMPLE_CLOSED_WORLD, false),
       Arguments.of(cddiffDir, "syndiff/SyntaxDiff/SS1.cd", "syndiff/SyntaxDiff/SS2.cd", SIMPLE_CLOSED_WORLD, false),
       Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin1.cd", SIMPLE_CLOSED_WORLD, false),
       Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin1.cd", "DigitalTwins/DigitalTwin2.cd", SIMPLE_CLOSED_WORLD, true),
       Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin3.cd", SIMPLE_CLOSED_WORLD, true),
       Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd", SIMPLE_CLOSED_WORLD, true),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin1.cd", SIMPLE_OPEN_WORLD, false),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin1.cd", "DigitalTwins/DigitalTwin2.cd", SIMPLE_OPEN_WORLD, true),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin2.cd", "DigitalTwins/DigitalTwin3.cd", SIMPLE_OPEN_WORLD, true),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd", SIMPLE_OPEN_WORLD, true),
       Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd", SIMPLE_CLOSED_WORLD, false),
       Arguments.of(cddiffDir, "Employees/Employees2.cd", "Employees/Employees1.cd", SIMPLE_CLOSED_WORLD, false),
-      Arguments.of(cddiffDir, "Employees/Employees7.cd", "Employees/Employees8.cd", STA_CLOSED_WORLD, true)
+      Arguments.of(cddiffDir, "Employees/Employees7.cd", "Employees/Employees8.cd", STA_CLOSED_WORLD, true),
+      Arguments.of(cddiffDir, "Employees/Employees7.cd", "Employees/Employees8.cd", STA_CLOSED_WORLD, false),
+      Arguments.of(cddiffDir, "Employees/Employees8.cd", "Employees/Employees7.cd", STA_CLOSED_WORLD, false),
+      Arguments.of(validationDir, "cddiff/LibraryV2.cd", "cddiff/LibraryV3.cd", STA_CLOSED_WORLD, true),
+      Arguments.of(validationDir, "cddiff/LibraryV4.cd", "cddiff/LibraryV5.cd", STA_CLOSED_WORLD, true),
+      Arguments.of(validationDir, "cddiff/LibraryV3.cd", "cddiff/LibraryV2.cd", STA_CLOSED_WORLD, false),
+      Arguments.of(validationDir, "cddiff/LibraryV2.cd", "cddiff/LibraryV3.cd", STA_CLOSED_WORLD, false),
+      Arguments.of(validationDir, "cddiff/LibraryV4.cd", "cddiff/LibraryV5.cd", STA_CLOSED_WORLD, false),
+      Arguments.of(validationDir, "cd4analysis/ManagementV1.cd", "cd4analysis/ManagementV2.cd", STA_CLOSED_WORLD, true),
+      Arguments.of(validationDir, "cd4analysis/MyCompanyV1.cd", "cd4analysis/MyCompanyV2.cd", STA_CLOSED_WORLD, true),
+      Arguments.of(validationDir, "cd4analysis/MyCompanyV2.cd", "cd4analysis/MyCompanyV1.cd", STA_CLOSED_WORLD, false)
     );
   }
 
@@ -91,7 +123,7 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
     dir = baseDir;
     parseModels(srcPath, tgtPath);
 
-    if(reduction){
+    if (reduction) {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(src, tgt);
     }
@@ -106,19 +138,23 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
 
   public static Stream<Arguments> witnessesReduction() {
     return Stream.of(
-        Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd"),
-        Arguments.of(validationDir, "Performance/5A.cd", "Performance/5B.cd"),
-        Arguments.of(validationDir, "Performance/10A.cd", "Performance/10B.cd"),
-        Arguments.of(validationDir, "Performance/15A.cd", "Performance/15B.cd"),
-        Arguments.of(validationDir, "Performance/20A.cd", "Performance/20B.cd"),
-        Arguments.of(validationDir, "Performance/25A.cd", "Performance/25B.cd"),
-        Arguments.of(validationDir, "cddiff/DEv2.cd", "cddiff/DEv1.cd"),
-        Arguments.of(validationDir, "cddiff/EAv2.cd", "cddiff/EAv1.cd"),
-        Arguments.of(validationDir, "cddiff/EMTv1.cd", "cddiff/EMTv2.cd"),
-        Arguments.of(validationDir, "cddiff/LibraryV2.cd", "cddiff/LibraryV1.cd"),
-        Arguments.of(validationDir, "cddiff/LibraryV4.cd", "cddiff/LibraryV3.cd"),
-        Arguments.of(validationDir, "cd4analysis/MyLifeV2.cd", "cd4analysis/MyLifeV1.cd"),
-        Arguments.of(validationDir, "cd4analysis/TeachingV2.cd", "cd4analysis/TeachingV1.cd")
+//      Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd"),
+      Arguments.of(validationDir, "Performance/5A.cd", "Performance/5B.cd"),
+      Arguments.of(validationDir, "Performance/10A.cd", "Performance/10B.cd"),
+      Arguments.of(validationDir, "Performance/15A.cd", "Performance/15B.cd"),
+      Arguments.of(validationDir, "Performance/20A.cd", "Performance/20B.cd"),
+      Arguments.of(validationDir, "Performance/25A.cd", "Performance/25B.cd"),
+      Arguments.of(validationDir, "cddiff/DEv2.cd", "cddiff/DEv1.cd"),
+      Arguments.of(validationDir, "cddiff/EAv2.cd", "cddiff/EAv1.cd"),
+      Arguments.of(validationDir, "cddiff/EMTv1.cd", "cddiff/EMTv2.cd"),
+      Arguments.of(validationDir, "cddiff/LibraryV2.cd", "cddiff/LibraryV1.cd"),
+      Arguments.of(validationDir, "cddiff/LibraryV4.cd", "cddiff/LibraryV3.cd"),
+      Arguments.of(validationDir, "cd4analysis/MyLifeV2.cd", "cd4analysis/MyLifeV1.cd"),
+      Arguments.of(validationDir, "cd4analysis/TeachingV2.cd", "cd4analysis/TeachingV1.cd"),
+      Arguments.of(cddiffDir, "Employees/Employees7.cd", "Employees/Employees8.cd"),
+      Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd"),
+      Arguments.of(cddiffDir, "Employees/Employees7.cd", "Employees/Employees8.cd"),
+      Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd")
     );
   }
 
