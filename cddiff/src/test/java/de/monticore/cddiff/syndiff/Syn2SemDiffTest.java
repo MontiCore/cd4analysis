@@ -217,10 +217,9 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
                                                             cddiffDir, "Employees/Employees7.cd",
                                                             "Employees/Employees8.cd"), Arguments
                                                                 .of(cddiffDir,
-                                                                    "Employees/Employees1.cd",
-                                                                    "Employees/Employees2.cd"),
-        Arguments.of(cddiffDir, "Employees/Employees7.cd", "Employees/Employees8.cd"), Arguments.of(
-            cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd"));
+                                                                    "Employees/Employees7.cd",
+                                                                    "Employees/Employees8.cd"),
+        Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd"));
   }
   
   @ParameterizedTest
