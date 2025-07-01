@@ -2,18 +2,17 @@
 package de.monticore.cdconformance.inc.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
-import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.booleanMatching.MatchCDAssocsBySrcTypeAndTgtRole;
+import de.monticore.cdmatcher.caching.StructureCache;
 
 public class RolePrefixInNavDirIncStrategy extends MatchCDAssocsBySrcTypeAndTgtRole {
-  
-  public RolePrefixInNavDirIncStrategy(ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher,
-      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
-    super(typeMatcher, srcCD, tgtCD);
+
+  public RolePrefixInNavDirIncStrategy(BooleanMatchingStrategy<ASTCDType> typeMatcher, StructureCache structureCache) {
+    super(typeMatcher, structureCache);
   }
-  
+
   @Override
   protected boolean checkRole(ASTCDAssocSide srcElem, ASTCDAssocSide tgtElem) {
     if (srcElem.isPresentCDRole() && tgtElem.isPresentCDRole()) {
@@ -21,5 +20,5 @@ public class RolePrefixInNavDirIncStrategy extends MatchCDAssocsBySrcTypeAndTgtR
     }
     return false;
   }
-  
+
 }

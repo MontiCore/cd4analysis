@@ -1,26 +1,30 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdmatcher;
+package de.monticore.cdmatcher.similarity;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdmatcher.CDSimilarity;
 import de.monticore.symboltable.ISymbol;
-import java.util.*;
 import org.antlr.v4.runtime.misc.Triple;
 
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.Set;
+
 public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
-  
+
   protected Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet;
-  
+
   public CDAssocSimilarity(Set<Triple<ASTCDType, ASTCDType, Double>> typeSimilaritySet) {
     this.typeSimilaritySet = typeSimilaritySet;
   }
-  
+
   @Override
   public Double computeWeight(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
     double score = 0.0;
-    
+
     /*
      * We determine the maximum score for a straight and a reverse match.
      * The straight match is scored slightly more.
@@ -28,7 +32,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
     score += Double.max(computeSideScore(srcElem.getLeft(), tgtElem.getLeft()) + computeSideScore(
         srcElem.getRight(), tgtElem.getRight()) + 0.01, computeSideScore(srcElem.getLeft(), tgtElem
             .getRight()) + computeSideScore(srcElem.getRight(), tgtElem.getLeft()));
-    
+
     /*
      * A match of the association name is weighted more than a role name,
      * but less than two role-names.
@@ -37,10 +41,10 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
         .getName())) {
       score += 1.5;
     }
-    
+
     return score;
   }
-  
+
   /**
    * Determines the similarity score of srcSide to tgtSide
    *
@@ -50,33 +54,33 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
    */
   protected double computeSideScore(ASTCDAssocSide srcSide, ASTCDAssocSide tgtSide) {
     double score = 0.0;
-    
+
     /*
      * First we need to determine the score of the type-match.
      * A type-match is weighted less than a role-name match as we assume that
      * the associations are already filtered according to a best-match of types
      * as well as their sub- and supertypes.
      */
-    
+
     Optional<ISymbol> srcTSymbol = srcSide.getMCQualifiedType().getDefiningSymbol();
     Optional<ISymbol> tgtTSymbol = tgtSide.getMCQualifiedType().getDefiningSymbol();
-    
+
     // The defining symbol is unfortunately not always present.
     if (srcTSymbol.isPresent() && srcTSymbol.get() instanceof CDTypeSymbol && tgtTSymbol.isPresent()
         && tgtTSymbol.get() instanceof CDTypeSymbol) {
-      
+
       ASTCDType srcType = ((CDTypeSymbol) srcTSymbol.get()).getAstNode();
       ASTCDType tgtType = ((CDTypeSymbol) tgtTSymbol.get()).getAstNode();
-      
+
       // Is there a better way to do this?
       Optional<Triple<ASTCDType, ASTCDType, Double>> entry = typeSimilaritySet.stream().filter(
           t -> t.a.equals(srcType) && t.b.equals(tgtType)).findFirst();
-      
+
       if (entry.isPresent()) {
         // We scale the score down to max 1.02.
         score += Double.min(entry.get().c, 1.02);
       }
-      
+
     }
     else {
       // If we cannot use getDefiningSymbol(), we instead match via q-name
@@ -85,7 +89,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
               .getMCQualifiedName().getQName()) && t.b.getSymbol().getInternalQualifiedName()
                   .contains(tgtSide.getMCQualifiedType().getMCQualifiedName().getQName())).max(
                       Comparator.comparingDouble(e -> e.c));
-      
+
       // If the type still cannot be resolved, we check if the q-names match
       if (entry.isPresent()) {
         // We scale the score down to max 1.0.
@@ -97,13 +101,13 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
         score += 0.98;
       }
     }
-    
+
     if (srcSide.isPresentCDRole() && tgtSide.isPresentCDRole() && srcSide.getName().equals(tgtSide
         .getName())) {
       score += 1.1;
     }
-    
+
     return score;
   }
-  
+
 }
