@@ -4,9 +4,7 @@ package de.monticore.cdmatcher.caching;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import org.antlr.v4.runtime.misc.MultiMap;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -205,14 +203,6 @@ public class StructureCache {
       return cachedType.getDirectSubTypes();
     }
     return Set.of();
-  }
-
-  public MultiMap<ASTCDType, ASTCDType> getSuperTypeMap() {
-    MultiMap<ASTCDType, ASTCDType> superTypeMap = new MultiMap<>();
-    for (CachedType cachedType : typeCache.values()) {
-      superTypeMap.put(cachedType.getCachedType(), new ArrayList<>(cachedType.getSuperTypes()));
-    }
-    return superTypeMap;
   }
 
 }

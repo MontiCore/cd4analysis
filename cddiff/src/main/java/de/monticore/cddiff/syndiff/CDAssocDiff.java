@@ -18,16 +18,19 @@ import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocStruct;
 import de.monticore.cddiff.syn2semdiff.datastructures.ClassSide;
 import de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper;
+import de.monticore.cdmatcher.caching.StructureCache;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
-import org.antlr.v4.runtime.misc.MultiMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.cardToEnum;
 import static de.monticore.cddiff.syn2semdiff.odgen.Syn2SemDiffHelper.getConnectedTypes;
@@ -54,7 +57,7 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
 
   private AssocStruct srcStruct;
   private AssocStruct tgtStruct;
-  private CDSynDiffMatches matches;
+  private final CDSynDiffMatches matches;
 
   // Print
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -641,7 +644,14 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   }
 
   private void setIsReversed(ASTCDAssociation srcAssoc, ASTCDAssociation tgtAssoc) {
-    MultiMap<ASTCDType, ASTCDType> computedMatchingMapTypes = matches.getStructureCache().getSuperTypeMap();
+    StructureCache structureCache = matches.getStructureCache();
+    Map<ASTCDType, ASTCDType> typeMatches = matches.getTypeMatches();
+    Map<ASTCDType, Set<ASTCDType>> computedMatchingMapTypes = typeMatches.entrySet().stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+          Set<ASTCDType> matchingTypes = structureCache.getSuperTypes(entry.getKey());
+          matchingTypes.add(entry.getValue());
+          return matchingTypes;
+        }));
 
     isReversed = false;
 
