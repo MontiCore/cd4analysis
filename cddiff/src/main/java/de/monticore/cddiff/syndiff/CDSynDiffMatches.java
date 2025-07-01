@@ -205,14 +205,21 @@ public class CDSynDiffMatches {
       }
     }
 
-    // Add direct subtypes
+    // Add subtypes
     for(ASTCDType type : getAllCDTypes(cD)) {
-      Set<ASTCDType> subTypes = getAllCDTypes(cD).stream()
+      Set<ASTCDType> directSubTypes = getAllCDTypes(cD).stream()
         .filter(t -> structureCache.getDirectSuperTypes(t).contains(type))
         .collect(Collectors.toSet());
-      success = structureCache.addAllDirectSubTypes(type, subTypes);
+      success = structureCache.addAllDirectSubTypes(type, directSubTypes);
       if (!success) {
         Log.warn("StructureCache already contains direct subtypes from type: " + type.getName());
+      }
+      Set<ASTCDType> subTypes = getAllCDTypes(cD).stream()
+        .filter(t -> structureCache.getSuperTypes(t).contains(type))
+        .collect(Collectors.toSet());
+      success = structureCache.addAllSubTypes(type, subTypes);
+      if (!success) {
+        Log.warn("StructureCache already contains subtypes from type: " + type.getName());
       }
     }
 

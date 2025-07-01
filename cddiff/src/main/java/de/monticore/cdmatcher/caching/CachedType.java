@@ -14,6 +14,8 @@ public class CachedType {
 
   private final Set<ASTCDType> superTypes = new HashSet<>();
   private final Set<ASTCDType> directSuperTypes = new HashSet<>();
+
+  private final Set<ASTCDType> subTypes = new HashSet<>();
   private final Set<ASTCDType> directSubTypes = new HashSet<>();
 
   private final Set<ASTCDAttribute> directAttributes = new HashSet<>();
@@ -38,6 +40,12 @@ public class CachedType {
 
   public void addDirectSuperType(ASTCDType directSuperType) {
     directSuperTypes.add(directSuperType);
+  }
+
+  public Set<ASTCDType> getSubTypes() { return subTypes; }
+
+  public void addSubType(ASTCDType subType) {
+    subTypes.add(subType);
   }
 
   public Set<ASTCDType> getDirectSubTypes() { return directSubTypes; }

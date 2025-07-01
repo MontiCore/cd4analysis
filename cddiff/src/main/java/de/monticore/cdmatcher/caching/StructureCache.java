@@ -169,6 +169,25 @@ public class StructureCache {
     return Set.of();
   }
 
+  public boolean addAllSubTypes(ASTCDType type, Set<ASTCDType> subTypes) {
+    CachedType cachedType = typeCache.get(type);
+    if (cachedType == null) {
+      return false;
+    }
+    for (ASTCDType subType : subTypes) {
+      cachedType.addSubType(subType);
+    }
+    return true;
+  }
+
+  public Set<ASTCDType> getSubTypes(ASTCDType type) {
+    CachedType cachedType = typeCache.get(type);
+    if (cachedType != null) {
+      return cachedType.getSubTypes();
+    }
+    return Set.of();
+  }
+
   public boolean addAllDirectSubTypes(ASTCDType type, Set<ASTCDType> subTypes) {
     CachedType cachedType = typeCache.get(type);
     if (cachedType == null) {

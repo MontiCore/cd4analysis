@@ -56,7 +56,7 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
 
     BooleanMatchingStrategy<ASTCDAssociation> greedyMatching = new MatchCDAssocsGreedy(context.getTypeIncStrategyMatchingSubTypes(), structureCache);
     CachedMatch<ASTCDAssociation> cachedGreedyMatches = new CachedMatch<>();
-    CDSynDiffMatches.applyMatchingStrategy(new HashSet<>(), rAssocs, greedyMatching, cachedGreedyMatches);
+    CDSynDiffMatches.applyMatchingStrategy(cAssocs, rAssocs, greedyMatching, cachedGreedyMatches);
 
     // Iterate over all associations in the reference class diagram
     for (ASTCDAssociation rAssoc : rAssocs) {

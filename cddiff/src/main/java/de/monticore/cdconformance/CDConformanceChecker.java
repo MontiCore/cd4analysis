@@ -151,6 +151,7 @@ public class CDConformanceChecker {
 
         CachedMatch<ASTCDType> subTypeCache = new CachedMatch<>();
         CDSynDiffMatches.applyMatchingStrategy(concTypes, refTypes, new MatchCDTypesToSubType(new BooleanMatchFromCache<>(typeCache, 1.0), structureCache), subTypeCache);
+        subTypeInc.addIncStrategy(new ExternalMatchFromCache<>(subTypeCache, 1.0));
 
         compAssocInc.addIncStrategy(new RolePrefixInNavDirIncStrategy(subTypeInc, structureCache));
         compAssocInc.addIncStrategy(new RolePrefixIfPresentIncStrategy(subTypeInc, structureCache));

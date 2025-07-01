@@ -26,7 +26,7 @@ public class MatchCDTypesToSubType implements BooleanMatchingStrategy<ASTCDType>
    */
   @Override
   public boolean isMatched(ASTCDType srcElem, ASTCDType tgtElem) {
-    return structureCache.getDirectSubTypes(srcElem).stream().anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
+    return structureCache.getSubTypes(srcElem).stream().anyMatch(srcSuper -> typeMatcher.isMatched(srcSuper, tgtElem));
   }
 
 }
