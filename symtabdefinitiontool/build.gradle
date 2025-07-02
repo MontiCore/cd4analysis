@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
-  id "com.github.johnrengelman.shadow" version "6.0.0"
+  id "com.github.johnrengelman.shadow" version "$shadow_plugin_version"
 }
 
 description = "SymTabDefinition: Tool"
@@ -26,14 +26,13 @@ task toolJar(type: Jar) {
   from sourceSets.main.output + sourceSets.main.allSource
 }
 
-apply plugin: "com.github.johnrengelman.shadow"
-  shadowJar {
-    manifest {
-      attributes "Main-Class": "de.monticore.symtabdefinition.SymTabDefinitionTool"
-    }
-    archiveFileName = "MCSTD.jar"
-    archiveClassifier = "std-tool"
+shadowJar {
+  manifest {
+    attributes "Main-Class": "de.monticore.symtabdefinition.SymTabDefinitionTool"
   }
+  archiveFileName = "MCSTD.jar"
+  archiveClassifier = "std-tool"
+}
 assemble.dependsOn(shadowJar)
 
 jar.dependsOn(shadowJar)
