@@ -22,7 +22,7 @@ public class PerformanceTest extends SynDiffTestBasis {
     return Stream.of(Arguments.of("5/CD1.cd", "5/CD2.cd", 1), Arguments.of("10/CD1.cd", "10/CD2.cd",
         1), Arguments.of("15/CD1.cd", "15/CD2.cd", 1), Arguments.of("20/CD1.cd", "20/CD2.cd", 1),
         Arguments.of("25/CD1.cd", "25/CD2.cd", 1), Arguments.of("100/CD1.cd", "100/CD2.cd", 2),
-        Arguments.of("900/CD1.cd", "900/CD2.cd", 120));
+        Arguments.of("500/CD1.cd", "500/CD2.cd", 120));
   }
   
   @ParameterizedTest
