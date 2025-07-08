@@ -13,12 +13,14 @@ import static com.google.common.math.DoubleMath.mean;
 
 public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociation> {
 
-  public CachedMatches cachedMatches;
-  public StructureCache structureCache;
+  private final CachedMatches cachedMatches;
+  private final StructureCache structureCache;
+  private final MatchingStrategy<ASTCDAssociation> nameMatcher;
 
-  public MatchCDAssocByDirectType(CachedMatches cachedMatches, StructureCache structureCache) {
+  public MatchCDAssocByDirectType(CachedMatches cachedMatches, StructureCache structureCache, MatchingStrategy<ASTCDAssociation> nameMatcher) {
     this.cachedMatches = cachedMatches;
     this.structureCache = structureCache;
+    this.nameMatcher = nameMatcher;
   }
 
   @Override
@@ -28,7 +30,7 @@ public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociati
     Optional<ASTCDType> tgtRightType = structureCache.getRightType(tgtElem);
     Optional<ASTCDType> tgtLeftType = structureCache.getLeftType(tgtElem);
 
-    double nameScore = new MatchCDAssocByName().getScore(srcElem, tgtElem);
+    double nameScore = nameMatcher.getScore(srcElem, tgtElem);
     double typeScore = -1;
     Double leftTypeScore = null;
     Double rightTypeScore = null;

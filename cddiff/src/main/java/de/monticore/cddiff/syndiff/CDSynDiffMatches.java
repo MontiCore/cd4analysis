@@ -10,23 +10,29 @@ import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDAttributeHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cdmatcher.BooleanMatchingStrategy;
-import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
 import de.monticore.cdmatcher.MatchBySimilarity;
-import de.monticore.cdmatcher.booleanMatching.MatchCDAssocsBySrcTypeAndTgtRole;
-import de.monticore.cdmatcher.booleanMatching.MatchCDAssocsGreedy;
 import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.cdmatcher.booleanMatching.BooleanMatchFromCache;
+import de.monticore.cdmatcher.booleanMatching.MatchCDAssocsBySrcTypeAndTgtRole;
+import de.monticore.cdmatcher.booleanMatching.MatchCDAssocsGreedy;
 import de.monticore.cdmatcher.booleanMatching.MatchCDTypesByQName;
-import de.monticore.cdmatcher.iterative.matching.association.MatchCDAssocByBestSuperType;
 import de.monticore.cdmatcher.caching.CachedMatch;
 import de.monticore.cdmatcher.caching.CachedMatches;
 import de.monticore.cdmatcher.caching.StructureCache;
+import de.monticore.cdmatcher.iterative.matching.association.MatchCDAssocByBestSuperType;
+import de.monticore.cdmatcher.iterative.matching.attribute.MatchCDAttributeByNameAndType;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAssocs;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAttributes;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSubClasses;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSuperClasses;
-import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByName;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeComposite;
+import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeFromCache;
+import de.monticore.cdmatcher.similarity.CDAssocEmbeddingSimilarity;
+import de.monticore.cdmatcher.similarity.CDAssocSimilarity4Iterative;
+import de.monticore.cdmatcher.similarity.CDAttributeEmbeddingSimilarity;
+import de.monticore.cdmatcher.similarity.CDAttributeSimilarity;
+import de.monticore.cdmatcher.similarity.CDTypeEmbeddingSimilarity;
+import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.misc.Pair;
 
@@ -48,6 +54,7 @@ import static de.monticore.cddiff.CDDiffUtil.getAllCDTypes;
  */
 public class CDSynDiffMatches {
   private final Map<ASTCDType, ASTCDType> typeMatches;
+  private CachedMatches scoredMatches = null;
   private final Map<ASTCDAssociation, ASTCDAssociation> assocMatches;
   private final Map<ASTCDAttribute, ASTCDAttribute> attributeMatches;
   private final StructureCache structureCache;
@@ -61,9 +68,10 @@ public class CDSynDiffMatches {
    * @param tgtCD the target class diagram
    * @param matchingIterations the maximum number of iterations to perform for matching
    * @param threshold the minimum similarity between two elements to be considered a match
+   * @param useEmbedding whether to use embeddings for matching, make sure to call CDEmbeddingSimilarity.initialize(String) before using this
    */
   public CDSynDiffMatches(
-      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, int matchingIterations, double threshold) {
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD, int matchingIterations, double threshold, boolean useEmbedding) {
 
     CachedMatches cachedMatches = new CachedMatches();
     structureCache = new StructureCache();
@@ -77,13 +85,28 @@ public class CDSynDiffMatches {
     Set<ASTCDType> srcTypes = CDDiffUtil.getAllTypesFromCD(srcCD);
     Set<ASTCDType> tgtTypes = CDDiffUtil.getAllTypesFromCD(tgtCD);
 
-    Set<MatchingStrategy<ASTCDType>> matchingStrategies = new HashSet<>((Set.of(
-      new MatchCDTypeByName(),
-      new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache), structureCache),
-      new MatchCDTypeByDirectAttributes(cachedMatches, structureCache),
-      new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache),
-      new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache)
-    )));
+    Set<MatchingStrategy<ASTCDType>> matchingStrategies;
+
+    if(useEmbedding) {
+      MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()));
+      matchingStrategies = new HashSet<>((Set.of(
+        new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()),
+        new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache),
+        new MatchCDTypeByDirectAttributes(structureCache, new MatchBySimilarity<>(new CDAttributeEmbeddingSimilarity())),
+        new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache),
+        new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache),
+        new MatchBySimilarity<>(new CDTypeSimilarity())
+      )));
+    } else {
+      MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeSimilarity()));
+      matchingStrategies = new HashSet<>((Set.of(
+        new MatchBySimilarity<>(new CDTypeSimilarity()),
+        new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocSimilarity4Iterative())), structureCache),
+        new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, new MatchBySimilarity<>(new CDAttributeSimilarity()))),
+        new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache),
+        new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache)
+      )));
+    }
 
     MatchCDTypeComposite matcher = new MatchCDTypeComposite(matchingStrategies, cachedMatches);
 
@@ -97,6 +120,7 @@ public class CDSynDiffMatches {
       if(cachedMatches.getBiggestChange() < MINIMUM_CHANGE_THRESHOLD) break;
     }
 
+    scoredMatches = cachedMatches;
     // compute a matching of types by name
     typeMatches = computeMatching(cachedMatches.getTypeMatches(), threshold);
     assocMatches = computeMatching(cachedMatches.getAssocMatches(), threshold);
@@ -142,7 +166,7 @@ public class CDSynDiffMatches {
 
     }
     else {
-      typeMatches = computeMatching(nameMatches, 1.0);;
+      typeMatches = computeMatching(nameMatches, 1.0);
     }
 
     BooleanMatchingStrategy<ASTCDType> assocTypeMatcher = new BooleanMatchFromCache<>(typeAssocMatches, 0.5);
@@ -344,5 +368,9 @@ public class CDSynDiffMatches {
 
   public StructureCache getStructureCache() {
     return structureCache;
+  }
+
+  public CachedMatches getScoredMatches() {
+    return scoredMatches;
   }
 }

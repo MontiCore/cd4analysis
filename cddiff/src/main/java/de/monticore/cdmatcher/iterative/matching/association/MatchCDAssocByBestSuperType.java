@@ -3,6 +3,7 @@ package de.monticore.cdmatcher.iterative.matching.association;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.cdmatcher.MultipleMatchingStrategy;
 import de.monticore.cdmatcher.caching.CachedMatches;
 import de.monticore.cdmatcher.caching.StructureCache;
@@ -15,18 +16,20 @@ import static com.google.common.math.DoubleMath.mean;
 public class MatchCDAssocByBestSuperType extends
     MultipleMatchingStrategy<ASTCDAssociation, ASTCDType> {
 
-  public CachedMatches cachedMatches;
-  public StructureCache structureCache;
+  private final CachedMatches cachedMatches;
+  private final StructureCache structureCache;
+  private final MatchingStrategy<ASTCDAssociation> nameMatcher;
 
-  public MatchCDAssocByBestSuperType(CachedMatches cachedMatches, StructureCache structureCache) {
+  public MatchCDAssocByBestSuperType(CachedMatches cachedMatches, StructureCache structureCache, MatchingStrategy<ASTCDAssociation> nameMatcher) {
     this.cachedMatches = cachedMatches;
     this.structureCache = structureCache;
+    this.nameMatcher = nameMatcher;
   }
 
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
 
-    double nameScore = new MatchCDAssocByName().getScore(srcElem, tgtElem);
+    double nameScore = nameMatcher.getScore(srcElem, tgtElem);
     double typeScore = -1;
 
     if (structureCache.getLeftType(srcElem).isPresent() && structureCache.getLeftType(tgtElem)

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class CachedMatch<T> {
 
@@ -21,6 +22,16 @@ public class CachedMatch<T> {
   }
 
   public Map<Pair<T, T>, Double> getMatches() { return matchMap; }
+
+  public Map<T, Double> getMatchesForSource(T srcElem) {
+    return matchMap.entrySet().stream().filter(entry -> entry.getKey().a.equals(srcElem))
+      .collect(Collectors.toMap(entry -> entry.getKey().b, Map.Entry::getValue));
+  }
+
+  public Map<T, Double> getMatchesForTarget(T tgtElem) {
+    return matchMap.entrySet().stream().filter(entry -> entry.getKey().b.equals(tgtElem))
+      .collect(Collectors.toMap(entry -> entry.getKey().a, Map.Entry::getValue));
+  }
 
   public void clear() {
     matchMap.clear();

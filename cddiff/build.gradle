@@ -24,6 +24,34 @@ dependencies {
     exclude group: 'de.monticore.lang', module:'cd4analysis'
   }
   implementation "edu.mit.alloy:alloy:6"
+  implementation "com.github.vinhkhuc:jfasttext:0.5"
 }
 
+tasks.register('downloadVectors') {
+  description = "Downloads the FastText vectors, including subword vectors"
 
+  def resourceDir = "src/main/resources/"
+
+  def vectors = file("$resourceDir/crawl-300d-2M-subword.bin")
+  if (!vectors.exists()) {
+
+    def zipFile = file("$resourceDir/vectors.zip")
+    if(zipFile.exists()){
+      zipFile.delete()
+    }
+    zipFile.createNewFileR()
+    println("Downloading vectors into ${zipFile.absolutePath}")
+    new URI("https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip").toURL().withInputStream { input -> zipFile.withOutputStream { it << input } }
+
+    copy {
+      from zipTree(zipFile)
+      into resourceDir
+    }
+    zipFile.delete()
+    file("$resourceDir/crawl-300d-2M-subword.vec").delete()
+    println("Vectors downloaded and extracted to $resourceDir")
+  } else {
+    println("Vectors already exist at $resourceDir")
+  }
+
+}

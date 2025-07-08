@@ -11,10 +11,13 @@ import static com.google.common.math.DoubleMath.mean;
 
 public class MatchCDAttributeByNameAndType implements MatchingStrategy<ASTCDAttribute> {
 
-  public CachedMatches cachedMatches;
+  private final CachedMatches cachedMatches;
+  private final MatchingStrategy<ASTCDAttribute> nameMatcher;
 
-  public MatchCDAttributeByNameAndType(CachedMatches cachedMatches) {
+
+  public MatchCDAttributeByNameAndType(CachedMatches cachedMatches, MatchingStrategy<ASTCDAttribute> nameMatcher) {
     this.cachedMatches = cachedMatches;
+    this.nameMatcher = nameMatcher;
   }
 
   @Override
@@ -25,7 +28,7 @@ public class MatchCDAttributeByNameAndType implements MatchingStrategy<ASTCDAttr
     Double attributeClassType = cachedMatches.getMatch(srcAttributeClassType,
         tgtAttributeClassType);
 
-    double score = new MatchCDAttributeByName().getScore(srcElem, tgtElem);
+    double score = nameMatcher.getScore(srcElem, tgtElem);
 
     if (attributeClassType != null) {
       score = mean(score, attributeClassType);
