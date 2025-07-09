@@ -14,6 +14,7 @@ import de.monticore.cd2smt.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.cd2smtGenerator.DataWrapper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
@@ -36,6 +37,7 @@ public class SMT2ODGenerator {
       elementList.add(buildLink(smtLink));
     }
     
+    OD4ReportMill.init();
     return Optional.of(ODHelper.buildOD(ODName, elementList));
   }
   
@@ -43,6 +45,7 @@ public class SMT2ODGenerator {
     List<ASTODAttribute> attributeList = new ArrayList<>();
     attributeList = getAllSuperInstanceAttribute(obj, attributeList);
     
+    OD4ReportMill.init();
     return ODHelper.buildObject(SMTHelper.buildObjectName(obj.getSmtExpr(), obj.getASTCDType()
         .getName()), obj.getASTCDType().getName(), attributeList);
   }
@@ -60,6 +63,7 @@ public class SMT2ODGenerator {
   }
   
   protected ASTODLink buildLink(SMTLink smtLink) {
+    OD4ReportMill.init();
     return ODHelper.buildLink(buildObject(smtLink.getLeftObject()).getName(), buildObject(smtLink
         .getRightObject()).getName(), smtLink.getAssociation().getLeft().getCDRole().getName(),
         smtLink.getAssociation().getRight().getCDRole().getName());
@@ -71,6 +75,7 @@ public class SMT2ODGenerator {
     if (CDHelper.isDateType(smtAttribute.getKey().getMCType())) {
       value = CDHelper.buildDate(Integer.parseInt(value));
     }
+    OD4ReportMill.init();
     return ODHelper.buildAttribute(smtAttribute.getKey().getName(), smtAttribute.getKey()
         .getMCType(), value);
   }

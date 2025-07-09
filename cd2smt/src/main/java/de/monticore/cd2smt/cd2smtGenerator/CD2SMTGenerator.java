@@ -24,6 +24,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
@@ -215,6 +216,7 @@ public class CD2SMTGenerator {
         objectSet.add(entry);
       }
     }
+    OD4ReportMill.init();
     return smt2ODGenerator.buildOd(objectSet, odName, model, dataWrapper);
   }
   

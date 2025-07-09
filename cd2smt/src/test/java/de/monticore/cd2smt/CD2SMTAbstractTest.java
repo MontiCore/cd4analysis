@@ -30,6 +30,7 @@ public class CD2SMTAbstractTest {
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH + "/" + dir, od.getObjectDiagram().getName()
         + ".od");
     try {
+      OD4ReportMill.init();
       FileUtils.writeStringToFile(outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset
           .defaultCharset());
     }
