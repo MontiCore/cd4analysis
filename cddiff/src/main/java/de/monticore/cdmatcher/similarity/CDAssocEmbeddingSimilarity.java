@@ -43,7 +43,7 @@ public class CDAssocEmbeddingSimilarity extends CDEmbeddingSimilarity<ASTCDAssoc
 
   private void mergePair(MutablePair<Double, Double> first, MutablePair<Double, Double> second) {
     if (second.getB() >= 0.0) {
-      first.setB(first.getB() < 0.0 ? second.getB() : first.getB() + second.getB());
+      first.setB(first.getB() < 0.0 ? second.getB() * second.getA() : first.getB() + second.getB() * second.getA());
       first.setA(first.getB() < 0.0 ? second.getA() : first.getA() + second.getA());
     }
   }

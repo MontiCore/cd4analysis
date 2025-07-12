@@ -32,6 +32,7 @@ import de.monticore.cdmatcher.similarity.CDAssocSimilarity4Iterative;
 import de.monticore.cdmatcher.similarity.CDAttributeEmbeddingSimilarity;
 import de.monticore.cdmatcher.similarity.CDAttributeSimilarity;
 import de.monticore.cdmatcher.similarity.CDTypeEmbeddingSimilarity;
+import de.monticore.cdmatcher.similarity.CDTypeEmbeddingWithAttributesSimilarity;
 import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.misc.Pair;
@@ -90,12 +91,11 @@ public class CDSynDiffMatches {
     if(useEmbedding) {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()));
       matchingStrategies = new HashSet<>((Set.of(
-        new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()),
+        new MatchBySimilarity<>(new CDTypeEmbeddingWithAttributesSimilarity(structureCache)),
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache),
         new MatchCDTypeByDirectAttributes(structureCache, new MatchBySimilarity<>(new CDAttributeEmbeddingSimilarity())),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache),
-        new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache),
-        new MatchBySimilarity<>(new CDTypeSimilarity())
+        new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache)
       )));
     } else {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeSimilarity()));
@@ -298,8 +298,8 @@ public class CDSynDiffMatches {
       .map(
         attr -> new Pair<>(attr.getName(), CDAttributeHelper.resolveClass(attr))
       )
-      .filter(pair -> pair.b != null && pair.b.isPresentSymbol())
-      .map(pair -> new Pair<>(pair.a, pair.b.getSymbol().getInternalQualifiedName()))
+      .filter(pair -> pair.b == null || pair.b.isPresentSymbol())
+      .map(pair -> new Pair<>(pair.a, pair.b == null ? null : pair.b.getSymbol().getInternalQualifiedName()))
       .collect(Collectors.toSet());
 
     if(srcAttributes.size() != srcAttrNameAndType.size()) { return false; }
@@ -307,8 +307,8 @@ public class CDSynDiffMatches {
     Set<Pair<String, String>> tgtAttrNameAndType = tgtAttributes.stream()
       .map(
         attr -> new Pair<>(attr.getName(), CDAttributeHelper.resolveClass(attr))
-      ).filter(pair -> pair.b != null && pair.b.isPresentSymbol())
-      .map(pair -> new Pair<>(pair.a, pair.b.getSymbol().getInternalQualifiedName()))
+      ).filter(pair -> pair.b == null || pair.b.isPresentSymbol())
+      .map(pair -> new Pair<>(pair.a, pair.b == null ? null : pair.b.getSymbol().getInternalQualifiedName()))
       .collect(Collectors.toSet());
 
     if(tgtAttributes.size() != tgtAttrNameAndType.size()) { return false; }

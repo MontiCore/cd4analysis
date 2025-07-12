@@ -25,6 +25,14 @@ public class MatchCDAttributeByNameAndType implements MatchingStrategy<ASTCDAttr
     ASTCDType srcAttributeClassType = CDAttributeHelper.resolveClass(srcElem);
     ASTCDType tgtAttributeClassType = CDAttributeHelper.resolveClass(tgtElem);
 
+    // ToDo resolve nested types
+    if (srcAttributeClassType == null && tgtAttributeClassType == null) {
+      return 1.0;
+    }
+    if (srcAttributeClassType == null || tgtAttributeClassType == null) {
+      return 0.0;
+    }
+
     Double attributeClassType = cachedMatches.getMatch(srcAttributeClassType,
         tgtAttributeClassType);
 

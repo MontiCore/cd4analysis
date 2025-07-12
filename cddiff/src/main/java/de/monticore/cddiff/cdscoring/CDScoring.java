@@ -9,7 +9,6 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.CDSynDiffMatches;
 import de.monticore.cdmatcher.caching.CachedMatch;
 import de.monticore.cdmatcher.caching.CachedMatches;
-import de.monticore.cdmatcher.similarity.CDEmbeddingSimilarity;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.Comparator;
@@ -27,7 +26,6 @@ public class CDScoring {
   CDScoring(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
-    CDEmbeddingSimilarity.initialize("src/main/resources/crawl-300d-2M-subword.bin");
   }
 
   public double score(int iterations, double threshold, boolean useEmbedding) {
@@ -56,7 +54,7 @@ public class CDScoring {
 
     typeScores.addAll(CDDiffUtil.getAllTypesFromCD(tgtCD).stream().map(
       combinedTypeMatches::getMatchesForTarget
-    ).map(Map::values).map(DoubleMath::mean).collect(Collectors.toList()));
+    ).map(Map::values).map(list -> list.isEmpty() ? 0.0 : DoubleMath.mean(list)).collect(Collectors.toList()));
 
     double typeScore = DoubleMath.mean(typeScores);
 

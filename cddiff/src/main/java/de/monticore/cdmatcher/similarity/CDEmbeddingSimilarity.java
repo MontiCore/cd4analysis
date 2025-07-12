@@ -7,12 +7,14 @@ import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
 
@@ -33,7 +35,8 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
       Log.error("Source Vector does not match Target Vector");
     }
 
-    return cosineSimilarity(srcVector, tgtVector);
+    // opposite vectors are considered as not matching
+    return Math.max(cosineSimilarity(srcVector, tgtVector), 0.0);
   }
 
   public Double matchMultipleNamesWithEmbedding(T srcElem, T tgtElem,
@@ -51,15 +54,23 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
     srcVectors.forEach(vectorPreprocessing);
     tgtVectors.forEach(vectorPreprocessing);
 
-    List<Float> srcAccumulated = srcVectors.stream().collect(LinkedList::new, vectorAccumulator,
+    // Ensure all vectors are of the same size
+    if(Stream.of(srcVectors, tgtVectors).flatMap(List::stream).mapToInt(List::size).distinct().count() != 1) {
+      Log.error("Source and Target Vectors must be of the same size for cosine similarity calculation. Make sure the preprocessing step does not change the size of the vectors.");
+    }
+
+    int vectorSize = srcVectors.get(0).size();
+
+    List<Float> srcAccumulated = srcVectors.stream().collect(emptyVectorSupplier(vectorSize), vectorAccumulator,
         vectorAccumulator);
-    List<Float> tgtAccumulated = tgtVectors.stream().collect(LinkedList::new, vectorAccumulator,
+    List<Float> tgtAccumulated = tgtVectors.stream().collect(emptyVectorSupplier(vectorSize), vectorAccumulator,
         vectorAccumulator);
 
     vectorPostprocessing.accept(srcAccumulated);
     vectorPostprocessing.accept(tgtAccumulated);
 
-    return cosineSimilarity(srcAccumulated, tgtAccumulated);
+    // opposite vectors are considered as not matching
+    return Math.max(cosineSimilarity(srcAccumulated, tgtAccumulated), 0.0);
   }
 
   private double cosineSimilarity(List<Float> vec1, List<Float> vec2) {
@@ -101,5 +112,11 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
     float sum = vector.stream().reduce(0f, Float::sum);
     vector.replaceAll(aFloat -> aFloat / sum);
   };
+
+  public static Consumer<List<Float>> doNothing = (List<Float> vector) -> {};
+
+  private Supplier<List<Float>> emptyVectorSupplier(int size) {
+    return () -> DoubleStream.generate(() -> 0.0).limit(size).mapToObj(value -> (float) value).collect(Collectors.toList());
+  }
 
 }
