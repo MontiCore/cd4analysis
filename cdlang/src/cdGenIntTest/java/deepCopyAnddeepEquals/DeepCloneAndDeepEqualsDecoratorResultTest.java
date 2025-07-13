@@ -21,7 +21,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     
     testDeepClone();
     
-    //check construction of default constructor if not present
+    //check the construction of the default constructor if not present
     ClassWithNoDefaultConstructor classWithNoDefaultConstructor = new ClassWithNoDefaultConstructor(
         1);
     ClassWithNoDefaultConstructor classWithNoDefaultConstructor2 = classWithNoDefaultConstructor
@@ -43,6 +43,8 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     testDeepEqualsCompositionTypes();
     testDeepEqualsCircularRelations();
     testDeepEqualsUnequalCircularRelations();
+    testDeepEqualsInterfaceTypes();
+    testDeepEqualsEnumTypes();
     testDeepEqualsAllTogether();
   }
   
@@ -59,8 +61,9 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     testDeepCloneAssociationType();
     testDeepCloneCompositionType();
     testDeepCloneCircularRelations();
-    testDeepCloneMulipleTypesAndDimensions();
-    
+    testDeepCloneMultipleTypesAndDimensions();
+    testDeepCloneInterfaceTypes();
+    testDeepCloneEnumTypes();
   }
   
   @Test
@@ -553,6 +556,43 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
   }
   
   @Test
+  public void testDeepEqualsInterfaceTypes() {
+    ClassWithInterface deInterface1 = new ClassWithInterface();
+    ClassWithInterface deInterface2 = new ClassWithInterface();
+    Level2class level2class1 = new Level2class();
+    Level2class level2class2 = new Level2class();
+    deInterface1.myInterface = level2class1;
+    deInterface2.myInterface = level2class2;
+    Assertions.assertTrue(deInterface1.deepEquals(deInterface2));
+    Assertions.assertTrue(deInterface1.deepEquals(deInterface2, true));
+    Assertions.assertTrue(deInterface1.deepEquals(deInterface2, false));
+    level2class1.myInt = 1;
+    level2class2.myInt = 1;
+    Level3class level3class1 = new Level3class();
+    level3class1.myInt = 1;
+    deInterface2.myInterface = level3class1;
+    Assertions.assertFalse(deInterface1.deepEquals(deInterface2));
+    Assertions.assertFalse(deInterface1.deepEquals(deInterface2, true));
+    Assertions.assertFalse(deInterface1.deepEquals(deInterface2, false));
+  }
+  
+  @Test
+  public void testDeepEqualsEnumTypes() {
+    ClassWithEnum deEnum1 = new ClassWithEnum();
+    ClassWithEnum deEnum2 = new ClassWithEnum();
+    deEnum1.myEnum = TestEnum.ERROR;
+    deEnum2.myEnum = TestEnum.ERROR;
+    Assertions.assertTrue(deEnum1.deepEquals(deEnum2));
+    Assertions.assertTrue(deEnum1.deepEquals(deEnum2, false));
+    Assertions.assertTrue(deEnum1.deepEquals(deEnum2, true));
+    deEnum1.myEnum = TestEnum.ERROR;
+    deEnum2.myEnum = TestEnum.IDLE;
+    Assertions.assertFalse(deEnum1.deepEquals(deEnum2));
+    Assertions.assertFalse(deEnum1.deepEquals(deEnum2, false));
+    Assertions.assertFalse(deEnum1.deepEquals(deEnum2, true));
+  }
+  
+  @Test
   public void testDeepEqualsAllTogether() {
     List<Integer> listAbsent1 = new ArrayList<>();
     List<Integer> listAbsent2 = new ArrayList<>();
@@ -975,7 +1015,6 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     ClassWith2DimSet dc11 = new ClassWith2DimSet();
     dc11.my2dimSet = new HashSet<>();
     dc11.my2dimSet.add(set1);
-    dc11.my2dimSet.add(set1);
     ClassWith2DimSet dc12 = dc11.deepClone();
     Assertions.assertNotSame(dc11, dc12);
     Assertions.assertNotSame(dc11.my2dimSet, dc12.my2dimSet);
@@ -1281,7 +1320,44 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
   }
   
   @Test
-  public void testDeepCloneMulipleTypesAndDimensions() {
+  public void testDeepCloneInterfaceTypes() {
+    Level2class deepCloneLevel2Class = new Level2class();
+    deepCloneLevel2Class.myInt = 1;
+    ClassWithInterface dc27 = new ClassWithInterface();
+    dc27.myInterface = deepCloneLevel2Class;
+    ClassWithInterface dc28 = dc27.deepClone();
+    Assertions.assertNotSame(dc27, dc28);
+    Assertions.assertNotSame(dc27.myInterface, dc28.myInterface);
+    Assertions.assertTrue(dc27.deepEquals(dc28));
+    Level3class deepCloneLevel3Class = new Level3class();
+    deepCloneLevel3Class.myInt = 2;
+    Level3class dc29 = deepCloneLevel3Class.deepClone();
+    Assertions.assertNotSame(deepCloneLevel3Class, dc29);
+    Assertions.assertTrue(deepCloneLevel3Class.deepEquals(dc29));
+    dc27.myInterface = deepCloneLevel2Class;
+    Assertions.assertFalse(dc27.deepEquals(dc28));
+    dc28 = dc27.deepClone();
+    Assertions.assertNotSame(dc27, dc28);
+    Assertions.assertNotSame(dc27.myInterface, dc28.myInterface);
+    Assertions.assertTrue(dc27.deepEquals(dc28));
+  }
+  
+  @Test
+  public void testDeepCloneEnumTypes() {
+    ClassWithEnum dc29 = new ClassWithEnum();
+    dc29.myEnum = TestEnum.ERROR;
+    ClassWithEnum dc30 = dc29.deepClone();
+    Assertions.assertNotSame(dc29, dc30);
+    Assertions.assertTrue(dc29.deepEquals(dc30));
+    dc29.myEnum = TestEnum.IDLE;
+    Assertions.assertFalse(dc29.deepEquals(dc30));
+    dc30 = dc29.deepClone();
+    Assertions.assertNotSame(dc29, dc30);
+    Assertions.assertTrue(dc29.deepEquals(dc30));
+  }
+  
+  @Test
+  public void testDeepCloneMultipleTypesAndDimensions() {
     List<Integer> listAbsent1 = new ArrayList<>();
     for (int i = 0; i <= 10; i++) {
       listAbsent1.add(i);

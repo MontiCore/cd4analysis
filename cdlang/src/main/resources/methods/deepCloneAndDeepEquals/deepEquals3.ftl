@@ -7,7 +7,7 @@
 ${tc.signature("originalClazzType", "attributeList", "PojoClazzesAsStringList")}
 <#-- as we want terminate on cyclic relations we need to add the object before we compare it sto our visited objects -->
 <#-- we will later delete it after comparing, so that if a object exists multiple times in a non cyclic way, it is checked anyways-->
-if(!(o instanceof ${originalClazzType.printType()})){
+if(!(o.getClass() == ${originalClazzType.printType()}.class)){
   return false;
 }
 ${originalClazzType.printType()} castO = (${originalClazzType.printType()}) o;

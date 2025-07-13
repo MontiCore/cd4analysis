@@ -25,6 +25,7 @@ public class VisitorDecoratorResultTest {
     testCircularRelations();
     testAllTogether();
     testClassToBeTopped();
+    testInterfaceAndInherit();
   }
   
   @Test
@@ -436,6 +437,36 @@ public class VisitorDecoratorResultTest {
     Assertions.assertSame(1, visitor.countEndVisitClassToBeTopped);
     Assertions.assertSame(1, visitor.countVisitClassWithPrimitiveType);
     Assertions.assertSame(1, visitor.countEndVisitClassWithPrimitiveType);
+  }
+  
+  /**
+   * Test for interface Lists and list with inheritance if the right visitor methods are called.
+   */
+  @Test
+  public void testInterfaceAndInherit() {
+    Set<Level1Interface> level1InterfacesList = new HashSet<>();
+    Level2class level2class1 = new Level2class();
+    level2class1.myInt = 1;
+    Level2class level2class2 = new Level2class();
+    level2class2.myInt = 2;
+    Level3class level3class1 = new Level3class();
+    level3class1.myInt = 3;
+    Level3class level3class2 = new Level3class();
+    level3class2.myInt = 4;
+    level1InterfacesList.add(level2class1);
+    level1InterfacesList.add(level2class2);
+    level1InterfacesList.add(level3class1);
+    level1InterfacesList.add(level3class2);
+    Level0class level0class = new Level0class();
+    level0class.many = level1InterfacesList;
+    visitor = new Visitor();
+    level0class.accept(visitor);
+    Assertions.assertSame(1, visitor.countVisitLevel0class);
+    Assertions.assertSame(1, visitor.countEndVisitLevel0class);
+    Assertions.assertSame(2, visitor.countVisitLevel2class);
+    Assertions.assertSame(2, visitor.countEndVisitLevel2class);
+    Assertions.assertSame(2, visitor.countVisitLevel3class);
+    Assertions.assertSame(2, visitor.countEndVisitLevel3class);
   }
   
 }

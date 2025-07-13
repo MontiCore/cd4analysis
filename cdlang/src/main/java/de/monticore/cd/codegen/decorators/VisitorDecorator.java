@@ -12,13 +12,13 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 import de.se_rwth.commons.StringTransformations;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,14 +32,15 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * for circular relations which would otherwise not terminate.
  */
 public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
-    CDBasisVisitor2 {
+    CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
   
   Stack<ASTCDParameter> parameterOfPojo = new Stack<>();
   Stack<ASTCDClass> currentDecoratedClass = new Stack<>();
+  Stack<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> currentDecoratedInterface =
+      new Stack<>();
   ASTCDInterface visitorInterface;
   ASTCDParameter visitorInterfaceParameter;
   Stack<ASTCDMethod> currentTraverseMethod = new Stack<>();
-  
   /**
    * a collection of all classes from the class diagram as strings
    */
@@ -114,9 +115,10 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
           new TemplateHookPoint("methods.visitor.removeTraversedElement")));
       
       //visitor to get all classes from the original class diagram classes
-      CDTypeCollector cdTypeCollector = new CDTypeCollector();
       CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
+      CDTypeCollector cdTypeCollector = new CDTypeCollector();
       t2.add4CDBasis(cdTypeCollector);
+      t2.add4CDInterfaceAndEnum(cdTypeCollector);
       compilationUnit.accept(t2);
       
       classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e -> e
@@ -192,6 +194,20 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
   }
   
   @Override
+  public void visit(de.monticore.cdinterfaceandenum._ast.ASTCDInterface node) {
+    if (decoratorData.shouldDecorate(this.getClass(), node)) {
+      de.monticore.cdinterfaceandenum._ast.ASTCDInterface decInterface = decoratorData
+          .getAsDecorated(node);
+      currentDecoratedInterface.add(decInterface);
+      
+      // add accept method to pojo class
+      ASTCDMethod acceptMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+          .modifierBuilder().PUBLIC().build(), "accept", visitorInterfaceParameter);
+      decInterface.addCDMember(acceptMethod);
+    }
+  }
+  
+  @Override
   public void endVisit(ASTCDClass clazz) {
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
       parameterOfPojo.pop();
@@ -229,6 +245,7 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
+    traverser.add4CDInterfaceAndEnum(this);
   }
   
 }

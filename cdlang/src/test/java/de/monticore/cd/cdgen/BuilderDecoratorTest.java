@@ -31,6 +31,8 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             + " -> (manyB) B [*] public;\n"
             + " -> (optB) B [0..1] public;\n"
             + " -> (oneB) B [1] public;\n"
+            + " public TestEnum myTestEnum;\n"
+            + " public Level1Interface myLevel1;\n"
             + " }\n"
             + " <<noSetter,getter,builder>> public class TestBuilderWithoutSetter { \n"
             + " public int myInt;\n"
@@ -38,6 +40,8 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             + " -> (manyB) B [*] public;\n"
             + " -> (optB) B [0..1] public;\n"
             + " -> (oneB) B [1] public;\n"
+            + " public TestEnum myTestEnum;\n"
+            + " public Level1Interface myLevel1;\n"
             + " }\n"
             + " <<getter>> public class B { \n"
             + " }\n"
@@ -49,6 +53,11 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             + " private PrivateDefaultConstructor();\n"
             + " int i; \n"
             + " } \n"
+            + " enum TestEnum { RUNNING, IDLE, ERROR; }\n"
+            + " interface Level1Interface;\n"
+            + " class Level2class implements Level1Interface{\n"
+            + "  int myInt;\n"
+            + " }\n"
             + "}");
     // @formatter:on
     

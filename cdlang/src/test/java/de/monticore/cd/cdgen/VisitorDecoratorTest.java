@@ -63,7 +63,16 @@ public class VisitorDecoratorTest extends AbstractDecoratorTest {
       + " public Map<String, Map<String,B>> myMap2;\n" + "}\n" + "public class B { \n" + "}\n"
       + "association [1] AllTogether (owner) -> (owns) B [*]public; "
       + "association [1] ClassWithAssociation (owner) -> (owns) B [*]public; "
-      + "association [1] ClassWithAssociation (owner2) -> (owns2) B [*]public; " + "}");
+      + "association [1] ClassWithAssociation (owner2) -> (owns2) B [*]public; "
+      + "interface Level1Interface;"
+      + "class Level2class implements Level1Interface{"
+      + " int myInt;"
+      + "}"
+      + "class Level3class extends Level2class implements Level1Interface;"
+      + " class Level0class {"
+      + "-> (many)Level1Interface [*];"
+      + "}"
+      + "}");
     // @formatter:on
     
     Assertions.assertTrue(opt.isPresent());

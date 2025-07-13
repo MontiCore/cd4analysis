@@ -62,6 +62,12 @@ public class Visitor implements ITestVisitorVisitor {
   public int countEndVisitB = 0;
   public int countVisitClassToBeTopped = 0;
   public int countEndVisitClassToBeTopped = 0;
+  public int countVisitLevel3class = 0;
+  public int countEndVisitLevel3class = 0;
+  public int countVisitLevel0class = 0;
+  public int countEndVisitLevel0class = 0;
+  public int countVisitLevel2class = 0;
+  public int countEndVisitLevel2class = 0;
   
   Stack<ClassWithMap> stackClassWithMap = new Stack<>();
   Stack<ClassCircular1> stackClassCircular1 = new Stack<>();
@@ -83,6 +89,9 @@ public class Visitor implements ITestVisitorVisitor {
   Stack<AllTogether> stackAllTogether = new Stack<>();
   Stack<B> stackB = new Stack<>();
   Stack<ClassToBeTopped> stackClassToBeTopped = new Stack<>();
+  Stack<Level3class> stackLevel3class = new Stack<>();
+  Stack<Level0class> stackLevel0class = new Stack<>();
+  Stack<Level2class> stackLevel2class = new Stack<>();
   
   @Override
   public void visit(ClassWith2DimMap node) {
@@ -416,13 +425,63 @@ public class Visitor implements ITestVisitorVisitor {
     else {
       stackClassToBeTopped.pop();
     }
-    
   }
   
   @Override
   public void visit(ClassToBeTopped node) {
     countVisitClassToBeTopped++;
     stackClassToBeTopped.push(node);
+  }
+  
+  @Override
+  public void visit(Level3class node) {
+    countVisitLevel3class++;
+    stackLevel3class.push(node);
+  }
+  
+  @Override
+  public void endVisit(Level3class node) {
+    countEndVisitLevel3class++;
+    if (stackLevel3class.empty() || stackLevel3class.peek() != node) {
+      Assertions.fail();
+    }
+    else {
+      stackLevel3class.pop();
+    }
+  }
+  
+  @Override
+  public void visit(Level0class node) {
+    countVisitLevel0class++;
+    stackLevel0class.push(node);
+  }
+  
+  @Override
+  public void endVisit(Level0class node) {
+    countEndVisitLevel0class++;
+    if (stackLevel0class.empty() || stackLevel0class.peek() != node) {
+      Assertions.fail();
+    }
+    else {
+      stackLevel0class.pop();
+    }
+  }
+  
+  @Override
+  public void visit(Level2class node) {
+    countVisitLevel2class++;
+    stackLevel2class.push(node);
+  }
+  
+  @Override
+  public void endVisit(Level2class node) {
+    countEndVisitLevel2class++;
+    if (stackLevel2class.empty() || stackLevel2class.peek() != node) {
+      Assertions.fail();
+    }
+    else {
+      stackLevel2class.pop();
+    }
   }
   
 }
