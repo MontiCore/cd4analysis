@@ -1329,17 +1329,17 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     Assertions.assertNotSame(dc27, dc28);
     Assertions.assertNotSame(dc27.myInterface, dc28.myInterface);
     Assertions.assertTrue(dc27.deepEquals(dc28));
-    Level3class deepCloneLevel3Class = new Level3class();
-    deepCloneLevel3Class.myInt = 2;
-    Level3class dc29 = deepCloneLevel3Class.deepClone();
-    Assertions.assertNotSame(deepCloneLevel3Class, dc29);
-    Assertions.assertTrue(deepCloneLevel3Class.deepEquals(dc29));
-    dc27.myInterface = deepCloneLevel2Class;
+    deepCloneLevel2Class.myInt = 2;
     Assertions.assertFalse(dc27.deepEquals(dc28));
     dc28 = dc27.deepClone();
     Assertions.assertNotSame(dc27, dc28);
     Assertions.assertNotSame(dc27.myInterface, dc28.myInterface);
     Assertions.assertTrue(dc27.deepEquals(dc28));
+    Level3class deepCloneLevel3Class = new Level3class();
+    deepCloneLevel3Class.myInt = 2;
+    Level3class dc29 = deepCloneLevel3Class.deepClone();
+    Assertions.assertNotSame(deepCloneLevel3Class, dc29);
+    Assertions.assertTrue(deepCloneLevel3Class.deepEquals(dc29));
   }
   
   @Test
