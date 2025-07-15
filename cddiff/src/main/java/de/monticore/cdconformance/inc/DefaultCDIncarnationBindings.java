@@ -14,6 +14,7 @@ import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
   private final Map<String, SetMultimap<String, FieldSymbol>> fieldBindings = new HashMap<>();
   
   private final Map<String, SetMultimap<String, MethodSymbol>> methodBindings = new HashMap<>();
-  
+
   @Override
   public String computeSymbolKey(ISymbol symbol) {
     return symbol.getFullName();
@@ -75,6 +76,34 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
       Set<CDAssociationSymbol> conAssociations) {
     // TODO implement association binding support
     throw new NotImplementedException();
+  }
+
+  public SetMultimap<String, TypeSymbol> getTypeBindings(IScope concreteScope) {
+    if (concreteScope instanceof IGlobalScope) {
+      // no enclosing scope, return empty set
+      return HashMultimap.create();
+    }
+    if (!concreteScope.isPresentSpanningSymbol()) {
+      // ignore the scope and jump one level higher
+      return getTypeBindings(concreteScope.getEnclosingScope());
+    }
+    // collect all bindings starting from the spanning symbol of the scope
+    return getTypeBindings(concreteScope.getSpanningSymbol());
+  }
+
+  public SetMultimap<String, TypeSymbol> getTypeBindings(ISymbol contextSymbol) {
+    String symbolName = computeSymbolKey(contextSymbol);
+    Log.debug("Checking for type incarnations in context of symbol: " + symbolName, LOG_NAME);
+
+    SetMultimap<String, TypeSymbol> allTypeBindings = HashMultimap.create();
+    SetMultimap<String, TypeSymbol> localTypeMapping = typeBindings.get(symbolName);
+    if (localTypeMapping != null) {
+      // add the local type mapping to the result
+      allTypeBindings.putAll(localTypeMapping);
+    }
+    // search higher in the scope hierarchy
+    allTypeBindings.putAll(getTypeBindings(contextSymbol.getEnclosingScope()));
+    return allTypeBindings;
   }
   
   @Override
@@ -157,6 +186,34 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
       return fieldIncarnations;
     }
   }
+
+  public SetMultimap<String, FieldSymbol> getFieldBindings(IScope concreteScope) {
+    if (concreteScope instanceof IGlobalScope) {
+      // no enclosing scope, return empty set
+      return HashMultimap.create();
+    }
+    if (!concreteScope.isPresentSpanningSymbol()) {
+      // ignore the scope and jump one level higher
+      return getFieldBindings(concreteScope.getEnclosingScope());
+    }
+    // collect all bindings starting from the spanning symbol of the scope
+    return getFieldBindings(concreteScope.getSpanningSymbol());
+  }
+
+  public SetMultimap<String, FieldSymbol> getFieldBindings(ISymbol contextSymbol) {
+    String symbolName = computeSymbolKey(contextSymbol);
+    Log.debug("Checking for type incarnations in context of symbol: " + symbolName, LOG_NAME);
+
+    SetMultimap<String, FieldSymbol> allBindings = HashMultimap.create();
+    SetMultimap<String, FieldSymbol> localMapping = fieldBindings.get(symbolName);
+    if (localMapping != null) {
+      // add the local type mapping to the result
+      allBindings.putAll(localMapping);
+    }
+    // search higher in the scope hierarchy
+    allBindings.putAll(getFieldBindings(contextSymbol.getEnclosingScope()));
+    return allBindings;
+  }
   
   @Override
   public Set<MethodSymbol> getBindings(IScope concreteScope, MethodSymbol referenceMethod) {
@@ -207,5 +264,32 @@ public class DefaultCDIncarnationBindings implements CDIncarnationBindings {
       return methodIncarnations;
     }
   }
-  
+
+  public SetMultimap<String, MethodSymbol> getMethodBindings(IScope concreteScope) {
+    if (concreteScope instanceof IGlobalScope) {
+      // no enclosing scope, return empty set
+      return HashMultimap.create();
+    }
+    if (!concreteScope.isPresentSpanningSymbol()) {
+      // ignore the scope and jump one level higher
+      return getMethodBindings(concreteScope.getEnclosingScope());
+    }
+    // collect all bindings starting from the spanning symbol of the scope
+    return getMethodBindings(concreteScope.getSpanningSymbol());
+  }
+
+  public SetMultimap<String, MethodSymbol> getMethodBindings(ISymbol contextSymbol) {
+    String symbolName = computeSymbolKey(contextSymbol);
+    Log.debug("Checking for type incarnations in context of symbol: " + symbolName, LOG_NAME);
+
+    SetMultimap<String, MethodSymbol> allBindings = HashMultimap.create();
+    SetMultimap<String, MethodSymbol> localMapping = methodBindings.get(symbolName);
+    if (localMapping != null) {
+      // add the local type mapping to the result
+      allBindings.putAll(localMapping);
+    }
+    // search higher in the scope hierarchy
+    allBindings.putAll(getMethodBindings(contextSymbol.getEnclosingScope()));
+    return allBindings;
+  }
 }

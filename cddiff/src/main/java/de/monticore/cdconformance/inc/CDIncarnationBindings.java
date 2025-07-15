@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc;
 
+import com.google.common.collect.SetMultimap;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -309,5 +310,16 @@ public interface CDIncarnationBindings {
       Set<CDAssociationSymbol> conAssociations) {
     addBinding(computeSymbolKey(contextSymbol), refAssociation, conAssociations);
   }
-  
+
+  SetMultimap<String, TypeSymbol> getTypeBindings(IScope concreteScope);
+
+  SetMultimap<String, TypeSymbol> getTypeBindings(ISymbol contextSymbol);
+
+  SetMultimap<String, FieldSymbol> getFieldBindings(IScope concreteScope);
+
+  SetMultimap<String, FieldSymbol> getFieldBindings(ISymbol contextSymbol);
+
+  SetMultimap<String, MethodSymbol> getMethodBindings(IScope concreteScope);
+
+  SetMultimap<String, MethodSymbol> getMethodBindings(ISymbol contextSymbol);
 }
