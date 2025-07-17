@@ -27,6 +27,11 @@ dependencies {
   implementation "com.github.vinhkhuc:jfasttext:0.5"
 }
 
+test {
+  maxHeapSize = '8g'
+  jvmArgs '-XX:MaxRAM=8g'
+}
+
 tasks.register('downloadVectors') {
   description = "Downloads the FastText vectors, including subword vectors"
 
@@ -39,7 +44,7 @@ tasks.register('downloadVectors') {
     if(zipFile.exists()){
       zipFile.delete()
     }
-    zipFile.createNewFileR()
+    zipFile.createNewFile()
     println("Downloading vectors into ${zipFile.absolutePath}")
     new URI("https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip").toURL().withInputStream { input -> zipFile.withOutputStream { it << input } }
 

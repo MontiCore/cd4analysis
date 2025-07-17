@@ -1,0 +1,53 @@
+classdiagram EBike {
+    class EBike {
+        Frame frame;
+        driveSystem DriveSystem;
+        Controller controller;
+        Battery battery;
+    }
+
+    class Frame {
+        String material;
+    }
+
+    class Wheel;
+
+    class DriveSystem {
+        Motor motor;
+    }
+
+    class Motor;
+
+    class Controller {
+        State currentState;
+        Battery battery;
+    }
+
+    class BasicController extends Controller {
+    }
+
+    class AdvancedController extends Controller {
+    }
+
+    class Battery {
+        float storedEnergy;
+    }
+
+    enum State {
+        On,
+        Off,
+        Charging;
+    }
+
+    association [1] EBike -> (wheel) Wheel [*];
+    association [1] EBike -> (battery) Battery [*];
+    association [1] EBike -> (frame) Frame [*];
+    association [1] EBike -> (driveSystem) DriveSystem [*];
+    association [1] EBike -> (controller) Controller [*];
+
+    association [1] DriveSystem -> (motor) Motor [*];
+
+    association [1] Controller -> (battery) Battery [*];
+    association [1] Controller -> (currentState) State [*];
+
+}
