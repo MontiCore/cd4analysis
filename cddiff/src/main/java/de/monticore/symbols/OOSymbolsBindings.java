@@ -9,6 +9,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import java.util.Optional;
 import java.util.Set;
 
+// NOTE: Could be generated
 public interface OOSymbolsBindings extends BasicSymbolsBindings {
 
   OOSymbolsBindings copy();

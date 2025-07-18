@@ -6,6 +6,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 
 import java.util.Set;
 
+// NOTE: Could be generated
 public interface BasicSymbolsLocalIncMapping {
 
   Set<TypeSymbol> getIncarnations(TypeSymbol typeSymbol);

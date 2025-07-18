@@ -7,6 +7,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
 import java.util.Set;
 
+// NOTE: Could be generated
 public interface OOSymbolsLocalIncMapping extends BasicSymbolsLocalIncMapping {
 
   Set<OOTypeSymbol> getIncarnations(OOTypeSymbol typeSymbol);

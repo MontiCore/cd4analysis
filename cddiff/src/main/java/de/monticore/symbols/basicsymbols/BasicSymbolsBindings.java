@@ -8,6 +8,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import java.util.Optional;
 import java.util.Set;
 
+// NOTE: Could be generated
 public interface BasicSymbolsBindings {
 
   BasicSymbolsBindings copy();
