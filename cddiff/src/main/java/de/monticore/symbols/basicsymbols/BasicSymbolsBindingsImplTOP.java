@@ -1,6 +1,7 @@
 package de.monticore.symbols.basicsymbols;
 
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.Bindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -16,9 +17,9 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   //      -> other example: addFunctionBinding but a parameter type of the function is already bound to something else
   //        -> maybe throw exception in that case so adaptation / variant logic can handle ti and drop the variant
 
-  protected final Bindings<TypeSymbol> typeBindings;
-  protected final Bindings<VariableSymbol> variableBindings;
-  protected final Bindings<FunctionSymbol> functionBindings;
+  private final Bindings<TypeSymbol> typeBindings;
+  private final Bindings<VariableSymbol> variableBindings;
+  private final Bindings<FunctionSymbol> functionBindings;
 
 
   protected BasicSymbolsBindingsImplTOP(Bindings<TypeSymbol> typeBindings,
@@ -53,8 +54,16 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public void addTypeBinding(Binding<TypeSymbol> binding) {
+  public void addTypeBinding(Binding<TypeSymbol> binding) throws BindingConflictException {
+    if (isConflictingTypeBinding(binding)) {
+      throw new BindingConflictException(binding);
+    }
     typeBindings.add(binding);
+  }
+
+  @Override
+  public boolean isConflictingTypeBinding(Binding<TypeSymbol> binding) {
+    return typeBindings.conflictsWith(binding);
   }
 
   @Override
@@ -68,9 +77,16 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public void addVariableBinding(Binding<VariableSymbol> binding) {
-    // TODO add checks to enforce no conflict with type bindings
+  public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
+    if (isConflictingVariableBinding(binding)) {
+      throw new BindingConflictException(binding);
+    }
     variableBindings.add(binding);
+  }
+
+  @Override
+  public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
+    return variableBindings.conflictsWith(binding);
   }
 
   @Override
@@ -84,12 +100,23 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public void addFunctionBinding(Binding<FunctionSymbol> binding) {
+  public void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException {
+    if (isConflictingFunctionBinding(binding)) {
+      throw new BindingConflictException(binding);
+    }
     functionBindings.add(binding);
   }
 
   @Override
-  public void addAll(BasicSymbolsBindings bindings) {
+  public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
+    return functionBindings.conflictsWith(binding);
+  }
+
+  @Override
+  public void addAll(BasicSymbolsBindings bindings) throws BindingConflictException {
+    if (isConflicting(bindings)) {
+      throw new BindingConflictException();
+    }
     for (Binding<TypeSymbol> binding : bindings.getTypeBindings()) {
       addTypeBinding(binding);
     }
@@ -99,5 +126,25 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
     for (Binding<FunctionSymbol> binding : bindings.getFunctionBindings()) {
       addFunctionBinding(binding);
     }
+  }
+
+  @Override
+  public boolean isConflicting(BasicSymbolsBindings otherBindings) {
+    for (Binding<TypeSymbol> binding : otherBindings.getTypeBindings()) {
+      if (isConflictingTypeBinding(binding)) {
+        return true;
+      }
+    }
+    for (Binding<VariableSymbol> binding : otherBindings.getVariableBindings()) {
+      if (isConflictingVariableBinding(binding)) {
+        return true;
+      }
+    }
+    for (Binding<FunctionSymbol> binding : otherBindings.getFunctionBindings()) {
+      if (isConflictingFunctionBinding(binding)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -2,6 +2,7 @@ package de.monticore.refadaptation;
 
 import com.google.common.base.Preconditions;
 import de.monticore.symboltable.ISymbol;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,14 +44,40 @@ public class Bindings<T extends ISymbol> {
     return symbol.getFullName();
   }
 
-  // TODO add compatibility checks etc
-
-  // TODO throws BindingConflictException
-  public void add(Binding<T> binding) {
-    // TODO check again
+  /**
+   * Adds a binding to the set of bindings if there is no conflict with an existing binding.
+   *
+   * @param binding the binding to add
+   * @throws BindingConflictException if there is a conflict with an existing binding.
+   */
+  public void add(Binding<T> binding) throws BindingConflictException {
     Preconditions.checkNotNull(binding);
     String key = computeKeyFunction.apply(binding.getReferenceElement());
-    bindings.put(key, binding);
+    Binding<T> existingBinding = bindings.get(key);
+    if (existingBinding != null) {
+      bindings.put(key, existingBinding.mergeOrThrowConflict(binding));
+    } else {
+      bindings.put(key, binding);
+    }
+  }
+
+  public boolean conflictsWith(Binding<T> binding) {
+    return getConflictingBinding(binding).isPresent();
+  }
+
+  protected Optional<Binding<T>> getConflictingBinding(Binding<T> binding) {
+    String key = computeKeyFunction.apply(binding.getReferenceElement());
+    return Optional.ofNullable(bindings.get(key))
+        .filter(existingBinding -> existingBinding.conflictsWith(binding));
+  }
+
+  protected void throwIfConflict(Binding<T> newBinding) throws BindingConflictException {
+    Optional<Binding<T>> conflictingBinding = getConflictingBinding(newBinding);
+    if (conflictingBinding.isPresent()) {
+      Log.debug("Existing binding conflicts with new binding: " + conflictingBinding.get() + " - " + newBinding,
+          Bindings.class.getName());
+      throw new BindingConflictException(newBinding);
+    }
   }
 
   public Optional<Binding<T>> get(T refElement) {

@@ -1,5 +1,7 @@
 package de.monticore.refadaptation;
 
+import de.se_rwth.commons.logging.Log;
+
 import java.util.Set;
 
 /**
@@ -61,6 +63,11 @@ public class Binding<T> {
   }
 
   public boolean conflictsWith(Binding<T> other) {
+    /*
+     * TODO review if this still makes any sense?! -> or simplify:
+     *  - strict: exactly one concrete element -> rename to FIXED ?
+     *  -> aggregate -> exactly multiple elements ??
+     */
     if (!referenceElement.equals(other.referenceElement)) return false;
 
     if (this.isStrict() && other.isStrict()) {
@@ -74,6 +81,24 @@ public class Binding<T> {
 
     // Aggregates are compatible
     return false;
+  }
+
+  public Binding<T> mergeOrThrowConflict(Binding<T> other) throws BindingConflictException {
+    // TODO adjust implementation for aggregate bindings
+    if (this.isStrict() && other.isStrict()) {
+      if (this.concreteElements.equals(other.concreteElements)) {
+        return this; // No conflict, return the existing binding
+      } else {
+        throw new BindingConflictException(other);
+      }
+    } else if (this.isAggregate() || other.isAggregate()) {
+      // TODO check if this makes sense?!
+      Set<T> mergedConcreteElements = Set.copyOf(this.concreteElements);
+      mergedConcreteElements.addAll(other.concreteElements);
+      return new Binding<>(this.referenceElement, mergedConcreteElements, Kind.AGGREGATE);
+    } else {
+      throw new BindingConflictException(other);
+    }
   }
 
   public <O> Binding<O> cast() {

@@ -1,6 +1,7 @@
 package de.monticore.symbols;
 
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
@@ -18,11 +19,15 @@ public interface OOSymbolsBindings extends BasicSymbolsBindings {
   Optional<Binding<FieldSymbol>> getBinding(FieldSymbol fieldSymbol);
   Optional<Binding<MethodSymbol>> getBinding(MethodSymbol methodSymbol);
 
-  void addOOTypeBinding(Binding<OOTypeSymbol> binding);
+  void addOOTypeBinding(Binding<OOTypeSymbol> binding) throws BindingConflictException;
 
-  void addFieldBinding(Binding<FieldSymbol> binding);
+  void addFieldBinding(Binding<FieldSymbol> binding) throws BindingConflictException;
 
-  void addMethodBinding(Binding<MethodSymbol> binding);
+  void addMethodBinding(Binding<MethodSymbol> binding) throws BindingConflictException;
+
+  boolean isConflictingOOTypeBinding(Binding<OOTypeSymbol> binding);
+  boolean isConflictingFieldBinding(Binding<FieldSymbol> binding);
+  boolean isConflictingMethodBinding(Binding<MethodSymbol> binding);
 
   Set<Binding<OOTypeSymbol>> getOOTypeBindings();
 
@@ -30,5 +35,7 @@ public interface OOSymbolsBindings extends BasicSymbolsBindings {
 
   Set<Binding<MethodSymbol>> getMethodBindings();
 
-  void addAll(OOSymbolsBindings bindings);
+  void addAll(OOSymbolsBindings bindings) throws BindingConflictException;
+
+  boolean isConflicting(OOSymbolsBindings otherBindings);
 }

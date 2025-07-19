@@ -1,7 +1,7 @@
 package de.monticore.symbols;
 
-import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.Bindings;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindingsImpl;
@@ -14,7 +14,6 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 // NOTE: Could be generated
 public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
@@ -77,7 +76,7 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   /*
-   * NOTE: We MUST add OOTypeSymbol, FieldSymbol, MethodSymbol to the BasicSymbolsBindings
+   * IMPLEMENTATION NOTE: We MUST add OOTypeSymbol, FieldSymbol, MethodSymbol to the BasicSymbolsBindings
    * because they are also TypeSymbol, VariableSymbol, FunctionSymbol.
    * This is necessary to ensure that the constraints enforced by BasicSymbolsBindings
    * are also applied to OOTypeSymbol, FieldSymbol, MethodSymbol.
@@ -89,37 +88,49 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
    * respected by a generated implementation of OOSymbolsBindings
    */
 
-  // TODO throw BindingConflictException
   @Override
-  public void addOOTypeBinding(Binding<OOTypeSymbol> binding) {
-    // 1. enforce OO specific constraints
-    // TODO check for conflicts with existing bindings OOTypeSymbol, FieldSymbol, MethodSymbol
-    // 2. call BasicSymbolsBindings.addTypeBinding
+  public void addOOTypeBinding(Binding<OOTypeSymbol> binding) throws BindingConflictException {
+    if (isConflictingOOTypeBinding(binding)) {
+      throw new BindingConflictException(binding);
+    }
     basicSymbolsBindings.addTypeBinding(binding.cast());
-    // 3. if that is successful add to ooTypeBindings
     ooTypeBindings.add(binding);
   }
 
-  // TODO throw BindingConflictException
   @Override
-  public void addFieldBinding(Binding<FieldSymbol> binding) {
-    // 1. enforce OO specific constraints
-    // TODO check for declaring type conflicts with existing bindings OOTypeSymbol
-    // 2. call BasicSymbolsBindings.addTypeBinding (already checks conflicts with existing TypeSymbol)
+  public void addFieldBinding(Binding<FieldSymbol> binding) throws BindingConflictException {
+    if (isConflictingFieldBinding(binding)) {
+      throw new BindingConflictException(binding);
+    }
     basicSymbolsBindings.addVariableBinding(binding.cast());
-    // 3. if that is successful add to ooTypeBindings
     fieldBindings.add(binding);
   }
 
-  // TODO throw BindingConflictException
   @Override
-  public void addMethodBinding(Binding<MethodSymbol> binding) {
-    // 1. enforce OO specific constraints
-    // TODO check for declaring type conflicts with existing bindings OOTypeSymbol
-    // 2. call BasicSymbolsBindings.addFunctionBinding (already checks conflicts with existing TypeSymbol)
+  public void addMethodBinding(Binding<MethodSymbol> binding) throws BindingConflictException {
+    if (isConflictingMethodBinding(binding)) {
+      throw new BindingConflictException(binding);
+    }
     basicSymbolsBindings.addFunctionBinding(binding.cast());
-    // 3. if that is successful add to ooTypeBindings
     methodBindings.add(binding);
+  }
+
+  @Override
+  public boolean isConflictingOOTypeBinding(Binding<OOTypeSymbol> binding) {
+    return ooTypeBindings.conflictsWith(binding)
+        || basicSymbolsBindings.isConflictingTypeBinding(binding.cast());
+  }
+
+  @Override
+  public boolean isConflictingFieldBinding(Binding<FieldSymbol> binding) {
+    return fieldBindings.conflictsWith(binding)
+        || basicSymbolsBindings.isConflictingVariableBinding(binding.cast());
+  }
+
+  @Override
+  public boolean isConflictingMethodBinding(Binding<MethodSymbol> binding) {
+    return methodBindings.conflictsWith(binding)
+        || basicSymbolsBindings.isConflictingFunctionBinding(binding.cast());
   }
 
   @Override
@@ -138,7 +149,11 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public void addAll(OOSymbolsBindings bindings) {
+  public void addAll(OOSymbolsBindings bindings) throws BindingConflictException {
+    // 1. check for conflicts
+    if (isConflicting(bindings)) {
+      throw new BindingConflictException();
+    }
     // Add all basic symbols bindings
     basicSymbolsBindings.addAll(bindings);
 
@@ -154,21 +169,49 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     }
   }
 
+  @Override
+  public boolean isConflicting(OOSymbolsBindings bindings) {
+    if (basicSymbolsBindings.isConflicting(bindings)) {
+      return true;
+    }
+    // Check for conflicts in OO specific bindings
+    for (Binding<OOTypeSymbol> binding : bindings.getOOTypeBindings()) {
+      if (isConflictingOOTypeBinding(binding)) {
+        return true;
+      }
+    }
+    for (Binding<FieldSymbol> binding : bindings.getFieldBindings()) {
+      if (isConflictingFieldBinding(binding)) {
+        return true;
+      }
+    }
+    for (Binding<MethodSymbol> binding : bindings.getMethodBindings()) {
+      if (isConflictingMethodBinding(binding)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   // ========== Delegate to BasicSymbolsBindings methods ==========
 
   @Override
   public Optional<Binding<TypeSymbol>> getBinding(TypeSymbol typeSymbol) {
-    // even if it is an OOTypeSymbol, we added it to the basic symbols bindings to it is
+    /*
+     * IMPL NOTE: We do not need to check if the typeSymbol is an OOTypeSymbol here
+     * because we added OOTypeSymbol bindings to the basicSymbolsBindings as well.
+     */
     return basicSymbolsBindings.getBinding(typeSymbol);
   }
 
   @Override
   public Set<Binding<TypeSymbol>> getTypeBindings() {
+    // IMPL NOTE: Returns OOTypeSymbols as well
     return basicSymbolsBindings.getTypeBindings();
   }
 
   @Override
-  public void addTypeBinding(Binding<TypeSymbol> binding) {
+  public void addTypeBinding(Binding<TypeSymbol> binding) throws BindingConflictException {
     // TODO should we check this here?
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       addOOTypeBinding(binding.cast());
@@ -178,17 +221,32 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
+  public boolean isConflictingTypeBinding(Binding<TypeSymbol> binding) {
+    // TODO should we check this here?
+    if (binding.getReferenceElement() instanceof OOTypeSymbol) {
+      return isConflictingOOTypeBinding(binding.cast());
+    } else {
+      return basicSymbolsBindings.isConflictingTypeBinding(binding);
+    }
+  }
+
+  @Override
   public Optional<Binding<VariableSymbol>> getBinding(VariableSymbol variableSymbol) {
+    /*
+     * IMPL NOTE: We do not need to check if the variableSymbol is a FieldSymbols here
+     * because we added FieldSymbol bindings to the basicSymbolsBindings as well.
+     */
     return basicSymbolsBindings.getBinding(variableSymbol);
   }
 
   @Override
   public Set<Binding<VariableSymbol>> getVariableBindings() {
+    // IMPL NOTE: Returns FieldSymbols as well
     return basicSymbolsBindings.getVariableBindings();
   }
 
   @Override
-  public void addVariableBinding(Binding<VariableSymbol> binding) {
+  public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
     // TODO should we check this here?
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       addFieldBinding(binding.cast());
@@ -198,17 +256,32 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
+  public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
+    // TODO should we check this here?
+    if (binding.getReferenceElement() instanceof FieldSymbol) {
+      return isConflictingFieldBinding(binding.cast());
+    } else {
+      return basicSymbolsBindings.isConflictingVariableBinding(binding);
+    }
+  }
+
+  @Override
   public Optional<Binding<FunctionSymbol>> getBinding(FunctionSymbol functionSymbol) {
+    /*
+     * IMPL NOTE: We do not need to check if the functionSymbol is a MethodSymbol here
+     * because we added MethodSymbol bindings to the basicSymbolsBindings as well.
+     */
     return basicSymbolsBindings.getBinding(functionSymbol);
   }
 
   @Override
   public Set<Binding<FunctionSymbol>> getFunctionBindings() {
+    // IMPL NOTE: Returns MethodSymbols as well
     return basicSymbolsBindings.getFunctionBindings();
   }
 
   @Override
-  public void addFunctionBinding(Binding<FunctionSymbol> binding) {
+  public void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException {
     // TODO should we check this here?
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       addMethodBinding(binding.cast());
@@ -218,12 +291,32 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public void addAll(BasicSymbolsBindings bindings) {
+  public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
+    // TODO should we check this here?
+    if (binding.getReferenceElement() instanceof MethodSymbol) {
+      return isConflictingMethodBinding(binding.cast());
+    } else {
+      return basicSymbolsBindings.isConflictingFunctionBinding(binding);
+    }
+  }
+
+  @Override
+  public void addAll(BasicSymbolsBindings bindings) throws BindingConflictException {
     // TODO should we check this here?
     if (bindings instanceof OOSymbolsBindings) {
       addAll((OOSymbolsBindings) bindings);
     } else {
       basicSymbolsBindings.addAll(bindings);
+    }
+  }
+
+  @Override
+  public boolean isConflicting(BasicSymbolsBindings otherBindings) {
+    // TODO should we check this here?
+    if (otherBindings instanceof OOSymbolsBindings) {
+      return isConflicting((OOSymbolsBindings) otherBindings);
+    } else {
+      return basicSymbolsBindings.isConflicting(otherBindings);
     }
   }
 }
