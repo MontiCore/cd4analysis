@@ -46,6 +46,9 @@ public class CD2SMTGenerator {
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
   
+  private static boolean useSeed = false;
+  private static int seed = 0;
+  
   public CD2SMTGenerator(ClassStrategy.Strategy cs, InheritanceData.Strategy is,
       AssociationStrategy.Strategy as) {
     if (is == InheritanceData.Strategy.SE && cs != ClassStrategy.Strategy.SSCOMB) {
@@ -93,8 +96,29 @@ public class CD2SMTGenerator {
     }
   }
   
+  public static void setSeed(int seed) {
+    CD2SMTGenerator.seed = seed;
+    CD2SMTGenerator.useSeed = true;
+  }
+  
+  public static void disableSeed() {
+    CD2SMTGenerator.useSeed = false;
+  }
+  
+  public static int getSeed() { return CD2SMTGenerator.seed; }
+  
+  public static boolean isSeedEnabled() { return CD2SMTGenerator.useSeed; }
+  
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
     Solver solver = ctx.mkSolver();
+    
+    if (useSeed) {
+      // Set the random seed for determinism
+      Params p = ctx.mkParams();
+      p.add("random_seed", getSeed()); // Choose your seed value
+      solver.setParameters(p);
+    }
+    
     inheritanceStrategy.getInheritanceConstraints().forEach(c -> solver.assertAndTrack(c.getValue(),
         ctx.mkBoolConst(String.valueOf(c.getId()))));
     

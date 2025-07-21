@@ -5,6 +5,7 @@ import static de.monticore.cd2smt.Helper.CDHelper.getASTCDTypes;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -34,6 +35,13 @@ public class CDTypeInitializer {
     Map<ASTCDType, IntExpr> vars = new HashMap<>();
     Context ctx = new Context();
     Solver solver = ctx.mkSolver();
+
+    if (CD2SMTGenerator.isSeedEnabled()) {
+      // Set the random seed for determinism
+      Params p = ctx.mkParams();
+      p.add("random_seed", CD2SMTGenerator.getSeed()); // Choose your seed value
+      solver.setParameters(p);
+    }
     
     // create it const for each type
     getASTCDTypes(ast.getCDDefinition()).forEach(t -> vars.put(t, ctx.mkIntConst(t.getName())));
