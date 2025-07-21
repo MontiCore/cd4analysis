@@ -11,7 +11,9 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
+
 import org.apache.commons.lang3.function.FailableConsumer;
+import org.apache.commons.lang3.function.FailableRunnable;
 
 /**
  * Resolves a symbol name to an AST node from a CD. When a matching AST node is found, the
@@ -19,12 +21,14 @@ import org.apache.commons.lang3.function.FailableConsumer;
  * CDMethod). This class is used to process references used e.g., in the 'forEach' stereotype which
  * can be of different kinds.
  */
-public class CDRefSymbolHandlerDelegator {
+public class CDRefSymbolHandlerDelegator<E extends Throwable> {
   
   private static final String LOG_NAME = CDRefSymbolHandlerDelegator.class.getName();
   
-  private FailableConsumer<ASTCDType, CompletionException> typeHandler;
-  private FailableConsumer<ASTCDAttribute, CompletionException> attributeHandler;
+  private FailableConsumer<ASTCDType, E> typeHandler;
+  private FailableConsumer<ASTCDAttribute, E> attributeHandler;
+  
+  private FailableRunnable<E> defaultHandler;
   
   /**
    * Resolves a symbol and calls the appropriate handler depending on the kind of model element.
@@ -32,19 +36,17 @@ public class CDRefSymbolHandlerDelegator {
    * @param scope the scope to resolve the symbol in
    * @param referenceSymbol the symbol to resolve
    * @param sourcePosition the source position of the reference symbol. For logging purposes
-   * @throws CompletionException
+   * @throws E exception that might be thrown from the handlers
    */
   public void resolveSymbol(ICDBasisScope scope, String referenceSymbol,
-      SourcePosition sourcePosition) throws CompletionException {
+      SourcePosition sourcePosition) throws E {
     boolean processed = resolveAsTypeSymbol(scope, referenceSymbol, sourcePosition);
     if (!processed) {
       processed = resolveAsAttributeSymbol(scope, referenceSymbol, sourcePosition);
     }
     // TODO Support method, and association references
-    if (!processed) {
-      // TODO Rework error logging/reporting & exception usage
-      throw new CompletionException("Unsupported forEach reference referenceSymbol '"
-          + referenceSymbol + "' at " + sourcePosition);
+    if (!processed && defaultHandler != null) {
+      defaultHandler.run();
     }
   }
   
@@ -52,10 +54,10 @@ public class CDRefSymbolHandlerDelegator {
    * Tries to resolve the given reference as a type symbol, e.g. 'Foo'.
    *
    * @return true if the reference was processed, false otherwise
-   * @throws CompletionException
+   * @throws E exception that might be thrown from the handlers
    */
   protected boolean resolveAsTypeSymbol(ICDBasisScope scope, String referenceSymbol,
-      SourcePosition sourcePosition) throws CompletionException {
+      SourcePosition sourcePosition) throws E {
     Optional<TypeSymbol> typeSymbol = scope.resolveType(referenceSymbol);
     if (typeSymbol.isPresent()) {
       ASTType type = typeSymbol.get().getAstNode();
@@ -63,15 +65,15 @@ public class CDRefSymbolHandlerDelegator {
         ASTCDType referencedType = (ASTCDType) type;
         Log.debug("Resolved CDType reference: " + referencedType, LOG_NAME);
         if (typeHandler == null) {
-          throw new CompletionException("A reference to a CDType is not supported @ "
-              + sourcePosition);
+          Log.error("A reference to a CDType is not supported @ " + sourcePosition);
+          return false;
         }
         typeHandler.accept(referencedType);
         return true;
       }
       else {
-        throw new CompletionException("Referenced type symbol " + referenceSymbol
-            + " is not a CDType! (type: " + type.getClass().getName() + ") @ " + sourcePosition);
+        Log.error("Referenced type symbol " + referenceSymbol + " is not a CDType! (type: " + type
+            .getClass().getName() + ") @ " + sourcePosition);
       }
     }
     return false;
@@ -81,10 +83,10 @@ public class CDRefSymbolHandlerDelegator {
    * Tries to resolve the given reference as an attribute symbol, e.g. 'Foo.attr'.
    *
    * @return true if the reference was processed, false otherwise
-   * @throws CompletionException
+   * @throws E exception that might be thrown from the handlers
    */
   private boolean resolveAsAttributeSymbol(ICDBasisScope scope, String referenceExpr,
-      SourcePosition sourcePosition) throws CompletionException {
+      SourcePosition sourcePosition) throws E {
     Optional<FieldSymbol> fieldSymbol = scope.resolveField(referenceExpr);
     if (fieldSymbol.isPresent()) {
       ASTField field = fieldSymbol.get().getAstNode();
@@ -92,16 +94,15 @@ public class CDRefSymbolHandlerDelegator {
         ASTCDAttribute referencedAttribute = (ASTCDAttribute) field;
         Log.debug("Resolved CDAttribute reference: " + referencedAttribute, LOG_NAME);
         if (attributeHandler == null) {
-          throw new CompletionException("A reference to a CDAttribute is not supported @ "
-              + sourcePosition);
+          Log.error("A reference to a CDAttribute is not supported @ " + sourcePosition);
+          return false;
         }
         attributeHandler.accept(referencedAttribute);
         return true;
       }
       else {
-        throw new CompletionException("Referenced field symbol " + referenceExpr
-            + " is not a CDAttribute! (type: " + field.getClass().getName() + ") @"
-            + sourcePosition);
+        Log.error("Referenced field symbol " + referenceExpr + " is not a CDAttribute! (type: "
+            + field.getClass().getName() + ") @" + sourcePosition);
       }
     }
     return false;
@@ -112,8 +113,9 @@ public class CDRefSymbolHandlerDelegator {
    *
    * @param typeHandler the handler to be called
    */
-  public void setTypeHandler(FailableConsumer<ASTCDType, CompletionException> typeHandler) {
+  public CDRefSymbolHandlerDelegator<E> onType(FailableConsumer<ASTCDType, E> typeHandler) {
     this.typeHandler = typeHandler;
+    return this;
   }
   
   /**
@@ -121,9 +123,20 @@ public class CDRefSymbolHandlerDelegator {
    *
    * @param attributeHandler the handler to be called
    */
-  public void setAttributeHandler(
-      FailableConsumer<ASTCDAttribute, CompletionException> attributeHandler) {
+  public CDRefSymbolHandlerDelegator<E> onAttribute(
+      FailableConsumer<ASTCDAttribute, E> attributeHandler) {
     this.attributeHandler = attributeHandler;
+    return this;
+  }
+  
+  /**
+   * Sets the default handler to be called when no specific handler is set for a reference.
+   *
+   * @param defaultHandler the default handler to be called
+   */
+  public CDRefSymbolHandlerDelegator<E> onDefault(FailableRunnable<E> defaultHandler) {
+    this.defaultHandler = defaultHandler;
+    return this;
   }
   
 }

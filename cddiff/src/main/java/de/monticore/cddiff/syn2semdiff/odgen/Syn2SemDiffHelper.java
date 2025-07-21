@@ -1,10 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.odgen;
 
-import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
-import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
-
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -18,11 +14,11 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cddiff.syn2semdiff.datastructures.*;
-import de.monticore.cddiff.syn2semdiff.datastructures.MatchingStrategy;
 import de.monticore.cddiff.syndiff.CDAssocDiff;
 import de.monticore.cddiff.syndiff.CDSynDiffMatches;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.*;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.cdmatcher.CachedMatches;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -31,8 +27,13 @@ import de.monticore.odbasis._ast.ASTODObject;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Pair;
+
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.monticore.cddiff.ow2cw.CDAssociationHelper.matchRoleNames;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.getAllSuper;
+import static de.monticore.cddiff.ow2cw.CDInheritanceHelper.isSuperOf;
 
 /**
  * This is a helper class that is accessible from all classes for semantic difference and generation
@@ -125,7 +126,7 @@ public class Syn2SemDiffHelper {
    */
   private List<ASTCDAssociation> deletedAssocs;
   
-  private de.monticore.cdmatcher.MatchingStrategy<ASTCDAssociation> matcher;
+  private BooleanMatchingStrategy<ASTCDAssociation> matcher;
   private List<CDAssocDiff> diffs;
   private List<MatchingStrategy> matchingStrategies;
   

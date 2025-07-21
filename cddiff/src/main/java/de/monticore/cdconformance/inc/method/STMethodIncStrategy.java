@@ -26,12 +26,17 @@ public class STMethodIncStrategy implements CDMethodMatchingStrategy {
   
   @Override
   public boolean isMatched(ASTCDMethod concrete, ASTCDMethod ref) {
+    if (!ref.isPresentSymbol() || ref.getEnclosingScope() == null) {
+      // If no symbol table information is attached to the reference method, we cannot
+      // determine whether the concrete method matches the reference method by stereotype.
+      return false;
+    }
     if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype()
         .contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      // TODO resolving the signature String every tme is not efficient
-      Optional<MethodSymbol> matchingSymbol = MethodSignatureString.resolveMethodSignature(refType
-          .getSpannedScope(), refName);
+      // TODO resolving the signature String every time is not efficient
+      Optional<MethodSymbol> matchingSymbol = MethodSignatureString.resolveMethodSignature(ref
+          .getEnclosingScope(), refName);
       return matchingSymbol.isPresent() && matchingSymbol.get().equals(ref.getSymbol());
     }
     return false;

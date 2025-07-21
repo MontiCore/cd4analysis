@@ -39,12 +39,13 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
         .getModifier(), "Stereotype value must not be empty for stereotype 'forEach' @ "
             + referenceType.get_SourcePositionStart());
     if (stereotypeValue.isPresent()) {
-      CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
-      symbolHandler.setTypeHandler(paramType -> completeTypeParameterizedByType(referenceType,
-          paramType, context));
-      // TODO Add support for other parameter elements
-      symbolHandler.resolveSymbol(context.getReferenceCD().getEnclosingScope(), stereotypeValue
-          .get(), referenceType.get_SourcePositionStart());
+      new CDRefSymbolHandlerDelegator<CompletionException>().onType(
+          paramType -> completeTypeParameterizedByType(referenceType, paramType, context))
+          // TODO Add support for other parameter elements
+          .onDefault(() -> Log.error("Unsupported forEach reference parameter", referenceType
+              .get_SourcePositionStart())).resolveSymbol(context.getReferenceCD()
+                  .getEnclosingScope(), stereotypeValue.get(), referenceType
+                      .get_SourcePositionStart());
     }
     else {
       super.completeTypeInCD(concreteCD, referenceType, context);
@@ -93,7 +94,7 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
       // TODO we do not support packages at the moment (see issue 29)
       String newTypeQualifier = context.getConcreteCD().getCDDefinition().getSymbol().getFullName();
       String newTypeFullName = Names.getQualifiedName(newTypeQualifier, newType.getName());
-      context.getScopedIncarnationBindings().addTypeBinding(newTypeFullName, paramType.getSymbol(),
+      context.getIncarnationMapping().addBinding(newTypeFullName, paramType.getSymbol(),
           paramTypeInc.getSymbol());
       
       // 4. pass the new type to the next completer

@@ -44,6 +44,7 @@ public class ClassMatcherTest {
   @BeforeEach
   public void initTests() {
     LogStub.init();
+    CD4CodeMill.reset();
     CD4CodeMill.init();
     Log.enableFailQuick(false);
   }

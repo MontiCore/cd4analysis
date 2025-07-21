@@ -7,7 +7,7 @@ import de.monticore.cddiff.CDDiffUtil;
 
 public class MatchCDTypesToSuperTypes extends MatchCDTypeInHierarchy {
   
-  public MatchCDTypesToSuperTypes(MatchingStrategy<ASTCDType> typeMatcher,
+  public MatchCDTypesToSuperTypes(BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }

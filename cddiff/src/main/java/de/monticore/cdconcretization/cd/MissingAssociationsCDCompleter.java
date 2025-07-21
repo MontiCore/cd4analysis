@@ -13,9 +13,10 @@ import de.monticore.cdconcretization.association.AssocMatchDirection;
 import de.monticore.cdconcretization.association.AssociationMatch;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
-import de.monticore.cdmatcher.MatchingStrategy;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -47,8 +48,8 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
     for (ASTCDAssociation rAssoc : rcd.getCDDefinition().getCDAssociationsList()) {
       Log.debug("Finding matches for assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
       
-      MatchingStrategy<ASTCDAssociation> greedyMatching = new MatchCDAssocsGreedy(context
-          .getTypeIncStrategyMatchingSubTypes(), ccd, rcd);
+      ExternalCandidatesMatchingStrategy<ASTCDAssociation> greedyMatching = new MatchCDAssocsGreedy(
+          context.getTypeIncStrategyMatchingSubTypes(), ccd, rcd);
       
       // Find all associations in the concrete class diagram that match the reference association
       Set<ASTCDAssociation> assocIncarnations = ccd.getCDDefinition().getCDAssociationsList()

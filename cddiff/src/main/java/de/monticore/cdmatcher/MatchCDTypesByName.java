@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Deprecated
-public class MatchCDTypesByName implements MatchingStrategy<ASTCDType> {
+public class MatchCDTypesByName implements ExternalCandidatesMatchingStrategy<ASTCDType> {
   
   private final ASTCDCompilationUnit tgtCD;
   

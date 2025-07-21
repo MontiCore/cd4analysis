@@ -6,9 +6,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.*;
-import java.util.*;
 import org.antlr.v4.runtime.misc.MultiMap;
 import org.antlr.v4.runtime.misc.Triple;
+
+import java.util.*;
 
 /**
  * This class should be used to construct a matching of respectively types and associations between
@@ -35,7 +36,8 @@ public class CDSynDiffMatches {
     Set<ASTCDType> tgtTypes = CDDiffUtil.getAllTypesFromCD(tgtCD);
     
     // compute a matching of types by name
-    MatchingStrategy<ASTCDType> typeMatcher = new MatchCDTypesByQName2Set(tgtTypes);
+    ExternalCandidatesMatchingStrategy<ASTCDType> typeMatcher = new MatchCDTypesByQName2Set(
+        tgtTypes);
     Map<ASTCDType, ASTCDType> typeMatchesByName = computeMatching(srcTypes, typeMatcher);
     
     /*
@@ -85,7 +87,7 @@ public class CDSynDiffMatches {
     
     this.typeMatches4Assocs = typeMatches4Assocs;
     
-    MatchingStrategy<ASTCDAssociation> assocMatcher = new MatchAssocsByRole2Set(
+    ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocMatcher = new MatchAssocsByRole2Set(
         new CachedMultiMatches<>(typeMatches4Assocs), srcCD, tgtCD, tgtAssocs);
     MultiMap<ASTCDAssociation, ASTCDAssociation> assocMatches = computeMultiMatching(srcAssocs,
         assocMatcher);
@@ -171,7 +173,8 @@ public class CDSynDiffMatches {
   }
   
   /** computes a matching based on a MatchingStrategy */
-  public static <T> Map<T, T> computeMatching(Set<T> srcSet, MatchingStrategy<T> matcher) {
+  public static <T> Map<T, T> computeMatching(Set<T> srcSet,
+      ExternalCandidatesMatchingStrategy<T> matcher) {
     Map<T, T> matching = new LinkedHashMap<>();
     for (T srcType : srcSet) {
       List<T> matches = matcher.getMatchedElements(srcType);
@@ -183,7 +186,7 @@ public class CDSynDiffMatches {
   }
   
   public static <T> MultiMap<T, T> computeMultiMatching(Set<T> srcSet,
-      MatchingStrategy<T> matcher) {
+      ExternalCandidatesMatchingStrategy<T> matcher) {
     MultiMap<T, T> matching = new MultiMap<>();
     for (T srcType : srcSet) {
       matching.put(srcType, matcher.getMatchedElements(srcType));

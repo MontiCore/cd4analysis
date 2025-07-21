@@ -4,7 +4,8 @@ package de.monticore.cdconformance.inc.method;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,13 +19,14 @@ import java.util.stream.Collectors;
  */
 public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
   
-  private final MCTypeMatcher typeMatcher;
+  private final MCTypeMatchingStrategy mcTypeIncStrategy;
   private final boolean strictParameterOrder;
   
   private ASTCDType refType;
   
-  public EqSignatureMethodIncStrategy(MCTypeMatcher typeMatcher, boolean strictParameterOrder) {
-    this.typeMatcher = typeMatcher;
+  public EqSignatureMethodIncStrategy(MCTypeMatchingStrategy mcTypeIncStrategy,
+      boolean strictParameterOrder) {
+    this.mcTypeIncStrategy = mcTypeIncStrategy;
     this.strictParameterOrder = strictParameterOrder;
   }
   
@@ -53,7 +55,7 @@ public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
     for (int i = 0; i < conParams.size(); i++) {
       ASTCDParameter conParam = conParams.get(i);
       ASTCDParameter refParam = refParams.get(i);
-      if (!typeMatcher.isMCTypeMatched(conParam.getMCType(), refParam.getMCType())) {
+      if (!mcTypeIncStrategy.isMatched(conParam.getMCType(), refParam.getMCType())) {
         return false;
       }
     }
@@ -63,7 +65,7 @@ public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
   private boolean isParameterMatchWithoutOrder(List<ASTCDParameter> conParams,
       List<ASTCDParameter> refParams) {
     for (ASTCDParameter refParam : refParams) {
-      if (conParams.stream().noneMatch(conParam -> typeMatcher.isMCTypeMatched(conParam.getMCType(),
+      if (conParams.stream().noneMatch(conParam -> mcTypeIncStrategy.isMatched(conParam.getMCType(),
           refParam.getMCType()))) {
         return false;
       }

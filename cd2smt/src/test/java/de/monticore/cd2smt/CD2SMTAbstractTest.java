@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.microsoft.z3.Context;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.provider.Arguments;
 
 public class CD2SMTAbstractTest {
@@ -26,10 +28,16 @@ public class CD2SMTAbstractTest {
   protected final String RELATIVE_TARGET_PATH = "target/generated/cd2smt-test";
   protected Context ctx;
   
+  @BeforeAll
+  public static void initSeed() {
+    CD2SMTGenerator.setSeed(42);
+  }
+  
   public void printOD(ASTODArtifact od, String dir) {
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH + "/" + dir, od.getObjectDiagram().getName()
         + ".od");
     try {
+      OD4ReportMill.init();
       FileUtils.writeStringToFile(outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset
           .defaultCharset());
     }

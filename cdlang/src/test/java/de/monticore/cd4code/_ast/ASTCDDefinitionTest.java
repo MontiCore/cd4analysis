@@ -41,6 +41,7 @@ public final class ASTCDDefinitionTest extends CD4CodeTestBasis {
   
   @Test
   public void testCDClassMillDelegation() {
+    CD4CodeMill.reset();
     CD4CodeMill.init();
     // All Mills should return a builder of the cd4code basis cdclass (overriding the cdbasis)
     assertEquals(CD4CodeMill.cDClassBuilder().uncheckedBuild().getClass(), CD4CodeBasisMill

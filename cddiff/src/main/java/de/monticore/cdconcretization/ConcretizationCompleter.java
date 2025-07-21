@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -11,7 +13,6 @@ import de.monticore.cdconcretization.association.DefaultAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssocSideCompleter;
 import de.monticore.cdconcretization.association.IAssociationCompleter;
 import de.monticore.cdconcretization.cd.*;
-import de.monticore.cdconcretization.cd.MissingAssociationsCDCompleter;
 import de.monticore.cdconcretization.cd.type.AbstractTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.BaseTypeInCDCompleter;
 import de.monticore.cdconcretization.cd.type.ForEachTypeInCDCompleter;
@@ -26,27 +27,17 @@ import de.monticore.cdconcretization.type.method.BaseMethodInTypeCompleter;
 import de.monticore.cdconcretization.type.method.ForEachMethodCompleter;
 import de.monticore.cdconcretization.type.method.IMethodInTypeCompleter;
 import de.monticore.cdconcretization.util.ChainBuilder;
-import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdconformance.inc.association.*;
-import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
-import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
-import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
-import de.monticore.cdconformance.inc.method.CompMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.EqNameMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.EqSignatureMethodIncStrategy;
-import de.monticore.cdconformance.inc.method.STMethodIncStrategy;
-import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
-import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
-import de.monticore.cdconformance.inc.type.MCTypeMatcher;
-import de.monticore.cdconformance.inc.type.STTypeIncStrategy;
-import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
-import de.monticore.cdmatcher.MatchingStrategy;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symboltable.IScope;
-import java.util.*;
-import java.util.stream.Collectors;
+import de.monticore.cdconformance.CDConformanceContext;
+import de.monticore.cdconformance.DefaultCDConformanceContext;
+import de.monticore.cdconformance.inc.ForEachBindingDerivingVisitor;
+import de.monticore.cdconformance.inc.STBindingDerivingVisitor;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
+import de.se_rwth.commons.logging.Log;
+import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
+import java.util.Set;
 
 /**
  * Tool for automatic completion of a concrete class diagram (CD) such that it conforms to a given
@@ -108,8 +99,30 @@ public class ConcretizationCompleter {
      * that are responsible for completing the different aspects of the CD. These completers are then used
      * to perform the actual concretization.
      */
-    CDCompletionContext context = new DefaultCompletionContext(concreteCD, referenceCD, mapping,
-        conformanceParams);
+    CDCompletionContext context = DefaultCompletionContext.create(concreteCD, referenceCD, mapping,
+        underspecifiedPlaceholderTypeName, forEachNameAdaptationEnabled, conformanceParams);
+    
+    // 1. introduce incarnation bindings for each incarnation
+    CD4CodeTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    STBindingDerivingVisitor stBindingDerivingVisitor = new STBindingDerivingVisitor(context
+        .getIncarnationMapping());
+    stBindingDerivingVisitor.addToTraverser(traverser);
+    ForEachBindingDerivingVisitor nameBindingDerivingVisitor = new ForEachBindingDerivingVisitor(
+        context.getIncarnationMapping());
+    nameBindingDerivingVisitor.addToTraverser(traverser);
+    concreteCD.accept(traverser);
+    
+    if (nameBindingDerivingVisitor.hasMissingBinding()) {
+      Log.warn("The concrete CD has missing incarnation bindings for reference elements"
+          + " using 'forEach'");
+      // TODO Should we continue conformance check anyway?
+      return;
+    }
+    if (nameBindingDerivingVisitor.hasFoundInvalidBinding()) {
+      Log.warn("The concrete CD has invalid incarnation bindings");
+      // TODO Should we continue conformance check anyway?
+      return;
+    }
     
     ITypeInCDCompleter typeInCDCompleter = new ChainBuilder<AbstractTypeInCDCompleter>().add(
         new ForEachTypeInCDCompleter()).add(new BaseTypeInCDCompleter()).build();
@@ -177,215 +190,66 @@ public class ConcretizationCompleter {
   /***
    * Provides default configurations for the matching strategies used in the concretization process.
    */
-  class DefaultCompletionContext implements CDCompletionContext {
+  static class DefaultCompletionContext extends DefaultCDConformanceContext implements
+      CDCompletionContext {
     
-    private final ASTCDCompilationUnit concreteCD;
-    private final ASTCDCompilationUnit referenceCD;
-    private final String mapping;
-    private final Set<CDConfParameter> conformanceParams;
-    private final CompTypeIncStrategy typeIncStrategy;
-    private final CompTypeIncStrategy typeIncStrategyMatchingSubTypes;
-    private final CompAssocIncStrategy assocIncStrategy;
-    private final MCTypeMatcher mcTypeMatcher;
+    private final boolean forEachNameAdaptationEnabled;
     
-    private final ScopedIncarnationBindings scopedIncarnationBindings =
-        new ScopedIncarnationBindings();
-    
-    public DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
-        ASTCDCompilationUnit referenceCD, String mapping, Set<CDConfParameter> conformanceParams) {
-      this.concreteCD = concreteCD;
-      this.referenceCD = referenceCD;
-      this.mapping = mapping;
-      this.conformanceParams = conformanceParams;
-      
-      typeIncStrategy = new CompTypeIncStrategy(referenceCD, mapping);
-      assocIncStrategy = new CompAssocIncStrategy(referenceCD, mapping);
-      
-      mcTypeMatcher = new MCTypeMatcher(underspecifiedPlaceholderTypeName, typeIncStrategy);
-      
-      /*
-       * We configure the matching strategies depending on the conformance checker parameter as we
-       * want to have the same matching behavior during concretization as the conformance checker.
-       */
-      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-        typeIncStrategy.addIncStrategy(new STTypeIncStrategy(referenceCD, mapping));
-        assocIncStrategy.addIncStrategy(new STNamedAssocIncStrategy(referenceCD, mapping));
-      }
-      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        typeIncStrategy.addIncStrategy(new EqTypeIncStrategy(referenceCD, mapping));
-        assocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
-      }
-      
-      // 'typeIncStrategyMatchingSubTypes' matches types which are an incarnation of a reference
-      // type
-      // themselves or have a subclass which is an incarnation of the reference type.
-      // This strategy is only used when matching associations. If we want to allow the concrete CD
-      // to
-      // define associations in superclasses of the actual type incarnation, we have to pass this
-      // type
-      // matching strategy to the association matching strategies. This allows supertypes to 'act'
-      // as
-      // incarnation of the reference type in context of a specific association.
-      // For example in the following concrete CD, A is a valid incarnation of A in the reference CD
-      // because A is a subclass of X, which has an association towards B.
-      //
-      // classdiagram Concrete {
-      //   class X;
-      //   class A extends X;
-      //   X -> B;
-      // }
-      //
-      // classdiagram Reference {
-      //   class A;
-      //   class B;
-      //   A -> B;
-      // }
-      typeIncStrategyMatchingSubTypes = new CompTypeIncStrategy(referenceCD, mapping);
-      typeIncStrategyMatchingSubTypes.addIncStrategy(typeIncStrategy);
-      if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
-        typeIncStrategyMatchingSubTypes.addIncStrategy(new MatchCDTypesToSubTypes(typeIncStrategy,
-            concreteCD, referenceCD));
-      }
-      
-      if (conformanceParams.contains(CDConfParameter.SRC_TARGET_ASSOC_MAPPING)) {
-        if (conformanceParams.contains(CDConfParameter.INHERITANCE)) {
-          assocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(
-              typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
-          assocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(
-              typeIncStrategyMatchingSubTypes, concreteCD, referenceCD));
-        }
-        else {
-          assocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(typeIncStrategy,
-              concreteCD, referenceCD));
-          assocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(typeIncStrategy,
-              concreteCD, referenceCD));
-        }
-      }
+    protected DefaultCompletionContext(ASTCDCompilationUnit concreteCD,
+        ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
+        Set<CDConfParameter> conformanceParams,
+        ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
+        ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategyMatchingSubTypes,
+        ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocIncStrategy,
+        CDAttributeMatchingStrategy attributeIncStrategy,
+        CDMethodMatchingStrategy methodIncStrategy, MCTypeMatchingStrategy mcTypeIncStrategy,
+        boolean forEachNameAdaptationEnabled) {
+      super(concreteCD, referenceCD, mapping, underspecifiedPlaceholderTypeName, conformanceParams,
+          typeIncStrategy, typeIncStrategyMatchingSubTypes, assocIncStrategy, attributeIncStrategy,
+          methodIncStrategy, mcTypeIncStrategy);
+      this.forEachNameAdaptationEnabled = forEachNameAdaptationEnabled;
     }
     
-    @Override
-    public ASTCDCompilationUnit getConcreteCD() { return concreteCD; }
-    
-    @Override
-    public ASTCDCompilationUnit getReferenceCD() { return referenceCD; }
-    
-    @Override
-    public String getMappingName() { return mapping; }
-    
-    @Override
-    public String getUnderspecifiedPlaceholderTypeName() {
-      return underspecifiedPlaceholderTypeName;
+    /**
+     * Creates a new {@link DefaultCompletionContext} for the given concretization scenario
+     * and configuration parameters.
+     *
+     * @param concreteCD the concrete CD to be completed
+     * @param referenceCD the reference CD to be used for completion
+     * @param mapping the mapping name to be used for the completion
+     * @param underspecifiedPlaceholderTypeName the name of the underspecified type
+     * @param forEachNameAdaptationEnabled if names should be treated as templates
+     * @param conformanceParams the conformance parameters to be used for the completion
+     * @return a new {@link DefaultCompletionContext} instance
+     */
+    public static DefaultCompletionContext create(ASTCDCompilationUnit concreteCD,
+        ASTCDCompilationUnit referenceCD, String mapping, String underspecifiedPlaceholderTypeName,
+        boolean forEachNameAdaptationEnabled, Set<CDConfParameter> conformanceParams) {
+      CDConformanceContext context = DefaultCDConformanceContext.create(concreteCD, referenceCD,
+          mapping, underspecifiedPlaceholderTypeName, conformanceParams);
+      return new DefaultCompletionContext(concreteCD, referenceCD, mapping,
+          underspecifiedPlaceholderTypeName, conformanceParams, context.getTypeIncStrategy(),
+          context.getTypeIncStrategyMatchingSubTypes(), context.getAssociationIncStrategy(), context
+              .getAttributeIncStrategy(), context.getMethodIncStrategy(), context
+                  .getMCTypeIncStrategy(), forEachNameAdaptationEnabled);
     }
     
     @Override
     public boolean isForEachNameAdaptationEnabled() { return forEachNameAdaptationEnabled; }
     
     @Override
-    public Set<CDConfParameter> getConformanceParams() { return conformanceParams; }
-    
-    @Override
-    public CompTypeIncStrategy getTypeIncStrategy() { return typeIncStrategy; }
-    
-    @Override
-    public CompTypeIncStrategy getTypeIncStrategyMatchingSubTypes() {
-      return typeIncStrategyMatchingSubTypes;
-    }
-    
-    @Override
-    public MatchingStrategy<ASTCDAssociation> getAssociationIncStrategy() {
-      return assocIncStrategy;
-    }
-    
-    @Override
-    public MatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(ASTCDType referenceType) {
-      CompAttributeIncStrategy attributeIncStrategy = new CompAttributeIncStrategy();
-      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new STAttributeIncStrategy(mapping));
-      }
-      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        attributeIncStrategy.addIncStrategy(new EqNameAttributeIncStrategy());
-      }
-      attributeIncStrategy.setReferenceType(referenceType);
-      return attributeIncStrategy;
-    }
-    
-    @Override
-    public MatchingStrategy<ASTCDMethod> createMethodIncStrategy(ASTCDType referenceType) {
-      CompMethodIncStrategy methodIncStrategy = new CompMethodIncStrategy();
-      if (conformanceParams.contains(CDConfParameter.STEREOTYPE_MAPPING)) {
-        methodIncStrategy.addIncStrategy(new STMethodIncStrategy(mapping));
-      }
-      if (conformanceParams.contains(CDConfParameter.NAME_MAPPING)) {
-        if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
-          methodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(mcTypeMatcher,
-              conformanceParams.contains(CDConfParameter.STRICT_PARAMETER_ORDER)));
-        }
-        else {
-          methodIncStrategy.addIncStrategy(new EqNameMethodIncStrategy());
-        }
-      }
-      methodIncStrategy.setReferenceType(referenceType);
-      return methodIncStrategy;
-    }
-    
-    @Override
-    public ScopedIncarnationBindings getScopedIncarnationBindings() {
-      return scopedIncarnationBindings;
-    }
-    
-    @Override
     public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {
-      return getTypeIncarnations(concreteCD.getEnclosingScope(), referenceType);
-    }
-    
-    @Override
-    public Set<ASTCDType> getTypeIncarnations(IScope scope, ASTCDType referenceType) {
-      // TODO improve readability...
-      // 1. check for scoped incarnation bindings
-      Optional<Collection<TypeSymbol>> typeIncarnationsOpt = scopedIncarnationBindings
-          .getScopedTypeIncarnations(scope, referenceType.getSymbol());
-      if (typeIncarnationsOpt.isPresent()) {
-        // map symbols back to AST nodes
-        return typeIncarnationsOpt.get().stream().map(SymbolUtil::cdTypeFromTypeSymbol).collect(
-            Collectors.toSet());
-      }
-      else {
-        // 2. Find all incarnations using the usual incarnation strategies
-        return ConcretizationHelper.getCDTypes(getConcreteCD()).stream().filter(
-            type -> getTypeIncStrategy().isMatched(type, referenceType)).collect(Collectors
-                .toSet());
-      }
+      return getIncarnationMapping().getIncarnations(referenceType);
     }
     
     @Override
     public Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute) {
-      return getAttributeIncarnations(concreteCD.getEnclosingScope(), referenceAttribute);
+      return getIncarnationMapping().getIncarnations(referenceAttribute);
     }
     
     @Override
-    public Set<ASTCDAttribute> getAttributeIncarnations(IScope scope,
-        ASTCDAttribute referenceAttribute) {
-      Optional<Collection<FieldSymbol>> fieldIncarnationsOpt = scopedIncarnationBindings
-          .getScopedFieldIncarnations(scope, referenceAttribute.getSymbol());
-      if (fieldIncarnationsOpt.isPresent()) {
-        // map symbols back to AST nodes
-        return fieldIncarnationsOpt.get().stream().map(SymbolUtil::cdAttributeFromFieldSymbol)
-            .collect(Collectors.toSet());
-      }
-      else {
-        // 2. Find all incarnations using the usual incarnation strategies
-        ASTCDType attributeDeclaringType = (ASTCDType) referenceAttribute.getSymbol()
-            .getEnclosingScope().getAstNode();
-        
-        return getTypeIncarnations(scope, attributeDeclaringType).stream().flatMap((
-            cAttributeDeclaringType) -> {
-          MatchingStrategy<ASTCDAttribute> attributeIncStrategy = createAttributeIncStrategy(
-              attributeDeclaringType);
-          return cAttributeDeclaringType.getCDAttributeList().stream().filter(
-              attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
-                  referenceAttribute));
-        }).collect(Collectors.toSet());
-      }
+    public Set<ASTCDMethod> getMethodIncarnations(ASTCDMethod referenceMethod) {
+      return getIncarnationMapping().getIncarnations(referenceMethod);
     }
     
   }

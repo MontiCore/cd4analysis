@@ -1,11 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmatcher;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.antlr.v4.runtime.misc.MultiMap;
 
-public class CachedMultiMatches<T> implements MatchingStrategy<T> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CachedMultiMatches<T> implements ExternalCandidatesMatchingStrategy<T> {
   
   protected MultiMap<T, T> matches;
   

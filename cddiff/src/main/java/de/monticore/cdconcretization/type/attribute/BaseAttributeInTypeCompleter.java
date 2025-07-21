@@ -29,7 +29,7 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
     List<ASTCDAttribute> allConcreteAttributesInHierarchy = CDSymbolTables.getAttributesInHierarchy(
         concreteType);
     List<ASTCDAttribute> incarnations = allConcreteAttributesInHierarchy.stream().filter(
-        cAttribute -> context.getAttributeIncStrategy().isMatched(cAttribute, referenceAttribute))
+        cAttribute -> context.getIncarnationMapping().isIncarnation(cAttribute, referenceAttribute))
         .collect(Collectors.toList());
     if (incarnations.isEmpty()) {
       createAttributeIncarnations(concreteType, referenceAttribute, context);

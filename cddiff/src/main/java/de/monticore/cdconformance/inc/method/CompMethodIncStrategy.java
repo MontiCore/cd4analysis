@@ -30,7 +30,7 @@ public class CompMethodIncStrategy implements CDMethodMatchingStrategy {
   
   @Override
   public boolean isMatched(ASTCDMethod concrete, ASTCDMethod ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
   }
   
   @Override

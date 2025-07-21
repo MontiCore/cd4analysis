@@ -22,6 +22,7 @@ public class RefactorCDsTest {
   
   @BeforeAll
   public static void init() {
+    CD4CodeMill.reset();
     CD4CodeMill.init();
   }
   

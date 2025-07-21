@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
  */
 public class MatchCDAssocsGreedy extends MatchCDAssocsBySrcTypeAndTgtRole {
   
-  public MatchCDAssocsGreedy(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  public MatchCDAssocsGreedy(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
   

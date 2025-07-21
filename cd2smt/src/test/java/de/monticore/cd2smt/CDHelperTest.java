@@ -19,6 +19,7 @@ public class CDHelperTest extends CD2SMTAbstractTest {
   @BeforeEach
   public void setup() {
     Log.init();
+    CD4CodeMill.reset();
     CD4CodeMill.init();
   }
   

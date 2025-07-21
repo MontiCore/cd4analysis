@@ -4,11 +4,12 @@ package de.monticore.cdconformance.inc.association;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class STNamedAssocIncStrategy implements MatchingStrategy<ASTCDAssociation> {
+public class STNamedAssocIncStrategy implements
+    ExternalCandidatesMatchingStrategy<ASTCDAssociation> {
   
   protected ASTCDCompilationUnit refCD;
   protected String mapping;

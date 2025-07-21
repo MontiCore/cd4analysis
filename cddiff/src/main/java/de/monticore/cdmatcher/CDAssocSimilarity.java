@@ -26,7 +26,7 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
      * The straight match is scored slightly more.
      */
     score += Double.max(computeSideScore(srcElem.getLeft(), tgtElem.getLeft()) + computeSideScore(
-        srcElem.getRight(), tgtElem.getRight()) + 0.05, computeSideScore(srcElem.getLeft(), tgtElem
+        srcElem.getRight(), tgtElem.getRight()) + 0.01, computeSideScore(srcElem.getLeft(), tgtElem
             .getRight()) + computeSideScore(srcElem.getRight(), tgtElem.getLeft()));
     
     /*
@@ -73,7 +73,8 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
           t -> t.a.equals(srcType) && t.b.equals(tgtType)).findFirst();
       
       if (entry.isPresent()) {
-        score += Double.min(entry.get().c, 0.9);
+        // We scale the score down to max 1.02.
+        score += Double.min(entry.get().c, 1.02);
       }
       
     }
@@ -87,17 +88,19 @@ public class CDAssocSimilarity implements CDSimilarity<ASTCDAssociation> {
       
       // If the type still cannot be resolved, we check if the q-names match
       if (entry.isPresent()) {
-        score += Double.min(entry.get().c, 0.8);
+        // We scale the score down to max 1.0.
+        score += Double.min(entry.get().c, 1.0);
       }
       else if (srcSide.getMCQualifiedType().getMCQualifiedName().getQName().equals(tgtSide
           .getMCQualifiedType().getMCQualifiedName().getQName())) {
-        score += 0.7;
+        // We scale the score down to max 0.98.
+        score += 0.98;
       }
     }
     
     if (srcSide.isPresentCDRole() && tgtSide.isPresentCDRole() && srcSide.getName().equals(tgtSide
         .getName())) {
-      score += 1;
+      score += 1.1;
     }
     
     return score;

@@ -9,7 +9,8 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.MatchingStrategy;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,8 +18,8 @@ public class ConcretizationHelper {
   
   private final ASTCDCompilationUnit ccd;
   private final ASTCDCompilationUnit rcd;
-  private final MatchingStrategy<ASTCDType> typeIncStrategy;
-  private final MatchingStrategy<ASTCDAssociation> assocIncStrategy;
+  private final BooleanMatchingStrategy<ASTCDType> typeIncStrategy;
+  private final BooleanMatchingStrategy<ASTCDAssociation> assocIncStrategy;
   
   // Mappings to store results
   public Map<CDTypeSymbol, Set<CDTypeSymbol>> typeMapping;
@@ -27,8 +28,8 @@ public class ConcretizationHelper {
   
   // Constructor
   public ConcretizationHelper(ASTCDCompilationUnit ccd, ASTCDCompilationUnit rcd,
-      MatchingStrategy<ASTCDType> compTypeIncStrategy,
-      MatchingStrategy<ASTCDAssociation> compAssocIncStrategy) {
+      BooleanMatchingStrategy<ASTCDType> compTypeIncStrategy,
+      BooleanMatchingStrategy<ASTCDAssociation> compAssocIncStrategy) {
     this.ccd = ccd;
     this.rcd = rcd;
     this.typeIncStrategy = compTypeIncStrategy;

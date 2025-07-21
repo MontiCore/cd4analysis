@@ -12,9 +12,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,54 +33,53 @@ public class BuildMappingTest extends ConfAbstractTest {
   public void TestTypeMap() {
     
     ASTCDType account = getType("Account", conCD);
-    List<ASTCDType> refTypes = checker.getRefElements(account);
+    Set<ASTCDType> refTypes = checker.getIncarnationMapping().getReferenceElements(account);
     Assertions.assertEquals(1, refTypes.size());
-    Assertions.assertEquals("Account", refTypes.get(0).getName());
+    Assertions.assertEquals("Account", refTypes.stream().findFirst().get().getName());
     
     ASTCDType bAccount = getType("BankAccount", conCD);
-    refTypes = checker.getRefElements(bAccount);
+    refTypes = checker.getIncarnationMapping().getReferenceElements(bAccount);
     Assertions.assertEquals(1, refTypes.size());
-    Assertions.assertEquals("Account", refTypes.get(0).getName());
+    Assertions.assertEquals("Account", refTypes.stream().findFirst().get().getName());
     
     ASTCDType deposit = getType("Deposit", conCD);
-    refTypes = checker.getRefElements(deposit);
+    refTypes = checker.getIncarnationMapping().getReferenceElements(deposit);
     Assertions.assertEquals(0, refTypes.size());
   }
   
   @Test
   public void TestAssociationMap() {
     ASTCDAssociation hasItems = getAssociation("hasItems", conCD);
-    List<ASTCDAssociation> refAssoc = checker.getRefElements(hasItems);
+    Set<ASTCDAssociation> refAssoc = checker.getIncarnationMapping().getReferenceElements(hasItems);
     Assertions.assertEquals(1, refAssoc.size());
-    Assertions.assertEquals("hasItems", refAssoc.get(0).getName());
+    Assertions.assertEquals("hasItems", refAssoc.stream().findFirst().get().getName());
   }
   
   @Test
   public void testAttributeMap() {
-    ASTCDType bAccount = getType("BankAccount", conCD);
     ASTCDAttribute name = getAttribute("BankAccount.name", conCD);
-    List<ASTCDAttribute> refAttributes = checker.getRefElements(bAccount, name);
+    Set<ASTCDAttribute> refAttributes = checker.getIncarnationMapping().getReferenceElements(name);
     Assertions.assertEquals(1, refAttributes.size());
-    Assertions.assertEquals("username", refAttributes.get(0).getName());
+    Assertions.assertEquals("username", refAttributes.stream().findFirst().get().getName());
     
-    ASTCDType item = getType("Item", conCD);
     ASTCDAttribute itemId = getAttribute("Item.itemId", conCD);
-    refAttributes = checker.getRefElements(item, itemId);
+    refAttributes = checker.getIncarnationMapping().getReferenceElements(itemId);
     Assertions.assertEquals(1, refAttributes.size());
-    Assertions.assertEquals("id", refAttributes.get(0).getName());
+    Assertions.assertEquals("id", refAttributes.stream().findFirst().get().getName());
   }
   
   @Test
   public void testMethodMap() {
-    ASTCDType bAccount = getType("BankAccount", conCD);
     ASTCDMethod method = getMethod("BankAccount", "execute", conCD);
-    List<ASTCDMethod> refMethod = checker.getRefElements(bAccount, method);
+    Set<ASTCDMethod> refMethod = checker.getIncarnationMapping().getReferenceElements(method);
     Assertions.assertEquals(1, refMethod.size());
-    Assertions.assertEquals("operation", refMethod.get(0).getName());
+    Assertions.assertEquals("operation", refMethod.stream().findFirst().get().getName());
     
-    List<ASTCDMethod> conElements = checker.getConElements(refMethod.get(0));
+    Set<ASTCDMethod> conElements = checker.getIncarnationMapping().getIncarnations(refMethod
+        .stream().findFirst().get());
     Assertions.assertEquals(2, conElements.size());
-    Assertions.assertEquals("execute", conElements.get(0).getName());
+    Assertions.assertEquals(Set.of("execute", "operation"), conElements.stream().map(
+        ASTCDMethod::getName).collect(Collectors.toSet()));
   }
   
   private ASTCDType getType(String name, ASTCDCompilationUnit cd) {

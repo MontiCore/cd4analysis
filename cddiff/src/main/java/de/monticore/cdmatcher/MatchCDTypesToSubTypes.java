@@ -11,8 +11,8 @@ import de.monticore.cddiff.CDDiffUtil;
  */
 public class MatchCDTypesToSubTypes extends MatchCDTypeInHierarchy {
   
-  public MatchCDTypesToSubTypes(MatchingStrategy<ASTCDType> typeMatcher, ASTCDCompilationUnit srcCD,
-      ASTCDCompilationUnit tgtCD) {
+  public MatchCDTypesToSubTypes(BooleanMatchingStrategy<ASTCDType> typeMatcher,
+      ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     super(typeMatcher, srcCD, tgtCD);
   }
   

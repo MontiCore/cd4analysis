@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import java.util.Arrays;
 import java.util.List;
+
+import de.monticore.cdconformance.CDConformanceChecker;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -115,10 +117,25 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
    */
   @Test
   void testAttributeForEachAttributeDifferentNameClassMI() {
-    testConcretizedConformsToRefAndExpectedOut(
+    CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
         "attributes/forEach/ForEachAttributeDifferentNameClassMIConc.cd",
         "attributes/forEach/ForEachAttributeDifferentNameRef.cd",
         "attributes/forEach/ForEachAttributeDifferentNameClassMIOut.cd");
+    
+    // check if bindings are correct
+    assertAttributeBindingExists(checker, resolveConField("Builder.attrCopy_Employee_firstName"),
+        "DataClass.attribute", "Employee.firstName");
+    assertAttributeBindingExists(checker, resolveConField("Builder.attrCopy_Employee_lastName"),
+        "DataClass.attribute", "Employee.lastName");
+    assertAttributeBindingExists(checker, resolveConField("Builder.attrCopy_Employee_salary"),
+        "DataClass.attribute", "Employee.salary");
+    assertAttributeBindingExists(checker, resolveConField("Builder.attrCopy_Employee_number"),
+        "DataClass.attribute", "Employee.number");
+    assertAttributeBindingExists(checker, resolveConField("Builder.attrCopy_Department_depId"),
+        "DataClass.attribute", "Department.depId");
+    assertAttributeBindingExists(checker, resolveConField(
+        "Builder.attrCopy_Department_managerName"), "DataClass.attribute",
+        "Department.managerName");
   }
   
   /**
