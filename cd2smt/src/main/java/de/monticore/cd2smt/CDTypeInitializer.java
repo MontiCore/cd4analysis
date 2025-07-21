@@ -35,7 +35,7 @@ public class CDTypeInitializer {
     Map<ASTCDType, IntExpr> vars = new HashMap<>();
     Context ctx = new Context();
     Solver solver = ctx.mkSolver();
-
+    
     if (CD2SMTGenerator.isSeedEnabled()) {
       // Set the random seed for determinism
       Params p = ctx.mkParams();
