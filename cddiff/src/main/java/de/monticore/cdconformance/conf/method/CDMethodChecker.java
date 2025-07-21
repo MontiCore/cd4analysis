@@ -2,28 +2,26 @@
 package de.monticore.cdconformance.conf.method;
 
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconformance.CDConformanceContext;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 
 public abstract class CDMethodChecker implements ConformanceStrategy<ASTCDMethod> {
   
-  protected final CDMethodMatchingStrategy methodIncStrategy;
+  protected final CDConformanceContext context;
+  protected final CDIncarnationMapping incMapping;
   
-  protected CDMethodChecker(CDMethodMatchingStrategy methodIncStrategy) {
-    this.methodIncStrategy = methodIncStrategy;
+  protected CDMethodChecker(CDConformanceContext context) {
+    this.context = context;
+    this.incMapping = context.getIncarnationMapping();
   }
   
   @Override
   public boolean checkConformance(ASTCDMethod concrete) {
-    return methodIncStrategy.getMatchedElements(concrete).stream().allMatch(ref -> checkConformance(
+    return incMapping.getReferenceElements(concrete).stream().allMatch(ref -> checkConformance(
         concrete, ref));
   }
   
   protected abstract boolean checkConformance(ASTCDMethod concrete, ASTCDMethod ref);
-  
-  public void setReferenceType(ASTCDType refType) {
-    methodIncStrategy.setReferenceType(refType);
-  }
   
 }

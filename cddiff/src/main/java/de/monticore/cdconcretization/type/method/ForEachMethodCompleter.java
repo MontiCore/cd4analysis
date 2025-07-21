@@ -15,6 +15,8 @@ import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
+import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.inc.MethodOverloadingCDIncBindings;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -33,10 +35,11 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
     Optional<String> stereotypeValue = StereotypeUtil.getForEachStereotypeValue(referenceMethod
         .getModifier(), "Stereotype value must not be empty for stereotype 'forEach'");
     if (stereotypeValue.isPresent()) {
-      CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
-      symbolHandler.setAttributeHandler(paramAttr -> completeMethodUsingAttribute(referenceMethod,
+      CDRefSymbolHandlerDelegator<CompletionException> symbolHandler =
+          new CDRefSymbolHandlerDelegator<>();
+      symbolHandler.onAttribute(paramAttr -> completeMethodUsingAttribute(referenceMethod,
           paramAttr, context));
-      symbolHandler.setTypeHandler(paramType -> completeMethodUsingType(referenceMethod, paramType,
+      symbolHandler.onType(paramType -> completeMethodUsingType(referenceMethod, paramType,
           context));
       symbolHandler.resolveSymbol(context.getReferenceType().getSpannedScope(), stereotypeValue
           .get(), referenceMethod.get_SourcePositionStart());
@@ -123,9 +126,16 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
             MethodSignatureString.printSignatureIfOverloaded(referenceMethod.getSymbol()));
         
         String newMethodQualifier = paramIncarnationDeclaringType.getFullName();
-        String newMethodFullName = Names.getQualifiedName(newMethodQualifier, newMethod.getName());
-        context.getScopedIncarnationBindings().addFieldBinding(newMethodFullName, paramAttribute
-            .getSymbol(), Set.of(paramAttributeInc.getSymbol()));
+        String bindingContextKey;
+        if (context.getConformanceParams().contains(CDConfParameter.METHOD_OVERLOADING)) {
+          bindingContextKey = MethodOverloadingCDIncBindings.computeMethodSymbolKey(
+              newMethodQualifier, newMethod);
+        }
+        else {
+          bindingContextKey = Names.getQualifiedName(newMethodQualifier, newMethod.getName());
+        }
+        context.getIncarnationMapping().addBinding(bindingContextKey, paramAttribute.getSymbol(),
+            paramAttributeInc.getSymbol());
         // TODO Should we also add a TYPE binding for the type of the parameter attribute?
         // alternative: is the ScopedIncarnationBindings class so "intelligent" that it looks up
         // type bindings by checking field symbol types, method return & parameter types? -> sounds
@@ -192,9 +202,11 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
       if (context.isForEachNameAdaptationEnabled() && adaptedName.isPresent()) {
         newMethod.setName(adaptedName.get());
       }
-      else if (!parameterSignatureAdapted) {
+      else if (!parameterSignatureAdapted || !context.getConformanceParams().contains(
+          CDConfParameter.METHOD_OVERLOADING)) {
         // Default: add the param incarnation name as suffix
-        // We only have to add a suffix if we have not changed the parameter signature!
+        // If method overloading is enabled, we only have to add a suffix if we have not changed
+        // the parameter signature. If method overloading is not allowed, we always add a suffix
         String typeSuffix = paramTypeIncarnations.size() > 1 ? "_" + paramTypeInc.getName() : "";
         newMethod.setName(referenceMethod.getName() + typeSuffix);
       }
