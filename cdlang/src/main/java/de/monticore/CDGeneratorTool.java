@@ -442,11 +442,20 @@ public class CDGeneratorTool extends CD4CodeTool {
     }
   }
   
-  public Collection<ASTCDCompilationUnit> parse(String file, Collection<Path> filesAndDirs) {
-    return filesAndDirs.stream().flatMap(dirOrFile -> this.parse(file, dirOrFile).stream()).collect(
-        Collectors.toList());
+  public Collection<ASTCDCompilationUnit> parse(String fileExt, Collection<Path> filesAndDirs) {
+    return filesAndDirs.stream().flatMap(dirOrFile -> this.parse(fileExt, dirOrFile).stream())
+        .collect(Collectors.toList());
   }
   
+  /**
+   * Parses all class diagrams in the given path.
+   * In case the path is a file, the file is parsed regardless of its extension
+   * Otherwise, all files within the path-directory are parsed if their extension matches
+   *
+   * @param fileExt recursively parses all files with this extension in a directory
+   * @param fileOrDir directory or file
+   * @return a collection of nested files
+   */
   public Collection<ASTCDCompilationUnit> parse(String fileExt, Path fileOrDir) {
     if (Files.isRegularFile(fileOrDir)) {
       // In case a file is within the ModelPath: parse the file
