@@ -19,39 +19,39 @@ import org.gradle.api.tasks.TaskProvider;
 
 @SuppressWarnings("unused")
 public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
-  
+
   public static final String CONFIG_TOOL = "stdefTool";
-  
+
   @Override
   public void apply(Project project) {
     project.getPluginManager().apply(JavaLibraryPlugin.class);
-    
+
     // Setup Tool dependency
     Properties properties = loadProperties();
     String version = properties.getProperty("version");
     Configuration toolConfig = project.getConfigurations().maybeCreate(CONFIG_TOOL);
     toolConfig.setCanBeResolved(true);
-    
+
     toolConfig.defaultDependencies(dependencies -> {
       dependencies.add(project.getDependencies().create("de.monticore.lang:cd4analysis:"
           + version));
     });
-    
+
     project.getTasks().withType(SymTabDefinitionTask.class).configureEach(t -> t
         .getExtraClasspathElements().from(toolConfig));
-    
+
     // Set up source-Sets
     project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
       SymTabDefinitionSourceDirectorySet stdefSrcDirSet = addSourceSetExtension(sourceSet, project);
-      
+
       TaskProvider<SymTabDefinitionTask> task = project.getTasks().register(sourceSet.getTaskName(
           "generate", "SymbolTables"), SymTabDefinitionTask.class, genTask -> {
             genTask.setDescription(
                 "Generates (json) symbol tables from the symtabdefinition models in source set ${sourceSet.name}.");
-            
+
             genTask.getInput().from(stdefSrcDirSet.getSourceDirectories());
             genTask.getOutputDir().set(stdefSrcDirSet.getDestinationDirectory());
-            
+
             sourceSet.getJava().srcDir(genTask.getOutputDir());
             genTask.getHandWrittenCodeDir().setFrom(project.provider(() -> sourceSet.getJava()
                 .getSourceDirectories().getFiles().stream().filter(it -> !it.toString().startsWith(
@@ -60,11 +60,9 @@ public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
           });
       SymTabDefinitionSourceDirectorySet.getSTDefSet(sourceSet).compiledBy(task,
           SymTabDefinitionTask::getOutputDir);
-      project.getTasks().named(sourceSet.getCompileJavaTaskName()).configure(t -> t.dependsOn(
-          task));
     });
   }
-  
+
   public Properties loadProperties() {
     Properties properties = new Properties();
     try {
@@ -75,31 +73,31 @@ public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
     }
     return properties;
   }
-  
+
   /** Adds the "symtabdefiniton" extension to every source set */
   protected SymTabDefinitionSourceDirectorySet addSourceSetExtension(SourceSet sourceSet,
       Project project) {
     SourceDirectorySet vanillaSrcDirSet = project.getObjects().sourceDirectorySet(
         SymTabDefinitionSourceDirectorySet.SOURCEDIRSET_NAME, sourceSet.getName()
             + " class diagram source");
-    
+
     SymTabDefinitionSourceDirectorySet cdSrcDirSet = sourceSet.getExtensions().create(
         SymTabDefinitionSourceDirectorySet.class,
         SymTabDefinitionSourceDirectorySet.SOURCEDIRSET_NAME,
         SymTabDefinitionSourceDirectorySet.DefaultSymTabDefinitionSourceDirectorySet.class,
         vanillaSrcDirSet);
-    
+
     // select output directory
     String buildDir = "generated/" + sourceSet.getName() + "/symtabdefinition/symbols";
     Provider<Directory> destinationDir = project.getLayout().getBuildDirectory().dir(buildDir);
     cdSrcDirSet.getDestinationDirectory().convention(destinationDir);
-    
+
     // Use the src/${sourcesetname}/${name} as an input by default
     cdSrcDirSet.srcDir(project.file("src/" + sourceSet.getName() + "/"
         + SymTabDefinitionSourceDirectorySet.SOURCEDIRSET_NAME));
     // and only work on symtabdefinition files
     cdSrcDirSet.getFilter().include("**/*.symtabdefinition");
-    
+
     // Casting the SrcDirSet to a FileCollection seems to be necessary due to compatibility reasons
     // with the
     // configuration cache.
@@ -109,8 +107,8 @@ public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
     sourceSet.getResources().exclude(SerializableLambdas.spec(el -> mcSrcSetCast.contains(el
         .getFile())));
     sourceSet.getAllSource().source(cdSrcDirSet);
-    
+
     return cdSrcDirSet;
   }
-  
+
 }
