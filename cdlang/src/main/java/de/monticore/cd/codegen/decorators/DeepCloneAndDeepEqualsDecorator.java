@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.cd.codegen.AbstractService;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.facade.CDConstructorFacade;
@@ -11,6 +12,7 @@ import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
@@ -539,21 +541,25 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     decoratedInterface.addCDMember(deepEquals3Method);
   }
   
-  //TODO Nico here i need help to get the Attributes from all interfaces and extended classes
+  /**
+   * This method resolves the super classes and returns all their attributes in a list
+   * <p>
+   * All interface attributes in java are automatically public static final
+   * Therefore, we do not need to check them when deepCloning or deepEqual as the result should
+   * always be true.
+   *
+   * @param node class that should be inspected for super classes
+   * @return a list of attributes from all classes inherited
+   */
   public List<ASTCDAttribute> getAllCDAttributes(ASTCDClass node) {
     List<ASTCDAttribute> astcdAttributeList = new ArrayList<>(node.getCDAttributeList());
+    List<CDTypeSymbol> superClassesTransitive = AbstractService.getAllSuperClassesTransitive(node
+        .getSymbol());
     
-    //    if(node.isPresentCDInterfaceUsage()) {
-    //      List<FieldSymbol> interfaces = node.getCDInterfaceUsage().getEnclosingScope().getLocalFieldSymbols();
-    //      for(FieldSymbol obj : interfaces){
-    //        System.out.println(obj.getClass());
-    //      }
-    //    }
-    //
-    //    if(node.isPresentCDExtendUsage()) {
-    //      Class<?> classes = node.getCDExtendUsage().getClass();
-    //      System.out.println(classes.getClass());
-    //    }
+    List<CDTypeSymbol> allDependencies = new ArrayList<>(superClassesTransitive);
+    for (CDTypeSymbol typeSymbol : allDependencies) {
+      astcdAttributeList.addAll(typeSymbol.getAstNode().getCDAttributeList());
+    }
     
     return astcdAttributeList;
   }

@@ -27,6 +27,7 @@ public class BuilderDecoratorResultTest {
     testBuild();
     testUnsafeBuild();
     testConstructorModificationsAndCreations();
+    testInheritanceBuilder();
     Log.clearFindings();
   }
   
@@ -518,7 +519,18 @@ public class BuilderDecoratorResultTest {
         .unsafeBuild();
     NoDefaultConstructor noDefaultConstructorBuilder = new NoDefaultConstructorBuilder()
         .unsafeBuild();
+  }
+  
+  @Test
+  public void testInheritanceBuilder() {
+    TestBuilderWithSuperClass testBuilderWithSuperClass = new TestBuilderWithSuperClassBuilder()
+        .setManyBAbsent().setOptBAbsent().setMyTestEnum(TestEnum.ERROR).setMyBool(true).setMyLevel1(
+            new Level2class()).setMyInt(1).setOneB(new B()).build();
     
+    Assertions.assertSame(TestEnum.ERROR, testBuilderWithSuperClass.getMyTestEnum());
+    TestBuilderWithSuperClass testBuilderWithSuperClass2 = new TestBuilderWithSuperClassBuilder()
+        .setMyBool(false).unsafeBuild();
+    Assertions.assertSame(false, testBuilderWithSuperClass2.isMyBool());
   }
   
   @Test

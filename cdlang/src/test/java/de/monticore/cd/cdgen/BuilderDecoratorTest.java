@@ -36,6 +36,7 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
             + " public TestEnum myTestEnum;\n"
             + " public Level1Interface myLevel1;\n"
             + " }\n"
+            + " <<setter,getter,builder>> public class TestBuilderWithSuperClass extends TestBuilderWithSetter;"
             + " <<noSetter,getter,builder>> public class TestBuilderWithoutSetter { \n"
             + " public int myInt;\n"
             + " public boolean myBool;\n"
