@@ -51,6 +51,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     testDeepEqualsInterfaceTypes();
     testDeepEqualsEnumTypes();
     testDeepEqualsAllTogether();
+    
   }
   
   @Test
@@ -69,7 +70,6 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     testDeepCloneMultipleTypesAndDimensions();
     testDeepCloneInterfaceTypes();
     testDeepCloneEnumTypes();
-    
     testDeepCloneWithBuilder();
   }
   
@@ -576,10 +576,30 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     level2class2.myInt = 1;
     Level3class level3class1 = new Level3class();
     level3class1.myInt = 1;
+    Level3class level3class2 = new Level3class();
+    level3class2.myInt = 1;
     deInterface2.myInterface = level3class1;
     Assertions.assertFalse(deInterface1.deepEquals(deInterface2));
     Assertions.assertFalse(deInterface1.deepEquals(deInterface2, true));
     Assertions.assertFalse(deInterface1.deepEquals(deInterface2, false));
+    
+    //test sets
+    deInterface1.many = new HashSet<Level1Interface>();
+    deInterface1.many.add(level2class1);
+    deInterface1.many.add(level3class1);
+    
+    deInterface2.many = new HashSet<Level1Interface>();
+    deInterface2.many.add(level2class2);
+    deInterface2.many.add(level3class1);
+    
+    Assertions.assertFalse(deInterface1.deepEquals(deInterface2));
+    Assertions.assertFalse(deInterface1.deepEquals(deInterface2, true));
+    Assertions.assertFalse(deInterface1.deepEquals(deInterface2, false));
+    
+  }
+  
+  private static Set<Level1Interface> getMany(ClassWithInterface deInterface2) {
+    return deInterface2.many;
   }
   
   @Test
@@ -1346,6 +1366,41 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     Level3class dc29 = deepCloneLevel3Class.deepClone();
     Assertions.assertNotSame(deepCloneLevel3Class, dc29);
     Assertions.assertTrue(deepCloneLevel3Class.deepEquals(dc29));
+    
+    //test lists
+    Level2class level2class1 = new Level2class();
+    level2class1.myInt = 1;
+    Level2class level2class2 = new Level2class();
+    level2class2.myInt = 2;
+    Level3class level3class1 = new Level3class();
+    level3class1.myInt = 3;
+    Level3class level3class2 = new Level3class();
+    level3class2.myInt = 4;
+    dc27.many = new HashSet<>();
+    dc27.many.add(level2class1);
+    dc27.many.add(level2class2);
+    dc27.many.add(level3class1);
+    dc27.many.add(level3class2);
+    
+    dc28 = dc27.deepClone();
+    Assertions.assertNotSame(dc27, dc28);
+    Assertions.assertNotSame(dc27.myInterface, dc28.myInterface);
+    Level2class level2class1Cloned = (Level2class) dc28.many.stream().filter(
+        m -> m instanceof Level2class && ((Level2class) m).myInt == 1).findFirst().get();
+    Level2class level2class2Cloned = (Level2class) dc28.many.stream().filter(
+        m -> m instanceof Level2class && ((Level2class) m).myInt == 2).findFirst().get();
+    Level3class level3class1Cloned = (Level3class) dc28.many.stream().filter(
+        m -> m instanceof Level3class && ((Level3class) m).myInt == 3).findFirst().get();
+    Level3class level3class2Cloned = (Level3class) dc28.many.stream().filter(
+        m -> m instanceof Level3class && ((Level3class) m).myInt == 4).findFirst().get();
+    Assertions.assertNotSame(level2class1, level2class1Cloned);
+    Assertions.assertNotSame(level2class2, level2class2Cloned);
+    Assertions.assertNotSame(level3class1, level3class1Cloned);
+    Assertions.assertNotSame(level3class2, level3class2Cloned);
+    Assertions.assertTrue(level2class1.deepEquals(level2class1Cloned));
+    Assertions.assertTrue(level2class2.deepEquals(level2class2Cloned));
+    Assertions.assertTrue(level3class1.deepEquals(level3class1Cloned));
+    Assertions.assertTrue(level3class2.deepEquals(level3class2Cloned));
   }
   
   @Test

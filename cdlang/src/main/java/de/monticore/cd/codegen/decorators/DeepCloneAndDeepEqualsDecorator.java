@@ -322,7 +322,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2",
-            originalClassQualifiedType, originalClass.getCDAttributeList(),
+            originalClassQualifiedType, getAllCDAttributes(originalClass),
             classesFromClassdiagramAsString)));
     
     //We need to add a deepEquals method fpr every implemented interface of the class.
@@ -512,7 +512,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3",
-            originalClassQualifiedType, originalClass.getCDAttributeList(),
+            originalClassQualifiedType, getAllCDAttributes(originalClass),
             classesFromClassdiagramAsString)));
   }
   
@@ -537,6 +537,25 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
             parameter1, parameter2, parameter3));
     
     decoratedInterface.addCDMember(deepEquals3Method);
+  }
+  
+  //TODO Nico here i need help to get the Attributes from all interfaces and extended classes
+  public List<ASTCDAttribute> getAllCDAttributes(ASTCDClass node) {
+    List<ASTCDAttribute> astcdAttributeList = new ArrayList<>(node.getCDAttributeList());
+    
+    //    if(node.isPresentCDInterfaceUsage()) {
+    //      List<FieldSymbol> interfaces = node.getCDInterfaceUsage().getEnclosingScope().getLocalFieldSymbols();
+    //      for(FieldSymbol obj : interfaces){
+    //        System.out.println(obj.getClass());
+    //      }
+    //    }
+    //
+    //    if(node.isPresentCDExtendUsage()) {
+    //      Class<?> classes = node.getCDExtendUsage().getClass();
+    //      System.out.println(classes.getClass());
+    //    }
+    
+    return astcdAttributeList;
   }
   
   @Override

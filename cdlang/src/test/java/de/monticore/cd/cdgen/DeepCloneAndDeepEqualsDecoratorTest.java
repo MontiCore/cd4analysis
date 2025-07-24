@@ -7,11 +7,15 @@ import de.monticore.cd.codegen.decorators.CardinalityDefaultDecorator;
 import de.monticore.cd.codegen.decorators.DeepCloneAndDeepEqualsDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4codebasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -59,7 +63,8 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest {
         + " public String myString2;\n" + "}\n" + "public class ClassWithEnum { \n"
         + " public TestEnum myEnum;\n" + " public TestEnum myEnum2;\n" + "}\n"
         + "public class ClassWithInterface { \n" + " public Level1Interface myInterface;\n"
-        + " public Level1Interface myInterface2;\n" + "}\n" + "public class ClassWithMap { \n"
+        + " public Level1Interface myInterface2;\n" + " -> (many)Level1Interface [*] public;\n"
+        + " -> (many2)Level1Interface [*] public;\n" + "}\n" + "public class ClassWithMap { \n"
         + " public Map<String, B> myMap;\n" + " public Map<String, B> myMap2;\n" + "}\n"
         + "public class ClassWith2DMap { \n" + " public Map<String, Map<String,B>> myMap;\n"
         + " public Map<String, Map<String,B>> myMap2;\n" + "}\n" + "public class B { \n" + "}\n"
@@ -101,6 +106,23 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest {
     for (Path temPath : templatePaths) {
       Assertions.assertTrue(Files.exists(temPath));
     }
+  }
+  
+  @Test
+  public void testGetAllCDAttributes() throws IOException {
+    var opt = CD4CodeMill.parser().parse_String("classdiagram TestDeepCloneAndDeepEquals {\n"
+        + "public class B { \n" + "}\n" + " interface Level1Interface;\n"
+        + " class Level2class implements Level1Interface{\n" + "  int myInt;\n" + " }\n"
+        + " class Level3class extends Level2class implements Level1Interface;" + "}");
+    
+    Assertions.assertTrue(opt.isPresent());
+    ASTCDCompilationUnit compilationUnit = (ASTCDCompilationUnit) opt.get();
+    ASTCDClass astcdClass = (ASTCDClass) compilationUnit.getCDDefinition().getCDElement(3);
+    
+    DeepCloneAndDeepEqualsDecorator deepCloneAndDeepEqualsDecorator =
+        new DeepCloneAndDeepEqualsDecorator();
+    Assertions.assertTrue(deepCloneAndDeepEqualsDecorator.getAllCDAttributes(astcdClass).size()
+        > 0);
   }
   
   @Override
