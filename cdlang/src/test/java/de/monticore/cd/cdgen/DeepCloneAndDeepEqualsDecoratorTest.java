@@ -2,6 +2,7 @@
 package de.monticore.cd.cdgen;
 
 import de.monticore.cd.codegen.DecoratorConfig;
+import de.monticore.cd.codegen.decorators.BuilderDecorator;
 import de.monticore.cd.codegen.decorators.CardinalityDefaultDecorator;
 import de.monticore.cd.codegen.decorators.DeepCloneAndDeepEqualsDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
@@ -65,6 +66,8 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest {
         + " enum TestEnum { RUNNING, IDLE, ERROR; }\n" + " interface Level1Interface;\n"
         + " class Level2class implements Level1Interface{\n" + "  int myInt;\n" + " }\n"
         + "class Level3class extends Level2class implements Level1Interface;"
+        + " <<builder>> public class ClassWithBuilder { \n" + " public ClassWithBuilder(int i);\n"
+        + " public int myInt;\n" + " }\n"
         + "association [1] AllTogether (owner) -> (owns) B [*]public; "
         + "association [1] ClassWithAssociation (owner) -> (owns) B [*]public; "
         + "association [1] ClassWithAssociation (owner2) -> (owns2) B [*]public; " + "}");
@@ -108,6 +111,9 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest {
     config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
     config.withDecorator(new DeepCloneAndDeepEqualsDecorator());
     config.configDefault(DeepCloneAndDeepEqualsDecorator.class, MatchResult.APPLY);
+    config.withDecorator(new BuilderDecorator());
+    config.configApplyMatchName(BuilderDecorator.class, "builder");
+    config.configIgnoreMatchName(BuilderDecorator.class, "noBuilder");
   }
   
 }

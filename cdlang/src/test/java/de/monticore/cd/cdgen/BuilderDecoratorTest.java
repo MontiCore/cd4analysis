@@ -8,6 +8,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
+import de.monticore.tagging.tags.TagsMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -22,6 +23,7 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
   
   @Test
   public void testBuilder() throws Exception {
+    TagsMill.init();
     var opt = CD4CodeMill.parser()
         .parse_String( // @formatter:off
           "classdiagram TestBuilder {\n"

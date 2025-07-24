@@ -20,6 +20,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
@@ -128,24 +129,31 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    */
   @Override
   public void visit(ASTCDClass node) {
-    ASTCDClass decClazz = decoratorData.getAsDecorated(node);
-    
-    //the numbers correspond to arguments of the deepClone and deepEquals methods
-    addDeepCloneMethod(node, decClazz);
-    addDeepCloneMethod1(node, decClazz);
-    addDeepCloneMethod2(node, decClazz);
-    addDeepEquals1Method(node, decClazz);
-    addDeepEquals2Method(node, decClazz);
-    addDeepEquals3Method(node, decClazz);
-    
-    //add a private constructor to the pojo class when no one exists. Needed for deepClone
-    if (!decClazz.getCDConstructorList().isEmpty()) {
-      boolean hasDefaultConstructor = decClazz.getCDConstructorList().stream().anyMatch(c -> c
-          .getCDParameterList().isEmpty());
-      if (!hasDefaultConstructor) {
-        ASTCDConstructor constructor1 = CDConstructorFacade.getInstance().createDefaultConstructor(
-            CD4CodeMill.modifierBuilder().PRIVATE().build(), node);
-        addToClass(decClazz, constructor1);
+    if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
+      ASTCDClass decClazz = decoratorData.getAsDecorated(node);
+      
+      //the numbers correspond to arguments of the deepClone and deepEquals methods
+      addDeepCloneMethod(node, decClazz);
+      addDeepCloneMethod1(node, decClazz);
+      addDeepCloneMethod2(node, decClazz);
+      addDeepEquals1Method(node, decClazz);
+      addDeepEquals2Method(node, decClazz);
+      addDeepEquals3Method(node, decClazz);
+      
+      //add a private constructor to the pojo class when no one exists.
+      // Needed for deepClone only if no Builder was generated
+      // (the BuilderDecorator itself also generates a default protected default Constructor)
+      if (!this.decoratorData.shouldDecorate(BuilderDecorator.class, node)) {
+        boolean hasDefaultConstructor = false;
+        if (!decClazz.getCDConstructorList().isEmpty()) {
+          hasDefaultConstructor = decClazz.getCDConstructorList().stream().anyMatch(c -> c
+              .getCDParameterList().isEmpty());
+        }
+        if (!hasDefaultConstructor) {
+          ASTCDConstructor constructor1 = CDConstructorFacade.getInstance()
+              .createDefaultConstructor(CD4CodeMill.modifierBuilder().PUBLIC().build(), node);
+          addToClass(decClazz, constructor1);
+        }
       }
     }
   }
@@ -158,15 +166,17 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    */
   @Override
   public void visit(ASTCDInterface node) {
-    ASTCDInterface decInterface = decoratorData.getAsDecorated(node);
-    
-    //the numbers correspond to arguments of the deepClone and deepEquals methods
-    addDeepCloneMethod(node, decInterface);
-    addDeepCloneMethod1(node, decInterface);
-    addDeepCloneMethod2(node, decInterface);
-    addDeepEquals1Method(node, decInterface);
-    addDeepEquals2Method(node, decInterface);
-    addDeepEquals3Method(node, decInterface);
+    if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
+      ASTCDInterface decInterface = decoratorData.getAsDecorated(node);
+      
+      //the numbers correspond to arguments of the deepClone and deepEquals methods
+      addDeepCloneMethod(node, decInterface);
+      addDeepCloneMethod1(node, decInterface);
+      addDeepCloneMethod2(node, decInterface);
+      addDeepEquals1Method(node, decInterface);
+      addDeepEquals2Method(node, decInterface);
+      addDeepEquals3Method(node, decInterface);
+    }
   }
   
   /**
@@ -241,9 +251,18 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     
     decoratedClass.addCDMember(deepClone2Method);
     
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method,
-        new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone1",
-            originalClassQualifiedType)));
+    //if the class has a builder, we construct the class using a builder. Else we use the default constructor generated.
+    if (this.decoratorData.shouldDecorate(BuilderDecorator.class, originalClass)) {
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method,
+          new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone1",
+              originalClassQualifiedType, "new " + originalClassQualifiedType.printType()
+                  + "Builder().unsafeBuild()")));
+    }
+    else {
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method,
+          new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone1",
+              originalClassQualifiedType, "new " + originalClassQualifiedType.printType() + "()")));
+    }
   }
   
   private void addDeepCloneMethod1(ASTCDInterface originalInterface,

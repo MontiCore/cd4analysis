@@ -4,7 +4,12 @@ package deepCopyAnddeepEquals;
 import TestDeepCloneAndDeepEquals.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Test the result of the DeepCloneAndDeepEquals Decorator.
@@ -64,6 +69,8 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     testDeepCloneMultipleTypesAndDimensions();
     testDeepCloneInterfaceTypes();
     testDeepCloneEnumTypes();
+    
+    testDeepCloneWithBuilder();
   }
   
   @Test
@@ -368,8 +375,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     deO1.my2DimOptional = null;
     deO2.my2DimOptional = null;
     Assertions.assertTrue(deO1.deepEquals(deO2));
-    deO2 = null;
-    Assertions.assertFalse(deO1.deepEquals(deO2));
+    Assertions.assertFalse(deO1.deepEquals(null));
   }
   
   @Test
@@ -528,7 +534,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     //create first circle
     deCircular11.myClassCircular2 = deCircular21;
     deCircular21.myClassCircular1 = deCircular11;
-    //create second object which has no circle
+    //create the second object which has no circle
     deCircular12.myClassCircular2 = deCircular22;
     deCircular22.myClassCircular1 = deCircular1NotEqual;
     Assertions.assertFalse(deCircular11.deepEquals(deCircular12));
@@ -718,7 +724,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
   @Test
   public void testDeepCloneArrayType() {
     ClassWithArray dcArray1 = new ClassWithArray();
-    ClassWithArray dcArray2 = new ClassWithArray();
+    ClassWithArray dcArray2;
     dcArray1.arrayOfString = new ClassWithPrimitiveType[2];
     dcArray1.arrayOfString[0] = new ClassWithPrimitiveType();
     dcArray1.arrayOfString[1] = new ClassWithPrimitiveType();
@@ -756,7 +762,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     
     //test multidimensional arrays
     ClassWith3DArray dcArray3 = new ClassWith3DArray();
-    ClassWith3DArray dcArray4 = new ClassWith3DArray();
+    ClassWith3DArray dcArray4;
     dcArray3.threeDimArrayOfString = new ClassWithPrimitiveType[2][2][2];
     dcArray3.threeDimArrayOfString[0][0][0] = new ClassWithPrimitiveType();
     dcArray3.threeDimArrayOfString[0][0][1] = new ClassWithPrimitiveType();
@@ -1061,12 +1067,12 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     Assertions.assertTrue(dc13.deepEquals(dc14));
     Assertions.assertNull(dc14.myOptionalInteger);
     //test Map correctness
-    Optional opt = Optional.of(1);
+    Optional<Integer> opt = Optional.of(1);
     dc13.myOptionalInteger = opt;
     dc13.myOptionalInteger2 = opt;
     dc14 = dc13.deepClone();
     Assertions.assertNotSame(dc13, dc14);
-    //they are the same as Integer has no deepClone method therefore we just copy the reference
+    //they are the same as Integer has no deepClone method, therefore we just copy the reference
     //Assertions.assertNotSame(dc13.myOptionalInteger,dc14.myOptionalInteger);
     //Assertions.assertNotSame(dc13.myOptionalInteger2,dc14.myOptionalInteger2);
     Assertions.assertTrue(dc13.deepEquals(dc14));
@@ -1075,7 +1081,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     
     //Test 2D Optional
     ClassWith2DimOptional dcO1 = new ClassWith2DimOptional();
-    ClassWith2DimOptional dcO2 = new ClassWith2DimOptional();
+    ClassWith2DimOptional dcO2;
     dcO1.my2DimOptional = Optional.of(Optional.of(new B()));
     dcO2 = dcO1.deepClone();
     Assertions.assertNotSame(dcO1, dcO2);
@@ -1142,7 +1148,7 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     
     //Test 2D map types
     ClassWith2DMap dcMap3 = new ClassWith2DMap();
-    ClassWith2DMap dcMap4 = new ClassWith2DMap();
+    ClassWith2DMap dcMap4;
     dcMap3.myMap = new HashMap<>();
     dcMap3.myMap.put("key", new HashMap<>());
     dcMap3.myMap.put("key2", new HashMap<>());
@@ -1343,20 +1349,6 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
   }
   
   @Test
-  public void testDeepCloneEnumTypes() {
-    ClassWithEnum dc29 = new ClassWithEnum();
-    dc29.myEnum = TestEnum.ERROR;
-    ClassWithEnum dc30 = dc29.deepClone();
-    Assertions.assertNotSame(dc29, dc30);
-    Assertions.assertTrue(dc29.deepEquals(dc30));
-    dc29.myEnum = TestEnum.IDLE;
-    Assertions.assertFalse(dc29.deepEquals(dc30));
-    dc30 = dc29.deepClone();
-    Assertions.assertNotSame(dc29, dc30);
-    Assertions.assertTrue(dc29.deepEquals(dc30));
-  }
-  
-  @Test
   public void testDeepCloneMultipleTypesAndDimensions() {
     List<Integer> listAbsent1 = new ArrayList<>();
     for (int i = 0; i <= 10; i++) {
@@ -1393,6 +1385,54 @@ public class DeepCloneAndDeepEqualsDecoratorResultTest {
     Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0], dc25.oneClassWith2DimList);
     Assertions.assertSame(dc25.manyClassWith2DimList.toArray()[0], dc25.optClassWith2DimList.get());
     Assertions.assertSame(dc25.optClassWith2DimList.get(), dc25.oneClassWith2DimList);
+  }
+  
+  @Test
+  public void testDeepCloneEnumTypes() {
+    ClassWithEnum dc29 = new ClassWithEnum();
+    dc29.myEnum = TestEnum.ERROR;
+    ClassWithEnum dc30 = dc29.deepClone();
+    Assertions.assertNotSame(dc29, dc30);
+    Assertions.assertTrue(dc29.deepEquals(dc30));
+    dc29.myEnum = TestEnum.IDLE;
+    Assertions.assertFalse(dc29.deepEquals(dc30));
+    dc30 = dc29.deepClone();
+    Assertions.assertNotSame(dc29, dc30);
+    Assertions.assertTrue(dc29.deepEquals(dc30));
+  }
+  
+  @Test
+  public void testDeepCloneWithBuilder() {
+    try {
+      File myObj = new File(
+          "target/cdGenOutTest/DeepCloneAndDeepEqualsDecoratorTest/TestDeepCloneAndDeepEquals/ClassWithBuilder.java");
+      Scanner myReader = new Scanner(myObj);
+      StringBuilder stringBuilder = new StringBuilder();
+      while (myReader.hasNextLine()) {
+        stringBuilder.append(myReader.nextLine());
+      }
+      myReader.close();
+      
+      //find deepClone1 method:
+      String regex =
+          "public\\s+TestDeepCloneAndDeepEquals\\.ClassWithBuilder\\s+deepClone\\s*\\(\\s*Map<Object,Object>\\s+map\\s*\\)\\s*\\{[\\s\\S]*?new\\s+TestDeepCloneAndDeepEquals\\.ClassWithBuilderBuilder\\(\\)\\.unsafeBuild\\(\\);[\\s\\S]*?}";
+      
+      Pattern pattern = Pattern.compile(regex);
+      Matcher matcher = pattern.matcher(stringBuilder.toString());
+      
+      if (!matcher.find()) {
+        Assertions.fail();
+      }
+    }
+    catch (FileNotFoundException e) {
+      Assertions.fail();
+    }
+    
+    ClassWithBuilder classWithBuilder = new ClassWithBuilderBuilder().unsafeBuild();
+    classWithBuilder.myInt = 1;
+    ClassWithBuilder classWithBuilderCloned = classWithBuilder.deepClone();
+    Assertions.assertNotSame(classWithBuilder, classWithBuilderCloned);
+    Assertions.assertTrue(classWithBuilder.deepEquals(classWithBuilderCloned));
   }
   
 }
