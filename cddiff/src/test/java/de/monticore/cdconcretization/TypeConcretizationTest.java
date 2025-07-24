@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cdconformance.CDConformanceChecker;
 import org.junit.jupiter.api.Test;
 
 class TypeConcretizationTest extends AbstractCDConcretizationTest {
@@ -23,8 +24,14 @@ class TypeConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testTypeForEachType() {
-    testConcretizedConformsToRefAndExpectedOut("types/forEach/ForEachTypeConc.cd",
-        "types/forEach/ForEachTypeRef.cd", "types/forEach/ForEachTypeOut.cd");
+    CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
+        "types/forEach/ForEachTypeConc.cd", "types/forEach/ForEachTypeRef.cd",
+        "types/forEach/ForEachTypeOut.cd");
+    
+    // check if bindings are correct
+    assertTypeBindingExists(checker, resolveConType("Builder_Employee"), "DataClass", "Employee");
+    assertTypeBindingExists(checker, resolveConType("Builder_Department"), "DataClass",
+        "Department");
   }
   
   @Test

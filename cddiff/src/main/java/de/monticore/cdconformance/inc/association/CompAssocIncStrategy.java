@@ -39,7 +39,7 @@ public class CompAssocIncStrategy implements ExternalCandidatesMatchingStrategy<
   
   @Override
   public boolean isMatched(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
   }
   
 }

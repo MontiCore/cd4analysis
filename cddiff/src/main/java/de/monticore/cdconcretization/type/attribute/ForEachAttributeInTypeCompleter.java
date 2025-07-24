@@ -14,7 +14,6 @@ import de.se_rwth.commons.Names;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -37,12 +36,13 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
     Optional<String> stereotypeValue = StereotypeUtil.getForEachStereotypeValue(referenceAttribute
         .getModifier(), "Stereotype value must not be empty for stereotype 'forEach'");
     if (stereotypeValue.isPresent()) {
-      CDRefSymbolHandlerDelegator symbolHandler = new CDRefSymbolHandlerDelegator();
-      symbolHandler.setAttributeHandler(paramAttribute -> completeAttributeUsingAttribute(
-          referenceAttribute, paramAttribute, context));
+      // spotless:off
       // TODO Add support for other parameter elements
-      symbolHandler.resolveSymbol(context.getReferenceCD().getEnclosingScope(), stereotypeValue
-          .get(), referenceAttribute.get_SourcePositionStart());
+      new CDRefSymbolHandlerDelegator<CompletionException>().onAttribute(
+          paramAttribute -> completeAttributeUsingAttribute(referenceAttribute, paramAttribute,
+              context)).resolveSymbol(context.getReferenceCD().getEnclosingScope(), stereotypeValue
+                  .get(), referenceAttribute.get_SourcePositionStart());
+      // spotless:on
       // each handler will call super.completeTypeForAttribute() if necessary
     }
     else {
@@ -141,8 +141,8 @@ public class ForEachAttributeInTypeCompleter extends AbstractAttributeInTypeComp
         
         String newAttrQualifier = paramIncarnationDeclaringType.getFullName();
         String newAttrFullName = Names.getQualifiedName(newAttrQualifier, newAttribute.getName());
-        context.getScopedIncarnationBindings().addFieldBinding(newAttrFullName, paramAttribute
-            .getSymbol(), Set.of(paramAttributeInc.getSymbol()));
+        context.getIncarnationMapping().addBinding(newAttrFullName, paramAttribute.getSymbol(),
+            paramAttributeInc.getSymbol());
         
         // 4. pass the new attribute to the next completer
         super.completeAttributeInType(context.getConcreteType(), newAttribute, context);

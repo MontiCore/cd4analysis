@@ -442,20 +442,34 @@ public class CDGeneratorTool extends CD4CodeTool {
     }
   }
   
-  public Collection<ASTCDCompilationUnit> parse(String file, Collection<Path> dirs) {
-    return dirs.stream().flatMap(directory -> this.parse(file, directory).stream()).collect(
-        Collectors.toList());
+  public Collection<ASTCDCompilationUnit> parse(String fileExt, Collection<Path> filesAndDirs) {
+    return filesAndDirs.stream().flatMap(dirOrFile -> this.parse(fileExt, dirOrFile).stream())
+        .collect(Collectors.toList());
   }
   
-  public Collection<ASTCDCompilationUnit> parse(String fileExt, Path directory) {
+  /**
+   * Parses all class diagrams in the given path.
+   * In case the path is a file, the file is parsed regardless of its extension
+   * Otherwise, all files within the path-directory are parsed if their extension matches
+   *
+   * @param fileExt recursively parses all files with this extension in a directory
+   * @param fileOrDir directory or file
+   * @return a collection of nested files
+   */
+  public Collection<ASTCDCompilationUnit> parse(String fileExt, Path fileOrDir) {
+    if (Files.isRegularFile(fileOrDir)) {
+      // In case a file is within the ModelPath: parse the file
+      return Collections.singleton(this.parse(fileOrDir.toString()));
+    }
+    // Otherwise: Traverse the directory & parse all matching files
     try (
-        Stream<Path> paths = Files.walk(directory)
+        Stream<Path> paths = Files.walk(fileOrDir)
     ) {
       return paths.filter(Files::isRegularFile).filter(file -> file.getFileName().toString()
           .endsWith(fileExt)).map(Path::toString).map(this::parse).collect(Collectors.toSet());
     }
     catch (IOException e) {
-      Log.error("0xA1063 Error while traversing the file structure `" + directory + "`.", e);
+      Log.error("0xA1063 Error while traversing the file structure `" + fileOrDir + "`.", e);
     }
     return Collections.emptySet();
   }

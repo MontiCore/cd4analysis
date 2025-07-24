@@ -33,7 +33,7 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
     List<ASTCDMethod> allConcreteAttributesInHierarchy = CDSymbolTables.getMethodsInHierarchy(
         concreteType);
     List<ASTCDMethod> incarnations = allConcreteAttributesInHierarchy.stream().filter(
-        cMethod -> context.getMethodIncStrategy().isMatched(cMethod, referenceMethod)).collect(
+        cMethod -> context.getIncarnationMapping().isIncarnation(cMethod, referenceMethod)).collect(
             Collectors.toList());
     if (incarnations.isEmpty()) {
       createMethodIncarnations(concreteType, referenceMethod, context);

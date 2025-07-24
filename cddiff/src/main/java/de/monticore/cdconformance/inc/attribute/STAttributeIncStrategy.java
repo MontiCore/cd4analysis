@@ -23,10 +23,15 @@ public class STAttributeIncStrategy implements CDAttributeMatchingStrategy {
   
   @Override
   public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
+    if (!ref.isPresentSymbol() || ref.getEnclosingScope() == null) {
+      // If no symbol table information is attached to the reference attribute, we cannot
+      // determine whether the concrete attribute matches the reference attribute by stereotype.
+      return false;
+    }
     if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype()
         .contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return referenceType.getSpannedScope().resolveFieldMany(refName).contains(ref.getSymbol());
+      return ref.getEnclosingScope().resolveFieldMany(refName).contains(ref.getSymbol());
     }
     return false;
   }

@@ -8,6 +8,7 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -150,6 +151,7 @@ public class CDDiff {
     sol.setLimited(true);
     
     // generate ODs
+    OD4ReportMill.init();
     List<ASTODArtifact> diffWitnesses = sol.generateODs();
     
     // join unidirectional links for bidirectional associations
@@ -172,6 +174,7 @@ public class CDDiff {
         == CDSemantics.STA_CLOSED_WORLD);
     
     // join unidirectional links for bidirectional associations
+    OD4ReportMill.init();
     JoinLinksTrafo joinLinksTrafo = new JoinLinksTrafo(ast1);
     diffWitnesses.forEach(joinLinksTrafo::transform);
     
@@ -179,7 +182,7 @@ public class CDDiff {
   }
   
   public static String printWitnesses2stdout(List<ASTODArtifact> witnesses) {
-    
+    OD4ReportMill.init();
     StringBuilder result = new StringBuilder();
     if (witnesses.isEmpty()) {
       result.append("\t ************************ No Diff Witnesses  ************************ \n");
@@ -195,6 +198,7 @@ public class CDDiff {
   
   public static void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory) {
     try {
+      OD4ReportMill.init();
       File out = new File(outputDirectory);
       for (ASTODArtifact od : ods) {
         String odDesc = CDDiffUtil.printOD(od);
