@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
-import de.monticore.cd.codegen.AbstractService;
+import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.facade.CDConstructorFacade;
@@ -12,7 +12,6 @@ import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
@@ -22,7 +21,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
-
 import java.util.*;
 import java.util.stream.Collectors;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
@@ -81,17 +79,17 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  */
 public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractDecorator.NoData>
     implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
-  
+
   /**
    * a collection of all classes from the class diagram as strings
    */
   List<String> classesFromClassdiagramAsString = new ArrayList<>();
   boolean isInitialized = false;
-  
+
   @Override
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() { return super.getMustRunAfter(); }
-  
+
   protected void initClassesFromClassDiagramAsString(ASTCDCompilationUnit compilationUnit) {
     if (isInitialized) {
       return;
@@ -102,7 +100,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     t2.add4CDInterfaceAndEnum(cdTypeCollector);
     t2.add4CDBasis(cdTypeCollector);
     compilationUnit.accept(t2);
-    
+
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e -> e
         .getSymbol().getFullName()).collect(Collectors.toList()));
     classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e -> e
@@ -112,7 +110,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     //    .getSymbol().getFullName()).collect(Collectors.toList()));
     isInitialized = true;
   }
-  
+
   /**
    * Used to init the list of all artifacts defined in the cd
    *
@@ -121,7 +119,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   public void visit(ASTCDCompilationUnit compilationUnit) {
     initClassesFromClassDiagramAsString(compilationUnit);
   }
-  
+
   /**
    * Only when visiting a class node, we add the real deepClone and deepEquals methods to the
    * decorated
@@ -133,7 +131,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   public void visit(ASTCDClass node) {
     if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
       ASTCDClass decClazz = decoratorData.getAsDecorated(node);
-      
+
       //the numbers correspond to arguments of the deepClone and deepEquals methods
       addDeepCloneMethod(node, decClazz);
       addDeepCloneMethod1(node, decClazz);
@@ -141,7 +139,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
       addDeepEquals1Method(node, decClazz);
       addDeepEquals2Method(node, decClazz);
       addDeepEquals3Method(node, decClazz);
-      
+
       //add a private constructor to the pojo class when no one exists.
       // Needed for deepClone only if no Builder was generated
       // (the BuilderDecorator itself also generates a default protected default Constructor)
@@ -159,7 +157,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
       }
     }
   }
-  
+
   /**
    * When visiting an interface node, we add the deepClone and deepEquals methods to the
    * decorated class.
@@ -170,7 +168,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
   public void visit(ASTCDInterface node) {
     if (this.decoratorData.shouldDecorate(this.getClass(), node)) {
       ASTCDInterface decInterface = decoratorData.getAsDecorated(node);
-      
+
       //the numbers correspond to arguments of the deepClone and deepEquals methods
       addDeepCloneMethod(node, decInterface);
       addDeepCloneMethod1(node, decInterface);
@@ -180,7 +178,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
       addDeepEquals3Method(node, decInterface);
     }
   }
-  
+
   /**
    * Adds a deepClone method with the signature deepClone()
    *
@@ -193,20 +191,20 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
         : packageName + "." + originalClass.getName();
     ASTMCQualifiedType originalClassQualifiedType = MCTypeFacade.getInstance().createQualifiedType(
         originalClassFullQualifiedName);
-    
+
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(
         originalClassQualifiedType).build();
     ASTCDMethod deepCloneMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().build(), originalClassReturnType, "deepClone",
         new ArrayList<>());
-    
+
     decoratedClass.addCDMember(deepCloneMethod);
-    
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepCloneMethod,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone", originalClassQualifiedType
             .printType())));
   }
-  
+
   private void addDeepCloneMethod(ASTCDInterface originalInterface,
       ASTCDInterface decoratedInterface) {
     String packageName = originalInterface.getSymbol().getPackageName();
@@ -214,16 +212,16 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
         : packageName + "." + originalInterface.getName();
     ASTMCQualifiedType originalInterfaceQualifiedType = MCTypeFacade.getInstance()
         .createQualifiedType(originalInterfaceFullQualifiedName);
-    
+
     ASTMCReturnType originalInterfaceReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(
         originalInterfaceQualifiedType).build();
     ASTCDMethod deepCloneMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().ABSTRACT().build(), originalInterfaceReturnType, "deepClone",
         new ArrayList<>());
-    
+
     decoratedInterface.addCDMember(deepCloneMethod);
   }
-  
+
   /**
    * Method needed to create the new Result Object, add it to the map and then runs the real
    * DeepClone method
@@ -241,18 +239,18 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
     ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType,
         objectType);
-    
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType)
         .setName("map").build();
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(
         originalClassQualifiedType).build();
-    
+
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().build(), originalClassReturnType, "deepClone", List.of(
             parameter1));
-    
+
     decoratedClass.addCDMember(deepClone2Method);
-    
+
     //if the class has a builder, we construct the class using a builder. Else we use the default constructor generated.
     if (this.decoratorData.shouldDecorate(BuilderDecorator.class, originalClass)) {
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method,
@@ -266,7 +264,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
               originalClassQualifiedType, "new " + originalClassQualifiedType.printType() + "()")));
     }
   }
-  
+
   private void addDeepCloneMethod1(ASTCDInterface originalInterface,
       ASTCDInterface decoratedInterface) {
     String packageName = originalInterface.getSymbol().getPackageName();
@@ -277,19 +275,19 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
     ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType,
         objectType);
-    
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType)
         .setName("map").build();
     ASTMCReturnType originalInterfaceReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(
         originalInterfaceQualifiedType).build();
-    
+
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().ABSTRACT().build(), originalInterfaceReturnType, "deepClone",
         List.of(parameter1));
-    
+
     decoratedInterface.addCDMember(deepClone2Method);
   }
-  
+
   /**
    * Adds a deepClone method with the signature deepClone(result: ‹PojoClass›, map: Map‹PojoClass,
    * PojoClass›)
@@ -308,25 +306,25 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
     ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType,
         objectType);
-    
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(
         originalClassQualifiedType).setName("result").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType)
         .setName("map").build();
     ASTMCReturnType originalClassReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(
         originalClassQualifiedType).build();
-    
+
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().build(), originalClassReturnType, "deepClone", List.of(
             parameter1, parameter2));
-    
+
     decoratedClass.addCDMember(deepClone2Method);
-    
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2Method,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2",
             originalClassQualifiedType, getAllCDAttributes(originalClass),
             classesFromClassdiagramAsString)));
-    
+
     //We need to add a deepEquals method fpr every implemented interface of the class.
     // This method should just redirect to the "normal" deepClone method of the specific class
     if (originalClass.isPresentCDInterfaceUsage()) {
@@ -347,7 +345,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
               CD4CodeMill.modifierBuilder().PUBLIC().build(), originalInterfaceReturnType,
               "deepClone", List.of(parameter1Interface, parameter2Interface));
           decoratedClass.addCDMember(deepClone2MethodInterface);
-          
+
           glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepClone2MethodInterface,
               new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepClone2ForInterfaces",
                   originalClassFullQualifiedName)));
@@ -355,7 +353,7 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
       }
     }
   }
-  
+
   private void addDeepCloneMethod2(ASTCDInterface originalInterface,
       ASTCDInterface decoratedClass) {
     String packageName = originalInterface.getSymbol().getPackageName();
@@ -366,21 +364,21 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
     ASTMCMapType visitedObjectsType = MCTypeFacade.getInstance().createMapTypeOf(objectType,
         objectType);
-    
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(
         originalInterfaceQualifiedType).setName("result").build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsType)
         .setName("map").build();
     ASTMCReturnType originalInterfaceReturnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(
         originalInterfaceQualifiedType).build();
-    
+
     ASTCDMethod deepClone2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().ABSTRACT().build(), originalInterfaceReturnType, "deepClone",
         List.of(parameter1, parameter2));
-    
+
     decoratedClass.addCDMember(deepClone2Method);
   }
-  
+
   /**
    * Adds a deepEquals method with the signature deepEquals(o: ‹Object›)
    * This method calls the deepEquals method with the signature deepEquals(o: ‹Object›,
@@ -398,13 +396,13 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
         originalClassQualifiedType).setName("o").build();
     ASTCDMethod deepEquals1Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().build(), booleanReturnType, "deepEquals", List.of(parameter1));
-    
+
     decoratedClass.addCDMember(deepEquals1Method);
-    
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals1Method,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals1")));
   }
-  
+
   private void addDeepEquals1Method(ASTCDInterface originalInterface,
       ASTCDInterface decoratedInterface) {
     ASTMCQualifiedType originalInterfaceQualifiedType = MCTypeFacade.getInstance()
@@ -416,10 +414,10 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDMethod deepEquals1Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().ABSTRACT().build(), booleanReturnType, "deepEquals", List.of(
             parameter1));
-    
+
     decoratedInterface.addCDMember(deepEquals1Method);
   }
-  
+
   /**
    * Adds a deepEquals method with the signature deepEquals(o: ‹Object›, forceSameOrder: boolean)
    * to the decorated class.
@@ -441,13 +439,13 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDMethod deepEquals2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().build(), booleanReturnType, "deepEquals", List.of(parameter1,
             parameter2));
-    
+
     decoratedClass.addCDMember(deepEquals2Method);
-    
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals2Method,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals2")));
   }
-  
+
   private void addDeepEquals2Method(ASTCDInterface originalInterface,
       ASTCDInterface decoratedInterface) {
     ASTMCQualifiedType originalInterfaceQualifiedType = MCTypeFacade.getInstance()
@@ -461,10 +459,10 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTCDMethod deepEquals2Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().ABSTRACT().build(), booleanReturnType, "deepEquals", List.of(
             parameter1, parameter2));
-    
+
     decoratedInterface.addCDMember(deepEquals2Method);
   }
-  
+
   /**
    * Adds a deepEquals method with the signature deepEquals(o: ‹Object›, forceSameOrder: boolean,
    * visitedObjects: Map‹Object,Set‹Object››)
@@ -498,26 +496,26 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCSetType visitedObjectsSet = MCTypeFacade.getInstance().createSetTypeOf(objectType);
     ASTMCMapType visitedObjectsMapOfSet = MCTypeFacade.getInstance().createMapTypeOf(objectType,
         visitedObjectsSet);
-    
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(objectType).setName("o")
         .build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(CD4CodeMill
         .mCPrimitiveTypeBuilder().setPrimitive(1).build()).setName("forceSameOrder").build();
     ASTCDParameter parameter3 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsMapOfSet)
         .setName("visitedObjects").build();
-    
+
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().PUBLIC().build(), booleanReturnType, "deepEquals", List.of(parameter1,
             parameter2, parameter3));
-    
+
     decoratedClass.addCDMember(deepEquals3Method);
-    
+
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, deepEquals3Method,
         new TemplateHookPoint("methods.deepCloneAndDeepEquals.deepEquals3",
             originalClassQualifiedType, getAllCDAttributes(originalClass),
             classesFromClassdiagramAsString)));
   }
-  
+
   private void addDeepEquals3Method(ASTCDInterface originalInterface,
       ASTCDInterface decoratedInterface) {
     ASTMCQualifiedType objectType = MCTypeFacade.getInstance().createQualifiedType("Object");
@@ -526,21 +524,21 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
     ASTMCSetType visitedObjectsSet = MCTypeFacade.getInstance().createSetTypeOf(objectType);
     ASTMCMapType visitedObjectsMapOfSet = MCTypeFacade.getInstance().createMapTypeOf(objectType,
         visitedObjectsSet);
-    
+
     ASTCDParameter parameter1 = CD4CodeMill.cDParameterBuilder().setMCType(objectType).setName("o")
         .build();
     ASTCDParameter parameter2 = CD4CodeMill.cDParameterBuilder().setMCType(CD4CodeMill
         .mCPrimitiveTypeBuilder().setPrimitive(1).build()).setName("forceSameOrder").build();
     ASTCDParameter parameter3 = CD4CodeMill.cDParameterBuilder().setMCType(visitedObjectsMapOfSet)
         .setName("visitedObjects").build();
-    
+
     ASTCDMethod deepEquals3Method = CDMethodFacade.getInstance().createMethod(CD4CodeMill
         .modifierBuilder().ABSTRACT().PUBLIC().build(), booleanReturnType, "deepEquals", List.of(
             parameter1, parameter2, parameter3));
-    
+
     decoratedInterface.addCDMember(deepEquals3Method);
   }
-  
+
   /**
    * This method resolves the super classes and returns all their attributes in a list
    * <p>
@@ -553,21 +551,19 @@ public class DeepCloneAndDeepEqualsDecorator extends AbstractDecorator<AbstractD
    */
   public List<ASTCDAttribute> getAllCDAttributes(ASTCDClass node) {
     List<ASTCDAttribute> astcdAttributeList = new ArrayList<>(node.getCDAttributeList());
-    List<CDTypeSymbol> superClassesTransitive = AbstractService.getAllSuperClassesTransitive(node
-        .getSymbol());
-    
-    List<CDTypeSymbol> allDependencies = new ArrayList<>(superClassesTransitive);
-    for (CDTypeSymbol typeSymbol : allDependencies) {
-      astcdAttributeList.addAll(typeSymbol.getAstNode().getCDAttributeList());
+    List<ASTCDClass> superClassesTransitive = CDSymbolTables.getTransitiveSuperClasses(node);
+
+    for (ASTCDClass astcdClass : superClassesTransitive) {
+      astcdAttributeList.addAll(astcdClass.getCDAttributeList());
     }
-    
+
     return astcdAttributeList;
   }
-  
+
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
     traverser.add4CDInterfaceAndEnum(this);
   }
-  
+
 }
