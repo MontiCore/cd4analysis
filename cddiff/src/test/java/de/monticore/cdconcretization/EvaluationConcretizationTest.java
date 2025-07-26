@@ -3,6 +3,7 @@ package de.monticore.cdconcretization;
 
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
@@ -92,6 +93,31 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
         "ConcreteVisitable", "InnerNode");
     assertTypeBindingExists(checker, resolveConMethod("NodeVisitor.visit(RootNode)"),
         "ConcreteVisitable", "RootNode");
+  }
+  
+  /**
+   * This test shows a limitation of the current incarnation binding concept. Currently,
+   * incarnations are completely independent of each other.
+   * For each incarnation C of a reference type R we attach a binding R=C to C. This is useful,
+   * e.g., in the Getter/Setter example where we want to limit the attribute incarnations to only
+   * these within the specific type incarnation.<br>
+   * <br>
+   * FUTURE work: To implement cross-incarnation-references, we need add a variant of the forEach
+   * stereotype that considers all incarnation independently of the current binding context, e.g.:
+   * <pre>
+   * &lt;&lt;forEachGlobal="Microservice as OtherService"&gt;&gt; void sendToOtherService(...)
+   * </pre>
+   * (see thesis for details).
+   */
+  @Test
+  @Disabled("shows limitation of current concept")
+  void testCrossReferences() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
+        "evaluation/cross-references/MicroserviceConc.cd",
+        "evaluation/cross-references/MicroserviceRef.cd",
+        "evaluation/cross-references/MicroserviceOut.cd");
   }
   
 }
