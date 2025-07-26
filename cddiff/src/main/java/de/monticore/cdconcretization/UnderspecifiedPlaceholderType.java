@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
-import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -50,9 +50,9 @@ public class UnderspecifiedPlaceholderType {
    */
   private static TypeSymbol createPlaceholderTypeSymbol(String name,
       IBasicSymbolsGlobalScope globalScope) {
-    return CD4CodeMill.typeSymbolBuilder().setName(name).setEnclosingScope(globalScope).setFullName(
-        name).setSpannedScope(CD4CodeMill.scope()).setAccessModifier(AccessModifier.ALL_INCLUSION)
-        .build();
+    return BasicSymbolsMill.typeSymbolBuilder().setName(name).setEnclosingScope(globalScope)
+        .setFullName(name).setSpannedScope(BasicSymbolsMill.scope()).setAccessModifier(
+            AccessModifier.ALL_INCLUSION).build();
   }
   
 }
