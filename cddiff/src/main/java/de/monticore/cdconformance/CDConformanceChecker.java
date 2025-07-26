@@ -209,4 +209,13 @@ public class CDConformanceChecker {
   
   public CDIncarnationMapping getIncarnationMapping() { return incMapping; }
   
+  /**
+   * Sets the name of the underspecified placeholder type.
+   *
+   * @param underspecifiedTypeName the name of the underspecified placeholder type
+   */
+  public void setUnderspecifiedTypeName(String underspecifiedTypeName) {
+    this.underspecifiedTypeName = underspecifiedTypeName;
+  }
+  
 }
