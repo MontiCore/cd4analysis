@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc;
 
+import com.google.common.collect.SetMultimap;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
@@ -355,6 +356,36 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
     mcTypeIncStrategy.setTypeMatcher((conCDType, refCDType) -> isIncarnation(contextSymbol,
         conCDType, refCDType));
     return mcTypeIncStrategy.isMatched(conType, refType);
+  }
+  
+  @Override
+  public SetMultimap<String, TypeSymbol> getTypeBindings(IScope concreteScope) {
+    return bindings.getTypeBindings(concreteScope);
+  }
+  
+  @Override
+  public SetMultimap<String, TypeSymbol> getTypeBindings(ISymbol contextSymbol) {
+    return bindings.getTypeBindings(contextSymbol);
+  }
+  
+  @Override
+  public SetMultimap<String, FieldSymbol> getFieldBindings(IScope concreteScope) {
+    return bindings.getFieldBindings(concreteScope);
+  }
+  
+  @Override
+  public SetMultimap<String, FieldSymbol> getFieldBindings(ISymbol contextSymbol) {
+    return bindings.getFieldBindings(contextSymbol);
+  }
+  
+  @Override
+  public SetMultimap<String, MethodSymbol> getMethodBindings(IScope concreteScope) {
+    return bindings.getMethodBindings(concreteScope);
+  }
+  
+  @Override
+  public SetMultimap<String, MethodSymbol> getMethodBindings(ISymbol contextSymbol) {
+    return bindings.getMethodBindings(contextSymbol);
   }
   
 }
