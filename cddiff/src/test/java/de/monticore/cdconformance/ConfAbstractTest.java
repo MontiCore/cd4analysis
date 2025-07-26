@@ -47,10 +47,9 @@ public abstract class ConfAbstractTest {
       else {
         fail("Could not parse CDs.");
       }
-      
     }
     catch (IOException e) {
-      fail(e.getMessage());
+      fail(e);
     }
   }
   
