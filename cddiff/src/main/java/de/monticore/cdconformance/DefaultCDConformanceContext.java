@@ -144,12 +144,16 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
             compSubTypeIncStrategy, concreteCD, referenceCD));
         compAssocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(
             compSubTypeIncStrategy, concreteCD, referenceCD));
+        compAssocIncStrategy.addIncStrategy(new ImplicitRoleNameAssocIncStrategy(
+            compSubTypeIncStrategy, concreteCD, referenceCD, mapping));
       }
       else {
         compAssocIncStrategy.addIncStrategy(new RolePrefixInNavDirIncStrategy(compTypeIncStrategy,
             concreteCD, referenceCD));
         compAssocIncStrategy.addIncStrategy(new RolePrefixIfPresentIncStrategy(compTypeIncStrategy,
             concreteCD, referenceCD));
+        compAssocIncStrategy.addIncStrategy(new ImplicitRoleNameAssocIncStrategy(
+            compTypeIncStrategy, concreteCD, referenceCD, mapping));
       }
     }
     

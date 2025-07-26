@@ -249,4 +249,24 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
   }
   
+  @ParameterizedTest
+  @ValueSource(strings = { "Valid1.cd" })
+  public void testAssocImplicitRoleNameValid(String concrete) {
+    parseModels("associations/implicit_role_name/valid/" + concrete,
+        "associations/implicit_role_name/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = { "Valid1.cd" })
+  public void testAssocRoleNameDerivedFromTypeValid(String concrete) {
+    parseModels("associations/role_name_derived_from_type/valid/" + concrete,
+        "associations/role_name_derived_from_type/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
 }
