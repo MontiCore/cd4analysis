@@ -3,19 +3,75 @@ package de.monticore.symbols.basicsymbols;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 
+/**
+ * Represents the incarnation mapping between a reference model and a concrete model for the symbols
+ * defined by the "BasicSymbols" language.<br>
+ * This interface not only provides access to all incarnation of a certain reference model but
+ * knows a set of "bindings" that restrict the incarnations in context of a certain symbol
+ * or scope.<br>
+ *
+ * @see BasicSymbolsBindings
+ * @see de.monticore.refadaptation.Binding
+ */
 public interface BasicSymbolsIncMapping extends BasicSymbolsLocalIncMapping {
+
+  /*
+   * TODO Discuss this
+   * Although an incarnation mapping is always defined for a single reference model and a single
+   * concrete model, this does not necessarily mean that there is only a single concrete and
+   * reference artifact! A "model" could also be composed of multiple artifacts defining distinct
+   * symbols.
+   * Therefore, we have no "getReferenceModel()" or "getConcreteModel()" methods here.
+   */
 
   String computeSymbolKey(ISymbol symbol);
 
   //BasicSymbolsLocalIncMapping getFullMapping(); // TODO extend local mapping vs getter?
 
+  /**
+   * Returns the local incarnation mapping for the given context symbol.<br>
+   * This is the global incarnation mapping restricted by the bindings holding for the given
+   * context symbol.
+   *
+   * @param contextSymbol the context symbol for which the mapping should be returned
+   * @return the local incarnation mapping for the given context symbol
+   */
   BasicSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol);
 
+  /**
+   * Returns the local incarnation mapping for the given scope.<br>
+   * This is the global incarnation mapping restricted by the bindings holding for the given scope.
+   *
+   * @param scope the scope for which the mapping should be returned
+   * @return the local incarnation mapping for the given scope
+   */
   BasicSymbolsLocalIncMapping getScopedMapping(IScope scope);
 
+  /**
+   * Returns the bindings holding at the context symbol represented by the given key.<br>
+   *
+   * @param contextSymbolKey the key representing the context symbol for which the bindings should
+   *                         be returned
+   * @return the scoped bindings for the given context symbol key
+   * 
+   * @see #computeSymbolKey(ISymbol)
+   */
   BasicSymbolsBindings getScopedBindings(String contextSymbolKey);
 
+
+  /**
+   * Returns the bindings holding at the given context symbol.
+   *
+   * @param contextSymbol the context symbol for which the bindings should be returned
+   * @return the scoped bindings for the given context symbol
+   */
   BasicSymbolsBindings getScopedBindings(ISymbol contextSymbol);
 
+  /**
+   * Returns the bindings holding at the given scope.
+   *
+   * @param scope the scope for which the bindings should be returned
+   * @return the scoped bindings for the given scope
+   */
   BasicSymbolsBindings getScopedBindings(IScope scope);
 }

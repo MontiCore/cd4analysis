@@ -1,17 +1,33 @@
 package de.monticore.refadaptation;
 
-import de.se_rwth.commons.logging.Log;
+import de.monticore.symboltable.ISymbol;
 
 import java.util.Set;
 
 /**
- * TODO document
+ * A binding fixes a reference symbol to a concrete symbol or a set of concrete symbols. The
+ * concrete symbols MUST be incarnations of the reference symbol!<br>
+ * In context of incarnation mappings, this means that although there are multiple incarnations
+ * of a reference symbol, only a certain set of incarnations is allowed to be used.<br>
+ * <br>
+ * If a STRICT binding is attached to an adaptation variant during reference artifact adaptation,
+ * this variant can only be combined with variants having the EXACT same binding.<br>
+ * <br>
+ * TODO defined aggregate bindings properly!
  *
  * A {@link Binding} instance is immutable!
  *
- * @param <T>
+ * @param <T> the kind of symbol this binding refers to.
  */
-public class Binding<T> {
+public class Binding<T extends ISymbol> {
+
+  /*
+   * TODO rework the definition of STRICT vs. AGGREGATE:
+   *  - Can there be STRICT bindings with multiple concrete elements?
+   *  - Can there be AGGREGATE bindings with a single concrete element?
+   *  - Is there a different kind of binding that only limits the concrete elements to a certain
+   *    set of incarnations?
+   */
   public enum Kind {
     STRICT,       // only these incarnations are allowed
     AGGREGATE     // these incarnations are required but others may also be present
@@ -27,11 +43,11 @@ public class Binding<T> {
     this.kind = kind;
   }
 
-  public static <T> Binding<T> createStrict(T referenceElement, T concreteElement) {
+  public static <T extends ISymbol> Binding<T> createStrict(T referenceElement, T concreteElement) {
     return new Binding<>(referenceElement, Set.of(concreteElement), Kind.STRICT);
   }
 
-  public static <T> Binding<T> createAggregate(T referenceElement, Set<T> concreteElements) {
+  public static <T extends ISymbol> Binding<T> createAggregate(T referenceElement, Set<T> concreteElements) {
     return new Binding<>(referenceElement, concreteElements, Kind.AGGREGATE);
   }
 
@@ -101,7 +117,7 @@ public class Binding<T> {
     }
   }
 
-  public <O> Binding<O> cast() {
+  public <O extends ISymbol> Binding<O> cast() {
     @SuppressWarnings("unchecked")
     Binding<O> casted = (Binding<O>) this;
     return casted;
