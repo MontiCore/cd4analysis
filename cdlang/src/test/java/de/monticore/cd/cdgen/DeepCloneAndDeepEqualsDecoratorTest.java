@@ -13,6 +13,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdgen.CDGenTool;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.tagging.tags.TagsMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,8 @@ public class DeepCloneAndDeepEqualsDecoratorTest extends AbstractDecoratorTest {
   
   @Test
   public void testDeepCopyAndDeepEquals() throws Exception {
+    TagsMill.reset();
+    TagsMill.init();
     var opt = CD4CodeMill.parser().parse_String("classdiagram TestDeepCloneAndDeepEquals {\n"
         + " public class AllTogether { \n" + " public int myInt;\n" + " public boolean myBool;\n"
         + " -> (manyClassWith2DimList)ClassWith2DimList [*] public;\n"
