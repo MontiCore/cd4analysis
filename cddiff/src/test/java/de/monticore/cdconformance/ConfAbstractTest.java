@@ -7,6 +7,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.util.Optional;
@@ -24,7 +25,8 @@ public abstract class ConfAbstractTest {
   
   @BeforeEach
   public void setup() {
-    LogStub.init();
+    Log.init();
+    Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();

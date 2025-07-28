@@ -1,3 +1,5 @@
+import java.lang.String;
+
 classdiagram Reference {
 
   class Address {
@@ -9,5 +11,6 @@ classdiagram Reference {
 
   class Employee {
     Address address;
+    Set<Address> secondaryAddresses;
   }
 }

@@ -11,6 +11,7 @@ import de.monticore.cdconformance.inc.attribute.CompAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.EqNameAttributeIncStrategy;
 import de.monticore.cdconformance.inc.attribute.STAttributeIncStrategy;
 import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
+import de.monticore.cdconformance.inc.mctype.TypeCheckMCTypeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.*;
 import de.monticore.cdconformance.inc.type.CompTypeIncStrategy;
 import de.monticore.cdconformance.inc.type.EqTypeIncStrategy;
@@ -81,8 +82,9 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     CompAttributeIncStrategy compAttributeIncStrategy = new CompAttributeIncStrategy();
     CompMethodIncStrategy compMethodIncStrategy = new CompMethodIncStrategy();
     
-    MCTypeMatchingStrategy mcTypeMatcher = new MCTypeMatchingStrategy(
-        underspecifiedPlaceholderTypeName, compTypeIncStrategy::isMatched);
+    MCTypeMatchingStrategy compMcTypeMatcher =
+            new TypeCheckMCTypeMatchingStrategy(underspecifiedPlaceholderTypeName);
+    compMcTypeMatcher.setCDTypeMatcher(compTypeIncStrategy);
     
     /*
      * We configure the matching strategies depending on the conformance checker parameter as we
@@ -99,7 +101,7 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
       compAssocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       compAttributeIncStrategy.addIncStrategy(new EqNameAttributeIncStrategy());
       if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
-        compMethodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(mcTypeMatcher,
+        compMethodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(compMcTypeMatcher,
             conformanceParams.contains(CDConfParameter.STRICT_PARAMETER_ORDER)));
       }
       else {
@@ -160,7 +162,7 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     return new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,
         underspecifiedPlaceholderTypeName, conformanceParams, compTypeIncStrategy,
         compSubTypeIncStrategy, compAssocIncStrategy, compAttributeIncStrategy,
-        compMethodIncStrategy, mcTypeMatcher);
+        compMethodIncStrategy, compMcTypeMatcher);
   }
   
   /**
@@ -196,7 +198,7 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     CachedMultiMatches<ASTCDType> cachedTypeIncStrategy = new CachedMultiMatches<>(CDSynDiffMatches
         .computeMultiMatching(concTypes, context.getTypeIncStrategy()));
     
-    context.getMCTypeIncStrategy().setTypeMatcher(context.getTypeIncStrategy());
+    context.getMCTypeIncStrategy().setCDTypeMatcher(context.getTypeIncStrategy());
     
     CachedMultiMatches<ASTCDType> cachedSubtypeIncStrategy = new CachedMultiMatches<>(
         CDSynDiffMatches.computeMultiMatching(concTypes, context
