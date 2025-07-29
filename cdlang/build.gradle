@@ -318,6 +318,9 @@ sourceSets {
     java.srcDirs(file('src/cdGenIntTestHwc/java'))
   }
 }
+tasks.named('generateCdGenIntTestMCGrammars') {
+  dependsOn tasks.named('test')
+}
 dependencies {
   cdGenIntTestImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
   cdGenIntTestRuntimeOnly 'org.junit.platform:junit-platform-launcher'
