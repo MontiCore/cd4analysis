@@ -2,6 +2,8 @@
 package de.monticore.cd.codegen.decorators;
 
 import com.google.common.collect.Iterables;
+import de.monticore.ast.ASTCNode;
+import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.CDTypeCollector;
 import de.monticore.cd.facade.CDMethodFacade;
@@ -19,10 +21,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 import de.se_rwth.commons.StringTransformations;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
@@ -31,9 +31,9 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
  * to account
  * for circular relations which would otherwise not terminate.
  */
-public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
-    CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
-  
+public class InheritanceVisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData>
+    implements CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
+
   Stack<ASTCDParameter> parameterOfPojo = new Stack<>();
   Stack<ASTCDClass> currentDecoratedClass = new Stack<>();
   Stack<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> currentDecoratedInterface =
@@ -46,7 +46,7 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
    */
   List<String> classesFromClassdiagramAsString = new ArrayList<>();
   boolean isInitialized = false;
-  
+
   @Override
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
@@ -55,13 +55,13 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
     return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
         SetterDecorator.class));
   }
-  
+
   @Override
   public void visit(ASTCDCompilationUnit compilationUnit) {
     init(compilationUnit, compilationUnit.getCDDefinition(), "I" + compilationUnit.getCDDefinition()
-        .getName() + "Visitor");
+        .getName() + "InheritanceVisitor");
   }
-  
+
   public void init(ASTCDCompilationUnit compilationUnit, ASTCDDefinition definition,
       String visitorInterfaceName) {
     if (!isInitialized) {
@@ -69,11 +69,11 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       //create the visitor interface
       visitorInterface = CD4CodeMill.cDInterfaceBuilder().setName(visitorInterfaceName).setModifier(
           CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
-      
+
       // add the visitor interface to the definition
       ASTCDDefinition decoratedDefinition = this.decoratorData.getAsDecorated(definition);
       decoratedDefinition.addCDElement(visitorInterface);
-      
+
       // create the visitor interface parameter
       String packageName = definition.getSymbol().getPackageName();
       String visitorInterfaceQualifiedName = packageName.isEmpty() ? visitorInterfaceName
@@ -82,14 +82,14 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
           .createQualifiedType(visitorInterfaceQualifiedName);
       visitorInterfaceParameter = CD4CodeMill.cDParameterBuilder().setName("visitor").setMCType(
           visitorInterfaceQualifiedType).build();
-      
+
       // add getTraversedElements Set<Object> method to the visitor interface
       ASTMCSetType setType = MCTypeFacade.getInstance().createSetTypeOf("Object");
       ASTMCReturnType returnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(setType).build();
       ASTCDMethod getTraversedElementsMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().setAbstract(true).build(), returnType, "getTraversedElements");
       visitorInterface.addCDMember(getTraversedElementsMethod);
-      
+
       // add addTraversedElement method to the visitor interface
       ASTMCReturnType returnTypeAddTraversedElement = CD4CodeMill.mCReturnTypeBuilder()
           .setMCVoidType(CD4CodeMill.mCVoidTypeBuilder().build()).build();
@@ -101,7 +101,7 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       visitorInterface.addCDMember(addTraversedElementMethod);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, addTraversedElementMethod,
           new TemplateHookPoint("methods.visitor.addTraversedElement")));
-      
+
       // add removeTraversedElement method to the visitor interface
       ASTMCReturnType returnTypeRemoveTraversedElement = CD4CodeMill.mCReturnTypeBuilder()
           .setMCVoidType(CD4CodeMill.mCVoidTypeBuilder().build()).build();
@@ -113,14 +113,14 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       visitorInterface.addCDMember(removeTraversedElement);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, removeTraversedElement,
           new TemplateHookPoint("methods.visitor.removeTraversedElement")));
-      
+
       //visitor to get all classes from the original class diagram classes
       CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
       CDTypeCollector cdTypeCollector = new CDTypeCollector();
       t2.add4CDBasis(cdTypeCollector);
       t2.add4CDInterfaceAndEnum(cdTypeCollector);
       compilationUnit.accept(t2);
-      
+
       classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e -> e
           .getSymbol().getFullName()).collect(Collectors.toList()));
       classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e -> e
@@ -129,15 +129,15 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
           .getSymbol().getFullName()).collect(Collectors.toList()));
     }
   }
-  
+
   @Override
   public void visit(ASTCDClass clazz) {
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
       ASTCDClass decClazz = decoratorData.getAsDecorated(clazz);
       currentDecoratedClass.add(decClazz);
-      
+
       String packageName = clazz.getSymbol().getPackageName();
-      
+
       String visitorInterfaceName = packageName.isEmpty() ? "I" + clazz.getName() + "Visitor"
           : packageName + ".I" + clazz.getName() + "Visitor";
       String pojoClassName = packageName.isEmpty() ? clazz.getName() : packageName + "." + clazz
@@ -151,7 +151,7 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       ASTCDParameter pojoInterfaceClassParameter = CD4CodeMill.cDParameterBuilder().setName("node")
           .setMCType(visitorInterfaceQualifiedType).build();
       parameterOfPojo.add(pojoClassParameter);
-      
+
       //create the methods for the visitor interface
       //visit:
       ASTCDMethod visitMethodHeader = CDMethodFacade.getInstance().createMethod(CD4CodeMill
@@ -162,14 +162,16 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
           .modifierBuilder().PUBLIC().build(), "endVisit", parameterOfPojo.peek());
       visitorInterface.addCDMember(endVisitMethodHeader);
       // handle:
+      List<String> upperInterfacesAndSuperClasses = getUpperInterfacesAndSuperClasses(clazz);
       ASTCDMethod handleMethodHeader = CD4CodeMill.cDMethodBuilder().setModifier(CD4CodeMill
           .modifierBuilder().PUBLIC().setAbstract(false).build()).setName("handle").setMCReturnType(
               CD4CodeMill.mCReturnTypeBuilder().setMCVoidType(CD4CodeMill.mCVoidTypeBuilder()
                   .build()).build()).setCDParametersList(List.of(parameterOfPojo.peek())).build();
-      visitorInterface.addCDMember(handleMethodHeader);
-      
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, handleMethodHeader,
-          new TemplateHookPoint("methods.visitor.handle")));
+          new TemplateHookPoint("methods.visitor.inheritanceHandle",
+              upperInterfacesAndSuperClasses)));
+      visitorInterface.addCDMember(handleMethodHeader);
+
       // traverse:
       ASTCDMethod traverseMethodHeader = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "traverse", parameterOfPojo.peek());
@@ -177,32 +179,78 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       currentTraverseMethod.add(traverseMethodHeader);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, traverseMethodHeader,
           new TemplateHookPoint("methods.visitor.traverse", classesFromClassdiagramAsString)));
-      
+
       // add accept method to pojo class
       ASTCDMethod acceptMethod = CDMethodFacade.getInstance().createDefaultMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "accept", visitorInterfaceParameter);
       decClazz.addCDMember(acceptMethod);
-      
+
       String errorCode = "0x01472";
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, acceptMethod,
           new TemplateHookPoint("methods.visitor.accept", clazz, errorCode)));
     }
   }
-  
+
   @Override
   public void visit(de.monticore.cdinterfaceandenum._ast.ASTCDInterface node) {
     if (decoratorData.shouldDecorate(this.getClass(), node)) {
+      String packageName = node.getSymbol().getPackageName();
+      String visitorInterfaceName = packageName.isEmpty() ? "I" + node.getName() + "Visitor"
+          : packageName + ".I" + node.getName() + "Visitor";
+      String pojoInterfaceName = packageName.isEmpty() ? node.getName() : packageName + "." + node
+          .getName();
+      ASTMCQualifiedType visitorInterfaceQualifiedType = MCTypeFacade.getInstance()
+          .createQualifiedType(visitorInterfaceName);
+      ASTMCQualifiedType pojoInterfaceQualifiedType = MCTypeFacade.getInstance()
+          .createQualifiedType(pojoInterfaceName);
+      ASTCDParameter pojoInterfaceParameter = CD4CodeMill.cDParameterBuilder().setName("node")
+          .setMCType(pojoInterfaceQualifiedType).build();
+      ASTCDParameter pojoInterfaceClassParameter = CD4CodeMill.cDParameterBuilder().setName("node")
+          .setMCType(visitorInterfaceQualifiedType).build();
       de.monticore.cdinterfaceandenum._ast.ASTCDInterface decInterface = decoratorData
           .getAsDecorated(node);
       currentDecoratedInterface.add(decInterface);
-      
+      parameterOfPojo.add(pojoInterfaceParameter);
+
+      //create the methods for the visitor interface
+      //visit:
+      ASTCDMethod visitMethodHeader = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+          .modifierBuilder().PUBLIC().build(), "visit", parameterOfPojo.peek());
+      visitorInterface.addCDMember(visitMethodHeader);
+      // endVisit:
+      ASTCDMethod endVisitMethodHeader = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+          .modifierBuilder().PUBLIC().build(), "endVisit", parameterOfPojo.peek());
+      visitorInterface.addCDMember(endVisitMethodHeader);
+      // handle:
+      List<String> upperInterfacesAndSuperClasses = getUpperInterfacesAndSuperClasses(node);
+      ASTCDMethod handleMethodHeader = CD4CodeMill.cDMethodBuilder().setModifier(CD4CodeMill
+          .modifierBuilder().PUBLIC().setAbstract(false).build()).setName("handle").setMCReturnType(
+              CD4CodeMill.mCReturnTypeBuilder().setMCVoidType(CD4CodeMill.mCVoidTypeBuilder()
+                  .build()).build()).setCDParametersList(List.of(parameterOfPojo.peek())).build();
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, handleMethodHeader,
+          new TemplateHookPoint("methods.visitor.inheritanceHandle",
+              upperInterfacesAndSuperClasses)));
+      visitorInterface.addCDMember(handleMethodHeader);
+
+      // traverse:
+      ASTCDMethod traverseMethodHeader = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+          .modifierBuilder().PUBLIC().build(), "traverse", parameterOfPojo.peek());
+      visitorInterface.addCDMember(traverseMethodHeader);
+      currentTraverseMethod.add(traverseMethodHeader);
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, traverseMethodHeader,
+          new TemplateHookPoint("methods.visitor.traverse", classesFromClassdiagramAsString)));
+
       // add accept method to pojo class
-      ASTCDMethod acceptMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+      ASTCDMethod acceptMethod = CDMethodFacade.getInstance().createDefaultMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "accept", visitorInterfaceParameter);
       decInterface.addCDMember(acceptMethod);
+
+      String errorCode = "0x01472";
+      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, acceptMethod,
+          new TemplateHookPoint("methods.visitor.accept", node, errorCode)));
     }
   }
-  
+
   @Override
   public void endVisit(ASTCDClass clazz) {
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
@@ -211,14 +259,16 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       currentTraverseMethod.pop();
     }
   }
-  
+
   @Override
   public void endVisit(de.monticore.cdinterfaceandenum._ast.ASTCDInterface node) {
     if (decoratorData.shouldDecorate(this.getClass(), node)) {
+      parameterOfPojo.pop();
       currentDecoratedInterface.pop();
+      currentTraverseMethod.pop();
     }
   }
-  
+
   @Override
   public void visit(ASTCDAttribute attribute) {
     if (!decoratorData.shouldDecorate(this.getClass(), attribute)) {
@@ -239,16 +289,100 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
       attributeName = "node.get" + attribute.getName().substring(0, 1).toUpperCase() + attribute
           .getName().substring(1) + "()";
     }
-    
+
     glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.visitor.traverse:Inner",
         currentTraverseMethod.peek(), new TemplateHookPoint("methods.visitor.traverseInner",
             classesFromClassdiagramAsString, attribute.getMCType(), attributeName)));
   }
-  
+
+  /**
+   * This method resolves the super classes and interfaces of a class and returns all in a somewhat
+   * expected order
+   * <p>
+   * The order is as follows:
+   * If the class has a single superclass or interface, the order is ascending from the
+   * superclass/interface to the class itself.
+   * If the class has multiple superclasses or interfaces, the order is unpredictable
+   *
+   * @param node class that should be inspected for super classes and interfaces
+   * @return an ordered list of super classes and interfaces
+   */
+  private List<String> getUpperInterfacesAndSuperClasses(ASTCNode node) {
+    List<String> result = new ArrayList<>();
+    List<ASTCNode> allVisited = new ArrayList<>();
+    allVisited.add(node);
+    List<ASTCNode> lastRoundVisited = new ArrayList<>();
+    lastRoundVisited.add(node);
+    List<ASTCNode> nextRoundVisited = new ArrayList<>();
+    Set<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> visitedInterfaces = new HashSet<>();
+    while (!lastRoundVisited.isEmpty()) {
+      for (ASTCNode currentNode : lastRoundVisited) {
+        if (currentNode instanceof ASTCDClass) {
+          //super class
+          Optional<ASTCDClass> resultOfTransitiveClass = (CDSymbolTables.getTransitiveSuperClasses(
+              (ASTCDClass) currentNode).stream().findFirst());
+          if (resultOfTransitiveClass.isPresent()) {
+            if (!allVisited.contains(resultOfTransitiveClass.get())) {
+              allVisited.add(resultOfTransitiveClass.get());
+              result.add(resultOfTransitiveClass.get().getSymbol().getFullName());
+              nextRoundVisited.add(resultOfTransitiveClass.get());
+            }
+          }
+
+          //interfaces
+          List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> resultOfTransitiveInterface = getASTCDInterfaces((ASTCDClass) currentNode, visitedInterfaces);
+          for (de.monticore.cdinterfaceandenum._ast.ASTCDInterface resultOfTransitiveInterfaceElement : resultOfTransitiveInterface) {
+            allVisited.add(resultOfTransitiveInterfaceElement);
+            result.add(resultOfTransitiveInterfaceElement.getSymbol().getFullName());
+            nextRoundVisited.add(resultOfTransitiveInterfaceElement);
+          }
+        }
+        else if (currentNode instanceof ASTCDInterface) {
+          //interfaces
+          List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> resultOfTransitiveInterface = getASTCDInterfaces((ASTCDInterface) currentNode, visitedInterfaces);
+          for (de.monticore.cdinterfaceandenum._ast.ASTCDInterface resultOfTransitiveInterfaceElement : resultOfTransitiveInterface) {
+            allVisited.add(resultOfTransitiveInterfaceElement);
+            result.add(resultOfTransitiveInterfaceElement.getSymbol().getFullName());
+            nextRoundVisited.add(resultOfTransitiveInterfaceElement);
+          }
+        }
+      }
+      lastRoundVisited.clear();
+      lastRoundVisited.addAll(nextRoundVisited);
+      nextRoundVisited.clear();
+    }
+    return result;
+  }
+
+  private static List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> getASTCDInterfaces(ASTCDType currentNode, Set<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> visitedInterfaces) {
+    //direct interfaces
+    List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> resultOfTransitiveInterface =
+        (new ArrayList<>(CDSymbolTables.getTransitiveSuperInterfaces(
+          currentNode)));
+    //filter out all interfaces that do not match the direct interface list of the class
+    List<String> directInterfaces = currentNode.getInterfaceList().stream()
+        .map(m -> ((ASTMCQualifiedType) m).getMCQualifiedName().getQName()).collect(Collectors
+            .toList());
+    List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> helper = new ArrayList<>();
+    for (de.monticore.cdinterfaceandenum._ast.ASTCDInterface directInterface : resultOfTransitiveInterface) {
+      for (String directName : directInterfaces) {
+        if (directInterface.getSymbol().getFullName().contains(directName)) { //we need to use contains here because the interfaceLists is not resolved
+          helper.add(directInterface);
+        }
+      }
+    }
+    resultOfTransitiveInterface = helper;
+    //filter out all interfaces that have already been visited
+    resultOfTransitiveInterface = resultOfTransitiveInterface.stream().filter(
+        m -> !visitedInterfaces.contains(m)).collect(Collectors.toList());
+    visitedInterfaces.addAll(resultOfTransitiveInterface);
+    return resultOfTransitiveInterface;
+  }
+
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
     traverser.add4CDInterfaceAndEnum(this);
   }
-  
+
 }
