@@ -27,9 +27,15 @@ import java.util.stream.Collectors;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 /**
+ * This decorator generates a visitor interface for each class and interface in the class diagram.
+ * The visitor interface contains methods to visit, endVisit, handle, traverse,
+ * All classes and interfaces contain an accept method that accepts the visitor interface as a
+ * parameter.
+ * <p>
+ * The visitor interface is used to traverse over classes in the class diagram.
+ * <p>
  * When visit(node) we add the visitedElements into a set and remove them after the endVisit again
- * to account
- * for circular relations which would otherwise not terminate.
+ * to account for circular relations which would otherwise not terminate.
  */
 public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2, CDInterfaceAndEnumVisitor2 {
