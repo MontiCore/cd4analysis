@@ -3,6 +3,8 @@ package de.monticore.refadaptation;
 import de.monticore.symboltable.ISymbol;
 
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A binding fixes a reference symbol to a concrete symbol or a set of concrete symbols. The
@@ -78,31 +80,51 @@ public class Binding<T extends ISymbol> {
     return kind == Kind.AGGREGATE;
   }
 
-  public boolean conflictsWith(Binding<T> other) {
+  public boolean conflictsWith(Binding<T> other, Function<ISymbol, String> computeKeyFun) {
     /*
      * TODO review if this still makes any sense?! -> or simplify:
      *  - strict: exactly one concrete element -> rename to FIXED ?
      *  -> aggregate -> exactly multiple elements ??
      */
-    if (!referenceElement.equals(other.referenceElement)) return false;
+    // NOTE: We have to apply the computeKeyFun here to avoid having two symbol instances representing
+    // the same symbol but not being equal.
+    // e.g. in some cases there seem to be multiple java.util.Set instances
+    String thisReferenceKey = computeKeyFun.apply(referenceElement);
+    String otherReferenceKey = computeKeyFun.apply(other.referenceElement);
+    if (!thisReferenceKey.equals(otherReferenceKey)) {
+      return false;
+    }
 
+    Set<String> thisConcreteKeys = concreteElements.stream()
+            .map(computeKeyFun)
+            .collect(Collectors.toSet());
+    Set<String> otherConcreteKeys = other.concreteElements.stream()
+            .map(computeKeyFun)
+            .collect(Collectors.toSet());
     if (this.isStrict() && other.isStrict()) {
-      return !this.concreteElements.equals(other.concreteElements);
+      return !thisConcreteKeys.equals(otherConcreteKeys);
     }
 
     if (this.isStrict() || other.isStrict()) {
-      return !this.concreteElements.containsAll(other.concreteElements) &&
-              !other.concreteElements.containsAll(this.concreteElements);
+      return !thisConcreteKeys.containsAll(otherConcreteKeys) &&
+              !otherConcreteKeys.containsAll(thisConcreteKeys);
     }
 
     // Aggregates are compatible
     return false;
   }
 
-  public Binding<T> mergeOrThrowConflict(Binding<T> other) throws BindingConflictException {
+  public Binding<T> mergeOrThrowConflict(Binding<T> other, Function<ISymbol, String> computeKeyFun)
+          throws BindingConflictException {
     // TODO adjust implementation for aggregate bindings
+    Set<String> thisConcreteKeys = concreteElements.stream()
+            .map(computeKeyFun)
+            .collect(Collectors.toSet());
+    Set<String> otherConcreteKeys = other.concreteElements.stream()
+            .map(computeKeyFun)
+            .collect(Collectors.toSet());
     if (this.isStrict() && other.isStrict()) {
-      if (this.concreteElements.equals(other.concreteElements)) {
+      if (thisConcreteKeys.equals(otherConcreteKeys)) {
         return this; // No conflict, return the existing binding
       } else {
         throw new BindingConflictException(other);

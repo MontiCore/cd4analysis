@@ -52,7 +52,7 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
 
   @Override
   public OOSymbolsBindings copy() {
-    return new OOSymbolsBindingsImplTOP(
+    return new OOSymbolsBindingsImpl(
         basicSymbolsBindings.copy(),
         new Bindings<>(ooTypeBindings),
         new Bindings<>(fieldBindings),

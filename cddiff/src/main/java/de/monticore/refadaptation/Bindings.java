@@ -85,7 +85,7 @@ public class Bindings<T extends ISymbol> {
     String key = computeKeyFunction.apply(binding.getReferenceElement());
     Binding<T> existingBinding = bindings.get(key);
     if (existingBinding != null) {
-      bindings.put(key, existingBinding.mergeOrThrowConflict(binding));
+      bindings.put(key, existingBinding.mergeOrThrowConflict(binding, computeKeyFunction));
     } else {
       bindings.put(key, binding);
     }
@@ -104,7 +104,7 @@ public class Bindings<T extends ISymbol> {
   protected Optional<Binding<T>> getConflictingBinding(Binding<T> binding) {
     String key = computeKeyFunction.apply(binding.getReferenceElement());
     return Optional.ofNullable(bindings.get(key))
-        .filter(existingBinding -> existingBinding.conflictsWith(binding));
+        .filter(existingBinding -> existingBinding.conflictsWith(binding, computeKeyFunction));
   }
 
   // TODO remove if not used?

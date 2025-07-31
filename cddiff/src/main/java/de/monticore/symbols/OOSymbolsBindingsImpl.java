@@ -46,7 +46,7 @@ public class OOSymbolsBindingsImpl extends OOSymbolsBindingsImplTOP {
   @Override
   public boolean isConflictingFieldBinding(Binding<FieldSymbol> binding) {
     return super.isConflictingFieldBinding(binding)
-            && isConflictingTypeBinding(getFieldImpliedTypeBinding(binding));
+            || isConflictingTypeBinding(getFieldImpliedTypeBinding(binding));
   }
 
   @Override
@@ -58,7 +58,7 @@ public class OOSymbolsBindingsImpl extends OOSymbolsBindingsImplTOP {
   @Override
   public boolean isConflictingMethodBinding(Binding<MethodSymbol> binding) {
     return super.isConflictingMethodBinding(binding)
-            && isConflictingTypeBinding(getMethodImpliedTypeBinding(binding));
+            || isConflictingTypeBinding(getMethodImpliedTypeBinding(binding));
   }
 
   /**

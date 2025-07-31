@@ -3,9 +3,8 @@ package de.monticore.symbols.basicsymbols;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.Bindings;
-import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.*;
+import de.monticore.types.check.SymTypeExpression;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,31 +32,15 @@ public class BasicSymbolsBindingsImpl extends BasicSymbolsBindingsImplTOP {
   @Override
   public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
     super.addVariableBinding(binding);
-    addTypeBinding(getVariableImpliedTypeBinding(binding));
+    for (Binding<TypeSymbol> typeBinding : getVariableImpliedTypeBindings(binding)) {
+      addTypeBinding(typeBinding);
+    }
   }
 
   @Override
   public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
     return super.isConflictingVariableBinding(binding)
-            && isConflictingTypeBinding(getVariableImpliedTypeBinding(binding));
-  }
-
-  /**
-   * Returns the type binding that is implied by a variable binding.
-   *
-   * @param binding the variable binding
-   * @return the type binding that is implied by the variable binding
-   */
-  protected Binding<TypeSymbol> getVariableImpliedTypeBinding(Binding<VariableSymbol> binding) {
-    TypeSymbol varTypeSymbol = binding.getReferenceElement().getType().getTypeInfo();
-    Set<TypeSymbol> conTypes = binding.getConcreteElements().stream()
-            .map(f -> f.getType().getTypeInfo())
-            .collect(Collectors.toSet());
-    if (binding.isStrict()) {
-      return Binding.createStrict(varTypeSymbol, conTypes.stream().findFirst().orElseThrow());
-    } else {
-      return Binding.createAggregate(varTypeSymbol, conTypes);
-    }
+           || getVariableImpliedTypeBindings(binding).stream().anyMatch(this::isConflictingTypeBinding);
   }
 
   @Override
@@ -76,7 +59,7 @@ public class BasicSymbolsBindingsImpl extends BasicSymbolsBindingsImplTOP {
 
   @Override
   public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
-    return super.isConflictingFunctionBinding(binding) && getFunctionImpliedTypeBindings(binding).stream()
+    return super.isConflictingFunctionBinding(binding) || getFunctionImpliedTypeBindings(binding).stream()
             .anyMatch(this::isConflictingTypeBinding);
   }
 
@@ -89,44 +72,85 @@ public class BasicSymbolsBindingsImpl extends BasicSymbolsBindingsImplTOP {
    * @param binding the function binding
    * @return a set of type bindings that are implied by the function binding
    */
-  protected Set<Binding<TypeSymbol>> getFunctionImpliedTypeBindings(Binding<FunctionSymbol> binding) {
+  public Set<Binding<TypeSymbol>> getFunctionImpliedTypeBindings(Binding<FunctionSymbol> binding) {
     // 1. Parameter types
-    Set<Binding<TypeSymbol>> bindings = new HashSet<>(getFunctionParameterTypeBindings(binding));
-
-    // 2. Return type
-    if (!binding.getReferenceElement().getType().isVoidType()) {
-      TypeSymbol refReturnType = binding.getReferenceElement().getType().getTypeInfo();
-      Set<TypeSymbol> concReturnTypes = binding.getConcreteElements().stream()
-              .map(f -> f.getType().getTypeInfo())
-              .collect(Collectors.toSet());
-      if (binding.isStrict()) {
-        bindings.add(Binding.createStrict(refReturnType, concReturnTypes.stream().findFirst().orElseThrow()));
-      } else {
-        bindings.add(Binding.createAggregate(refReturnType, concReturnTypes));
-      }
-    }
-    return bindings;
-  }
-
-  protected Set<Binding<TypeSymbol>> getFunctionParameterTypeBindings(Binding<FunctionSymbol> binding) {
     // TODO We can get issues here depending on how we map concrete parameters to ref parameters
     //   -> should we introduce method parameters to CDIncarnationMapping ?
     // for now, we assume reference and concrete function have the same number of parameters
     List<VariableSymbol> refParams =  binding.getReferenceElement().getParameterList();
     Set<Binding<TypeSymbol>> bindings = new HashSet<>();
     for (int i=0; i<refParams.size(); i++) {
-      TypeSymbol refParamType = refParams.get(i).getType().getTypeInfo();
+      SymTypeExpression refParamType = refParams.get(i).getType();
       final int currentParamIndex = i;
-      Set<TypeSymbol> conParamTypes = binding.getConcreteElements().stream()
-              .map(f -> f.getParameterList().get(currentParamIndex).getType().getTypeInfo())
+      Set<SymTypeExpression> conParamTypes = binding.getConcreteElements().stream()
+              .map(f -> f.getParameterList().get(currentParamIndex).getType())
               .collect(Collectors.toSet());
-      Binding<TypeSymbol> typeBinding;
-      if (binding.isStrict()) {
-        typeBinding = Binding.createStrict(refParamType, conParamTypes.stream().findFirst().orElseThrow());
-      } else {
-        typeBinding = Binding.createAggregate(refParamType, conParamTypes);
+      bindings.addAll(getImpliedTypeBindings(refParamType,conParamTypes, binding.isStrict()));
+    }
+
+    // 2. Return type
+    if (!binding.getReferenceElement().getType().isVoidType()) {
+      SymTypeExpression refReturnType = binding.getReferenceElement().getType();
+      Set<SymTypeExpression> conReturnTypes = binding.getConcreteElements().stream()
+              .map(FunctionSymbolTOP::getType)
+              .collect(Collectors.toSet());
+      bindings.addAll(getImpliedTypeBindings(refReturnType, conReturnTypes, binding.isStrict()));
+    }
+    return bindings;
+  }
+
+  /**
+   * Returns type bindings implied by a variable binding.<br>
+   * his includes:
+   *  1. The type of the variable itself
+   *  2. Possible type parameters if the type is a generic type
+   *
+   * @param binding the variable binding
+   * @return the type binding that is implied by the variable binding
+   */
+  public Set<Binding<TypeSymbol>> getVariableImpliedTypeBindings(Binding<VariableSymbol> binding) {
+    SymTypeExpression refType = binding.getReferenceElement().getType();
+    Set<SymTypeExpression> conTypes = binding.getConcreteElements().stream()
+            .map(VariableSymbolTOP::getType)
+            .collect(Collectors.toSet());
+    return getImpliedTypeBindings(refType, conTypes, binding.isStrict());
+  }
+
+  /**
+   * Returns type bindings that are implied by the binding between the given reference and concrete
+   * types. The types are given as SymTypeExpressions so we can handle generic types and return
+   * bindings for possibly (deeply) nested type parameters.
+   *
+   * @param refSymType the reference type
+   * @param conSymTypes the concrete types that are bound to the reference type
+   * @param strict if true, the returned bindings are strict
+   * @return a set of type bindings
+   */
+  public Set<Binding<TypeSymbol>> getImpliedTypeBindings(SymTypeExpression refSymType, Set<SymTypeExpression> conSymTypes, boolean strict) {
+    Set<Binding<TypeSymbol>> bindings = new HashSet<>();
+    // 1. handle the type itself
+    TypeSymbol refType = refSymType.getTypeInfo();
+    Set<TypeSymbol> conTypes = conSymTypes.stream()
+            .map(SymTypeExpression::getTypeInfo)
+            .collect(Collectors.toSet());
+    if (strict) {
+      bindings.add(Binding.createStrict(refType, conTypes.stream().findFirst().orElseThrow()));
+    } else {
+      bindings.add(Binding.createAggregate(refType, conTypes));
+    }
+    // 2. handle type parameters if the type is a generic type
+    if (refSymType.isGenericType()) {
+      List<SymTypeExpression> refArguments = refSymType.asGenericType().getArgumentList();
+      // Assumption: if reference type is generic concrete is generic as well and has the same
+      // number of parameters
+      for (int i=0; i<refArguments.size(); i++) {
+        SymTypeExpression refArgumentType = refArguments.get(i);
+        final int currentParamIndex = i;
+        Set<SymTypeExpression> conParamTypes = conSymTypes.stream()
+                .map(t -> t.asGenericType().getArgument(currentParamIndex))
+                .collect(Collectors.toSet());
+        bindings.addAll(getImpliedTypeBindings(refArgumentType, conParamTypes, strict));
       }
-      bindings.add(typeBinding);
     }
     return bindings;
   }

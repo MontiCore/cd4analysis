@@ -36,7 +36,7 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
 
   @Override
   public BasicSymbolsBindings copy() {
-    return new BasicSymbolsBindingsImplTOP(
+    return new BasicSymbolsBindingsImpl(
         new Bindings<>(typeBindings),
         new Bindings<>(variableBindings),
         new Bindings<>(functionBindings)

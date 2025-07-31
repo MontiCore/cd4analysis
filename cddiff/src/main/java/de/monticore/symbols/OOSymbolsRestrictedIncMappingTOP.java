@@ -29,6 +29,7 @@ public class OOSymbolsRestrictedIncMappingTOP implements OOSymbolsLocalIncMappin
     return IncMappingUtils.getRestrictIncarnations(
             originalMapping::getIncarnations,
             bindings::getBinding,
+            bindings::isConflictingOOTypeBinding,
             typeSymbol
     );
   }
@@ -38,6 +39,7 @@ public class OOSymbolsRestrictedIncMappingTOP implements OOSymbolsLocalIncMappin
     return IncMappingUtils.getRestrictIncarnations(
             originalMapping::getIncarnations,
             bindings::getBinding,
+            bindings::isConflictingFieldBinding,
             fieldSymbol
     );
   }
@@ -47,6 +49,7 @@ public class OOSymbolsRestrictedIncMappingTOP implements OOSymbolsLocalIncMappin
     return IncMappingUtils.getRestrictIncarnations(
             originalMapping::getIncarnations,
             bindings::getBinding,
+            bindings::isConflictingMethodBinding,
             methodSymbol
     );
   }
