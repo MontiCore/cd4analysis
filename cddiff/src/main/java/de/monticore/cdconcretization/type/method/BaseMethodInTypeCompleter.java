@@ -9,6 +9,7 @@ import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconcretization.util.MethodSignatureString;
@@ -107,9 +108,9 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
     else {
       List<ASTMCType> typeIncarnationsList = new ArrayList<>();
       for (ASTCDType typeIncarnation : typeIncarnations) {
-        typeIncarnationsList.add(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-            MCQualifiedNameFacade.createQualifiedName(typeIncarnation.getSymbol()
-                .getInternalQualifiedName())).build());
+        typeIncarnationsList.add(ConcretizationHelper.createQualifiedTypeInScope(
+                context.getConcreteType().getSpannedScope(), typeIncarnation.getSymbol()
+                .getInternalQualifiedName()));
       }
       return typeIncarnationsList;
     }

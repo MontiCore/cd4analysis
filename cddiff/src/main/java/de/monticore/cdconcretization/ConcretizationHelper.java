@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
@@ -10,6 +12,9 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmatcher.BooleanMatchingStrategy;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -239,6 +244,32 @@ public class ConcretizationHelper {
       }
     }));
     cdDefinition.setCDElementList(elements);
+  }
+
+  /**
+   * Workaround to create an {@link ASTMCQualifiedType} instance that is already linked
+   * into the symbol table.<br>
+   * <br>
+   * This is required as we sometimes execute the type check for AST elements created by one
+   * completer (e.g. a for each completer) which passes the newly created instanced down to
+   * the Base completer. If we do not link an enclosing scope manually, the type check fails.
+   *
+   * @param scope the scope that should be used as enclosing scope for the type
+   * @param name the name of the type to create, e.g. "com.example.Foo"
+   * @return a new {@link ASTMCQualifiedType} instance with the given name and scope
+   */
+  public static ASTMCQualifiedType createQualifiedTypeInScope(IBasicSymbolsScope scope,
+                                                               String name) {
+    ASTMCQualifiedName mcQualifiedName = MCQualifiedNameFacade.createQualifiedName(name);
+    /*
+     * We have to set the enclosing scope so the type can be resolved if the type check is
+     * used on the cloned method.
+     */
+    mcQualifiedName.setEnclosingScope(scope);
+    ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
+            mcQualifiedName).build();
+    qualifiedType.setEnclosingScope(scope);
+    return qualifiedType;
   }
   
 }
