@@ -11,6 +11,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 import java.util.Set;
@@ -95,6 +96,7 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     }
     basicSymbolsBindings.addTypeBinding(binding.cast());
     ooTypeBindings.add(binding);
+    addAll(getOOTypeImpliedBindings(binding));
   }
 
   @Override
@@ -104,6 +106,7 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     }
     basicSymbolsBindings.addVariableBinding(binding.cast());
     fieldBindings.add(binding);
+    addAll(getFieldImpliedBindings(binding));
   }
 
   @Override
@@ -113,24 +116,67 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     }
     basicSymbolsBindings.addFunctionBinding(binding.cast());
     methodBindings.add(binding);
+    addAll(getMethodImpliedBindings(binding));
   }
 
   @Override
   public boolean isConflictingOOTypeBinding(Binding<OOTypeSymbol> binding) {
-    return ooTypeBindings.conflictsWith(binding)
-        || basicSymbolsBindings.isConflictingTypeBinding(binding.cast());
+    try {
+      return ooTypeBindings.conflictsWith(binding)
+              || isConflicting(getOOTypeImpliedBindings(binding))
+              || basicSymbolsBindings.isConflictingTypeBinding(binding.cast());
+    } catch (BindingConflictException e) {
+      Log.error("The bindings implied by " + binding + " conflict with each other! " +
+              "Either there is an issue in the model or you should check the implementation of " +
+              "OOSymbolBindings.getOOTypeImpliedBindings", e);
+      return true;
+    }
   }
 
   @Override
   public boolean isConflictingFieldBinding(Binding<FieldSymbol> binding) {
-    return fieldBindings.conflictsWith(binding)
-        || basicSymbolsBindings.isConflictingVariableBinding(binding.cast());
+    try {
+      return fieldBindings.conflictsWith(binding)
+              || isConflicting(getFieldImpliedBindings(binding))
+              || basicSymbolsBindings.isConflictingVariableBinding(binding.cast());
+    } catch (BindingConflictException e) {
+      Log.error("The bindings implied by " + binding + " conflict with each other! " +
+              "Either there is an issue in the model or you should check the implementation of " +
+              "OOSymbolBindings.getFieldImpliedBindings", e);
+      return true;
+    }
   }
 
   @Override
   public boolean isConflictingMethodBinding(Binding<MethodSymbol> binding) {
-    return methodBindings.conflictsWith(binding)
-        || basicSymbolsBindings.isConflictingFunctionBinding(binding.cast());
+    try {
+      return methodBindings.conflictsWith(binding)
+              || isConflicting(getMethodImpliedBindings(binding))
+              || basicSymbolsBindings.isConflictingFunctionBinding(binding.cast());
+    } catch (BindingConflictException e) {
+      Log.error("The bindings implied by " + binding + " conflict with each other! " +
+              "Either there is an issue in the model or you should check the implementation of " +
+              "OOSymbolBindings.getMethodImpliedBindings", e);
+      return true;
+    }
+  }
+
+  @Override
+  public OOSymbolsBindings getOOTypeImpliedBindings(Binding<OOTypeSymbol> binding) throws BindingConflictException {
+    // Default implementation returns an empty set
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
+  public OOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException {
+    // Default implementation returns an empty set
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
+  public OOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException {
+    // Default implementation returns an empty set
+    return new OOSymbolsBindingsImpl();
   }
 
   @Override
@@ -216,7 +262,11 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       addOOTypeBinding(binding.cast());
     } else {
-      basicSymbolsBindings.addTypeBinding(binding);
+      if (isConflictingTypeBinding(binding)) {
+        throw new BindingConflictException(binding);
+      }
+      basicSymbolsBindings.addTypeBinding(binding.cast());
+      addAll(getTypeImpliedBindings(binding));
     }
   }
 
@@ -226,7 +276,27 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       return isConflictingOOTypeBinding(binding.cast());
     } else {
-      return basicSymbolsBindings.isConflictingTypeBinding(binding);
+      try {
+        return basicSymbolsBindings.isConflictingTypeBinding(binding)
+                || isConflicting(getTypeImpliedBindings(binding));
+      } catch (BindingConflictException e) {
+        Log.error("The bindings implied by " + binding + " conflict with each other! " +
+                "Either there is an issue in the model or you should check the implementation of " +
+                "OOSymbolBindings.getTypeImpliedBindings", e);
+        return true;
+      }
+    }
+  }
+
+  @Override
+  public OOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
+    // TODO should we check this here?
+    if (binding.getReferenceElement() instanceof OOTypeSymbol) {
+      return getOOTypeImpliedBindings(binding.cast());
+    } else {
+      OOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindingsImpl();
+      ooSymbolsBindings.addAll(basicSymbolsBindings.getTypeImpliedBindings(binding));
+      return ooSymbolsBindings;
     }
   }
 
@@ -251,7 +321,11 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       addFieldBinding(binding.cast());
     } else {
-      basicSymbolsBindings.addVariableBinding(binding);
+      if (isConflictingVariableBinding(binding)) {
+        throw new BindingConflictException(binding);
+      }
+      basicSymbolsBindings.addVariableBinding(binding.cast());
+      addAll(getVariableImpliedBindings(binding));
     }
   }
 
@@ -261,7 +335,27 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       return isConflictingFieldBinding(binding.cast());
     } else {
-      return basicSymbolsBindings.isConflictingVariableBinding(binding);
+      try {
+        return basicSymbolsBindings.isConflictingVariableBinding(binding)
+                || isConflicting(getVariableImpliedBindings(binding));
+      } catch (BindingConflictException e) {
+        Log.error("The bindings implied by " + binding + " conflict with each other! " +
+                "Either there is an issue in the model or you should check the implementation of " +
+                "OOSymbolBindings.getVariableImpliedBindings", e);
+        return true;
+      }
+    }
+  }
+
+  @Override
+  public OOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+    // TODO should we check this here?
+    if (binding.getReferenceElement() instanceof FieldSymbol) {
+      return getFieldImpliedBindings(binding.cast());
+    } else {
+      OOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindingsImpl();
+      ooSymbolsBindings.addAll(basicSymbolsBindings.getVariableImpliedBindings(binding));
+      return ooSymbolsBindings;
     }
   }
 
@@ -286,7 +380,11 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       addMethodBinding(binding.cast());
     } else {
-      basicSymbolsBindings.addFunctionBinding(binding);
+      if (isConflictingFunctionBinding(binding)) {
+        throw new BindingConflictException(binding);
+      }
+      basicSymbolsBindings.addFunctionBinding(binding.cast());
+      addAll(getFunctionImpliedBindings(binding));
     }
   }
 
@@ -296,7 +394,27 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       return isConflictingMethodBinding(binding.cast());
     } else {
-      return basicSymbolsBindings.isConflictingFunctionBinding(binding);
+      try {
+        return basicSymbolsBindings.isConflictingFunctionBinding(binding)
+                || isConflicting(getFunctionImpliedBindings(binding));
+      } catch (BindingConflictException e) {
+        Log.error("The bindings implied by " + binding + " conflict with each other! " +
+                "Either there is an issue in the model or you should check the implementation of " +
+                "OOSymbolBindings.getFunctionImpliedBindings", e);
+        return true;
+      }
+    }
+  }
+
+  @Override
+  public OOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+    // TODO should we check this here?
+    if (binding.getReferenceElement() instanceof MethodSymbol) {
+      return getMethodImpliedBindings(binding.cast());
+    } else {
+      OOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindingsImpl();
+      ooSymbolsBindings.addAll(basicSymbolsBindings.getFunctionImpliedBindings(binding));
+      return ooSymbolsBindings;
     }
   }
 

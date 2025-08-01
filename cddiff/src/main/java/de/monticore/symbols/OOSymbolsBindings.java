@@ -3,6 +3,9 @@ package de.monticore.symbols;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -38,6 +41,22 @@ public interface OOSymbolsBindings extends BasicSymbolsBindings {
   boolean isConflictingOOTypeBinding(Binding<OOTypeSymbol> binding);
   boolean isConflictingFieldBinding(Binding<FieldSymbol> binding);
   boolean isConflictingMethodBinding(Binding<MethodSymbol> binding);
+
+  OOSymbolsBindings getOOTypeImpliedBindings(Binding<OOTypeSymbol> binding) throws BindingConflictException;
+  OOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException;
+  OOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException;
+
+  // redefine methods from BasicSymbolsBindings for more precise return types
+
+
+  @Override
+  OOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException;
+
+  @Override
+  OOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException;
+
+  @Override
+  OOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException;
 
   Set<Binding<OOTypeSymbol>> getOOTypeBindings();
 

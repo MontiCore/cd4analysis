@@ -6,7 +6,6 @@ import de.monticore.refadaptation.Bindings;
 import de.monticore.symbols.basicsymbols._symboltable.*;
 import de.monticore.types.check.SymTypeExpression;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,56 +28,24 @@ public class BasicSymbolsBindingsImpl extends BasicSymbolsBindingsImplTOP {
     return super.isConflictingTypeBinding(binding);
   }
 
-  @Override
-  public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
-    super.addVariableBinding(binding);
-    for (Binding<TypeSymbol> typeBinding : getVariableImpliedTypeBindings(binding)) {
-      addTypeBinding(typeBinding);
-    }
-  }
-
-  @Override
-  public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
-    return super.isConflictingVariableBinding(binding)
-           || getVariableImpliedTypeBindings(binding).stream().anyMatch(this::isConflictingTypeBinding);
-  }
-
-  @Override
-  public void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException {
-    /*
-     * IMPLEMENTATION NOTE: the superclass method makes sure to check for conflicts and
-     * throw an exception if there is a conflict.
-     * We only need to make sure to check all constraints, e.g. additional type bindings for
-     * the function parameters and return type in 'isConflictingFunctionBinding'
-     */
-    super.addFunctionBinding(binding);
-    for (Binding<TypeSymbol> typeBinding : getFunctionImpliedTypeBindings(binding)) {
-      addTypeBinding(typeBinding);
-    }
-  }
-
-  @Override
-  public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
-    return super.isConflictingFunctionBinding(binding) || getFunctionImpliedTypeBindings(binding).stream()
-            .anyMatch(this::isConflictingTypeBinding);
-  }
-
   /**
    * Returns the type bindings that are implied by a function binding.
    * This includes:
    * 1. The parameter types of the function
    * 2. The return type of the function if it is not void
+   * 3. Possible type parameters if one of the types is a generic type
    *
    * @param binding the function binding
    * @return a set of type bindings that are implied by the function binding
    */
-  public Set<Binding<TypeSymbol>> getFunctionImpliedTypeBindings(Binding<FunctionSymbol> binding) {
+  @Override
+  public BasicSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
     // 1. Parameter types
     // TODO We can get issues here depending on how we map concrete parameters to ref parameters
     //   -> should we introduce method parameters to CDIncarnationMapping ?
     // for now, we assume reference and concrete function have the same number of parameters
     List<VariableSymbol> refParams =  binding.getReferenceElement().getParameterList();
-    Set<Binding<TypeSymbol>> bindings = new HashSet<>();
+    BasicSymbolsBindings bindings = new BasicSymbolsBindingsImpl();
     for (int i=0; i<refParams.size(); i++) {
       SymTypeExpression refParamType = refParams.get(i).getType();
       final int currentParamIndex = i;
@@ -100,15 +67,16 @@ public class BasicSymbolsBindingsImpl extends BasicSymbolsBindingsImplTOP {
   }
 
   /**
-   * Returns type bindings implied by a variable binding.<br>
+   * Returns bindings implied by a variable binding.<br>
    * his includes:
    *  1. The type of the variable itself
    *  2. Possible type parameters if the type is a generic type
    *
    * @param binding the variable binding
-   * @return the type binding that is implied by the variable binding
+   * @return the bindings implied by the variable binding
    */
-  public Set<Binding<TypeSymbol>> getVariableImpliedTypeBindings(Binding<VariableSymbol> binding) {
+  @Override
+  public BasicSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
     SymTypeExpression refType = binding.getReferenceElement().getType();
     Set<SymTypeExpression> conTypes = binding.getConcreteElements().stream()
             .map(VariableSymbolTOP::getType)
@@ -125,18 +93,24 @@ public class BasicSymbolsBindingsImpl extends BasicSymbolsBindingsImplTOP {
    * @param conSymTypes the concrete types that are bound to the reference type
    * @param strict if true, the returned bindings are strict
    * @return a set of type bindings
+   * @throws BindingConflictException if the implied bindings conflict with each other.
+   *    This indicates an implementation error
    */
-  public Set<Binding<TypeSymbol>> getImpliedTypeBindings(SymTypeExpression refSymType, Set<SymTypeExpression> conSymTypes, boolean strict) {
-    Set<Binding<TypeSymbol>> bindings = new HashSet<>();
+  protected BasicSymbolsBindings getImpliedTypeBindings(
+          SymTypeExpression refSymType,
+          Set<SymTypeExpression> conSymTypes,
+          boolean strict)
+          throws BindingConflictException {
+    BasicSymbolsBindings bindings = new BasicSymbolsBindingsImpl();
     // 1. handle the type itself
     TypeSymbol refType = refSymType.getTypeInfo();
     Set<TypeSymbol> conTypes = conSymTypes.stream()
             .map(SymTypeExpression::getTypeInfo)
             .collect(Collectors.toSet());
     if (strict) {
-      bindings.add(Binding.createStrict(refType, conTypes.stream().findFirst().orElseThrow()));
+      bindings.addTypeBinding(Binding.createStrict(refType, conTypes.stream().findFirst().orElseThrow()));
     } else {
-      bindings.add(Binding.createAggregate(refType, conTypes));
+      bindings.addTypeBinding(Binding.createAggregate(refType, conTypes));
     }
     // 2. handle type parameters if the type is a generic type
     if (refSymType.isGenericType()) {

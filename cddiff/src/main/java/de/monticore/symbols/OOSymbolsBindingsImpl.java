@@ -13,8 +13,6 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ISymbol;
 
-import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,126 +38,53 @@ public class OOSymbolsBindingsImpl extends OOSymbolsBindingsImplTOP {
   }
 
   @Override
-  public void addFieldBinding(Binding<FieldSymbol> binding) throws BindingConflictException {
-    super.addFieldBinding(binding);
-    addTypeBinding(getFieldImpliedTypeBinding(binding));
+  public OOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException {
+    OOSymbolsBindings bindings = super.getMethodImpliedBindings(binding);
+    bindings.addTypeBinding(getDeclaringTypeBinding(binding));
+    return bindings;
   }
 
   @Override
-  public boolean isConflictingFieldBinding(Binding<FieldSymbol> binding) {
-    return super.isConflictingFieldBinding(binding)
-            || isConflictingTypeBinding(getFieldImpliedTypeBinding(binding));
+  public OOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException {
+    OOSymbolsBindings bindings = super.getFieldImpliedBindings(binding);
+    bindings.addTypeBinding(getDeclaringTypeBinding(binding));
+    return bindings;
   }
 
   @Override
-  public void addMethodBinding(Binding<MethodSymbol> binding) throws BindingConflictException {
-    super.addMethodBinding(binding);
-    addTypeBinding(getMethodImpliedTypeBinding(binding));
-  }
-
-  @Override
-  public boolean isConflictingMethodBinding(Binding<MethodSymbol> binding) {
-    return super.isConflictingMethodBinding(binding)
-            || isConflictingTypeBinding(getMethodImpliedTypeBinding(binding));
-  }
-
-  @Override
-  public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
-    super.addVariableBinding(binding);
-    for (Binding<TypeSymbol> typeBinding : getVariableImpliedTypeBinding(binding)) {
-      addTypeBinding(typeBinding);
+  public OOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+    OOSymbolsBindings bindings = super.getVariableImpliedBindings(binding);
+    /* A VariableSymbol instance might still represent a field of a CDType, although
+     * it is not a FieldSymbol. Therefore, we try to get a declaring type by the heuristic in
+     * {@link #getDeclaringTypeIfPresent(ISymbol)}.
+     */
+    if (isDeclaringTypeSymbolPresent(binding.getReferenceElement())) {
+      bindings.addTypeBinding(getDeclaringTypeBinding(binding));
     }
+    return bindings;
   }
 
   @Override
-  public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
-    return super.isConflictingVariableBinding(binding) || getVariableImpliedTypeBinding(binding)
-            .stream().anyMatch(this::isConflictingTypeBinding);
-  }
-
-  @Override
-  public void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException {
-    super.addFunctionBinding(binding);
-    for (Binding<TypeSymbol> typeBinding : getFunctionImpliedTypeBinding(binding)) {
-      addTypeBinding(typeBinding);
+  public OOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+    OOSymbolsBindings bindings = super.getFunctionImpliedBindings(binding);
+    /* A FunctionSymbol instance might still represent a method of a CDType, although
+     * it is not a MethodSymbol. Therefore, we try to get a declaring type by the heuristic in
+     * {@link #getDeclaringTypeIfPresent(ISymbol)}.
+     */
+    if (isDeclaringTypeSymbolPresent(binding.getReferenceElement())) {
+      bindings.addTypeBinding(getDeclaringTypeBinding(binding));
     }
-  }
-
-  @Override
-  public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
-    return super.isConflictingFunctionBinding(binding) || getFunctionImpliedTypeBinding(binding).stream()
-            .anyMatch(this::isConflictingTypeBinding);
+    return bindings;
   }
 
   /**
-   * Returns the type binding that is implied by a method binding, i.e. a binding for the
-   * declaring type.
-   *
-   * @param binding the variable binding
-   * @return the type binding that is implied by the method binding
-   */
-  protected Binding<TypeSymbol> getMethodImpliedTypeBinding(Binding<MethodSymbol> binding) {
-    return getImpliedTypeBinding(binding);
-  }
-
-  /**
-   * Returns the type binding that is implied by a field binding, i.e. a binding for the
-   * declaring type.
-   *
-   * @param binding the variable binding
-   * @return the type binding that is implied by the field binding
-   */
-  protected Binding<TypeSymbol> getFieldImpliedTypeBinding(Binding<FieldSymbol> binding) {
-    return getImpliedTypeBinding(binding);
-  }
-
-  /**
-   * Returns the type binding that is implied by a variable binding, i.e. a binding for the
-   * declaring type.<br>
-   * A VariableSymbol instance might still represent a field of a CDType, although
-   * it is not a FieldSymbol. Therefore, we try to get a declaring type by the heuristic in
-   * {@link #getDeclaringTypeIfPresent(ISymbol)}.
-   *
-   * @param binding the variable binding
-   * @return the type binding that is implied by the field binding
-   */
-  protected Set<Binding<TypeSymbol>> getVariableImpliedTypeBinding(Binding<VariableSymbol> binding) {
-    Optional<TypeSymbol> declaringTypeOpt = getDeclaringTypeIfPresent(binding.getReferenceElement());
-    if (declaringTypeOpt.isPresent()) {
-      return Set.of(getImpliedTypeBinding(binding));
-    } else {
-      return Collections.emptySet();
-    }
-  }
-
-  /**
-   * Returns the type binding that is implied by a function binding, i.e. a binding for the
-   * declaring type.<br>
-   * A VariableSymbol instance might still represent a field of a CDType, although
-   * it is not a FieldSymbol. Therefore, we try to get a declaring type by the heuristic in
-   * {@link #getDeclaringTypeIfPresent(ISymbol)}.
-   *
-   * @param binding the variable binding
-   * @return the type binding that is implied by the method binding
-   */
-  protected Set<Binding<TypeSymbol>> getFunctionImpliedTypeBinding(Binding<FunctionSymbol> binding) {
-    Optional<TypeSymbol> declaringTypeOpt = getDeclaringTypeIfPresent(binding.getReferenceElement());
-    if (declaringTypeOpt.isPresent()) {
-      return Set.of(getImpliedTypeBinding(binding));
-    } else {
-      return Collections.emptySet();
-    }
-  }
-
-  /**
-   * Returns the type binding for the declaring typ of a method/field binding for the
-   * declaring type.
+   * Returns the type binding for the declaring type of a method/field binding.
    *
    * @param binding the binding for the method/field
-   * @return
-   * @param <T>
+   * @return the binding for the declaring type of the method/field
+   * @param <T> the type of the symbol
    */
-  protected <T extends ISymbol> Binding<TypeSymbol> getImpliedTypeBinding(Binding<T> binding) {
+  protected <T extends ISymbol> Binding<TypeSymbol> getDeclaringTypeBinding(Binding<T> binding) {
     TypeSymbol declaringRefType = SymbolUtil.getDeclaringTypeSymbol(binding.getReferenceElement());
     Set<TypeSymbol> declaringTypeIncs = binding.getConcreteElements().stream()
             .map(SymbolUtil::getDeclaringTypeSymbol)
@@ -172,20 +97,15 @@ public class OOSymbolsBindingsImpl extends OOSymbolsBindingsImplTOP {
   }
 
   /**
-   * Returns the declaring type of the given symbol, if it exists, e.g. the type in which an
-   * attribute is declared.
+   * Checks if the given symbol is declared in a type symbol, i.e., if the spanning symbol of the
+   * enclosing scope of the symbol is a {@link TypeSymbol}.
    *
-   * @param symbol the symbol for which to get the declaring type
-   * @return the declaring type if it exists, otherwise an empty Optional
+   * @param symbol the symbol to check
+   * @return true if the symbol is declared in a type symbol, false otherwise
    */
-  protected Optional<TypeSymbol> getDeclaringTypeIfPresent(ISymbol symbol) {
+  protected boolean isDeclaringTypeSymbolPresent(ISymbol symbol) {
     // TODO Get declaring type via spanning symbol of enclosing scope vs. resolve qualifier from symbol full name
-    if (symbol.getEnclosingScope().isPresentSpanningSymbol()) {
-      ISymbol spanningSymbol = symbol.getEnclosingScope().getSpanningSymbol();
-      if (spanningSymbol instanceof TypeSymbol) {
-        return Optional.of((TypeSymbol) spanningSymbol);
-      }
-    }
-    return Optional.empty();
+    return symbol.getEnclosingScope().isPresentSpanningSymbol()
+            && symbol.getEnclosingScope().getSpanningSymbol() instanceof TypeSymbol;
   }
 }

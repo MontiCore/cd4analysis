@@ -46,17 +46,20 @@ public interface BasicSymbolsBindings {
   Set<Binding<TypeSymbol>> getTypeBindings();
 
   /**
-   * Adds a binding for a {@link TypeSymbol} to this set of bindings.
+   * Adds a binding for a {@link TypeSymbol} to this set of bindings. Further, all bindings
+   * implied by the binding are added as well (see {@link #getTypeImpliedBindings(Binding)}).
    *
    * @param binding the binding to add
    * @throws BindingConflictException if the binding conflicts with existing bindings
    *
    * @see #isConflictingTypeBinding(Binding)
+   * @see #getTypeImpliedBindings(Binding)
    */
   void addTypeBinding(Binding<TypeSymbol> binding) throws BindingConflictException;
 
   /**
-   * Checks if the given {@link TypeSymbol} binding conflicts with existing bindings.<br>
+   * Checks if the given {@link TypeSymbol} binding or any implied binding conflicts with existing
+   * bindings.<br>
    * <br>
    * NOTE: This is not limited to bindings of the same symbol kind, as there may be implications
    * between different kinds of symbols, e.g., a type binding could conflict with a variable binding
@@ -64,8 +67,19 @@ public interface BasicSymbolsBindings {
    *
    * @param binding the binding to check
    * @return true if there is a conflict, false otherwise
+   * 
+   * @see #getTypeImpliedBindings(Binding) 
    */
   boolean isConflictingTypeBinding(Binding<TypeSymbol> binding);
+
+  /**
+   * Returns the bindings that are implied by a type binding.
+   *
+   * @param binding the type binding
+   * @return the bindings implied by the type binding
+   * @throws BindingConflictException if the implied bindings conflict with each other
+   */
+  BasicSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException;
 
   /**
    * Returns the binding for the given {@link VariableSymbol} if it exists in this set.
@@ -83,29 +97,39 @@ public interface BasicSymbolsBindings {
   Set<Binding<VariableSymbol>> getVariableBindings();
 
   /**
-   * Adds a binding for a {@link VariableSymbol} to this set of bindings.<br>
-   * <br>
-   * NOTE: This method might add additional bindings implied by this binding, e.g., a variable
-   * binding implies a type binding for the variable's type.
+   * Adds a binding for a {@link VariableSymbol} to this set of bindings. Further, all bindings
+   * implied by the binding are added as well (see {@link #getVariableImpliedBindings(Binding)}).
    *
    * @param binding the binding to add
    * @throws BindingConflictException if the binding conflicts with existing bindings
    *
    * @see #isConflictingVariableBinding(Binding)
+   * @see #getVariableImpliedBindings(Binding)
    */
   void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException;
 
   /**
-   * Checks if the given {@link VariableSymbol} binding conflicts with existing bindings.<br>
-   * <br>
-   * NOTE: This is not limited to bindings of the same symbol kind, as there may be implications
-   * between different kinds of symbols, e.g., a variable binding implies an additional type binding
-   * for its type.
+   * Checks if the given {@link VariableSymbol} binding or ony implied bindings conflicts with
+   * existing bindings.
    *
    * @param binding the binding to check
    * @return true if there is a conflict, false otherwise
+   *
+   * @see #getVariableImpliedBindings(Binding)
    */
   boolean isConflictingVariableBinding(Binding<VariableSymbol> binding);
+
+  /**
+   * Returns the bindings that are implied by a variable binding.<br>
+   * e.g. a variable binding implies:
+   * 1. A binding for the type of the variable
+   * 2. If the type is a generic type, additional bindings for the type arguments
+   *
+   * @param binding the variable binding
+   * @return the bindings implied by the variable binding
+   * @throws BindingConflictException if the implied bindings conflict with each other
+   */
+  BasicSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException;
 
   /**
    * Returns the binding for the given {@link FunctionSymbol} if it exists in this set.
@@ -123,29 +147,39 @@ public interface BasicSymbolsBindings {
   Set<Binding<FunctionSymbol>> getFunctionBindings();
 
   /**
-   * Adds a binding for a {@link FunctionSymbol} to this set of bindings.<br>
-   * <br>
-   * NOTE: This method might add additional bindings implied by this binding, e.g., a function
-   * binding implies type bindings for its parameters and return type.
+   * Adds a binding for a {@link FunctionSymbol} to this set of bindings. Further, all bindings
+   * implied by the binding are added as well (see {@link #getFunctionImpliedBindings(Binding)}).
    *
    * @param binding the binding to add
    * @throws BindingConflictException if the binding conflicts with existing bindings
    *
    * @see #isConflictingFunctionBinding(Binding)
+   * @see #getFunctionImpliedBindings(Binding)
    */
   void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException;
 
   /**
-   * Checks if the given {@link FunctionSymbol} binding conflicts with existing bindings.<br>
-   * <br>
-   * NOTE: This is not limited to bindings of the same symbol kind, as there may be implications
-   * between different kinds of symbols, e.g., a function binding implies additional type bindings
-   * for its parameters and return type.
+   * Checks if the given {@link FunctionSymbol} binding or any implied binding conflicts with
+   * existing bindings.
    *
    * @param binding the binding to check
    * @return true if there is a conflict, false otherwise
+   *
+   * @see #getFunctionImpliedBindings(Binding)
    */
   boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding);
+
+  /**
+   * Returns the bindings that are implied by a function binding.<br>
+   * e.g. a function binding implies:
+   * 1. Bindings for the parameter types of the function
+   * 2. A binding for the return type of the function if it is not void
+   *
+   * @param binding the function binding
+   * @return the bindings implied by the function binding
+   * @throws BindingConflictException if the implied bindings conflict with each other
+   */
+  BasicSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException;
 
   /**
    * Adds all bindings from the given BasicSymbolsBindings instance to this instance.
