@@ -1,5 +1,7 @@
 package de.monticore.symbols.basicsymbols;
 
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 
@@ -15,6 +17,20 @@ import de.monticore.symboltable.ISymbol;
  */
 public interface BasicSymbolsIncMapping extends BasicSymbolsLocalIncMapping {
 
+  /**
+   * Returns the scope that is used to symbols of the reference model.
+   *
+   * @return the scope for reference symbols
+   */
+  IBasicSymbolsScope getReferenceScope();
+
+  /**
+   * Returns the scope that is used to symbols of the concrete model.
+   *
+   * @return the scope for concrete symbols
+   */
+  IBasicSymbolsScope getConcreteScope();
+
   /*
    * TODO Discuss this
    * Although an incarnation mapping is always defined for a single reference model and a single
@@ -25,8 +41,6 @@ public interface BasicSymbolsIncMapping extends BasicSymbolsLocalIncMapping {
    */
 
   String computeSymbolKey(ISymbol symbol);
-
-  //BasicSymbolsLocalIncMapping getFullMapping(); // TODO extend local mapping vs getter?
 
   /**
    * Returns the local incarnation mapping for the given context symbol.<br>
