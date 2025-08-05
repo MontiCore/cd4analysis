@@ -323,39 +323,51 @@ public class InheritanceVisitorDecorator extends AbstractDecorator<AbstractDecor
     List<ASTCNode> lastRoundVisited = new ArrayList<>();
     lastRoundVisited.add(node);
     List<ASTCNode> nextRoundVisited = new ArrayList<>();
-    Set<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> visitedInterfaces = new HashSet<>();
+    
     while (!lastRoundVisited.isEmpty()) {
       for (ASTCNode currentNode : lastRoundVisited) {
-        if (currentNode instanceof ASTCDClass) {
-          //super class
-          Optional<ASTCDClass> resultOfTransitiveClass = (CDSymbolTables.getTransitiveSuperClasses(
-              (ASTCDClass) currentNode).stream().findFirst());
-          if (resultOfTransitiveClass.isPresent()) {
-            if (!allVisited.contains(resultOfTransitiveClass.get())) {
-              allVisited.add(resultOfTransitiveClass.get());
-              result.add(resultOfTransitiveClass.get().getSymbol().getFullName());
-              nextRoundVisited.add(resultOfTransitiveClass.get());
-            }
-          }
-          
-          //interfaces
-          List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> resultOfTransitiveInterface =
-              getASTCDInterfaces((ASTCDClass) currentNode, visitedInterfaces);
-          for (de.monticore.cdinterfaceandenum._ast.ASTCDInterface resultOfTransitiveInterfaceElement : resultOfTransitiveInterface) {
-            allVisited.add(resultOfTransitiveInterfaceElement);
-            result.add(resultOfTransitiveInterfaceElement.getSymbol().getFullName());
-            nextRoundVisited.add(resultOfTransitiveInterfaceElement);
+        List<ASTCDType> resultOfTransitiveType = CDSymbolTables.getTransitiveSuperTypes(
+            (ASTCDType) currentNode);
+        //super class
+        Optional<ASTCDType> resultOfTransitiveClass = resultOfTransitiveType.stream().filter(
+            m -> m instanceof de.monticore.cd4codebasis._ast.ASTCDClass).findFirst();
+        if (resultOfTransitiveClass.isPresent()) {
+          if (!allVisited.contains(resultOfTransitiveClass.get())) {
+            allVisited.add((ASTCNode) resultOfTransitiveClass.get());
+            result.add(resultOfTransitiveClass.get().getSymbol().getFullName());
+            nextRoundVisited.add((ASTCNode) resultOfTransitiveClass.get());
           }
         }
-        else if (currentNode instanceof ASTCDInterface) {
-          //interfaces
-          List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> resultOfTransitiveInterface =
-              getASTCDInterfaces((ASTCDInterface) currentNode, visitedInterfaces);
-          for (de.monticore.cdinterfaceandenum._ast.ASTCDInterface resultOfTransitiveInterfaceElement : resultOfTransitiveInterface) {
-            allVisited.add(resultOfTransitiveInterfaceElement);
-            result.add(resultOfTransitiveInterfaceElement.getSymbol().getFullName());
-            nextRoundVisited.add(resultOfTransitiveInterfaceElement);
-          }
+        
+        //interfaces
+        List<ASTCDType> resultOfTransitiveInterface = resultOfTransitiveType.stream().filter(
+            m -> m instanceof de.monticore.cdinterfaceandenum._ast.ASTCDInterface).collect(
+                Collectors.toList());
+        //filter out all interfaces that are not implemented by the current class
+        resultOfTransitiveInterface = resultOfTransitiveInterface.stream().filter(i -> {
+          // The full name of the current interface we are checking.
+          String currentInterfaceName = ((de.monticore.cdinterfaceandenum._ast.ASTCDInterface) i)
+              .getSymbol().getFullName();
+          
+          // Check if this name exists in the other list.
+          return ((ASTCDType) currentNode).getInterfaceList().stream().anyMatch(type -> {
+            if (type instanceof de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) {
+              return ((de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType) type)
+                  .getDefiningSymbol().map(symbol -> symbol.getFullName().equals(
+                      currentInterfaceName)).orElse(false);
+            }
+            return false;
+          });
+        }).collect(Collectors.toList());
+        
+        //filter out all interfaces that have already been visited
+        resultOfTransitiveInterface = resultOfTransitiveInterface.stream().filter(m -> !allVisited
+            .contains(m)).collect(Collectors.toList());
+        
+        for (ASTCDType resultOfTransitiveInterfaceElement : resultOfTransitiveInterface) {
+          allVisited.add((ASTCNode) resultOfTransitiveInterfaceElement);
+          result.add(resultOfTransitiveInterfaceElement.getSymbol().getFullName());
+          nextRoundVisited.add((ASTCNode) resultOfTransitiveInterfaceElement);
         }
       }
       lastRoundVisited.clear();
@@ -363,31 +375,6 @@ public class InheritanceVisitorDecorator extends AbstractDecorator<AbstractDecor
       nextRoundVisited.clear();
     }
     return result;
-  }
-  
-  private static List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> getASTCDInterfaces(
-      ASTCDType currentNode,
-      Set<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> visitedInterfaces) {
-    //direct interfaces
-    List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> resultOfTransitiveInterface =
-        (new ArrayList<>(CDSymbolTables.getTransitiveSuperInterfaces(currentNode)));
-    //filter out all interfaces that do not match the direct interface list of the class
-    List<String> directInterfaces = currentNode.getInterfaceList().stream().map(
-        m -> ((ASTMCQualifiedType) m).getMCQualifiedName().getQName()).collect(Collectors.toList());
-    List<de.monticore.cdinterfaceandenum._ast.ASTCDInterface> helper = new ArrayList<>();
-    for (de.monticore.cdinterfaceandenum._ast.ASTCDInterface directInterface : resultOfTransitiveInterface) {
-      for (String directName : directInterfaces) {
-        if (directInterface.getSymbol().getFullName().contains(directName)) { //we need to use contains here because the interfaceLists is not resolved
-          helper.add(directInterface);
-        }
-      }
-    }
-    resultOfTransitiveInterface = helper;
-    //filter out all interfaces that have already been visited
-    resultOfTransitiveInterface = resultOfTransitiveInterface.stream().filter(
-        m -> !visitedInterfaces.contains(m)).collect(Collectors.toList());
-    visitedInterfaces.addAll(resultOfTransitiveInterface);
-    return resultOfTransitiveInterface;
   }
   
   @Override
