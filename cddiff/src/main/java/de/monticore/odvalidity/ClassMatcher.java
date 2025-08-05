@@ -432,7 +432,6 @@ public class ClassMatcher {
     for (var cdEnum : cd.getCDDefinition().getCDEnumsList()) {
       // Check if we can find
       if (cdEnum.getSymbol().getInternalQualifiedName().equals(name)) {
-        Log.warn(name);
         return true;
       }
     }
