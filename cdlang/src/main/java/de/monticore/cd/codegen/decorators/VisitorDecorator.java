@@ -70,70 +70,66 @@ public class VisitorDecorator extends AbstractDecorator<AbstractDecorator.NoData
   
   public void init(ASTCDCompilationUnit compilationUnit, ASTCDDefinition definition,
       String visitorInterfaceName) {
-    if (!isInitialized) {
-      isInitialized = true;
-      //create the visitor interface
-      visitorInterface = CD4CodeMill.cDInterfaceBuilder().setName(visitorInterfaceName).setModifier(
-          CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
-      
-      // add the visitor interface to the definition
-      ASTCDDefinition decoratedDefinition = this.decoratorData.getAsDecorated(definition);
-      decoratedDefinition.addCDElement(visitorInterface);
-      
-      // create the visitor interface parameter
-      String packageName = definition.getSymbol().getPackageName();
-      String visitorInterfaceQualifiedName = packageName.isEmpty() ? visitorInterfaceName
-          : packageName + "." + visitorInterfaceName;
-      ASTMCQualifiedType visitorInterfaceQualifiedType = MCTypeFacade.getInstance()
-          .createQualifiedType(visitorInterfaceQualifiedName);
-      visitorInterfaceParameter = CD4CodeMill.cDParameterBuilder().setName("visitor").setMCType(
-          visitorInterfaceQualifiedType).build();
-      
-      // add getTraversedElements Set<Object> method to the visitor interface
-      ASTMCSetType setType = MCTypeFacade.getInstance().createSetTypeOf("Object");
-      ASTMCReturnType returnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(setType).build();
-      ASTCDMethod getTraversedElementsMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-          .modifierBuilder().setAbstract(true).build(), returnType, "getTraversedElements");
-      visitorInterface.addCDMember(getTraversedElementsMethod);
-      
-      // add addTraversedElement method to the visitor interface
-      ASTMCReturnType returnTypeAddTraversedElement = CD4CodeMill.mCReturnTypeBuilder()
-          .setMCVoidType(CD4CodeMill.mCVoidTypeBuilder().build()).build();
-      ASTCDParameter addTraversedElementParameter = CD4CodeMill.cDParameterBuilder().setName(
-          "element").setMCType(MCTypeFacade.getInstance().createQualifiedType("Object")).build();
-      ASTCDMethod addTraversedElementMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-          .modifierBuilder().build(), returnTypeAddTraversedElement, "addTraversedElement",
-          addTraversedElementParameter);
-      visitorInterface.addCDMember(addTraversedElementMethod);
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, addTraversedElementMethod,
-          new TemplateHookPoint("methods.visitor.addTraversedElement")));
-      
-      // add removeTraversedElement method to the visitor interface
-      ASTMCReturnType returnTypeRemoveTraversedElement = CD4CodeMill.mCReturnTypeBuilder()
-          .setMCVoidType(CD4CodeMill.mCVoidTypeBuilder().build()).build();
-      ASTCDParameter removeTraversedElementParameter = CD4CodeMill.cDParameterBuilder().setName(
-          "element").setMCType(MCTypeFacade.getInstance().createQualifiedType("Object")).build();
-      ASTCDMethod removeTraversedElement = CDMethodFacade.getInstance().createMethod(CD4CodeMill
-          .modifierBuilder().build(), returnTypeAddTraversedElement, "removeTraversedElement",
-          addTraversedElementParameter);
-      visitorInterface.addCDMember(removeTraversedElement);
-      glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, removeTraversedElement,
-          new TemplateHookPoint("methods.visitor.removeTraversedElement")));
-      
-      //visitor to get all classes from the original class diagram classes
-      CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
-      CDTypeCollector cdTypeCollector = new CDTypeCollector();
-      t2.add4CDBasis(cdTypeCollector);
-      t2.add4CDInterfaceAndEnum(cdTypeCollector);
-      compilationUnit.accept(t2);
-      
-      classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e -> e
-          .getSymbol().getFullName()).collect(Collectors.toList()));
-      classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e -> e
-          .getSymbol().getFullName()).collect(Collectors.toList()));
-      classesFromClassdiagramAsString.addAll(cdTypeCollector.getEnums().stream().map(e -> e
-          .getSymbol().getFullName()).collect(Collectors.toList()));
+    if (isInitialized) {
+      return;
     }
+    //create the visitor interface
+    visitorInterface = CD4CodeMill.cDInterfaceBuilder().setName(visitorInterfaceName).setModifier(
+        CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+    
+    // add the visitor interface to the definition
+    ASTCDDefinition decoratedDefinition = this.decoratorData.getAsDecorated(definition);
+    decoratedDefinition.addCDElement(visitorInterface);
+    
+    // create the visitor interface parameter
+    String packageName = definition.getSymbol().getPackageName();
+    String visitorInterfaceQualifiedName = packageName.isEmpty() ? visitorInterfaceName
+        : packageName + "." + visitorInterfaceName;
+    ASTMCQualifiedType visitorInterfaceQualifiedType = MCTypeFacade.getInstance()
+        .createQualifiedType(visitorInterfaceQualifiedName);
+    visitorInterfaceParameter = CD4CodeMill.cDParameterBuilder().setName("visitor").setMCType(
+        visitorInterfaceQualifiedType).build();
+    
+    // add getTraversedElements Set<Object> method to the visitor interface
+    ASTMCSetType setType = MCTypeFacade.getInstance().createSetTypeOf("Object");
+    ASTMCReturnType returnType = CD4CodeMill.mCReturnTypeBuilder().setMCType(setType).build();
+    ASTCDMethod getTraversedElementsMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+        .modifierBuilder().setAbstract(true).build(), returnType, "getTraversedElements");
+    visitorInterface.addCDMember(getTraversedElementsMethod);
+    
+    // add addTraversedElement method to the visitor interface
+    ASTMCReturnType returnTypeAddTraversedElement = CD4CodeMill.mCReturnTypeBuilder().setMCVoidType(
+        CD4CodeMill.mCVoidTypeBuilder().build()).build();
+    ASTCDParameter addTraversedElementParameter = CD4CodeMill.cDParameterBuilder().setName(
+        "element").setMCType(MCTypeFacade.getInstance().createQualifiedType("Object")).build();
+    ASTCDMethod addTraversedElementMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+        .modifierBuilder().build(), returnTypeAddTraversedElement, "addTraversedElement",
+        addTraversedElementParameter);
+    visitorInterface.addCDMember(addTraversedElementMethod);
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, addTraversedElementMethod,
+        new TemplateHookPoint("methods.visitor.addTraversedElement")));
+    
+    // add removeTraversedElement method to the visitor interface
+    ASTCDMethod removeTraversedElement = CDMethodFacade.getInstance().createMethod(CD4CodeMill
+        .modifierBuilder().build(), returnTypeAddTraversedElement, "removeTraversedElement",
+        addTraversedElementParameter);
+    visitorInterface.addCDMember(removeTraversedElement);
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, removeTraversedElement,
+        new TemplateHookPoint("methods.visitor.removeTraversedElement")));
+    
+    //visitor to get all classes from the original class diagram classes
+    CD4CodeTraverser t2 = CD4CodeMill.inheritanceTraverser();
+    CDTypeCollector cdTypeCollector = new CDTypeCollector();
+    t2.add4CDBasis(cdTypeCollector);
+    t2.add4CDInterfaceAndEnum(cdTypeCollector);
+    compilationUnit.accept(t2);
+    
+    classesFromClassdiagramAsString.addAll(cdTypeCollector.getClasses().stream().map(e -> e
+        .getSymbol().getFullName()).collect(Collectors.toList()));
+    classesFromClassdiagramAsString.addAll(cdTypeCollector.getInterfaces().stream().map(e -> e
+        .getSymbol().getFullName()).collect(Collectors.toList()));
+    classesFromClassdiagramAsString.addAll(cdTypeCollector.getEnums().stream().map(e -> e
+        .getSymbol().getFullName()).collect(Collectors.toList()));
   }
   
   @Override

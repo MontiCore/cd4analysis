@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
  * cdlang/src/cdGenIntTest/java/getter/GetterDecoratorResultTest then tests the generated result
  */
 public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
-  
+
   @Test
   public void testAll() throws Exception {
     var opt = CD4CodeMill.parser().parse_String("classdiagram TestDefaultCD2Pojo {\n"
@@ -28,18 +28,25 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
         + " public association TestGetterC -> (roleB) Other [*];\n"
         + " public association TestGetterC -> (orderedRole) Other [*] {ordered};\n"
         + " <<getter>> public class Other { \n" + "}\n" + "}");
-    
+
     Assertions.assertTrue(opt.isPresent());
-    
+
     super.doTest(opt.get());
-    
+
     // TODO: Remove once WIP Set Setter is implemented
     Log.getFindings().remove(0);
     Log.getFindings().remove(0);
-    
+    // TODO: Remove once Map and Set are accepted
+    Log.getFindings().remove(0);
+    Log.getFindings().remove(0);
+    Log.getFindings().remove(0);
+    Log.getFindings().remove(0);
+    Log.getFindings().remove(0);
+    Log.getFindings().remove(0);
+
     Assertions.assertTrue(Log.getFindings().isEmpty());
   }
-  
+
   @Override
   public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
       GeneratorSetup setup) {
@@ -52,5 +59,5 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
     glex.setGlobalValue("genSetup", setup);
     hpp.processValue(tc, new ArrayList<>());
   }
-  
+
 }

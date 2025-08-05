@@ -67,7 +67,7 @@ public class DecoratorConfig {
     return this.withDecorator(new VisitorDecorator());
   }
   
-  public ChainableGenSetup withInheritanceVisitor() {
+  public ChainableGenSetup withInheritanceVisitors() {
     return this.withDecorator(new InheritanceVisitorDecorator());
   }
   

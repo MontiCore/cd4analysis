@@ -84,8 +84,6 @@ public class InheritanceVisitorDecoratorTest extends AbstractDecoratorTest {
           + "}");
     // @formatter:on
     
-    //TODO add really fucked up inheritance structure here
-    
     Assertions.assertTrue(opt.isPresent());
     
     super.doTest(opt.get());
