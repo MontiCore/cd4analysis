@@ -141,7 +141,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "Concrete.cd" })
+  @ValueSource(strings = { "Concrete.cd", "Unchanged.cd" })
   public void testAttributeTypeIncarnationValid(String concrete) {
     parseModels("attributes/typeIncarnation/valid/" + concrete,
         "attributes/typeIncarnation/Reference.cd");
@@ -150,7 +150,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "NotMarkedAsIncarnation.cd" })
+  @ValueSource(strings = { "NotMarkedAsIncarnation.cd", "TypeParamNoIncarnation.cd" })
   public void testAttributeTypeIncarnationInvalid(String concrete) {
     parseModels("attributes/typeIncarnation/invalid/" + concrete,
         "attributes/typeIncarnation/Reference.cd");

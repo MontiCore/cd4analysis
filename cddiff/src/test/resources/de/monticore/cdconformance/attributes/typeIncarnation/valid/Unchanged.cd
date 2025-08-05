@@ -2,7 +2,7 @@ import java.lang.String;
 
 classdiagram Concrete {
 
-  <<ref="Address">> class AddressInfo {
+  class Address {
     String streetName;
     String houseNr;
     String city;
@@ -10,7 +10,7 @@ classdiagram Concrete {
   }
 
   class Employee {
-    AddressInfo address;
-    Set<AddressInfo> secondaryAddresses;
+    Address address;
+    Set<Address> secondaryAddresses;
   }
 }

@@ -347,13 +347,13 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public boolean isIncarnation(ASTMCType conType, ASTMCType refType) {
-    mcTypeIncStrategy.setTypeMatcher(this::isIncarnation);
+    mcTypeIncStrategy.setCDTypeMatcher(this::isIncarnation);
     return mcTypeIncStrategy.isMatched(conType, refType);
   }
   
   @Override
   public boolean isIncarnation(ISymbol contextSymbol, ASTMCType conType, ASTMCType refType) {
-    mcTypeIncStrategy.setTypeMatcher((conCDType, refCDType) -> isIncarnation(contextSymbol,
+    mcTypeIncStrategy.setCDTypeMatcher((conCDType, refCDType) -> isIncarnation(contextSymbol,
         conCDType, refCDType));
     return mcTypeIncStrategy.isMatched(conType, refType);
   }
