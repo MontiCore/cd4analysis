@@ -63,6 +63,18 @@ public class DecoratorConfig {
     return this.withDecorator(new BuilderDecorator());
   }
   
+  public ChainableGenSetup withVisitors() {
+    return this.withDecorator(new VisitorDecorator());
+  }
+  
+  public ChainableGenSetup withInheritanceVisitor() {
+    return this.withDecorator(new InheritanceVisitorDecorator());
+  }
+  
+  public ChainableGenSetup withDeepCloneAndDeepEquals() {
+    return this.withDecorator(new DeepCloneAndDeepEqualsDecorator());
+  }
+  
   public ChainableGenSetup withObservers() {
     return this.withDecorator(new ObserverDecorator());
   }
