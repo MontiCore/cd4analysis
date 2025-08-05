@@ -17,34 +17,17 @@ public class SymbolUtil {
   
   private SymbolUtil() {}
   
-  public static TypeSymbol getDeclaringTypeSymbol(FieldSymbol fieldSymbol) {
-    IScope enclosingScope = fieldSymbol.getEnclosingScope();
+  public static TypeSymbol getDeclaringTypeSymbol(ISymbol iSymbol) {
+    IScope enclosingScope = iSymbol.getEnclosingScope();
     if (!enclosingScope.isPresentSpanningSymbol()) {
-      throw new IllegalStateException("FieldSymbol without enclosing scope: " + fieldSymbol
-          .getFullName());
+      throw new IllegalStateException("Symbol without enclosing scope: " + iSymbol.getFullName());
     }
     IScopeSpanningSymbol symbol = enclosingScope.getSpanningSymbol();
     if (symbol instanceof TypeSymbol) {
       return (TypeSymbol) symbol;
     }
     else {
-      throw new IllegalStateException("FieldSymbol not enclosed in a type symbol: " + fieldSymbol
-          .getFullName());
-    }
-  }
-  
-  public static TypeSymbol getDeclaringTypeSymbol(MethodSymbol methodSymbol) {
-    IScope enclosingScope = methodSymbol.getEnclosingScope();
-    if (!enclosingScope.isPresentSpanningSymbol()) {
-      throw new IllegalStateException("MethodSymbol without enclosing scope: " + methodSymbol
-          .getFullName());
-    }
-    IScopeSpanningSymbol symbol = enclosingScope.getSpanningSymbol();
-    if (symbol instanceof TypeSymbol) {
-      return (TypeSymbol) symbol;
-    }
-    else {
-      throw new IllegalStateException("MethodSymbol not enclosed in a type symbol: " + methodSymbol
+      throw new IllegalStateException("Symbol not enclosed in a type symbol: " + iSymbol
           .getFullName());
     }
   }
