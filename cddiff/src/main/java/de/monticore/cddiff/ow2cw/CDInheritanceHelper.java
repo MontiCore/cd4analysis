@@ -78,30 +78,39 @@ public class CDInheritanceHelper {
       ICD4CodeArtifactScope scope) {
     
     ICDBasisScope currentScope = srcNode.getEnclosingScope();
-    List<CDTypeSymbol> symbolList;
     
-    symbolList = currentScope.resolveCDTypeDownMany(targetName);
+    List<CDTypeSymbol> symbolList = currentScope.resolveCDTypeMany(mkFullName(targetName, scope));
     
-    if (symbolList.isEmpty()) {
-      symbolList = scope.resolveCDTypeMany(mkFullName(targetName, scope));
+    while (currentScope != null && currentScope != scope) {
+      symbolList.addAll(currentScope.resolveCDTypeDownMany(internalQualifiedName(targetName,
+          scope)));
+      currentScope = currentScope.getEnclosingScope();
     }
     
+    symbolList.addAll(scope.resolveCDTypeDownMany(internalQualifiedName(targetName, scope)));
+    
     if (symbolList.isEmpty()) {
-      Log.error(String.format("0xCDD08: Could not resolve %s", targetName));
+      Log.error(String.format("0xCDD08: Could not resolve %s", internalQualifiedName(targetName,
+          scope)));
       return Optional.empty();
     }
     
     CDTypeSymbol current = symbolList.get(0);
-    int currentMatch = getPositionWhereTextDiffer(current.getInternalQualifiedName(), srcNode
-        .getSymbol().getInternalQualifiedName());
+    int currentMatch = getPositionWhereTextDiffer(current.getFullName(), srcNode.getSymbol()
+        .getFullName());
     int nextMatch;
     
     for (CDTypeSymbol symbol : symbolList) {
-      nextMatch = getPositionWhereTextDiffer(symbol.getInternalQualifiedName(), srcNode.getSymbol()
-          .getInternalQualifiedName());
+      nextMatch = getPositionWhereTextDiffer(symbol.getFullName(), srcNode.getSymbol()
+          .getFullName());
       if (currentMatch < nextMatch) {
         current = symbol;
       }
+    }
+    
+    if (!current.getFullName().contains(scope.getFullName())) {
+      Log.error(String.format("0xCDD09: Could not resolve %s in %s", internalQualifiedName(
+          targetName, scope), scope.getFullName()));
     }
     
     return Optional.of(current.getAstNode());

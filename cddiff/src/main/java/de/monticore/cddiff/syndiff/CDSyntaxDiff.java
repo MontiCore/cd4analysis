@@ -1426,7 +1426,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         }
       }
       
-      for (ASTCDType tgtSuper : getAllSuper(tgtClass, srcCDScope)) {
+      for (ASTCDType tgtSuper : getAllSuper(tgtClass, tgtCDScope)) {
         for (ASTCDType srcSuper : allSuperClassOfSrcClass) {
           for (Pair<ASTCDClass, ASTCDType> pair : matchedClasses) {
             if (pair.a.equals(srcSuper) && pair.b.equals(tgtSuper)) {

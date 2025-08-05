@@ -1622,7 +1622,13 @@ public class Syn2SemDiffHelper {
     
     for (ASTCDClass subclass : subClasses) {
       if (!subclass.getModifier().isAbstract() && !notInstClasses.contains(subclass)) {
-        int attributeCount = getAllAttr(subclass).b.size();
+        int attributeCount;
+        if (isSource) {
+          attributeCount = getAllAttr(subclass).b.size();
+        }
+        else {
+          attributeCount = getAllAttrTgt(subclass).b.size();
+        }
         int associationCount = getAssociationCount(subclass, isSource);
         int otherAssocsCount = getAllOtherAssocs(subclass, isSource).size();
         int totalCount = attributeCount + associationCount + otherAssocsCount;
