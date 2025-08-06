@@ -50,10 +50,7 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
     
     Set<ASTCDAssociation> conAssocSet = CDDiffUtil.getAllSuperTypes(concrete, conCD
         .getCDDefinition()).stream().flatMap(supertype -> CDDiffUtil.getReferencingAssociations(
-            supertype, conCD).stream().filter(assoc -> supertype.getSymbol()
-                .getInternalQualifiedName().contains(assoc.getLeftQualifiedName().getQName())
-                || supertype.getSymbol().getInternalQualifiedName().contains(assoc
-                    .getRightQualifiedName().getQName()))).collect(Collectors.toSet());
+            supertype, conCD).stream()).collect(Collectors.toSet());
     
     conAssocSet.addAll(CDDiffUtil.getReferencingAssociations(concrete, conCD));
     
