@@ -186,7 +186,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "FalseDirection.cd", "FalseCard.cd" })
+  @ValueSource(strings = { "FalseDirection.cd", "FalseCard.cd", "MissingAssocInc.cd" })
   public void testDeepAssocConformanceInvalid(String concrete) {
     parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
     checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));

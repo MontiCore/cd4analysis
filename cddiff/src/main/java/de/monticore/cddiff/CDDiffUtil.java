@@ -5,6 +5,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
@@ -17,6 +18,7 @@ import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
@@ -316,10 +318,25 @@ public class CDDiffUtil {
   /** A helper function to compute all associations in cd that reference astcdType. */
   public static Set<ASTCDAssociation> getReferencingAssociations(ASTCDType astcdType,
       ASTCDCompilationUnit cd) {
-    return cd.getCDDefinition().getCDAssociationsList().stream().filter(rAssoc -> astcdType
-        .getSymbol().getInternalQualifiedName().contains(rAssoc.getLeftQualifiedName().getQName())
-        || astcdType.getSymbol().getInternalQualifiedName().contains(rAssoc.getRightQualifiedName()
-            .getQName())).collect(Collectors.toSet());
+    // TODO Use TypeCheck3
+    ISynthesize typeSynthesizer = new FullSynthesizeFromCD4Code();
+    
+    String typeFullName = astcdType.getSymbol().getFullName();
+    return cd.getCDDefinition().getCDAssociationsList().stream().filter(rAssoc -> {
+      SymTypeExpression leftType = typeSynthesizer.synthesizeType(rAssoc.getLeft()
+          .getMCQualifiedType()).getResult();
+      SymTypeExpression rightType = typeSynthesizer.synthesizeType(rAssoc.getRight()
+          .getMCQualifiedType()).getResult();
+      if (!leftType.hasTypeInfo() || !rightType.hasTypeInfo()) {
+        Log.error("Could not get type for association sides" + CD4CodeMill.prettyPrint(rAssoc,
+            false));
+        return false;
+      }
+      else {
+        return leftType.getTypeInfo().getFullName().equals(typeFullName) || rightType.getTypeInfo()
+            .getFullName().equals(typeFullName);
+      }
+    }).collect(Collectors.toSet());
   }
   
   public static List<ASTCDType> getAllCDTypes(ASTCDCompilationUnit cd) {
