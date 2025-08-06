@@ -23,6 +23,8 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.antlr.v4.runtime.misc.MultiMap;
 
 /**
@@ -780,12 +782,16 @@ public class CDAssocDiff extends SyntaxDiffHelper implements ICDAssocDiff {
   
   @Override
   public String insertSpaceBetweenStringsAndGreen(List<String> stringList) {
-    return super.insertSpaceBetweenStringsAndGreen(stringList) + COLOR_ADD + "; ";
+    List<String> newList = stringList.stream().filter(Objects::nonNull).map(s -> s.replace(
+        COLOR_CHANGE, "")).collect(Collectors.toList());
+    return super.insertSpaceBetweenStringsAndGreen(newList) + COLOR_ADD + "; ";
   }
   
   @Override
   public String insertSpaceBetweenStringsAndRed(List<String> stringList) {
-    return super.insertSpaceBetweenStringsAndRed(stringList) + COLOR_DELETE + "; ";
+    List<String> newList = stringList.stream().filter(Objects::nonNull).map(s -> s.replace(
+        COLOR_CHANGE, "")).collect(Collectors.toList());
+    return super.insertSpaceBetweenStringsAndRed(newList) + COLOR_DELETE + "; ";
   }
   
   /**

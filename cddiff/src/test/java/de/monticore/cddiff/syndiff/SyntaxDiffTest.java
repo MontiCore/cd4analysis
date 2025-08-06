@@ -211,7 +211,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     assertTrue(synDiff.getAddedClasses().isEmpty());
     assertTrue(synDiff.getAddedInterfaces().isEmpty());
     assertTrue(synDiff.getDeletedInterfaces().isEmpty());
-    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedEnums().isEmpty());
     assertTrue(synDiff.getChangedTypes().isEmpty());
     assertTrue(synDiff.getChangedAssocs().isEmpty());
     assertTrue(synDiff.getAddedAssocs().isEmpty());
@@ -228,6 +228,61 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     ods = semDiff.generateODs(false);
     
     assertTrue(ods.isEmpty());
+    assertTrue(Log.getFindings().isEmpty());
+  }
+  
+  @Test
+  public void testMaCoCo2() {
+    CDDiffUtil.setUseJavaTypes(true);
+    parseModels("MaCoCo_Failing_1.cd", "MaCoCo_Failing_2.cd");
+    
+    CDSyntaxDiff synDiff = new CDSyntaxDiff(src, tgt, List.of());
+    SyntaxDiffPrinter sb = new SyntaxDiffPrinter(synDiff);
+    Log.println(sb.printDiff());
+    
+    assertEquals(1, synDiff.changedTypes().size());
+    
+    assertTrue(synDiff.getAddedClasses().isEmpty());
+    assertTrue(synDiff.getDeletedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedEnums().isEmpty());
+    assertTrue(synDiff.getDeletedEnums().isEmpty());
+    assertTrue(synDiff.getAddedAssocs().isEmpty());
+    assertTrue(synDiff.getDeletedAssocs().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
+    
+    // Syn2SemDiff produces correct diff-witnesses
+    Syn2SemDiff semDiff = new Syn2SemDiff(src, tgt);
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    List<ASTODArtifact> ods = semDiff.generateODs(false);
+    
+    assertFalse(ods.isEmpty());
+    assertTrue(semDiff.generateODs(false).stream().allMatch(od -> matcher.checkIfDiffWitness(
+        CDSemantics.SIMPLE_CLOSED_WORLD, src, tgt, od)));
+    
+    synDiff = new CDSyntaxDiff(tgt, src, List.of());
+    sb = new SyntaxDiffPrinter(synDiff);
+    
+    assertEquals(1, synDiff.changedTypes().size());
+    
+    assertTrue(synDiff.getAddedClasses().isEmpty());
+    assertTrue(synDiff.getDeletedClasses().isEmpty());
+    assertTrue(synDiff.getAddedInterfaces().isEmpty());
+    assertTrue(synDiff.getDeletedInterfaces().isEmpty());
+    assertTrue(synDiff.getAddedEnums().isEmpty());
+    assertTrue(synDiff.getDeletedEnums().isEmpty());
+    assertTrue(synDiff.getAddedAssocs().isEmpty());
+    assertTrue(synDiff.getDeletedAssocs().isEmpty());
+    assertTrue(synDiff.getChangedAssocs().isEmpty());
+    
+    Log.println(sb.printDiff());
+    // Syn2SemDiff produces no diff-witnesses
+    semDiff = new Syn2SemDiff(tgt, src);
+    ods = semDiff.generateODs(false);
+    
+    assertTrue(ods.isEmpty());
+    assertTrue(Log.getFindings().isEmpty());
   }
   
   public void parseModels(String concrete, String ref) {
