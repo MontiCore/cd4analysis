@@ -44,6 +44,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.CDDiffUtil.getAllCDTypes;
@@ -294,26 +295,22 @@ public class CDSynDiffMatches {
 
     if(srcAttributes.size() != tgtAttributes.size()) { return false; }
 
-    Set<Pair<String, String>> srcAttrNameAndType = srcAttributes.stream()
-      .map(
-        attr -> new Pair<>(attr.getName(), CDAttributeHelper.resolveClass(attr))
-      )
-      .filter(pair -> pair.b == null || pair.b.isPresentSymbol())
-      .map(pair -> new Pair<>(pair.a, pair.b == null ? null : pair.b.getSymbol().getInternalQualifiedName()))
+    // Attributes names are unique in a class
+    Map<String, ASTCDAttribute> srcAttributesMap = srcAttributes.stream()
+      .collect(Collectors.toMap(ASTCDAttribute::getName, Function.identity()));
+
+    Set<Pair<ASTCDType, ASTCDType>> srcAndTgtAttributes = tgtAttributes.stream()
+      .filter(attr -> srcAttributesMap.containsKey(attr.getName()))
+      .map(attr -> new Pair<>(srcAttributesMap.get(attr.getName()), attr))
+      .filter(pair -> CDAttributeHelper.hasSameNestings(pair.a, pair.b))
+      .map(pair -> new Pair<>(CDAttributeHelper.resolveInnermostClass(pair.a), CDAttributeHelper.resolveInnermostClass(pair.b)))
+      .filter(pair -> pair.a != null && pair.b != null)
+      .filter(pair -> pair.a.isPresentSymbol() && pair.b.isPresentSymbol())
+      .filter(pair -> pair.a.getSymbol().getInternalQualifiedName().equals(pair.b.getSymbol().getInternalQualifiedName()))
       .collect(Collectors.toSet());
 
-    if(srcAttributes.size() != srcAttrNameAndType.size()) { return false; }
-
-    Set<Pair<String, String>> tgtAttrNameAndType = tgtAttributes.stream()
-      .map(
-        attr -> new Pair<>(attr.getName(), CDAttributeHelper.resolveClass(attr))
-      ).filter(pair -> pair.b == null || pair.b.isPresentSymbol())
-      .map(pair -> new Pair<>(pair.a, pair.b == null ? null : pair.b.getSymbol().getInternalQualifiedName()))
-      .collect(Collectors.toSet());
-
-    if(tgtAttributes.size() != tgtAttrNameAndType.size()) { return false; }
-
-    return srcAttrNameAndType.equals(tgtAttrNameAndType);
+    // If the list is still the same size, all attributes are matched
+    return srcAndTgtAttributes.size() == srcAttributes.size();
   }
 
   public static Set<ASTCDType> getAllSuperSuperTypesFromCache(ASTCDType type, StructureCache structureCache) {

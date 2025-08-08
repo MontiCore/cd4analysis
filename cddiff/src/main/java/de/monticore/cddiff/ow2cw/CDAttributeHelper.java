@@ -1,22 +1,112 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw;
 
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 public class CDAttributeHelper {
 
-  public static ASTCDType resolveClass(ASTCDAttribute attribute) {
-    if(attribute.getSymbol().getType().getTypeInfo() == null) {
+  protected static List<Class<?>> nestedTypes = List.of(
+      ASTMCListType.class,
+      ASTMCSetType.class,
+      ASTMCOptionalType.class
+  );
+
+  public static boolean isPrimitiveType(ASTCDAttribute attribute) {
+    return isPrimitiveType(attribute.getMCType());
+  }
+
+  public static boolean isPrimitiveType(ASTMCType type) {
+    return type instanceof ASTMCPrimitiveType;
+  }
+
+  public static ASTMCPrimitiveType getPrimitiveType(ASTCDAttribute attribute) {
+    return getPrimitiveType(attribute.getMCType());
+  }
+
+  public static ASTMCPrimitiveType getPrimitiveType(ASTMCType type) {
+    if(!isPrimitiveType(type)) {
       return null;
     }
-    Optional<TypeSymbol> typeSymbol = attribute.getEnclosingScope().resolveType(attribute
-      .getSymbol().getType().getTypeInfo().getName());
+    return (ASTMCPrimitiveType) type;
+  }
+
+  public static boolean isNestedType(ASTCDAttribute attribute) {
+    return isNestedType(attribute.getMCType());
+  }
+
+  public static boolean isNestedType(ASTMCType type) {
+    return nestedTypes.stream().anyMatch(nestedType -> nestedType.isInstance(type));
+  }
+
+  public static boolean isQualifiedType(ASTCDAttribute attribute) {
+    return isQualifiedType(attribute.getMCType());
+  }
+
+  public static boolean isQualifiedType(ASTMCType type) {
+    return type instanceof ASTMCQualifiedType;
+  }
+
+  public static ASTMCQualifiedType getQualifiedType(ASTCDAttribute attribute) {
+    return getQualifiedType(attribute.getMCType());
+  }
+
+  public static ASTMCQualifiedType getQualifiedType(ASTMCType type) {
+    if(!isQualifiedType(type)) {
+      return null;
+    }
+    return (ASTMCQualifiedType) type;
+  }
+
+  public static ASTCDType resolveInnermostClass(ASTCDAttribute attribute) {
+    ASTMCType type = attribute.getMCType();
+    if (type instanceof ASTMCGenericType) {
+      ASTMCType innerType = resolveInnermostClass((ASTMCGenericType) type);
+      if (innerType != null) {
+        return resolveClass(innerType, getCD4CodeArtifactScope(attribute.getEnclosingScope()));
+      }
+      return null;
+    }
+    return resolveClass(type, getCD4CodeArtifactScope(attribute.getEnclosingScope()));
+  }
+
+  public static ASTMCType resolveInnermostClass(ASTMCGenericType type) {
+    if( type.getMCTypeArgumentList().isEmpty()) {
+      return null;
+    }
+    ASTMCType innerType = type.getMCTypeArgument(0).getMCTypeOpt().orElse(null);
+    if(innerType instanceof ASTMCGenericType) {
+      return resolveInnermostClass((ASTMCGenericType) innerType);
+    }
+    return innerType;
+  }
+
+  public static ASTCDType resolveClass(ASTCDAttribute attribute) {
+    return resolveClass(attribute.getMCType(), getCD4CodeArtifactScope(attribute.getEnclosingScope()));
+  }
+
+  private static ASTCDType resolveClass(ASTMCType type, ICD4CodeArtifactScope scope) {
+    if(!isQualifiedType(type)) {
+      return null;
+    }
+    ASTMCQualifiedType qualifiedType = (ASTMCQualifiedType) type;
+    Optional<TypeSymbol> typeSymbol = scope.resolveType(qualifiedType.getMCQualifiedName().getBaseName());
     if (typeSymbol.isPresent() && typeSymbol.get().isPresentAstNode() && typeSymbol.get()
         .getAstNode() instanceof ASTCDType) {
       return (ASTCDType) typeSymbol.get().getAstNode();
@@ -28,4 +118,45 @@ public class CDAttributeHelper {
     return new HashSet<>(cdType.getCDAttributeList());
   }
 
+  public static boolean hasSameNestings(ASTCDAttribute attr1, ASTCDAttribute attr2) {
+    return hasSameNestings(attr1.getMCType(), attr2.getMCType());
+  }
+
+  private static boolean hasSameNestings(ASTMCType type1, ASTMCType type2) {
+    if( type1 == null || type2 == null || (isNestedType(type1) != isNestedType(type2))) {
+      return false;
+    }
+    if(!isNestedType(type1)) {
+      return true;
+    }
+    ASTMCGenericType genericType1 = (ASTMCGenericType) type1;
+    ASTMCGenericType genericType2 = (ASTMCGenericType) type2;
+    if(genericType1.getMCTypeArgumentList().isEmpty() || genericType2.getMCTypeArgumentList().isEmpty() ||
+      genericType1.getMCTypeArgumentList().size() != genericType2.getMCTypeArgumentList().size()) {
+      return false;
+    }
+
+    if(genericType1.getName(0).equals(genericType2.getName(0))) {
+      if(genericType1.getMCTypeArgument(0).getMCTypeOpt().isPresent() &&
+         genericType2.getMCTypeArgument(0).getMCTypeOpt().isPresent()) {
+        return hasSameNestings(genericType1.getMCTypeArgument(0).getMCTypeOpt().get(),
+          genericType2.getMCTypeArgument(0).getMCTypeOpt().get());
+      }
+    }
+    return false;
+  }
+
+  private static ICD4CodeArtifactScope getCD4CodeArtifactScope(ICDBasisScope scope) {
+    if (scope instanceof ICD4CodeArtifactScope) {
+      return (ICD4CodeArtifactScope) scope;
+    }
+    else if (scope == null) {
+      Log.error("0xCDD20: ACDType was not contained in a CD4CodeArtifactScope.");
+      return null;
+
+    }
+    else {
+      return getCD4CodeArtifactScope(scope.getEnclosingScope());
+    }
+  }
 }
