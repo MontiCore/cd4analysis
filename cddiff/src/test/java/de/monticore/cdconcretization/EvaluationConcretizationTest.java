@@ -130,6 +130,35 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
           "evaluation/banking/BankingRef.cd", "evaluation/banking/singleInc/BankingOut.cd");
     }
     
+    /**
+     * Insight: If we use multi incarnation to model different kinds of accounts, we must have a
+     * special 'Transaction' incarnation for all combinations of accounts. This leads to a lot of
+     * associations which is not only hard to read, but we also lose transaction order.
+     */
+    @Test
+    void accountMultiInc() {
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/banking/accountMultiInc/BankingConc.cd", "evaluation/banking/BankingRef.cd",
+          "evaluation/banking/accountMultiInc/BankingOut.cd");
+    }
+    
+    /*
+     * Should be resolved when using new incarnation mapping/binding abstractions.
+     * See https://git.rwth-aachen.de/se-student/theses/ma-jorden/master-theses/-/issues/68
+     */
+    @Disabled("currently not working because 'bind' is not considered when completing associations")
+    @Test
+    void multiInc() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/banking/multiInc/BankingConc.cd",
+          "evaluation/banking/BankingRef.cd", "evaluation/banking/multiInc/BankingOut.cd");
+    }
+    
+    /**
+     * Insight: By subclassing from account, we can use the same Transaction class for all kinds
+     * of accounts, which makes our life a lot easier and the model simpler.
+     * Note that we can still rename the 'Account' class to 'BankAccount' and the 'id' attribute
+     * to 'iban' via incarnation mapping.
+     */
     @Test
     void usageByExtension() {
       testConcretizedConformsToRefAndExpectedOut(

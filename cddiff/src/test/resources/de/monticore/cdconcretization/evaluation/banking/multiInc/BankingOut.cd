@@ -1,0 +1,72 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram Banking {
+
+  <<ref="Bank">> class SEPABank {
+    <<ref="id">> String bic;
+    <<ref="overallBalance", bind="Account=PrivateAccount">> double privateAccountsOverallBalance;
+    <<ref="overallBalance", bind="Account=BusinessAccount">> double businessAccountsOverallBalance;
+  }
+
+  <<ref="Account", bind="Customer=PrivateCustomer">> class PrivateAccount {
+    <<ref="id">> String iban;
+    double balance; // money in the account
+  }
+
+  <<ref="Account", bind="Customer=BusinessCustomer">> class BusinessAccount {
+    <<ref="id">> String iban;
+    double balance; // money in the account
+  }
+
+  <<ref="Customer">> class PrivateCustomer {
+    String name;
+    String address;
+    String phoneNumber;
+  }
+
+  <<ref="Customer">> class BusinessCustomer {
+    String name;
+    String address;
+    String phoneNumber;
+  }
+
+  <<ref="Transaction">> class PrivateAccountTransaction {
+    PrivateAccount sourceAccount;
+    PrivateAccount targetAccount;
+    double amount;
+  }
+
+  <<ref="Transaction">> class BusinessAccountTransaction {
+    BusinessAccount sourceAccount;
+    BusinessAccount targetAccount;
+    double amount;
+  }
+
+  <<ref="Transaction">> class PrivateToBusinessAccountTransaction {
+    PrivateAccount sourceAccount;
+    BusinessAccount targetAccount;
+    double amount;
+  }
+
+  <<ref="Transaction">> class BusinessToPrivateAccountTransaction {
+    BusinessAccount sourceAccount;
+    PrivateAccount targetAccount;
+    double amount;
+  }
+
+  association SEPABank -> PrivateAccount [*];
+  association SEPABank -> BusinessAccount [*];
+  association SEPABank -> PrivateCustomer [*];
+  association SEPABank -> BusinessCustomer [*];
+  association [*] PrivateAccount <-> PrivateCustomer [*];
+  association [*] BusinessAccount <-> BusinessCustomer [*];
+  association PrivateAccount->BusinessToPrivateAccountTransaction[*]<<ordered>>;
+  association PrivateAccount->BusinessAccountTransaction[*]<<ordered>>;
+  association PrivateAccount->PrivateAccountTransaction[*]<<ordered>>;
+  association PrivateAccount->PrivateToBusinessAccountTransaction[*]<<ordered>>;
+  association BusinessAccount->BusinessToPrivateAccountTransaction[*]<<ordered>>;
+  association BusinessAccount->BusinessAccountTransaction[*]<<ordered>>;
+  association BusinessAccount->PrivateAccountTransaction[*]<<ordered>>;
+  association BusinessAccount->PrivateToBusinessAccountTransaction[*]<<ordered>>;
+}
