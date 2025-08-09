@@ -1,0 +1,10 @@
+/*
+ * Note this is a simplified reference model for the observer pattern (from KMR24)
+ * just for demonstration of the multiple mapping feature.
+ * See OCl reference code adaptation for a full model with specification for all methods.
+ */
+classdiagram SimpleObserverRef {
+  class Observer;
+  class Observed;
+  association observes Observer -> Observed [*];
+}

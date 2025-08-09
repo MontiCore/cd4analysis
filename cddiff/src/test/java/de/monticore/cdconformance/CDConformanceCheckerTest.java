@@ -269,4 +269,15 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
   }
   
+  /**
+   * Example from KMR24 for multiple mappings.
+   */
+  @Test
+  public void testMutualObserversExample() {
+    parseModels("mutualObservers/SimpleMutualObserversConc.cd", "mutualObservers/SimpleObserverRef.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING, ALLOW_CARD_RESTRICTION));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref1", "ref2")));
+  }
+  
 }
