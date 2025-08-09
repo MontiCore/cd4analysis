@@ -274,7 +274,8 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
    */
   @Test
   public void testMutualObserversExample() {
-    parseModels("mutualObservers/SimpleMutualObserversConc.cd", "mutualObservers/SimpleObserverRef.cd");
+    parseModels("mutualObservers/SimpleMutualObserversConc.cd",
+        "mutualObservers/SimpleObserverRef.cd");
     checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
         SRC_TARGET_ASSOC_MAPPING, ALLOW_CARD_RESTRICTION));
     assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref1", "ref2")));

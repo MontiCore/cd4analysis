@@ -159,7 +159,7 @@ public abstract class AbstractCDConcretizationTest {
   }
   
   // TODO Replace once there is a MontiCore method: MCAssertions#assertNoFindings()
-  private static void assertNoFindings(String message) {
+  protected static void assertNoFindings(String message) {
     if (!Log.getFindings().isEmpty()) {
       fail(message);
     }
