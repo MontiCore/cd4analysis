@@ -130,6 +130,17 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
           "evaluation/banking/BankingRef.cd", "evaluation/banking/singleInc/BankingOut.cd");
     }
     
+    /*
+     * Should be resolved when using new incarnation mapping/binding abstractions.
+     * See https://git.rwth-aachen.de/se-student/theses/ma-jorden/master-theses/-/issues/68
+     */
+    @Disabled("currently not working because 'bind' is not considered when completing associations")
+    @Test
+    void multiInc() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/banking/multiInc/BankingConc.cd",
+          "evaluation/banking/BankingRef.cd", "evaluation/banking/multiInc/BankingOut.cd");
+    }
+    
     @Test
     void usageByExtension() {
       testConcretizedConformsToRefAndExpectedOut(
