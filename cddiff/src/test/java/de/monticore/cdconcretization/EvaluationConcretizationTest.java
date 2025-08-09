@@ -4,6 +4,7 @@ package de.monticore.cdconcretization;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
@@ -118,6 +119,24 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
         "evaluation/cross-references/MicroserviceConc.cd",
         "evaluation/cross-references/MicroserviceRef.cd",
         "evaluation/cross-references/MicroserviceOut.cd");
+  }
+  
+  @Nested
+  class Banking {
+    
+    @Test
+    void singleInc() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/banking/singleInc/BankingConc.cd",
+          "evaluation/banking/BankingRef.cd", "evaluation/banking/singleInc/BankingOut.cd");
+    }
+    
+    @Test
+    void usageByExtension() {
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/banking/usageByExtension/BankingConc.cd", "evaluation/banking/BankingRef.cd",
+          "evaluation/banking/usageByExtension/BankingOut.cd");
+    }
+    
   }
   
 }
