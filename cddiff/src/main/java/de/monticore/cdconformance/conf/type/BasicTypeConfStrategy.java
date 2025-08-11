@@ -165,6 +165,16 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
         .getReferencingAssociations(refType, refCD));
   }
   
+  /**
+   * Checks if all reference associations are incarnated by one of the given concrete associations
+   * at least once.<br>
+   * If the reference association is annotated with the stereotype <code>optional</code>, it is not
+   * required to be incarnated.
+   *
+   * @param con the concrete associations
+   * @param ref the reference associations
+   * @return true if all required reference associations are incarnated, false otherwise
+   */
   protected boolean checkAssocIncarnation(Set<ASTCDAssociation> con, Set<ASTCDAssociation> ref) {
     return ref.stream().allMatch(refAssoc -> (refAssoc.getModifier().isPresentStereotype()
         && refAssoc.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
