@@ -47,12 +47,9 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
   
   @Override
   protected boolean checkAssocIncarnation(ASTCDType concrete, ASTCDType ref) {
-    
     Set<ASTCDAssociation> conAssocSet = CDDiffUtil.getAllSuperTypes(concrete, conCD
         .getCDDefinition()).stream().flatMap(supertype -> CDDiffUtil.getReferencingAssociations(
             supertype, conCD).stream()).collect(Collectors.toSet());
-    
-    conAssocSet.addAll(CDDiffUtil.getReferencingAssociations(concrete, conCD));
     
     return checkAssocIncarnation(conAssocSet, CDDiffUtil.getReferencingAssociations(ref, refCD));
   }

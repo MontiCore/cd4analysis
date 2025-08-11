@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc;
 
+import com.google.common.collect.SetMultimap;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -262,6 +263,19 @@ public interface CDIncarnationBindings {
   }
   
   /**
+   * Adds a method binding for the given context symbol.
+   *
+   * @param contextSymbol the symbol at which the binding is added
+   * @param referenceMethod the reference method for which a binding is added
+   * @param concreteMethod the concrete method to which the reference method is bound to in the
+   * context
+   */
+  default void addBinding(ISymbol contextSymbol, MethodSymbol referenceMethod,
+      MethodSymbol concreteMethod) {
+    addBinding(contextSymbol, referenceMethod, Set.of(concreteMethod));
+  }
+  
+  /**
    * Returns all concrete methods that are bound to the given reference method at the given context
    * symbol.<br>
    * <b>Note:</b> If no bindings are found, the method returns an empty set. This does not mean that
@@ -296,5 +310,17 @@ public interface CDIncarnationBindings {
       Set<CDAssociationSymbol> conAssociations) {
     addBinding(computeSymbolKey(contextSymbol), refAssociation, conAssociations);
   }
+  
+  SetMultimap<String, TypeSymbol> getTypeBindings(IScope concreteScope);
+  
+  SetMultimap<String, TypeSymbol> getTypeBindings(ISymbol contextSymbol);
+  
+  SetMultimap<String, FieldSymbol> getFieldBindings(IScope concreteScope);
+  
+  SetMultimap<String, FieldSymbol> getFieldBindings(ISymbol contextSymbol);
+  
+  SetMultimap<String, MethodSymbol> getMethodBindings(IScope concreteScope);
+  
+  SetMultimap<String, MethodSymbol> getMethodBindings(ISymbol contextSymbol);
   
 }

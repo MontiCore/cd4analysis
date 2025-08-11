@@ -186,6 +186,11 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
    */
   Set<ASTCDAttribute> getIncarnations(IScope scope, ASTCDAttribute referenceAttribute);
   
+  default Set<FieldSymbol> getIncarnations(FieldSymbol referenceElement) {
+    return getIncarnations(SymbolUtil.cdAttributeFromFieldSymbol(referenceElement)).stream().map(
+        ASTCDAttribute::getSymbol).collect(Collectors.toSet());
+  }
+  
   // --------------------------
   // ----- Method Mapping -----
   // --------------------------
