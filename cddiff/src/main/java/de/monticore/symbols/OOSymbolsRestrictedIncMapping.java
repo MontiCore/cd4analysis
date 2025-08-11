@@ -12,13 +12,13 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import java.util.Set;
 
 // NOTE: Could be generated
-public class OOSymbolsRestrictedIncMapping implements OOSymbolsLocalIncMapping {
+public class OOSymbolsRestrictedIncMapping implements IOOSymbolsLocalIncMapping {
 
-  protected final OOSymbolsLocalIncMapping originalMapping;
-  protected final OOSymbolsBindings bindings;
+  protected final IOOSymbolsLocalIncMapping originalMapping;
+  protected final IOOSymbolsBindings bindings;
   protected final BasicSymbolsRestrictedIncMapping basicSymbolsRestrictedIncMapping;
 
-  public OOSymbolsRestrictedIncMapping(OOSymbolsLocalIncMapping originalMapping, OOSymbolsBindings bindings) {
+  public OOSymbolsRestrictedIncMapping(IOOSymbolsLocalIncMapping originalMapping, IOOSymbolsBindings bindings) {
     this.originalMapping = originalMapping;
     this.bindings = bindings;
     this.basicSymbolsRestrictedIncMapping = new BasicSymbolsRestrictedIncMapping(originalMapping, bindings);

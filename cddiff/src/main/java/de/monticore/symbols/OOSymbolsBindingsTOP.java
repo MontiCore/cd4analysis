@@ -3,8 +3,8 @@ package de.monticore.symbols;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.Bindings;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
-import de.monticore.symbols.basicsymbols.BasicSymbolsBindingsImpl;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -17,14 +17,14 @@ import java.util.Optional;
 import java.util.Set;
 
 // NOTE: Could be generated
-public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
+public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
 
   // ========== Symbol bindings from languages extended by OOSymbols ==========
 
   /**
    * Used to manage basic symbols (required because OOSymbols language extends BasicSymbols).
    */
-  private final BasicSymbolsBindings basicSymbolsBindings;
+  private final IBasicSymbolsBindings basicSymbolsBindings;
 
   // ========== OOSymbols specific symbol bindings ==========
 
@@ -32,15 +32,15 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   private final Bindings<FieldSymbol> fieldBindings;
   private final Bindings<MethodSymbol> methodBindings;
 
-  public OOSymbolsBindingsImplTOP() {
-    this(new BasicSymbolsBindingsImpl(),
+  public OOSymbolsBindingsTOP() {
+    this(new BasicSymbolsBindings(),
          new Bindings<>(),
          new Bindings<>(),
          new Bindings<>());
   }
 
-  protected OOSymbolsBindingsImplTOP(
-          BasicSymbolsBindings basicSymbolsBindings,
+  protected OOSymbolsBindingsTOP(
+          IBasicSymbolsBindings basicSymbolsBindings,
           Bindings<OOTypeSymbol> ooTypeBindings,
           Bindings<FieldSymbol> fieldBindings,
           Bindings<MethodSymbol> methodBindings) {
@@ -52,8 +52,8 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
 
 
   @Override
-  public OOSymbolsBindings copy() {
-    return new OOSymbolsBindingsImpl(
+  public IOOSymbolsBindings copy() {
+    return new OOSymbolsBindings(
         basicSymbolsBindings.copy(),
         new Bindings<>(ooTypeBindings),
         new Bindings<>(fieldBindings),
@@ -162,21 +162,21 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public OOSymbolsBindings getOOTypeImpliedBindings(Binding<OOTypeSymbol> binding) throws BindingConflictException {
+  public IOOSymbolsBindings getOOTypeImpliedBindings(Binding<OOTypeSymbol> binding) throws BindingConflictException {
     // Default implementation returns an empty set
-    return new OOSymbolsBindingsImpl();
+    return new OOSymbolsBindings();
   }
 
   @Override
-  public OOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException {
+  public IOOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException {
     // Default implementation returns an empty set
-    return new OOSymbolsBindingsImpl();
+    return new OOSymbolsBindings();
   }
 
   @Override
-  public OOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException {
+  public IOOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException {
     // Default implementation returns an empty set
-    return new OOSymbolsBindingsImpl();
+    return new OOSymbolsBindings();
   }
 
   @Override
@@ -195,7 +195,7 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public void addAll(OOSymbolsBindings bindings) throws BindingConflictException {
+  public void addAll(IOOSymbolsBindings bindings) throws BindingConflictException {
     // 1. check for conflicts
     if (isConflicting(bindings)) {
       throw new BindingConflictException();
@@ -216,7 +216,7 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public boolean isConflicting(OOSymbolsBindings bindings) {
+  public boolean isConflicting(IOOSymbolsBindings bindings) {
     if (basicSymbolsBindings.isConflicting(bindings)) {
       return true;
     }
@@ -289,12 +289,12 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public OOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
+  public IOOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
     // TODO should we check this here?
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       return getOOTypeImpliedBindings(binding.cast());
     } else {
-      OOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindingsImpl();
+      IOOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindings();
       ooSymbolsBindings.addAll(basicSymbolsBindings.getTypeImpliedBindings(binding));
       return ooSymbolsBindings;
     }
@@ -348,12 +348,12 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public OOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+  public IOOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
     // TODO should we check this here?
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       return getFieldImpliedBindings(binding.cast());
     } else {
-      OOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindingsImpl();
+      IOOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindings();
       ooSymbolsBindings.addAll(basicSymbolsBindings.getVariableImpliedBindings(binding));
       return ooSymbolsBindings;
     }
@@ -407,32 +407,32 @@ public class OOSymbolsBindingsImplTOP implements OOSymbolsBindings {
   }
 
   @Override
-  public OOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+  public IOOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
     // TODO should we check this here?
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       return getMethodImpliedBindings(binding.cast());
     } else {
-      OOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindingsImpl();
+      IOOSymbolsBindings ooSymbolsBindings = new OOSymbolsBindings();
       ooSymbolsBindings.addAll(basicSymbolsBindings.getFunctionImpliedBindings(binding));
       return ooSymbolsBindings;
     }
   }
 
   @Override
-  public void addAll(BasicSymbolsBindings bindings) throws BindingConflictException {
+  public void addAll(IBasicSymbolsBindings bindings) throws BindingConflictException {
     // TODO should we check this here?
-    if (bindings instanceof OOSymbolsBindings) {
-      addAll((OOSymbolsBindings) bindings);
+    if (bindings instanceof IOOSymbolsBindings) {
+      addAll((IOOSymbolsBindings) bindings);
     } else {
       basicSymbolsBindings.addAll(bindings);
     }
   }
 
   @Override
-  public boolean isConflicting(BasicSymbolsBindings otherBindings) {
+  public boolean isConflicting(IBasicSymbolsBindings otherBindings) {
     // TODO should we check this here?
-    if (otherBindings instanceof OOSymbolsBindings) {
-      return isConflicting((OOSymbolsBindings) otherBindings);
+    if (otherBindings instanceof IOOSymbolsBindings) {
+      return isConflicting((IOOSymbolsBindings) otherBindings);
     } else {
       return basicSymbolsBindings.isConflicting(otherBindings);
     }

@@ -11,7 +11,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 import java.util.Set;
 
-public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
+public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
 
   // TODO -> This could be a generated TOP class and developers can override e.g., addFieldBinding to additionally check if it conflicts with type bindings!
   //      -> That's detailed semantic a generator cannot know about!
@@ -23,21 +23,21 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   private final Bindings<FunctionSymbol> functionBindings;
 
 
-  protected BasicSymbolsBindingsImplTOP(Bindings<TypeSymbol> typeBindings,
-                                        Bindings<VariableSymbol> variableBindings,
-                                        Bindings<FunctionSymbol> functionBindings) {
+  protected BasicSymbolsBindingsTOP(Bindings<TypeSymbol> typeBindings,
+                                    Bindings<VariableSymbol> variableBindings,
+                                    Bindings<FunctionSymbol> functionBindings) {
     this.typeBindings = typeBindings;
     this.variableBindings = variableBindings;
     this.functionBindings = functionBindings;
   }
 
-  public BasicSymbolsBindingsImplTOP() {
+  public BasicSymbolsBindingsTOP() {
     this(new Bindings<>(), new Bindings<>(), new Bindings<>());
   }
 
   @Override
-  public BasicSymbolsBindings copy() {
-    return new BasicSymbolsBindingsImpl(
+  public IBasicSymbolsBindings copy() {
+    return new BasicSymbolsBindings(
         new Bindings<>(typeBindings),
         new Bindings<>(variableBindings),
         new Bindings<>(functionBindings)
@@ -77,9 +77,9 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public BasicSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
+  public IBasicSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
     // default implementation returns an empty set
-    return new BasicSymbolsBindingsImpl();
+    return new BasicSymbolsBindings();
   }
 
   @Override
@@ -115,9 +115,9 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public BasicSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+  public IBasicSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
     // default implementation returns an empty set
-    return new BasicSymbolsBindingsImpl();
+    return new BasicSymbolsBindings();
   }
 
   @Override
@@ -153,13 +153,13 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public BasicSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+  public IBasicSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
     // default implementation returns an empty set
-    return new BasicSymbolsBindingsImpl();
+    return new BasicSymbolsBindings();
   }
 
   @Override
-  public void addAll(BasicSymbolsBindings bindings) throws BindingConflictException {
+  public void addAll(IBasicSymbolsBindings bindings) throws BindingConflictException {
     if (isConflicting(bindings)) {
       throw new BindingConflictException();
     }
@@ -175,7 +175,7 @@ public class BasicSymbolsBindingsImplTOP implements BasicSymbolsBindings {
   }
 
   @Override
-  public boolean isConflicting(BasicSymbolsBindings otherBindings) {
+  public boolean isConflicting(IBasicSymbolsBindings otherBindings) {
     for (Binding<TypeSymbol> binding : otherBindings.getTypeBindings()) {
       if (isConflictingTypeBinding(binding)) {
         return true;

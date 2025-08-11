@@ -19,7 +19,7 @@ import java.util.Set;
  *   <li>{@link FunctionSymbol}</li>
  * </ul>
  */
-public interface BasicSymbolsLocalIncMapping {
+public interface IBasicSymbolsLocalIncMapping {
 
   Set<TypeSymbol> getIncarnations(TypeSymbol typeSymbol);
 

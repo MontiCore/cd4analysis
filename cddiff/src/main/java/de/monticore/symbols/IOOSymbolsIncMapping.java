@@ -1,12 +1,12 @@
 package de.monticore.symbols;
 
-import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 
 // NOTE: Could be generated
-public interface OOSymbolsIncMapping extends BasicSymbolsIncMapping, OOSymbolsLocalIncMapping {
+public interface IOOSymbolsIncMapping extends IBasicSymbolsIncMapping, IOOSymbolsLocalIncMapping {
 
   /**
    * Returns the scope that is used to symbols of the reference model.
@@ -24,13 +24,13 @@ public interface OOSymbolsIncMapping extends BasicSymbolsIncMapping, OOSymbolsLo
 
   String computeSymbolKey(ISymbol symbol);
 
-  OOSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol);
+  IOOSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol);
 
-  OOSymbolsLocalIncMapping getScopedMapping(IScope scope);
+  IOOSymbolsLocalIncMapping getScopedMapping(IScope scope);
 
-  OOSymbolsBindings getScopedBindings(String contextSymbolKey);
+  IOOSymbolsBindings getScopedBindings(String contextSymbolKey);
 
-  OOSymbolsBindings getScopedBindings(ISymbol contextSymbol);
+  IOOSymbolsBindings getScopedBindings(ISymbol contextSymbol);
 
-  OOSymbolsBindings getScopedBindings(IScope scope);
+  IOOSymbolsBindings getScopedBindings(IScope scope);
 }

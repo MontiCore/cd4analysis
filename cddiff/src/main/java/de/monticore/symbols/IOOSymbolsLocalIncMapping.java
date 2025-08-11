@@ -1,6 +1,6 @@
 package de.monticore.symbols;
 
-import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsLocalIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -8,7 +8,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import java.util.Set;
 
 // NOTE: Could be generated
-public interface OOSymbolsLocalIncMapping extends BasicSymbolsLocalIncMapping {
+public interface IOOSymbolsLocalIncMapping extends IBasicSymbolsLocalIncMapping {
 
   Set<OOTypeSymbol> getIncarnations(OOTypeSymbol typeSymbol);
 

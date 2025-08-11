@@ -1,70 +1,111 @@
 package de.monticore.symbols;
 
+import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
+import de.monticore.refadaptation.Bindings;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.ISymbol;
 
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-// NOTE: Could be generated
-/**
- * Represents a <i>consistent</i> set of bindings for the symbols defined by the "OOSymbols"
- * language. These are:
- * <ul>
- *   <li>{@link OOTypeSymbol}</li>
- *   <li>{@link FieldSymbol}</li>
- *   <li>{@link MethodSymbol}</li>
- * </ul>
- * Consistent means that no binding conflicts with another binding in this set.
- */
-public interface OOSymbolsBindings extends BasicSymbolsBindings {
+public class OOSymbolsBindings extends OOSymbolsBindingsTOP {
 
-  OOSymbolsBindings copy();
+  public OOSymbolsBindings() {
+    super();
+  }
 
-  Optional<Binding<OOTypeSymbol>> getBinding(OOTypeSymbol typeSymbol);
-  Optional<Binding<FieldSymbol>> getBinding(FieldSymbol fieldSymbol);
-  Optional<Binding<MethodSymbol>> getBinding(MethodSymbol methodSymbol);
-
-  void addOOTypeBinding(Binding<OOTypeSymbol> binding) throws BindingConflictException;
-
-  void addFieldBinding(Binding<FieldSymbol> binding) throws BindingConflictException;
-
-  void addMethodBinding(Binding<MethodSymbol> binding) throws BindingConflictException;
-
-  boolean isConflictingOOTypeBinding(Binding<OOTypeSymbol> binding);
-  boolean isConflictingFieldBinding(Binding<FieldSymbol> binding);
-  boolean isConflictingMethodBinding(Binding<MethodSymbol> binding);
-
-  OOSymbolsBindings getOOTypeImpliedBindings(Binding<OOTypeSymbol> binding) throws BindingConflictException;
-  OOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException;
-  OOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException;
-
-  // redefine methods from BasicSymbolsBindings for more precise return types
-
+  protected OOSymbolsBindings(
+          IBasicSymbolsBindings basicSymbolsBindings,
+          Bindings<OOTypeSymbol> ooTypeBindings,
+          Bindings<FieldSymbol> fieldBindings,
+          Bindings<MethodSymbol> methodBindings) {
+    super(basicSymbolsBindings, ooTypeBindings, fieldBindings, methodBindings);
+  }
 
   @Override
-  OOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException;
+  public void addOOTypeBinding(Binding<OOTypeSymbol> binding) throws BindingConflictException {
+    // 1. enforce OO specific constraints
+    // TODO check for conflicts with existing bindings, FieldSymbol, MethodSymbol
+    super.addOOTypeBinding(binding);
+  }
 
   @Override
-  OOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException;
+  public IOOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException {
+    IOOSymbolsBindings bindings = super.getMethodImpliedBindings(binding);
+    bindings.addTypeBinding(getDeclaringTypeBinding(binding));
+    return bindings;
+  }
 
   @Override
-  OOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException;
+  public IOOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException {
+    IOOSymbolsBindings bindings = super.getFieldImpliedBindings(binding);
+    bindings.addTypeBinding(getDeclaringTypeBinding(binding));
+    return bindings;
+  }
 
-  Set<Binding<OOTypeSymbol>> getOOTypeBindings();
+  @Override
+  public IOOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+    IOOSymbolsBindings bindings = super.getVariableImpliedBindings(binding);
+    /* A VariableSymbol instance might still represent a field of a CDType, although
+     * it is not a FieldSymbol. Therefore, we try to get a declaring type by the heuristic in
+     * {@link #getDeclaringTypeIfPresent(ISymbol)}.
+     */
+    if (isDeclaringTypeSymbolPresent(binding.getReferenceElement())) {
+      bindings.addTypeBinding(getDeclaringTypeBinding(binding));
+    }
+    return bindings;
+  }
 
-  Set<Binding<FieldSymbol>> getFieldBindings();
+  @Override
+  public IOOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+    IOOSymbolsBindings bindings = super.getFunctionImpliedBindings(binding);
+    /* A FunctionSymbol instance might still represent a method of a CDType, although
+     * it is not a MethodSymbol. Therefore, we try to get a declaring type by the heuristic in
+     * {@link #getDeclaringTypeIfPresent(ISymbol)}.
+     */
+    if (isDeclaringTypeSymbolPresent(binding.getReferenceElement())) {
+      bindings.addTypeBinding(getDeclaringTypeBinding(binding));
+    }
+    return bindings;
+  }
 
-  Set<Binding<MethodSymbol>> getMethodBindings();
+  /**
+   * Returns the type binding for the declaring type of a method/field binding.
+   *
+   * @param binding the binding for the method/field
+   * @return the binding for the declaring type of the method/field
+   * @param <T> the type of the symbol
+   */
+  protected <T extends ISymbol> Binding<TypeSymbol> getDeclaringTypeBinding(Binding<T> binding) {
+    TypeSymbol declaringRefType = SymbolUtil.getDeclaringTypeSymbol(binding.getReferenceElement());
+    Set<TypeSymbol> declaringTypeIncs = binding.getConcreteElements().stream()
+            .map(SymbolUtil::getDeclaringTypeSymbol)
+            .collect(Collectors.toSet());
+    if (binding.isStrict()) {
+      return Binding.createStrict(declaringRefType, declaringTypeIncs.stream().findFirst().orElseThrow());
+    } else {
+      return Binding.createAggregate(declaringRefType, declaringTypeIncs);
+    }
+  }
 
-  void addAll(OOSymbolsBindings bindings) throws BindingConflictException;
-
-  boolean isConflicting(OOSymbolsBindings otherBindings);
+  /**
+   * Checks if the given symbol is declared in a type symbol, i.e., if the spanning symbol of the
+   * enclosing scope of the symbol is a {@link TypeSymbol}.
+   *
+   * @param symbol the symbol to check
+   * @return true if the symbol is declared in a type symbol, false otherwise
+   */
+  protected boolean isDeclaringTypeSymbolPresent(ISymbol symbol) {
+    // TODO Get declaring type via spanning symbol of enclosing scope vs. resolve qualifier from symbol full name
+    return symbol.getEnclosingScope().isPresentSpanningSymbol()
+            && symbol.getEnclosingScope().getSpanningSymbol() instanceof TypeSymbol;
+  }
 }

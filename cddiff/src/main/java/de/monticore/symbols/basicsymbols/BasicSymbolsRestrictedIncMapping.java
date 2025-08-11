@@ -8,12 +8,12 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import java.util.Set;
 
 // NOTE: Can be generated.
-public class BasicSymbolsRestrictedIncMapping implements BasicSymbolsLocalIncMapping {
+public class BasicSymbolsRestrictedIncMapping implements IBasicSymbolsLocalIncMapping {
 
-  protected final BasicSymbolsLocalIncMapping originalMapping;
-  protected final BasicSymbolsBindings bindings;
+  protected final IBasicSymbolsLocalIncMapping originalMapping;
+  protected final IBasicSymbolsBindings bindings;
 
-  public BasicSymbolsRestrictedIncMapping(BasicSymbolsLocalIncMapping originalMapping, BasicSymbolsBindings bindings) {
+  public BasicSymbolsRestrictedIncMapping(IBasicSymbolsLocalIncMapping originalMapping, IBasicSymbolsBindings bindings) {
     this.originalMapping = originalMapping;
     this.bindings = bindings;
   }
