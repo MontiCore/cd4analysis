@@ -11,22 +11,23 @@ import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+
 import java.util.List;
 
 public class CD4AnalysisSymbolTableCompleter {
-
+  
   protected CD4AnalysisTraverser traverser;
-
+  
   public CD4AnalysisSymbolTableCompleter(ASTCDCompilationUnit ast) {
     this(ast.getMCImportStatementList(), ast.isPresentMCPackageDeclaration() ? ast
         .getMCPackageDeclaration().getMCQualifiedName() : MCQualifiedNameFacade.createQualifiedName(
             ""));
   }
-
+  
   public CD4AnalysisSymbolTableCompleter(List<ASTMCImportStatement> imports,
       ASTMCQualifiedName packageDeclaration) {
     this.traverser = CD4AnalysisMill.inheritanceTraverser();
-
+    
     final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(
         new FullSynthesizeFromCD4Analysis());
     traverser.add4CDBasis(cDBasisVisitor);
@@ -39,7 +40,7 @@ public class CD4AnalysisSymbolTableCompleter {
         new CDInterfaceAndEnumSymbolTableCompleter(new FullSynthesizeFromCD4Analysis());
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
   }
-
+  
   public CD4AnalysisTraverser getTraverser() { return traverser; }
-
+  
 }
