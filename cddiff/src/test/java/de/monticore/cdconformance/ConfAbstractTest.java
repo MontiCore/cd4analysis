@@ -1,16 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
+import org.junit.jupiter.api.BeforeEach;
+
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class ConfAbstractTest {
   
@@ -24,8 +25,7 @@ public abstract class ConfAbstractTest {
   
   @BeforeEach
   public void setup() {
-    Log.init();
-    Log.enableFailQuick(false);
+    LogStub.init();
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
