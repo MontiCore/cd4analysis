@@ -41,7 +41,17 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
   }
   
   public boolean checkConformance(ASTCDAssociation concrete, ASTCDAssociation ref) {
-    return check(concrete, ref) || checkReverse(concrete, ref);
+    if (check(concrete, ref)) {
+      warnExplicitRoleNameMissing(concrete.getLeft(), ref.getLeft());
+      warnExplicitRoleNameMissing(concrete.getRight(), ref.getRight());
+      return true;
+    }
+    if (checkReverse(concrete, ref)) {
+      warnExplicitRoleNameMissing(concrete.getLeft(), ref.getRight());
+      warnExplicitRoleNameMissing(concrete.getRight(), ref.getLeft());
+      return true;
+    }
+    return false;
   }
   
   protected boolean check(ASTCDAssociation concrete, ASTCDAssociation ref) {
@@ -112,6 +122,29 @@ public class BasicAssocConfStrategy implements ConformanceStrategy<ASTCDAssociat
     }
     return !ref.isPresentCDCardinality() || concrete.getCDCardinality().deepEquals(ref
         .getCDCardinality());
+  }
+  
+  /**
+   * Warns if the concrete association side does not have an explicit role name although the
+   * matching reference association side has an explicit role name.
+   *
+   * @param concrete the concrete association side
+   * @param reference the reference association side
+   */
+  protected void warnExplicitRoleNameMissing(ASTCDAssocSide concrete, ASTCDAssocSide reference) {
+    if (reference.isPresentCDRole() && !concrete.isPresentCDRole()) {
+      /*
+       * Strategies like ImplicitRoleNameAssocIncStrategy might return matches where no concrete
+       * role name is present, but the implicit name (by convention) is matches the reference
+       * role name.
+       * We warn the user and recommend to provide an explicit concrete role name if there is an
+       * explicit reference role name. There are conventions for the implicit name but better not
+       * rely on having the same convention in mind as the reference modeler.
+       */
+      Log.warn("There is no explicit concrete role name although the matching reference "
+          + "association side has an explicit role name (" + reference.getCDRole().getName()
+          + "). This is not recommended.", concrete.get_SourcePositionStart());
+    }
   }
   
   protected boolean checkReference(String concrete, String ref) {
