@@ -1,4 +1,4 @@
-package de.monticore.refadaptation;
+package de.monticore.refmodel;
 
 /**
  * Exception thrown when an existing binding conflicts with a new binding that is being added to

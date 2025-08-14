@@ -1,5 +1,6 @@
-package de.monticore.symbols.basicsymbols;
+package de.monticore.symbols.basicsymbols.refmodel;
 
+import de.monticore.refmodel.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
@@ -12,7 +13,7 @@ import de.monticore.symboltable.ISymbol;
  * or scope.<br>
  *
  * @see IBasicSymbolsBindings
- * @see de.monticore.refadaptation.Binding
+ * @see Binding
  */
 public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
 

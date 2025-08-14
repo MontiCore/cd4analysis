@@ -1,4 +1,4 @@
-package de.monticore.refadaptation;
+package de.monticore.refmodel;
 
 import com.google.common.base.Preconditions;
 import de.monticore.symboltable.ISymbol;

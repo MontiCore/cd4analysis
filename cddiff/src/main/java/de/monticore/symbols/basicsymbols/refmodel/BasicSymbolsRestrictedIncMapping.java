@@ -1,6 +1,6 @@
-package de.monticore.symbols.basicsymbols;
+package de.monticore.symbols.basicsymbols.refmodel;
 
-import de.monticore.refmodels.IncMappingUtils;
+import de.monticore.refmodel.IncMappingUtils;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;

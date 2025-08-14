@@ -1,7 +1,5 @@
-package de.monticore.refmodels;
+package de.monticore.refmodel;
 
-import de.monticore.refadaptation.Binding;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
 
 import java.util.Optional;

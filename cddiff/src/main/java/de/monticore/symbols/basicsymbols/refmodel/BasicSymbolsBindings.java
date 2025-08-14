@@ -1,8 +1,8 @@
-package de.monticore.symbols.basicsymbols;
+package de.monticore.symbols.basicsymbols.refmodel;
 
-import de.monticore.refadaptation.Binding;
-import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.refadaptation.Bindings;
+import de.monticore.refmodel.Binding;
+import de.monticore.refmodel.BindingConflictException;
+import de.monticore.refmodel.Bindings;
 import de.monticore.symbols.basicsymbols._symboltable.*;
 import de.monticore.types.check.SymTypeExpression;
 

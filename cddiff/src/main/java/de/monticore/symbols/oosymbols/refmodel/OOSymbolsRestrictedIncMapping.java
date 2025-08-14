@@ -1,7 +1,7 @@
-package de.monticore.symbols;
+package de.monticore.symbols.oosymbols.refmodel;
 
-import de.monticore.refmodels.IncMappingUtils;
-import de.monticore.symbols.basicsymbols.BasicSymbolsRestrictedIncMapping;
+import de.monticore.refmodel.IncMappingUtils;
+import de.monticore.symbols.basicsymbols.refmodel.BasicSymbolsRestrictedIncMapping;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;

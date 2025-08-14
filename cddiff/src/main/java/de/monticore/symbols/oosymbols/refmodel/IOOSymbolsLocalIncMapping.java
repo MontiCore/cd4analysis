@@ -1,6 +1,6 @@
-package de.monticore.symbols;
+package de.monticore.symbols.oosymbols.refmodel;
 
-import de.monticore.symbols.basicsymbols.IBasicSymbolsLocalIncMapping;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsLocalIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;

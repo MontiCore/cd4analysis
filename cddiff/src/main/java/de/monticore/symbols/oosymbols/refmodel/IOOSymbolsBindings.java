@@ -1,8 +1,8 @@
-package de.monticore.symbols;
+package de.monticore.symbols.oosymbols.refmodel;
 
-import de.monticore.refadaptation.Binding;
-import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
+import de.monticore.refmodel.Binding;
+import de.monticore.refmodel.BindingConflictException;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;

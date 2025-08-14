@@ -1,6 +1,6 @@
-package de.monticore.symbols;
+package de.monticore.symbols.oosymbols.refmodel;
 
-import de.monticore.symbols.basicsymbols.IBasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;

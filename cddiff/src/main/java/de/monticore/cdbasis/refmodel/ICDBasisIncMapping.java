@@ -1,8 +1,8 @@
-package de.monticore.cdbasis;
+package de.monticore.cdbasis.refmodel;
 
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.symbols.IOOSymbolsLocalIncMapping;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsLocalIncMapping;
 
 import java.util.Set;
 
