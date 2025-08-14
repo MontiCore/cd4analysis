@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symbols.basicsymbols.refmodel;
 
 import de.monticore.refmodel.Binding;
@@ -12,48 +13,41 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
-
+  
   // TODO -> This could be a generated TOP class and developers can override e.g., addFieldBinding to additionally check if it conflicts with type bindings!
   //      -> That's detailed semantic a generator cannot know about!
   //      -> other example: addFunctionBinding but a parameter type of the function is already bound to something else
   //        -> maybe throw exception in that case so adaptation / variant logic can handle ti and drop the variant
-
+  
   private final Bindings<TypeSymbol> typeBindings;
   private final Bindings<VariableSymbol> variableBindings;
   private final Bindings<FunctionSymbol> functionBindings;
-
-
+  
   protected BasicSymbolsBindingsTOP(Bindings<TypeSymbol> typeBindings,
-                                    Bindings<VariableSymbol> variableBindings,
-                                    Bindings<FunctionSymbol> functionBindings) {
+      Bindings<VariableSymbol> variableBindings, Bindings<FunctionSymbol> functionBindings) {
     this.typeBindings = typeBindings;
     this.variableBindings = variableBindings;
     this.functionBindings = functionBindings;
   }
-
+  
   public BasicSymbolsBindingsTOP() {
     this(new Bindings<>(), new Bindings<>(), new Bindings<>());
   }
-
+  
   @Override
   public IBasicSymbolsBindings copy() {
-    return new BasicSymbolsBindings(
-        new Bindings<>(typeBindings),
-        new Bindings<>(variableBindings),
-        new Bindings<>(functionBindings)
-    );
+    return new BasicSymbolsBindings(new Bindings<>(typeBindings), new Bindings<>(variableBindings),
+        new Bindings<>(functionBindings));
   }
-
+  
   @Override
   public Optional<Binding<TypeSymbol>> getBinding(TypeSymbol typeSymbol) {
     return typeBindings.get(typeSymbol);
   }
-
+  
   @Override
-  public Set<Binding<TypeSymbol>> getTypeBindings() {
-    return typeBindings.getAll();
-  }
-
+  public Set<Binding<TypeSymbol>> getTypeBindings() { return typeBindings.getAll(); }
+  
   @Override
   public void addTypeBinding(Binding<TypeSymbol> binding) throws BindingConflictException {
     if (isConflictingTypeBinding(binding)) {
@@ -62,36 +56,35 @@ public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
     typeBindings.add(binding);
     addAll(getTypeImpliedBindings(binding));
   }
-
+  
   @Override
   public boolean isConflictingTypeBinding(Binding<TypeSymbol> binding) {
     try {
-      return typeBindings.conflictsWith(binding)
-              || isConflicting(getTypeImpliedBindings(binding));
-    } catch (BindingConflictException e) {
-      Log.error("The bindings implied by " + binding + " conflict with each other! " +
-              "Either there is an issue in the model or you should check the implementation of " +
-              "BasicSymbolBindings.getTypeImpliedBindings", e);
+      return typeBindings.conflictsWith(binding) || isConflicting(getTypeImpliedBindings(binding));
+    }
+    catch (BindingConflictException e) {
+      Log.error("The bindings implied by " + binding + " conflict with each other! "
+          + "Either there is an issue in the model or you should check the implementation of "
+          + "BasicSymbolBindings.getTypeImpliedBindings", e);
       return true;
     }
   }
-
+  
   @Override
-  public IBasicSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
+  public IBasicSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding)
+      throws BindingConflictException {
     // default implementation returns an empty set
     return new BasicSymbolsBindings();
   }
-
+  
   @Override
   public Optional<Binding<VariableSymbol>> getBinding(VariableSymbol variableSymbol) {
     return variableBindings.get(variableSymbol);
   }
-
+  
   @Override
-  public Set<Binding<VariableSymbol>> getVariableBindings() {
-    return variableBindings.getAll();
-  }
-
+  public Set<Binding<VariableSymbol>> getVariableBindings() { return variableBindings.getAll(); }
+  
   @Override
   public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
     if (isConflictingVariableBinding(binding)) {
@@ -100,36 +93,36 @@ public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
     variableBindings.add(binding);
     addAll(getVariableImpliedBindings(binding));
   }
-
+  
   @Override
   public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
     try {
-      return variableBindings.conflictsWith(binding)
-              || isConflicting(getVariableImpliedBindings(binding));
-    } catch (BindingConflictException e) {
-      Log.error("The bindings implied by " + binding + " conflict with each other! " +
-              "Either there is an issue in the model or you should check the implementation of " +
-              "BasicSymbolBindings.getVariableImpliedBindings", e);
+      return variableBindings.conflictsWith(binding) || isConflicting(getVariableImpliedBindings(
+          binding));
+    }
+    catch (BindingConflictException e) {
+      Log.error("The bindings implied by " + binding + " conflict with each other! "
+          + "Either there is an issue in the model or you should check the implementation of "
+          + "BasicSymbolBindings.getVariableImpliedBindings", e);
       return true;
     }
   }
-
+  
   @Override
-  public IBasicSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+  public IBasicSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding)
+      throws BindingConflictException {
     // default implementation returns an empty set
     return new BasicSymbolsBindings();
   }
-
+  
   @Override
   public Optional<Binding<FunctionSymbol>> getBinding(FunctionSymbol functionSymbol) {
     return functionBindings.get(functionSymbol);
   }
-
+  
   @Override
-  public Set<Binding<FunctionSymbol>> getFunctionBindings() {
-    return functionBindings.getAll();
-  }
-
+  public Set<Binding<FunctionSymbol>> getFunctionBindings() { return functionBindings.getAll(); }
+  
   @Override
   public void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException {
     if (isConflictingFunctionBinding(binding)) {
@@ -138,26 +131,28 @@ public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
     functionBindings.add(binding);
     addAll(getFunctionImpliedBindings(binding));
   }
-
+  
   @Override
   public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
     try {
-      return functionBindings.conflictsWith(binding)
-              || isConflicting(getFunctionImpliedBindings(binding));
-    } catch (BindingConflictException e) {
-      Log.error("The bindings implied by " + binding + " conflict with each other! " +
-              "Either there is an issue in the model or you should check the implementation of " +
-              "BasicSymbolBindings.getFunctionImpliedBindings", e);
+      return functionBindings.conflictsWith(binding) || isConflicting(getFunctionImpliedBindings(
+          binding));
+    }
+    catch (BindingConflictException e) {
+      Log.error("The bindings implied by " + binding + " conflict with each other! "
+          + "Either there is an issue in the model or you should check the implementation of "
+          + "BasicSymbolBindings.getFunctionImpliedBindings", e);
       return true;
     }
   }
-
+  
   @Override
-  public IBasicSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+  public IBasicSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding)
+      throws BindingConflictException {
     // default implementation returns an empty set
     return new BasicSymbolsBindings();
   }
-
+  
   @Override
   public void addAll(IBasicSymbolsBindings bindings) throws BindingConflictException {
     if (isConflicting(bindings)) {
@@ -173,7 +168,7 @@ public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
       addFunctionBinding(binding);
     }
   }
-
+  
   @Override
   public boolean isConflicting(IBasicSymbolsBindings otherBindings) {
     for (Binding<TypeSymbol> binding : otherBindings.getTypeBindings()) {
@@ -193,4 +188,5 @@ public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
     }
     return false;
   }
+  
 }

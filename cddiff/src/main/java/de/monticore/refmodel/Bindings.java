@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.refmodel;
 
 import com.google.common.base.Preconditions;
@@ -13,7 +14,8 @@ import java.util.function.Function;
 /**
  * Represents a consistent set of bindings for a specific symbol kind. {@link T}<br>
  * <br>
- * <b>NOTE:</b> This is a helper class for INTERNAL IMPLEMENTATION of the language specific interfaces
+ * <b>NOTE:</b> This is a helper class for INTERNAL IMPLEMENTATION of the language specific
+ * interfaces
  * which provide access to bindings.
  * This class is mutable and should not be exposed to handwritten code! Instead, there are specific
  * mutation methods in the language specific interfaces.
@@ -22,13 +24,13 @@ import java.util.function.Function;
  * @param <T> the kind of symbol for which bindings are defined.
  */
 public class Bindings<T extends ISymbol> {
-
+  
   /**
    * The map of bindings, where the key is computed from the reference element of the binding.
    * The key is computed using the {@link #computeKeyFunction}.
    */
   private final Map<String, Binding<T>> bindings = new HashMap<>();
-
+  
   // TODO Do we need this on this level, or only for the context symbols one level higher?
   /*
    * This is a workaround so we do not have to deal with multiple instances of the same symbol
@@ -42,15 +44,15 @@ public class Bindings<T extends ISymbol> {
    * This is used to ensure that bindings can be uniquely identified in the map.
    */
   private final Function<ISymbol, String> computeKeyFunction;
-
+  
   public Bindings(Function<ISymbol, String> computeKeyFunction) {
     this.computeKeyFunction = computeKeyFunction;
   }
-
+  
   public Bindings() {
     this(Bindings::computeDefaultKey);
   }
-
+  
   /**
    * Creates a new instance of Bindings by copying the bindings from another instance.
    *
@@ -60,7 +62,7 @@ public class Bindings<T extends ISymbol> {
     this.computeKeyFunction = other.computeKeyFunction;
     this.bindings.putAll(other.bindings);
   }
-
+  
   /**
    * Computes a default key for a symbol based on its full name.<br>
    * <br>
@@ -73,7 +75,7 @@ public class Bindings<T extends ISymbol> {
   public static String computeDefaultKey(ISymbol symbol) {
     return symbol.getFullName();
   }
-
+  
   /**
    * Adds a binding to the set of bindings if there is no conflict with an existing binding.
    *
@@ -86,11 +88,12 @@ public class Bindings<T extends ISymbol> {
     Binding<T> existingBinding = bindings.get(key);
     if (existingBinding != null) {
       bindings.put(key, existingBinding.mergeOrThrowConflict(binding, computeKeyFunction));
-    } else {
+    }
+    else {
       bindings.put(key, binding);
     }
   }
-
+  
   /**
    * Checks if the given binding conflicts with an existing binding in this set of bindings.
    *
@@ -100,23 +103,23 @@ public class Bindings<T extends ISymbol> {
   public boolean conflictsWith(Binding<T> binding) {
     return getConflictingBinding(binding).isPresent();
   }
-
+  
   protected Optional<Binding<T>> getConflictingBinding(Binding<T> binding) {
     String key = computeKeyFunction.apply(binding.getReferenceElement());
-    return Optional.ofNullable(bindings.get(key))
-        .filter(existingBinding -> existingBinding.conflictsWith(binding, computeKeyFunction));
+    return Optional.ofNullable(bindings.get(key)).filter(existingBinding -> existingBinding
+        .conflictsWith(binding, computeKeyFunction));
   }
-
+  
   // TODO remove if not used?
   protected void throwIfConflict(Binding<T> newBinding) throws BindingConflictException {
     Optional<Binding<T>> conflictingBinding = getConflictingBinding(newBinding);
     if (conflictingBinding.isPresent()) {
-      Log.debug("Existing binding conflicts with new binding: " + conflictingBinding.get() + " - " + newBinding,
-          Bindings.class.getName());
+      Log.debug("Existing binding conflicts with new binding: " + conflictingBinding.get() + " - "
+          + newBinding, Bindings.class.getName());
       throw new BindingConflictException(newBinding);
     }
   }
-
+  
   /**
    * Returns the binding for the given reference element if it exists in this set of bindings.
    *
@@ -128,14 +131,13 @@ public class Bindings<T extends ISymbol> {
     String key = computeKeyFunction.apply(refElement);
     return Optional.ofNullable(bindings.get(key));
   }
-
+  
   /**
    * Returns all bindings in this set of bindings.
    *
    * @return a set of all bindings
    * @implNote The returned set is a copy of the internal map values to ensure immutability.
    */
-  public Set<Binding<T>> getAll() {
-    return Set.copyOf(bindings.values());
-  }
+  public Set<Binding<T>> getAll() { return Set.copyOf(bindings.values()); }
+  
 }

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.refmodel;
 
 /**
@@ -5,11 +6,12 @@ package de.monticore.refmodel;
  * a set of bindings.
  */
 public class BindingConflictException extends Exception {
-
+  
   public BindingConflictException() {
   }
-
+  
   public BindingConflictException(Binding<?> conflictingBinding) {
     super("Binding conflict. Cannot add: " + conflictingBinding);
   }
+  
 }

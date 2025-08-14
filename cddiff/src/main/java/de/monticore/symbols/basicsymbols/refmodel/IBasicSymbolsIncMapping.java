@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.symbols.basicsymbols.refmodel;
 
 import de.monticore.refmodel.Binding;
@@ -16,21 +17,21 @@ import de.monticore.symboltable.ISymbol;
  * @see Binding
  */
 public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
-
+  
   /**
    * Returns the scope that is used to symbols of the reference model.
    *
    * @return the scope for reference symbols
    */
   IBasicSymbolsScope getReferenceScope();
-
+  
   /**
    * Returns the scope that is used to symbols of the concrete model.
    *
    * @return the scope for concrete symbols
    */
   IBasicSymbolsScope getConcreteScope();
-
+  
   /*
    * TODO Discuss this
    * Although an incarnation mapping is always defined for a single reference model and a single
@@ -39,9 +40,9 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * symbols.
    * Therefore, we have no "getReferenceModel()" or "getConcreteModel()" methods here.
    */
-
+  
   String computeSymbolKey(ISymbol symbol);
-
+  
   /**
    * Returns the local incarnation mapping for the given context symbol.<br>
    * This is the global incarnation mapping restricted by the bindings holding for the given
@@ -51,7 +52,7 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @return the local incarnation mapping for the given context symbol
    */
   IBasicSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol);
-
+  
   /**
    * Returns the local incarnation mapping for the given scope.<br>
    * This is the global incarnation mapping restricted by the bindings holding for the given scope.
@@ -60,19 +61,18 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @return the local incarnation mapping for the given scope
    */
   IBasicSymbolsLocalIncMapping getScopedMapping(IScope scope);
-
+  
   /**
    * Returns the bindings holding at the context symbol represented by the given key.<br>
    *
    * @param contextSymbolKey the key representing the context symbol for which the bindings should
-   *                         be returned
+   * be returned
    * @return the scoped bindings for the given context symbol key
-   * 
+   *
    * @see #computeSymbolKey(ISymbol)
    */
   IBasicSymbolsBindings getScopedBindings(String contextSymbolKey);
-
-
+  
   /**
    * Returns the bindings holding at the given context symbol.
    *
@@ -80,7 +80,7 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @return the scoped bindings for the given context symbol
    */
   IBasicSymbolsBindings getScopedBindings(ISymbol contextSymbol);
-
+  
   /**
    * Returns the bindings holding at the given scope.
    *
@@ -88,4 +88,5 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @return the scoped bindings for the given scope
    */
   IBasicSymbolsBindings getScopedBindings(IScope scope);
+  
 }

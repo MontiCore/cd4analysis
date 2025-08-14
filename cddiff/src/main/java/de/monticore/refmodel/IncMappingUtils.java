@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.refmodel;
 
 import de.monticore.symboltable.ISymbol;
@@ -14,10 +15,10 @@ import java.util.stream.Collectors;
  * fact we do not generate any code (yet).
  */
 public class IncMappingUtils {
-
+  
   private IncMappingUtils() {
   }
-
+  
   /**
    * Returns the set of incarnations that are allowed for a given reference symbol,
    * taking into account the binding associated with it.
@@ -37,24 +38,19 @@ public class IncMappingUtils {
    * @param <T> the kind of symbol
    */
   public static <T extends ISymbol> Set<T> getRestrictIncarnations(
-          Function<T, Set<T>> getIncarnations,
-          Function<T, Optional<Binding<T>>> getBinding,
-          Predicate<Binding<T>> isConflictingBinding,
-          T refSymbol) {
-    return getBinding.apply(refSymbol)
-            .map(binding -> {
-              if (binding.isStrict()) {
-                return binding.getConcreteElements();
-              } else {
-                return getIncarnations.apply(refSymbol);
-              }
-            })
-            .orElseGet(() -> getIncarnations.apply(refSymbol))
-            .stream()
-            .filter(incarnation -> {
-              Binding<T> binding = Binding.createStrict(refSymbol, incarnation);
-              return !isConflictingBinding.test(binding);
-            })
-            .collect(Collectors.toSet());
+      Function<T, Set<T>> getIncarnations, Function<T, Optional<Binding<T>>> getBinding,
+      Predicate<Binding<T>> isConflictingBinding, T refSymbol) {
+    return getBinding.apply(refSymbol).map(binding -> {
+      if (binding.isStrict()) {
+        return binding.getConcreteElements();
+      }
+      else {
+        return getIncarnations.apply(refSymbol);
+      }
+    }).orElseGet(() -> getIncarnations.apply(refSymbol)).stream().filter(incarnation -> {
+      Binding<T> binding = Binding.createStrict(refSymbol, incarnation);
+      return !isConflictingBinding.test(binding);
+    }).collect(Collectors.toSet());
   }
+  
 }
