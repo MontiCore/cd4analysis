@@ -14,10 +14,13 @@ import java.util.Set;
 
 public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
   
-  // TODO -> This could be a generated TOP class and developers can override e.g., addFieldBinding to additionally check if it conflicts with type bindings!
-  //      -> That's detailed semantic a generator cannot know about!
-  //      -> other example: addFunctionBinding but a parameter type of the function is already bound to something else
-  //        -> maybe throw exception in that case so adaptation / variant logic can handle ti and drop the variant
+  /*
+   * NOTE: This class can be generated and developers can override methods to add additional checks
+   * for conflicts.
+   * For example, addFieldBinding to additionally check if it conflicts with type bindings,
+   * or addFunctionBinding to check if a parameter type of the function is already bound to
+   * something else
+   */
   
   private final Bindings<TypeSymbol> typeBindings;
   private final Bindings<VariableSymbol> variableBindings;

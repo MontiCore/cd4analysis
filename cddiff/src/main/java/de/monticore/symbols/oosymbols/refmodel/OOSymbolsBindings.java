@@ -108,7 +108,6 @@ public class OOSymbolsBindings extends OOSymbolsBindingsTOP {
    * @return true if the symbol is declared in a type symbol, false otherwise
    */
   protected boolean isDeclaringTypeSymbolPresent(ISymbol symbol) {
-    // TODO Get declaring type via spanning symbol of enclosing scope vs. resolve qualifier from symbol full name
     return symbol.getEnclosingScope().isPresentSpanningSymbol() && symbol.getEnclosingScope()
         .getSpanningSymbol() instanceof TypeSymbol;
   }

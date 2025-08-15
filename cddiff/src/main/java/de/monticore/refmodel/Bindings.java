@@ -3,7 +3,6 @@ package de.monticore.refmodel;
 
 import com.google.common.base.Preconditions;
 import de.monticore.symboltable.ISymbol;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -108,16 +107,6 @@ public class Bindings<T extends ISymbol> {
     String key = computeKeyFunction.apply(binding.getReferenceElement());
     return Optional.ofNullable(bindings.get(key)).filter(existingBinding -> existingBinding
         .conflictsWith(binding, computeKeyFunction));
-  }
-  
-  // TODO remove if not used?
-  protected void throwIfConflict(Binding<T> newBinding) throws BindingConflictException {
-    Optional<Binding<T>> conflictingBinding = getConflictingBinding(newBinding);
-    if (conflictingBinding.isPresent()) {
-      Log.debug("Existing binding conflicts with new binding: " + conflictingBinding.get() + " - "
-          + newBinding, Bindings.class.getName());
-      throw new BindingConflictException(newBinding);
-    }
   }
   
   /**
