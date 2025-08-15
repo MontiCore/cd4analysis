@@ -246,7 +246,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public void addTypeBinding(Binding<TypeSymbol> binding) throws BindingConflictException {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       addOOTypeBinding(binding.cast());
     }
@@ -261,7 +260,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public boolean isConflictingTypeBinding(Binding<TypeSymbol> binding) {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       return isConflictingOOTypeBinding(binding.cast());
     }
@@ -282,7 +280,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   @Override
   public IOOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding)
       throws BindingConflictException {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof OOTypeSymbol) {
       return getOOTypeImpliedBindings(binding.cast());
     }
@@ -310,7 +307,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public void addVariableBinding(Binding<VariableSymbol> binding) throws BindingConflictException {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       addFieldBinding(binding.cast());
     }
@@ -325,7 +321,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       return isConflictingFieldBinding(binding.cast());
     }
@@ -346,7 +341,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   @Override
   public IOOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding)
       throws BindingConflictException {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof FieldSymbol) {
       return getFieldImpliedBindings(binding.cast());
     }
@@ -374,7 +368,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public void addFunctionBinding(Binding<FunctionSymbol> binding) throws BindingConflictException {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       addMethodBinding(binding.cast());
     }
@@ -389,7 +382,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       return isConflictingMethodBinding(binding.cast());
     }
@@ -410,7 +402,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   @Override
   public IOOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding)
       throws BindingConflictException {
-    // TODO should we check this here?
     if (binding.getReferenceElement() instanceof MethodSymbol) {
       return getMethodImpliedBindings(binding.cast());
     }
@@ -423,7 +414,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public void addAll(IBasicSymbolsBindings bindings) throws BindingConflictException {
-    // TODO should we check this here?
     if (bindings instanceof IOOSymbolsBindings) {
       addAll((IOOSymbolsBindings) bindings);
     }
@@ -434,7 +424,6 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   
   @Override
   public boolean isConflicting(IBasicSymbolsBindings otherBindings) {
-    // TODO should we check this here?
     if (otherBindings instanceof IOOSymbolsBindings) {
       return isConflicting((IOOSymbolsBindings) otherBindings);
     }

@@ -18,6 +18,14 @@ import de.monticore.symboltable.ISymbol;
  */
 public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
   
+  /*
+   * Although an incarnation mapping is always defined for a single reference model and a single
+   * concrete model, this does not necessarily mean that there is only a single concrete and
+   * reference artifact! A "model" could also be composed of multiple artifacts defining distinct
+   * symbols.
+   * Therefore, we have no "getReferenceModel()" or "getConcreteModel()" methods here.
+   */
+  
   /**
    * Returns the scope that is used to symbols of the reference model.
    *
@@ -32,15 +40,13 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    */
   IBasicSymbolsScope getConcreteScope();
   
-  /*
-   * TODO Discuss this
-   * Although an incarnation mapping is always defined for a single reference model and a single
-   * concrete model, this does not necessarily mean that there is only a single concrete and
-   * reference artifact! A "model" could also be composed of multiple artifacts defining distinct
-   * symbols.
-   * Therefore, we have no "getReferenceModel()" or "getConcreteModel()" methods here.
+  /**
+   * Compute the key for a symbol that is used to identify it in the incarnation mapping.<br>
+   * <br>
+   * We cannot use {@link ISymbol#getFullName()} in every case. For example, methods can be
+   * overloaded (same name, different parameters) and thus have the same full name.
+   * In such cases, the key must be computed differently.
    */
-  
   String computeSymbolKey(ISymbol symbol);
   
   /**

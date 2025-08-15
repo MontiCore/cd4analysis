@@ -131,6 +131,20 @@ public class Binding<T extends ISymbol> {
     }
   }
   
+  /**
+   * <b>WARNING: use with care!</b><br>
+   * <br>
+   * Casts this binding to a binding of a different symbol type.<br>
+   * This is a workaround for limitations of the Java type system, which does not allow
+   * to, e.g. cast a {@code Binding<FieldSymbol>} to a {@code Binding<VariableSymbol>} even though
+   * {@code FieldSymbol} extends {@code VariableSymbol}.
+   * <br>
+   * Instead of writing an explicit <i>unchecked</i> cast producing a warning everytime, we provide
+   * this helper method.
+   *
+   * @return a binding of the specified type
+   * @param <O> the type to cast teh symbols to, must extend {@link ISymbol}
+   */
   public <O extends ISymbol> Binding<O> cast() {
     @SuppressWarnings("unchecked")
     Binding<O> casted = (Binding<O>) this;
