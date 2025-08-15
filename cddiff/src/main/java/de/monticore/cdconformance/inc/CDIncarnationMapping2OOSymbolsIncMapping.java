@@ -26,14 +26,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO CDIncarnationMapping in cd4a should be a supertype of OOSymbolsIncMapping
+/**
+ * This class is a bridge between the {@link CDIncarnationMapping} and the
+ * {@link IOOSymbolsIncMapping} which we use for reference artifact adaptation.
+ *
+ * Eventually, we should use the new binding abstraction also in CD conformance check and
+ * CD concretization tool!
+ *
+ * @deprecated remove & replace {@link CDIncarnationBindings} with the new interface
+ */
 @Deprecated
-public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements IOOSymbolsIncMapping {
+public class CDIncarnationMapping2OOSymbolsIncMapping implements IOOSymbolsIncMapping {
   
   private CDIncarnationMapping cdIncarnationMapping;
   private ASTCDCompilationUnit concreteCD;
   private ASTCDCompilationUnit referenceCD;
   
-  public LegacyCDIncarnationMapping2OOSymbolsIncMapping(CDIncarnationMapping cdIncarnationMapping,
+  public CDIncarnationMapping2OOSymbolsIncMapping(CDIncarnationMapping cdIncarnationMapping,
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD) {
     this.cdIncarnationMapping = cdIncarnationMapping;
     this.concreteCD = concreteCD;
@@ -71,20 +80,19 @@ public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements IOOSymbol
   
   @Override
   public IOOSymbolsBindings getScopedBindings(String contextSymbolKey) {
-    return new LegacyCDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, null,
+    return new CDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, null,
         contextSymbolKey);
   }
   
   @Override
   public IOOSymbolsBindings getScopedBindings(ISymbol contextSymbol) {
-    return new LegacyCDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, contextSymbol,
-        null, contextSymbol.getFullName());
+    return new CDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, contextSymbol, null,
+        contextSymbol.getFullName());
   }
   
   @Override
   public IOOSymbolsBindings getScopedBindings(IScope scope) {
-    return new LegacyCDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, scope,
-        null);
+    return new CDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, scope, null);
   }
   
   @Override

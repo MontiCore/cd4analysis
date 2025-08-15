@@ -22,15 +22,23 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This class is a bridge between the {@link CDIncarnationBindings} and the
+ * {@link IOOSymbolsBindings} which we use for reference artifact adaptation.
+ * Eventually, we should use the new binding abstraction also in CD conformance check and
+ * CD concretization tool!
+ *
+ * @deprecated remove & replace {@link CDIncarnationBindings} with the new interface
+ */
 @Deprecated
-public class LegacyCDIncarnationBindings2OOSymbolsBindings implements IOOSymbolsBindings {
+public class CDIncarnationBindings2OOSymbolsBindings implements IOOSymbolsBindings {
   
   private final CDIncarnationBindings cdIncarnationBindings;
   private final ISymbol contextSymbol;
   private final IScope scope;
   private final String contextSymbolKey;
   
-  public LegacyCDIncarnationBindings2OOSymbolsBindings(CDIncarnationBindings cdIncarnationBindings,
+  public CDIncarnationBindings2OOSymbolsBindings(CDIncarnationBindings cdIncarnationBindings,
       ISymbol contextSymbol, IScope scope, String contextSymbolKey) {
     this.cdIncarnationBindings = cdIncarnationBindings;
     this.contextSymbol = contextSymbol;
