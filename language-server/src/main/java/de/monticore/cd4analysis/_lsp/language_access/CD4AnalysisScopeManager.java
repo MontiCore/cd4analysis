@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
-
+  
   @Override
   public void initGlobalScope(MCPath modelPath) {
     super.initGlobalScope(modelPath);
@@ -22,17 +22,17 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
       BasicSymbolsMill.initializeString();
     });
   }
-
+  
   @Override
   public CD4AnalysisArtifactScopeWithFindings createArtifactScope(ASTCDCompilationUnit ast,
       ICD4AnalysisArtifactScope old) {
     CD4AnalysisArtifactScopeWithFindings res = super.createArtifactScope(ast, old);
     ast.accept(new CD4AnalysisSymbolTableCompleter(ast).getTraverser());
     res.findings.addAll(Log.getFindings());
-
+    
     return res;
   }
-
+  
   @Override
   public Map<ASTCDCompilationUnit, CD4AnalysisArtifactScopeWithFindings> createAllArtifactScopes(
       Collection<ASTCDCompilationUnit> astNodes) {
@@ -45,7 +45,7 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
           // Use super.createArtifactScope, so that the completer is not used
           res.put(node, super.createArtifactScope(node, null));
         }
-
+        
         // Phase 2: complete symbol table when base structure is finished
         for (ASTCDCompilationUnit ast : astNodes) {
           Log.getFindings().clear();
@@ -56,5 +56,5 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
     });
     return res;
   }
-
+  
 }
