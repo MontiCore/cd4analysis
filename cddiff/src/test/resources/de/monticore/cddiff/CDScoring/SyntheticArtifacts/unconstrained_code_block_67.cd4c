@@ -1,0 +1,59 @@
+
+classdiagram TicketingSystem {
+
+    class TicketingSystem {
+        void addTicket(Ticket ticket);
+        void removeTicket(String ticketId);
+        void updateTicket(Ticket ticket);
+        Ticket getTicket(String ticketId);
+
+        void addRoute(Route route);
+        void removeRoute(String routeName);
+        void updateRoute(Route route);
+        Route getRoute(String routeName);
+
+        void addVehicle(Vehicle vehicle);
+        void removeVehicle(String vehicleId);
+        void updateVehicle(Vehicle vehicle);
+        Vehicle getVehicle(String vehicleId);
+    }
+
+    class Ticket {
+        String uniqueIdentifier;
+        Route route;
+        TicketType type;
+    }
+
+    class Route {
+        String name;
+        String description;
+        List<Stop> stops;
+        -> Vehicle [*];
+    }
+
+    class Vehicle {
+        String uniqueIdentifier;
+        List<Route> routes;
+        VehicleStatus status;
+    }
+
+    class Stop {
+        String name;
+        String description;
+    }
+
+    enum TicketType {
+        SingleRide, DayPass, MonthlyPass;
+    }
+
+    enum VehicleStatus {
+        Available, InMaintenance, OutOfService;
+    }
+
+    composition TicketingSystem -> Ticket [*];
+    composition TicketingSystem -> Route [*];
+    composition TicketingSystem -> Vehicle [*];
+    association Route -> Stop [*];
+    association Route -> Vehicle [*];
+    association Vehicle -> Route [*];
+}

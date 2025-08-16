@@ -1,0 +1,72 @@
+
+classdiagram AIProductionSystem {
+
+    class AIProductionSystem {
+        DataIngestionModule dataIngestionModule;
+        DataProcessingModule dataProcessingModule;
+        PredictiveAnalyticsModule predictiveAnalyticsModule;
+        RecommendationEngine recommendationEngine;
+        IntegrationModule integrationModule;
+        UserInterface userInterface;
+    }
+
+    class DataIngestionModule {
+        void collectData(SensorData sensorData);
+    }
+
+    class DataProcessingModule {
+        void analyzeData(SensorData sensorData);
+        Issue identifyIssues(SensorData sensorData);
+    }
+
+    class PredictiveAnalyticsModule {
+        Issue predictIssues(SensorData sensorData);
+    }
+
+    class RecommendationEngine {
+        Recommendation provideRecommendations(Issue issue);
+    }
+
+    class IntegrationModule {
+        void integrateWithERP(ERPData erpData);
+    }
+
+    class UserInterface {
+        void displayRealTimeData(SensorData sensorData);
+        void displayRecommendations(Recommendation recommendation);
+    }
+
+    class SensorData {
+        String sensorId;
+        String machineId;
+        String dataType;
+        String dataValue;
+        DateTime timestamp;
+    }
+
+    class Issue {
+        String issueId;
+        String description;
+        DateTime detectedAt;
+    }
+
+    class Recommendation {
+        String recommendationId;
+        String description;
+        DateTime recommendedAt;
+    }
+
+    class ERPData {
+        String erpId;
+        String dataType;
+        String dataValue;
+        DateTime timestamp;
+    }
+
+    composition AIProductionSystem -> DataIngestionModule;
+    composition AIProductionSystem -> DataProcessingModule;
+    composition AIProductionSystem -> PredictiveAnalyticsModule;
+    composition AIProductionSystem -> RecommendationEngine;
+    composition AIProductionSystem -> IntegrationModule;
+    composition AIProductionSystem -> UserInterface;
+}

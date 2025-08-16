@@ -1,0 +1,70 @@
+
+classdiagram VirtualAssistantSystem {
+
+    class VirtualAssistant {
+        UserInterface ui;
+        NLPModule nlp;
+        TaskManagementModule taskManager;
+        DeviceControlModule deviceControl;
+        DataStorageModule dataStorage;
+        IntegrationModule integration;
+    }
+
+    class UserInterface {
+        void interactWithUser();
+    }
+
+    class NLPModule {
+        String processCommand(String command);
+    }
+
+    class TaskManagementModule {
+        void setReminder(String reminder);
+        void sendMessage(String message);
+        void makePhoneCall(String phoneNumber);
+        void provideInformation(String infoType);
+        void provideRecommendations(String recommendationType);
+    }
+
+    class DeviceControlModule {
+        void controlDevice(Device device, String action);
+    }
+
+    class DataStorageModule {
+        void storeUserData(UserData data);
+        UserData retrieveUserData();
+    }
+
+    class IntegrationModule {
+        void integrateWithService(Service service);
+    }
+
+    class Device {
+        String deviceId;
+        DeviceType type;
+    }
+
+    class UserData {
+        String userId;
+        String preferences;
+    }
+
+    class Service {
+        String serviceName;
+        void connect();
+    }
+
+    enum DeviceType {
+        Smartphone, Smartwatch, SmartHomeDevice;
+    }
+
+    composition VirtualAssistant -> UserInterface;
+    composition VirtualAssistant -> NLPModule;
+    composition VirtualAssistant -> TaskManagementModule;
+    composition VirtualAssistant -> DeviceControlModule;
+    composition VirtualAssistant -> DataStorageModule;
+    composition VirtualAssistant -> IntegrationModule;
+    association DeviceControlModule -> Device;
+    association DataStorageModule -> UserData;
+    association IntegrationModule -> Service;
+}

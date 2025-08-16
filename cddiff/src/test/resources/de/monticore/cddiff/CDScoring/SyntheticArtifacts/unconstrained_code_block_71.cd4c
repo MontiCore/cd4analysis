@@ -1,0 +1,41 @@
+
+classdiagram ProjectManagement {
+
+    class ProjectManagementTool {
+        -> Project [*];
+        void generateProjectProgressReport(Project project);
+        void generateTaskCompletionReport(Project project);
+    }
+
+    class Project {
+        String name;
+        Date startDate;
+        Date endDate;
+        -> Task [*];
+    }
+
+    class Task {
+        String taskName;
+        String description;
+        Date dueDate;
+        TaskStatus status;
+        -> TeamMember [*];
+    }
+
+    class TeamMember {
+        String name;
+        String employeeID;
+        -> Task [*];
+    }
+
+    enum TaskStatus {
+        NotStarted,
+        InProgress,
+        Completed;
+    }
+
+    composition ProjectManagementTool -> Project [*];
+    composition Project -> Task [*];
+    association Task -> TeamMember [*];
+    association TeamMember -> Task [*];
+}

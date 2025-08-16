@@ -1,0 +1,58 @@
+
+classdiagram IPManagement {
+
+    class IPManagementSystem {
+        -> IPAsset [*];
+        -> Industry [*];
+        void searchByKeyword(String keyword);
+        void searchByTitle(String title);
+        void searchByOwner(Owner owner);
+    }
+
+    abstract class IPAsset {
+        String uniqueIdentifier;
+        String title;
+        String description;
+        IPStatus status;
+        -> Owner [*];
+        -> Industry [*];
+    }
+
+    class Patent extends IPAsset {
+        Date expirationDate;
+    }
+
+    class Trademark extends IPAsset {
+        Date registrationDate;
+    }
+
+    class Copyright extends IPAsset {
+        Date creationDate;
+    }
+
+    abstract class Owner {
+        String name;
+    }
+
+    class Person extends Owner {
+        String emailAddress;
+    }
+
+    class Organization extends Owner {
+        String taxIDNumber;
+    }
+
+    class Industry {
+        String name;
+        String description;
+    }
+
+    enum IPStatus {
+        Pending, Approved, Rejected;
+    }
+
+    composition IPManagementSystem -> IPAsset [*];
+    composition IPManagementSystem -> Industry [*];
+    association IPAsset -> Owner [*];
+    association IPAsset -> Industry [*];
+}

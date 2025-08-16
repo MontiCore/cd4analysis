@@ -9,6 +9,8 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cddiff.ow2cw.CDAttributeHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdmatcher.BooleanMatchingStrategy;
 import de.monticore.cdmatcher.MatchBySimilarity;
 import de.monticore.cdmatcher.MatchingStrategy;
@@ -21,6 +23,7 @@ import de.monticore.cdmatcher.caching.CachedMatches;
 import de.monticore.cdmatcher.caching.StructureCache;
 import de.monticore.cdmatcher.iterative.matching.association.MatchCDAssocByBestSuperType;
 import de.monticore.cdmatcher.iterative.matching.attribute.MatchCDAttributeByNameAndType;
+import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDEnum;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAssocs;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAttributes;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSubClasses;
@@ -29,8 +32,8 @@ import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeComposite;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeFromCache;
 import de.monticore.cdmatcher.similarity.CDAssocEmbeddingSimilarity;
 import de.monticore.cdmatcher.similarity.CDAssocSimilarity4Iterative;
-import de.monticore.cdmatcher.similarity.CDAttributeEmbeddingSimilarity;
-import de.monticore.cdmatcher.similarity.CDAttributeSimilarity;
+import de.monticore.cdmatcher.similarity.NameEmbeddingSimilarity;
+import de.monticore.cdmatcher.similarity.NameSimilarity;
 import de.monticore.cdmatcher.similarity.CDTypeEmbeddingSimilarity;
 import de.monticore.cdmatcher.similarity.CDTypeEmbeddingWithAttributesSimilarity;
 import de.monticore.cdmatcher.similarity.CDTypeSimilarity;
@@ -87,35 +90,36 @@ public class CDSynDiffMatches {
     Set<ASTCDType> srcTypes = CDDiffUtil.getAllTypesFromCD(srcCD);
     Set<ASTCDType> tgtTypes = CDDiffUtil.getAllTypesFromCD(tgtCD);
 
-    Set<MatchingStrategy<ASTCDType>> matchingStrategies;
-
+    MatchCDTypeComposite typeMatcher;
     if(useEmbedding) {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeEmbeddingSimilarity()));
-      matchingStrategies = new HashSet<>((Set.of(
+      Set<MatchingStrategy<ASTCDType>> matchingStrategies = new HashSet<>((Set.of(
         new MatchBySimilarity<>(new CDTypeEmbeddingWithAttributesSimilarity(structureCache)),
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache),
-        new MatchCDTypeByDirectAttributes(structureCache, new MatchBySimilarity<>(new CDAttributeEmbeddingSimilarity())),
+        new MatchCDTypeByDirectAttributes(structureCache, new MatchBySimilarity<>(new NameEmbeddingSimilarity<>(ASTCDAttribute::getName))),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache),
         new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache)
       )));
+      MatchingStrategy<ASTCDEnum> enumMatcher = new MatchCDEnum(new NameEmbeddingSimilarity<>(ASTCDEnum::getName), new NameEmbeddingSimilarity<>(ASTCDEnumConstant::getName));
+      typeMatcher = new MatchCDTypeComposite(matchingStrategies, enumMatcher, cachedMatches);
     } else {
       MatchCDTypeFromCache.setDefaultFallbackStrategy(new MatchBySimilarity<>(new CDTypeSimilarity()));
-      matchingStrategies = new HashSet<>((Set.of(
+      Set<MatchingStrategy<ASTCDType>> matchingStrategies = new HashSet<>((Set.of(
         new MatchBySimilarity<>(new CDTypeSimilarity()),
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocSimilarity4Iterative())), structureCache),
-        new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, new MatchBySimilarity<>(new CDAttributeSimilarity()))),
+        new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, new MatchBySimilarity<>(new NameSimilarity<>(ASTCDAttribute::getName)))),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache),
         new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache)
       )));
+      MatchingStrategy<ASTCDEnum> enumMatcher = new MatchCDEnum(new NameSimilarity<>(ASTCDEnum::getName), new NameSimilarity<>(ASTCDEnumConstant::getName));
+      typeMatcher = new MatchCDTypeComposite(matchingStrategies, enumMatcher, cachedMatches);
     }
-
-    MatchCDTypeComposite matcher = new MatchCDTypeComposite(matchingStrategies, cachedMatches);
 
     for(int i = 0; i < matchingIterations; i++) {
       cachedMatches.resetBiggestChange();
       for (ASTCDType srcType : srcTypes) {
         for (ASTCDType tgtType : tgtTypes) {
-          matcher.getScore(srcType, tgtType);
+          typeMatcher.getScore(srcType, tgtType);
         }
       }
       if(cachedMatches.getBiggestChange() < MINIMUM_CHANGE_THRESHOLD) break;

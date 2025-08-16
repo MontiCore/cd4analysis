@@ -1,0 +1,40 @@
+
+classdiagram VotingSystem {
+
+    class VotingSystem {
+        -> VotingStation [*];
+        -> Candidate [*];
+        void determineWinner();
+        void generateReport();
+    }
+
+    class VotingStation {
+        -> Voter [*];
+        void castVote(Voter voter, Candidate candidate);
+    }
+
+    class Voter {
+        String uniqueIdentifier;
+        boolean hasVoted;
+    }
+
+    class Candidate {
+        String name;
+        String identifier;
+        int voteCount;
+    }
+
+    class ElectionResult {
+        -> Candidate [*];
+        Candidate winner;
+        void determineWinner();
+        void handleTieBreaker();
+        void generateReport();
+    }
+
+    composition VotingSystem -> VotingStation [*];
+    composition VotingSystem -> Candidate [*];
+    association VotingStation -> Voter [*];
+    association VotingStation -> Candidate [*];
+    association ElectionResult -> Candidate [*];
+}

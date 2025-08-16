@@ -1,0 +1,55 @@
+
+classdiagram TelecommunicationNetwork {
+
+    class NetworkSystem {
+        void createNode(Node node);
+        void deleteNode(Node node);
+        void modifyNode(Node node);
+        void createConnection(Connection connection);
+        void deleteConnection(Connection connection);
+        void modifyConnection(Connection connection);
+        void monitorNetworkTraffic();
+        void monitorNetworkPerformance();
+    }
+
+    abstract class Node {
+        String id;
+    }
+
+    class Router extends Node {
+        String ipAddress;
+        String subnetMask;
+        String gateway;
+    }
+
+    class Switch extends Node {
+        int portNumber;
+        String macAddress;
+    }
+
+    class Server extends Node {
+        String ipAddress;
+        int portNumber;
+        ServerType serverType;
+    }
+
+    class Connection {
+        Node node1;
+        Node node2;
+        int bandwidth;
+        int latency;
+        ConnectionType connectionType;
+    }
+
+    enum ServerType {
+        Web, Database, Application;
+    }
+
+    enum ConnectionType {
+        Ethernet, FiberOptic, Wireless;
+    }
+
+    composition NetworkSystem -> Node [*];
+    composition NetworkSystem -> Connection [*];
+    association Connection -> Node [2];
+}

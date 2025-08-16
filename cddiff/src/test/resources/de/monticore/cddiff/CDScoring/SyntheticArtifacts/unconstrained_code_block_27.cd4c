@@ -1,0 +1,76 @@
+
+classdiagram TourismAndHospitalityManagement {
+
+    class TourismAndHospitalityManagementSystem {
+        -> Hotel [*];
+    }
+
+    class Hotel {
+        String name;
+        String location;
+        -> Room [*];
+        -> Guest [*];
+        -> Booking [*];
+    }
+
+    abstract class Room {
+        String uniqueIdentifier;
+        RoomType roomType;
+        RoomStatus status;
+        -> Amenity [*];
+    }
+
+    class StandardRoom extends Room {}
+    class Suite extends Room {}
+    class LuxurySuite extends Room {}
+
+    class Amenity {
+        String name;
+    }
+
+    enum RoomType {
+        Standard, Suite, LuxurySuite;
+    }
+
+    enum RoomStatus {
+        Occupied, Vacant;
+    }
+
+    abstract class Guest {
+        String uniqueIdentifier;
+        String name;
+        ContactInfo contactInfo;
+    }
+
+    class Individual extends Guest {}
+    class Couple extends Guest {}
+    class Family extends Guest {}
+
+    class ContactInfo {
+        String email;
+        String phone;
+    }
+
+    abstract class Booking {
+        String uniqueIdentifier;
+        Date startDate;
+        Date endDate;
+        double totalCost;
+    }
+
+    class SingleNightBooking extends Booking {}
+    class MultiNightBooking extends Booking {}
+    class PackageBooking extends Booking {}
+
+    class Report {
+        void generateRoomOccupancyReport();
+        void generateGuestDemographicsReport();
+        void generateBookingTrendsReport();
+    }
+
+    composition TourismAndHospitalityManagementSystem -> Hotel [*];
+    composition Hotel -> Room [*];
+    composition Hotel -> Guest [*];
+    composition Hotel -> Booking [*];
+    composition Room -> Amenity [*];
+}

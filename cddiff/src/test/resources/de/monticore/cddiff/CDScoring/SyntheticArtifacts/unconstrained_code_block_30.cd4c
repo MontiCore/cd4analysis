@@ -1,0 +1,43 @@
+
+classdiagram EMS {
+
+    class EnvironmentalMonitoringSystem {
+        CentralServer centralServer;
+        Database database;
+        ReportingModule reportingModule;
+    }
+
+    class Sensor {
+        String sensorType;
+        String data;
+        void collectData();
+    }
+
+    class DataLogger {
+        -> Sensor [*];
+        void storeData(String data);
+    }
+
+    class CentralServer {
+        -> DataLogger [*];
+        void processData();
+        void analyzeData();
+        void provideUserInterface();
+        void realTimeDataAnalysis();
+        void sendAlerts();
+    }
+
+    class Database {
+        void storeHistoricalData(String data);
+    }
+
+    class ReportingModule {
+        void generateReport();
+    }
+
+    composition EnvironmentalMonitoringSystem -> (has) CentralServer;
+    composition EnvironmentalMonitoringSystem -> (has) Database;
+    composition EnvironmentalMonitoringSystem -> (has) ReportingModule;
+    association CentralServer -> DataLogger [*];
+    association DataLogger -> Sensor [*];
+}

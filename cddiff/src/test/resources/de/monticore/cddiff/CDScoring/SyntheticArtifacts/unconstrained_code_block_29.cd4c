@@ -1,0 +1,73 @@
+
+classdiagram SportsAnalytics {
+
+  class SportsAnalyticsSystem {
+    -> Sport [*];
+    -> ReportGenerator;
+  }
+
+  class Sport {
+    String name;
+    -> Team [*];
+    -> League [*];
+  }
+
+  class Team {
+    String name;
+    -> Player [*];
+    -> Game [*];
+  }
+
+  class Player {
+    String name;
+    String position;
+    -> Statistic [*];
+  }
+
+  class Game {
+    String date;
+    String location;
+    -> Statistic [*];
+  }
+
+  class League {
+    String name;
+    String country;
+    -> Season [*];
+  }
+
+  class Season {
+    int year;
+    -> Tournament [*];
+  }
+
+  class Tournament {
+    String name;
+    String region;
+    -> Game [*];
+  }
+
+  class Statistic {
+    String type;
+    int value;
+  }
+
+  class ReportGenerator {
+    void generatePlayerReport(Player player);
+    void generateTeamReport(Team team);
+    void generateGameReport(Game game);
+    void generateSeasonReport(Season season);
+  }
+
+  composition SportsAnalyticsSystem -> Sport [*];
+  composition SportsAnalyticsSystem -> ReportGenerator;
+  composition Sport -> Team [*];
+  composition Sport -> League [*];
+  composition Team -> Player [*];
+  composition Team -> Game [*];
+  composition Player -> Statistic [*];
+  composition Game -> Statistic [*];
+  composition League -> Season [*];
+  composition Season -> Tournament [*];
+  composition Tournament -> Game [*];
+}

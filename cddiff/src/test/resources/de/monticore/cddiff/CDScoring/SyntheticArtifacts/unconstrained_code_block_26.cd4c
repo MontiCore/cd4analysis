@@ -1,0 +1,67 @@
+
+classdiagram DigitalForensicsSystem {
+
+    class DigitalForensicsSystem {
+        UserInterface ui;
+        Database database;
+        void importEvidence(Source source);
+        void analyzeEvidence();
+        Report generateReport();
+    }
+
+    class UserInterface {
+        void importEvidence();
+        void analyzeEvidence();
+        void viewReport();
+    }
+
+    class Database {
+        -> Evidence [*];
+        -> AnalysisResult [*];
+        void storeEvidence(Evidence evidence);
+        void storeAnalysisResult(AnalysisResult result);
+    }
+
+    abstract class Evidence {
+        String source;
+        Date importDate;
+    }
+
+    class FileEvidence extends Evidence {
+        String fileName;
+        long fileSize;
+    }
+
+    class EmailEvidence extends Evidence {
+        String emailHeader;
+        String emailBody;
+    }
+
+    class NetworkPacketEvidence extends Evidence {
+        String packetContent;
+        String sourceIP;
+        String destinationIP;
+    }
+
+    class AnalysisResult {
+        String summary;
+        String details;
+    }
+
+    class Report {
+        String summary;
+        String conclusions;
+        void export(String format);
+    }
+
+    class Source {
+        String type;
+        String location;
+    }
+
+    composition DigitalForensicsSystem -> (has) UserInterface;
+    composition DigitalForensicsSystem -> (has) Database;
+    composition Database -> Evidence [*];
+    composition Database -> AnalysisResult [*];
+    association DigitalForensicsSystem -> Source;
+}

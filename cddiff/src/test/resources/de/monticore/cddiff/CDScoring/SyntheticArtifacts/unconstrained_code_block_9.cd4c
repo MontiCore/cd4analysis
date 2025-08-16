@@ -1,0 +1,195 @@
+
+classdiagram ANS {
+
+    class AerospaceNavigationSystem {
+        GroundStation groundStation;
+        Aircraft aircraft;
+        Satellite satellite;
+        WeatherStation weatherStation;
+        RadarStation radarStation;
+        CommunicationSystem communicationSystem;
+        NavigationAlgorithm navigationAlgorithm;
+        DataStorage dataStorage;
+        DataProcessing dataProcessing;
+        UserInterface userInterface;
+        SystemManagement systemManagement;
+        SystemMonitoring systemMonitoring;
+        SystemMaintenance systemMaintenance;
+        SystemTesting systemTesting;
+        SystemDocumentation systemDocumentation;
+        SystemTraining systemTraining;
+        SystemSupport systemSupport;
+        SystemUpgrade systemUpgrade;
+        SystemDowngrade systemDowngrade;
+        SystemBackup systemBackup;
+        SystemRestore systemRestore;
+        SystemRecovery systemRecovery;
+        SystemSecurity systemSecurity;
+        SystemIntegrity systemIntegrity;
+        SystemAvailability systemAvailability;
+    }
+
+    class GroundStation {
+        String name;
+        String uniqueIdentifier;
+        -> WeatherStation;
+        -> RadarStation;
+        -> CommunicationSystem;
+    }
+
+    class Aircraft {
+        String name;
+        String uniqueIdentifier;
+        -> Pilot;
+        -> NavigationAlgorithm;
+        -> DataStorage;
+        -> DataProcessing;
+        -> UserInterface;
+    }
+
+    class Satellite {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class WeatherStation {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class RadarStation {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class CommunicationSystem {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class NavigationAlgorithm {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class DataStorage {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class DataProcessing {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class UserInterface {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemManagement {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemMonitoring {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemMaintenance {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemTesting {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemDocumentation {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemTraining {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemSupport {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemUpgrade {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemDowngrade {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemBackup {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemRestore {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemRecovery {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemSecurity {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemIntegrity {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class SystemAvailability {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    class Pilot {
+        String name;
+        String uniqueIdentifier;
+    }
+
+    composition AerospaceNavigationSystem -> GroundStation;
+    composition AerospaceNavigationSystem -> Aircraft;
+    composition AerospaceNavigationSystem -> Satellite;
+    composition AerospaceNavigationSystem -> WeatherStation;
+    composition AerospaceNavigationSystem -> RadarStation;
+    composition AerospaceNavigationSystem -> CommunicationSystem;
+    composition AerospaceNavigationSystem -> NavigationAlgorithm;
+    composition AerospaceNavigationSystem -> DataStorage;
+    composition AerospaceNavigationSystem -> DataProcessing;
+    composition AerospaceNavigationSystem -> UserInterface;
+    composition AerospaceNavigationSystem -> SystemManagement;
+    composition AerospaceNavigationSystem -> SystemMonitoring;
+    composition AerospaceNavigationSystem -> SystemMaintenance;
+    composition AerospaceNavigationSystem -> SystemTesting;
+    composition AerospaceNavigationSystem -> SystemDocumentation;
+    composition AerospaceNavigationSystem -> SystemTraining;
+    composition AerospaceNavigationSystem -> SystemSupport;
+    composition AerospaceNavigationSystem -> SystemUpgrade;
+    composition AerospaceNavigationSystem -> SystemDowngrade;
+    composition AerospaceNavigationSystem -> SystemBackup;
+    composition AerospaceNavigationSystem -> SystemRestore;
+    composition AerospaceNavigationSystem -> SystemRecovery;
+    composition AerospaceNavigationSystem -> SystemSecurity;
+    composition AerospaceNavigationSystem -> SystemIntegrity;
+    composition AerospaceNavigationSystem -> SystemAvailability;
+}

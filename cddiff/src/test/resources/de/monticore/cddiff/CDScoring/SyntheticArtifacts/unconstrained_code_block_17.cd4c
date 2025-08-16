@@ -1,0 +1,58 @@
+
+classdiagram HRManagementSystem {
+
+    class Employee {
+        String uniqueID;
+        String name;
+        ContactInfo contactInfo;
+        -> Department;
+        -> JobPosition [*];
+    }
+
+    class Department {
+        String uniqueID;
+        String name;
+        -> JobPosition [*];
+    }
+
+    class JobPosition {
+        String name;
+        String jobDescription;
+        -> Department;
+        Set<Skill> requiredSkills;
+        Set<Qualification> requiredQualifications;
+        -> Employee [*];
+    }
+
+    class PerformanceEvaluation {
+        Employee employee;
+        JobPosition jobPosition;
+        int rating;
+        String comment;
+    }
+
+    class ContactInfo {
+        String email;
+        String phone;
+        String address;
+    }
+
+    class Skill {
+        String name;
+        String description;
+    }
+
+    class Qualification {
+        String name;
+        String description;
+    }
+
+    composition Employee -> ContactInfo;
+    association Employee -> Department;
+    association Employee -> JobPosition [*];
+    association Department -> JobPosition [*];
+    association JobPosition -> Department;
+    association JobPosition -> Employee [*];
+    association PerformanceEvaluation -> Employee;
+    association PerformanceEvaluation -> JobPosition;
+}

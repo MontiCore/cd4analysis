@@ -1,0 +1,62 @@
+
+classdiagram POS {
+
+    class POSSystem {
+        Store store;
+        Database database;
+        void addProduct(Product product);
+        void removeProduct(Product product);
+        void addCustomer(Customer customer);
+        void removeCustomer(Customer customer);
+        void addCashRegister(CashRegister cashRegister);
+        void removeCashRegister(CashRegister cashRegister);
+        void processTransaction(Transaction transaction);
+    }
+
+    class Store {
+        String uniqueIdentifier;
+        String name;
+        -> CashRegister [*];
+    }
+
+    class CashRegister {
+        String uniqueIdentifier;
+        CashRegisterStatus status;
+    }
+
+    class Database {
+        -> Product [*];
+        -> Customer [*];
+        -> Transaction [*];
+    }
+
+    class Product {
+        String uniqueIdentifier;
+        String name;
+        double price;
+        int quantity;
+    }
+
+    class Customer {
+        String uniqueIdentifier;
+        String name;
+        String contactInfo;
+    }
+
+    class Transaction {
+        String date;
+        String time;
+        double totalAmount;
+    }
+
+    enum CashRegisterStatus {
+        Open, Closed;
+    }
+
+    composition POSSystem -> Store;
+    composition POSSystem -> Database;
+    composition Store -> CashRegister [*];
+    composition Database -> Product [*];
+    composition Database -> Customer [*];
+    composition Database -> Transaction [*];
+}

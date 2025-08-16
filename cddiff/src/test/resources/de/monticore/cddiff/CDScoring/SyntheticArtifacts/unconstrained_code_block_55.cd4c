@@ -1,0 +1,47 @@
+
+classdiagram EventManagementSystem {
+
+    class Event {
+        String uniqueIdentifier;
+        String name;
+        Date date;
+        -> Speaker [*];
+        -> Session [*];
+        -> Attendee [*];
+    }
+
+    class Speaker {
+        String name;
+        String bio;
+        String contactInfo;
+    }
+
+    class Session {
+        String title;
+        String description;
+        Date startTime;
+        Date endTime;
+        -> Attendee [*];
+    }
+
+    class Attendee {
+        String name;
+        String email;
+        String phoneNumber;
+        -> Session [*];
+    }
+
+    class ReportGenerator {
+        void generateAttendanceReport(Session session);
+        void generateAttendeeCountReport(Session session);
+        void generateSpeakerCountReport(Event event);
+        void generateSessionCountReport(Event event);
+        void generateEventAttendeeCountReport(Event event);
+    }
+
+    composition Event -> Speaker [*];
+    composition Event -> Session [*];
+    composition Event -> Attendee [*];
+    association Session -> Attendee [*];
+    association Attendee -> Session [*];
+}

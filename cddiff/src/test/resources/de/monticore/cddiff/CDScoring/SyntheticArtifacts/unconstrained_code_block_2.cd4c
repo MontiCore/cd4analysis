@@ -1,0 +1,50 @@
+
+classdiagram EcommercePlatform {
+
+    class EcommercePlatform {
+        void addStore(Store store);
+        void removeStore(Store store);
+        void addProduct(Product product);
+        void removeProduct(Product product);
+        void addProductType(ProductType productType);
+        void removeProductType(ProductType productType);
+        String checkOrderStatus(Order order);
+    }
+
+    class Store {
+        String uniqueIdentifier;
+        String name;
+        -> Product [*];
+    }
+
+    class Product {
+        String uniqueIdentifier;
+        String name;
+        double price;
+        String description;
+        -> ProductType [*];
+    }
+
+    class ProductType {
+        String name;
+        String description;
+    }
+
+    class Customer {
+        String uniqueIdentifier;
+        String name;
+        -> Order [*];
+    }
+
+    class Order {
+        String uniqueIdentifier;
+        Customer customer;
+        -> Product [*];
+    }
+
+    composition EcommercePlatform -> Store [*];
+    composition Store -> Product [*];
+    association Product -> ProductType [*];
+    composition Customer -> Order [*];
+    association Order -> Product [*];
+}

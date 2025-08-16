@@ -1,0 +1,64 @@
+
+classdiagram FraudDetectionSystem {
+
+    class FraudDetectionSystem {
+        TransactionData transactionData;
+        UserData userData;
+        FraudDetectionAlgorithm fraudDetectionAlgorithm;
+        AlertSystem alertSystem;
+        DataAnalytics dataAnalytics;
+        MachineLearning machineLearning;
+    }
+
+    class TransactionData {
+        String transactionId;
+        double amount;
+        Date date;
+        TransactionType type;
+    }
+
+    class UserData {
+        String userId;
+        AccountInfo accountInfo;
+        List<TransactionData> transactionHistory;
+    }
+
+    class AccountInfo {
+        String accountId;
+        String accountType;
+        double balance;
+    }
+
+    class FraudDetectionAlgorithm {
+        void analyzeTransaction(TransactionData transaction);
+        boolean isSuspicious(TransactionData transaction);
+    }
+
+    class AlertSystem {
+        void sendAlert(TransactionData transaction);
+    }
+
+    class DataAnalytics {
+        List<FraudType> analyzeFraudPatterns(List<TransactionData> transactions);
+    }
+
+    class MachineLearning {
+        void trainModel(List<TransactionData> transactions);
+        void updateModel(TransactionData transaction);
+    }
+
+    enum TransactionType {
+        DEPOSIT, WITHDRAWAL, TRANSFER, PAYMENT;
+    }
+
+    enum FraudType {
+        PHISHING, IDENTITY_THEFT, ACCOUNT_TAKEOVER, CARD_FRAUD;
+    }
+
+    composition FraudDetectionSystem -> TransactionData;
+    composition FraudDetectionSystem -> UserData;
+    composition FraudDetectionSystem -> FraudDetectionAlgorithm;
+    composition FraudDetectionSystem -> AlertSystem;
+    composition FraudDetectionSystem -> DataAnalytics;
+    composition FraudDetectionSystem -> MachineLearning;
+}

@@ -1,0 +1,39 @@
+
+classdiagram VehicleMaintenanceSystem {
+
+    class Vehicle {
+        String make;
+        String model;
+        int year;
+        String VIN;
+        VehicleStatus status;
+        -> MaintenanceHistory [*];
+        -> RepairHistory [*];
+    }
+
+    class MaintenanceHistory {
+        String maintenanceType;
+        Date maintenanceDate;
+        int mileage;
+    }
+
+    class RepairHistory {
+        String repairType;
+        Date repairDate;
+        double cost;
+    }
+
+    class ReportGenerator {
+        void generateMaintenanceReport(Vehicle vehicle);
+        void generateRepairReport(Vehicle vehicle);
+        void generateFleetCostReport();
+    }
+
+    enum VehicleStatus {
+        InShop, OnRoad, InStorage;
+    }
+
+    composition Vehicle -> MaintenanceHistory [*];
+    composition Vehicle -> RepairHistory [*];
+    association ReportGenerator -> Vehicle [*];
+}

@@ -1,0 +1,80 @@
+
+classdiagram DigitalSignage {
+
+    class CMS {
+        void storeContent(Content content);
+        void scheduleContent(Content content, Schedule schedule);
+        PerformanceMetrics trackPerformance(Content content);
+    }
+
+    class Player {
+        void playContent(Content content);
+        void handleContent(Content content);
+        void controlRemotely(Command command);
+    }
+
+    class Screen {
+        void displayContent(Content content);
+        void controlRemotely(Command command);
+        void configureDisplay(DisplayConfiguration config);
+    }
+
+    class Network {
+        void connect(CMS cms, Player player, Screen screen);
+        void prioritizeContentType(ContentType contentType);
+        void secure(Authentication auth, Authorization authz);
+    }
+
+    class Content {
+        ContentType type;
+        String data;
+    }
+
+    class Schedule {
+        DateTime startTime;
+        DateTime endTime;
+    }
+
+    class PerformanceMetrics {
+        int views;
+        int engagement;
+    }
+
+    class Command {
+        String commandType;
+        String parameters;
+    }
+
+    class DisplayConfiguration {
+        ContentType contentType;
+        String configurationDetails;
+    }
+
+    class Authentication {
+        String method;
+        String credentials;
+    }
+
+    class Authorization {
+        String role;
+        String permissions;
+    }
+
+    enum ContentType {
+        Text, Image, Video;
+    }
+
+    composition CMS -> Content [*];
+    association CMS -> Schedule;
+    association CMS -> PerformanceMetrics;
+    association Player -> Content;
+    association Player -> Command;
+    association Screen -> Content;
+    association Screen -> Command;
+    association Screen -> DisplayConfiguration;
+    association Network -> CMS;
+    association Network -> Player;
+    association Network -> Screen;
+    association Network -> Authentication;
+    association Network -> Authorization;
+}

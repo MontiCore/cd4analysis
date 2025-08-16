@@ -1,0 +1,56 @@
+
+classdiagram Smartwatch {
+
+  class Smartwatch {
+    HealthTracker healthTracker;
+    FitnessTracker fitnessTracker;
+    NotificationManager notificationManager;
+  }
+
+  class HealthTracker {
+    HeartRateMonitor heartRateMonitor;
+    BloodPressureMonitor bloodPressureMonitor;
+    SleepQualityMonitor sleepQualityMonitor;
+  }
+
+  class FitnessTracker {
+    int stepsTaken;
+    double distanceTraveled;
+    int caloriesBurned;
+  }
+
+  class NotificationManager {
+    -> Notification [*];
+    void receiveNotification(Notification notification);
+  }
+
+  class HeartRateMonitor {
+    int currentHeartRate;
+    int getHeartRate();
+  }
+
+  class BloodPressureMonitor {
+    int systolic;
+    int diastolic;
+    int getBloodPressure();
+  }
+
+  class SleepQualityMonitor {
+    int sleepDuration;
+    String sleepQuality;
+    String getSleepQuality();
+  }
+
+  class Notification {
+    String type;
+    String content;
+  }
+
+  composition Smartwatch -> (has) HealthTracker;
+  composition Smartwatch -> (has) FitnessTracker;
+  composition Smartwatch -> (has) NotificationManager;
+  composition HealthTracker -> (has) HeartRateMonitor;
+  composition HealthTracker -> (has) BloodPressureMonitor;
+  composition HealthTracker -> (has) SleepQualityMonitor;
+  association NotificationManager -> Notification [*];
+}

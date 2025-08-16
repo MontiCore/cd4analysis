@@ -1,0 +1,93 @@
+
+classdiagram CloudServiceProvider {
+
+    class CloudServiceProvider {
+        LoyaltyProgram loyaltyProgram;
+        CustomerSupport customerSupport;
+        Policy[] policies;
+        Procedure[] procedures;
+    }
+
+    class Service {
+        String uniqueIdentifier;
+        String name;
+        Feature[] features;
+        PricingPlan pricingPlan;
+    }
+
+    class Storage extends Service {}
+    class Processing extends Service {}
+    class Networking extends Service {}
+
+    class FileStorage extends Storage {}
+    class DatabaseStorage extends Storage {}
+    class ObjectStorage extends Storage {}
+
+    class VirtualMachines extends Processing {}
+    class Containerization extends Processing {}
+    class ServerlessComputing extends Processing {}
+
+    class LoadBalancing extends Networking {}
+    class ContentDeliveryNetwork extends Networking {}
+    class VirtualPrivateNetwork extends Networking {}
+
+    class PricingPlan {
+        double basePrice;
+        double usageBasedPrice;
+    }
+
+    class LoyaltyProgram {
+        Rule[] rules;
+        RewardSystem rewardSystem;
+    }
+
+    class Rule {
+        String condition;
+    }
+
+    class RewardSystem {
+        Reward[] rewards;
+    }
+
+    class Reward {
+        String description;
+        int points;
+    }
+
+    class CustomerSupport {
+        Skill[] skills;
+        KnowledgeBase[] knowledgeBases;
+    }
+
+    class Skill {
+        String name;
+        String description;
+    }
+
+    class KnowledgeBase {
+        String topic;
+        String content;
+    }
+
+    class Policy {
+        String name;
+        String description;
+    }
+
+    class Procedure {
+        String name;
+        String steps;
+    }
+
+    composition CloudServiceProvider -> LoyaltyProgram;
+    composition CloudServiceProvider -> CustomerSupport;
+    composition CloudServiceProvider -> Policy [*];
+    composition CloudServiceProvider -> Procedure [*];
+    composition Service -> Feature [*];
+    composition Service -> PricingPlan;
+    composition LoyaltyProgram -> Rule [*];
+    composition LoyaltyProgram -> RewardSystem;
+    composition RewardSystem -> Reward [*];
+    composition CustomerSupport -> Skill [*];
+    composition CustomerSupport -> KnowledgeBase [*];
+}

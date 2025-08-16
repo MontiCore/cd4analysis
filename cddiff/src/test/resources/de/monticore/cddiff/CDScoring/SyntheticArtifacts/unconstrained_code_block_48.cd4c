@@ -1,0 +1,87 @@
+
+classdiagram GIS {
+
+    class GISystem {
+        +City[] cities;
+        +Country[] countries;
+        +PointOfInterest[] pointsOfInterest;
+        +Road[] roads;
+        +WeatherStation[] weatherStations;
+
+        +City findNearestCity(Point point);
+        +City[] findCitiesWithinDistance(Point point, double distance);
+        +WeatherStation[] findWeatherStationsByTemperatureRange(double minTemp, double maxTemp, TimePeriod period);
+    }
+
+    class City {
+        +String name;
+        +Point location;
+        +Country country;
+        +Boundary boundary;
+    }
+
+    class Country {
+        +String name;
+        +Boundary boundary;
+    }
+
+    class PointOfInterest {
+        +String name;
+        +Point location;
+        +POIType type;
+    }
+
+    class Road {
+        +String name;
+        +double length;
+        +RoadType type;
+        +TrafficCondition trafficCondition;
+    }
+
+    class WeatherStation {
+        +String id;
+        +Point location;
+        +double temperature;
+        +double precipitation;
+        +TimePeriod timePeriod;
+    }
+
+    class Boundary {
+        +Point[] points;
+    }
+
+    class Point {
+        +double latitude;
+        +double longitude;
+    }
+
+    class TimePeriod {
+        +Date startDate;
+        +Date endDate;
+    }
+
+    enum POIType {
+        Landmark, Park, Building;
+    }
+
+    enum RoadType {
+        Highway, MainRoad, Street;
+    }
+
+    enum TrafficCondition {
+        Light, Moderate, Heavy;
+    }
+
+    composition GISystem -> City [*];
+    composition GISystem -> Country [*];
+    composition GISystem -> PointOfInterest [*];
+    composition GISystem -> Road [*];
+    composition GISystem -> WeatherStation [*];
+    association City -> Country;
+    association City -> Boundary;
+    association Country -> Boundary;
+    association PointOfInterest -> Point;
+    association Road -> TrafficCondition;
+    association WeatherStation -> Point;
+    association WeatherStation -> TimePeriod;
+}

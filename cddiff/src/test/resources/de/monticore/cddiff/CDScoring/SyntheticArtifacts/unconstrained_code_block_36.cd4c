@@ -1,0 +1,50 @@
+
+classdiagram BlockchainSystem {
+
+    class BlockchainSystem {
+        -> Node [*];
+        -> Block [*];
+        ConsensusMechanism consensusMechanism;
+    }
+
+    class Node {
+        String nodeId;
+        NodeType type;
+        -> Transaction [*];
+        void createTransaction(String sender, String recipient, DigitalAsset asset);
+        void validateBlock(Block block);
+    }
+
+    class Block {
+        String blockId;
+        -> Transaction [*];
+        String previousBlockId;
+    }
+
+    class Transaction {
+        String transactionId;
+        String sender;
+        String recipient;
+        DigitalAsset asset;
+    }
+
+    class ConsensusMechanism {
+        void initiateVoting();
+        void tallyVotes();
+    }
+
+    class DigitalAsset {
+        String assetId;
+        String assetName;
+    }
+
+    enum NodeType {
+        Miner, Validator, User;
+    }
+
+    composition BlockchainSystem -> (has) Node [*];
+    composition BlockchainSystem -> (has) Block [*];
+    composition BlockchainSystem -> (has) ConsensusMechanism;
+    composition Block -> (contains) Transaction [*];
+    association Node -> (creates) Transaction [*];
+}

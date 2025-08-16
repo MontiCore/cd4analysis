@@ -1,0 +1,46 @@
+
+classdiagram DigitalTwinSystem {
+
+    class PhysicalSystem {
+        float temperature;
+        float pressure;
+        float vibration;
+    }
+
+    class DigitalTwin {
+        float simulationTime;
+        float simulationSpeed;
+        float simulationAccuracy;
+
+        void simulateBehavior();
+        void analyzeData();
+        void provideRecommendations();
+    }
+
+    class Sensor {
+        void collectData(PhysicalSystem physicalSystem);
+        void sendData(DigitalTwin digitalTwin);
+    }
+
+    class AnalyticsEngine {
+        void analyzeData(Sensor sensor);
+        String provideInsights();
+        String provideRecommendations();
+    }
+
+    class UserInterface {
+        void interactWithDigitalTwin(DigitalTwin digitalTwin);
+        void accessData(DigitalTwin digitalTwin);
+    }
+
+    composition DigitalTwinSystem -> PhysicalSystem;
+    composition DigitalTwinSystem -> DigitalTwin;
+    composition DigitalTwinSystem -> Sensor;
+    composition DigitalTwinSystem -> AnalyticsEngine;
+    composition DigitalTwinSystem -> UserInterface;
+    association Sensor -> DigitalTwin;
+    association Sensor -> PhysicalSystem;
+    association AnalyticsEngine -> Sensor;
+    association AnalyticsEngine -> DigitalTwin;
+    association UserInterface -> DigitalTwin;
+}

@@ -1,0 +1,60 @@
+
+classdiagram SurveyFeedbackSystem {
+
+    class User {
+        String uniqueID;
+        UserRole role;
+    }
+
+    class Survey {
+        String uniqueID;
+        String title;
+        String description;
+        -> Question [*];
+    }
+
+    class Question {
+        String type;
+        -> AnswerOption [*];
+    }
+
+    class AnswerOption {
+        String optionText;
+    }
+
+    class Answer {
+        -> Question;
+        -> User;
+        String answerText;
+    }
+
+    class Feedback {
+        -> Survey;
+        -> User;
+        -> Answer [*];
+    }
+
+    class Analytics {
+        void generateReport(Survey survey);
+        void visualizeData(Survey survey);
+    }
+
+    class Dashboard {
+        void displayOverallFeedback();
+        void filterFeedback(String criteria);
+        void sortFeedback(String criteria);
+        void exportFeedbackData();
+    }
+
+    enum UserRole {
+        Admin, Moderator, Participant;
+    }
+
+    composition Survey -> Question [*];
+    composition Question -> AnswerOption [*];
+    association Answer -> Question;
+    association Answer -> User;
+    association Feedback -> Survey;
+    association Feedback -> User;
+    association Feedback -> Answer [*];
+}

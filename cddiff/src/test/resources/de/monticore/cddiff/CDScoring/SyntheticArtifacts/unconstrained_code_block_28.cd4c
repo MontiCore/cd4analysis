@@ -1,0 +1,64 @@
+
+classdiagram BIM {
+
+    class BIMProject {
+        -> Building [*];
+        -> Architect [*];
+        void createBuilding(Building building);
+        void modifyBuilding(Building building);
+        void deleteBuilding(Building building);
+        void createRoom(Room room);
+        void modifyRoom(Room room);
+        void deleteRoom(Room room);
+        void createArchitect(Architect architect);
+        void modifyArchitect(Architect architect);
+        void deleteArchitect(Architect architect);
+    }
+
+    class Building {
+        String uniqueIdentifier;
+        String name;
+        -> Floor [*];
+        -> Architect [1];
+    }
+
+    class Floor {
+        -> Room [*];
+    }
+
+    abstract class Room {
+        String uniqueIdentifier;
+        RoomStatus status;
+    }
+
+    class OfficeRoom extends Room {
+        int numberOfDesks;
+        int numberOfChairs;
+    }
+
+    class MeetingRoom extends Room {
+        int capacity;
+        List<String> availableMeetingTimes;
+    }
+
+    class StorageRoom extends Room {
+        int capacity;
+        List<String> storedItems;
+    }
+
+    class Architect {
+        String uniqueIdentifier;
+        String name;
+        -> Building [*];
+    }
+
+    enum RoomStatus {
+        Occupied, Unoccupied;
+    }
+
+    composition BIMProject -> Building [*];
+    composition BIMProject -> Architect [*];
+    composition Building -> Floor [*];
+    composition Floor -> Room [*];
+    association Architect -> Building [*];
+}

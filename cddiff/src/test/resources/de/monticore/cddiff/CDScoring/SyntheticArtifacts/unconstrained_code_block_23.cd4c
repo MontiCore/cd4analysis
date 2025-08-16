@@ -1,0 +1,66 @@
+
+classdiagram LegalCaseManagement {
+
+  class Case {
+    String uniqueIdentifier;
+    String title;
+    String description;
+    Client client;
+    Lawyer lawyer;
+    -> PartyInvolvement [*];
+    -> Event [*];
+  }
+
+  class Client {
+    String name;
+    String address;
+    String contactInfo;
+  }
+
+  class Lawyer {
+    String name;
+    String address;
+    String contactInfo;
+  }
+
+  class Judge {
+    String name;
+    String address;
+    String contactInfo;
+  }
+
+  class PartyInvolvement {
+    Party party;
+    Role role;
+  }
+
+  class Event {
+    Date date;
+    Time time;
+    String location;
+    -> Notification [*];
+  }
+
+  class Notification {
+    String message;
+    Party recipient;
+  }
+
+  abstract class Party {
+    String name;
+    String address;
+    String contactInfo;
+  }
+
+  enum Role {
+    Plaintiff, Defendant, Witness;
+  }
+
+  composition Case -> (has) Client;
+  composition Case -> (has) Lawyer;
+  composition Case -> (has) PartyInvolvement [*];
+  composition Case -> (has) Event [*];
+  composition Event -> (has) Notification [*];
+  association PartyInvolvement -> Party;
+  association Notification -> Party;
+}

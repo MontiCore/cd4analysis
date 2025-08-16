@@ -1,0 +1,120 @@
+
+classdiagram ECommerceApp {
+
+    class ECommerceApp {
+        User user;
+        NotificationSystem notificationSystem;
+        ProductCatalog productCatalog;
+        ShoppingCart shoppingCart;
+        OrderSystem orderSystem;
+        AccountManagement accountManagement;
+    }
+
+    class User {
+        String email;
+        String password;
+        Profile profile;
+        Wishlist wishlist;
+        OrderHistory orderHistory;
+    }
+
+    class Profile {
+        String name;
+        String address;
+        String phoneNumber;
+        void updateProfile(String name, String address, String phoneNumber);
+        void changePassword(String oldPassword, String newPassword);
+    }
+
+    class Wishlist {
+        -> Product [*];
+        void addProduct(Product product);
+        void removeProduct(Product product);
+        List<Product> viewWishlist();
+    }
+
+    class OrderHistory {
+        -> Order [*];
+        List<Order> viewOrderHistory();
+    }
+
+    class NotificationSystem {
+        void sendNotification(User user, String message);
+    }
+
+    class ProductCatalog {
+        -> Product [*];
+        List<Product> browseByCategory(String category);
+        List<Product> searchProducts(String query);
+        Product viewProductDetails(String productId);
+        List<Product> getRecommendations(User user);
+    }
+
+    class ShoppingCart {
+        -> Product [*];
+        void addProduct(Product product);
+        void removeProduct(Product product);
+        List<Product> viewCart();
+        void checkout(PaymentMethod paymentMethod);
+    }
+
+    class OrderSystem {
+        -> Order [*];
+        Order trackOrder(String orderId);
+        List<Order> viewOrderHistory(User user);
+    }
+
+    class AccountManagement {
+        void updateProfile(User user, Profile profile);
+        void changePassword(User user, String oldPassword, String newPassword);
+    }
+
+    class Product {
+        String productId;
+        String name;
+        String description;
+        double price;
+        String[] images;
+        int rating;
+        List<Review> reviews;
+        void addReview(Review review);
+        void shareProduct(User user, String recipientEmail);
+    }
+
+    class Review {
+        User user;
+        int rating;
+        String comment;
+    }
+
+    class Order {
+        String orderId;
+        List<Product> products;
+        String status;
+        String orderDetails;
+    }
+
+    class PaymentMethod {
+        String type;
+        String details;
+    }
+
+    composition ECommerceApp -> User;
+    composition ECommerceApp -> NotificationSystem;
+    composition ECommerceApp -> ProductCatalog;
+    composition ECommerceApp -> ShoppingCart;
+    composition ECommerceApp -> OrderSystem;
+    composition ECommerceApp -> AccountManagement;
+    composition User -> Profile;
+    composition User -> Wishlist;
+    composition User -> OrderHistory;
+    composition Wishlist -> Product [*];
+    composition OrderHistory -> Order [*];
+    composition ProductCatalog -> Product [*];
+    composition ShoppingCart -> Product [*];
+    composition OrderSystem -> Order [*];
+    composition Product -> Review [*];
+    association Product -> User;
+    association Order -> Product [*];
+    association Review -> User;
+}

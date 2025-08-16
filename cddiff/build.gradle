@@ -32,6 +32,12 @@ test {
   jvmArgs '-XX:MaxRAM=8g'
 }
 
+test {
+  maxHeapSize = '4g'
+  jvmArgs '-XX:MaxRAM=8g'
+}
+
+
 tasks.register('downloadVectors') {
   description = "Downloads the FastText vectors, including subword vectors"
 

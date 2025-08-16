@@ -1,0 +1,93 @@
+
+classdiagram ESystem {
+
+    class ESystem {
+        PatientDB patientDB;
+        DoctorDB doctorDB;
+        PrescriptionDB prescriptionDB;
+        PharmacyDB pharmacyDB;
+
+        void createPatientRecord(Patient patient);
+        void createDoctorRecord(Doctor doctor);
+        void createPrescriptionOrder(PrescriptionOrder order);
+        void fillPrescription(PrescriptionFulfillment fulfillment);
+        void updatePatientMedicationList(Patient patient, Medication medication);
+        PatientMedicationList retrievePatientMedicationList(Patient patient);
+        List<PrescriptionOrder> retrieveDoctorPrescriptionHistory(Doctor doctor);
+        List<InventoryItem> retrievePharmacyInventory(Pharmacy pharmacy);
+    }
+
+    class PatientDB {
+        -> Patient [*];
+    }
+
+    class DoctorDB {
+        -> Doctor [*];
+    }
+
+    class PrescriptionDB {
+        -> PrescriptionOrder [*];
+    }
+
+    class PharmacyDB {
+        -> Pharmacy [*];
+    }
+
+    class Patient {
+        String name;
+        String address;
+        String medicalHistory;
+        PatientMedicationList medicationList;
+    }
+
+    class Doctor {
+        String name;
+        String specialty;
+        String hospitalAffiliation;
+    }
+
+    class PrescriptionOrder {
+        String medicationName;
+        String dosage;
+        Date expirationDate;
+        Patient patient;
+        Doctor doctor;
+    }
+
+    class Pharmacy {
+        String name;
+        String location;
+        List<InventoryItem> inventory;
+    }
+
+    class PrescriptionFulfillment {
+        PrescriptionOrder order;
+        Pharmacy pharmacy;
+    }
+
+    class PatientMedicationList {
+        -> Medication [*];
+    }
+
+    class Medication {
+        String name;
+        String dosage;
+    }
+
+    class InventoryItem {
+        String medicationName;
+        int quantity;
+    }
+
+    composition ESystem -> PatientDB;
+    composition ESystem -> DoctorDB;
+    composition ESystem -> PrescriptionDB;
+    composition ESystem -> PharmacyDB;
+    composition PatientDB -> Patient [*];
+    composition DoctorDB -> Doctor [*];
+    composition PrescriptionDB -> PrescriptionOrder [*];
+    composition PharmacyDB -> Pharmacy [*];
+    composition Patient -> PatientMedicationList;
+    composition PatientMedicationList -> Medication [*];
+    composition Pharmacy -> InventoryItem [*];
+}

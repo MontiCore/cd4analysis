@@ -1,0 +1,66 @@
+
+classdiagram FleetTelematics {
+
+    class FleetTelematicsSystem {
+        FleetManager fleetManager;
+        void sendAlert(String message);
+    }
+
+    class FleetManager {
+        -> Vehicle [*];
+        void trackVehicle(Vehicle vehicle);
+        void monitorVehicle(Vehicle vehicle);
+    }
+
+    abstract class Vehicle {
+        String id;
+        Location location;
+        double speed;
+        String direction;
+        double fuelLevel;
+        double engineTemperature;
+        void updateLocation(Location location);
+        void updateSpeed(double speed);
+        void updateDirection(String direction);
+        void updateFuelLevel(double fuelLevel);
+        void updateEngineTemperature(double engineTemperature);
+    }
+
+    class Car extends Vehicle {
+        int numberOfDoors;
+        String carType;
+    }
+
+    class Truck extends Vehicle {
+        double cargoCapacity;
+        int numberOfAxles;
+    }
+
+    class Bus extends Vehicle {
+        int seatingCapacity;
+        boolean isDoubleDecker;
+    }
+
+    class Location {
+        double latitude;
+        double longitude;
+    }
+
+    class GPS {
+        void getCoordinates();
+    }
+
+    class FuelPump {
+        void refuel(Vehicle vehicle);
+    }
+
+    class MaintenanceScheduler {
+        void scheduleMaintenance(Vehicle vehicle);
+    }
+
+    composition FleetTelematicsSystem -> FleetManager;
+    composition FleetManager -> Vehicle [*];
+    association Vehicle -> GPS;
+    association Vehicle -> FuelPump;
+    association Vehicle -> MaintenanceScheduler;
+}

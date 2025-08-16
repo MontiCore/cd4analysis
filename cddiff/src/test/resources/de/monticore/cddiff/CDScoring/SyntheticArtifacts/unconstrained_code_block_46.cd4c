@@ -1,0 +1,59 @@
+
+classdiagram BMS {
+
+    class BuildingManagementSystem {
+        -> Building [*];
+        void monitorDeviceStatus();
+        void controlLighting(String buildingId, String roomId, boolean status);
+        void controlTemperature(String buildingId, String roomId, int temperature);
+        void sendNotification(String message);
+    }
+
+    class Building {
+        String uniqueIdentifier;
+        String name;
+        -> Floor [*];
+    }
+
+    class Floor {
+        int floorNumber;
+        -> Room [*];
+    }
+
+    class Room {
+        String uniqueIdentifier;
+        RoomType type;
+        -> Device [*];
+    }
+
+    abstract class Device {
+        String uniqueIdentifier;
+        DeviceStatus status;
+    }
+
+    class Light extends Device {
+        int brightnessLevel;
+    }
+
+    class TemperatureSensor extends Device {
+        int currentTemperature;
+    }
+
+    class SecurityCamera extends Device {
+        String resolution;
+        boolean isRecording;
+    }
+
+    enum RoomType {
+        Office, MeetingRoom, StorageRoom;
+    }
+
+    enum DeviceStatus {
+        On, Off;
+    }
+
+    composition BuildingManagementSystem -> Building [*];
+    composition Building -> Floor [*];
+    composition Floor -> Room [*];
+    composition Room -> Device [*];
+}

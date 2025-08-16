@@ -1,0 +1,49 @@
+
+classdiagram TimeTrackingSystem {
+
+    class Employee {
+        String uniqueName;
+        String employeeID;
+        -> Project [*];
+        -> Task [*];
+        double calculateTotalTimeOnTask(Task task);
+        double calculateTotalTimeOnProject(Project project);
+        double calculateTotalTime();
+    }
+
+    class Project {
+        String uniqueName;
+        String description;
+        -> Task [*];
+        double calculateTotalTime();
+    }
+
+    class Task {
+        String uniqueName;
+        String description;
+        Date startDate;
+        Date endDate;
+        -> Employee [*];
+        double calculateTotalTimeByEmployee(Employee employee);
+    }
+
+    class TimeEntry {
+        Date startTime;
+        Date endTime;
+        -> Employee;
+        -> Task;
+        double calculateDuration();
+    }
+
+    class ReportGenerator {
+        String generateTaskReport(Task task);
+        String generateProjectReport(Project project);
+        String generateEmployeeReport(Employee employee);
+    }
+
+    composition Employee -> Project [*];
+    composition Project -> Task [*];
+    composition Task -> Employee [*];
+    composition Task -> TimeEntry [*];
+    composition Employee -> TimeEntry [*];
+}

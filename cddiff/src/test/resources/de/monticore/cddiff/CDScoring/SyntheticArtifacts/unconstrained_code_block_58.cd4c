@@ -1,0 +1,75 @@
+
+classdiagram MLP {
+
+    class MLP {
+        PM projectManager;
+        UserManagement userManagement;
+        Dashboard dashboard;
+    }
+
+    class PM {
+        -> Project [*];
+    }
+
+    class Project {
+        String name;
+        String description;
+        -> Model [*];
+    }
+
+    abstract class Model {
+        String name;
+        String description;
+        ModelStatus status;
+        -> Version [*];
+    }
+
+    class Classification extends Model {}
+    class Regression extends Model {}
+    class Clustering extends Model {}
+
+    class Version {
+        String versionNumber;
+        String description;
+        -> Metric [*];
+    }
+
+    abstract class Metric {
+        String name;
+        double value;
+    }
+
+    class Accuracy extends Metric {}
+    class Precision extends Metric {}
+    class Recall extends Metric {}
+
+    class UserManagement {
+        -> User [*];
+    }
+
+    abstract class User {
+        String username;
+        String role;
+    }
+
+    class Administrator extends User {}
+    class DataScientist extends User {}
+
+    class Dashboard {
+        void monitorModelPerformance(Model model);
+        void monitorProjectPerformance(Project project);
+    }
+
+    enum ModelStatus {
+        Training, Testing, Deployed;
+    }
+
+    composition MLP -> (has) PM;
+    composition MLP -> (has) UserManagement;
+    composition MLP -> (has) Dashboard;
+    composition PM -> Project [*];
+    composition Project -> Model [*];
+    composition Model -> Version [*];
+    composition Version -> Metric [*];
+    composition UserManagement -> User [*];
+}

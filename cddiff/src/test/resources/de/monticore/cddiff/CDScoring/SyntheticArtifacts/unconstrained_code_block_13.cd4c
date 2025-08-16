@@ -1,0 +1,83 @@
+
+classdiagram GIS {
+
+    class GIS {
+        +List<City> cities;
+        +List<Country> countries;
+        +List<PointOfInterest> pointsOfInterest;
+        +List<Road> roads;
+        +List<WeatherStation> weatherStations;
+
+        +List<City> findNearestCity(Point point);
+        +List<City> findCitiesWithinDistance(Point point, double distance);
+        +List<WeatherStation> findWeatherStationsByTemperatureRange(double minTemp, double maxTemp, TimePeriod period);
+    }
+
+    class City {
+        String name;
+        Point location;
+        Country country;
+        Boundary boundary;
+    }
+
+    class Country {
+        String name;
+        Boundary boundary;
+    }
+
+    class PointOfInterest {
+        String name;
+        Point location;
+        POIType type;
+    }
+
+    class Road {
+        String name;
+        double length;
+        RoadType type;
+        TrafficCondition trafficCondition;
+    }
+
+    class WeatherStation {
+        String name;
+        Point location;
+        double temperature;
+        double precipitation;
+        TimePeriod period;
+    }
+
+    class Boundary {
+        List<Point> points;
+    }
+
+    class Point {
+        double latitude;
+        double longitude;
+    }
+
+    enum POIType {
+        Landmark, Park, Building;
+    }
+
+    enum RoadType {
+        Highway, Street, Avenue;
+    }
+
+    enum TrafficCondition {
+        Light, Moderate, Heavy;
+    }
+
+    class TimePeriod {
+        Date startDate;
+        Date endDate;
+    }
+
+    composition GIS -> City [*];
+    composition GIS -> Country [*];
+    composition GIS -> PointOfInterest [*];
+    composition GIS -> Road [*];
+    composition GIS -> WeatherStation [*];
+    association City -> Country;
+    association City -> Boundary;
+    association Country -> Boundary;
+}

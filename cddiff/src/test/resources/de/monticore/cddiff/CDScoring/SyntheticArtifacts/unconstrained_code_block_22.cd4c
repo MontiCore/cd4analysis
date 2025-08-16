@@ -1,0 +1,45 @@
+
+classdiagram SmartGrid {
+
+    class CentralControlCenter {
+        void monitorGridStatus();
+        void controlElectricityFlow();
+        void receiveData(Meter meter);
+        void receiveData(SmartAppliance smartAppliance);
+    }
+
+    class Substation {
+        String uniqueIdentifier;
+        -> PowerLine [*];
+    }
+
+    class PowerLine {
+        -> Substation;
+        -> Transformer;
+    }
+
+    class Transformer {
+        -> PowerLine;
+    }
+
+    class Meter {
+        -> Household;
+        void measureConsumption();
+    }
+
+    class SmartAppliance {
+        -> Household;
+        void controlRemotely();
+    }
+
+    class Household {
+        -> Meter;
+        -> SmartAppliance [*];
+    }
+
+    composition CentralControlCenter -> Substation [*];
+    composition Substation -> PowerLine [*];
+    composition PowerLine -> Transformer;
+    composition Meter -> Household;
+    composition SmartAppliance -> Household;
+}

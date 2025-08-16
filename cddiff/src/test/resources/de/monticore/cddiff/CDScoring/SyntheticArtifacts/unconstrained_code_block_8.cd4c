@@ -1,0 +1,67 @@
+
+classdiagram EducationTechSystem {
+
+    class University {
+        -> Department [*];
+        -> Semester [*];
+        void generateReports();
+        void integrateWithOtherSystems();
+    }
+
+    class Department {
+        String name;
+        -> Course [*];
+        -> Instructor [*];
+    }
+
+    class Semester {
+        String name;
+        -> CourseSchedule [*];
+    }
+
+    class Course {
+        String courseCode;
+        String title;
+        int credits;
+        -> Instructor [1];
+        -> Student [*];
+    }
+
+    class Instructor {
+        String instructorId;
+        String name;
+        -> Availability [*];
+    }
+
+    class Student {
+        String studentId;
+        String name;
+        Major major;
+        -> Course [*];
+        void generateCourseRecommendations();
+    }
+
+    class CourseSchedule {
+        Course course;
+        String timeSlot;
+        String location;
+    }
+
+    class Availability {
+        String day;
+        String timeSlot;
+    }
+
+    enum Major {
+        ComputerScience, Mathematics, Physics, Chemistry, Biology;
+    }
+
+    composition University -> Department [*];
+    composition University -> Semester [*];
+    composition Department -> Course [*];
+    composition Department -> Instructor [*];
+    composition Semester -> CourseSchedule [*];
+    composition Course -> Instructor [1];
+    composition Course -> Student [*];
+    composition Instructor -> Availability [*];
+}

@@ -1,0 +1,59 @@
+
+classdiagram IAMSystem {
+
+    class IAMSystem {
+        User[] users;
+        Role[] roles;
+        Permission[] permissions;
+        Session[] sessions;
+        Login[] logins;
+    }
+
+    class User {
+        String username;
+        String password;
+        Role[] roles;
+        Session[] sessions;
+        Login[] logins;
+        boolean isActive;
+        boolean isLoggedIn;
+        Date lastLoginTime;
+        Date lastLogoutTime;
+        Date lastActiveTime;
+        Date lastInactiveTime;
+    }
+
+    class Role {
+        String roleName;
+        Permission[] permissions;
+    }
+
+    class Permission {
+        String permissionName;
+    }
+
+    class Session {
+        User user;
+        Date loginTime;
+        Date logoutTime;
+        boolean isActive;
+    }
+
+    class Login {
+        User user;
+        Date loginTime;
+        Date logoutTime;
+    }
+
+    composition IAMSystem -> User [*];
+    composition IAMSystem -> Role [*];
+    composition IAMSystem -> Permission [*];
+    composition IAMSystem -> Session [*];
+    composition IAMSystem -> Login [*];
+    association User -> Role [*];
+    association Role -> Permission [*];
+    association User -> Session [*];
+    association User -> Login [*];
+    association Session -> User;
+    association Login -> User;
+}

@@ -1,0 +1,52 @@
+
+classdiagram VirtualEventPlatform {
+
+    class VirtualEventPlatform {
+        -> Event [*];
+        void registerUserForEvent(User user, Event event);
+        void registerUserForSession(User user, Session session);
+    }
+
+    class Event {
+        String uniqueIdentifier;
+        String name;
+        Date startDate;
+        Date endDate;
+        int maxAttendees;
+        -> Speaker [*];
+        -> Session [*];
+        void addSpeaker(Speaker speaker);
+        void removeSpeaker(Speaker speaker);
+        void addSession(Session session);
+        void removeSession(Session session);
+    }
+
+    class Speaker {
+        String name;
+        String bio;
+        -> Event [*];
+    }
+
+    class Session {
+        String title;
+        Date startTime;
+        Date endTime;
+        -> Speaker;
+        -> User [*];
+    }
+
+    class User {
+        String uniqueIdentifier;
+        String name;
+        -> Event [*];
+        -> Session [*];
+    }
+
+    composition VirtualEventPlatform -> Event [*];
+    association Event -> Speaker [*];
+    association Event -> Session [*];
+    association Session -> Speaker;
+    association Session -> User [*];
+    association User -> Event [*];
+    association User -> Session [*];
+}

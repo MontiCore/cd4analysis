@@ -1,0 +1,77 @@
+
+classdiagram RemoteSensing {
+
+    class RemoteSensingSystem {
+        Sensor sensor;
+        Processor processor;
+        Storage storage;
+        Visualizer visualizer;
+        User user;
+    }
+
+    class Sensor {
+        String uniqueIdentifier;
+        Resolution resolution;
+        Image captureImage();
+        Metadata getMetadata();
+    }
+
+    class Processor {
+        Filter[] filters;
+        Algorithm[] algorithms;
+        Image processImage(Image image);
+    }
+
+    class Storage {
+        int capacity;
+        void storeImage(Image image);
+        Image retrieveImage(String imageId);
+    }
+
+    class Visualizer {
+        Format[] formats;
+        void displayImage(Image image, Format format);
+    }
+
+    class User {
+        void requestImageProcessing();
+        void requestImageVisualization();
+    }
+
+    class Image {
+        String id;
+        Resolution resolution;
+        byte[] data;
+    }
+
+    class Metadata {
+        String timestamp;
+        String location;
+        String sensorId;
+    }
+
+    class Filter {
+        String name;
+        void apply(Image image);
+    }
+
+    class Algorithm {
+        String name;
+        void execute(Image image);
+    }
+
+    class Resolution {
+        int width;
+        int height;
+    }
+
+    class Format {
+        String name;
+    }
+
+    composition RemoteSensingSystem -> Sensor;
+    composition RemoteSensingSystem -> Processor;
+    composition RemoteSensingSystem -> Storage;
+    composition RemoteSensingSystem -> Visualizer;
+    composition RemoteSensingSystem -> User;
+}

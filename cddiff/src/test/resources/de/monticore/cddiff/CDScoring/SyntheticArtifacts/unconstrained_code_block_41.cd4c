@@ -1,0 +1,131 @@
+
+classdiagram InventoryManagementSystem {
+
+    class InventoryManagementSystem {
+        Warehouse[] warehouses;
+        ReportGenerator reportGenerator;
+        AlertSystem alertSystem;
+    }
+
+    class Warehouse {
+        String name;
+        String location;
+        Product[] products;
+        Movement[] movements;
+        void trackProductMovement(Product product, Warehouse destination);
+        void checkInventoryLevels();
+    }
+
+    class Product {
+        String uniqueIdentifier;
+        String name;
+        String description;
+        String category;
+        String subcategory;
+        String image;
+        String video;
+        String supplier;
+        Date deliveryDate;
+        Date expirationDate;
+        double price;
+        int quantityInStock;
+        ProductStatus status;
+        Review[] reviews;
+        Rating[] ratings;
+        Comment[] comments;
+        int likes;
+        int dislikes;
+        int shares;
+        int purchases;
+        int returns;
+        int refunds;
+        int exchanges;
+        String warranty;
+        String guarantee;
+        String certification;
+        String compliance;
+        Recall[] recalls;
+        Notification[] notifications;
+        Alert[] alerts;
+        Reminder[] reminders;
+    }
+
+    class Movement {
+        Product product;
+        Warehouse source;
+        Warehouse destination;
+        Date movementDate;
+        int quantity;
+    }
+
+    class ReportGenerator {
+        void generateInventoryReport(Warehouse warehouse);
+        void generateMovementReport(Warehouse warehouse);
+        void generateHistoryReport(Warehouse warehouse);
+    }
+
+    class AlertSystem {
+        void sendAlert(WarehouseManager manager, String message);
+    }
+
+    class WarehouseManager {
+        String name;
+        String contactInfo;
+    }
+
+    class Review {
+        String reviewer;
+        String content;
+        Date date;
+    }
+
+    class Rating {
+        String rater;
+        int score;
+        Date date;
+    }
+
+    class Comment {
+        String commenter;
+        String content;
+        Date date;
+    }
+
+    class Recall {
+        String reason;
+        Date date;
+    }
+
+    class Notification {
+        String message;
+        Date date;
+    }
+
+    class Alert {
+        String message;
+        Date date;
+    }
+
+    class Reminder {
+        String message;
+        Date date;
+    }
+
+    enum ProductStatus {
+        InStock, OutOfStock;
+    }
+
+    composition InventoryManagementSystem -> Warehouse [*];
+    composition InventoryManagementSystem -> ReportGenerator;
+    composition InventoryManagementSystem -> AlertSystem;
+    composition Warehouse -> Product [*];
+    composition Warehouse -> Movement [*];
+    association Warehouse -> WarehouseManager;
+    association Product -> Review [*];
+    association Product -> Rating [*];
+    association Product -> Comment [*];
+    association Product -> Recall [*];
+    association Product -> Notification [*];
+    association Product -> Alert [*];
+    association Product -> Reminder [*];
+}

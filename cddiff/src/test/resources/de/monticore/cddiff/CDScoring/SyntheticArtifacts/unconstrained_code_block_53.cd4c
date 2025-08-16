@@ -1,0 +1,53 @@
+
+classdiagram HomeSecuritySystem {
+
+    class HomeSecuritySystem {
+        CentralUnit centralUnit;
+        MonitoringService monitoringService;
+        UserInterface userInterface;
+        BackupPower backupPower;
+    }
+
+    class CentralUnit {
+        -> Sensor [*];
+        void receiveData(Sensor sensor);
+        void processData();
+    }
+
+    abstract class Sensor {
+        String uniqueIdentifier;
+        SensorStatus status;
+    }
+
+    class DoorSensor extends Sensor {}
+    class MotionSensor extends Sensor {}
+    class GlassBreakSensor extends Sensor {}
+
+    class MonitoringService {
+        void sendAlert(String message, ContactMethod method);
+    }
+
+    class UserInterface {
+        void configureSystem();
+        void viewSensorStatus();
+        void receiveAlerts();
+    }
+
+    class BackupPower {
+        int capacityWh;
+    }
+
+    enum SensorStatus {
+        Enabled, Disabled;
+    }
+
+    enum ContactMethod {
+        Phone, Email;
+    }
+
+    composition HomeSecuritySystem -> CentralUnit;
+    composition HomeSecuritySystem -> MonitoringService;
+    composition HomeSecuritySystem -> UserInterface;
+    composition HomeSecuritySystem -> BackupPower [0..1];
+    composition CentralUnit -> Sensor [*];
+}

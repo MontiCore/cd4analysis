@@ -1,0 +1,80 @@
+
+classdiagram AgriculturalTechnology {
+
+    class Farm {
+        String uniqueIdentifier;
+        String name;
+        -> Equipment [*];
+        -> Crop [*];
+        -> FarmOperator [*];
+        void addEquipment(Equipment equipment);
+        void removeEquipment(Equipment equipment);
+        void addCrop(Crop crop);
+        void removeCrop(Crop crop);
+        void assignOperator(FarmOperator operator);
+        Report generatePerformanceReport();
+    }
+
+    class Equipment {
+        String uniqueIdentifier;
+        EquipmentType type;
+        EquipmentStatus status;
+        MaintenanceSchedule maintenanceSchedule;
+    }
+
+    class Crop {
+        String cropType;
+        Date plantingDate;
+        Date harvestDate;
+        -> Sensor [*];
+        void monitorHealth();
+    }
+
+    class Sensor {
+        String sensorType;
+        int readingFrequency;
+        void monitorCrop(Crop crop);
+    }
+
+    class WeatherStation {
+        float temperature;
+        float humidity;
+        float precipitation;
+        WeatherData getWeatherData();
+    }
+
+    class FarmOperator {
+        String name;
+        String contactInfo;
+    }
+
+    class MaintenanceSchedule {
+        Date lastMaintenanceDate;
+        Date nextMaintenanceDate;
+        void trackMaintenance();
+    }
+
+    class Report {
+        String content;
+        void generate();
+    }
+
+    class WeatherData {
+        float temperature;
+        float humidity;
+        float precipitation;
+    }
+
+    enum EquipmentType {
+        Tractor, Plow, Harvester;
+    }
+
+    enum EquipmentStatus {
+        Available, InUse, Broken;
+    }
+
+    composition Farm -> Equipment [*];
+    composition Farm -> Crop [*];
+    composition Farm -> FarmOperator [*];
+    composition Crop -> Sensor [*];
+}

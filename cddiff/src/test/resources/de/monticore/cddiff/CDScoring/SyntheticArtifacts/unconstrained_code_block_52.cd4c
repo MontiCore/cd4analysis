@@ -1,0 +1,62 @@
+
+classdiagram ITS {
+
+    class IntelligentTransportationSystem {
+        TrafficManagementCenter trafficManagementCenter;
+        DataAnalyticsAndReporting dataAnalyticsAndReporting;
+        TrafficSignalController trafficSignalController;
+        RealTimeTrafficInfo realTimeTrafficInfo;
+    }
+
+    class TrafficManagementCenter {
+        -> TrafficSensor [*];
+        -> TrafficCamera [*];
+        void analyzeTrafficData();
+        void respondToIncident(Incident incident);
+    }
+
+    class TrafficSensor {
+        String sensorId;
+        double trafficVolume;
+        double speed;
+        double occupancy;
+        void collectData();
+    }
+
+    class TrafficCamera {
+        String cameraId;
+        String resolution;
+        void captureImage();
+    }
+
+    class TrafficSignalController {
+        void optimizeSignalTiming();
+    }
+
+    class DataAnalyticsAndReporting {
+        void generateReport();
+        void provideInsights();
+    }
+
+    class RealTimeTrafficInfo {
+        void provideInfoToDrivers();
+    }
+
+    class Incident {
+        String incidentId;
+        IncidentType type;
+        String location;
+        String description;
+    }
+
+    enum IncidentType {
+        Accident, RoadClosure, Construction;
+    }
+
+    composition IntelligentTransportationSystem -> TrafficManagementCenter;
+    composition IntelligentTransportationSystem -> DataAnalyticsAndReporting;
+    composition IntelligentTransportationSystem -> TrafficSignalController;
+    composition IntelligentTransportationSystem -> RealTimeTrafficInfo;
+    association TrafficManagementCenter -> TrafficSensor [*];
+    association TrafficManagementCenter -> TrafficCamera [*];
+}

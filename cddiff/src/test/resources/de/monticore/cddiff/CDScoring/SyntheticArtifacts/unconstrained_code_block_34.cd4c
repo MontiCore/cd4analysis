@@ -1,0 +1,59 @@
+
+classdiagram InsuranceClaimProcessing {
+
+    class InsuranceClaimProcessingSystem {
+        Claim[] claims;
+        void addClaim(Claim claim);
+        void removeClaim(String claimId);
+        void updateClaimStatus(String claimId, ClaimStatus status);
+        Claim getClaim(String claimId);
+    }
+
+    abstract class Claim {
+        String uniqueIdentifier;
+        ClaimStatus status;
+        Claimant claimant;
+        Adjuster adjuster;
+        InsuranceType insuranceType;
+        Date incidentDate;
+        double claimAmount;
+    }
+
+    class CarInsuranceClaim extends Claim {
+        String carModel;
+        String carLicensePlate;
+    }
+
+    class HomeInsuranceClaim extends Claim {
+        String homeAddress;
+        double homeValue;
+    }
+
+    class LifeInsuranceClaim extends Claim {
+        double policyAmount;
+        String beneficiaryName;
+    }
+
+    class Claimant {
+        String name;
+        String address;
+        String contactInfo;
+    }
+
+    class Adjuster {
+        String name;
+        String contactInfo;
+    }
+
+    enum ClaimStatus {
+        Pending, Approved, Denied;
+    }
+
+    enum InsuranceType {
+        Car, Home, Life;
+    }
+
+    composition InsuranceClaimProcessingSystem -> Claim [*];
+    association Claim -> Claimant;
+    association Claim -> Adjuster;
+}

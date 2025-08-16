@@ -1,0 +1,174 @@
+
+classdiagram IndustrialRoboticsSystem {
+
+    class IndustrialRoboticsSystem {
+        -> Robot [*];
+        -> Sensor [*];
+        -> Actuator [*];
+        -> Controller [*];
+        -> User [*];
+        -> Log [*];
+        -> Report [*];
+        -> Setting [*];
+        -> Notification [*];
+        -> Alert [*];
+        -> Message [*];
+    }
+
+    class Robot {
+        String uniqueIdentifier;
+        RobotStatus status;
+        RobotType type;
+        -> Tool [*];
+        -> Task [*];
+    }
+
+    class Tool {
+        String name;
+        String description;
+        ToolType type;
+    }
+
+    class Task {
+        String name;
+        String description;
+        -> Step [*];
+    }
+
+    class Step {
+        String name;
+        String description;
+        -> Action [*];
+    }
+
+    class Action {
+        String name;
+        String description;
+        -> Parameter [*];
+    }
+
+    class Parameter {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Value {
+        String name;
+        String description;
+    }
+
+    class Sensor {
+        String name;
+        String description;
+        -> Reading [*];
+    }
+
+    class Reading {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Actuator {
+        String name;
+        String description;
+        -> Command [*];
+    }
+
+    class Command {
+        String name;
+        String description;
+        -> Parameter [*];
+    }
+
+    class Controller {
+        String name;
+        String description;
+        -> Rule [*];
+    }
+
+    class Rule {
+        String name;
+        String description;
+        -> Condition [*];
+    }
+
+    class Condition {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class User {
+        String name;
+        String description;
+        -> Permission [*];
+    }
+
+    class Permission {
+        String name;
+        String description;
+        -> Action [*];
+    }
+
+    class Log {
+        String name;
+        String description;
+        -> Entry [*];
+    }
+
+    class Entry {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Report {
+        String name;
+        String description;
+        -> Section [*];
+    }
+
+    class Section {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Setting {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Notification {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Alert {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    class Message {
+        String name;
+        String description;
+        -> Value [*];
+    }
+
+    enum RobotStatus {
+        Operational, NonOperational;
+    }
+
+    enum RobotType {
+        Welding, Assembly, Inspection;
+    }
+
+    enum ToolType {
+        WeldingTorch, Screwdriver;
+    }
+}

@@ -1,0 +1,69 @@
+
+classdiagram RiskManagementSystem {
+
+    class RiskManagementSystem {
+        RiskRegister riskRegister;
+        RiskAssessmentPlan riskAssessmentPlan;
+        Policy[] policies;
+    }
+
+    class RiskRegister {
+        Risk[] risks;
+    }
+
+    class Risk {
+        String uniqueIdentifier;
+        String description;
+        SeverityLevel severity;
+        MitigationStrategy[] mitigationStrategies;
+        Department[] affectedDepartments;
+    }
+
+    class MitigationStrategy {
+        String uniqueIdentifier;
+        String description;
+        Status status;
+        Employee[] responsibleEmployees;
+    }
+
+    class Employee {
+        String uniqueIdentifier;
+        String name;
+        String role;
+    }
+
+    class Department {
+        String uniqueIdentifier;
+        String name;
+        Employee[] employees;
+    }
+
+    class Policy {
+        String uniqueIdentifier;
+        String description;
+        Status status;
+    }
+
+    class RiskAssessmentPlan {
+        String uniqueIdentifier;
+        String description;
+        Status status;
+    }
+
+    enum SeverityLevel {
+        Low, Medium, High, Critical;
+    }
+
+    enum Status {
+        Active, Inactive;
+    }
+
+    composition RiskManagementSystem -> RiskRegister;
+    composition RiskManagementSystem -> RiskAssessmentPlan;
+    composition RiskManagementSystem -> Policy [*];
+    composition RiskRegister -> Risk [*];
+    composition Risk -> MitigationStrategy [*];
+    composition Risk -> Department [*];
+    composition MitigationStrategy -> Employee [*];
+    composition Department -> Employee [*];
+}

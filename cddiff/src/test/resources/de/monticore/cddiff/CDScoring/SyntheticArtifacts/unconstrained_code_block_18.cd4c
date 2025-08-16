@@ -1,0 +1,71 @@
+
+classdiagram WeatherForecastingSystem {
+
+    class WeatherStation {
+        String uniqueIdentifier;
+        String city;
+        float temperature;
+        float humidity;
+        float windSpeed;
+        void collectData();
+    }
+
+    class WeatherAlgorithm {
+        WeatherDatabase weatherDatabase;
+        WeatherStation weatherStation;
+        ForecastModel model;
+        WeatherForecast predictWeather();
+    }
+
+    class UserInterface {
+        void displayForecast(WeatherForecast forecast);
+    }
+
+    class WeatherDatabase {
+        void storeHistoricalData(WeatherStation station);
+        WeatherData retrieveHistoricalData(String stationId);
+    }
+
+    class WeatherForecast {
+        float temperature;
+        float humidity;
+        float windSpeed;
+        float precipitation;
+    }
+
+    class WeatherData {
+        String stationId;
+        List<WeatherRecord> records;
+    }
+
+    class WeatherRecord {
+        Date timestamp;
+        float temperature;
+        float humidity;
+        float windSpeed;
+        float precipitation;
+    }
+
+    abstract class ForecastModel {
+        abstract WeatherForecast generateForecast(WeatherData data);
+    }
+
+    class LinearRegressionModel extends ForecastModel {
+        WeatherForecast generateForecast(WeatherData data);
+    }
+
+    class DecisionTreeModel extends ForecastModel {
+        WeatherForecast generateForecast(WeatherData data);
+    }
+
+    class NeuralNetworkModel extends ForecastModel {
+        WeatherForecast generateForecast(WeatherData data);
+    }
+
+    composition WeatherAlgorithm -> WeatherDatabase;
+    composition WeatherAlgorithm -> WeatherStation;
+    association WeatherAlgorithm -> ForecastModel;
+    association UserInterface -> WeatherForecast;
+    association WeatherDatabase -> WeatherData;
+    association WeatherData -> WeatherRecord;
+}

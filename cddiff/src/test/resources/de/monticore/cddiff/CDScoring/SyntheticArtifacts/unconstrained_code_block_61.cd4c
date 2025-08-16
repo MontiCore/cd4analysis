@@ -1,0 +1,38 @@
+
+classdiagram HeatMappingSystem {
+
+    class HeatMapGenerator {
+        void generateHeatMap();
+        void receiveSensorData(Sensor sensor);
+        void storeHeatMap(Database db, HeatMap heatMap);
+    }
+
+    class Sensor {
+        String uniqueIdentifier;
+        float temperature;
+        float humidity;
+        float pressure;
+    }
+
+    class HeatMap {
+        String id;
+        String data;
+    }
+
+    class GUI {
+        -> HeatMap [*];
+        void displayHeatMap(HeatMap heatMap);
+    }
+
+    class Database {
+        -> HeatMap [*];
+        void storeHeatMap(HeatMap heatMap);
+        HeatMap retrieveHeatMap(String id);
+    }
+
+    composition HeatMapGenerator -> Sensor [*];
+    association HeatMapGenerator -> HeatMap;
+    association HeatMapGenerator -> Database;
+    association GUI -> HeatMap [*];
+    association Database -> HeatMap [*];
+}

@@ -1,0 +1,77 @@
+
+classdiagram RetailAI {
+
+    class ConversationalAISystem {
+        UI ui;
+        NLPModule nlpModule;
+        KnowledgeBase knowledgeBase;
+        ResponseGenerator responseGenerator;
+        DialogueManager dialogueManager;
+    }
+
+    class UI {
+        void receiveInput(String input);
+        void displayResponse(String response);
+    }
+
+    class NLPModule {
+        String analyzeInput(String input);
+        ExtractedInfo extractInfo(String analyzedInput);
+    }
+
+    class KnowledgeBase {
+        ProductInfo getProductInfo(String productId);
+        PromotionInfo getPromotionInfo(String promotionId);
+        StorePolicy getStorePolicy(String policyId);
+        GeneralInfo getGeneralInfo(String infoType);
+    }
+
+    class ResponseGenerator {
+        String generateResponse(ExtractedInfo info);
+    }
+
+    class DialogueManager {
+        void manageDialogue(String input);
+        void askFollowUpQuestion(String question);
+    }
+
+    class ExtractedInfo {
+        String type;
+        String details;
+    }
+
+    class ProductInfo {
+        String features;
+        double price;
+        boolean availability;
+        String reviews;
+        double ratings;
+    }
+
+    class PromotionInfo {
+        String description;
+        double discount;
+        String validity;
+    }
+
+    class StorePolicy {
+        String returnPolicy;
+        String exchangePolicy;
+    }
+
+    class GeneralInfo {
+        String hoursOfOperation;
+        String location;
+    }
+
+    composition ConversationalAISystem -> UI;
+    composition ConversationalAISystem -> NLPModule;
+    composition ConversationalAISystem -> KnowledgeBase;
+    composition ConversationalAISystem -> ResponseGenerator;
+    composition ConversationalAISystem -> DialogueManager;
+    association NLPModule -> ExtractedInfo;
+    association KnowledgeBase -> ProductInfo;
+    association KnowledgeBase -> PromotionInfo;
+    association KnowledgeBase -> StorePolicy;
+    association KnowledgeBase -> GeneralInfo;
+}

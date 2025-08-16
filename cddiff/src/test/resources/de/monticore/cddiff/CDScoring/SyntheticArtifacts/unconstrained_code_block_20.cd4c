@@ -1,0 +1,110 @@
+
+classdiagram ERPSystem {
+
+    class ERPSystem {
+        CentralDatabase centralDatabase;
+        void generateReports();
+        void performAnalytics();
+        void integrateWithCRM(CRMSystem crmSystem);
+        void integrateWithEAM(EAMSystem eamSystem);
+    }
+
+    class CentralDatabase {
+        void storeData(Module module);
+        void retrieveData(Module module);
+    }
+
+    abstract class Module {
+        String name;
+        void customize();
+    }
+
+    class HumanResources extends Module {
+        EmployeeProfile[] employeeProfiles;
+        JobPosting[] jobPostings;
+        PerformanceEvaluation[] performanceEvaluations;
+    }
+
+    class SupplyChainManagement extends Module {
+        InventoryManagement inventoryManagement;
+        OrderTracking orderTracking;
+        Logistics logistics;
+    }
+
+    class FinancialManagement extends Module {
+        Budgeting budgeting;
+        Accounting accounting;
+        Reporting reporting;
+    }
+
+    class EmployeeProfile {
+        String employeeId;
+        String name;
+        String position;
+    }
+
+    class JobPosting {
+        String jobId;
+        String title;
+        String description;
+    }
+
+    class PerformanceEvaluation {
+        String evaluationId;
+        String employeeId;
+        String comments;
+    }
+
+    class InventoryManagement {
+        String inventoryId;
+        String itemName;
+        int quantity;
+    }
+
+    class OrderTracking {
+        String orderId;
+        String status;
+    }
+
+    class Logistics {
+        String logisticsId;
+        String details;
+    }
+
+    class Budgeting {
+        String budgetId;
+        double amount;
+    }
+
+    class Accounting {
+        String accountId;
+        double balance;
+    }
+
+    class Reporting {
+        String reportId;
+        String content;
+    }
+
+    class CRMSystem {
+        String crmId;
+        String details;
+    }
+
+    class EAMSystem {
+        String eamId;
+        String details;
+    }
+
+    composition ERPSystem -> CentralDatabase;
+    composition ERPSystem -> Module [*];
+    composition HumanResources -> EmployeeProfile [*];
+    composition HumanResources -> JobPosting [*];
+    composition HumanResources -> PerformanceEvaluation [*];
+    composition SupplyChainManagement -> InventoryManagement;
+    composition SupplyChainManagement -> OrderTracking;
+    composition SupplyChainManagement -> Logistics;
+    composition FinancialManagement -> Budgeting;
+    composition FinancialManagement -> Accounting;
+    composition FinancialManagement -> Reporting;
+}

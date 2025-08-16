@@ -1,0 +1,55 @@
+
+classdiagram EAM {
+
+  class EAMSystem {
+    -> Asset [*];
+    -> Department [*];
+    -> Location [*];
+  }
+
+  class Asset {
+    String uniqueIdentifier;
+    String name;
+    String description;
+    AssetClass assetClass;
+    Department department;
+    Location location;
+    -> MaintenanceHistory [*];
+  }
+
+  class AssetClass {
+    String name;
+    String[] specificAttributes;
+  }
+
+  class Department {
+    String name;
+    -> Asset [*];
+  }
+
+  class Location {
+    String name;
+    -> Asset [*];
+  }
+
+  class MaintenanceHistory {
+    Date maintenanceDate;
+    String maintenanceType;
+    MaintenanceStatus status;
+  }
+
+  enum MaintenanceStatus {
+    Scheduled, InProgress, Completed;
+  }
+
+  class Report {
+    String generateAssetUtilizationReport();
+    String generateMaintenanceCostReport();
+    String generateAssetDepreciationReport();
+  }
+
+  composition EAMSystem -> Asset [*];
+  composition EAMSystem -> Department [*];
+  composition EAMSystem -> Location [*];
+  composition Asset -> MaintenanceHistory [*];
+}

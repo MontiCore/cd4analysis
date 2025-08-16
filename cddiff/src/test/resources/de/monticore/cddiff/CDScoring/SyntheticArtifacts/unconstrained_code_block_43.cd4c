@@ -1,0 +1,40 @@
+
+classdiagram ATMSystem {
+
+    class ATMSystem {
+        -> ATM [*];
+        -> CashDispenser [*];
+        SecurityFeature securityFeature;
+    }
+
+    class ATM {
+        String uniqueIdentifier;
+        -> BankAccount;
+        void depositCash(double amount);
+        void withdrawCash(double amount);
+        double checkBalance();
+    }
+
+    class BankAccount {
+        String accountNumber;
+        double balance;
+        void deposit(double amount);
+        void withdraw(double amount);
+        double getBalance();
+    }
+
+    class CashDispenser {
+        int capacity;
+        void dispenseCash(double amount);
+    }
+
+    class SecurityFeature {
+        void trackTransaction(String transactionDetails);
+        void alertBank(String alertDetails);
+    }
+
+    composition ATMSystem -> ATM [*];
+    composition ATMSystem -> CashDispenser [*];
+    composition ATMSystem -> SecurityFeature;
+    association ATM -> BankAccount;
+}

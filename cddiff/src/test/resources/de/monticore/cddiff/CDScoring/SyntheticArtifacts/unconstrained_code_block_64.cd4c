@@ -1,0 +1,97 @@
+
+classdiagram EnterpriseSearch {
+
+    class EnterpriseSearchSystem {
+        SearchEngine searchEngine;
+        UserInterface userInterface;
+        IntegrationManager integrationManager;
+    }
+
+    class SearchEngine {
+        Indexer indexer;
+        QueryProcessor queryProcessor;
+        SuggestionEngine suggestionEngine;
+    }
+
+    class Indexer {
+        void indexContent(Content content);
+    }
+
+    class QueryProcessor {
+        SearchResult[] search(String query, Filter[] filters);
+    }
+
+    class SuggestionEngine {
+        String[] suggestQueries(String partialQuery);
+    }
+
+    class UserInterface {
+        void displayResults(SearchResult[] results);
+        void saveSearchResults(SearchResult[] results, User user);
+        void shareSearchResults(SearchResult[] results, User user, User[] recipients);
+    }
+
+    class IntegrationManager {
+        void integrateWithService(Service service);
+    }
+
+    class Content {
+        String id;
+        String title;
+        String author;
+        Date date;
+        ContentType type;
+    }
+
+    class TextFile extends Content {
+        String text;
+    }
+
+    class ImageFile extends Content {
+        String resolution;
+        String format;
+    }
+
+    class VideoFile extends Content {
+        String resolution;
+        String format;
+        int duration;
+    }
+
+    class SearchResult {
+        Content content;
+        float relevanceScore;
+    }
+
+    class Filter {
+        String type;
+        String value;
+    }
+
+    class User {
+        String id;
+        String name;
+        String email;
+    }
+
+    class Service {
+        String name;
+        String endpoint;
+    }
+
+    enum ContentType {
+        TEXT, IMAGE, VIDEO;
+    }
+
+    composition EnterpriseSearchSystem -> SearchEngine;
+    composition EnterpriseSearchSystem -> UserInterface;
+    composition EnterpriseSearchSystem -> IntegrationManager;
+    composition SearchEngine -> Indexer;
+    composition SearchEngine -> QueryProcessor;
+    composition SearchEngine -> SuggestionEngine;
+    composition QueryProcessor -> Filter [*];
+    association UserInterface -> User;
+    association UserInterface -> SearchResult [*];
+    association IntegrationManager -> Service;
+    association SearchResult -> Content;
+}

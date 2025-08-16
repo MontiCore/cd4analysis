@@ -1,0 +1,62 @@
+
+classdiagram RatingsAndReviewsPlatform {
+
+    class Platform {
+        User[] users;
+        Review[] reviews;
+        ProductServiceBusiness[] items;
+        Administrator[] administrators;
+    }
+
+    class User {
+        String username;
+        String password;
+        String email;
+        void createAccount();
+        void login();
+        void searchItem(String query);
+        void rateItem(ProductServiceBusiness item, int rating, String reviewText);
+        void filterReviews(ProductServiceBusiness item, FilterCriteria criteria);
+    }
+
+    class Administrator extends User {
+        void manageReviews(Review review, ReviewAction action);
+        void manageUsers(User user, UserAction action);
+    }
+
+    class ProductServiceBusiness {
+        String name;
+        Review[] reviews;
+        double averageRating;
+        int numberOfReviews;
+        void calculateAverageRating();
+        void displayTopRated();
+    }
+
+    class Review {
+        User user;
+        ProductServiceBusiness item;
+        int rating;
+        String reviewText;
+        Date date;
+    }
+
+    enum FilterCriteria {
+        Rating, Date, Relevance;
+    }
+
+    enum ReviewAction {
+        Approve, Reject, Remove;
+    }
+
+    enum UserAction {
+        Approve, Reject, Remove;
+    }
+
+    composition Platform -> User [*];
+    composition Platform -> Review [*];
+    composition Platform -> ProductServiceBusiness [*];
+    composition Platform -> Administrator [*];
+    association User -> Review [*];
+    association ProductServiceBusiness -> Review [*];
+}

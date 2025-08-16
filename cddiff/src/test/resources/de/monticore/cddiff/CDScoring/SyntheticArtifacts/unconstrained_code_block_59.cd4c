@@ -1,0 +1,72 @@
+
+classdiagram NLPSystem {
+
+    class NLPSystem {
+        TextPreprocessing textPreprocessing;
+        Tokenization tokenization;
+        POSTagging posTagging;
+        NER ner;
+        SentimentAnalysis sentimentAnalysis;
+        Database database;
+        UserInterface userInterface;
+    }
+
+    class TextPreprocessing {
+        String preprocess(String rawText);
+    }
+
+    class Tokenization {
+        List<String> tokenize(String text);
+    }
+
+    class POSTagging {
+        List<POSTag> tag(List<String> tokens);
+    }
+
+    class NER {
+        List<NamedEntity> recognize(List<String> tokens);
+    }
+
+    class SentimentAnalysis {
+        Sentiment analyze(String text);
+    }
+
+    class Database {
+        void storeTextData(String text);
+        void storePOSTags(List<POSTag> posTags);
+        void storeNamedEntities(List<NamedEntity> namedEntities);
+        void storeSentiment(Sentiment sentiment);
+    }
+
+    class UserInterface {
+        void inputTextData(String text);
+        void displayResults(String results);
+    }
+
+    class POSTag {
+        String token;
+        String tag;
+    }
+
+    class NamedEntity {
+        String entity;
+        String type;
+    }
+
+    class Sentiment {
+        String text;
+        SentimentType type;
+    }
+
+    enum SentimentType {
+        Positive, Negative, Neutral;
+    }
+
+    composition NLPSystem -> TextPreprocessing;
+    composition NLPSystem -> Tokenization;
+    composition NLPSystem -> POSTagging;
+    composition NLPSystem -> NER;
+    composition NLPSystem -> SentimentAnalysis;
+    composition NLPSystem -> Database;
+    composition NLPSystem -> UserInterface;
+}

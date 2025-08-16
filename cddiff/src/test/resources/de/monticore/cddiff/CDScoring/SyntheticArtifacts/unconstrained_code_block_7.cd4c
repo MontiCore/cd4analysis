@@ -1,0 +1,61 @@
+
+classdiagram GameDevelopment {
+
+    class Game {
+        Level[] levels;
+        Character[] characters;
+        ScoringSystem scoringSystem;
+        Leaderboard leaderboard;
+        GameMode mode;
+    }
+
+    class Level {
+        String name;
+        String uniqueFeatures;
+        int difficulty;
+    }
+
+    abstract class Character {
+        String name;
+        int health;
+        int strength;
+        int speed;
+    }
+
+    class Player extends Character {
+        int score;
+    }
+
+    class Enemy extends Character {
+        int damage;
+    }
+
+    class PowerUp extends Character {
+        String effect;
+    }
+
+    class ScoringSystem {
+        int calculateScore(Player player, Level level, Enemy[] defeatedEnemies);
+    }
+
+    class Leaderboard {
+        void displayTopScorers();
+    }
+
+    enum GameMode {
+        SinglePlayer, MultiPlayer;
+    }
+
+    class GameSession {
+        Player[] players;
+        void joinSession(Player player);
+        void createSession(Player player);
+    }
+
+    composition Game -> Level [*];
+    composition Game -> Character [*];
+    composition Game -> ScoringSystem;
+    composition Game -> Leaderboard;
+    association Game -> GameMode;
+    association Game -> GameSession [0..*];
+}

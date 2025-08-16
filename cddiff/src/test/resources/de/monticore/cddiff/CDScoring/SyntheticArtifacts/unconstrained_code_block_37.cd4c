@@ -1,0 +1,40 @@
+
+classdiagram MedicalImagingSoftware {
+
+    class MedicalImagingSoftware {
+        Patient[] patients;
+        Image[] images;
+        Algorithm[] algorithms;
+    }
+
+    class Patient {
+        String name;
+        int age;
+        String medicalHistory;
+        -> Image [*];
+    }
+
+    abstract class Image {
+        String uniqueIdentifier;
+        String description;
+    }
+
+    class XRay extends Image {}
+    class CTScan extends Image {}
+    class MRIScan extends Image {}
+
+    abstract class Algorithm {
+        String name;
+        String description;
+        void apply(Image image);
+    }
+
+    class Filter extends Algorithm {}
+    class Transformation extends Algorithm {}
+
+    composition MedicalImagingSoftware -> Patient [*];
+    composition MedicalImagingSoftware -> Image [*];
+    composition MedicalImagingSoftware -> Algorithm [*];
+    association Patient -> Image [*];
+    association Image -> Algorithm [*];
+}

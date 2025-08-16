@@ -1,0 +1,72 @@
+
+classdiagram IVRSystem {
+
+    class IVRSystem {
+        -> UserSession [*];
+        void handleUserRequest(UserSession session, String request);
+        void storeUserPreferences(User user, UserPreferences preferences);
+        UserPreferences retrieveUserPreferences(User user);
+    }
+
+    class UserSession {
+        String sessionId;
+        User user;
+        Menu currentMenu;
+        void navigateTo(Menu menu);
+        void handleError(String errorMessage);
+    }
+
+    class User {
+        String userId;
+        UserPreferences preferences;
+    }
+
+    class UserPreferences {
+        String preferredLanguage;
+        String accountInfo;
+        String profileInfo;
+        String subscriptionInfo;
+    }
+
+    abstract class Menu {
+        String uniqueIdentifier;
+        String description;
+        -> MenuOption [*];
+    }
+
+    class MainMenu extends Menu {
+        -> LanguageSelectionMenu;
+        -> CustomerSupportMenu;
+        -> AccountManagementMenu;
+    }
+
+    class LanguageSelectionMenu extends Menu {
+        void selectLanguage(String language);
+    }
+
+    class CustomerSupportMenu extends Menu {
+        void reportIssue(String issue);
+        void requestAssistance(String assistance);
+        void viewFAQs();
+    }
+
+    class AccountManagementMenu extends Menu {
+        void viewAccountInfo();
+        void updateProfile(String profileInfo);
+        void manageSubscriptions(String subscriptionInfo);
+    }
+
+    class MenuOption {
+        String uniqueIdentifier;
+        String description;
+    }
+
+    composition IVRSystem -> UserSession [*];
+    composition UserSession -> User;
+    composition UserSession -> Menu;
+    composition User -> UserPreferences;
+    composition Menu -> MenuOption [*];
+    composition MainMenu -> LanguageSelectionMenu;
+    composition MainMenu -> CustomerSupportMenu;
+    composition MainMenu -> AccountManagementMenu;
+}

@@ -1,0 +1,81 @@
+
+classdiagram CRM {
+
+    class CRMSystem {
+        void createCustomer(Customer customer);
+        void updateCustomer(Customer customer);
+        void deleteCustomer(Customer customer);
+        void createAccount(Account account);
+        void updateAccount(Account account);
+        void deleteAccount(Account account);
+        void createContact(Contact contact);
+        void updateContact(Contact contact);
+        void deleteContact(Contact contact);
+        List<Relationship> viewRelationships(Account account);
+    }
+
+    class Customer {
+        String uniqueIdentifier;
+        String name;
+        String emailAddress;
+    }
+
+    class Account {
+        String uniqueIdentifier;
+        String accountName;
+        AccountType accountType;
+        -> Customer;
+    }
+
+    class Contact {
+        String uniqueIdentifier;
+        String name;
+        String jobTitle;
+        -> Account;
+        Relationship relationship;
+    }
+
+    class CommunicationHistory {
+        -> Contact;
+        -> Account;
+        List<Communication> communications;
+    }
+
+    class SalesHistory {
+        -> Account;
+        List<Sale> sales;
+    }
+
+    class Communication {
+        CommunicationType type;
+        String details;
+        Date date;
+    }
+
+    class Sale {
+        String product;
+        double salesAmount;
+        Date date;
+    }
+
+    enum AccountType {
+        Individual, Business;
+    }
+
+    enum Relationship {
+        Owner, Manager, Employee;
+    }
+
+    enum CommunicationType {
+        Email, PhoneCall, Meeting;
+    }
+
+    composition CRMSystem -> Customer [*];
+    composition CRMSystem -> Account [*];
+    composition CRMSystem -> Contact [*];
+    composition Account -> Customer;
+    composition Contact -> Account;
+    composition CommunicationHistory -> Contact;
+    composition CommunicationHistory -> Account;
+    composition SalesHistory -> Account;
+}

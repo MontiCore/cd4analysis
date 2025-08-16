@@ -1,0 +1,56 @@
+
+classdiagram RailwayManagementSystem {
+
+    class RailwayManagementSystem {
+        -> RailwayLine [*];
+        -> Train [*];
+        -> Track [*];
+        void provideRealTimeInfo();
+        void provideHistoricalData();
+    }
+
+    class RailwayLine {
+        String lineName;
+        -> Train [*];
+        -> Track [*];
+        void scheduleTrain(Train train);
+    }
+
+    class Train {
+        String trainID;
+        TrainStatus status;
+        -> MaintenanceRecord [*];
+        void trackMovement();
+        void performMaintenance();
+    }
+
+    class Track {
+        String trackID;
+        TrackCondition condition;
+        -> MaintenanceRecord [*];
+        void monitorCondition();
+        void performMaintenance();
+    }
+
+    class MaintenanceRecord {
+        String recordID;
+        Date maintenanceDate;
+        String details;
+    }
+
+    enum TrainStatus {
+        OnTime, Delayed, Cancelled;
+    }
+
+    enum TrackCondition {
+        Good, NeedsMaintenance, UnderMaintenance;
+    }
+
+    composition RailwayManagementSystem -> RailwayLine [*];
+    composition RailwayManagementSystem -> Train [*];
+    composition RailwayManagementSystem -> Track [*];
+    association RailwayLine -> Train [*];
+    association RailwayLine -> Track [*];
+    association Train -> MaintenanceRecord [*];
+    association Track -> MaintenanceRecord [*];
+}

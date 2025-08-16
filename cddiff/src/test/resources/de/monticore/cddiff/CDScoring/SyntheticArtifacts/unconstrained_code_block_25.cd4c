@@ -1,0 +1,65 @@
+
+classdiagram LogisticsFleetManagement {
+
+    class LogisticsCompany {
+        -> Vehicle [*];
+        -> Driver [*];
+        -> Warehouse [*];
+    }
+
+    class Vehicle {
+        String uniqueIdentifier;
+        String make;
+        String model;
+        int yearOfManufacture;
+        -> Driver [0..1];
+        -> Task [*];
+    }
+
+    class Driver {
+        String name;
+        String personnelNumber;
+        JobTitle jobTitle;
+    }
+
+    enum JobTitle {
+        TruckDriver,
+        CarDriver,
+        VanDriver;
+    }
+
+    class Task {
+        String uniqueIdentifier;
+        String description;
+        TaskStatus status;
+        -> Vehicle [*];
+    }
+
+    enum TaskStatus {
+        Completed,
+        NotCompleted;
+    }
+
+    class Warehouse {
+        String uniqueIdentifier;
+        String location;
+        int capacity;
+        -> Good [*];
+    }
+
+    class Good {
+        String uniqueIdentifier;
+        String name;
+        int quantity;
+        -> Warehouse [*];
+    }
+
+    composition LogisticsCompany -> Vehicle [*];
+    composition LogisticsCompany -> Driver [*];
+    composition LogisticsCompany -> Warehouse [*];
+    association Vehicle -> Driver [0..1];
+    association Vehicle -> Task [*];
+    association Task -> Vehicle [*];
+    association Warehouse -> Good [*];
+    association Good -> Warehouse [*];
+}

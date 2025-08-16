@@ -1,0 +1,89 @@
+
+classdiagram QMS {
+
+    class QualityManagementSystem {
+        QualityPolicy qualityPolicy;
+        QualityManual qualityManual;
+        -> QualityObjective [*];
+        -> QualityProcedure [*];
+        -> QualityRecord [*];
+        -> QualityMetric [*];
+        -> QualityIndicator [*];
+
+        void defineQualityPolicy(QualityPolicy qp);
+        void updateQualityPolicy(QualityPolicy qp);
+        void defineQualityManual(QualityManual qm);
+        void updateQualityManual(QualityManual qm);
+        void setQualityObjective(QualityObjective qo);
+        void trackQualityObjective(QualityObjective qo);
+        void recordQualityRecord(QualityRecord qr);
+        void trackQualityMetric(QualityMetric qm);
+        void analyzeQualityIndicator(QualityIndicator qi);
+        void reportQualityIndicator(QualityIndicator qi);
+        void identifyQualityIssue(QualityIssue qi);
+        void addressQualityIssue(QualityIssue qi);
+        void conductInternalAudit(InternalAudit ia);
+        void conductManagementReview(ManagementReview mr);
+        void implementCorrectiveAction(CorrectiveAction ca);
+        void implementPreventiveAction(PreventiveAction pa);
+    }
+
+    class QualityPolicy {
+        String objectives;
+        String procedures;
+    }
+
+    class QualityManual {
+        String detailedProcedures;
+    }
+
+    class QualityObjective {
+        String description;
+        boolean isSMART;
+    }
+
+    class QualityProcedure {
+        String steps;
+    }
+
+    class QualityRecord {
+        String documentation;
+    }
+
+    class QualityMetric {
+        String measurement;
+    }
+
+    class QualityIndicator {
+        String feedback;
+    }
+
+    class QualityIssue {
+        String description;
+        String nonconformity;
+    }
+
+    class InternalAudit {
+        String auditDetails;
+    }
+
+    class ManagementReview {
+        String reviewDetails;
+    }
+
+    class CorrectiveAction {
+        String actionDetails;
+    }
+
+    class PreventiveAction {
+        String actionDetails;
+    }
+
+    composition QualityManagementSystem -> QualityPolicy;
+    composition QualityManagementSystem -> QualityManual;
+    composition QualityManagementSystem -> QualityObjective [*];
+    composition QualityManagementSystem -> QualityProcedure [*];
+    composition QualityManagementSystem -> QualityRecord [*];
+    composition QualityManagementSystem -> QualityMetric [*];
+    composition QualityManagementSystem -> QualityIndicator [*];
+}

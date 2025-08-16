@@ -1,0 +1,118 @@
+
+classdiagram TransportationManagementSystem {
+
+    class TransportationManagementSystem {
+        VehicleManager vehicleManager;
+        ScheduleManager scheduleManager;
+        DriverManager driverManager;
+        MaintenanceManager maintenanceManager;
+        PassengerInfoSystem passengerInfoSystem;
+        PerformanceMonitor performanceMonitor;
+        IntegrationManager integrationManager;
+    }
+
+    class VehicleManager {
+        -> Vehicle [*];
+        void trackMovement(Vehicle vehicle);
+        void allocateDriver(Vehicle vehicle, Driver driver);
+    }
+
+    class ScheduleManager {
+        -> Route [*];
+        void manageSchedule(Vehicle vehicle, Schedule schedule);
+    }
+
+    class DriverManager {
+        -> Driver [*];
+        void assignDriver(Driver driver, Vehicle vehicle);
+    }
+
+    class MaintenanceManager {
+        -> MaintenanceSchedule [*];
+        void scheduleMaintenance(Vehicle vehicle, MaintenanceSchedule maintenanceSchedule);
+    }
+
+    class PassengerInfoSystem {
+        void provideRealTimeInfo(Vehicle vehicle);
+        void provideAlerts(String message);
+    }
+
+    class PerformanceMonitor {
+        void reportPerformanceMetrics();
+    }
+
+    class IntegrationManager {
+        void integrateWithTrafficSystem();
+        void integrateWithWeatherSystem();
+    }
+
+    abstract class Vehicle {
+        String id;
+        String type;
+        Location currentLocation;
+        Schedule schedule;
+        Driver driver;
+    }
+
+    class Bus extends Vehicle {}
+    class Tram extends Vehicle {}
+    class Train extends Vehicle {}
+
+    class Driver {
+        String id;
+        String name;
+        String licenseNumber;
+    }
+
+    class Schedule {
+        String id;
+        List<Stop> stops;
+        Time startTime;
+        Time endTime;
+    }
+
+    class Route {
+        String id;
+        List<Stop> stops;
+    }
+
+    class Stop {
+        String id;
+        String name;
+        Location location;
+    }
+
+    class MaintenanceSchedule {
+        String id;
+        Date scheduledDate;
+        String description;
+    }
+
+    class Location {
+        double latitude;
+        double longitude;
+    }
+
+    class Time {
+        int hour;
+        int minute;
+    }
+
+    class Date {
+        int day;
+        int month;
+        int year;
+    }
+
+    composition TransportationManagementSystem -> VehicleManager;
+    composition TransportationManagementSystem -> ScheduleManager;
+    composition TransportationManagementSystem -> DriverManager;
+    composition TransportationManagementSystem -> MaintenanceManager;
+    composition TransportationManagementSystem -> PassengerInfoSystem;
+    composition TransportationManagementSystem -> PerformanceMonitor;
+    composition TransportationManagementSystem -> IntegrationManager;
+    association VehicleManager -> Vehicle [*];
+    association ScheduleManager -> Route [*];
+    association DriverManager -> Driver [*];
+    association MaintenanceManager -> MaintenanceSchedule [*];
+}
