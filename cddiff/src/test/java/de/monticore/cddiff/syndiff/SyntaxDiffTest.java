@@ -12,6 +12,7 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.syn2semdiff.Syn2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

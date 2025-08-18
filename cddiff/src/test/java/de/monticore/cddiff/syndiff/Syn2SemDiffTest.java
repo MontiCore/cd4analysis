@@ -28,10 +28,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Syn2SemDiffTest extends SynDiffTestBasis {
-  
+
   private static final String cddiffDir = "src/test/resources/de/monticore/cddiff/";
   private static final String validationDir = "src/test/resources/validation/";
-  
+
   public static Stream<Arguments> emptyWitnesses() {
     return Stream.of(Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd",
         "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", false, false), Arguments.of(cddiffDir,
@@ -91,30 +91,30 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
         Arguments.of(validationDir, "cd4analysis/MyExampleV1.cd", "cd4analysis/MyExampleV2.cd",
             true, false));
   }
-  
+
   @ParameterizedTest
   @MethodSource("emptyWitnesses")
   public void testEmptyWitnesses(String baseDir, String srcPath, String tgtPath, boolean staDiff,
       boolean reduction) {
     dir = baseDir;
     parseModels(srcPath, tgtPath);
-    
+
     if (reduction) {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(src, tgt);
     }
-    
+
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(src, tgt);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(staDiff);
-    
+
     assertTrue(witnesses.isEmpty());
   }
-  
+
   public static Stream<Arguments> witnesses() {
     return Stream.of(
-        //Arguments.of("syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", SIMPLE_CLOSED_WORLD, true),
-        //Arguments.of(validationDir, "cddiff/LibraryV5.cd", "cddiff/LibraryV4.cd", STA_CLOSED_WORLD, false),
-        //Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd", SIMPLE_CLOSED_WORLD, true),
+        Arguments.of(cddiffDir, "syndiff/AssocDiff/AssocDeletedMerging/CD51.cd", "syndiff/AssocDiff/AssocDeletedMerging/CD52.cd", SIMPLE_CLOSED_WORLD, true),
+        Arguments.of(validationDir, "cddiff/LibraryV5.cd", "cddiff/LibraryV4.cd", STA_CLOSED_WORLD, false),
+        Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd", SIMPLE_CLOSED_WORLD, true),
         Arguments.of(cddiffDir, "syndiff/SyntaxDiff/AddedDeletedAssocs/CD31.cd",
             "syndiff/SyntaxDiff/AddedDeletedAssocs/CD32.cd", SIMPLE_CLOSED_WORLD, false), Arguments
                 .of(cddiffDir, "syndiff/SyntaxDiff/MoveAttributes/CD12.cd",
@@ -174,31 +174,31 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
                     "cd4analysis/MyCompanyV2.cd", "cd4analysis/MyCompanyV1.cd", STA_CLOSED_WORLD,
                     false));
   }
-  
+
   @ParameterizedTest
   @MethodSource("witnesses")
   public void testWitnesses(String baseDir, String srcPath, String tgtPath, CDSemantics semantics,
       boolean reduction) {
     dir = baseDir;
     parseModels(srcPath, tgtPath);
-    
+
     if (reduction) {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(src, tgt);
     }
-    
+
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(src, tgt);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(semantics.equals(STA_CLOSED_WORLD)
         || semantics.equals(STA_OPEN_WORLD));
-    
+
     assertFalse(witnesses.isEmpty());
-    
+
     checkDiffWitnesses(semantics, src, tgt, witnesses);
   }
-  
+
   public static Stream<Arguments> witnessesReduction() {
     return Stream.of(
-        //      Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd"),
+        Arguments.of(cddiffDir, "Employees/Employees1.cd", "Employees/Employees2.cd"),
         Arguments.of(validationDir, "Performance/5A.cd", "Performance/5B.cd"), Arguments.of(
             validationDir, "Performance/10A.cd", "Performance/10B.cd"), Arguments.of(validationDir,
                 "Performance/15A.cd", "Performance/15B.cd"), Arguments.of(validationDir,
@@ -221,32 +221,32 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
                                                                     "Employees/Employees8.cd"),
         Arguments.of(cddiffDir, "DigitalTwins/DigitalTwin3.cd", "DigitalTwins/DigitalTwin2.cd"));
   }
-  
+
   @ParameterizedTest
   @MethodSource("witnessesReduction")
   public void testWitnessesReduction(String baseDir, String srcPath, String tgtPath) {
     dir = baseDir;
     parseModels(srcPath, tgtPath);
-    
+
     ASTCDCompilationUnit srcOriginal = src.deepClone();
     ASTCDCompilationUnit tgtOriginal = tgt.deepClone();
-    
+
     // reduction-based
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(src, tgt);
-    
+
     Syn2SemDiff syn2semdiff = new Syn2SemDiff(src, tgt);
     List<ASTODArtifact> witnesses = syn2semdiff.generateODs(true);
-    
+
     Assertions.assertFalse(witnesses.isEmpty());
-    
+
     checkDiffWitnesses(CDSemantics.STA_CLOSED_WORLD, src, tgt, witnesses);
-    
+
     CD4CodeMill.scopesGenitorDelegator().createFromAST(srcOriginal);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(tgtOriginal);
     checkDiffWitnesses(CDSemantics.STA_OPEN_WORLD, srcOriginal, tgtOriginal, witnesses);
   }
-  
+
   protected void checkDiffWitnesses(CDSemantics semantics, ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2, Collection<ASTODArtifact> witnesses) {
     for (ASTODArtifact od : witnesses) {
@@ -256,5 +256,5 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
       }
     }
   }
-  
+
 }
