@@ -1,0 +1,16 @@
+import java.lang.String;
+
+classdiagram Concrete {
+
+  class Address {
+    String streetName;
+    String houseNr;
+    String city;
+    String zipCode;
+  }
+
+  class Employee {
+    Address address;
+    Set<Address> secondaryAddresses;
+  }
+}

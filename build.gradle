@@ -119,8 +119,6 @@ subprojects {
 
 evaluationDependsOnChildren()
 
-def withTagGen = ("true").equals(getProperty('genTagging'))
-
 publishing {
   publications {
     def publ = maven(MavenPublication)
@@ -158,15 +156,6 @@ publishing {
     if (("false").equals(getProperty('publishMain'))) {
       publ.artifact(project(":cdlang").tasks.testSourcesJar) {
         group "de.monticore.lang"
-      }
-      // Trafos are published in :cdlang
-      if (withTagGen) {
-        // If available, publish tagging here too
-        "tagging"(MavenPublication) {
-          artifactId = project.name + "-tagging"
-          artifact project(":cdlang").tasks.taggingJar { archiveAppendix = 'tagging' }
-          artifact project(":cdlang").tasks.taggingSourcesJar { archiveAppendix = 'tagging'; archiveClassifier = 'sources' }
-        }
       }
     }
   }

@@ -7,11 +7,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.method.CDMethodChecker;
-import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,11 +17,8 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
   
   public DeepTypeConfStrategy(ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker, CDMethodChecker methodChecker,
-      CDAttributeMatchingStrategy attributeInc, CDMethodMatchingStrategy methodInc,
-      ExternalCandidatesMatchingStrategy<ASTCDType> typeInc,
-      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc) {
-    super(conCD, refCD, attributeChecker, methodChecker, attributeInc, methodInc, typeInc,
-        assocInc);
+      CDIncarnationMapping incMapping) {
+    super(conCD, refCD, attributeChecker, methodChecker, incMapping);
   }
   
   @Override
@@ -40,27 +34,22 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
   }
   
   @Override
-  protected boolean checkAttributeConformance(ASTCDType concrete) {
+  protected boolean checkAttributeConformance(ASTCDType concrete, ASTCDType refType) {
     return checkAttributeConformance(new HashSet<>(CDSymbolTables.getAttributesInHierarchy(
-        concrete)));
+        concrete)), refType);
   }
   
   @Override
-  protected boolean checkMethodConformance(ASTCDType concrete) {
-    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)));
+  protected boolean checkMethodConformance(ASTCDType concrete, ASTCDType refType) {
+    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)),
+        refType);
   }
   
   @Override
   protected boolean checkAssocIncarnation(ASTCDType concrete, ASTCDType ref) {
-    
     Set<ASTCDAssociation> conAssocSet = CDDiffUtil.getAllSuperTypes(concrete, conCD
         .getCDDefinition()).stream().flatMap(supertype -> CDDiffUtil.getReferencingAssociations(
-            supertype, conCD).stream().filter(assoc -> supertype.getSymbol()
-                .getInternalQualifiedName().contains(assoc.getLeftQualifiedName().getQName())
-                || supertype.getSymbol().getInternalQualifiedName().contains(assoc
-                    .getRightQualifiedName().getQName()))).collect(Collectors.toSet());
-    
-    conAssocSet.addAll(CDDiffUtil.getReferencingAssociations(concrete, conCD));
+            supertype, conCD).stream()).collect(Collectors.toSet());
     
     return checkAssocIncarnation(conAssocSet, CDDiffUtil.getReferencingAssociations(ref, refCD));
   }

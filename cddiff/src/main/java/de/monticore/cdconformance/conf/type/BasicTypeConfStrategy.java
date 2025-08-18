@@ -10,12 +10,10 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.method.CDMethodChecker;
-import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
-import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
-import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
@@ -26,31 +24,23 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   protected ASTCDCompilationUnit refCD;
   protected ASTCDCompilationUnit conCD;
   
-  protected CDAttributeChecker attributeChecker;
-  protected CDMethodChecker methodChecker;
-  protected CDAttributeMatchingStrategy attributeInc;
-  protected CDMethodMatchingStrategy methodInc;
-  protected ExternalCandidatesMatchingStrategy<ASTCDType> typeInc;
-  protected ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc;
+  protected final CDAttributeChecker attributeChecker;
+  protected final CDMethodChecker methodChecker;
+  protected final CDIncarnationMapping incMapping;
   
   public BasicTypeConfStrategy(ASTCDCompilationUnit conCD, ASTCDCompilationUnit refCD,
       CDAttributeChecker attributeChecker, CDMethodChecker methodChecker,
-      CDAttributeMatchingStrategy attributeInc, CDMethodMatchingStrategy methodInc,
-      ExternalCandidatesMatchingStrategy<ASTCDType> typeInc,
-      ExternalCandidatesMatchingStrategy<ASTCDAssociation> assocInc) {
+      CDIncarnationMapping incMapping) {
     this.refCD = refCD;
     this.conCD = conCD;
     this.attributeChecker = attributeChecker;
     this.methodChecker = methodChecker;
-    this.attributeInc = attributeInc;
-    this.methodInc = methodInc;
-    this.typeInc = typeInc;
-    this.assocInc = assocInc;
+    this.incMapping = incMapping;
   }
   
   @Override
   public boolean checkConformance(ASTCDType concrete) {
-    Set<ASTCDType> nonConformingTo = typeInc.getMatchedElements(concrete).stream().filter(
+    Set<ASTCDType> nonConformingTo = incMapping.getReferenceElements(concrete).stream().filter(
         ref -> !checkConformance(concrete, ref)).collect(Collectors.toSet());
     return nonConformingTo.isEmpty();
   }
@@ -91,13 +81,12 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     }
     
     // check if all necessary attributes are present
-    attributeChecker.setReferenceType(ref);
     boolean attributes = checkAttributeIncarnation(concrete, ref) && checkAttributeConformance(
-        concrete);
+        concrete, ref);
     
     // check if all necessary methods are present
-    methodChecker.setReferenceType(ref);
-    boolean methods = checkMethodIncarnation(concrete, ref) && checkMethodConformance(concrete);
+    boolean methods = checkMethodIncarnation(concrete, ref) && checkMethodConformance(concrete,
+        ref);
     
     // check if reference associations are incarnated
     boolean associations = checkAssocIncarnation(concrete, ref);
@@ -105,7 +94,7 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
     // check if all reference super-types are incarnated
     boolean superTypes = CDDiffUtil.getAllSuperTypes(ref, refCD.getCDDefinition()).stream()
         .allMatch(refSuper -> CDDiffUtil.getAllSuperTypes(concrete, conCD.getCDDefinition())
-            .stream().anyMatch(conSuper -> typeInc.getMatchedElements(conSuper).contains(
+            .stream().anyMatch(conSuper -> incMapping.getReferenceElements(conSuper).contains(
                 refSuper)));
     if (attributes && methods && associations && superTypes) {
       return true;
@@ -161,13 +150,13 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   }
   
   /** check if all attributes that are incarnations are conformed to the references */
-  protected boolean checkAttributeConformance(ASTCDType con) {
-    return checkAttributeConformance(new HashSet<>(con.getCDAttributeList()));
+  protected boolean checkAttributeConformance(ASTCDType con, ASTCDType refType) {
+    return checkAttributeConformance(new HashSet<>(con.getCDAttributeList()), refType);
   }
   
   /** check if all methods that are incarnations are conformed to the references */
-  protected boolean checkMethodConformance(ASTCDType con) {
-    return checkMethodConformance(new HashSet<>(con.getCDMethodList()));
+  protected boolean checkMethodConformance(ASTCDType con, ASTCDType refType) {
+    return checkMethodConformance(new HashSet<>(con.getCDMethodList()), refType);
   }
   
   /** check if all associations of the reference type are incarnated */
@@ -176,32 +165,42 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
         .getReferencingAssociations(refType, refCD));
   }
   
+  /**
+   * Checks if all reference associations are incarnated by one of the given concrete associations
+   * at least once.<br>
+   * If the reference association is annotated with the stereotype <code>optional</code>, it is not
+   * required to be incarnated.
+   *
+   * @param con the concrete associations
+   * @param ref the reference associations
+   * @return true if all required reference associations are incarnated, false otherwise
+   */
   protected boolean checkAssocIncarnation(Set<ASTCDAssociation> con, Set<ASTCDAssociation> ref) {
     return ref.stream().allMatch(refAssoc -> (refAssoc.getModifier().isPresentStereotype()
         && refAssoc.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            cAssoc -> assocInc.getMatchedElements(cAssoc).contains(refAssoc)));
+            cAssoc -> incMapping.isIncarnation(cAssoc, refAssoc)));
   }
   
   protected boolean checkAttributeIncarnation(Set<ASTCDAttribute> con, Set<ASTCDAttribute> ref) {
     return ref.stream().allMatch(refAttr -> (refAttr.getModifier().isPresentStereotype() && refAttr
         .getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            conAttr -> attributeInc.isMatched(conAttr, refAttr)));
+            conAttr -> incMapping.isIncarnation(conAttr, refAttr)));
   }
   
   protected boolean checkMethodIncarnation(Set<ASTCDMethod> con, Set<ASTCDMethod> ref) {
     return ref.stream().allMatch(refMethod -> (refMethod.getModifier().isPresentStereotype()
         && refMethod.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            conMethod -> methodInc.isMatched(conMethod, refMethod)));
+            conMethod -> incMapping.isIncarnation(conMethod, refMethod)));
   }
   
-  protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete) {
-    return concrete.stream().allMatch(conAttr -> attributeInc.getMatchedElements(conAttr).isEmpty()
-        || attributeChecker.checkConformance(conAttr));
+  protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete, ASTCDType refType) {
+    return concrete.stream().allMatch(conAttr -> incMapping.getReferenceElements(conAttr, refType)
+        .isEmpty() || attributeChecker.checkConformance(conAttr));
   }
   
-  protected boolean checkMethodConformance(Set<ASTCDMethod> concrete) {
-    return concrete.stream().allMatch(conMethod -> methodInc.getMatchedElements(conMethod).isEmpty()
-        || methodChecker.checkConformance(conMethod));
+  protected boolean checkMethodConformance(Set<ASTCDMethod> concrete, ASTCDType refType) {
+    return concrete.stream().allMatch(conMethod -> incMapping.getReferenceElements(conMethod,
+        refType).isEmpty() || methodChecker.checkConformance(conMethod));
   }
   
 }

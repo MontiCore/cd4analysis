@@ -5,10 +5,10 @@
   Call it using the CLI: .. -ct cd2java.CD2Pojo
 
 -->
-${tc.signature("glex", "deConf")}
 <#-- @ftlvariable name="glex" type="de.monticore.generating.templateengine.GlobalExtensionManagement" -->
-<#-- @ftlvariable name="deConf" type="de.monticore.cd.codegen.DecoratorConfig" -->
+<#-- @ftlvariable name="decConfig" type="de.monticore.cd.codegen.DecoratorConfig" -->
 <#-- @ftlvariable name="tc" type="de.monticore.generating.templateengine.TemplateController" -->
+<#-- @ftlvariable name="genSetup" type="de.monticore.generating.GeneratorSetup" -->
 
 
 <#--
@@ -19,24 +19,24 @@ ${tc.signature("glex", "deConf")}
  -->
 
 <#--Apply the default creator: Copy the original CD and use it as the base-->
-${deConf.withCopyCreator().defaultApply()}
+${decConfig.withCopyCreator().defaultApply()}
 <#-- By default (defaultApply) the GetterDecorator is applied, unless an element or its parents are marked with noGetter -->
-${deConf.withGetters().ignoreOnName("noGetter").defaultApply()}
+${decConfig.withGetters().ignoreOnName("noGetter").defaultApply()}
 <#--  Similar configuration for a decorator setting the initial value of associations -->
-${deConf.withDefaultsForCardinalityAttrs().ignoreOnName("noDefaultCardinality").defaultApply()}
+${decConfig.withDefaultsForCardinalityAttrs().ignoreOnName("noDefaultCardinality").defaultApply()}
 <#-- Similar configuration for the Setter Decorator -->
-${deConf.withSetters().ignoreOnName("noSetter").defaultApply()}
+${decConfig.withSetters().ignoreOnName("noSetter").defaultApply()}
 <#-- And the NavigableSetters (for bidirectional assocs). -->
 <#-- The implementation of the NavigableSetters decorator requires that the Setter decorator has run before.-->
-${deConf.withNavigableSetters().ignoreOnName("noSetter").defaultApply()}
+${decConfig.withNavigableSetters().ignoreOnName("noSetter").defaultApply()}
 <#--Method signatures will be turned into abstract methods-->
-${deConf.withAbstractMethodSignatures().ignoreOnName("nonAbstractMethod").defaultApply()}
+${decConfig.withAbstractMethodSignatures().ignoreOnName("nonAbstractMethod").defaultApply()}
 <#--The following decorators are not applied by default, instead they have to be explicitly configured using stereos/tags/etc-->
 <#-- By default, the Builders decorator is NOT applied, unless an element or its parents are marked with builder -->
 <#--  Builders are also not applied when the element is not marked and the parent is marked with noBuilder. -->
-${deConf.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}
+${decConfig.withBuilders().applyOnName("builder").ignoreOnName("noBuilder")}
 <#-- Similarly, the Observable decorator is NOT applied by default, unless an element or its parents are marked with observable -->
-${deConf.withObservers().applyOnName("observable").ignoreOnName("notObservable")}
+${decConfig.withObservers().applyOnName("observable").ignoreOnName("notObservable")}
 
 
 <#--

@@ -53,6 +53,7 @@ public class Syn2SemDiff {
     this.odGenHelper = new ODGenHelper(srcCD, helper);
     helper.findDuplicatedAssocs();
     syntaxDiff.findOverlappingAssocs();
+    OD4ReportMill.init();
   }
   
   /**
@@ -72,6 +73,7 @@ public class Syn2SemDiff {
     this.odGenHelper = new ODGenHelper(srcCD, helper);
     helper.findDuplicatedAssocs();
     syntaxDiff.findOverlappingAssocs();
+    OD4ReportMill.init();
   }
   
   /**

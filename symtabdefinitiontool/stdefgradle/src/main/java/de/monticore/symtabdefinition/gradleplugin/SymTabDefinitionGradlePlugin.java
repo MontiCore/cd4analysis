@@ -60,8 +60,6 @@ public class SymTabDefinitionGradlePlugin implements Plugin<Project> {
           });
       SymTabDefinitionSourceDirectorySet.getSTDefSet(sourceSet).compiledBy(task,
           SymTabDefinitionTask::getOutputDir);
-      project.getTasks().named(sourceSet.getCompileJavaTaskName()).configure(t -> t.dependsOn(
-          task));
     });
   }
   

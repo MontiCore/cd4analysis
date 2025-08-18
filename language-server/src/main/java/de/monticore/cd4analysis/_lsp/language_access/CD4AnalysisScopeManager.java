@@ -16,7 +16,6 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
   
   @Override
   public void initGlobalScope(MCPath modelPath) {
-    BasicSymbolsMill.init();
     super.initGlobalScope(modelPath);
     syncAccessGlobalScope(gs -> {
       BuiltInTypes.addBuiltInTypes(gs);

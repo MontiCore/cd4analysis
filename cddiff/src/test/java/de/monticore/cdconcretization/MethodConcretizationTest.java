@@ -4,6 +4,7 @@ package de.monticore.cdconcretization;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.CDConformanceChecker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -168,9 +169,18 @@ class MethodConcretizationTest extends AbstractCDConcretizationTest {
   
   @Test
   void testMethodForEachTypeSameReturnTypeNoNameMatch() {
-    testConcretizedConformsToRefAndExpectedOut("methods/forEach/ForEachTypeSameReturnTypeConc.cd",
+    CDConformanceChecker checker = testConcretizedConformsToRefAndExpectedOut(
+        "methods/forEach/ForEachTypeSameReturnTypeConc.cd",
         "methods/forEach/ForEachTypeSameReturnTypeNoNameMatchRef.cd",
         "methods/forEach/ForEachTypeSameReturnTypeNoNameMatchOut.cd");
+    
+    // check if bindings are correct
+    assertTypeBindingExists(checker, resolveConMethod("Mill.create_EmployeeBuilder"), "Builder",
+        "EmployeeBuilder");
+    assertTypeBindingExists(checker, resolveConMethod("Mill.create_DepartmentBuilder"), "Builder",
+        "DepartmentBuilder");
+    assertTypeBindingExists(checker, resolveConMethod("Mill.create_CompanyBuilder"), "Builder",
+        "CompanyBuilder");
   }
   
   @Test

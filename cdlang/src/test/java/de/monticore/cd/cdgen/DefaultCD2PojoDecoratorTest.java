@@ -8,8 +8,8 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.se_rwth.commons.logging.Log;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,11 +44,13 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
   public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig config,
       GeneratorSetup setup) {
     // Instead of adding the getters via the API, we call the config template
-    List<Object> configTemplateArgs = Arrays.asList(glex, config);
     String configTemplate = "cd2java.init.CD2Pojo";
     TemplateController tc = setup.getNewTemplateController(configTemplate);
     TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
-    hpp.processValue(tc, configTemplateArgs);
+    glex.setGlobalValue("glex", glex);
+    glex.setGlobalValue("decConfig", config);
+    glex.setGlobalValue("genSetup", setup);
+    hpp.processValue(tc, new ArrayList<>());
   }
   
 }

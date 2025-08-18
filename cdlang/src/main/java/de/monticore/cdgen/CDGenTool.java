@@ -200,17 +200,20 @@ public class CDGenTool extends CDGeneratorTool {
     }
   }
   
-  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig decSetup,
+  public void initializeDecConf(GlobalExtensionManagement glex, DecoratorConfig decConfig,
       CommandLine cmd, GeneratorSetup setup) {
     // Setup CLI config overrides
     if (cmd.hasOption("cliconfig")) {
-      decSetup.withCLIConfig(Arrays.asList(cmd.getOptionValues("cliconfig")));
+      decConfig.withCLIConfig(Arrays.asList(cmd.getOptionValues("cliconfig")));
     }
-    List<Object> configTemplateArgs = Arrays.asList(glex, decSetup);
+    // Avoid a signature with parameters, as any changes will break compatibility
+    glex.setGlobalValue("glex", glex);
+    glex.setGlobalValue("decConfig", decConfig);
+    glex.setGlobalValue("genSetup", setup);
     String configTemplate = cmd.getOptionValue("ct", "cd2java.init.CD2Pojo");
     TemplateController tc = setup.getNewTemplateController(configTemplate);
     TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
-    hpp.processValue(tc, configTemplateArgs);
+    hpp.processValue(tc, new ArrayList<>());
   }
   
   public void decorateAndGenerate(GlobalExtensionManagement glex,

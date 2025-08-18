@@ -8,17 +8,17 @@ import java.util.List;
 
 public class CompAttributeIncStrategy implements CDAttributeMatchingStrategy {
   
-  private final List<CDAttributeMatchingStrategy> attributeCheckers = new ArrayList<>();
+  private final List<CDAttributeMatchingStrategy> incStrategies = new ArrayList<>();
   
   public void addIncStrategy(CDAttributeMatchingStrategy checker) {
-    attributeCheckers.add(checker);
+    incStrategies.add(checker);
   }
   
   @Override
   public List<ASTCDAttribute> getMatchedElements(ASTCDAttribute concrete) {
     List<ASTCDAttribute> refElements = new ArrayList<>();
     
-    for (CDAttributeMatchingStrategy strategy : attributeCheckers) {
+    for (CDAttributeMatchingStrategy strategy : incStrategies) {
       refElements.addAll(strategy.getMatchedElements(concrete));
       if (!refElements.isEmpty()) {
         return refElements;
@@ -30,12 +30,12 @@ public class CompAttributeIncStrategy implements CDAttributeMatchingStrategy {
   
   @Override
   public boolean isMatched(ASTCDAttribute concrete, ASTCDAttribute ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
   }
   
   @Override
   public void setReferenceType(ASTCDType refType) {
-    attributeCheckers.forEach(checker -> checker.setReferenceType(refType));
+    incStrategies.forEach(checker -> checker.setReferenceType(refType));
   }
   
 }

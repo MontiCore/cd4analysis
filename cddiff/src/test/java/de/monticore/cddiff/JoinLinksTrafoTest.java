@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4report.OD4ReportMill;
-import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -20,7 +19,8 @@ public class JoinLinksTrafoTest extends CDDiffTestBasis {
     try {
       ASTCDCompilationUnit cd = parseModel("src/test/resources/de/monticore/cddiff/Employees"
           + "/Employees2.cd");
-      Optional<ASTODArtifact> od = new OD4ReportParser().parse(
+      OD4ReportMill.init();
+      Optional<ASTODArtifact> od = OD4ReportMill.parser().parse(
           "src/test/resources/de/monticore/cddiff/JoinLinksTrafo/EmployeesInstance.od");
       
       assertTrue(od.isPresent());

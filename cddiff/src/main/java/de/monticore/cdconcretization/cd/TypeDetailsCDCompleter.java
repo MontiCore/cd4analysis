@@ -8,15 +8,16 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
-import de.monticore.cdconcretization.ScopedIncarnationBindings;
 import de.monticore.cdconcretization.type.ITypeCompleter;
 import de.monticore.cdconcretization.type.TypeCompletionContext;
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.cdconformance.inc.CDIncarnationMapping;
+import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
+import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
+import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdmatcher.BooleanMatchingStrategy;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
-import de.monticore.symboltable.IScope;
 
 import java.util.Set;
 
@@ -32,33 +33,33 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
   @Override
   public void complete(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD,
       CDCompletionContext context) throws CompletionException {
-    ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy = context.getTypeIncStrategy();
+    CDIncarnationMapping incMapping = context.getIncarnationMapping();
     // complete member incarnations
     for (ASTCDClass cClass : concreteCD.getCDDefinition().getCDClassesList()) {
-      for (ASTCDType rType : typeIncStrategy.getMatchedElements(cClass)) {
+      for (ASTCDType rType : incMapping.getReferenceElements(cClass)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cClass, rType);
-        context.getScopedIncarnationBindings().addTypeBinding(cClass.getSymbol(), rType.getSymbol(),
-            cClass.getSymbol());
+        context.getIncarnationMapping().addBinding(cClass.getSymbol(), rType.getSymbol(), cClass
+            .getSymbol());
         typeDetailsCompleter.completeType(cClass, rType, typeCompletionContext);
       }
     }
     
     for (ASTCDInterface cInterface : concreteCD.getCDDefinition().getCDInterfacesList()) {
-      for (ASTCDType rType : typeIncStrategy.getMatchedElements(cInterface)) {
+      for (ASTCDType rType : incMapping.getReferenceElements(cInterface)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cInterface, rType);
-        context.getScopedIncarnationBindings().addTypeBinding(cInterface.getSymbol(), rType
-            .getSymbol(), cInterface.getSymbol());
+        context.getIncarnationMapping().addBinding(cInterface.getSymbol(), rType.getSymbol(),
+            cInterface.getSymbol());
         typeDetailsCompleter.completeType(cInterface, rType, typeCompletionContext);
       }
     }
     for (ASTCDEnum cEnum : concreteCD.getCDDefinition().getCDEnumsList()) {
-      for (ASTCDType rType : typeIncStrategy.getMatchedElements(cEnum)) {
+      for (ASTCDType rType : incMapping.getReferenceElements(cEnum)) {
         TypeCompletionContext typeCompletionContext = new DefaultTypeCompletionContext(context,
             cEnum, rType);
-        context.getScopedIncarnationBindings().addTypeBinding(cEnum.getSymbol(), rType.getSymbol(),
-            cEnum.getSymbol());
+        context.getIncarnationMapping().addBinding(cEnum.getSymbol(), rType.getSymbol(), cEnum
+            .getSymbol());
         typeDetailsCompleter.completeType(cEnum, rType, typeCompletionContext);
       }
     }
@@ -70,17 +71,12 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     private final CDCompletionContext parentContext;
     private final ASTCDType concreteType;
     private final ASTCDType referenceType;
-    private final BooleanMatchingStrategy<ASTCDAttribute> attributeIncStrategy;
-    private final BooleanMatchingStrategy<ASTCDMethod> methodIncStrategy;
     
     DefaultTypeCompletionContext(CDCompletionContext parentContext, ASTCDType concreteType,
         ASTCDType referenceType) {
       this.parentContext = parentContext;
       this.concreteType = concreteType;
       this.referenceType = referenceType;
-      
-      attributeIncStrategy = parentContext.createAttributeIncStrategy(referenceType);
-      methodIncStrategy = parentContext.createMethodIncStrategy(referenceType);
     }
     
     @Override
@@ -122,6 +118,16 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
       return parentContext.getAssociationIncStrategy();
     }
     
+    @Override
+    public CDAttributeMatchingStrategy getAttributeIncStrategy() {
+      return parentContext.getAttributeIncStrategy();
+    }
+    
+    @Override
+    public CDMethodMatchingStrategy getMethodIncStrategy() {
+      return parentContext.getMethodIncStrategy();
+    }
+    
     // === TypeCompletionContext specific ===
     
     @Override
@@ -131,49 +137,31 @@ public class TypeDetailsCDCompleter extends AbstractCDCompleter {
     public ASTCDType getReferenceType() { return referenceType; }
     
     @Override
-    public BooleanMatchingStrategy<ASTCDAttribute> getAttributeIncStrategy() {
-      return attributeIncStrategy;
-    }
-    
-    @Override
-    public ExternalCandidatesMatchingStrategy<ASTCDAttribute> createAttributeIncStrategy(
-        ASTCDType referenceType) {
-      return parentContext.createAttributeIncStrategy(referenceType);
-    }
-    
-    @Override
-    public BooleanMatchingStrategy<ASTCDMethod> getMethodIncStrategy() { return methodIncStrategy; }
-    
-    @Override
-    public ExternalCandidatesMatchingStrategy<ASTCDMethod> createMethodIncStrategy(
-        ASTCDType referenceType) {
-      return parentContext.createMethodIncStrategy(referenceType);
-    }
-    
-    @Override
-    public ScopedIncarnationBindings getScopedIncarnationBindings() {
-      return parentContext.getScopedIncarnationBindings();
-    }
-    
-    @Override
-    public Set<ASTCDType> getTypeIncarnations(IScope scope, ASTCDType referenceType) {
-      return parentContext.getTypeIncarnations(scope, referenceType);
-    }
-    
-    @Override
     public Set<ASTCDType> getTypeIncarnations(ASTCDType referenceType) {
-      return getTypeIncarnations(getConcreteType().getSpannedScope(), referenceType);
-    }
-    
-    @Override
-    public Set<ASTCDAttribute> getAttributeIncarnations(IScope scope,
-        ASTCDAttribute referenceAttribute) {
-      return parentContext.getAttributeIncarnations(scope, referenceAttribute);
+      return getIncarnationMapping().getIncarnations(getConcreteType().getSpannedScope(),
+          referenceType);
     }
     
     @Override
     public Set<ASTCDAttribute> getAttributeIncarnations(ASTCDAttribute referenceAttribute) {
-      return getAttributeIncarnations(getConcreteType().getSpannedScope(), referenceAttribute);
+      return getIncarnationMapping().getIncarnations(getConcreteType().getSpannedScope(),
+          referenceAttribute);
+    }
+    
+    @Override
+    public Set<ASTCDMethod> getMethodIncarnations(ASTCDMethod referenceMethod) {
+      return getIncarnationMapping().getIncarnations(getConcreteType().getSpannedScope(),
+          referenceMethod);
+    }
+    
+    @Override
+    public MCTypeMatchingStrategy getMCTypeIncStrategy() {
+      return parentContext.getMCTypeIncStrategy();
+    }
+    
+    @Override
+    public CDIncarnationMapping getIncarnationMapping() {
+      return parentContext.getIncarnationMapping();
     }
     
   }

@@ -90,15 +90,21 @@ public class MatchCDAssocsBySrcTypeAndTgtRole implements
   
   /** We check if the referenced types match using the provided type-matcher. */
   protected boolean checkReference(String srcElem, String tgtElem) {
-    Optional<CDTypeSymbol> srcTypeSymbol = srcCD.getEnclosingScope().resolveCDTypeDown(srcElem);
-    Optional<CDTypeSymbol> tgtTypeSymbol = tgtCD.getEnclosingScope().resolveCDTypeDown(tgtElem);
+    Optional<ASTCDType> srcType = resolveConcreteCDTyp(srcElem);
+    Optional<ASTCDType> tgtType = resolveReferenceCDTyp(tgtElem);
     
-    if (srcTypeSymbol.isPresent() && tgtTypeSymbol.isPresent()) {
-      ASTCDType srcType = srcTypeSymbol.get().getAstNode();
-      ASTCDType tgtType = tgtTypeSymbol.get().getAstNode();
-      return typeMatcher.isMatched(srcType, tgtType);
+    if (srcType.isPresent() && tgtType.isPresent()) {
+      return typeMatcher.isMatched(srcType.get(), tgtType.get());
     }
     return false;
+  }
+  
+  protected Optional<ASTCDType> resolveConcreteCDTyp(String qName) {
+    return srcCD.getEnclosingScope().resolveCDTypeDown(qName).map(CDTypeSymbol::getAstNode);
+  }
+  
+  protected Optional<ASTCDType> resolveReferenceCDTyp(String qName) {
+    return tgtCD.getEnclosingScope().resolveCDTypeDown(qName).map(CDTypeSymbol::getAstNode);
   }
   
   protected boolean checkRole(ASTCDAssocSide srcElem, ASTCDAssocSide tgtElem) {

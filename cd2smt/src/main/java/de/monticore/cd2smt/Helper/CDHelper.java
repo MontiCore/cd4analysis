@@ -203,11 +203,13 @@ public class CDHelper {
     if (javaTypeMap.containsKey(mySort.toString())) {
       return javaTypeMap.get(mySort.toString());
     }
+    OD4ReportMill.init();
     return OD4ReportMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade
         .createQualifiedName(mySort.toString())).build();
   }
   
   protected static Map<String, ASTMCType> buildJavaTypeMap() {
+    OD4ReportMill.init();
     return Map.of("Int", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build(), "Real",
         OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build(), "Bool", OD4ReportMill
             .mCPrimitiveTypeBuilder().setPrimitive(1).build(), "String", OD4ReportMill

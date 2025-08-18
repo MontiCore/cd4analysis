@@ -1,0 +1,10 @@
+import java.lang.String;
+
+classdiagram Reference {
+  <<ref="Account">> class BankAccount;
+
+  <<ref="Person">> class User;
+
+  association BankAccount (bankAccount) -> (user)  User[1];
+  association User  (user)  -> (bankAccount) BankAccount[*];
+}

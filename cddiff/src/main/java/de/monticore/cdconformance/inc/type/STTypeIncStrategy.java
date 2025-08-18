@@ -34,10 +34,15 @@ public class STTypeIncStrategy implements ExternalCandidatesMatchingStrategy<AST
   
   @Override
   public boolean isMatched(ASTCDType concrete, ASTCDType ref) {
+    if (!ref.isPresentSymbol() || ref.getEnclosingScope() == null) {
+      // If no symbol table information is attached to the reference type, we cannot
+      // determine whether the concrete type matches the reference type by stereotype.
+      return false;
+    }
     if (concrete.getModifier().isPresentStereotype() && concrete.getModifier().getStereotype()
         .contains(mapping)) {
       String refName = concrete.getModifier().getStereotype().getValue(mapping);
-      return refCD.getEnclosingScope().resolveCDTypeDownMany(refName).contains(ref.getSymbol());
+      return ref.getEnclosingScope().resolveTypeMany(refName).contains(ref.getSymbol());
     }
     return false;
   }

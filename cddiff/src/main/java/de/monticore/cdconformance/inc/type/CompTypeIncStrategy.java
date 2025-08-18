@@ -39,7 +39,7 @@ public class CompTypeIncStrategy implements ExternalCandidatesMatchingStrategy<A
   
   @Override
   public boolean isMatched(ASTCDType concrete, ASTCDType ref) {
-    return getMatchedElements(concrete).contains(ref);
+    return incStrategies.stream().anyMatch(strategy -> strategy.isMatched(concrete, ref));
   }
   
 }
