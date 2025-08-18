@@ -61,8 +61,15 @@ public class ImplicitRoleNameAssocIncStrategy extends MatchCDAssocsBySrcTypeAndT
       }
       else if (reference.isPresentCDRole()) {
         String refRoleName = reference.getCDRole().getName();
-        // If no concrete role is present, it is still a match if the reference role is exactly
-        // the implicit role name.
+        /*
+         * If no concrete role is present, it is still a match if the reference role is exactly
+         * the implicit role name.
+         * However, the conformance checker will warn the user to provide a concrete role name if
+         * there is an explicit reference role name.
+         * See BasicAssocConfStrategy.warnExplicitRoleNameMissing.
+         * NOTE: We should not warn here, because this strategy is not only used for conformance
+         * checking but also during concretization, where we add the missing role name anyway.
+          */
         return refRoleName.equals(implicitRefRoleName);
       }
     }
