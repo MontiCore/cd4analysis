@@ -40,7 +40,9 @@ public class TypeCheckMCTypeMatchingStrategy implements MCTypeMatchingStrategy {
    * @param refType the reference type
    * @return true if the types are matched, false otherwise
    */
-  public boolean isMatched(ASTMCType conType, ASTMCType refType) {
+  @Override
+  public boolean isMatched(ASTMCType conType, ASTMCType refType,
+      BooleanMatchingStrategy<ASTCDType> cdTypeMatcher) {
     if (MCTypeUtil.isUnderspecified(underspecifiedTypeName, refType)) {
       if (MCTypeUtil.isUnderspecified(underspecifiedTypeName, conType)) {
         Log.error("The underspecified placeholder type is not allowed as a concrete type.");
@@ -64,6 +66,13 @@ public class TypeCheckMCTypeMatchingStrategy implements MCTypeMatchingStrategy {
     //  2. no conflicting bindings attached to one of the type parameters
     //  (can be solved with a simple visitor once we have the "Binding" infrastructure from OCL
     //   available here)
+    /*
+     * IMPORTANT: Set the CD type matcher before calling compatibilityCalculator so it uses the
+     * desired incarnation mapping for the CD types.
+     * This makes the method NOT THREAD SAVE! (like a lot of other methods in the conformance check
+     * and concretization as well, so not a huge issue).
+     */
+    compatibilityCalculator.setCDTypeMatcher(cdTypeMatcher);
     List<Bound> result = compatibilityCalculator.constrainSameType(concreteType, referenceType);
     /*
      * IMPORTANT: Do NOT log an error here if it is no match! Conformance checking code might call
@@ -74,11 +83,6 @@ public class TypeCheckMCTypeMatchingStrategy implements MCTypeMatchingStrategy {
      * found for any candidate.
      */
     return result.isEmpty();
-  }
-  
-  @Override
-  public void setCDTypeMatcher(BooleanMatchingStrategy<ASTCDType> cdTypeMatcher) {
-    compatibilityCalculator.setCDTypeMatcher(cdTypeMatcher);
   }
   
 }
