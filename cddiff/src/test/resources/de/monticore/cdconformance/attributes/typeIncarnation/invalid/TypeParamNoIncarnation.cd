@@ -12,6 +12,11 @@ classdiagram Concrete {
   class Employee {
     Address address;
     Set<Foo> secondaryAddresses;
+    Optional<Foo> invoiceAddress;
+    List<Foo> orderedAddresses;
+    Map<String, Foo> addressMap;
+    Map<Foo, String> addressToStringMap;
+    Set<int> favoriteNumbers;
   }
 
   class Foo;
