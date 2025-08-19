@@ -1,12 +1,15 @@
 package de.monticore.cddiff.cdscoring;
 
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.syndiff.SynDiffTestBasis;
+import de.monticore.cdmatcher.caching.CachedMatch;
 import de.monticore.cdmatcher.similarity.CDEmbeddingSimilarity;
 import org.antlr.v4.runtime.misc.Pair;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,9 +53,34 @@ public class CDScoringTest extends SynDiffTestBasis {
 
     CDScoring cdScoring = new CDScoring(src, tgt);
     double score = cdScoring.score(iterations, threshold, useEmbedding);
+    CachedMatch<ASTCDType> closeMatches = cdScoring.getCloseTypeMatches();
     System.out.println("Iterations: " + iterations + ", Threshold: " + threshold + ", Use Embedding: " + useEmbedding);
-    System.out.println("Score for " + srcFile + " and " + tgtFile + ": " + score);
+    System.out.println("Score for " + srcFile + " and " + tgtFile + ": " + String.format("%.4f", score));
+    if (!closeMatches.getMatches().isEmpty()) {
+      System.out.println(printCloseMatches(closeMatches, threshold));
+    }
     System.out.println("----------------------------------------");
+  }
+
+  private static String printCloseMatches(CachedMatch<ASTCDType> closeMatches, double threshold) {
+    StringBuilder builder = new StringBuilder();
+    for (Map.Entry<Pair<ASTCDType, ASTCDType>, Double> entry : closeMatches.getMatches().entrySet()) {
+      Pair<ASTCDType, ASTCDType> pair = entry.getKey();
+      double score = entry.getValue();
+      builder.append("Close match: ")
+        .append(pair.a.getName())
+        .append(" <-> ")
+        .append(pair.b.getName())
+        .append(" (score: ")
+        .append(String.format("%.4f", score));
+      if (score >= threshold) {
+        builder.append(" - match included)");
+      } else {
+        builder.append(" - match excluded)");
+      }
+      builder.append("\n");
+    }
+    return builder.toString();
   }
 
 }

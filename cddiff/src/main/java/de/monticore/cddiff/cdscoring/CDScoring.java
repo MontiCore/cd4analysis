@@ -22,12 +22,27 @@ public class CDScoring {
 
   private final ASTCDCompilationUnit srcCD;
   private final ASTCDCompilationUnit tgtCD;
+  // score matches that are close to the threshold ([0,9 * threshold, 1.11 * threshold])
+  private CachedMatch<ASTCDType> closeTypeMatches = new CachedMatch<>();
+  private CachedMatch<ASTCDAssociation> closeAssocMatches = new CachedMatch<>();
+  private CachedMatch<ASTCDAttribute> closeAttributeMatches = new CachedMatch<>();
 
   CDScoring(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
   }
 
+  /**
+   * Computes the score for the given source and target CD.
+   * The score is based on the matches found between the two CDs.
+   *
+   * @param iterations  maximum number of iterations for the matching algorithm, if matches converge before that, the algorithm stops
+   * @param threshold   threshold for considering a match significant, matches close to the threshold will be saved and can be retrieved via {@link #getCloseTypeMatches()}. If the threshold is greater than 0.9, all matches will be considered close.
+   * @param useEmbedding whether to use embedding in the matching process, make sure to initialize the embedding before if useEmbedding is true via {@link de.monticore.cdmatcher.similarity.CDEmbeddingSimilarity#initialize(String)}
+   *                     or look at the readme for more information
+   * @return the computed score
+   */
+  //TODO: explain embedding usage in the readme
   public double score(int iterations, double threshold, boolean useEmbedding) {
     CDSynDiffMatches srcToTgtMatcher = new CDSynDiffMatches(srcCD, tgtCD, iterations, threshold, useEmbedding);
     CDSynDiffMatches tgtToSrcMatcher = new CDSynDiffMatches(tgtCD, srcCD, iterations, threshold, useEmbedding);
@@ -35,15 +50,23 @@ public class CDScoring {
     CachedMatches srcToTgtScore = srcToTgtMatcher.getScoredMatches();
     CachedMatches tgtToSrcScore = tgtToSrcMatcher.getScoredMatches();
 
-    CachedMatch<ASTCDType> combinedTypeMatches = filterAndCombineMatches(
+    Pair<CachedMatch<ASTCDType>, CachedMatch<ASTCDType>> combinedTypeMatchesResult = filterAndCombineMatches(
       srcToTgtScore.getTypeMatches(), tgtToSrcScore.getTypeMatches(), threshold
     );
-    CachedMatch<ASTCDAssociation> combinedAssocMatches = filterAndCombineMatches(
+    CachedMatch<ASTCDType> combinedTypeMatches = combinedTypeMatchesResult.a;
+    closeTypeMatches = combinedTypeMatchesResult.b;
+
+    Pair<CachedMatch<ASTCDAssociation>, CachedMatch<ASTCDAssociation>> combinedAssocMatchesResult = filterAndCombineMatches(
       srcToTgtScore.getAssocMatches(), tgtToSrcScore.getAssocMatches(), threshold
     );
-    CachedMatch<ASTCDAttribute> combinedAttributeMatches = filterAndCombineMatches(
+    CachedMatch<ASTCDAssociation> combinedAssocMatches = combinedAssocMatchesResult.a;
+    closeAssocMatches = combinedAssocMatchesResult.b;
+
+    Pair<CachedMatch<ASTCDAttribute>, CachedMatch<ASTCDAttribute>> combinedAttributeMatchesResult = filterAndCombineMatches(
       srcToTgtScore.getAttributeMatches(), tgtToSrcScore.getAttributeMatches(), threshold
     );
+    CachedMatch<ASTCDAttribute> combinedAttributeMatches = combinedAttributeMatchesResult.a;
+    closeAttributeMatches = combinedAttributeMatchesResult.b;
 
     // Calculate the scores for all types in the source CD, if a type is not matched, it will be the default value 0.0
     // If two different types are matched to the same type, the average will be lower because both matches were scaled down
@@ -61,20 +84,40 @@ public class CDScoring {
     return typeScore;
   }
 
-  private <T> CachedMatch<T> filterAndCombineMatches(CachedMatch<T> srcToTgt, CachedMatch<T> tgtToSrc, double threshold) {
-    CachedMatch<T> filteredSrcToTgt = filterMatches(srcToTgt, threshold);
-    CachedMatch<T> filteredTgtToSrc = filterMatches(tgtToSrc, threshold);
+  /**
+   * Filters the matches based on a threshold and combines source to target and target to source matches into a single CachedMatch.
+   * @param srcToTgt the matches from source to target
+   * @param tgtToSrc the matches from target to source
+   * @param threshold the threshold to filter matches by should be in the range [0, 1], for values greater than 0.9 close matches will include all matches
+   * @return a pair of CachedMatches, the first one contains the filtered matches that are above the threshold, the second one contains the close matches
+   * @param <T> the type of the elements in the matches
+   */
+  private <T> Pair<CachedMatch<T>, CachedMatch<T>> filterAndCombineMatches(CachedMatch<T> srcToTgt, CachedMatch<T> tgtToSrc, double threshold) {
+    Pair<CachedMatch<T>, CachedMatch<T>> filteredSrcToTgt = filterMatches(srcToTgt, threshold);
+    Pair<CachedMatch<T>, CachedMatch<T>> filteredTgtToSrc = filterMatches(tgtToSrc, threshold);
+    CachedMatch<T> closeMatches = de.monticore.cdmatcher.caching.CachedMatch.merge(
+      List.of(filteredSrcToTgt.b, filteredTgtToSrc.b), Double::min
+    );
 
     //scale down to disfavor matches only in one direction
-    filteredSrcToTgt.getMatches().replaceAll((k, v) -> v * 0.5);
-    filteredTgtToSrc.getMatches().replaceAll((k, v) -> v * 0.5);
+    filteredSrcToTgt.a.getMatches().replaceAll((k, v) -> v * 0.5);
+    filteredTgtToSrc.a.getMatches().replaceAll((k, v) -> v * 0.5);
 
 
-    return CachedMatch.merge(List.of(filteredSrcToTgt, flipMatches(filteredTgtToSrc)), Double::sum);
+    CachedMatch<T> combinedMatches = CachedMatch.merge(List.of(filteredSrcToTgt.a, flipMatches(filteredTgtToSrc.a)), Double::sum);
+    return new Pair<>(combinedMatches, closeMatches);
   }
 
-  private <T> CachedMatch<T> filterMatches(CachedMatch<T> matches, double threshold) {
+  /**
+   * Filters the matches based on a threshold.
+   * @param matches the matches to filter
+   * @param threshold the threshold to filter matches by should be in the range [0, 1], for values greater than 0.9 close matches will include all matches
+   * @return a pair of Cached Matches, the first one contains the filtered matches that are above the threshold, the second one contains the close matches that are in the range [0.9 * threshold, 1.11 * threshold]
+   * @param <T> the type of the elements in the matches
+   */
+  private <T> Pair<CachedMatch<T>, CachedMatch<T>> filterMatches(CachedMatch<T> matches, double threshold) {
     CachedMatch<T> filteredMatches = new CachedMatch<>();
+    CachedMatch<T> closeMatches = new CachedMatch<>();
     List<Map.Entry<Pair<T, T>, Double>> matchScores = matches.getMatches().entrySet().stream().sorted(
       Map.Entry.comparingByValue(Comparator.reverseOrder())
     ).collect(Collectors.toList());
@@ -83,16 +126,21 @@ public class CDScoring {
     Set<T> matchedMapValues = new HashSet<>();
 
     for (Map.Entry<Pair<T, T>, Double> entry : matchScores) {
-      if (entry.getValue() < threshold) {
+      if (entry.getValue() < (threshold * 0.9)) {
         break;
       }
       if (!matchedMapKeys.contains(entry.getKey().a) && !matchedMapValues.contains(entry.getKey().b)) {
-        filteredMatches.putMatch(entry.getKey().a, entry.getKey().b, entry.getValue());
+        if( entry.getValue() > threshold) {
+          filteredMatches.putMatch(entry.getKey().a, entry.getKey().b, entry.getValue());
+        }
+        if( entry.getValue() < threshold * 1.11) {
+          closeMatches.putMatch(entry.getKey().a, entry.getKey().b, entry.getValue());
+        }
         matchedMapKeys.add(entry.getKey().a);
         matchedMapValues.add(entry.getKey().b);
       }
     }
-    return filteredMatches;
+    return new Pair<>(filteredMatches, closeMatches);
   }
 
   private <T> CachedMatch<T> flipMatches(CachedMatch<T> matches) {
@@ -101,5 +149,41 @@ public class CDScoring {
       flippedMatches.putMatch(entry.getKey().b, entry.getKey().a, entry.getValue());
     }
     return flippedMatches;
+  }
+
+  /**
+   * Returns the cached matches that are close to the threshold.
+   * Close matches are defined as those with a score in the range of [0.9 * threshold, 1.11 * threshold].
+   * These matches can be used for further analysis or debugging.
+   * This is only meaningful if the score method was called before, otherwise this will return an empty CachedMatches.
+   *
+   * @return CachedMatches containing matches close to the threshold
+   */
+  public CachedMatch<ASTCDType> getCloseTypeMatches() {
+    return closeTypeMatches;
+  }
+
+  /**
+   * Returns the cached matches that are close to the threshold.
+   * Close matches are defined as those with a score in the range of [0.9 * threshold, 1.11 * threshold].
+   * These matches can be used for further analysis or debugging.
+   * This is only meaningful if the score method was called before, otherwise this will return an empty CachedMatches.
+   *
+   * @return CachedMatches containing matches close to the threshold
+   */
+  public CachedMatch<ASTCDAssociation> getCloseAssocMatches() {
+    return closeAssocMatches;
+  }
+
+  /**
+   * Returns the cached matches that are close to the threshold.
+   * Close matches are defined as those with a score in the range of [0.9 * threshold, 1.11 * threshold].
+   * These matches can be used for further analysis or debugging.
+   * This is only meaningful if the score method was called before, otherwise this will return an empty CachedMatches.
+   *
+   * @return CachedMatches containing matches close to the threshold
+   */
+  public CachedMatch<ASTCDAttribute> getCloseAttributeMatches() {
+    return closeAttributeMatches;
   }
 }
