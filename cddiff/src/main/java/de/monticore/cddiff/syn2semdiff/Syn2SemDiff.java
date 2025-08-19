@@ -203,15 +203,21 @@ public class Syn2SemDiff {
             }
             comment.append(System.lineSeparator()).append("// is/are added in ").append(attribute.a
                 .getSymbol().getInternalQualifiedName());
-            Optional<ASTODArtifact> astodArtifact = generateArtifact(attribute.a, comment);
-            if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
-              artifactList.add(astodArtifact.get());
-              if (artifactList.size() == diffLimit) {
-                return artifactList;
+            
+            Optional<ASTCDClass> srcClass = syntaxDiff.getMatchedClasses().stream().filter(p -> p.b
+                .equals(attribute.a)).map(p -> p.a).findFirst();
+            
+            if (srcClass.isPresent()) {
+              Optional<ASTODArtifact> astodArtifact = generateArtifact(srcClass.get(), comment);
+              if (astodArtifact.isPresent() && diffLimit != 0 && artifactList.size() < diffLimit) {
+                artifactList.add(astodArtifact.get());
+                if (artifactList.size() == diffLimit) {
+                  return artifactList;
+                }
               }
-            }
-            else if (astodArtifact.isPresent() && diffLimit == 0) {
-              artifactList.add(astodArtifact.get());
+              else if (astodArtifact.isPresent() && diffLimit == 0) {
+                artifactList.add(astodArtifact.get());
+              }
             }
           }
         }
