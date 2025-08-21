@@ -187,4 +187,12 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
   }
   
+  @Test
+  void testRepository() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut("evaluation/repository/DomainModel.cd",
+        "evaluation/repository/RepositoryRef.cd", "evaluation/repository/RepositoryOut.cd");
+  }
+  
 }
