@@ -1,0 +1,34 @@
+import java.lang.String;
+
+classdiagram CRUDBackendRef {
+
+  class Entity {
+    any id;
+    any attribute;
+  }
+
+  <<forEach="Entity">> class EntityRepository {
+    <<forEach="Entity.id">> Optional<Entity> findById(any id);
+    List<Entity> findAll();
+    Entity save(Entity entity);
+    <<forEach="Entity.id">> void removeById(any id);
+  }
+
+  <<forEach="Entity">> class EntityController {
+    <<forEach="Entity.id">> HttpResponse getById(any id);
+    HttpResponse getAll();
+    HttpResponse create(CreateEntityData data);
+    //<<forEach="Entity.id">> HttpResponse updateById(any id, UpdateEntityData data);
+    <<forEach="Entity.id">> HttpResponse removeById(any id);
+  }
+
+  <<forEach="Entity">> class CreateEntityData {
+    <<forEach="Entity.attribute">> any attribute;
+  }
+
+  <<forEach="Entity">> class UpdateEntityData {
+    <<forEach="Entity.attribute">> any attribute;
+  }
+
+  class HttpResponse;
+}

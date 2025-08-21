@@ -1,0 +1,75 @@
+import java.lang.String;
+
+classdiagram DomainModel {
+
+  <<ref="Entity">> class Employee {
+     <<ref="id">> String id;
+     <<ref="id">> String taxId;
+     <<ref="attribute">> String firstName;
+     <<ref="attribute">> String lastName;
+     <<ref="attribute">> int number;
+     <<ref="attribute">> int salary;
+  }
+
+   <<ref="Entity">> class Department {
+     <<ref="attribute">> String managerName;
+     <<ref="id">> int depId;
+   }
+
+   class HttpResponse;
+
+   <<ref="CRUDBackendRef.EntityRepository">> class DepartmentRepository {
+     <<ref="CRUDBackendRef.EntityRepository.findById">> Optional<Department> findByDepId(int depId);
+     List<Department> findAll();
+     Department save(Department entity);
+     <<ref="CRUDBackendRef.EntityRepository.removeById">> void removeByDepId(int depId);
+
+   }
+
+   <<ref="CRUDBackendRef.EntityRepository">> class EmployeeRepository {
+     <<ref="CRUDBackendRef.EntityRepository.findById">> Optional<Employee> findById(String id);
+     <<ref="CRUDBackendRef.EntityRepository.findById">> Optional<Employee> findByTaxId(String taxId);
+     List<Employee> findAll();
+     Employee save(Employee entity);
+     <<ref="CRUDBackendRef.EntityRepository.removeById">> void removeById(String id);
+     <<ref="CRUDBackendRef.EntityRepository.removeById">> void removeByTaxId(String taxId);
+   }
+
+   <<ref="CRUDBackendRef.EntityController">> class EmployeeController {
+     <<ref="CRUDBackendRef.EntityController.getById">> HttpResponse getById(String id);
+     <<ref="CRUDBackendRef.EntityController.getById">> HttpResponse getByTaxId(String taxId);
+     HttpResponse getAll();
+     HttpResponse create(CreateEmployeeData data);
+     <<ref="CRUDBackendRef.EntityController.removeById">> HttpResponse removeById(String id);
+     <<ref="CRUDBackendRef.EntityController.removeById">> HttpResponse removeByTaxId(String taxId);
+   }
+
+   <<ref="CRUDBackendRef.EntityController">> class DepartmentController {
+     <<ref="CRUDBackendRef.EntityController.getById">> HttpResponse getByDepId(int depId);
+     HttpResponse getAll();
+     HttpResponse create(CreateDepartmentData data);
+     <<ref="CRUDBackendRef.EntityController.removeById">> HttpResponse removeByDepId(int depId);
+   }
+
+   <<ref="CRUDBackendRef.CreateEntityData">> class CreateEmployeeData {
+     <<ref="CRUDBackendRef.CreateEntityData.attribute">> String firstName;
+     <<ref="CRUDBackendRef.CreateEntityData.attribute">> String lastName;
+     <<ref="CRUDBackendRef.CreateEntityData.attribute">> int number;
+     <<ref="CRUDBackendRef.CreateEntityData.attribute">> int salary;
+   }
+
+   <<ref="CRUDBackendRef.UpdateEntityData">> class UpdateEmployeeData {
+     <<ref="CRUDBackendRef.UpdateEntityData.attribute">> String firstName;
+     <<ref="CRUDBackendRef.UpdateEntityData.attribute">> String lastName;
+     <<ref="CRUDBackendRef.UpdateEntityData.attribute">> int number;
+     <<ref="CRUDBackendRef.UpdateEntityData.attribute">> int salary;
+   }
+
+   <<ref="CRUDBackendRef.CreateEntityData">> class CreateDepartmentData {
+     <<ref="CRUDBackendRef.CreateEntityData.attribute">> String managerName;
+   }
+
+   <<ref="CRUDBackendRef.UpdateEntityData">> class UpdateDepartmentData {
+     <<ref="CRUDBackendRef.UpdateEntityData.attribute">> String managerName;
+   }
+}

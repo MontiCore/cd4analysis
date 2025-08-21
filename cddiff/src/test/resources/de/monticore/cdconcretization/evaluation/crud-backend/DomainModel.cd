@@ -1,0 +1,17 @@
+import java.lang.String;
+
+ classdiagram DomainModel {
+   <<ref="Entity">> class Employee {
+     <<ref="id">> String id;
+     <<ref="id">> String taxId;
+     <<ref="attribute">> String firstName;
+     <<ref="attribute">> String lastName;
+     <<ref="attribute">> int number;
+     <<ref="attribute">> int salary;
+   }
+
+   <<ref="Entity">> class Department {
+     <<ref="attribute">> String managerName;
+     <<ref="id">> int depId;
+   }
+ }
