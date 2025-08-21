@@ -17,7 +17,7 @@ import de.monticore.symboltable.ISymbol;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class OOSymbolsBindings extends OOSymbolsBindingsTOP {
+public class OOSymbolsBindings extends OOSymbolsBindingsBase {
   
   public OOSymbolsBindings() {
     super();

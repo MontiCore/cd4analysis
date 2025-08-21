@@ -12,28 +12,33 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 import java.util.Set;
 
-public class BasicSymbolsBindingsTOP implements IBasicSymbolsBindings {
-  
-  /*
-   * NOTE: This class can be generated and developers can override methods to add additional checks
-   * for conflicts.
-   * For example, addFieldBinding to additionally check if it conflicts with type bindings,
-   * or addFunctionBinding to check if a parameter type of the function is already bound to
-   * something else
-   */
+/**
+ * Basic implementation of {@link IBasicSymbolsBindings}.<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar.<br>
+ * <br>
+ * Developers can customize the semantic relations between different symbols, e.g. by overriding
+ * the {@code getXXXImpliedBindings}.
+ */
+/*
+ * TODO If this class is generated, remove the 'Base' suffix as MontiCore will automatically name
+ *   it TOP in case there is a handwritten implementation.
+ */
+public class BasicSymbolsBindingsBase implements IBasicSymbolsBindings {
   
   private final Bindings<TypeSymbol> typeBindings;
   private final Bindings<VariableSymbol> variableBindings;
   private final Bindings<FunctionSymbol> functionBindings;
   
-  protected BasicSymbolsBindingsTOP(Bindings<TypeSymbol> typeBindings,
+  protected BasicSymbolsBindingsBase(Bindings<TypeSymbol> typeBindings,
       Bindings<VariableSymbol> variableBindings, Bindings<FunctionSymbol> functionBindings) {
     this.typeBindings = typeBindings;
     this.variableBindings = variableBindings;
     this.functionBindings = functionBindings;
   }
   
-  public BasicSymbolsBindingsTOP() {
+  public BasicSymbolsBindingsBase() {
     this(new Bindings<>(), new Bindings<>(), new Bindings<>());
   }
   

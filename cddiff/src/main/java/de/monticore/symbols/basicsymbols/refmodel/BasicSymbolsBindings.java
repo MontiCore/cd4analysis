@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BasicSymbolsBindings extends BasicSymbolsBindingsTOP {
+public class BasicSymbolsBindings extends BasicSymbolsBindingsBase {
   
   protected BasicSymbolsBindings(Bindings<TypeSymbol> typeBindings,
       Bindings<VariableSymbol> variableBindings, Bindings<FunctionSymbol> functionBindings) {
