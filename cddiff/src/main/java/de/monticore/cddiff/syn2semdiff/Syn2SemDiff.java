@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syn2semdiff.datastructures.*;
 import de.monticore.cddiff.syn2semdiff.helpers.ODGenHelper;
@@ -204,8 +205,15 @@ public class Syn2SemDiff {
             comment.append(System.lineSeparator()).append("// is/are added in ").append(attribute.a
                 .getSymbol().getInternalQualifiedName());
             
-            Optional<ASTCDClass> srcClass = syntaxDiff.getMatchedClasses().stream().filter(p -> p.b
-                .equals(attribute.a)).map(p -> p.a).findFirst();
+            Optional<ASTCDClass> srcClass;
+            
+            if (CDDiffUtil.getAllTypesFromCD(syntaxDiff.getSrcCD()).contains(attribute.a)) {
+              srcClass = Optional.of(attribute.a);
+            }
+            else {
+              srcClass = syntaxDiff.getMatchedClasses().stream().filter(p -> p.b.equals(
+                  attribute.a)).map(p -> p.a).findFirst();
+            }
             
             if (srcClass.isPresent()) {
               Optional<ASTODArtifact> astodArtifact = generateArtifact(srcClass.get(), comment);
