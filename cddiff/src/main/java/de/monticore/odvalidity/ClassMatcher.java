@@ -3,10 +3,7 @@ package de.monticore.odvalidity;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -21,6 +18,7 @@ import de.monticore.odbasis._ast.*;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClassMatcher {
   
@@ -72,7 +70,7 @@ public class ClassMatcher {
       String objectType = obj.getMCObjectType().printType();
       Optional<ASTCDClass> optClass = getCDClassOfType(objectType);
       
-      if (Semantic.isClosedWorld(semantics) && optClass.isEmpty()) {
+      if (SemanticsHelper.isClosedWorld(semantics) && optClass.isEmpty()) {
         Log.println("[CONFLICT] Could not find class: " + objectType);
         return false;
       }
@@ -83,20 +81,24 @@ public class ClassMatcher {
         return false;
       }
       
-      if (semantics.equals(CDSemantics.STA_OPEN_WORLD)) {
+      if (SemanticsHelper.isSuperTypeAware(semantics)) {
         Optional<Set<String>> optSuper = STAObjectMatcher.getSuperSetFromStereotype(obj);
         if (optSuper.isPresent()) {
           for (String type : optSuper.get()) {
             if (!optSuper.get().containsAll(STAObjectMatcher.getSuperSet(type, scope))) {
+              Log.println("[CONFLICT]" + optSuper + "does not contain" + STAObjectMatcher
+                  .getSuperSet(type, scope));
               return false;
             }
             Optional<ASTCDClass> optType = getCDClassOfType(type);
             if (optType.isPresent()) {
               if (optClass.isPresent() && !optType.equals(optClass) && CDInheritanceHelper
                   .isSuperOf(objectType, type, scope)) {
+                Log.println("[CONFLICT]" + type + "is not instantiated by" + obj.getName());
                 return false;
               }
-              if (!isObjectValid4Class(obj, optType.get(), semantics)) {
+              // We check with STA_OPEN_WORLD to prevent a call to areObjectAttributesValidInClass
+              if (!isObjectValid4Class(obj, optType.get(), CDSemantics.STA_OPEN_WORLD)) {
                 return false;
               }
             }
@@ -112,7 +114,7 @@ public class ClassMatcher {
   private boolean isInstanceOf(ASTODObject object, ASTCDType type) {
     
     // check the intanceof-stereotype iff semantics is STA open-world
-    if (Semantic.isSuperTypeAware(semantics)) {
+    if (SemanticsHelper.isSuperTypeAware(semantics)) {
       Optional<Set<String>> optSuper = STAObjectMatcher.getSuperSetFromStereotype(object);
       if (optSuper.isPresent()) {
         return optSuper.get().contains(type.getSymbol().getInternalQualifiedName());
@@ -158,7 +160,7 @@ public class ClassMatcher {
       }
     }
     
-    if (Semantic.isClosedWorld(semantics)) {
+    if (SemanticsHelper.isClosedWorld(semantics)) {
       return areObjectAttributesValidInClass(obj.getODAttributeList(), superAttributes);
     }
     
@@ -207,6 +209,8 @@ public class ClassMatcher {
       if (!odAttrFoundInCD) {
         // If we didn't find a matching attribute in class then we check if it exists in the
         // associations
+        Log.println("[CONFLICT] Could not find: " + odAttr.getName() + " in class attributes "
+            + cdAttributes.stream().map(ASTCDAttributeTOP::getName).collect(Collectors.toSet()));
         ASTCDAssociation cdAssociation = getCDAssociationOfODObjectAttribute(odAttr);
         return cdAssociation != null;
       }
@@ -451,7 +455,7 @@ public class ClassMatcher {
    * @param value Enumeration value
    */
   private boolean validateEnumValue(ASTCDEnum cdEnum, String value) {
-    if (Semantic.isClosedWorld(semantics)) {
+    if (SemanticsHelper.isClosedWorld(semantics)) {
       for (var cdEnumMember : cdEnum.getCDEnumConstantList()) {
         if (cdEnumMember.getName().equals(value)) {
           return true;

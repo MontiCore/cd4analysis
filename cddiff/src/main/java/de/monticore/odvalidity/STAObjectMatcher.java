@@ -67,7 +67,7 @@ public class STAObjectMatcher {
     // iterate over all objects
     for (ASTODObject obj : objectList) {
       // for closed world semantics call hasObjectSameInheritance()
-      if (Semantic.isClosedWorld(semantic)) {
+      if (SemanticsHelper.isClosedWorld(semantic)) {
         if (!hasObjectSameInheritance(obj, baseScope, compScope)) {
           // object has not the same inheritance in both CDs
           // -> DiffWitness
@@ -76,7 +76,7 @@ public class STAObjectMatcher {
         }
       }
       // for open world semantics call checkInheritanceOpenWorld()
-      else if (Semantic.isOpenWorld(semantic)) {
+      else if (SemanticsHelper.isOpenWorld(semantic)) {
         if (!checkInheritanceOpenWorld(obj, baseScope, compScope, compCD)) {
           // inheritance contradicts that both CDs have the same open world semantics
           // -> DiffWitness

@@ -3,7 +3,7 @@ package de.monticore.odvalidity;
 
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 
-public class Semantic {
+public class SemanticsHelper {
   
   public static boolean isOpenWorld(CDSemantics semantic) {
     return semantic == CDSemantics.SIMPLE_OPEN_WORLD || semantic == CDSemantics.STA_OPEN_WORLD;

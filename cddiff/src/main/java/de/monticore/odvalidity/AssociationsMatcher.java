@@ -65,7 +65,7 @@ public class AssociationsMatcher {
     }
     
     // for closed-world semantics each link in od must be an instance of an association in cd
-    if (Semantic.isClosedWorld(semantics)) {
+    if (SemanticsHelper.isClosedWorld(semantics)) {
       for (ASTODLink link : links) {
         if (cd.getCDDefinition().getCDAssociationsList().stream().noneMatch(
             assoc -> matchLinkAgainstAssociation(link, assoc))) {
