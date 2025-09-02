@@ -1,0 +1,39 @@
+@startuml
+
+class AirplaneModel {
+    Int ModelId
+}
+
+class Airplane {
+    Int AirPlaneId
+}
+
+class Acquisition {
+    Int AcquisitionId
+    Float NegotiatedPice
+    String Options
+    DateTime DeliveryDate
+}
+
+class Contract {
+    Int ContractId
+    String Text
+}
+
+class Employee {
+    Int EmployeeId
+}
+
+class Airline {
+    String Name
+}
+
+
+AirplaneModel "1" -- "0..*" Airplane
+Airplane "0..1" -- "0..1" Acquisition : part of
+Acquisition "0..*" -- "1" Contract : part of
+Contract "0..*" -- "1" Airline
+Contract "0..*" -- "1" Employee
+Airline "0..1" -- "0..*" Airline
+
+@enduml

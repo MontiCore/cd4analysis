@@ -1,0 +1,25 @@
+classdiagram BankAccount {
+    class Bank {}
+
+    class Branch {}
+
+    class Customer {
+        String firstName;
+        String lastName;
+    }
+
+    class Account {
+        int accountNumber;
+        double balance;
+    }
+
+    class SavingsAccount extends Account {}
+
+    class CheckingAccount extends Account {
+        double overdraftLimit;
+    }
+
+association [1] Bank -- Branch [0..*];
+association [0..*] Bank <-> Customer  [0..*];
+association [1] Customer -> Account [1..5];
+}

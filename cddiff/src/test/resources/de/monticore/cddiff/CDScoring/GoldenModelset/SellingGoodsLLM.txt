@@ -1,0 +1,40 @@
+@startuml
+
+class Product{
+    String Name
+    Int Stock
+}
+
+class Customer{
+    String Name
+    String Address
+    String VATnumber
+}
+
+class OrderLine{
+    String LineNumber
+    Int Quantity
+}
+
+class InvoiceLine{}
+
+class Order{
+    String OrderNumber
+    String DeliveryAddress
+}
+
+class Invoice{}
+class DeliveryLine{}
+class Delivery{}
+
+Product "1" -- "0..*" OrderLine
+OrderLine "1" -- "0..1" InvoiceLine
+OrderLine "1" -- "0..1" DeliveryLine
+Customer "1" -- "0..*" Order
+Order "1" -- "0..*" Invoice
+Order "1" -- "0..*" Delivery
+Order "1" -- "0..*" OrderLine
+Delivery "1" -- "0..*" DeliveryLine
+Invoice "1" -- "0..*" InvoiceLine
+
+@enduml

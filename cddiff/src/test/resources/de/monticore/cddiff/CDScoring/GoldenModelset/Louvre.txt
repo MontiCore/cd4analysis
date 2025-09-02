@@ -1,0 +1,37 @@
+@startuml
+
+class Collector{}
+
+class Piece{
+    String Title
+    String Description
+}
+
+class Item{
+    String Description
+}
+
+class Exhibition{
+    String Title
+    String Stage
+}
+
+class Location{}
+
+class Room{}
+
+class Employee{
+    String Level
+}
+
+
+Collector "1" -- "0..*" Piece
+Piece "0..*" - "0..*" Item
+Exhibition "1" -- "0..*" Item
+Employee "1" -- "0..*" Exhibition : Coordinator
+Exhibition "0..*" -- "0..1" Location : AssignedLocation
+Location "0..*" -- "0..*" Room : RoomLocationAssignment
+Employee "0..*" -- "0..1" Employee : hasCoach >
+
+
+@enduml

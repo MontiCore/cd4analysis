@@ -1,0 +1,75 @@
+classdiagram AirTravelLLM {
+class Aircraft {
+    String name;
+    String type;
+    int yearOfManufacture;
+    Date nextInspection;
+}
+
+class PassengerAircraft extends Aircraft {
+    int numberOfSeats;
+}
+
+class SeatCategory {
+    String designation;
+    Boolean hasEntertainment;
+    int numberOfSeats;
+}
+
+class Airline {
+    String name;
+}
+
+class Flight {
+    String flightNumber;
+    Date date;
+}
+
+class Passenger {
+    String name;
+    String passportNumber;
+}
+
+class Ticket {
+    String ticketNumber;
+    float price;
+    Boolean upgradeDesired;
+}
+
+class FlightAttendant {
+    String name;
+    Date employmentDate;
+    Boolean isChief;
+}
+
+class Pilot {
+    String name;
+    Date employmentDate;
+    String license;
+}
+
+class Airport {
+    String name;
+    String address;
+    int numberOfRunways;
+}
+
+association performs [1] Aircraft <-> Flight [0..*];
+association has [0..*] Flight <-> Passenger [0..*];
+association holds [0..*] Passenger <-> Ticket [0..*];
+association for [1] Ticket -> SeatCategory [1];
+association belongsTo [1] SeatCategory <-> PassengerAircraft [1];
+
+association partOf [0..1] Aircraft -> Airline [1];
+association employs [0..*] Airline -> FlightAttendant [0..*];
+association employs [0..*] Airline -> Pilot [0..*];
+
+association uses [1] Flight -> Aircraft [1];
+association departure [1] Flight -> Airport [1];
+association destination [1] Flight -> Airport [1];
+association home [0..1] Aircraft -> Airport [1];
+
+association employs [0..*] Flight -> FlightAttendant [0..*];
+association captain [1] Flight -> Pilot [1];
+association coPilots [1] Flight -> Pilot [0..2];
+}

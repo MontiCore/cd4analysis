@@ -1,0 +1,37 @@
+@startuml
+
+class CardHolder{
+    String Name
+    Boolean Suspended
+}
+class Invoice {
+    Int Number
+    Double Discount
+    String status
+}
+class InvoiceLine{
+    Int Number
+}
+class GasStation{
+    String Name
+}
+class Pump {
+    String Type
+    Boolean InUse
+    Double RefillThreshold
+    Boolean Blocked
+}
+class RefuelTurn {
+    Int RefuelTurnNumber
+}
+class CashTurn {}
+
+Pump "1" -- "0..*" RefuelTurn
+Pump "1" -- "0..*" CashTurn
+GasStation"1" -- "0..*" Pump 
+CardHolder "1" -- "0..*" Invoice
+CardHolder "1" -- "0..*" RefuelTurn
+Invoice "1" -- "0..*" InvoiceLine
+RefuelTurn"1" -- "0..1" InvoiceLine
+
+@enduml

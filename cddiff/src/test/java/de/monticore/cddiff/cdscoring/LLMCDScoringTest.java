@@ -33,30 +33,22 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
     CDEmbeddingSimilarity.initialize("src/main/resources/crawl-300d-2M-subword.bin");
   }
 
-  @Test
-  public void testKineopolis() {
-    parseModels("KineopolisLLM.cd", "Kineopolis.cd");
-
-    CDScoring llmCDScoring = new CDScoring(src, tgt);
-
-    System.out.println("Score: " + llmCDScoring.score(5, 0.5, true));
+  public static Stream<Arguments> LLMTestData() {
+    return Stream.of(
+      Arguments.of("KineopolisLLM.cd", "Kineopolis.cd"),
+      Arguments.of("EBikeLLM.cd", "EBike.cd"),
+      Arguments.of("BuildingManagementLLM.cd", "BuildingManagement.cd"),
+      Arguments.of("GoldenModelset/AirTravelLLM.txt", "GoldenModelset/AirTravel.txt"),
+      Arguments.of("GoldenModelset/AlphaInsuranceLLM.txt", "GoldenModelset/AlphaInsurance.txt"),
+      Arguments.of("GoldenModelset/BankAccountLLM.txt", "GoldenModelset/BankAccount.txt")
+    );
   }
 
-  @Test
-  public void testEBike() {
-    parseModels("EBikeLLM.cd", "EBike.cd");
-
+  @ParameterizedTest
+  @MethodSource("LLMTestData")
+  public void testLLMModels(String srcFile, String tgtFile) {
+    parseModels(srcFile, tgtFile);
     CDScoring llmCDScoring = new CDScoring(src, tgt);
-
-    System.out.println("Score: " + llmCDScoring.score(5, 0.5, true));
-  }
-
-  @Test
-  public void testBuildingManagement() {
-    parseModels("BuildingManagementLLM.cd", "BuildingManagement.cd");
-
-    CDScoring llmCDScoring = new CDScoring(src, tgt);
-
     System.out.println("Score: " + llmCDScoring.score(5, 0.5, true));
   }
 

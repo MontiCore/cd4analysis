@@ -1,0 +1,32 @@
+@startuml
+
+class Patient {
+    Boolean Consent
+}
+
+class Doctor{}
+
+class Diagnosis {
+    Int Stage
+    Int ugradeStage()
+    Int downgradeStage()
+    Int priorityUpgrade()
+}
+
+class Illness {
+    String Priority
+}
+
+class Treatment {}
+
+class AppliedTreatment {}
+
+
+Patient "1" -- "0..*" Diagnosis
+Doctor "1" -- "0..*" Diagnosis
+Illness "1" -- "0..*" Diagnosis
+Diagnosis "1" -- "0..*" AppliedTreatment
+Illness "1" -- "0..*" Treatment
+Treatment "1" -- "0..*" AppliedTreatment
+
+@enduml

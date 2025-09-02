@@ -1,0 +1,84 @@
+@startuml
+
+class Ride {
+    Int RideNr {frozen}
+    DateTime PickupDateTime
+    DateTime DropoffDateTime
+    Int Duration
+    String PickupLocation
+    String DropoffLocation
+    Int Distance
+    Int Fee
+
+    getRideNr()
+    setRideNr(newRideNr)
+    calcDuration()
+}
+
+class RideHailing {
+    Int Passengers
+    Time WaitTime
+    String RequestType
+
+    getPassengers()
+}
+
+class RideSharing {
+    numberOfCustomers()
+}
+
+class Customer {
+    Int CustNr {frozen}
+    String CustName
+
+    getCustNr()
+    setCustNr(newCustNr)
+    top5customerHail()
+    top5customerShare()
+}
+
+class Car {
+    Int CarNr {frozen}
+    String CarType
+
+    getCarNr()
+    setCarNr(newCarNr)
+    numberOfRides()
+}
+
+class SoberCar {
+    numberOfSoberCars()
+}
+
+class OtherCar {}
+
+class Involved {
+    Int DamageAmount
+
+    generateReport()
+}
+
+class Accident {
+    Int AccNr {frozen}
+    String AccLocation
+    DateTime AccDateTime
+
+    getAccNr()
+    setAccNr(newAccNr)
+    Top3AccidentHotSports()
+    Top3AccidentPeakTimes()
+}
+
+
+Ride <|-- RideHailing : {total; disjoint}
+Ride <|-- RideSharing
+RideHailing "*"--"1" Customer : LeadCustomer
+RideSharing "*"--"1" Customer : Book
+Ride "*"-"1" Car : OperatedBy
+Car <|-- SoberCar : {total; disjoint}
+Car <|-- OtherCar
+OtherCar "*"--"1" Customer : Owns
+Car "1..*"-"*" Accident
+Involved .. (Car,Accident)
+
+@enduml

@@ -1,0 +1,52 @@
+@startuml
+
+class User {
+    Int UserID
+    String Name
+    String Email
+    Date BirthDate
+}
+
+abstract class Account {
+    Int AccountNumber
+}
+
+class BusinessAccount {
+    String CompanyName
+}
+
+class PersonalAccount {}
+
+class FriendRequest {}
+
+abstract class Page {
+    String PageName
+    Int Visits
+}
+
+class PersonalPage {}
+
+class Privilege {
+    String TypeOfPrivilege
+}
+
+class AdvertisementPage {
+    Double BounceRate
+    Double ClickThroughRate
+    Double CoversionRate
+}
+
+User "1"--"1" Account
+Account <|-- BusinessAccount
+Account <|-- PersonalAccount
+BusinessAccount "1"--"*" AdvertisementPage
+PersonalAccount "1"--"*" PersonalPage : administrator
+PersonalAccount "*"--"*" PersonalPage
+Privilege .. (PersonalAccount,PersonalPage)
+FriendRequest "*"-"1" PersonalAccount : sender
+FriendRequest "*"-"1" PersonalAccount : receiver
+AdvertisementPage --|> Page
+PersonalPage --|> Page
+
+
+@enduml

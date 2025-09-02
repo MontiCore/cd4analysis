@@ -1,0 +1,47 @@
+@startuml
+
+class ProblemType {
+    String Type
+}
+class TreatmentPlan {}
+class AdvisedExaminationType {}
+class ExaminationType {
+    String Type
+}
+class Diagnosis {}
+class Treatment {}
+class AdvisedExamination{}
+class Permission{}
+class Consultation{}
+class FreeExamination{}
+class Patient{}
+class Affiliation{}
+class Doctor{}
+class Hospital{}
+
+ProblemType "1" - "0..1" TreatmentPlan
+TreatmentPlan "0..*" - "0..*" ExaminationType
+(TreatmentPlan,ExaminationType) .. AdvisedExaminationType
+
+ProblemType "1" -- "0..*" Diagnosis
+TreatmentPlan "1" -- "0..*" Treatment
+
+Diagnosis "1" - "0..*" Treatment
+Diagnosis "0..*" -- "1" Consultation
+Treatment "1" - "0..*" AdvisedExamination
+Treatment "1" -- "0..*" FreeExamination
+
+AdvisedExaminationType "1" -- "0..*" AdvisedExamination
+
+AdvisedExamination "0..*" - "1" Permission
+FreeExamination "0..*" -- "1" Permission
+ExaminationType "1" -- "0..*" Permission
+
+Consultation "0..*" -- "1" Affiliation
+Consultation "0..*" -- "1" Patient
+
+Affiliation "0..*" -- "1" Doctor
+Affiliation "0..*" -- "1" Hospital
+Permission "0..*" -- "1" Hospital
+
+@enduml

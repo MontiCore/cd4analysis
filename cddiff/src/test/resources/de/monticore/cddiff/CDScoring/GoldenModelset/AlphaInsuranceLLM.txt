@@ -1,0 +1,81 @@
+classdiagram AlphaInsuranceLLM {
+class Customer {
+    String customerId;
+    String name;
+    String contactInfo;
+}
+
+class Broker {
+    String brokerId;
+    String name;
+    String contactInfo;
+}
+
+class InsurancePolicy {
+    String policyId;
+    String type;
+    Double price;
+}
+
+class PreliminaryOffer {
+    String offerId;
+    Date dateIssued;
+    String deliveryMethod;
+}
+
+class Contract {
+    String contractId;
+    Date startDate;
+    Date endDate;
+    String billingFrequency;
+}
+
+class Invoice {
+    String invoiceId;
+    Double amount;
+    Date dateIssued;
+}
+
+class Claim {
+    String claimId;
+    Date dateSubmitted;
+    String status;
+}
+
+class ClaimCase {
+    String caseId;
+    String type;
+    String status;
+}
+
+class Estimator {
+    String estimatorId;
+    String name;
+    String expertise;
+}
+
+class EstimatorReport {
+    String reportId;
+    Date dateIssued;
+    String content;
+}
+
+class CompensationDecision {
+    String decisionId;
+    Double amount;
+    Date date;
+}
+
+association assignedTo [1] Customer -- Broker [1];
+association interestedIn [1] Customer -- InsurancePolicy [0..*];
+association receives [1] Customer -- PreliminaryOffer [0..*];
+association signs [1] Customer -- Contract [0..*];
+association generates [1] Contract -- Invoice [0..*];
+
+association submittedBy [1] Claim -- Customer [1];
+association consistsOf [1] Claim -- ClaimCase [0..*];
+association assessedBy [0..*] ClaimCase -> Estimator [1];
+association generates [1] ClaimCase -- EstimatorReport [0..*];
+association resultsIn [1] ClaimCase -> CompensationDecision [0..1];
+association paidTo [1] CompensationDecision -- Customer [1];
+}
