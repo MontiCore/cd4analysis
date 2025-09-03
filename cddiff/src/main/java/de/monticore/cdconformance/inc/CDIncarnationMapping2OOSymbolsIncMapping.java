@@ -70,16 +70,16 @@ public class CDIncarnationMapping2OOSymbolsIncMapping implements IOOSymbolsIncMa
   
   @Override
   public IOOSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol) {
-    return new OOSymbolsRestrictedIncMapping(this, getScopedBindings(contextSymbol));
+    return new OOSymbolsRestrictedIncMapping(this, this.getScopedBindings(contextSymbol));
   }
   
   @Override
   public IOOSymbolsLocalIncMapping getScopedMapping(IScope scope) {
-    return new OOSymbolsRestrictedIncMapping(this, getScopedBindings(scope));
+    return new OOSymbolsRestrictedIncMapping(this, this.getScopedBindings(scope));
   }
   
   @Override
-  public IOOSymbolsBindings getScopedBindings(String contextSymbolKey) {
+  public IOOSymbolsBindings getLocalOnlyBindings(String contextSymbolKey) {
     return new CDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, null,
         contextSymbolKey);
   }
