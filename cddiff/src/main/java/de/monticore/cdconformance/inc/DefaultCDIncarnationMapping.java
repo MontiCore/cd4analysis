@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc;
 
-import com.google.common.collect.SetMultimap;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
@@ -14,14 +13,19 @@ import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
+import de.monticore.refmodel.Binding;
+import de.monticore.refmodel.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
+import de.monticore.symbols.oosymbols.refmodel.OOSymbolsIncMapping;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,21 +39,26 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   private final CDMethodMatchingStrategy methodIncStrategy;
   private final ExternalCandidatesMatchingStrategy<ASTCDAssociation> associationIncStrategy;
   
-  private final CDIncarnationBindings bindings;
+  private final OOSymbolsIncMapping ooSymbolsIncMapping;
   
   public DefaultCDIncarnationMapping(ASTCDCompilationUnit concreteCD,
       ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
       MCTypeMatchingStrategy mcTypeIncStrategy, CDAttributeMatchingStrategy attributeIncStrategy,
       CDMethodMatchingStrategy methodIncStrategy,
       ExternalCandidatesMatchingStrategy<ASTCDAssociation> associationIncStrategy,
-      CDIncarnationBindings bindings) {
+      OOSymbolsIncMapping ooSymbolsIncMapping) {
     this.concreteCD = concreteCD;
     this.typeIncStrategy = typeIncStrategy;
     this.mcTypeIncStrategy = mcTypeIncStrategy;
     this.attributeIncStrategy = attributeIncStrategy;
     this.methodIncStrategy = methodIncStrategy;
     this.associationIncStrategy = associationIncStrategy;
-    this.bindings = bindings;
+    this.ooSymbolsIncMapping = ooSymbolsIncMapping;
+  }
+  
+  @Override
+  public IOOSymbolsIncMapping asOOSymbolsIncMapping() {
+    return ooSymbolsIncMapping;
   }
   
   @Override
@@ -65,28 +74,20 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public Set<ASTCDType> getIncarnations(IScope scope, ASTCDType referenceType) {
-    return getIncarnations(bindings.getBindings(scope, referenceType.getSymbol()), referenceType);
+    return ooSymbolsIncMapping.getScopedMapping(scope).getIncarnations(referenceType.getSymbol())
+        .stream().map(SymbolUtil::cdTypeFromTypeSymbol).collect(Collectors.toSet());
   }
   
   @Override
   public Set<ASTCDType> getIncarnations(ISymbol contextSymbol, ASTCDType referenceType) {
-    return getIncarnations(bindings.getBindings(contextSymbol, referenceType.getSymbol()),
-        referenceType);
+    return ooSymbolsIncMapping.getScopedMapping(contextSymbol).getIncarnations(referenceType
+        .getSymbol()).stream().map(SymbolUtil::cdTypeFromTypeSymbol).collect(Collectors.toSet());
   }
   
   @Override
   public boolean isIncarnation(ISymbol contextSymbol, ASTCDType conType, ASTCDType refType) {
-    Set<TypeSymbol> typeBindings = bindings.getBindings(contextSymbol, refType.getSymbol());
-    // 1. check for scoped incarnation bindings
-    if (!typeBindings.isEmpty()) {
-      // map symbols back to AST nodes
-      return typeBindings.stream().map(SymbolUtil::cdTypeFromTypeSymbol).anyMatch(c -> c.equals(
-          conType));
-    }
-    else {
-      // 2. use usual incarnation strategies
-      return isIncarnation(conType, refType);
-    }
+    // TODO can be optimized once LocalIncMapping supports isIncarnation checks directly
+    return getIncarnations(contextSymbol, refType).stream().anyMatch(type -> type == conType);
   }
   
   @Override
@@ -94,33 +95,40 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
     return typeIncStrategy.isMatched(conType, refType);
   }
   
-  protected Set<ASTCDType> getIncarnations(Set<TypeSymbol> typeBindings, ASTCDType referenceType) {
-    // 1. check for scoped incarnation bindings
-    if (!typeBindings.isEmpty()) {
-      // map symbols back to AST nodes
-      return typeBindings.stream().map(SymbolUtil::cdTypeFromTypeSymbol).collect(Collectors
-          .toSet());
-    }
-    else {
-      // 2. Find all incarnations using the usual incarnation strategies
-      return getIncarnations(referenceType);
-    }
-  }
-  
-  @Override
-  public void addBinding(String contextSymbolName, TypeSymbol referenceType,
-      Set<TypeSymbol> concreteTypes) {
-    bindings.addBinding(contextSymbolName, referenceType, concreteTypes);
-  }
-  
   @Override
   public Set<TypeSymbol> getBindings(ISymbol contextSymbol, TypeSymbol referenceType) {
-    return bindings.getBindings(contextSymbol, referenceType);
+    return ooSymbolsIncMapping.getScopedBindings(contextSymbol).getBinding(referenceType).map(
+        Binding::getConcreteElements).orElse(Collections.emptySet());
   }
   
   @Override
   public Set<TypeSymbol> getBindings(IScope concreteScope, TypeSymbol referenceType) {
-    return bindings.getBindings(concreteScope, referenceType);
+    return ooSymbolsIncMapping.getScopedBindings(concreteScope).getBinding(referenceType).map(
+        Binding::getConcreteElements).orElse(Collections.emptySet());
+  }
+  
+  @Override
+  public void addBinding(String contextSymbolName, FieldSymbol referenceField,
+      FieldSymbol concreteField) {
+    try {
+      ooSymbolsIncMapping.getLocalOnlyBindings(contextSymbolName).addFieldBinding(Binding
+          .createStrict(referenceField, concreteField));
+    }
+    catch (BindingConflictException e) {
+      throw new RuntimeException("Binding exception", e);
+    }
+  }
+  
+  @Override
+  public void addBinding(ISymbol contextSymbol, FieldSymbol referenceField,
+      FieldSymbol concreteField) {
+    try {
+      ooSymbolsIncMapping.getScopedBindings(contextSymbol).addFieldBinding(Binding.createStrict(
+          referenceField, concreteField));
+    }
+    catch (BindingConflictException e) {
+      throw new RuntimeException("Binding exception", e);
+    }
   }
   
   @Override
@@ -153,44 +161,23 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public Set<ASTCDAttribute> getIncarnations(IScope scope, ASTCDAttribute referenceAttribute) {
-    Set<FieldSymbol> fieldIncarnationsOpt = bindings.getBindings(scope, referenceAttribute
-        .getSymbol());
-    if (!fieldIncarnationsOpt.isEmpty()) {
-      // map symbols back to AST nodes
-      return fieldIncarnationsOpt.stream().map(SymbolUtil::cdAttributeFromFieldSymbol).collect(
-          Collectors.toSet());
-    }
-    else {
-      // 2. Find all incarnations using the usual incarnation strategies
-      ASTCDType attributeDeclaringType = (ASTCDType) referenceAttribute.getSymbol()
-          .getEnclosingScope().getAstNode();
-      
-      // TODO What about the "deep" case where attributes are matched in supertypes?
-      
-      return getIncarnations(scope, attributeDeclaringType).stream().flatMap(
-          cAttributeDeclaringType -> {
-            attributeIncStrategy.setReferenceType(attributeDeclaringType);
-            return cAttributeDeclaringType.getCDAttributeList().stream().filter(
-                attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
-                    referenceAttribute));
-          }).collect(Collectors.toSet());
-    }
+    return ooSymbolsIncMapping.getScopedMapping(scope).getIncarnations(referenceAttribute
+        .getSymbol()).stream().map(SymbolUtil::cdAttributeFromFieldSymbol).collect(Collectors
+            .toSet());
+  }
+  
+  public Set<ASTCDAttribute> getIncarnations(ISymbol contextSymbol,
+      ASTCDAttribute referenceAttribute) {
+    return ooSymbolsIncMapping.getScopedMapping(contextSymbol).getIncarnations(referenceAttribute
+        .getSymbol()).stream().map(SymbolUtil::cdAttributeFromFieldSymbol).collect(Collectors
+            .toSet());
   }
   
   @Override
   public boolean isIncarnation(ISymbol contextSymbol, ASTCDAttribute conAttribute,
       ASTCDAttribute refAttribute) {
-    Set<FieldSymbol> fieldBindings = bindings.getBindings(contextSymbol, refAttribute.getSymbol());
-    // 1. check for scoped incarnation bindings
-    if (!fieldBindings.isEmpty()) {
-      // map symbols back to AST nodes
-      return fieldBindings.stream().map(SymbolUtil::cdAttributeFromFieldSymbol).anyMatch(c -> c
-          .equals(conAttribute));
-    }
-    else {
-      // 2. use usual incarnation strategies
-      return isIncarnation(conAttribute, refAttribute);
-    }
+    // TODO can be optimized once LocalIncMapping supports isIncarnation checks directly
+    return getIncarnations(contextSymbol, refAttribute).contains(conAttribute);
   }
   
   @Override
@@ -199,19 +186,27 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, FieldSymbol referenceField,
-      Set<FieldSymbol> concreteFields) {
-    bindings.addBinding(contextSymbolName, referenceField, concreteFields);
-  }
-  
-  @Override
   public Set<FieldSymbol> getBindings(ISymbol contextSymbol, FieldSymbol referenceField) {
-    return bindings.getBindings(contextSymbol, referenceField);
+    return ooSymbolsIncMapping.getScopedBindings(contextSymbol).getBinding(referenceField).map(
+        Binding::getConcreteElements).orElse(Collections.emptySet());
   }
   
   @Override
   public Set<FieldSymbol> getBindings(IScope concreteScope, FieldSymbol referenceField) {
-    return bindings.getBindings(concreteScope, referenceField);
+    return ooSymbolsIncMapping.getScopedBindings(concreteScope).getBinding(referenceField).map(
+        Binding::getConcreteElements).orElse(Collections.emptySet());
+  }
+  
+  @Override
+  public void addBinding(ISymbol contextSymbol, MethodSymbol referenceMethod,
+      MethodSymbol concreteMethod) {
+    try {
+      ooSymbolsIncMapping.getScopedBindings(contextSymbol).addMethodBinding(Binding.createStrict(
+          referenceMethod, concreteMethod));
+    }
+    catch (BindingConflictException e) {
+      throw new RuntimeException("Binding exception", e);
+    }
   }
   
   @Override
@@ -245,42 +240,21 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public Set<ASTCDMethod> getIncarnations(IScope scope, ASTCDMethod referenceMethod) {
-    Set<MethodSymbol> methodIncarnationsOpt = bindings.getBindings(scope, referenceMethod
-        .getSymbol());
-    if (!methodIncarnationsOpt.isEmpty()) {
-      // map symbols back to AST nodes
-      return methodIncarnationsOpt.stream().map(SymbolUtil::cdMethodFromMethodSymbol).collect(
-          Collectors.toSet());
-    }
-    else {
-      // 2. Find all incarnations using the usual incarnation strategies
-      ASTCDType methodDeclaringType = (ASTCDType) referenceMethod.getSymbol().getEnclosingScope()
-          .getAstNode();
-      
-      // TODO What about the "deep" case where methods are matched in supertypes?
-      
-      return getIncarnations(scope, methodDeclaringType).stream().flatMap(cMethodDeclaringType -> {
-        methodIncStrategy.setReferenceType(methodDeclaringType);
-        return cMethodDeclaringType.getCDMethodList().stream().filter(
-            methodIncarnation -> methodIncStrategy.isMatched(methodIncarnation, referenceMethod));
-      }).collect(Collectors.toSet());
-    }
+    return ooSymbolsIncMapping.getScopedMapping(scope).getIncarnations(referenceMethod.getSymbol())
+        .stream().map(SymbolUtil::cdMethodFromMethodSymbol).collect(Collectors.toSet());
+  }
+  
+  public Set<ASTCDMethod> getIncarnations(ISymbol contextSymbol, ASTCDMethod referenceMethod) {
+    return ooSymbolsIncMapping.getScopedMapping(contextSymbol).getIncarnations(referenceMethod
+        .getSymbol()).stream().map(SymbolUtil::cdMethodFromMethodSymbol).collect(Collectors
+            .toSet());
   }
   
   @Override
   public boolean isIncarnation(ISymbol contextSymbol, ASTCDMethod conMethod,
       ASTCDMethod refMethod) {
-    Set<MethodSymbol> methodBindings = bindings.getBindings(contextSymbol, refMethod.getSymbol());
-    // 1. check for scoped incarnation bindings
-    if (!methodBindings.isEmpty()) {
-      // map symbols back to AST nodes
-      return methodBindings.stream().map(SymbolUtil::cdMethodFromMethodSymbol).anyMatch(c -> c
-          .equals(conMethod));
-    }
-    else {
-      // 2. use usual incarnation strategies
-      return isIncarnation(conMethod, refMethod);
-    }
+    // TODO can be optimized once LocalIncMapping supports isIncarnation checks directly
+    return getIncarnations(contextSymbol, refMethod).contains(conMethod);
   }
   
   @Override
@@ -289,19 +263,22 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, MethodSymbol referenceMethod,
-      Set<MethodSymbol> concreteMethods) {
-    bindings.addBinding(contextSymbolName, referenceMethod, concreteMethods);
-  }
-  
-  @Override
   public Set<MethodSymbol> getBindings(ISymbol contextSymbol, MethodSymbol referenceMethod) {
-    return bindings.getBindings(contextSymbol, referenceMethod);
+    return ooSymbolsIncMapping.getScopedBindings(contextSymbol).getBinding(referenceMethod).map(
+        Binding::getConcreteElements).orElse(Collections.emptySet());
   }
   
   @Override
   public Set<MethodSymbol> getBindings(IScope scope, MethodSymbol referenceMethod) {
-    return bindings.getBindings(scope, referenceMethod);
+    return ooSymbolsIncMapping.getScopedBindings(scope).getBinding(referenceMethod).map(
+        Binding::getConcreteElements).orElse(Collections.emptySet());
+  }
+  
+  @Override
+  public void addBinding(ISymbol contextSymbol, CDAssociationSymbol refAssociation,
+      Set<CDAssociationSymbol> conAssociations) {
+    // TODO implement association support
+    throw new NotImplementedException();
   }
   
   @Override
@@ -335,14 +312,31 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   }
   
   @Override
-  public void addBinding(String contextSymbolName, CDAssociationSymbol refAssociation,
-      Set<CDAssociationSymbol> conAssociations) {
-    bindings.addBinding(contextSymbolName, refAssociation, conAssociations);
+  public String computeSymbolKey(ISymbol symbol) {
+    return ooSymbolsIncMapping.computeSymbolKey(symbol);
   }
   
   @Override
-  public String computeSymbolKey(ISymbol symbol) {
-    return bindings.computeSymbolKey(symbol);
+  public void addBinding(String contextSymbolName, TypeSymbol referenceType,
+      TypeSymbol concreteType) {
+    try {
+      ooSymbolsIncMapping.getLocalOnlyBindings(contextSymbolName).addTypeBinding(Binding
+          .createStrict(referenceType, concreteType));
+    }
+    catch (BindingConflictException e) {
+      throw new RuntimeException("Binding exception", e);
+    }
+  }
+  
+  @Override
+  public void addBinding(ISymbol contextSymbol, TypeSymbol referenceType, TypeSymbol concreteType) {
+    try {
+      ooSymbolsIncMapping.getScopedBindings(contextSymbol).addTypeBinding(Binding.createStrict(
+          referenceType, concreteType));
+    }
+    catch (BindingConflictException e) {
+      throw new RuntimeException("Binding exception", e);
+    }
   }
   
   @Override
@@ -354,36 +348,6 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   public boolean isIncarnation(ISymbol contextSymbol, ASTMCType conType, ASTMCType refType) {
     return mcTypeIncStrategy.isMatched(conType, refType, (conCDType, refCDType) -> isIncarnation(
         contextSymbol, conCDType, refCDType));
-  }
-  
-  @Override
-  public SetMultimap<String, TypeSymbol> getTypeBindings(IScope concreteScope) {
-    return bindings.getTypeBindings(concreteScope);
-  }
-  
-  @Override
-  public SetMultimap<String, TypeSymbol> getTypeBindings(ISymbol contextSymbol) {
-    return bindings.getTypeBindings(contextSymbol);
-  }
-  
-  @Override
-  public SetMultimap<String, FieldSymbol> getFieldBindings(IScope concreteScope) {
-    return bindings.getFieldBindings(concreteScope);
-  }
-  
-  @Override
-  public SetMultimap<String, FieldSymbol> getFieldBindings(ISymbol contextSymbol) {
-    return bindings.getFieldBindings(contextSymbol);
-  }
-  
-  @Override
-  public SetMultimap<String, MethodSymbol> getMethodBindings(IScope concreteScope) {
-    return bindings.getMethodBindings(concreteScope);
-  }
-  
-  @Override
-  public SetMultimap<String, MethodSymbol> getMethodBindings(ISymbol contextSymbol) {
-    return bindings.getMethodBindings(contextSymbol);
   }
   
 }

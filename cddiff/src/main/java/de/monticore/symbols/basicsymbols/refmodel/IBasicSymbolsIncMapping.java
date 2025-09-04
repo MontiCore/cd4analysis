@@ -3,7 +3,6 @@ package de.monticore.symbols.basicsymbols.refmodel;
 
 import de.monticore.refmodel.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsBindings;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 
@@ -68,9 +67,10 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @return the local incarnation mapping for the given scope
    */
   IBasicSymbolsLocalIncMapping getScopedMapping(IScope scope);
-
+  
   /**
-   * Returns the <b>LOCAL</b> bindings holding at the context symbol represented by the given key.<br>
+   * Returns the <b>LOCAL</b> bindings holding at the context symbol represented by the given
+   * key.<br>
    * <b>NOTE:</b> This method does not return bindings from enclosing scopes of the symbol, as no
    * scope information is available when using only the symbol key!<br>
    * <br>
@@ -84,7 +84,7 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @see #computeSymbolKey(ISymbol)
    */
   IBasicSymbolsBindings getLocalOnlyBindings(String contextSymbolKey);
-
+  
   /**
    * Returns <b>all</b> bindings holding at the given context symbol, <b>including the bindings
    * inherited from enclosing scopes!</b><br>
@@ -96,7 +96,7 @@ public interface IBasicSymbolsIncMapping extends IBasicSymbolsLocalIncMapping {
    * @return the scoped bindings for the given context symbol
    */
   IBasicSymbolsBindings getScopedBindings(ISymbol contextSymbol);
-
+  
   /**
    * Returns <b>all</b> bindings holding at the given scope, <b>including the bindings
    * inherited from enclosing scopes!</b><br>

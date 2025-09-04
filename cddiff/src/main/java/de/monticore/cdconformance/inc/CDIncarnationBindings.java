@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance.inc;
 
-import com.google.common.collect.SetMultimap;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -49,6 +48,7 @@ import java.util.Set;
  * symbol table, e.g., during concretization of an incomplete model. In this case, implementations
  * must make sure to use the correct key for the contexts symbol.
  */
+@Deprecated
 public interface CDIncarnationBindings {
   
   /**
@@ -72,20 +72,6 @@ public interface CDIncarnationBindings {
   /**
    * Adds a type binding for the given context symbol.<br>
    * <br>
-   * <b>NOTE: Prefer using {@link #addBinding(ISymbol, TypeSymbol, Set)}</b>. In case
-   * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
-   * as key anymore!
-   *
-   * @param contextSymbolName the name of the context symbol
-   * @param referenceType the reference type for which the bindings are added
-   * @param concreteTypes the concrete types to which the reference type is bound to in the context
-   */
-  void addBinding(String contextSymbolName, TypeSymbol referenceType,
-      Set<TypeSymbol> concreteTypes);
-  
-  /**
-   * Adds a type binding for the given context symbol.<br>
-   * <br>
    * <b>NOTE: Prefer using {@link #addBinding(ISymbol, TypeSymbol, TypeSymbol)}</b>. In case
    * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
    * as key anymore!
@@ -94,22 +80,7 @@ public interface CDIncarnationBindings {
    * @param referenceType the reference type for which a binding is added
    * @param concreteType the concrete type to which the reference type is bound to in the context
    */
-  default void addBinding(String contextSymbolName, TypeSymbol referenceType,
-      TypeSymbol concreteType) {
-    addBinding(contextSymbolName, referenceType, Set.of(concreteType));
-  }
-  
-  /**
-   * Adds a type binding for the given context symbol.
-   *
-   * @param contextSymbol the symbol at which the binding is added
-   * @param referenceType the reference type for which the binding is added
-   * @param concreteTypes the concrete types to which the reference type is bound to in the context
-   */
-  default void addBinding(ISymbol contextSymbol, TypeSymbol referenceType,
-      Set<TypeSymbol> concreteTypes) {
-    addBinding(computeSymbolKey(contextSymbol), referenceType, concreteTypes);
-  }
+  void addBinding(String contextSymbolName, TypeSymbol referenceType, TypeSymbol concreteType);
   
   /**
    * Adds a type binding for the given context symbol.
@@ -119,10 +90,7 @@ public interface CDIncarnationBindings {
    * @param concreteElements the concrete type to which the reference type is bound to in the
    * context
    */
-  default void addBinding(ISymbol contextSymbol, TypeSymbol referenceTypes,
-      TypeSymbol concreteElements) {
-    addBinding(contextSymbol, referenceTypes, Set.of(concreteElements));
-  }
+  void addBinding(ISymbol contextSymbol, TypeSymbol referenceTypes, TypeSymbol concreteElements);
   
   /**
    * Returns all concrete types that are bound to the given reference type at the given context
@@ -154,21 +122,6 @@ public interface CDIncarnationBindings {
   /**
    * Adds a field binding for the given context symbol.<br>
    * <br>
-   * <b>NOTE: Prefer using {@link #addBinding(ISymbol, FieldSymbol, Set)}</b>. In case
-   * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
-   * as key anymore!
-   *
-   * @param contextSymbolName the name of the context symbol
-   * @param referenceField the reference field for which the bindings are added
-   * @param concreteElements the concrete fields to which the reference field is bound to in the
-   * context
-   */
-  void addBinding(String contextSymbolName, FieldSymbol referenceField,
-      Set<FieldSymbol> concreteElements);
-  
-  /**
-   * Adds a field binding for the given context symbol.<br>
-   * <br>
    * <b>NOTE: Prefer using {@link #addBinding(ISymbol, FieldSymbol, FieldSymbol)}</b>. In case
    * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
    * as key anymore!
@@ -177,23 +130,8 @@ public interface CDIncarnationBindings {
    * @param referenceElement the reference field for which a binding is added
    * @param concreteField the concrete field to which the reference field is bound to in the context
    */
-  default void addBinding(String contextSymbolName, FieldSymbol referenceElement,
-      FieldSymbol concreteField) {
-    addBinding(contextSymbolName, referenceElement, Set.of(concreteField));
-  }
-  
-  /**
-   * Adds a field binding for the given context symbol.
-   *
-   * @param contextSymbol the symbol at which the binding is added
-   * @param referenceField the reference field for which the bindings are added
-   * @param concreteFields the concrete fields to which the reference field is bound to in the
-   * context
-   */
-  default void addBinding(ISymbol contextSymbol, FieldSymbol referenceField,
-      Set<FieldSymbol> concreteFields) {
-    addBinding(computeSymbolKey(contextSymbol), referenceField, concreteFields);
-  }
+  void addBinding(String contextSymbolName, FieldSymbol referenceElement,
+      FieldSymbol concreteField);
   
   /**
    * Adds a field binding for the given context symbol.
@@ -202,10 +140,7 @@ public interface CDIncarnationBindings {
    * @param referenceField the reference field for which a binding is added
    * @param concreteField the concrete field to which the reference field is bound to in the context
    */
-  default void addBinding(ISymbol contextSymbol, FieldSymbol referenceField,
-      FieldSymbol concreteField) {
-    addBinding(contextSymbol, referenceField, Set.of(concreteField));
-  }
+  void addBinding(ISymbol contextSymbol, FieldSymbol referenceField, FieldSymbol concreteField);
   
   /**
    * Returns all concrete fields that are bound to the given reference field at the given context
@@ -235,34 +170,6 @@ public interface CDIncarnationBindings {
   // --------------------------
   
   /**
-   * Adds a method binding for the given context symbol.<br>
-   * <br>
-   * <b>NOTE: Prefer using {@link #addBinding(ISymbol, MethodSymbol, Set)}</b>. In case
-   * {@link #computeSymbolKey(ISymbol)} is overridden, you may not be able to use the symbol name
-   * as key anymore!
-   *
-   * @param contextSymbolName the name of the context symbol
-   * @param referenceMethod the reference method for which the bindings are added
-   * @param concreteMethods the concrete methods to which the reference method is bound to in the
-   * context
-   */
-  void addBinding(String contextSymbolName, MethodSymbol referenceMethod,
-      Set<MethodSymbol> concreteMethods);
-  
-  /**
-   * Adds a method binding for the given context symbol.
-   *
-   * @param contextSymbol the symbol at which the binding is added
-   * @param referenceMethod the reference method for which a binding is added
-   * @param concreteMethods the concrete methods to which the reference method is bound to in the
-   * context
-   */
-  default void addBinding(ISymbol contextSymbol, MethodSymbol referenceMethod,
-      Set<MethodSymbol> concreteMethods) {
-    addBinding(computeSymbolKey(contextSymbol), referenceMethod, concreteMethods);
-  }
-  
-  /**
    * Adds a method binding for the given context symbol.
    *
    * @param contextSymbol the symbol at which the binding is added
@@ -270,10 +177,7 @@ public interface CDIncarnationBindings {
    * @param concreteMethod the concrete method to which the reference method is bound to in the
    * context
    */
-  default void addBinding(ISymbol contextSymbol, MethodSymbol referenceMethod,
-      MethodSymbol concreteMethod) {
-    addBinding(contextSymbol, referenceMethod, Set.of(concreteMethod));
-  }
+  void addBinding(ISymbol contextSymbol, MethodSymbol referenceMethod, MethodSymbol concreteMethod);
   
   /**
    * Returns all concrete methods that are bound to the given reference method at the given context
@@ -303,24 +207,7 @@ public interface CDIncarnationBindings {
   // ----- Association Mapping -----
   // -------------------------------
   
-  void addBinding(String contextSymbolName, CDAssociationSymbol refAssociation,
+  void addBinding(ISymbol contextSymbol, CDAssociationSymbol refAssociation,
       Set<CDAssociationSymbol> conAssociations);
-  
-  default void addBinding(ISymbol contextSymbol, CDAssociationSymbol refAssociation,
-      Set<CDAssociationSymbol> conAssociations) {
-    addBinding(computeSymbolKey(contextSymbol), refAssociation, conAssociations);
-  }
-  
-  SetMultimap<String, TypeSymbol> getTypeBindings(IScope concreteScope);
-  
-  SetMultimap<String, TypeSymbol> getTypeBindings(ISymbol contextSymbol);
-  
-  SetMultimap<String, FieldSymbol> getFieldBindings(IScope concreteScope);
-  
-  SetMultimap<String, FieldSymbol> getFieldBindings(ISymbol contextSymbol);
-  
-  SetMultimap<String, MethodSymbol> getMethodBindings(IScope concreteScope);
-  
-  SetMultimap<String, MethodSymbol> getMethodBindings(ISymbol contextSymbol);
   
 }

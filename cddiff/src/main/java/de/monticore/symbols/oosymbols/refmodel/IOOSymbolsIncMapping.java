@@ -52,7 +52,8 @@ public interface IOOSymbolsIncMapping extends IBasicSymbolsIncMapping, IOOSymbol
   IOOSymbolsLocalIncMapping getScopedMapping(IScope scope);
   
   /**
-   * Returns the <b>LOCAL</b> bindings holding at the context symbol represented by the given key.<br>
+   * Returns the <b>LOCAL</b> bindings holding at the context symbol represented by the given
+   * key.<br>
    * <b>NOTE:</b> This method does not return bindings from enclosing scopes of the symbol, as no
    * scope information is available when using only the symbol key!<br>
    * <br>

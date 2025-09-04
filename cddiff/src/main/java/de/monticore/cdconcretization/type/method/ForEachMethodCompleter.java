@@ -15,7 +15,7 @@ import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdconformance.inc.MethodOverloadingCDIncBindings;
+import de.monticore.cdconformance.inc.MethodOverloadingOOSymbolsIncMapping;
 import de.se_rwth.commons.Names;
 
 import java.util.List;
@@ -127,7 +127,7 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
         String newMethodQualifier = paramIncarnationDeclaringType.getFullName();
         String bindingContextKey;
         if (context.getConformanceParams().contains(CDConfParameter.METHOD_OVERLOADING)) {
-          bindingContextKey = MethodOverloadingCDIncBindings.computeMethodSymbolKey(
+          bindingContextKey = MethodOverloadingOOSymbolsIncMapping.computeMethodSymbolKey(
               newMethodQualifier, newMethod);
         }
         else {

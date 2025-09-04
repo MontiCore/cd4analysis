@@ -21,6 +21,8 @@ import de.monticore.cdmatcher.MatchCDTypesToSubTypes;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syndiff.CDSynDiffMatches;
 import de.monticore.cdmatcher.CachedMultiMatches;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsLocalIncMapping;
+import de.monticore.symbols.oosymbols.refmodel.OOSymbolsIncMapping;
 
 import java.util.Set;
 
@@ -63,15 +65,14 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     this.methodIncStrategy = methodIncStrategy;
     this.mcTypeIncStrategy = mcTypeMatcher;
     
-    CDIncarnationBindings incarnationBinding;
-    if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
-      incarnationBinding = new MethodOverloadingCDIncBindings();
-    }
-    else {
-      incarnationBinding = new DefaultCDIncarnationBindings();
-    }
+    IOOSymbolsLocalIncMapping artifactIncMapping = new CDArtifactIncMapping(getConcreteCD(),
+        typeIncStrategy, attributeIncStrategy, methodIncStrategy);
+    
+    OOSymbolsIncMapping ooSymbolsIncMapping = new MethodOverloadingOOSymbolsIncMapping(
+        artifactIncMapping, referenceCD.getEnclosingScope(), referenceCD.getEnclosingScope());
+    
     incarnationMapping = new DefaultCDIncarnationMapping(concreteCD, typeIncStrategy, mcTypeMatcher,
-        attributeIncStrategy, methodIncStrategy, assocIncStrategy, incarnationBinding);
+        attributeIncStrategy, methodIncStrategy, assocIncStrategy, ooSymbolsIncMapping);
   }
   
   public static CDConformanceContext create(ASTCDCompilationUnit concreteCD,

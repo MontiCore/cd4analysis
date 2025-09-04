@@ -17,4 +17,6 @@ public interface IOOSymbolsLocalIncMapping extends IBasicSymbolsLocalIncMapping 
   
   Set<MethodSymbol> getIncarnations(MethodSymbol methodSymbol);
   
+  // TODO Optimize by adding isIncarnation( ... ) methods
+  
 }
