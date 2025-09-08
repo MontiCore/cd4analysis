@@ -1,4 +1,4 @@
-@startuml
+classDiagram ProjectManagement {
 
 class ResearchGroup{}
 
@@ -15,13 +15,11 @@ class WorkPackageLeader{}
 class Service{}
 
 
-Department "1" -- "0..*" ResearchGroup
-ResearchGroup "1" - "0..*" Researcher
-(ResearchGroup,Researcher) .. ResearchGroupMember 
-Project "1" -- "1..*" WorkPackage
-WorkPackage "0..*" - "0..1" ResearchGroup 
-(WorkPackage,ResearchGroup) .. WorkPackageLeader
-ResearchGroupMember "1..1" -- "0..*" Service 
-WorkPackageLeader "1..1" -- "0..*" Service 
+association [1] Department -> ResearchGroup [*]
+association [1] ResearchGroup -> Researcher [*]
+association [1] Project -> WorkPackage [1..*]
+association [*] WorkPackage -> ResearchGroup [0..1]
+association [1] ResearchGroupMember -> Service [*]
+association [1] WorkPackageLeader -> Service [*]
 
-@enduml
+}

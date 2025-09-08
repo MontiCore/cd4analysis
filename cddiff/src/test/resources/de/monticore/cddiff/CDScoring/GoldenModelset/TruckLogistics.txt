@@ -1,50 +1,48 @@
-@startuml
+/* Converted from PlantUML to CD4A */
 
-    class Assignment {
-        Date date
-    }
+classdiagram TrackLogistics {
 
-    class Location {
-        String address
-    }
+  class Assignment {
+    java.util.Date date;
+  }
 
-    class Driver {
-        String firstName
-        String lastName
-    }
+  class Location {
+    String address;
+  }
 
-    class Vehicle {
-        int vehicleNumber
-    }
+  class Driver {
+    String firstName;
+    String lastName;
+  }
 
-    class Truck {
-        double tonnage
-    }
+  class Vehicle {
+    int vehicleNumber;
+  }
 
-    class PassengerCar {
-        int seats
-    }
+  class Truck extends Vehicle {
+    double tonnage;
+  }
 
-    class Transporter
+  class PassengerCar extends Vehicle {
+    int seats;
+  }
 
-    enum VehicleStatus <<enum>> {
-        READY
-        ASSIGNMENT
-        MAINTENANCE
-    }
+  class Transporter extends Vehicle {}
 
-    Assignment "0..1" --> "*" Driver : executes
-    Assignment "*" --> "1" Location : from
-    Assignment "*" --> "1" Location : to
-    Location "1" *-- "1" Vehicle
+  enum VehicleStatus {
+    READY,
+    ASSIGNMENT,
+    MAINTENANCE;
+  }
 
-    Driver "1..*" --> "*" Vehicle : driver
-    Vehicle "0..1" --> "*" Driver : driver
+  association executes [0..1] Assignment -> Driver [*];
+  association from [*] Assignment -> Location [1];
+  association to [*] Assignment -> Location [1];
 
-    Vehicle <|-- Truck
-    Vehicle <|-- PassengerCar
-    Vehicle <|-- Transporter
+  association [1] Location -> Vehicle [1];
 
-    Vehicle "1" --> "1" VehicleStatus : status
+  association [1..*] Driver -> Vehicle [*];
+  association [0..1] Vehicle -> Driver [*];
 
-@enduml
+  association status [1] Vehicle -> (status) VehicleStatus [1];
+}

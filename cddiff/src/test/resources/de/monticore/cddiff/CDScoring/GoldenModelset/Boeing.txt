@@ -1,39 +1,40 @@
-@startuml
+/* (c) converted from PlantUML by CD4A Class Diagram Creator */
 
-class AirplaneModel {
-    Int ModelId
+classdiagram Boeing {
+
+  class AirplaneModel {
+    int modelId;
+  }
+
+  class Airplane {
+    int airplaneId;
+  }
+
+  class Acquisition {
+    int acquisitionId;
+    float negotiatedPice;
+    String options;
+    Date deliveryDate;
+  }
+
+  class Contract {
+    int contractId;
+    String text;
+  }
+
+  class Employee {
+    int employeeId;
+  }
+
+  class Airline {
+    String name;
+  }
+
+  // Associations
+  association [1] AirplaneModel -> Airplane [*];
+  association [0..1] Airplane -> (part_of) Acquisition [0..1];
+  association [*] Acquisition -> (part_of) Contract [1];
+  association [*] Contract -> Airline [1];
+  association [*] Contract -> Employee [1];
+  association [0..1] Airline -> Airline [*];
 }
-
-class Airplane {
-    Int AirPlaneId
-}
-
-class Acquisition {
-    Int AcquisitionId
-    Float NegotiatedPice
-    String Options
-    DateTime DeliveryDate
-}
-
-class Contract {
-    Int ContractId
-    String Text
-}
-
-class Employee {
-    Int EmployeeId
-}
-
-class Airline {
-    String Name
-}
-
-
-AirplaneModel "1" -- "0..*" Airplane
-Airplane "0..1" -- "0..1" Acquisition : part of
-Acquisition "0..*" -- "1" Contract : part of
-Contract "0..*" -- "1" Airline
-Contract "0..*" -- "1" Employee
-Airline "0..1" -- "0..*" Airline
-
-@enduml

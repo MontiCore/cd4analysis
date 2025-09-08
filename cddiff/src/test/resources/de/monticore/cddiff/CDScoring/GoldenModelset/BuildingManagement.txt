@@ -1,69 +1,68 @@
-@startuml
-    class User {
-        String username
-        String password
-        String email
-    }
+/* Converted from PlantUML to CD4A */
 
-    class Administrator {
-        String idCardNumber
-    }
+classdiagram BuildingPortal {
 
-    class WebPortal {
-        String versionNumber
-        String url
-    }
+  class User {
+    String username;
+    String password;
+    String email;
+  }
 
-    class Building {
-        String id
-        String label
-        String address
-        int yearOfConstruction
-    }
+  class Administrator extends User {
+    String idCardNumber;
+  }
 
-    class Entry {
-        String name
-        boolean public
-    }
+  class WebPortal {
+    String versionNumber;
+    String url;
+  }
 
-    class TextEntry {
-        String text
-    }
+  class Building {
+    String id;
+    String label;
+    String address;
+    int yearOfConstruction;
+  }
 
-    class NumericEntry {
-        double value
-        String unit
-    }
+  class Entry {
+    String name;
+    boolean public;
+  }
 
-    class EntryGroup
+  class TextEntry extends Entry {
+    String text;
+  }
 
-    enum EnergyClass <<enum>> {
-        A
-        B
-        C
-        D
-    }
+  class NumericEntry extends Entry {
+    double value;
+    String unit;
+  }
 
-    class Comment {
-        String text
-    }
+  class EntryGroup {}
 
-    class Image {
-        String fileName
-    }
+  enum EnergyClass {
+    A,
+    B,
+    C,
+    D;
+  }
 
-    WebPortal "1" --> "*" Entry : id
-    WebPortal "0..1" --> "1" User : username
-    EntryGroup "1" *-- "*" Entry
+  class Comment {
+    String text;
+  }
 
-    Entry <|-- TextEntry
-    Entry <|-- NumericEntry
+  class Image {
+    String fileName;
+  }
 
-    User <|-- Administrator
+  association [1] WebPortal -> (id) Entry [*];
+  association [0..1] WebPortal -> (username) User [1];
+  association [1] EntryGroup -> Entry [*];
 
-    User "1" --> "*" Building : owner
-    User "1" --> "*" Building : author
-    Building "1" --> "*" Comment
-    Building "1" --> "1" Image : profilePicture
-    Building "1" --> "1" EnergyClass
-@enduml
+  association [1] User -> (owner) Building [*];
+  association [1] User -> (author) Building [*];
+  association [1] Building -> Comment [*];
+  association [1] Building -> (profilePicture) Image [1];
+  association [1] Building -> EnergyClass [1];
+
+}

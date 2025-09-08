@@ -1,37 +1,45 @@
-@startuml
+/* Converted from PlantUML to CD4A */
 
-class CardHolder{
-    String Name
-    Boolean Suspended
-}
-class Invoice {
-    Int Number
-    Double Discount
-    String status
-}
-class InvoiceLine{
-    Int Number
-}
-class GasStation{
-    String Name
-}
-class Pump {
-    String Type
-    Boolean InUse
-    Double RefillThreshold
-    Boolean Blocked
-}
-class RefuelTurn {
-    Int RefuelTurnNumber
-}
-class CashTurn {}
+classdiagram GasStation_KUL {
 
-Pump "1" -- "0..*" RefuelTurn
-Pump "1" -- "0..*" CashTurn
-GasStation"1" -- "0..*" Pump 
-CardHolder "1" -- "0..*" Invoice
-CardHolder "1" -- "0..*" RefuelTurn
-Invoice "1" -- "0..*" InvoiceLine
-RefuelTurn"1" -- "0..1" InvoiceLine
+  class CardHolder {
+    String name;
+    Boolean suspended;
+  }
 
-@enduml
+  class Invoice {
+    int number;
+    double discount;
+    String status;
+  }
+
+  class InvoiceLine {
+    int number;
+  }
+
+  class GasStation {
+    String name;
+  }
+
+  class Pump {
+    String type;
+    Boolean inUse;
+    double refillThreshold;
+    Boolean blocked;
+  }
+
+  class RefuelTurn {
+    int refuelTurnNumber;
+  }
+
+  class CashTurn {}
+
+  association [1] Pump -> RefuelTurn [*];
+  association [1] Pump -> CashTurn [*];
+  association [1] GasStation -> Pump [*];
+  association [1] CardHolder -> Invoice [*];
+  association [1] CardHolder -> RefuelTurn [*];
+  association [1] Invoice -> InvoiceLine [*];
+  association [1] RefuelTurn -> InvoiceLine [0..1];
+
+}

@@ -1,57 +1,51 @@
-@startuml
+classdiagram EBikeSystem {
 
-    class EBike {
-        frame : Frame
-        driveSystem : DriveSystem
-        controller : Controller
-        battery : Battery
-    }
+  class EBike {
+    Frame frame;
+    DriveSystem driveSystem;
+    Controller controller;
+    Battery battery;
+  }
 
-    class Frame {
-        steel
-    }
+  class Frame {
+    String steel;
+  }
 
-    class Wheel
+  class Wheel {}
 
-    class DriveSystem {
-        motor : Motor
-    }
+  class DriveSystem {
+    Motor motor;
+  }
 
-    class Motor
+  class Motor {}
 
-    class Controller {
-        currentState : State
-        battery : Battery
-        commandDriveSystem()
-    }
+  class Controller {
+    Battery battery;
+    State currentState;
+  }
 
-    class BasicController
+  class BasicController extends Controller {}
 
-    class AdvancedController {
-        nextInspection() : Date
-    }
+  class AdvancedController extends Controller {}
 
-    class Battery {
-        storedEnergy : float
-    }
+  class Battery {
+    float storedEnergy;
+  }
 
-    enum State <<enum>> {
-        On
-        Off
-        Charging
-    }
+  enum State {
+    On,
+    Off,
+    Charging;
+  }
 
-    EBike --> Wheel : wheel
-    EBike --> Battery : battery
-    EBike --> Frame : frame
-    EBike --> DriveSystem : driveSystem
-    EBike --> Controller : controller
+  association [1] EBike -> (wheel) Wheel [*];
+  association [1] EBike -> (battery) Battery [1];
+  association [1] EBike -> (frame) Frame [1];
+  association [1] EBike -> (driveSystem) DriveSystem [1];
+  association [1] EBike -> (controller) Controller [1];
 
-    DriveSystem --> Motor : motor
+  association [1] DriveSystem -> (motor) Motor [1];
 
-    Controller --> Battery : battery
-    Controller --> State : currentState
-    Controller <|-- BasicController
-    Controller <|-- AdvancedController
-
-@enduml
+  association [1] Controller -> (battery) Battery [1];
+  association [1] Controller -> (currentState) State [1];
+}

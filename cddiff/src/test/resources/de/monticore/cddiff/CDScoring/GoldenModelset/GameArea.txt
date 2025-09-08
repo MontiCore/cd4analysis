@@ -1,32 +1,27 @@
-@startuml
-    class GameArea {
-        String name
-    }
+classdiagram GameArea {
 
-    class GameCharacter
+  class GameArea {
+    String name;
+  }
 
-    class GameElement {
-        long x
-        long y
-    }
+  class GameCharacter {}
 
-    class Shape
+  class GameElement {
+    long x;
+    long y;
+  }
 
-    class Item
+  class Shape extends GameElement {}
 
-    class Enemy {
-        int numberOfLives
-        toKill()
-    }
+  class Item extends GameElement {}
 
-    GameArea "1" o-- "1..2" GameCharacter
-    GameArea "1" o-- "1..*" GameElement
-    GameElement <|-- Shape
-    GameElement <|-- Item
-    GameElement <|-- Enemy
+  class Enemy extends GameElement {
+    int numberOfLives;
+  }
 
-    Shape "*" -- "*" Shape : is_connected_with
-
-    GameArea "1" --> "1" Enemy : finalBoss
-
-@enduml
+  // Associations
+  association [1] GameArea -- GameCharacter [1..2];
+  association [1] GameArea -- GameElement [1..*];
+  association [*] Shape <-> (isConnectedWith) Shape [*];
+  association [1] GameArea -> (finalBoss) Enemy [1];
+}

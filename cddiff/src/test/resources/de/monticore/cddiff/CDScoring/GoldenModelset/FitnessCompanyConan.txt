@@ -1,46 +1,40 @@
-@startuml
+classdiagram FitnessCompanyConan {
 
-class Center {
-    String name
-    String Address
+  class Center {
+    String name;
+    String address;
+  }
+
+  class Room {
+    int roomNr;
+    int maxCapacity;
+  }
+
+  class Session {
+    Date startDateTime;
+  }
+
+  class IndividualSession extends Session {}
+
+  class GroupSession extends Session {
+    String type;
+  }
+
+  class Person {
+    String firstName;
+    String lastName;
+    Date birthDate;
+  }
+
+  class Member extends Person {}
+
+  class Trainer extends Person {
+    String diploma;
+  }
+
+  association [1] Center -> Room [1..*];
+  association [1] Room -> Session [*];
+  association IndividualSession [*] -> Member [1];
+  association Member [*] <-> GroupSession [*];
+  association [1] Trainer -> GroupSession [*];
 }
-
-class Room {
-    Int RoomNr
-    Int MaxCapacity
-}
-
-class Session {
-    DateTime StartDateTime
-    
-}
-
-class IndividualSession {}
-
-class GroupSession {
-    String Type
-}
-
-class Person {
-    String FirstName
-    String Lastname
-    Date BirthDate
-}
-
-class Member {}
-
-class Trainer {
-    String Diploma
-}
-
-Center "1"--"1..*" Room
-Room "1"-"*" Session
-Session <|-- GroupSession : {total; disjoint}
-Session <|- IndividualSession
-IndividualSession "*"-"1" Member
-Member "*"--"*" GroupSession
-Person <|-- Member : {partial; overlap}
-Person <|-- Trainer
-Trainer "1"--"*" GroupSession
-
-@enduml

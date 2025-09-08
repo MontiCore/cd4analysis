@@ -1,40 +1,43 @@
-@startuml
+/* Converted from PlantUML to CD4A */
 
-class Product{
-    String Name
-    Int Stock
+classdiagram OrderSystem {
+
+  class Product {
+    String name;
+    int stock;
+  }
+
+  class Customer {
+    String name;
+    String address;
+    String VATnumber;
+  }
+
+  class OrderLine {
+    String lineNumber;
+    int quantity;
+  }
+
+  class InvoiceLine {}
+
+  class Order {
+    String orderNumber;
+    String deliveryAddress;
+  }
+
+  class Invoice {}
+
+  class DeliveryLine {}
+
+  class Delivery {}
+
+  association [1] Product -> OrderLine [*];
+  association [1] OrderLine -> InvoiceLine [0..1];
+  association [1] OrderLine -> DeliveryLine [0..1];
+  association [1] Customer -> Order [*];
+  association [1] Order -> Invoice [*];
+  association [1] Order -> Delivery [*];
+  association [1] Order -> OrderLine [*];
+  association [1] Delivery -> DeliveryLine [*];
+  association [1] Invoice -> InvoiceLine [*];
 }
-
-class Customer{
-    String Name
-    String Address
-    String VATnumber
-}
-
-class OrderLine{
-    String LineNumber
-    Int Quantity
-}
-
-class InvoiceLine{}
-
-class Order{
-    String OrderNumber
-    String DeliveryAddress
-}
-
-class Invoice{}
-class DeliveryLine{}
-class Delivery{}
-
-Product "1" -- "0..*" OrderLine
-OrderLine "1" -- "0..1" InvoiceLine
-OrderLine "1" -- "0..1" DeliveryLine
-Customer "1" -- "0..*" Order
-Order "1" -- "0..*" Invoice
-Order "1" -- "0..*" Delivery
-Order "1" -- "0..*" OrderLine
-Delivery "1" -- "0..*" DeliveryLine
-Invoice "1" -- "0..*" InvoiceLine
-
-@enduml

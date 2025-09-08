@@ -1,49 +1,45 @@
-@startuml
+/* Converted from PlantUML to CD4A */
+classdiagram School {
 
-abstract class Person {
-    String FirstName
-    String LastName
+  abstract class Person {
+    String firstName;
+    String lastName;
+  }
+
+  class Teacher extends Person {
+    String email;
+  }
+
+  class Student extends Person {}
+
+  class ClassGroup {
+    String name;
+  }
+
+  class TeacherAssignment {
+    int hours;
+  }
+
+  class School {
+    String name;
+  }
+
+  abstract class Room {
+    String name;
+  }
+
+  class ClassRoom extends Room {
+    int capacity;
+  }
+
+  class OtherRoom extends Room {
+    double size;
+  }
+
+  // Associations
+  association [*] Teacher -> School [0..3];
+  association principal [1] Teacher -> School [0..1];
+  association [1] School -> Room [*];
+  association [10..31] Student -- ClassGroup [1];
+  association [1] ClassGroup -> ClassRoom [1];
 }
-
-class Teacher {
-    String Email
-}
-
-class Student {}
-
-class ClassGroup {
-    String Name
-}
-
-class TeacherAssignment {
-    Int Hours
-}
-
-class School {
-    String Name
-}
-
-abstract class Room {
-    String Name
-}
-
-class ClassRoom {
-    Int Capacity
-}
-
-class OtherRoom {
-    Double Size
-}
-
-Person <|-- Student
-Person <|- Teacher
-Teacher "*"-"0..3" School
-TeacherAssignment .. (Teacher,School)
-Teacher "1"-"0..1" School : Principal
-School "1"*-"*" Room
-Room <|- OtherRoom
-Room <|-- ClassRoom
-Student "10..31"-o"1" ClassGroup
-ClassGroup "1"-"1" ClassRoom
-
-@enduml

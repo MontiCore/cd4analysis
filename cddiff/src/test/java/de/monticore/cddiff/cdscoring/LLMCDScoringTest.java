@@ -68,7 +68,6 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
   @Test
   public void testSpecificSyntheticArtifacts() {
     // ToDo: Enum Pre-Matches
-    // ToDo: Ignore or reduce impact of no Element Matches
     // ToDo: Increase name importance and maybe adjust embedding accordingly
     score("SyntheticArtifacts/unconstrained_code_block_31.cd4c", "SyntheticArtifacts/unconstrained_code_block_23.cd4c", 5, 0.5, true);
     score("SyntheticArtifacts/unconstrained_code_block_29.cd4c", "SyntheticArtifacts/unconstrained_code_block_26.cd4c", 5, 0.5, true);

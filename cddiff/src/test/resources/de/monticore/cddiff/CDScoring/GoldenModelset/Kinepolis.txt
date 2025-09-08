@@ -1,69 +1,70 @@
-@startuml
+classdiagram Kinepolis {
 
-    class Cinema {
-	    String Name
-	    String City
-    }
-    class Theatre {
-	    Int Number
-    }
-    class Movie {
-	    String Title
-	    Int durationMinutes
-    }
-    class MovieCopy {
-	    Int Id
-    }
-    class CopyLocation {
-	    DateTime StartDate
-	    DateTime EndDate
-    }
-    class Seat {
-	    Int SeatNumber
-    }
-    class Show {
-	    DateTime StartTime
-	    DateTime EndTime
-      publish()
-      cancelShow()
-    }
-    class Ticket {
-      Int TicketId
-      Float Price
-    }
-    class Customer {
-      String Name
-      Int CustomerId
-    }
-    class OnlineTicket {
-      Int OnlineTicketId
-      Float Price
-      cancelReservationCustomer()
-      cancelReservationKinepolis()
-    }
-    class AlternativeOffer {
-      Int AlternativeOfferId
-      accept()
-      decline()
-      expire()
-      refund()
-    }
+  class Cinema {
+    String name;
+    String city;
+  }
 
+  class Theatre {
+    int number;
+  }
 
-    Cinema "1..1" -- "0..*" Theatre
-    Movie "1..1" -- "0..*" MovieCopy
-    Cinema "1..1" -- "0..*" CopyLocation
-    MovieCopy "1..1" -- "0..*" CopyLocation
-    Theatre "1..1" -- "0..*" Seat
-    Theatre "1..1" -- "0..*" Show
-    CopyLocation "1..1" -- "0..*" Show
-    Seat "1..1" -- "0..*" Ticket
-    Show "1..1" -- "0..*" Ticket
-    Customer "1..1" -- "0..*" OnlineTicket
-    Seat "1..1" -- "0..*" OnlineTicket
-    Show "1..1" -- "0..*" OnlineTicket
-    OnlineTicket "1..1" -- "0..1" AlternativeOffer
-    Seat "1..1" -- "0..*" AlternativeOffer
-    Show "1..1" -- "0..*" AlternativeOffer
+  class Movie {
+    String title;
+    int durationMinutes;
+  }
 
-@enduml
+  class MovieCopy {
+    int id;
+  }
+
+  class CopyLocation {
+    DateTime startDate;
+    DateTime endDate;
+  }
+
+  class Seat {
+    int seatNumber;
+  }
+
+  class Show {
+    DateTime startTime;
+    DateTime endTime;
+  }
+
+  class Ticket {
+    int ticketId;
+    float price;
+  }
+
+  class Customer {
+    String name;
+    int customerId;
+  }
+
+  class OnlineTicket {
+    int onlineTicketId;
+    float price;
+  }
+
+  class AlternativeOffer {
+    int alternativeOfferId;
+  }
+
+  // Associations
+  association [1] Cinema -> Theatre [*];
+  association [1] Movie -> MovieCopy [*];
+  association [1] Cinema -> CopyLocation [*];
+  association [1] MovieCopy -> CopyLocation [*];
+  association [1] Theatre -> Seat [*];
+  association [1] Theatre -> Show [*];
+  association [1] CopyLocation -> Show [*];
+  association [1] Seat -> Ticket [*];
+  association [1] Show -> Ticket [*];
+  association [1] Customer -> OnlineTicket [*];
+  association [1] Seat -> OnlineTicket [*];
+  association [1] Show -> OnlineTicket [*];
+  association [1] OnlineTicket -> AlternativeOffer [0..1];
+  association [1] Seat -> AlternativeOffer [*];
+  association [1] Show -> AlternativeOffer [*];
+}

@@ -1,53 +1,49 @@
-@startuml
+classdiagram Musicmatic {
 
-class Song {
-    String Title
-    Int Year
-    Int lenght
-    String Genre
+  class Song {
+    String title;
+    int year;
+    int length;
+    String genre;
+  }
+
+  class Artist {
+    Date birthDate;
+    String name;
+    String website;
+  }
+
+  class User {
+    int userID;
+    String name;
+    String address;
+  }
+
+  class RegularUser extends User {
+  }
+
+  class BusinessUser extends User {
+    int vatNumber;
+  }
+
+  class Single extends Song {
+  }
+
+  class Hit extends Song {
+  }
+
+  class Track {
+    int trackNumber;
+  }
+
+  class Album {
+  }
+
+  // Associations
+  association [1] Artist -> Song [*];
+  association [*] Hit -> Album [*];
+  association [*] Song -> BusinessUser [1];
+  association [*] Single -> RegularUser [*];
+  association [1] RegularUser -> (compose) Album [*];
+  association [*] RegularUser -> (suggestion) Album [*];
 }
-
-class Artist {
-    Date BirthDate
-    String Name
-    String Website
-}
-
-class User {
-    Int UserID
-    String Name
-    String Address
-}
-
-class RegularUser {
-}
-
-class BusinessUser {
-    Int VATnumber
-}
-
-class Single {
-}
-
-class Hit {
-}
-
-class Track {
-    Int TrackNumber
-}
-
-
-Artist "1"--"*" Song
-Song <|-- Hit : {total; disjoint}
-Song <|--Single
-Hit "*"--"*" Album
-Track .. (Hit,Album)
-Song "*"-"1" BusinessUser
-BusinessUser --|> User : {total; overlap}
-User <|-- RegularUser
-Single "*"-"*" RegularUser
-RegularUser "1"--"*" Album : compose
-RegularUser "*"--"*" Album : suggestion
-
-
-@enduml

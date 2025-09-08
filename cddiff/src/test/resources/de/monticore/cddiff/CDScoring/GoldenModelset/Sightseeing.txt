@@ -1,39 +1,34 @@
-@startuml
+classdiagram Sightseeing {
 
-class City {
-    String Name
-    Int NumberOfInhabitants
+  class City {
+    String name;
+    int numberOfInhabitants;
+  }
+
+  class Attraction {
+    String name;
+    String address;
+  }
+
+  class Visitor extends Person {}
+
+  class GuidedTour {
+    int number;
+    int duration;
+  }
+
+  class Discount {
+    int discount;
+  }
+
+  class Person {
+    String name;
+  }
+
+  class Guide extends Person {}
+
+  association [1] City -> Attraction [*];
+  association [*] Visitor -> GuidedTour [1..20];
+  association [1] Attraction -> GuidedTour [*];
+  association [*] GuidedTour -> Guide [1];
 }
-
-class Attraction {
-    String Name
-    String Address
-}
-
-class Visitor {}
-
-class GuidedTour {
-    Int Number
-    Int Duration
-}
-
-class Discount {
-    Int Discount
-}
-
-class Person {
-    String Name
-}
-
-class Guide {}
-
-
-City "1"--"*" Attraction
-Visitor "1..20"--"*" GuidedTour
-Attraction "1"-"*" GuidedTour
-Person <|-- Guide
-Visitor -|> Person
-GuidedTour "*"-"1" Guide
-(Visitor,GuidedTour) .. Discount
-
-@enduml

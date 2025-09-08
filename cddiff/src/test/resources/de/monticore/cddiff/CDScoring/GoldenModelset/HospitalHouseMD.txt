@@ -1,32 +1,29 @@
-@startuml
+/* (c) conversion from PlantUML to CD4A */
 
-class Patient {
-    Boolean Consent
+classdiagram HospitalHouseMD {
+
+  class Patient {
+    Boolean consent;
+  }
+
+  class Doctor {}
+
+  class Diagnosis {
+    int stage;
+  }
+
+  class Illness {
+    String priority;
+  }
+
+  class Treatment {}
+
+  class AppliedTreatment {}
+
+  association [1] Patient -> Diagnosis [*];
+  association [1] Doctor -> Diagnosis [*];
+  association [1] Illness -> Diagnosis [*];
+  association [1] Diagnosis -> AppliedTreatment [*];
+  association [1] Illness -> Treatment [*];
+  association [1] Treatment -> AppliedTreatment [*];
 }
-
-class Doctor{}
-
-class Diagnosis {
-    Int Stage
-    Int ugradeStage()
-    Int downgradeStage()
-    Int priorityUpgrade()
-}
-
-class Illness {
-    String Priority
-}
-
-class Treatment {}
-
-class AppliedTreatment {}
-
-
-Patient "1" -- "0..*" Diagnosis
-Doctor "1" -- "0..*" Diagnosis
-Illness "1" -- "0..*" Diagnosis
-Diagnosis "1" -- "0..*" AppliedTreatment
-Illness "1" -- "0..*" Treatment
-Treatment "1" -- "0..*" AppliedTreatment
-
-@enduml

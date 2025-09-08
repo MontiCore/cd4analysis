@@ -1,4 +1,6 @@
-@startuml
+classdiagram StudentAppointment {
+
+
 class Student{}
 class Course{}
 class Assistant{}
@@ -6,13 +8,9 @@ class TeachingAssistant{}
 class CourseSubscription{}
 class Appointment{}
 
-Student "0..*" - "0..*" Course
-(Student,Course) .. CourseSubscription
+association [*] Student -> Course [*]
+association [*] Course -> Assistant [*]
+association [1] CourseSubscription -> Appointment [*]
+association [1] TeachingAssistant -> Appointment [*]
 
-Course "0..*" - "0..*" Assistant
-(Course,Assistant) .. TeachingAssistant
-
-CourseSubscription "1" -- "0..*" Appointment
-TeachingAssistant "1" -- "0..*" Appointment
-
-@enduml
+}

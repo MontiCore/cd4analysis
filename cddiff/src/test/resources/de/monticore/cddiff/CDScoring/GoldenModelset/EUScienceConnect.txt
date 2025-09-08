@@ -1,51 +1,47 @@
-@startuml
+/* Converted from PlantUML to CD4A */
 
-class Person {
-    Int PersonID
-    String PhoneNumber
-    String Keywords
+classdiagram EuScienceConnect {
+
+  class Person {
+    int personID;
+    String phoneNumber;
+    String keywords;
+  }
+
+  class ResearchInstitution {
+    int institutionCode;
+  }
+
+  class Article {
+    int doi;
+    String title;
+  }
+
+  class Author {
+    int position;
+  }
+
+  class PeerReviewedPaper extends Article {
+    int citationCount;
+  }
+
+  class TechnicalReport extends Article {
+  }
+
+  class Publisher {
+    String name;
+  }
+
+  class Journal {
+    String name;
+    double impactFactor;
+  }
+
+  association [*] Person -> Article [*];
+  association [1] ResearchInstitution -> (worksFor) Person [*];
+  association [*] Person -> (reviews) PeerReviewedPaper [*];
+  association [*] ResearchInstitution -> (subscribesTo) Journal [*];
+  association [1] Publisher -> (publishes) Journal [*];
+  association [1] Journal -> PeerReviewedPaper [*];
+  association [1] ResearchInstitution -> (publishes) TechnicalReport [*];
 }
-
-class ResearchInstitution {
-    Int InstitutionCode
-}
-
-class Article {
-    Int DOI
-    String Title
-}
-
-class Author {
-    Int Position
-}
-
-class PeerReviewedPaper {
-    Int CitationCount
-}
-
-class TechnicalReport {
-
-}
-
-class Publisher {
-    String Name
-}
-
-class Journal {
-    String Name
-    Double ImpactFactor
-}
-
-
-TechnicalReport --|> Article : {total; disjoint}
-Article <|-- PeerReviewedPaper
-Article "*"-"*" Person
-Author .. (Article,Person)
-ResearchInstitution "1"--"*" Person : worksFor
-Person "*"--"*" PeerReviewedPaper : reviews
-ResearchInstitution "*"--"*" Journal : subscribesTo
-Publisher "1"--"*" Journal : publishes
-Journal "1"--"*" PeerReviewedPaper
-ResearchInstitution "1"--"*" TechnicalReport : publishes
-
-@enduml
