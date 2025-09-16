@@ -1,50 +1,47 @@
-@startuml
+/* (c) https://github.com/MontiCore/monticore */
 
-    class Assignment {
-        Date date
-    }
+classdiagram TruckLogisticsLLM {
 
-    class Location {
-        String address
-    }
+  class Location {
+    String address;
+  }
 
-    class Driver {
-        String firstName
-        String lastName
-    }
+  class Driver {
+    String firstName;
+    String lastName;
+  }
 
-    class Vehicle {
-        int vehicleNumber
-    }
+  class Vehicle {
+    String vehicleNumber;
+  }
 
-    class Truck {
-        double tonnage
-    }
+  class Truck extends Vehicle {
+    double weight;
+  }
 
-    class PassengerCar {
-        int seats
-    }
+  class Car extends Vehicle {
+    int numberOfSeats;
+  }
 
-    class Transporter
+  class Van extends Vehicle {}
 
-    enum VehicleStatus <<enum>> {
-        READY
-        ASSIGNMENT
-        MAINTENANCE
-    }
+  class Order {
+    String origin;
+    String destination;
+    Date dateOfExecution;
+  }
 
-    Assignment "0..1" --> "*" Driver : executes
-    Assignment "*" --> "1" Location : from
-    Assignment "*" --> "1" Location : to
-    Location "1" *-- "1" Vehicle
+  // Associations
 
-    Driver "1..*" --> "*" Vehicle : driver
-    Vehicle "0..1" --> "*" Driver : driver
+  association [1] Location -> (drivers) Driver [*];
+  association [1] Location -> (vehicles) Vehicle [*];
 
-    Vehicle <|-- Truck
-    Vehicle <|-- PassengerCar
-    Vehicle <|-- Transporter
+  // Each driver can have at most one current order
+  association [0..1] Order -> (assignedDrivers) Driver [1]; // at least one driver per order
 
-    Vehicle "1" --> "1" VehicleStatus : status
+  // NOTE: Drivers carry out at most one order at a time
+  association [1] Driver -> (currentOrder) Order [0..1];
 
-@enduml
+  // Vehicles are assigned to at most one driver
+  association [0..1] Vehicle -> (assignedDriver) Driver [1];
+}

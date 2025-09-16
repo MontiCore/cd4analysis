@@ -58,7 +58,7 @@ classdiagram FilmSet {
   class Concept {}
 
   // Associations
-  association [1] Director -> (implements) Screenplay [*];
+  association [1] Director -> Screenplay [*];
   association [*] Actor -> (reads) Screenplay [*];
   association [*] Employee -> FilmSet [1];
   association [*] FilmSet -> Film [*];

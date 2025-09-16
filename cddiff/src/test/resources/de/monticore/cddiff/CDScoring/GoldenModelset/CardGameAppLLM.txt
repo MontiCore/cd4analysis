@@ -1,79 +1,64 @@
-@startuml
+/* (c) https://github.com/MontiCore/monticore */
 
-class Game {
-  int ID
+classdiagram CardGameAppLLM {
+
+  // ---------------- Base Classes ----------------
+  abstract class BaseEntity {
+    String id; // unique ID for every object
+  }
+
+  class Game extends BaseEntity {}
+
+  class Player extends BaseEntity {}
+
+  class Deck extends BaseEntity {}
+
+  class Card extends BaseEntity {
+    CardSuit suit;
+    // has a comparison method -> not modeled (methods are not allowed in CD4A diagrams)
+  }
+
+  enum CardSuit {
+    DIAMONDS,
+    HEARTS,
+    SPADES,
+    CLUBS;
+  }
+
+  class ScoringTable extends BaseEntity {}
+
+  class Round extends BaseEntity {
+    int pointValue;
+  }
+
+  class JackRound extends Round {}
+
+  class SoloRound extends Round {
+    SoloType type;
+  }
+
+  class MandatorySoloRound extends SoloRound {}
+
+  enum SoloType {
+    TRUMP,
+    JACK,
+    QUEEN;
+  }
+
+  // ---------------- Associations ----------------
+  association [1] Game -> (players) Player [4];
+
+  association [1] Game -> (deck) Deck [1];
+  association [1] Game -> (scoringTable) ScoringTable [1];
+
+  association [1] Deck -> (cards) Card [0..48];
+
+  association [1] ScoringTable -> (rounds) Round [*];
+
+  // Each round has winning players
+  association [1] Round -> (winningPlayers) Player [*];
+
+  // SoloRound has exactly one solo player -> cannot enforce "exactly one" with [1], but modeled as [1]:
+  association [1] SoloRound -> (soloPlayer) Player [1];
+
 }
-
-class Player {
-  int ID
-}
-
-class Deck {
-  int ID
-}
-
-class Card {
-  int ID
-  Suit suit
-  Compare compare(Card)
-}
-
-class Scoreboard {
-  int ID
-}
-
-class Round {
-  int ID
-  int points
-}
-
-abstract class RoundType {
-  int ID
-}
-
-class SoloRound {
-  SoloType solo
-}
-
-class MandatorySolo
-
-class DoubleRound 
-
-enum Suit <<enum>> {
-  Diamonds
-  Hearts
-  Spades
-  Clubs
-}
-
-enum Compare <<enum>> {
-  Lower
-  Higher
-  Equal
-}
-
-enum SoloType <<enum>> {
-  Trump
-  Jacks
-  Queens
-}
-
-Game --> "1" Scoreboard
-Game --> "1" Deck
-Game --> "4" Player
-
-Deck --> "0..48" Card
-
-Scoreboard --> "*" Round
-
-Player --> "1..3" Round
-Player --> "1..2" RoundType
-
-RoundType <|-- SoloRound
-RoundType <|-- DoubleRound
-SoloRound <|-- MandatorySolo
-
-Card --> Suit
-Card --> Compare
-SoloRound --> SoloType
-@enduml

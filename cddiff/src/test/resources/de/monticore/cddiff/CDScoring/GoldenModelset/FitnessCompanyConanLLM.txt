@@ -1,46 +1,53 @@
-@startuml
+/* (c) Conan Fitness - CD4A model
+   Modelled according to the provided requirements.
+*/
 
-class Center {
-    String name
-    String Address
+classdiagram FitnessCompanyConanLLM {
+
+  // People
+  class Person {
+    String firstName;
+    String familyName;
+    Date birthDate;
+  }
+
+  // Trainers are persons with an additional diploma attribute.
+  class Trainer extends Person {
+    String diploma;
+  }
+
+  // Centers and Rooms
+  class Center {
+    String name;
+    String address; // atomic
+  }
+
+  class Room {
+    int number;
+    int maxCapacity;
+  }
+
+  // Sessions: abstract base
+  class Session {
+    Date date;
+    DateTime startTime;
+  }
+
+  class GroupSession extends Session {
+    String type; // e.g., aerobics, bodystyling, ...
+  }
+
+  class IndividualSession extends Session {
+    // no trainer
+  }
+
+  // Associations
+  association centersRooms [1] Center -> (rooms) Room [*];
+
+  association sessionRoom [1] Session -> (room) Room [1];
+
+  association participants [*] Session -> (participants) Person [*];
+
+  association trainerAssignment [1] GroupSession -> (trainer) Trainer [*];
+
 }
-
-class Room {
-    Int RoomNr
-    Int MaxCapacity
-}
-
-class Session {
-    DateTime StartDateTime
-    
-}
-
-class IndividualSession {}
-
-class GroupSession {
-    String Type
-}
-
-class Person {
-    String FirstName
-    String Lastname
-    Date BirthDate
-}
-
-class Member {}
-
-class Trainer {
-    String Diploma
-}
-
-Center "1"--"1..*" Room
-Room "1"-"*" Session
-Session <|-- GroupSession : {total; disjoint}
-Session <|- IndividualSession
-IndividualSession "*"-"1" Member
-Member "*"--"*" GroupSession
-Person <|-- Member : {partial; overlap}
-Person <|-- Trainer
-Trainer "1"--"*" GroupSession
-
-@enduml

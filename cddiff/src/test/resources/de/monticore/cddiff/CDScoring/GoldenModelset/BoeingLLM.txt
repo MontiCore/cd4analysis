@@ -1,39 +1,44 @@
-@startuml
+/* (c) CD4A Class Diagram */
 
-class AirplaneModel {
-    Int ModelId
+classdiagram BoeingLLM {
+
+  class AirlineCompany {
+    String name;
+    String country;
+  }
+
+  // Self-association to represent mother-daughter airline relationships
+  association [0..1] AirlineCompany (mother) <-> (daughter) AirlineCompany [*];
+
+  class Contract {
+    String contractNumber;
+    String deliveryConditions;
+    String legalAspects;
+  }
+
+  class Acquisition {
+    double price;
+    Date deliveryDate;
+    String optionsAndCustomizations;
+  }
+
+  class AircraftModel {
+    String modelName;
+    String version;
+  }
+
+  class Employee {
+    String employeeId;
+    String name;
+  }
+
+  // Associations
+  association [1] AirlineCompany -> (contracts) Contract [*];
+  association [1] Contract -> (acquisitions) Acquisition [*];
+  association [1] Acquisition -> (aircraftModel) AircraftModel [1];
+
+  // A contract always has one responsible salesperson,
+  // but over time it may change (historical tracking not modeled here)
+  association [1] Employee -> (managedContracts) Contract [*];
+
 }
-
-class Airplane {
-    Int AirPlaneId
-}
-
-class Acquisition {
-    Int AcquisitionId
-    Float NegotiatedPice
-    String Options
-    DateTime DeliveryDate
-}
-
-class Contract {
-    Int ContractId
-    String Text
-}
-
-class Employee {
-    Int EmployeeId
-}
-
-class Airline {
-    String Name
-}
-
-
-AirplaneModel "1" -- "0..*" Airplane
-Airplane "0..1" -- "0..1" Acquisition : part of
-Acquisition "0..*" -- "1" Contract : part of
-Contract "0..*" -- "1" Airline
-Contract "0..*" -- "1" Employee
-Airline "0..1" -- "0..*" Airline
-
-@enduml

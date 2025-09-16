@@ -1,55 +1,116 @@
-@startuml
+/* (c) Elderly Home Management Model */
 
-class Department {}
+classdiagram HomeForTheElderlyLLM {
 
-class Category {
-    Double Price
-    String Type
+  // ---------------- Core Structure ----------------
+  class Home {
+    String name;
+  }
+
+  class Department {
+    String name;
+  }
+
+  class Room {
+    int number;
+  }
+
+  class Bed {
+    int number;
+  }
+
+  class Category {
+    String name;
+    double price;
+  }
+
+  enum StayType {
+    RH,   // Rest Home
+    RNH,  // Rest & Nursing Home
+    SF;   // Service Flat
+  }
+
+  class Stay {
+    Date startDate;
+    Date endDate;
+    boolean suspended;
+  }
+
+  class Inhabitant {
+    String firstName;
+    String lastName;
+    Date birthDate;
+  }
+
+  // ---------------- Registration & Assessment ----------------
+  class Person {
+    String firstName;
+    String lastName;
+    Date birthDate;
+    Date registrationDate;
+  }
+
+  class Question {
+    String text;
+  }
+
+  class Answer {
+    String value;
+  }
+
+  class Assessment {
+    Date assessmentDate;
+  }
+
+  class WaitingList {
+    Date registrationDate;
+    // ordered by registrationDate
+  }
+
+  class Proposal {
+    Date proposalDate;
+    boolean accepted;
+    boolean invalidated;
+  }
+
+  // ---------------- Invoicing ----------------
+  class Invoice {
+    Date invoiceDate;
+    double totalAmount;
+    double outstandingAmount;
+    boolean paid;
+  }
+
+  class CreditNote {
+    Date date;
+    double amount;
+  }
+
+  // ---------------- Associations ----------------
+
+  association [1] Home -> (departments) Department [*];
+  association [1] Department -> (rooms) Room [*];
+  association [1] Room -> (beds) Bed [*];
+
+  association [1] Bed -> (category) Category [1];
+  association [1] Category -> (type) StayType [1];
+
+  association [1] Inhabitant -> (stays) Stay [*];
+  association [1] Stay -> (bed) Bed [1];
+  association [1] Stay -> (category) Category [1];
+
+  association [1] Person -> (answers) Answer [*];
+  association [1] Question -> (answers) Answer [*];
+
+  association [1] Person -> (assessments) Assessment [*];
+  association [1] Assessment -> (type) StayType [1];
+
+  association [1] WaitingList -> (type) StayType [1];
+  association [1] WaitingList -> (persons) Person [*];
+
+  association [1] Proposal -> (person) Person [1];
+  association [1] Proposal -> (type) StayType [1];
+
+  association [1] Inhabitant -> (invoices) Invoice [*];
+  association [0..1] Invoice -> (creditNote) CreditNote [0..1];
 }
-
-class Room {}
-
-class Bed {}
-
-class Proposal {
-    String Status
-    Boolean Validated
-}
-
-class Stay {
-    Date IntakeDate
-    Date EndDate
-}
-
-class Person {
-    String Name
-    Date Birthdate
-    Date RegistrationDate
-    String Abilities
-}
-
-class Invoice {
-    Date InvoiceDate
-    Double OutstandingAmount
-    Double payment(paymentAmount)
-    String Status
-}
-
-class InvoiceItem {}
-
-class InvoiceLine {}
-
-
-Department "1" -- "0..*" Room
-Category "1" -- "0..*" Room
-Room "1" -- "0..*" Bed
-Bed "0..1" - "0..1" Person 
-Proposal .. (Bed,Person)
-Person "1" -- "0..*" Stay
-Bed "1" -- "0..*" Stay
-Person "1" -- "0..*" Invoice
-Invoice "1" -- "0..*" InvoiceLine
-InvoiceItem "1" - "0..1" InvoiceLine
-Stay "1" -- "0..1*" InvoiceItem
-
-@enduml

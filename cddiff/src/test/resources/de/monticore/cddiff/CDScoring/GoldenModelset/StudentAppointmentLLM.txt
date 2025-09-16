@@ -1,18 +1,39 @@
-@startuml
-class Student{}
-class Course{}
-class Assistant{}
-class TeachingAssistant{}
-class CourseSubscription{}
-class Appointment{}
+/* (c) CD4A Class Diagram for Course Appointment System */
 
-Student "0..*" - "0..*" Course
-(Student,Course) .. CourseSubscription
+classdiagram StudentAppointmentLLM {
 
-Course "0..*" - "0..*" Assistant
-(Course,Assistant) .. TeachingAssistant
+  class Student {
+    String name;
+    String studentId;
+    String email;
+  }
 
-CourseSubscription "1" -- "0..*" Appointment
-TeachingAssistant "1" -- "0..*" Appointment
+  class TeachingAssistant {
+    String name;
+    String taId;
+    String email;
+  }
 
-@enduml
+  class Course {
+    String courseId;
+    String title;
+    String description;
+  }
+
+  class Appointment {
+    DateTime dateTime;
+    String location;
+  }
+
+  // Students can register for multiple courses
+  association [*] Student -> (registeredCourses) Course [*];
+  // Teaching assistants can teach multiple courses
+  association [*] TeachingAssistant -> (teachingCourses) Course [*];
+
+  // An appointment is for one specific course
+  association [1] Appointment -> (course) Course [1];
+  // An appointment is with one teaching assistant (who teaches the course)
+  association [1] Appointment -> (assistant) TeachingAssistant [1];
+  // An appointment is with one or more students (who are registered in the course)
+  association [*] Appointment -> (participants) Student [1..*];
+}

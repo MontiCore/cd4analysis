@@ -1,67 +1,64 @@
-@startuml
+/* (c) CD4A Model */
 
-class ConcreteBasement {
-    Double Quality
+classdiagram HouseLLM {
+
+
+  class House {
+    String address;
+    BuildingMaterial buildingMaterial;
+  }
+
+  enum BuildingMaterial {
+    WOOD,
+    BRICK,
+    CONCRETE;
+  }
+
+  class Basement {
+    String name;
+    double size;
+  }
+
+  class EarthBasement extends Basement {
+    double humidityLevel;
+  }
+
+  class ConcreteBasement extends Basement {}
+
+  class SemiDetachedHouse extends House {
+    boolean hasOwnGarden;
+    int numberOfWindows;
+  }
+
+  class Carport {
+    boolean isDoubleCarport;
+    boolean hasFlatRoof;
+  }
+
+  class Garage {
+    boolean hasAutomaticDoor;
+  }
+
+  class Company {
+    String name;
+    String address;
+  }
+
+  class JobLog {
+    int hours;
+    double agreedPrice;
+  }
+
+  // Each House may have a Basement
+  association [1] House -> (basement) Basement [0..1];
+
+  association [1] SemiDetachedHouse -> (carports) Carport [0..2];
+  association [1] SemiDetachedHouse -> (garage) Garage [0..1];
+
+  // Each House serviced by several Companies
+  association [1] House <-> (services) Company [*];
+
+  // Jobs carried out by Companies in Houses
+  association [1] JobLog -> (house) House [1];
+  association [1] JobLog -> (company) Company [1];
 }
-
-abstract class Basement {
-    Double Size
-    String Name
-}
-
-enum BMType <<enum>> {
-    wood
-    brick
-    concrete
-}
-
-class EarthBasement {
-    Double Humidity
-}
-
-abstract class SemiDetached {
-    Boolean Garden
-    Int Windows
-}
-
-class House {
-    String Address
-    BMType BuildingMaterial
-}
-
-class JobLog {
-    Int Hours
-    Double Price
-}
-
-class SemiDetachedWithCarport {}
-
-class SemiDetachedWithGarage {}
-
-class Company {
-    String Name
-    String Address
-}
-
-class Carport {
-    Boolean DoublePort
-    Boolean flatRoof
-}
-
-class Garage {
-    Boolean Automatic
-}
-
-
-ConcreteBasement --|> Basement
-EarthBasement --|> Basement
-Basement "0..1" -* "1" House
-House "*"-"*" Company
-JobLog .. (House,Company)
-House <|-- SemiDetached
-SemiDetached <|- SemiDetachedWithCarport
-SemiDetached <|-- SemiDetachedWithGarage
-SemiDetachedWithCarport "1"-"2" Carport
-SemiDetachedWithGarage "1"-"1" Garage
-
-@enduml

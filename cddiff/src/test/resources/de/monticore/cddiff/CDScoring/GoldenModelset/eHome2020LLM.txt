@@ -1,58 +1,82 @@
-@startuml
+/* (c) E-Home-2020 CD4A Model */
 
-    class SensorController {
-        id
-    }
+classdiagram eHome2020LLM {
 
-    class Sensor {
-        Integer id
-        String description
-        Double threshold
-    }
+  // ===========================
+  // Core System Components
+  // ===========================
+  class SensorController {
+    String systemName;
+  }
 
-    class Measurement {
-        Double value
-        Long timestamp
-    }
+  class EMonitor {}
 
-    class TemperatureSensor {
-        Double min
-        Double max
-    }
+  association [1] EMonitor -> (monitoredController) SensorController [1];
 
-    class PowerMeter {
-        Double totalConsumption
-    }
+  // ===========================
+  // Apartment / Inhabitants
+  // ===========================
+  class Apartment {
+    String address;
+    Optional<String> email; // optional email for alerts
+  }
 
-    enum Unit <<enum>> {
-        CELSIUS
-        WATT
-    }
+  class Inhabitant {
+    String username;
+    String password;
+    boolean isAdmin; // admin flag for configuration rights
+  }
 
-    class Room {
-        String label
-    }
+  association [1] Apartment -> (inhabitants) Inhabitant [*];
+  association [1] SensorController -> (apartment) Apartment [1];
 
-    class Apartment {
-        String address
-        String email
-    }
+  // ===========================
+  // Rooms and Sensors
+  // ===========================
+  class Room {
+    String description;
+  }
 
-    class Resident {
-        String username
-        String password
-        Boolean isAdmin
-    }
+  association [1] Apartment -> (rooms) Room [2..*];
 
-    SensorController "1" --> "0..1" Sensor
-    Sensor "1" --> "*" Measurement
-    Sensor "1" --> "1" Measurement : lastValue
-    Sensor <|-- TemperatureSensor
-    Sensor <|-- PowerMeter
-    Sensor "1" --> "1" Unit
-    SensorController "1" --> "1" Room
-    Room "2..*" *-- "1" Apartment
-    Apartment "1" --> "*" Resident
-    Apartment "1" --> "*" Sensor
+  abstract class Sensor {
+    String vendorId;      // unique identifier
+    String description;   // e.g. "temperature radiator living room"
+    Unit unit;
+  }
 
-@enduml
+  class TemperatureSensor extends Sensor {
+    double minValue;
+    double maxValue;
+  }
+
+  class PowerSensor extends Sensor {
+    double counterReading; // total power consumption
+  }
+
+  enum Unit {
+    CELSIUS,
+    WATT;
+  }
+
+  association [1] Room -> (sensors) Sensor [*];
+  association [1] SensorController -> (sensors) Sensor [*];
+
+  // ===========================
+  // Thresholds & Values
+  // ===========================
+  class Threshold {
+    double limit;
+  }
+
+  class SensorValue {
+    DateTime timestamp;
+    double value;
+  }
+
+  association [1] Sensor -> (threshold) Threshold [0..1];
+  association [1] Sensor -> (values) SensorValue [*];
+
+  // NOTE: "last value" of a sensor is conceptually the most recent SensorValue,
+  // but is not explicitly modeled as a separate association.
+}

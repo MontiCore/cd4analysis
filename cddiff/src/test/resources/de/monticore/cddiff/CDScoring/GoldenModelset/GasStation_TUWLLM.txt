@@ -1,37 +1,39 @@
-@startuml
+/* (c) https://github.com/MontiCore/monticore */
 
-class GasStation {
-    Int Id
-    String Address
+classdiagram GasStation_TUWLLM {
+
+  class GasStation {
+    String id;
+    String address;
+  }
+
+  class FuelPump {
+    int number;
+    boolean selfService;
+  }
+
+  class Fuel {
+    String name; // unique
+    int octaneRating;
+  }
+
+  class DailyPrice {
+    Date date;
+    double pricePerLiter;
+  }
+
+  class FuelPurchase {
+    String id;
+    double liters;
+  }
+
+  // Associations
+  association [1] GasStation -> (fuelPumps) FuelPump [1..12];
+  association [*] FuelPump -> (fuels) Fuel [*];
+  association [1] GasStation -> (dailyPrices) DailyPrice [*];
+  association [1] DailyPrice -> (fuel) Fuel [1];
+  association [1] FuelPurchase -> (pump) FuelPump [1];
+  association [1] FuelPurchase -> (fuel) Fuel [1];
+  association [1] FuelPurchase -> (price) DailyPrice [1];
+
 }
-
-class DailyPrice {
-    Date Date
-    Double Price
-}
-
-class FuelPurchase {
-    Int Id
-    Int Liter
-}
-
-class FuelPump {
-    Int PumpNumber
-    Boolean SelfService
-}
-
-class Fuel {
-    String Name
-    Int Octane
-}
-
-
-GasStation "1"--"*" DailyPrice
-GasStation "1"*-"1..12" FuelPump
-DailyPrice "*"-"1" Fuel
-FuelPump "1"--"*" FuelPurchase
-FuelPurchase "*"--"1" DailyPrice
-FuelPump "*"--"*" Fuel
-
-
-@enduml

@@ -1,27 +1,49 @@
-@startuml
+/* (c) Research Project Management Model */
 
-class ResearchGroup{}
+classdiagram ProjectManagementLLM {
 
-class Department{}
+  class University {
+    String name;
+  }
 
-class Researcher{}
+  class Department {
+    String name;
+  }
 
-class Project{}
+  class ResearchGroup {
+    String name;
+  }
 
-class WorkPackage{}
+  class Researcher {
+    String name;
+  }
 
-class WorkPackageLeader{}
+  class Project {
+    String title;
+  }
 
-class Service{}
+  class WorkPackage {
+    String title;
+    String description;
+  }
 
+  // A University consists of multiple Departments
+  association [1] University -> (departments) Department [*];
 
-Department "1" -- "0..*" ResearchGroup
-ResearchGroup "1" - "0..*" Researcher
-(ResearchGroup,Researcher) .. ResearchGroupMember 
-Project "1" -- "1..*" WorkPackage
-WorkPackage "0..*" - "0..1" ResearchGroup 
-(WorkPackage,ResearchGroup) .. WorkPackageLeader
-ResearchGroupMember "1..1" -- "0..*" Service 
-WorkPackageLeader "1..1" -- "0..*" Service 
+  // A Department consists of multiple ResearchGroups
+  association [1] Department -> (researchGroups) ResearchGroup [*];
 
-@enduml
+  // A ResearchGroup consists of multiple Researchers
+  association [1] ResearchGroup -> (members) Researcher [*];
+
+  // A Project consists of multiple WorkPackages
+  association [1] Project -> (workPackages) WorkPackage [*];
+
+  // Each WorkPackage has exactly one ResearchGroup as leader
+  association [1] WorkPackage -> (leader) ResearchGroup [1];
+
+  // Researchers can be assigned to any WorkPackage
+  // This assignment represents "service delivery" between groups
+  association [*] Researcher -> (assignments) WorkPackage [*];
+
+}

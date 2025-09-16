@@ -1,58 +1,72 @@
-@startuml
+/* (c) De Lijn - MENSO Project */
 
-class BusLine {
-    String Destination
+classdiagram MensoLLM {
+
+  // ------------------ Core Domain ------------------
+
+  class Bus {
+    int busNumber;
+  }
+
+  class Line {
+    int lineNumber;
+    LineCategory category;
+  }
+
+  class Trajectory {
+    String name;
+    TrajectoryStatus status;
+  }
+
+  enum TrajectoryStatus {
+    REQUESTED,
+    REFUSED,
+    APPROVED,
+    OPERATIONAL,
+    SUSPENDED,
+    CANCELLED;
+  }
+
+  enum LineCategory {
+    URBAN,
+    REGIONAL,
+    EXPRESS;
+    // Example categories; could be extended
+  }
+
+  association [*] Line -> (trajectories) Trajectory [*];
+  association [*] Bus -> (assignedLine) Line [1];
+  // A bus always belongs to exactly one line,
+  // but the description might imply more flexibility
+
+  // ------------------ MENSO System ------------------
+
+  class Customer {
+    String name;
+    String homeAddress;
+    String officeAddress;
+    String workingHours;
+  }
+
+  class MensoCard {
+    String cardId;
+    Date validUntil;
+  }
+
+  class Trip {
+    DateTime dateTime;
+  }
+
+  class Invoice {
+    Date issueDate;
+    double amount;
+    double discount;
+    boolean isPaid;
+  }
+
+  association [1] Customer -> (mensoCard) MensoCard [0..1];
+  association [1] MensoCard -> (trips) Trip [*];
+  association [1] Trip -> (line) Line [1];
+  association [1] Customer -> (invoices) Invoice [*];
+
 }
-
-class PriceCategory {
-    Double Price
-}
-
-class Trajectory {
-    String Status
-}
-
-class Bus {
-}
-
-class BusOnTrajectory {
-}
-
-class Trip {
-}
-
-class MensoTicket {
-}
-
-class MensoTrip {
-    DateTime TripDateTime
-}
-
-class InvoiceLine {
-}
-
-class Invoice {
-    Double Total
-    Double Discount
-}
-
-class Customer {
-    String Name
-    String HomeAddress
-    String OfficeAddress
-    String WorkingHours
-}
-
-BusLine "0..*" - "0..1" PriceCategory
-BusLine "1" -- "0..*" Trajectory
-Trajectory "1" -- "0..*" BusOnTrajectory
-Bus "1" -- "0..*" BusOnTrajectory
-BusOnTrajectory "1" -- "0..*" Trip
-MensoTicket "1" -- "0..*" MensoTrip
-BusOnTrajectory "1" -- "0..*" MensoTrip
-MensoTrip "1" -- "0..1" InvoiceLine
-Invoice "1" -- "0..*" InvoiceLine
-Customer "1" -- "0..*" MensoTicket
-MensoTicket "1" -- "0..*" Invoice
-
-@enduml

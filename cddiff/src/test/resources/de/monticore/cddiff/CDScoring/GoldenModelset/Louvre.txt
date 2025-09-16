@@ -25,10 +25,10 @@ classdiagram Louvre {
   }
 
   association [1] Collector -> Piece [*];
-  association Piece [*] -> Item [*];
+  association [*] Piece -> Item [*];
   association [1] Exhibition -> Item [*];
   association Coordinator [1] Employee -> Exhibition [*];
-  association Exhibition [*] -> (AssignedLocation) Location [0..1];
-  association RoomLocationAssignment Location [*] <-> Room [*];
-  association hasCoach Employee [*] -> Employee [0..1];
+  association [*] Exhibition -> (AssignedLocation) Location [0..1];
+  association RoomLocationAssignment [*] Location <-> Room [*];
+  association hasCoach [*] Employee -> Employee [0..1];
 }

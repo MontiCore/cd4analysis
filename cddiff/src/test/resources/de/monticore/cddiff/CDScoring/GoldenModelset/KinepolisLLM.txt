@@ -1,69 +1,97 @@
-@startuml
+/* (c) https://github.com/MontiCore/monticore */
 
-    class Cinema {
-	    String Name
-	    String City
-    }
-    class Theatre {
-	    Int Number
-    }
-    class Movie {
-	    String Title
-	    Int durationMinutes
-    }
-    class MovieCopy {
-	    Int Id
-    }
-    class CopyLocation {
-	    DateTime StartDate
-	    DateTime EndDate
-    }
-    class Seat {
-	    Int SeatNumber
-    }
-    class Show {
-	    DateTime StartTime
-	    DateTime EndTime
-      publish()
-      cancelShow()
-    }
-    class Ticket {
-      Int TicketId
-      Float Price
-    }
-    class Customer {
-      String Name
-      Int CustomerId
-    }
-    class OnlineTicket {
-      Int OnlineTicketId
-      Float Price
-      cancelReservationCustomer()
-      cancelReservationKinepolis()
-    }
-    class AlternativeOffer {
-      Int AlternativeOfferId
-      accept()
-      decline()
-      expire()
-      refund()
-    }
+classdiagram KinepolisLLM {
 
+  // ---------------- Core Domain ----------------
 
-    Cinema "1..1" -- "0..*" Theatre
-    Movie "1..1" -- "0..*" MovieCopy
-    Cinema "1..1" -- "0..*" CopyLocation
-    MovieCopy "1..1" -- "0..*" CopyLocation
-    Theatre "1..1" -- "0..*" Seat
-    Theatre "1..1" -- "0..*" Show
-    CopyLocation "1..1" -- "0..*" Show
-    Seat "1..1" -- "0..*" Ticket
-    Show "1..1" -- "0..*" Ticket
-    Customer "1..1" -- "0..*" OnlineTicket
-    Seat "1..1" -- "0..*" OnlineTicket
-    Show "1..1" -- "0..*" OnlineTicket
-    OnlineTicket "1..1" -- "0..1" AlternativeOffer
-    Seat "1..1" -- "0..*" AlternativeOffer
-    Show "1..1" -- "0..*" AlternativeOffer
+  class Kinepolis {
+    String name;
+  }
 
-@enduml
+  class Cinema {
+    String town;
+    String name;
+  }
+
+  association [1] Kinepolis -> (cinemas) Cinema [*];
+
+  class Theatre {
+    String name;
+    int seatCount;
+  }
+
+  association [1] Cinema -> (theatres) Theatre [*];
+
+  class Movie {
+    String title;
+    String genre;
+    int durationMinutes;
+  }
+
+  class Copy {
+    String copyId;
+  }
+
+  association [1] Cinema -> (copies) Copy [*];
+  association [1] Movie -> (copies) Copy [*];
+
+  // Comment: Copy is shown only in the theatres of its cinema,
+  // this restriction cannot be modeled directly in CD4A.
+
+  class Show {
+    DateTime startTime;
+    boolean published;
+  }
+
+  association [1] Theatre -> (shows) Show [*];
+  association [1] Copy -> (shows) Show [*];
+
+  // ---------------- Reservation & Ticketing ----------------
+
+  class Reservation {
+    DateTime reservationDate;
+    boolean paid;
+  }
+
+  association [1] Show -> (reservations) Reservation [*];
+
+  class CreditCard {
+    String number;
+    String holderName;
+    String expirationDate;
+  }
+
+  association [1] Reservation -> (payment) CreditCard [1];
+
+  class Seat {
+    int seatNumber;
+  }
+
+  association [1] Theatre -> (seats) Seat [*];
+  association [0..1] Reservation -> (reservedSeat) Seat [1];
+
+  class Ticket {
+    int ticketNumber;
+    boolean anonymous;
+  }
+
+  association [1] Show -> (tickets) Ticket [*];
+  association [0..1] Ticket -> (seat) Seat [0..1];
+
+  // ---------------- Cancellation & Offers ----------------
+
+  class Offer {
+    DateTime expiration;
+    boolean accepted;
+  }
+
+  association [0..1] Offer -> (reservation) Reservation [1];
+  association [0..1] Offer -> (newSeat) Seat [0..1];
+
+  class FreeTicket {
+    int freeTicketNumber;
+  }
+
+  association [0..1] Offer -> (compensation) FreeTicket [0..1];
+
+}

@@ -1,69 +1,67 @@
-@startuml
-    class User {
-        String username
-        String password
-        String email
-    }
+/* (c) CD4A Model based on given project description */
 
-    class Administrator {
-        String idCardNumber
-    }
+classdiagram BuildingManagementLLM {
 
-    class WebPortal {
-        String versionNumber
-        String url
-    }
+  class WebPortal {
+    String version;
+    String url;
+  }
 
-    class Building {
-        String id
-        String label
-        String address
-        int yearOfConstruction
-    }
+  class Building {
+    String buildingId;
+    String name;
+    EnergyClass energyClass;
+    String address;
+    int yearOfConstruction;
+  }
 
-    class Entry {
-        String name
-        boolean public
-    }
+  enum EnergyClass {
+    A,
+    B,
+    C,
+    D;
+  }
 
-    class TextEntry {
-        String text
-    }
+  class AdditionalEntry {
+    String name;
+    boolean isPublic;
+  }
 
-    class NumericEntry {
-        double value
-        String unit
-    }
+  class TextEntry extends AdditionalEntry {
+    String text;
+  }
 
-    class EntryGroup
+  class NumericEntry extends AdditionalEntry {
+    double value;
+    String unit;
+  }
 
-    enum EnergyClass <<enum>> {
-        A
-        B
-        C
-        D
-    }
+  class Image {
+    String filename;
+    boolean isProfile;
+  }
 
-    class Comment {
-        String text
-    }
+  class User {
+    String username;
+    String email;
+    String password;
+  }
 
-    class Image {
-        String fileName
-    }
+  class Administrator extends User {
+    String idCardNumber;
+  }
 
-    WebPortal "1" --> "*" Entry : id
-    WebPortal "0..1" --> "1" User : username
-    EntryGroup "1" *-- "*" Entry
+  class Comment {
+    String text;
+  }
 
-    Entry <|-- TextEntry
-    Entry <|-- NumericEntry
+  // ---------------- Associations ----------------
 
-    User <|-- Administrator
+  association [1] WebPortal -> (catalog) Building [*];
+  association [1] Building -> (owner) User [1];
+  association [1] Building -> (entries) AdditionalEntry [*];
+  association [1] Building -> (images) Image [*];
+  association [1] Building -> (comments) Comment [*];
+  association [1] Comment -> (author) User [1];
 
-    User "1" --> "*" Building : owner
-    User "1" --> "*" Building : author
-    Building "1" --> "*" Comment
-    Building "1" --> "1" Image : profilePicture
-    Building "1" --> "1" EnergyClass
-@enduml
+}

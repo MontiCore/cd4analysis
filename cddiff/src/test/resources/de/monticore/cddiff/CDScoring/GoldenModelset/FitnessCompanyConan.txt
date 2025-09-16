@@ -17,8 +17,8 @@ classdiagram FitnessCompanyConan {
   class IndividualSession extends Session {}
 
   class GroupSession extends Session {
-    String type;
-  }
+       String type;
+     }
 
   class Person {
     String firstName;
@@ -34,7 +34,7 @@ classdiagram FitnessCompanyConan {
 
   association [1] Center -> Room [1..*];
   association [1] Room -> Session [*];
-  association IndividualSession [*] -> Member [1];
-  association Member [*] <-> GroupSession [*];
+  association [*] IndividualSession -> Member [1];
+  association [*] Member <-> GroupSession [*];
   association [1] Trainer -> GroupSession [*];
 }

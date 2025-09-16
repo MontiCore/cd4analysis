@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
@@ -34,22 +35,30 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
   }
 
   public static Stream<Arguments> LLMTestData() {
-    return Stream.of(
-      Arguments.of("KineopolisLLM.cd", "Kineopolis.cd"),
-      Arguments.of("EBikeLLM.cd", "EBike.cd"),
-      Arguments.of("BuildingManagementLLM.cd", "BuildingManagement.cd"),
-      Arguments.of("GoldenModelset/AirTravelLLM.txt", "GoldenModelset/AirTravel.txt"),
-      Arguments.of("GoldenModelset/AlphaInsuranceLLM.txt", "GoldenModelset/AlphaInsurance.txt"),
-      Arguments.of("GoldenModelset/BankAccountLLM.txt", "GoldenModelset/BankAccount.txt")
-    );
+    File root = new File(dir, "GoldenModelset");
+    try (
+      Stream<Path> artifacts = Files.walk(root.toPath())) {
+      return artifacts.filter(Files::isRegularFile)
+        .filter(f -> f.getFileName().toString().endsWith("LLM.txt"))
+        .map(artifact -> Arguments.of(
+          "GoldenModelset/" + artifact.getFileName().toString().replace("LLM", ""), "GoldenModelset/" + artifact.getFileName()
+        )).collect(Collectors.toList()).stream();
+    } catch (
+      IOException e) {
+      fail("Could not read directory: " + root.getAbsolutePath() + " - " + e.getMessage());
+      return Stream.empty();
+    }
   }
 
   @ParameterizedTest
   @MethodSource("LLMTestData")
-  public void testLLMModels(String srcFile, String tgtFile) {
+  public void testLLMModels(String srcFile, String tgtFile) throws IOException {
     parseModels(srcFile, tgtFile);
     CDScoring llmCDScoring = new CDScoring(src, tgt);
-    System.out.println("Score: " + llmCDScoring.score(5, 0.5, true));
+    double score = llmCDScoring.score(5, 0.5, true);
+    System.out.println("Score: " + score);
+    File out = new File(dir + "LLMScores.txt");
+    Files.writeString(out.toPath(), score + "\n", out.exists() ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
   }
 
   @ParameterizedTest

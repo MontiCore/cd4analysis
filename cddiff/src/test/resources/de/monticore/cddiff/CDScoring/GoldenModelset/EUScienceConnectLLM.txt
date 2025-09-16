@@ -1,51 +1,67 @@
-@startuml
+/* (c) Science Connect Research Database */
 
-class Person {
-    Int PersonID
-    String PhoneNumber
-    String Keywords
+classdiagram EUScienceConnectLLM {
+
+  // =========================
+  // Core Domain Classes
+  // =========================
+
+  class Person {
+    String personId;
+    String phoneNumber;
+    List<String> keywords;
+  }
+
+  class Institution {
+    String institutionCode;
+  }
+
+  class ScientificArticle {
+    String doi;
+    String title;
+  }
+
+  class PeerReviewedPaper extends ScientificArticle {
+    int citationCount;
+  }
+
+  class TechnicalReport extends ScientificArticle {}
+
+  class Publisher {
+    String name;
+  }
+
+  class Journal {
+    String name;
+    double impactFactor;
+  }
+
+  // =========================
+  // Associations
+  // =========================
+
+  // Person works for an Institution
+  association [*] Person -> (worksAt) Institution [1];
+
+  // Author relationships (with position stored separately)
+  class Authorship {
+    int position;
+  }
+  association [1] Person -> (authored) Authorship [*];
+  association [1] ScientificArticle -> (hasAuthor) Authorship [*];
+
+  // Reviewer relationships (only for PeerReviewedPapers)
+  association [*] Person -> (reviews) PeerReviewedPaper [*];
+
+  // TechnicalReport published by one Institution
+  association [1] Institution -> (publishedReports) TechnicalReport [*];
+
+  // Publisher - Journal
+  association [1] Publisher -> (journals) Journal [*];
+
+  // Institution subscribes to Journals
+  association [*] Institution -> (subscriptions) Journal [*];
+
+  // Only PeerReviewedPapers are published in Journals
+  association [1] Journal -> (papers) PeerReviewedPaper [*];
 }
-
-class ResearchInstitution {
-    Int InstitutionCode
-}
-
-class Article {
-    Int DOI
-    String Title
-}
-
-class Author {
-    Int Position
-}
-
-class PeerReviewedPaper {
-    Int CitationCount
-}
-
-class TechnicalReport {
-
-}
-
-class Publisher {
-    String Name
-}
-
-class Journal {
-    String Name
-    Double ImpactFactor
-}
-
-
-TechnicalReport --|> Article : {total; disjoint}
-Article <|-- PeerReviewedPaper
-Article "*"-"*" Person
-Author .. (Article,Person)
-ResearchInstitution "1"--"*" Person : worksFor
-Person "*"--"*" PeerReviewedPaper : reviews
-ResearchInstitution "*"--"*" Journal : subscribesTo
-Publisher "1"--"*" Journal : publishes
-Journal "1"--"*" PeerReviewedPaper
-ResearchInstitution "1"--"*" TechnicalReport : publishes
-
-@enduml

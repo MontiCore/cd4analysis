@@ -26,7 +26,7 @@ classdiagram BuildingPortal {
 
   class Entry {
     String name;
-    boolean public;
+    boolean isPublic;
   }
 
   class TextEntry extends Entry {

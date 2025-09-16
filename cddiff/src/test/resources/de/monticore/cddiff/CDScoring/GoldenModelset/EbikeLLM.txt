@@ -1,57 +1,52 @@
-@startuml
+/* (c) EBike System Model */
 
-    class EBike {
-        frame : Frame
-        driveSystem : DriveSystem
-        controller : Controller
-        battery : Battery
-    }
+classdiagram EBikeLLM {
 
-    class Frame {
-        steel
-    }
+  class EBike {}
 
-    class Wheel
+  class Frame {
+    String material = "Steel";
+  }
 
-    class DriveSystem {
-        motor : Motor
-    }
+  class Wheel {}
 
-    class Motor
+  class DriveSystem {}
 
-    class Controller {
-        currentState : State
-        battery : Battery
-        commandDriveSystem()
-    }
+  class Motor {}
 
-    class BasicController
+  class Battery {
+    double storedEnergyWh;
+  }
 
-    class AdvancedController {
-        nextInspection() : Date
-    }
+  class Controller {}
 
-    class Battery {
-        storedEnergy : float
-    }
+  class BasicController extends Controller {}
 
-    enum State <<enum>> {
-        On
-        Off
-        Charging
-    }
+  class AdvancedController extends Controller {
+    Date nextMaintenanceDate;
+  }
 
-    EBike --> Wheel : wheel
-    EBike --> Battery : battery
-    EBike --> Frame : frame
-    EBike --> DriveSystem : driveSystem
-    EBike --> Controller : controller
+  enum ControllerState {
+    ON,
+    OFF,
+    CHARGING;
+  }
 
-    DriveSystem --> Motor : motor
+  // Associations
+  association [1] EBike -> (frame) Frame [1];
+  association [1] EBike -> (driveSystem) DriveSystem [1];
+  association [1] EBike -> (controller) Controller [1];
+  association [1] Frame -> (wheels) Wheel [2];
 
-    Controller --> Battery : battery
-    Controller --> State : currentState
-    Controller <|-- BasicController
-    Controller <|-- AdvancedController
+  association [1] DriveSystem -> (motor) Motor [1];
 
-@enduml
+  // "Removable battery" means optional:
+  association [1] EBike -> (battery) Battery [0..1];
+
+  // Controller manages battery if connected:
+  association [0..1] Controller -> (controlledBattery) Battery [0..1];
+
+  // Controller commands the drive system:
+  association [1] Controller -> (controlledDrive) DriveSystem [1];
+
+}

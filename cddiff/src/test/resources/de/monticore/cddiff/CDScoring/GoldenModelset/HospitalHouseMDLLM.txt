@@ -1,32 +1,73 @@
-@startuml
+/* (c) HospitalHouseMD Class Diagram */
 
-class Patient {
-    Boolean Consent
+classdiagram HospitalHouseMDLLM {
+
+  // ---------------- Core Entities ----------------
+
+  class Patient {
+    String name;
+    boolean consentGiven;  // true if patient signed consent for stage upgrade
+  }
+
+  class Doctor {
+    String name;
+  }
+
+  class HeadDoctor extends Doctor {}
+
+  class Nurse {
+    String name;
+  }
+
+  class Illness {
+    String name;
+    PriorityScore priority;
+  }
+
+  enum PriorityScore {
+    HIGH,
+    LOW;
+  }
+
+  class Diagnosis {
+    String description;
+    boolean approved; // true if head doctor approved
+  }
+
+  class Treatment {
+    String name;
+    TreatmentStage stage;
+  }
+
+  enum TreatmentStage {
+    STAGE1,
+    STAGE2,
+    STAGE3;
+  }
+
+
+  // ---------------- Associations ----------------
+
+  // Patients are treated by multiple doctors
+  association [1] Patient -> (assignedDoctors) Doctor [*];
+
+  // Patients have illnesses
+  association [1] Patient -> (illnesses) Illness [*];
+
+  // Doctors make diagnoses for patients
+  association [1] Doctor -> (diagnoses) Diagnosis [*];
+  association [1] Patient -> (diagnoses) Diagnosis [*];
+
+  // Each diagnosis must be approved by the head doctor
+  association [1] Diagnosis -> (approvedBy) HeadDoctor [0..1];
+
+  // Each illness has possible treatments stored in the database
+  association [1] Illness -> (possibleTreatments) Treatment [*];
+
+  // Diagnoses can have applied treatments
+  association [1] Diagnosis -> (appliedTreatments) Treatment [*];
+
+  // Nurses follow up patients (especially important in stage 3)
+  association [1] Nurse -> (followUpPatients) Patient [*];
+
 }
-
-class Doctor{}
-
-class Diagnosis {
-    Int Stage
-    Int ugradeStage()
-    Int downgradeStage()
-    Int priorityUpgrade()
-}
-
-class Illness {
-    String Priority
-}
-
-class Treatment {}
-
-class AppliedTreatment {}
-
-
-Patient "1" -- "0..*" Diagnosis
-Doctor "1" -- "0..*" Diagnosis
-Illness "1" -- "0..*" Diagnosis
-Diagnosis "1" -- "0..*" AppliedTreatment
-Illness "1" -- "0..*" Treatment
-Treatment "1" -- "0..*" AppliedTreatment
-
-@enduml

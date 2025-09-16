@@ -1,78 +1,81 @@
-@startuml
+/* (c) CD4A Model for Film Set System */
 
-enum Genre <<enum>> {
-    Thriller
-    Action
-    Horror
-    Comedy
+classdiagram FilmSetLLM {
+
+  class Employee {
+    String name;
+    String socialSecurityNumber;
+  }
+
+  class CreativeEmployee extends Employee {}
+
+  class Actor extends CreativeEmployee {
+    String education;
+    boolean hasOscar;
+  }
+
+  class Director extends CreativeEmployee {
+    String assistantName;
+    boolean hasOscar;
+  }
+
+  class Technician extends Employee {
+    String fieldOfActivity;
+  }
+
+  class FilmSet {
+    String location;
+  }
+
+  class Film {
+    String title;
+    int releaseYear;
+    Genre genre;
+  }
+
+  enum Genre {
+    THRILLER,
+    ACTION,
+    HORROR,
+    COMEDY;
+  }
+
+  class Screenwriter {
+    String name;
+    String mostSuccessfulFilm;
+  }
+
+  class Screenplay {
+    String title;
+    String version;
+    Date date;
+    int numberOfScenes;
+    String plot;
+  }
+
+  class Novel {
+    String title;
+    String author;
+  }
+
+  class Concept {
+    String title;
+  }
+
+  // Associations
+  association [1] FilmSet -> Employee [*];
+  association [*] FilmSet <-> Film [*];
+  association [1] Screenwriter -> Screenplay [*];
+  association [1] Screenplay -> (film) Film [1];
+  association [1] Film -> (screenplay) Screenplay [1];
+
+  // A Screenplay is based either on a Novel or on a Concept
+  association [0..1] Screenplay -> (basedOnNovel) Novel [1];
+  association [0..1] Screenplay -> (basedOnConcept) Concept [1];
+
+  // Actors prepare for their roles by reading the screenplay
+  association [*] Actor -> (reads) Screenplay [*];
+
+  // Directors implement the screenplay
+  association [*] Director -> Screenplay [*];
 }
-
-abstract class Employee {
-    String Name
-    Int Ssn
-}
-
-abstract class CreativeEmployee {
-    Boolean Oscar
-}
-
-class Technician {
-    String FieldOfActivity
-}
-
-class Director {
-    String AssistentName
-}
-
-class Actor {
-    String Education
-}
-
-class Screenplay {
-    String Title
-    String Version
-    Date Date
-    Int NumberOfScenes
-    String Plot
-}
-
-class FilmSet {
-    String Location
-}
-
-class Film {
-    String Title
-    Int Year
-    Genre Genre
-}
-
-class ScreenplayAuthor {
-    String Name
-}
-
-class Book {
-    String Title
-    String Author
-}
-
-class Concept {}
-
-Employee <|-- CreativeEmployee
-Employee <|-- Technician
-CreativeEmployee <|-- Director
-CreativeEmployee <|-- Actor
-Director "1"--"*" Screenplay : implements
-Actor "*"--"*" Screenplay : reads
-Employee "*"-"1" FilmSet
-FilmSet "*"--"*" Film
-Film "1"--"0..1" ScreenplayAuthor : MostSuccessful
-ScreenplayAuthor "1"--"*" Screenplay : creates
-Film "1"--"1" Screenplay
-Screenplay "0..1"--"0..1" Book
-Screenplay "0..1"--"0..1" Concept
-
-note "{XOR}" as N1
-(Book,Screenplay)..N1
-N1..(Screenplay,Concept)
-
-@enduml

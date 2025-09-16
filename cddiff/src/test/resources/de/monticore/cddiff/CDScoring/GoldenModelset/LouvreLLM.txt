@@ -1,37 +1,61 @@
-@startuml
+/* (c) Louvre Museum Management System */
 
-class Collector{}
+classdiagram LouvreMuseum {
 
-class Piece{
-    String Title
-    String Description
+  // ---------------- Core Museum Structure ----------------
+  class Museum {
+    String name;
+    String address;
+  }
+
+  class Location {
+    String name;
+    String description;
+  }
+
+  association [1] Museum -> (locations) Location [*];
+
+  class Exhibition {
+    String title;
+    Date startDate;
+    Date endDate;
+    Date planningStartDate;
+  }
+
+  association [1] Location -> (exhibitions) Exhibition [*];
+
+  // ---------------- Employees ----------------
+  class Employee {
+    String name;
+    String role;
+  }
+
+  association coordinator [1] Exhibition -> (coordinator) Employee [1];
+
+  // Coaching relation: one senior can coach multiple juniors, each junior has one senior
+  association coaching [*] Employee (junior) -> (senior) Employee [1];
+
+  // ---------------- Exhibition Items ----------------
+  class ExhibitionItem {
+    String description;
+  }
+
+  association [1] Exhibition -> (desiredItems) ExhibitionItem [*];
+
+  class Piece {
+    String title;
+    String artist;
+    String period;
+  }
+
+  class Collector {
+    String name;
+    String contactInfo;
+  }
+
+  // Some items may be linked to several possible pieces
+  association [1] ExhibitionItem -> (candidatePieces) Piece [*];
+
+  // Requested pieces are tracked per collector
+  association [*] Collector -> (pieces) Piece [*];
 }
-
-class Item{
-    String Description
-}
-
-class Exhibition{
-    String Title
-    String Stage
-}
-
-class Location{}
-
-class Room{}
-
-class Employee{
-    String Level
-}
-
-
-Collector "1" -- "0..*" Piece
-Piece "0..*" - "0..*" Item
-Exhibition "1" -- "0..*" Item
-Employee "1" -- "0..*" Exhibition : Coordinator
-Exhibition "0..*" -- "0..1" Location : AssignedLocation
-Location "0..*" -- "0..*" Room : RoomLocationAssignment
-Employee "0..*" -- "0..1" Employee : hasCoach >
-
-
-@enduml

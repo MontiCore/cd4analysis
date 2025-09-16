@@ -1,47 +1,85 @@
-@startuml
+/* (c) CD4A Class Diagram for Hospital Examinations and Treatments */
 
-class ProblemType {
-    String Type
+classdiagram TreatmentPlansLLM {
+
+  class Hospital {
+    String name;
+    String location;
+  }
+
+  class Doctor {
+    String name;
+    String specialization;
+  }
+
+  class Patient {
+    String name;
+    Date dateOfBirth;
+  }
+
+  class Examination {
+    DateTime date;
+  }
+
+  class ExaminationType {
+    String name;
+    String description;
+  }
+
+  class Problem {
+    String description;
+  }
+
+  class TreatmentPlan {
+    String planName;
+  }
+
+  class ActualTreatment {
+    String notes;
+  }
+
+  class MedicalAction {
+    String description;
+  }
+
+  // ----------------- Associations -----------------
+
+  // A hospital employs doctors
+  association [1] Hospital -> (doctors) Doctor [*];
+
+  // A patient can be treated at one hospital
+  association [1] Patient -> (hospital) Hospital [1];
+
+  // A doctor is affiliated with one hospital
+  association [1] Doctor -> (hospital) Hospital [1];
+
+  // A hospital has permissions for examination types
+  association [1] Hospital -> (permittedTypes) ExaminationType [*];
+
+  // Each examination is of exactly one type
+  association [1] Examination -> (type) ExaminationType [1];
+
+  // A patient undergoes examinations
+  association [1] Patient -> (examinations) Examination [*];
+
+  // A doctor prescribes examinations
+  association [1] Doctor -> (prescribedExaminations) Examination [*];
+
+  // A treatment plan belongs to a problem
+  association [1] Problem -> (treatmentPlans) TreatmentPlan [*];
+
+  // A treatment plan advises certain examination types
+  association [1] TreatmentPlan -> (advisedExaminations) ExaminationType [*];
+
+  // A patient diagnosed with a problem
+  association [1] Patient -> (problems) Problem [*];
+
+  // A doctor defines actual treatments for a patient based on a plan
+  association [1] ActualTreatment -> (basedOn) TreatmentPlan [0..1];
+  association [1] ActualTreatment -> (patient) Patient [1];
+  association [1] ActualTreatment -> (doctor) Doctor [1];
+
+  // An actual treatment consists of examinations and additional actions
+  association [1] ActualTreatment -> (examinations) Examination [*];
+  association [1] ActualTreatment -> (actions) MedicalAction [*];
 }
-class TreatmentPlan {}
-class AdvisedExaminationType {}
-class ExaminationType {
-    String Type
-}
-class Diagnosis {}
-class Treatment {}
-class AdvisedExamination{}
-class Permission{}
-class Consultation{}
-class FreeExamination{}
-class Patient{}
-class Affiliation{}
-class Doctor{}
-class Hospital{}
-
-ProblemType "1" - "0..1" TreatmentPlan
-TreatmentPlan "0..*" - "0..*" ExaminationType
-(TreatmentPlan,ExaminationType) .. AdvisedExaminationType
-
-ProblemType "1" -- "0..*" Diagnosis
-TreatmentPlan "1" -- "0..*" Treatment
-
-Diagnosis "1" - "0..*" Treatment
-Diagnosis "0..*" -- "1" Consultation
-Treatment "1" - "0..*" AdvisedExamination
-Treatment "1" -- "0..*" FreeExamination
-
-AdvisedExaminationType "1" -- "0..*" AdvisedExamination
-
-AdvisedExamination "0..*" - "1" Permission
-FreeExamination "0..*" -- "1" Permission
-ExaminationType "1" -- "0..*" Permission
-
-Consultation "0..*" -- "1" Affiliation
-Consultation "0..*" -- "1" Patient
-
-Affiliation "0..*" -- "1" Doctor
-Affiliation "0..*" -- "1" Hospital
-Permission "0..*" -- "1" Hospital
-
-@enduml

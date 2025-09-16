@@ -1,64 +1,78 @@
-@startuml
-class TravelAgency {
- String Name
- String Address
+/* (c) Cruise Management System */
+
+classdiagram CuiseLLM {
+
+  class Provider {
+    String name;
+    String location;
+  }
+
+  class Cruise {
+    int number;
+    String name;
+    Date startDate;
+    Date endDate;
+  }
+
+  class Employee {
+    String name;
+    String socialSecurityNumber;
+  }
+
+  class Guest {
+    String name;
+    boolean isVIP;
+  }
+
+  class Ship {
+    String name;
+    int numberOfDecks;
+    double length;
+    int numberOfPassengers;
+  }
+
+  class TravelAgency {
+    String name;
+    String address;
+  }
+
+  class Booking {
+    String bookingNumber; // unique
+    Date bookingDate;
+  }
+
+  class DestinationArea {
+    String name;
+    String sea;
+  }
+
+  class Show {
+    String title;
+    int duration; // in minutes
+  }
+
+  class Ticket {
+    String ticketNumber; // assumed unique
+  }
+
+  // Associations
+  association [1] Cruise -> Provider [1]; // each cruise organized by exactly one provider
+  association [1] Cruise -> Employee [*]; // a cruise requires many employees
+  association [*] Cruise <-> Guest [*];   // many-to-many between cruises and guests
+  association [1] Cruise -> Ship [1];     // each cruise uses exactly one ship
+  association [1] Ship -> Cruise [*];   // a ship can be used for different cruises (multi-cruise reuse)
+
+  association [1] Booking -> Cruise [1]; // each booking is for one cruise
+  association [1] Booking -> TravelAgency [1]; // booking through exactly one agency
+  association [1] Booking -> Guest [1]; // booking made by one guest
+
+  association [1] Cruise -> DestinationArea [1]; // a cruise has exactly one destination area
+  association [1] Cruise -> Show [*]; // several shows offered on a cruise
+
+  association [1] Ticket -> Cruise [1]; // each ticket belongs to exactly one cruise
+  association [1] Ticket -> Guest [1];  // each ticket belongs to exactly one guest
+
+  // Constraints not directly expressible in CD4A:
+  // - A guest can have multiple tickets, but only ONE per cruise.
+  // - A ship can be reused across multiple cruises, but only one per cruise instance.
 }
-
-class Ticket {
- Int BookingNumber
- Date BookingDate
-}
-
-class Guest {
- String Name
- Boolean VIP
-}
-
-class Employee {
- String Name
- Int Ssn
-}
-
-class Cruise {
- Int CruiseNumber
- String Name
- Date StartDate
- Date EndDate
-}
-
-class ProviderCompany {
- String Name
- String Location
-}
-
-class Ship {
- String Name
- Int DeckCount
- Float lenght
- Int PassengerCount
-}
-
-class Show {
- String Title
- Int Duration
-}
-
-class Destination {
- String Name
- String Sea
-}
-
-<> diamond
-
-Cruise "0..*"--"0..1" ProviderCompany
-Cruise "0..*"--"0..*" Employee
-Cruise "0..*"--"0..1" Ship
-TravelAgency "1..1"--"0..*" Ticket
-Cruise "0..*"--"0..1" Destination
-Cruise "0..*"--"0..*" Show
-
-diamond --"0..1" Guest
-diamond --"0..1" Ticket
-diamond --"0..1" Cruise
-
-@enduml

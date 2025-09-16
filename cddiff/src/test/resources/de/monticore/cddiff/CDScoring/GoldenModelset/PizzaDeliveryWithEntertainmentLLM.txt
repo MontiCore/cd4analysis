@@ -1,70 +1,144 @@
-@startuml
+/* (c) CD4A — Pizza Delivery with Entertainment
+   Produced by: CD4A Class Diagram Creator
+*/
 
-class User {
-    Int UserID
-    Date Birthdate
-    String Name
-    String Address
+classdiagram PizzaDeliveryWithEntertainmentLLM {
+
+  /* --------------------------
+     Enums
+     -------------------------- */
+  enum DayOfWeek {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY;
+  }
+
+  enum EntertainmentType {
+    SINGING,
+    JOKES,
+    MAGIC,
+    DANCE,
+    OTHER;
+  }
+
+  /* --------------------------
+     Core application / Users
+     -------------------------- */
+
+  class App {
+    String appName = "PizzaDeliveryWithEntertainment";
+  }
+
+  class User {
+    String userId;
+    String firstName;
+    String lastName;
+    Date birthday;
+    String address; // general account address
+    String email;
+  }
+
+  class BusinessOwner extends User {
+    String linkedIn; // LinkedIn account / url
+  }
+
+  class HungryCustomer extends User {
+    String deliveryAddress; // can differ from account address
+  }
+
+  class Entertainer extends User {
+    String stageName;
+    String bio;
+    double pricePer30Min;
+  }
+
+  /* --------------------------
+     Restaurants & Pizzas
+     -------------------------- */
+
+  class PizzaRestaurant {
+    String name;
+    String zipCode;
+    String address;
+    String phoneNumber;
+    String website;
+    String openingHours; // free-text (could be modelled as structured times in future)
+  }
+
+  class Pizza {
+
+    String pizzaId;
+    String name;           // e.g., Margherita
+    String crustStructure; // e.g., classic, deep dish
+    double price;
+    // Note: pizzas are distinct entities even if name & price equal; uniqueness handled by pizzaId + association to restaurant
+  }
+
+  /* --------------------------
+     Orders
+     -------------------------- */
+
+  class Order {
+    String orderId;
+    DateTime placedAt;
+    Optional<DateTime> latestDeliveryTime;
+    int numberOfPeople;
+    String deliveryAddress; // address for this order (may differ from customer's deliveryAddress)
+  }
+
+  class EntertainmentOrder extends Order {
+    EntertainmentType entertainmentType;
+    Duration duration; // duration of entertainment
+  }
+
+  /* --------------------------
+     Availability (per restaurant)
+     -------------------------- */
+
+  class Availability {
+    DayOfWeek day;
+    // Additional fields (startTime, endTime) could be added if needed, e.g. LocalTime start, LocalTime end
+  }
+
+  /* --------------------------
+     Associations
+     -------------------------- */
+
+  association appUsers [1] App -> (users) User [*];
+
+  /* Business owners own restaurants */
+  association owns [1] BusinessOwner -> (ownedRestaurants) PizzaRestaurant [*];
+  // Note: we allow multiple business owners owning restaurants; adjust cardinality if restaurants must have exactly one owner.
+
+  /* Restaurants offer pizzas (pizzas are unique per restaurant by design) */
+  association menu [1] PizzaRestaurant -> (pizzas) Pizza [*];
+  association pizzaAt [1] Pizza -> (restaurant) PizzaRestaurant [1];
+
+  /* Hungry customers place orders */
+  association places [1] HungryCustomer -> (orders) Order [*];
+  association orderBy [1] Order -> (customer) HungryCustomer [1];
+
+  /* Orders contain pizzas */
+  association orderContains [1] Order -> (pizzas) Pizza [*];
+
+  /* Entertainment orders are a specialized order (subclass). Each EntertainmentOrder is fulfilled by exactly one Entertainer. */
+  association entertains [1] EntertainmentOrder -> (entertainer) Entertainer [1];
+  association entertainerFulfillment [1] Entertainer -> (fulfilledOrders) EntertainmentOrder [*];
+
+  /* Entertainers choose restaurants they work for */
+  association worksFor [1] Entertainer -> (restaurants) PizzaRestaurant [*];
+
+  /* Availability entries tie an entertainer to a specific restaurant on a specific day */
+  association availabilityOf [1] Availability -> (entertainer) Entertainer [1];
+  association availabilityAt [1] Availability -> (restaurant) PizzaRestaurant [1];
+
+  /* App-level root associations (optional convenience links) */
+  association restaurantsInApp [1] App -> (restaurants) PizzaRestaurant [*];
+  association entertainersInApp [1] App -> (entertainers) Entertainer [*];
+  association ordersInApp [1] App -> (orders) Order [*];
+
 }
-
-class Customer {
-    String DeliveryAddress
-}
-
-class Order {
-    Int OrderID
-    DateTime OrderPlacement
-    DateTime LatestDelivery
-    Int NumberOfPeople
-}
-
-
-class EntertainmentOrder {
-    String EntertainmentType
-    Int Duration
-}
-
-
-class BusinessOwner {
-    String LinkedInAccout
-}
-
-class PizzaRestaurant {
-    Int ZipCode
-    String Address
-    String PhoneNumber
-    String Website
-    String OpeningHours
-}
-
-class Pizza {
-    String Name
-    String CrustStructure
-    Double Price
-}
-
-
-class Entertainer {
-    String StageName
-    String Bio
-    Double PriceThirtyMin
-}
-
-class Employment {
-    String Availability
-}
-
-Customer -|> User
-User <|-- BusinessOwner
-User <|-- Entertainer
-Customer "1"--"*" Order
-Order <|-- EntertainmentOrder
-BusinessOwner "1"--"*" PizzaRestaurant
-PizzaRestaurant "*"--"*" Pizza
-Order "*"-"1" PizzaRestaurant
-Order "*"-"1..*" Pizza
-PizzaRestaurant "*"-"*" Entertainer
-(PizzaRestaurant,Entertainer) .. Employment
-Entertainer "1"--"*" EntertainmentOrder
-
-@enduml

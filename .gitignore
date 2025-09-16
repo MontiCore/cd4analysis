@@ -13,3 +13,4 @@ gradle/
 gradlew
 gradlew.bat
 ~$*
+/cddiff/src/test/resources/de/monticore/cddiff/CDScoring/LLMScores.txt

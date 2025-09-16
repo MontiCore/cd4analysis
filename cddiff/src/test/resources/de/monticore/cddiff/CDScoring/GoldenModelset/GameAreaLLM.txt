@@ -1,32 +1,35 @@
-@startuml
-    class GameArea {
-        String name
-    }
+/* (c) CD4A Diagram for Game Area System */
 
-    class GameCharacter
+classdiagram GameAreaLLM {
 
-    class GameElement {
-        long x
-        long y
-    }
+  class GameArea {
+    String name;
+  }
 
-    class Shape
+  class GameElement {
+    long x;
+    long y;
+  }
 
-    class Item
+  class Shape extends GameElement {}
 
-    class Enemy {
-        int numberOfLives
-        toKill()
-    }
+  class Object extends GameElement {}
 
-    GameArea "1" o-- "1..2" GameCharacter
-    GameArea "1" o-- "1..*" GameElement
-    GameElement <|-- Shape
-    GameElement <|-- Item
-    GameElement <|-- Enemy
+  class Opponent extends GameElement {
+    int lives;
+  }
 
-    Shape "*" -- "*" Shape : is_connected_with
+  // Associations
+  association [1] GameArea -> (elements) GameElement [1..*];
 
-    GameArea "1" --> "1" Enemy : finalBoss
+  // A game area consists of one or two game pieces
+  association [1] GameArea -> (pieces) GamePiece [1..2];
 
-@enduml
+  class GamePiece {}
+
+  // Shapes can be connected to any number of other shapes
+  association Shape <-> (connectedShapes) Shape [*];
+
+  // Exactly one opponent is known to the game area as the boss
+  association [1] GameArea -> (boss) Opponent [1];
+}

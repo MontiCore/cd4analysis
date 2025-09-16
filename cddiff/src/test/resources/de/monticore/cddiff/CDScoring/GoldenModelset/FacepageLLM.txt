@@ -1,52 +1,45 @@
-@startuml
+/* (c) https://github.com/MontiCore/monticore */
 
-class User {
-    Int UserID
-    String Name
-    String Email
-    Date BirthDate
+classdiagram FacepageLLM {
+
+  class User {
+    String id;
+    String name;
+    String email;
+    Date dateOfBirth;
+  }
+
+  class Account {
+    String accountNumber;
+  }
+
+  class BusinessAccount extends Account {
+    String companyName;
+    double monthlyFee;
+  }
+
+  class PersonalAccount extends Account {}
+
+  class Page {
+    String name;
+    int numberOfVisits;
+  }
+
+  class AdvertisementPage extends Page {
+    double bounceRate;
+    double clickThroughRate;
+    double conversionRate;
+  }
+
+  // Each User has exactly one Account
+  association [1] User -> (account) Account [1];
+
+  // Each Account can have several Pages, each Page belongs to exactly one Account
+  association [1] Account -> (pages) Page [*];
+
+  // Personal accounts can have privileges on other personal pages
+  association privileges [*] PersonalAccount -> (privilegedPages) Page [*];
+
+  // Only PersonalAccounts can send and receive friend requests
+  association friendRequests [*] PersonalAccount <-> (friends) PersonalAccount [*];
 }
-
-abstract class Account {
-    Int AccountNumber
-}
-
-class BusinessAccount {
-    String CompanyName
-}
-
-class PersonalAccount {}
-
-class FriendRequest {}
-
-abstract class Page {
-    String PageName
-    Int Visits
-}
-
-class PersonalPage {}
-
-class Privilege {
-    String TypeOfPrivilege
-}
-
-class AdvertisementPage {
-    Double BounceRate
-    Double ClickThroughRate
-    Double CoversionRate
-}
-
-User "1"--"1" Account
-Account <|-- BusinessAccount
-Account <|-- PersonalAccount
-BusinessAccount "1"--"*" AdvertisementPage
-PersonalAccount "1"--"*" PersonalPage : administrator
-PersonalAccount "*"--"*" PersonalPage
-Privilege .. (PersonalAccount,PersonalPage)
-FriendRequest "*"-"1" PersonalAccount : sender
-FriendRequest "*"-"1" PersonalAccount : receiver
-AdvertisementPage --|> Page
-PersonalPage --|> Page
-
-
-@enduml

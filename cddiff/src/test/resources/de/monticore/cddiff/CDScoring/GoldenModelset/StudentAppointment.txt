@@ -1,16 +1,16 @@
 classdiagram StudentAppointment {
 
 
-class Student{}
-class Course{}
-class Assistant{}
-class TeachingAssistant{}
-class CourseSubscription{}
-class Appointment{}
+class Student {}
+class Course {}
+class Assistant {}
+class TeachingAssistant {}
+class CourseSubscription {}
+class Appointment {}
 
-association [*] Student -> Course [*]
-association [*] Course -> Assistant [*]
-association [1] CourseSubscription -> Appointment [*]
-association [1] TeachingAssistant -> Appointment [*]
+association [*] Student -> Course [*];
+association [*] Course -> Assistant [*];
+association [1] CourseSubscription -> Appointment [*];
+association [1] TeachingAssistant -> Appointment [*];
 
 }

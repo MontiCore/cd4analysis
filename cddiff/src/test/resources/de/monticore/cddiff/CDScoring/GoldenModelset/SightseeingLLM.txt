@@ -1,39 +1,42 @@
-@startuml
+/* (c) CD4A Diagram for the City Tourism System */
 
-class City {
-    String Name
-    Int NumberOfInhabitants
+classdiagram SightseeingLLM {
+
+  class City {
+    String name;
+    int inhabitants;
+  }
+
+  class Attraction {
+    String name;
+    String address;
+  }
+
+  class GuidedTour {
+    int duration;     // in minutes or hours
+    int number;       // identifier for the tour
+  }
+
+  class Person {
+    String name;
+  }
+
+  class Guide extends Person {}
+
+  class Visitor extends Person {}
+
+  class Discount {
+    double amount;
+    // NOTE: The condition "certain visitors may get a discount on certain guided tours"
+    // is modeled by association Visitor <-> Discount <-> GuidedTour.
+  }
+
+  // Associations
+  association [1] City -> (attractions) Attraction [*];
+  association [1] Attraction -> (tours) GuidedTour [*];
+  association [1] GuidedTour -> (guide) Guide [1];
+  association [*] GuidedTour -> (visitors) Visitor [*];
+  association [*] Visitor -> (discounts) Discount [*];
+  association [*] GuidedTour -> (discounts) Discount [*];
+  association [1..20] Visitor -> (participatesIn) GuidedTour [*];
 }
-
-class Attraction {
-    String Name
-    String Address
-}
-
-class Visitor {}
-
-class GuidedTour {
-    Int Number
-    Int Duration
-}
-
-class Discount {
-    Int Discount
-}
-
-class Person {
-    String Name
-}
-
-class Guide {}
-
-
-City "1"--"*" Attraction
-Visitor "1..20"--"*" GuidedTour
-Attraction "1"-"*" GuidedTour
-Person <|-- Guide
-Visitor -|> Person
-GuidedTour "*"-"1" Guide
-(Visitor,GuidedTour) .. Discount
-
-@enduml
