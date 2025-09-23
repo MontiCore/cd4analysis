@@ -39,7 +39,8 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
     try (
       Stream<Path> artifacts = Files.walk(root.toPath())) {
       return artifacts.filter(Files::isRegularFile)
-        .filter(f -> f.getFileName().toString().endsWith("LLM.txt"))
+        .filter(f -> f.getFileName().toString().endsWith("LLM.cd4a"))
+        .filter(artifact -> Files.exists(artifact.resolveSibling(artifact.getFileName().toString().replace("LLM", ""))))
         .map(artifact -> Arguments.of(
           "GoldenModelset/" + artifact.getFileName().toString().replace("LLM", ""), "GoldenModelset/" + artifact.getFileName()
         )).collect(Collectors.toList()).stream();
