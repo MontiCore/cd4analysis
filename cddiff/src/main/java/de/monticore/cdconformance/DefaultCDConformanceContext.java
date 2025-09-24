@@ -65,11 +65,11 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     this.methodIncStrategy = methodIncStrategy;
     this.mcTypeIncStrategy = mcTypeMatcher;
     
-    IOOSymbolsLocalIncMapping artifactIncMapping = new CDArtifactIncMapping(getConcreteCD(),
+    IOOSymbolsLocalIncMapping fullIncMapping = new CDFullIncMapping(getConcreteCD(),
         typeIncStrategy, attributeIncStrategy, methodIncStrategy);
     
     OOSymbolsIncMapping ooSymbolsIncMapping = new MethodOverloadingOOSymbolsIncMapping(
-        artifactIncMapping, referenceCD.getEnclosingScope(), referenceCD.getEnclosingScope());
+        fullIncMapping, referenceCD.getEnclosingScope(), referenceCD.getEnclosingScope());
     
     incarnationMapping = new DefaultCDIncarnationMapping(concreteCD, typeIncStrategy, mcTypeMatcher,
         attributeIncStrategy, methodIncStrategy, assocIncStrategy, ooSymbolsIncMapping);

@@ -20,23 +20,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Represents the artifact-wide incarnation mapping between a reference and a concrete CD model
- * <i>without</i> ony restrictions by bindings.<br>
+ * Represents the full incarnation mapping between a reference and a concrete CD model
+ * <i>without</i> any restrictions by bindings.<br>
  * <br>
  * This is basically, the "link" between the AST-based, handwritten matching strategies and the
  * systematic, symbol-based incarnation mapping & binding infrastructure which could be generated
  * automatically in the future.
  */
-// TODO naming "global" sounds reasonable, but it is not fully global
-//   alternative: "UnrestrictedCDIncMapping" because it is not restricted to a specific scope
-public class CDArtifactIncMapping implements IOOSymbolsLocalIncMapping {
+public class CDFullIncMapping implements IOOSymbolsLocalIncMapping {
   
   private final ASTCDCompilationUnit concreteCD;
   private final ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy;
   private final CDAttributeMatchingStrategy attributeIncStrategy;
   private final CDMethodMatchingStrategy methodIncStrategy;
   
-  public CDArtifactIncMapping(ASTCDCompilationUnit concreteCD,
+  public CDFullIncMapping(ASTCDCompilationUnit concreteCD,
       ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
       CDAttributeMatchingStrategy attributeIncStrategy,
       CDMethodMatchingStrategy methodIncStrategy) {
