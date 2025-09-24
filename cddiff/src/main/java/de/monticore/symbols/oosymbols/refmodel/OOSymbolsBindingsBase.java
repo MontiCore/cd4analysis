@@ -17,8 +17,20 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 import java.util.Set;
 
-// NOTE: Could be generated
-public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
+/**
+ * Basic implementation of {@link IOOSymbolsBindings}.<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar.<br>
+ * <br>
+ * Developers can customize the semantic relations between different symbols, e.g. by overriding
+ * the {@code getXXXImpliedBindings}.
+ */
+/*
+ * TODO If this class is generated, remove the 'Base' suffix as MontiCore will automatically name
+ *   it TOP in case there is a handwritten implementation.
+ */
+public class OOSymbolsBindingsBase implements IOOSymbolsBindings {
   
   // ========== Symbol bindings from languages extended by OOSymbols ==========
   
@@ -33,11 +45,11 @@ public class OOSymbolsBindingsTOP implements IOOSymbolsBindings {
   private final Bindings<FieldSymbol> fieldBindings;
   private final Bindings<MethodSymbol> methodBindings;
   
-  public OOSymbolsBindingsTOP() {
+  public OOSymbolsBindingsBase() {
     this(new BasicSymbolsBindings(), new Bindings<>(), new Bindings<>(), new Bindings<>());
   }
   
-  protected OOSymbolsBindingsTOP(IBasicSymbolsBindings basicSymbolsBindings,
+  protected OOSymbolsBindingsBase(IBasicSymbolsBindings basicSymbolsBindings,
       Bindings<OOTypeSymbol> ooTypeBindings, Bindings<FieldSymbol> fieldBindings,
       Bindings<MethodSymbol> methodBindings) {
     this.basicSymbolsBindings = basicSymbolsBindings;
