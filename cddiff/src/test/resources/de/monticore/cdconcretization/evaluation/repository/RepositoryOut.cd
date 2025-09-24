@@ -1,0 +1,34 @@
+import java.lang.String;
+
+classdiagram DomainModel {
+  <<ref="Entity">> class Employee {
+    <<ref="id">> String id;
+    <<ref="id">> String taxId;
+    String firstName;
+    String lastName;
+    int number;
+    int salary;
+  }
+
+  <<ref="Entity">> class Department {
+    String managerName;
+    <<ref="id">> int depId;
+  }
+
+  <<ref="RepositoryRef.EntityRepository">>class DepartmentRepository {
+    <<ref="RepositoryRef.EntityRepository.findById">> Optional<Department> findByDepId(int depId);
+    List<Department> findAll();
+    Department save(Department entity);
+    <<ref="RepositoryRef.EntityRepository.removeById">> void removeByDepId(int depId);
+
+  }
+
+  <<ref="RepositoryRef.EntityRepository">>class EmployeeRepository {
+    <<ref="RepositoryRef.EntityRepository.findById">> Optional<Employee> findById(String id);
+    <<ref="RepositoryRef.EntityRepository.findById">> Optional<Employee> findByTaxId(String taxId);
+    List<Employee> findAll();
+    Employee save(Employee entity);
+    <<ref="RepositoryRef.EntityRepository.removeById">> void removeById(String id);
+    <<ref="RepositoryRef.EntityRepository.removeById">> void removeByTaxId(String taxId);
+  }
+}

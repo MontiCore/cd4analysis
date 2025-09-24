@@ -82,9 +82,8 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     CompAttributeIncStrategy compAttributeIncStrategy = new CompAttributeIncStrategy();
     CompMethodIncStrategy compMethodIncStrategy = new CompMethodIncStrategy();
     
-    MCTypeMatchingStrategy compMcTypeMatcher = new TypeCheckMCTypeMatchingStrategy(
+    MCTypeMatchingStrategy mcTypeMatcher = new TypeCheckMCTypeMatchingStrategy(
         underspecifiedPlaceholderTypeName);
-    compMcTypeMatcher.setCDTypeMatcher(compTypeIncStrategy);
     
     /*
      * We configure the matching strategies depending on the conformance checker parameter as we
@@ -101,8 +100,9 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
       compAssocIncStrategy.addIncStrategy(new EqNameAssocIncStrategy(referenceCD, mapping));
       compAttributeIncStrategy.addIncStrategy(new EqNameAttributeIncStrategy());
       if (conformanceParams.contains(CDConfParameter.METHOD_OVERLOADING)) {
-        compMethodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(compMcTypeMatcher,
-            conformanceParams.contains(CDConfParameter.STRICT_PARAMETER_ORDER)));
+        compMethodIncStrategy.addIncStrategy(new EqSignatureMethodIncStrategy(mcTypeMatcher,
+            compTypeIncStrategy, conformanceParams.contains(
+                CDConfParameter.STRICT_PARAMETER_ORDER)));
       }
       else {
         compMethodIncStrategy.addIncStrategy(new EqNameMethodIncStrategy());
@@ -162,7 +162,7 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     return new DefaultCDConformanceContext(concreteCD, referenceCD, mapping,
         underspecifiedPlaceholderTypeName, conformanceParams, compTypeIncStrategy,
         compSubTypeIncStrategy, compAssocIncStrategy, compAttributeIncStrategy,
-        compMethodIncStrategy, compMcTypeMatcher);
+        compMethodIncStrategy, mcTypeMatcher);
   }
   
   /**
@@ -197,8 +197,6 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     Set<ASTCDType> concTypes = CDDiffUtil.getAllTypesFromCD(context.getConcreteCD());
     CachedMultiMatches<ASTCDType> cachedTypeIncStrategy = new CachedMultiMatches<>(CDSynDiffMatches
         .computeMultiMatching(concTypes, context.getTypeIncStrategy()));
-    
-    context.getMCTypeIncStrategy().setCDTypeMatcher(context.getTypeIncStrategy());
     
     CachedMultiMatches<ASTCDType> cachedSubtypeIncStrategy = new CachedMultiMatches<>(
         CDSynDiffMatches.computeMultiMatching(concTypes, context
