@@ -52,7 +52,13 @@ public interface IOOSymbolsIncMapping extends IBasicSymbolsIncMapping, IOOSymbol
   IOOSymbolsLocalIncMapping getScopedMapping(IScope scope);
   
   /**
-   * Returns the bindings holding at the context symbol represented by the given key.<br>
+   * Returns the <b>LOCAL</b> bindings holding at the context symbol represented by the given
+   * key.<br>
+   * <b>NOTE:</b> This method does not return bindings from enclosing scopes of the symbol, as no
+   * scope information is available when using only the symbol key!<br>
+   * <br>
+   * If the returned bindings instance is changed, the changes <b>do affect</b> the actual
+   * state of the incarnation mapping!
    *
    * @param contextSymbolKey the key representing the context symbol for which the bindings should
    * be returned
@@ -60,10 +66,14 @@ public interface IOOSymbolsIncMapping extends IBasicSymbolsIncMapping, IOOSymbol
    *
    * @see #computeSymbolKey(ISymbol)
    */
-  IOOSymbolsBindings getScopedBindings(String contextSymbolKey);
+  IOOSymbolsBindings getLocalOnlyBindings(String contextSymbolKey);
   
   /**
-   * Returns the bindings holding at the given context symbol.
+   * Returns <b>all</b> bindings holding at the given context symbol, <b>including the bindings
+   * inherited from enclosing scopes!</b><br>
+   * <br>
+   * If the returned bindings instance is changed, the changes <b>do affect</b> the actual
+   * state of the incarnation mapping!
    *
    * @param contextSymbol the context symbol for which the bindings should be returned
    * @return the scoped bindings for the given context symbol
@@ -71,7 +81,11 @@ public interface IOOSymbolsIncMapping extends IBasicSymbolsIncMapping, IOOSymbol
   IOOSymbolsBindings getScopedBindings(ISymbol contextSymbol);
   
   /**
-   * Returns the bindings holding at the given scope.
+   * Returns <b>all</b> bindings holding at the given scope, <b>including the bindings
+   * inherited from enclosing scopes!</b><br>
+   * <br>
+   * If the returned bindings instance is changed, the changes <b>do affect</b> the actual
+   * state of the incarnation mapping!
    *
    * @param scope the scope for which the bindings should be returned
    * @return the scoped bindings for the given scope

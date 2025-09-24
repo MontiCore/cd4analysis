@@ -195,4 +195,17 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
         "evaluation/repository/RepositoryRef.cd", "evaluation/repository/RepositoryOut.cd");
   }
   
+  @Nested
+  class CRUDBackend {
+    
+    @Test
+    void testCRUDBackend() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut("evaluation/crud-backend/DomainModel.cd",
+          "evaluation/crud-backend/CRUDBackendRef.cd", "evaluation/crud-backend/CRUDBackendOut.cd");
+    }
+    
+  }
+  
 }
