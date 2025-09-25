@@ -66,7 +66,7 @@ public class DefaultCDConformanceContext implements CDConformanceContext {
     this.mcTypeIncStrategy = mcTypeMatcher;
     
     IOOSymbolsLocalIncMapping fullIncMapping = new CDFullIncMapping(getConcreteCD(),
-        typeIncStrategy, attributeIncStrategy, methodIncStrategy);
+        typeIncStrategy, attributeIncStrategy, methodIncStrategy, conformanceParams);
     
     OOSymbolsIncMapping ooSymbolsIncMapping = new MethodOverloadingOOSymbolsIncMapping(
         fullIncMapping, referenceCD.getEnclosingScope(), referenceCD.getEnclosingScope());
