@@ -152,6 +152,29 @@ class AttributeConcretizationTest extends AbstractCDConcretizationTest {
   }
   
   /**
+   * Same as 'testAttributeForEachAttribute' but now with inheritance of some attribute
+   * incarnations from a superclass.<br>
+   * <br>
+   * Currently disabled as the completed attributes get a suffix for the declaring type which is not
+   * expected here. Seems as it could be easily fixed in
+   * {@link de.monticore.cdconcretization.type.attribute.ForEachAttributeInTypeCompleter} but
+   * requires some deeper changes in how we can query attribute incarnations.
+   * 1. we need methods to query attributes/methods filtered by declaring type incarnation (but
+   * still considering supertypes)
+   * 2. we need to rethink some filtering because of conflicting bindings. Currently, attributes
+   * shifted to a superclass are filtered out because their declaring type is not a valid
+   * incarnation of the declaring reference type.
+   */
+  @Disabled("completed attributes get suffix for declaring type which is not expected here")
+  @Test
+  void testAttributeForEachAttributeInheritance() {
+    testConcretizedConformsToRefAndExpectedOut(
+        "attributes/forEach/ForEachAttributeInheritanceConc.cd",
+        "attributes/forEach/ForEachAttributeRef.cd",
+        "attributes/forEach/ForEachAttributeInheritanceOut.cd");
+  }
+  
+  /**
    * An underspecified attribute (type: any) needs to be incarnated at least once. Otherwise, we
    * would have to add an attribute of type 'any' to the concrete CD which is not allowed.
    */
