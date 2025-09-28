@@ -15,6 +15,8 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.tagging.SimpleSymbolTagger;
@@ -144,6 +146,12 @@ public class DecoratorData {
     else if (node instanceof ASTCDMethod) {
       result = matchCDMethod((ASTCDMethod) node, matcherData);
     }
+    else if (node instanceof ASTCDInterface) {
+      result = matchCDInterface(((ASTCDInterface) node), matcherData);
+    }
+    else if (node instanceof ASTCDEnum) {
+      result = matchCDEnum(((ASTCDEnum) node), matcherData);
+    }
     else {
       Log.error(INTERNAL_ERROR_CODE + ": Unable add to parent of unknown type " + node.getClass()
           .getName(), node.get_SourcePositionStart());
@@ -164,6 +172,48 @@ public class DecoratorData {
   }
   
   protected MatchResult matchClass(ASTCDClass node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT)
+          return r;
+      }
+    }
+    
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+    }
+    
+    return MatchResult.DEFAULT;
+  }
+  
+  protected MatchResult matchCDInterface(ASTCDInterface node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT)
+          return r;
+      }
+    }
+    
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+    }
+    
+    return MatchResult.DEFAULT;
+  }
+  
+  protected MatchResult matchCDEnum(ASTCDEnum node, MatcherData matcherData) {
     if (node.getModifier().isPresentStereotype()) {
       for (var s : node.getModifier().getStereotype().getValuesList()) {
         var r = matchStereo(s, matcherData);

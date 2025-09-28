@@ -28,18 +28,20 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
       // Retrieve the parent of the attribute
       var originalClazz = decoratorData.getParent(attribute).get();
-      //
-      var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz);
-      if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
-      }
-      else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
-        decorateList(decClazz, attribute);
-      }
-      else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
-        decorateSet(decClazz, attribute);
-      }
-      else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
-        decorateOptional(decClazz, attribute);
+      if (decoratorData.getAsDecorated(
+          originalClazz) instanceof de.monticore.cd4codebasis._ast.ASTCDClass) {
+        var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz);
+        if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
+        }
+        else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
+          decorateList(decClazz, attribute);
+        }
+        else if (MCCollectionSymTypeRelations.isSet(attribute.getSymbol().getType())) {
+          decorateSet(decClazz, attribute);
+        }
+        else if (MCCollectionSymTypeRelations.isOptional(attribute.getSymbol().getType())) {
+          decorateOptional(decClazz, attribute);
+        }
       }
     }
   }

@@ -2,12 +2,14 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -25,6 +27,7 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.tagging.tags.TagsMill;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -76,9 +79,12 @@ public class CDGenTool extends CDGeneratorTool {
    * @param args array of the command line arguments
    */
   public void run(String[] args) {
+    // We might be using tags
+    TagsMill.reset();
+    TagsMill.init();
     
-    de.monticore.cd4code.CD4CodeMill.reset();
-    de.monticore.cd4code.CD4CodeMill.init();
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
     
     Options options = initOptions();
     
@@ -221,6 +227,9 @@ public class CDGenTool extends CDGeneratorTool {
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
       Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
+    glex.setGlobalValue("cdGenService", new CDGenService());
+    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
     
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
@@ -246,7 +255,7 @@ public class CDGenTool extends CDGeneratorTool {
       t.add4CDBasis(new CDBasisDefaultPackageTrafo());
       decorated.get().accept(t);
       // Post-Decorate: make methods in interfaces abstract
-      this.makeMethodsInInterfacesAbstract(decorated.get());
+      //this.makeMethodsInInterfacesAbstract(decorated.get());
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
       

@@ -32,8 +32,8 @@ classdiagram MyCD {
   interface MyEmptyInterface { }
 
   interface MyInterface {
-    boolean doStuff();
-    public boolean doStuffInPublic();
+    abstract boolean doStuff();
+    public abstract boolean doStuffInPublic();
   }
 
   <<needsTOP="TOP required: %s">>
