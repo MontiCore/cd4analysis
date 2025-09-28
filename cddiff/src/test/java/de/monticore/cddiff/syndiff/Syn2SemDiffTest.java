@@ -246,7 +246,6 @@ public class Syn2SemDiffTest extends SynDiffTestBasis {
       ASTCDCompilationUnit cd2, Collection<ASTODArtifact> witnesses) {
     System.out.println(new CD4AnalysisFullPrettyPrinter(new IndentPrinter()).prettyprint(cd1));
     System.out.println(new CD4AnalysisFullPrettyPrinter(new IndentPrinter()).prettyprint(cd2));
-    //System.out.println(witnesses.size());
     for (ASTODArtifact od : witnesses) {
       if (!new OD2CDMatcher().checkIfDiffWitness(semantics, cd1, cd2, od)) {
         System.out.println(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
