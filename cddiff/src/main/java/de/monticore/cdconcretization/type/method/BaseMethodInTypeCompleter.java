@@ -16,9 +16,13 @@ import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes._ast.*;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,6 +75,8 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
         parameterTypeIncarnations);
   }
   
+  // TODO This is generic functionality not limited to methods. It should be extracted and reused
+  // for attributes and associations as well.
   /**
    * Finds all incarnations of the given reference method in the given concrete type. If the type is
    * not a CD type, or there is no incarnation, the type is returned as is.
@@ -94,7 +100,14 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
         .isPresentAstNode() ? Optional.ofNullable(symTypeExpr.getTypeInfo().getAstNode()) : Optional
             .empty();
     if (rAttributeTypeOpt.isEmpty() || !(rAttributeTypeOpt.get() instanceof ASTCDType)) {
-      // if it is not a CD type, we cannot have incarnations and just use the type as is!
+      if (refMCType instanceof ASTMCCollectionTypesNode) {
+        // if it is a collection type, we can find the incarnations of the item type
+        return findMCCollectionTypeIncarnations((ASTMCCollectionTypesNode) refMCType, context);
+      }
+      /*
+       * If it is neither a CD type nor an MCCollection type, we cannot have incarnations and just
+       * use the type as is!
+       */
       return Collections.singletonList(refMCType);
     }
     
@@ -112,6 +125,85 @@ public class BaseMethodInTypeCompleter extends AbstractMethodInTypeCompleter {
                 .getInternalQualifiedName()));
       }
       return typeIncarnationsList;
+    }
+  }
+  
+  /**
+   * Finds all incarnations of the given reference MCCollection type in the given context.
+   * This checks for incarnations of the item/key/value type argument of the different collection
+   * types and creates multiple instances if the item/key/value type has multiple incarnations.
+   *
+   * @param refMCType the reference MCCollection type to find incarnations for
+   * @param context the completion context to use for finding the incarnations
+   * @return
+   */
+  protected List<ASTMCType> findMCCollectionTypeIncarnations(ASTMCCollectionTypesNode refMCType,
+      TypeCompletionContext context) {
+    /*
+     * TODO What we should actually do here is reuse the reference adaptation framework for
+     *  MCTypes so we can adapt every nested type etc.
+     *  -> in general we could reuse all the adaptation logic to realize the for each and multi
+     *  incarnation handling! -> think about it: if a type has multiple incarnations and we
+     *  therefore create multiple incarnations of a method this is in fact reference model adaptation!
+     *  -> only that we not apply it to the whole artifact but a single method.
+     *  workaround for now: hardcoded behavior for MCCollection types
+     */
+    if (refMCType instanceof ASTMCListType) {
+      ASTMCType refItemType = ((ASTMCListType) refMCType).getMCTypeArgument().getMCTypeOpt().get();
+      List<ASTMCType> itemTypeIncs = findTypeIncarnations(refItemType, context);
+      return itemTypeIncs.stream().map(typeIncarnation -> CD4CodeMill.mCListTypeBuilder()
+          .setMCTypeArgument(createTypeArgument(typeIncarnation)).build()).collect(Collectors
+              .toList());
+    }
+    else if (refMCType instanceof ASTMCSetType) {
+      ASTMCType refItemType = ((ASTMCSetType) refMCType).getMCTypeArgument().getMCTypeOpt().get();
+      List<ASTMCType> itemTypeIncs = findTypeIncarnations(refItemType, context);
+      return itemTypeIncs.stream().map(typeIncarnation -> CD4CodeMill.mCSetTypeBuilder()
+          .setMCTypeArgument(createTypeArgument(typeIncarnation)).build()).collect(Collectors
+              .toList());
+    }
+    else if (refMCType instanceof ASTMCOptionalType) {
+      ASTMCType refItemType = ((ASTMCOptionalType) refMCType).getMCTypeArgument().getMCTypeOpt()
+          .get();
+      List<ASTMCType> itemTypeIncs = findTypeIncarnations(refItemType, context);
+      return itemTypeIncs.stream().map(typeIncarnation -> CD4CodeMill.mCOptionalTypeBuilder()
+          .setMCTypeArgument(createTypeArgument(typeIncarnation)).build()).collect(Collectors
+              .toList());
+    }
+    else if (refMCType instanceof ASTMCMapType) {
+      ASTMCType keyType = ((ASTMCMapType) refMCType).getKey().getMCTypeOpt().get();
+      ASTMCType valueType = ((ASTMCMapType) refMCType).getValue().getMCTypeOpt().get();
+      List<ASTMCTypeArgument> keyTypeArgIncs = findTypeIncarnations(keyType, context).stream().map(
+          this::createTypeArgument).collect(Collectors.toList());
+      List<ASTMCTypeArgument> valueTypeArgIncs = findTypeIncarnations(valueType, context).stream()
+          .map(this::createTypeArgument).collect(Collectors.toList());
+      /*
+       * TODO We must only combine the incarnations of the key and value type if they are not
+       *  conflicting or imply any conflicting bindings!
+       *  -> we would have the same issues, e.g. when choosing method parameter incarnations
+       *  -> again, this is something we already solved in the reference adaptation framework
+       *  -> so we should reuse it here as well!
+       */
+      return Lists.cartesianProduct(keyTypeArgIncs, valueTypeArgIncs).stream().map(
+          argPair -> CD4CodeMill.mCMapTypeBuilder().setKey(argPair.get(0)).setValue(argPair.get(1))
+              .build()).collect(Collectors.toList());
+    }
+    throw new UnsupportedOperationException("Unsupported MCCollectionTypes type: " + refMCType
+        .getClass().getName());
+  }
+  
+  protected ASTMCTypeArgument createTypeArgument(ASTMCType mcType) {
+    if (mcType instanceof ASTMCQualifiedType) {
+      return CD4CodeMill.mCBasicTypeArgumentBuilder().setMCQualifiedType(
+          (ASTMCQualifiedType) mcType).build();
+    }
+    else if ((mcType instanceof ASTMCPrimitiveType)) {
+      return CD4CodeMill.mCPrimitiveTypeArgumentBuilder().setMCPrimitiveType(
+          (ASTMCPrimitiveType) mcType).build();
+    }
+    else {
+      throw new UnsupportedOperationException("Unsupported type argument type: " + mcType.getClass()
+          .getName());
     }
   }
   

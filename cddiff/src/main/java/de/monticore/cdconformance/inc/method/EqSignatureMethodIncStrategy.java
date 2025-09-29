@@ -5,6 +5,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconformance.inc.mctype.MCTypeMatchingStrategy;
+import de.monticore.cdmatcher.BooleanMatchingStrategy;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,13 +21,15 @@ import java.util.stream.Collectors;
 public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
   
   private final MCTypeMatchingStrategy mcTypeIncStrategy;
+  private final BooleanMatchingStrategy<ASTCDType> cdTypeMatcher;
   private final boolean strictParameterOrder;
   
   private ASTCDType refType;
   
   public EqSignatureMethodIncStrategy(MCTypeMatchingStrategy mcTypeIncStrategy,
-      boolean strictParameterOrder) {
+      BooleanMatchingStrategy<ASTCDType> cdTypeMatcher, boolean strictParameterOrder) {
     this.mcTypeIncStrategy = mcTypeIncStrategy;
+    this.cdTypeMatcher = cdTypeMatcher;
     this.strictParameterOrder = strictParameterOrder;
   }
   
@@ -55,7 +58,7 @@ public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
     for (int i = 0; i < conParams.size(); i++) {
       ASTCDParameter conParam = conParams.get(i);
       ASTCDParameter refParam = refParams.get(i);
-      if (!mcTypeIncStrategy.isMatched(conParam.getMCType(), refParam.getMCType())) {
+      if (!mcTypeIncStrategy.isMatched(conParam.getMCType(), refParam.getMCType(), cdTypeMatcher)) {
         return false;
       }
     }
@@ -66,7 +69,7 @@ public class EqSignatureMethodIncStrategy implements CDMethodMatchingStrategy {
       List<ASTCDParameter> refParams) {
     for (ASTCDParameter refParam : refParams) {
       if (conParams.stream().noneMatch(conParam -> mcTypeIncStrategy.isMatched(conParam.getMCType(),
-          refParam.getMCType()))) {
+          refParam.getMCType(), cdTypeMatcher))) {
         return false;
       }
     }

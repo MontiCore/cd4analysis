@@ -13,6 +13,11 @@ public class StereotypeUtil {
   public static final String FOR_EACH_STEREOTYPE = "forEach";
   
   /**
+   * Stereotype used to mark elements that are optional in the reference model.
+   */
+  public static final String OPTIONAL_STEREOTYPE = "optional";
+  
+  /**
    * Stereotype for binding a reference to a concrete type. This can be used by modelers to
    * manually inform other tools about the specific type incarnation to use in a certain scope of
    * the model.<br>
@@ -55,6 +60,20 @@ public class StereotypeUtil {
       String valueEmptyWarning) {
     return getStereotypeValue(modifier, BIND_STEREOTYPE, valueEmptyWarning).map(
         BindingValue::parseFromString);
+  }
+  
+  /**
+   * Checks if the given modifier contains the "optional" stereotype.
+   *
+   * @param modifier the ASTModifier to check
+   * @return true if the "optional" stereotype is present, false otherwise
+   */
+  public static boolean isOptional(ASTModifier modifier) {
+    if (modifier.isPresentStereotype()) {
+      ASTStereotype stereotype = modifier.getStereotype();
+      return stereotype.contains(OPTIONAL_STEREOTYPE);
+    }
+    return false;
   }
   
   /**

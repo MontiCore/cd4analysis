@@ -28,4 +28,6 @@ public interface IBasicSymbolsLocalIncMapping {
   
   Set<FunctionSymbol> getIncarnations(FunctionSymbol functionSymbol);
   
+  // TODO Optimize by adding isIncarnation( ... ) methods
+  
 }

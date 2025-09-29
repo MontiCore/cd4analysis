@@ -9,6 +9,7 @@ import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -23,6 +24,14 @@ import java.util.stream.Collectors;
 public interface CDIncarnationMapping extends CDIncarnationBindings {
   
   // TODO Consider renaming the "global" getIncarnations/isIncarnation methods to avoid confusion with the scope-based methods
+  
+  /**
+   * Adapts this representation of the incarnation mapping to the new incarnation mapping
+   * infrastructure used for reference artifact adaptation.
+   *
+   * @return the incarnation mapping adapted to the new incarnation mapping infrastructure
+   */
+  IOOSymbolsIncMapping asOOSymbolsIncMapping();
   
   // ------------------------
   // ----- Type Mapping -----
@@ -84,7 +93,7 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
    * Returns all incarnations of the given reference type in a certain scope.<br>
    * <br>
    * The incarnation mapping in a certain scope can be limited to a subset of the incarnations using
-   * {@link #addBinding(String, TypeSymbol, Set)}
+   * {@link #addBinding(String, TypeSymbol, TypeSymbol)}
    *
    * @param scope the scope in which incarnations are searched
    * @param referenceType the reference type for which incarnations are searched
@@ -178,7 +187,7 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
   /**
    * Returns all incarnations of the given reference type in a certain scope. <br>
    * The incarnation mapping in a certain scope can be limited to a subset of the incarnations using
-   * {@link DefaultCDIncarnationBindings#addBinding(String, FieldSymbol, Set)}
+   * {@link CDIncarnationBindings#addBinding(ISymbol, FieldSymbol, FieldSymbol)}
    *
    * @param scope the scope in which incarnations are searched
    * @param referenceAttribute the reference attribute for which incarnations are searched
@@ -250,7 +259,7 @@ public interface CDIncarnationMapping extends CDIncarnationBindings {
    * Returns all incarnations of the given reference method in a certain scope.<br>
    * <br>
    * The incarnation mapping in a certain scope can be limited to a subset of the incarnations using
-   * {@link CDIncarnationBindings#addBinding(ISymbol, MethodSymbol, Set)}
+   * {@link CDIncarnationBindings#addBinding(ISymbol, MethodSymbol, MethodSymbol)}
    *
    * @param scope the scope in which incarnations are searched
    * @param referenceElement the reference method for which incarnations are searched

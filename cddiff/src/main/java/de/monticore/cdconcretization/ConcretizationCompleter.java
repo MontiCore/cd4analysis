@@ -48,7 +48,7 @@ import java.util.Set;
  */
 public class ConcretizationCompleter {
   
-  private final String mapping;
+  private String mapping;
   
   /**
    * If true, the conformance checker is used to check the conformance of the concretization result.
@@ -163,6 +163,8 @@ public class ConcretizationCompleter {
     // perform the actual concretization
     completerChainBuilder.build().complete(concreteCD, referenceCD, context);
   }
+  
+  public void setMapping(String mapping) { this.mapping = mapping; }
   
   /**
    * Configures if the conformance checker should be used to check the conformance of the

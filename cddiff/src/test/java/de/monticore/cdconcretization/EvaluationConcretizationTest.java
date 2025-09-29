@@ -1,11 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization;
 
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
   
@@ -146,6 +151,59 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
       testConcretizedConformsToRefAndExpectedOut(
           "evaluation/banking/usageByExtension/BankingConc.cd", "evaluation/banking/BankingRef.cd",
           "evaluation/banking/usageByExtension/BankingOut.cd");
+    }
+    
+  }
+  
+  @Nested
+  class Observer {
+    
+    @Test
+    void mutualObservers() {
+      parseModels("evaluation/observer/mutualObservers/MutualObserversConc.cd",
+          "evaluation/observer/ObserverRef.cd");
+      ASTCDCompilationUnit expectedCD = parseCD(
+          "evaluation/observer/mutualObservers/MutualObserversOut.cd");
+      
+      ConcretizationCompleter completer = new ConcretizationCompleter("ref1", confParameters);
+      
+      // 1. concretize and check conformance
+      try {
+        // TODO Improve API to handle multiple mappings after we tested the basics
+        completer.completeCD(conCD, refCD);
+        completer.setMapping("ref2");
+        completer.completeCD(conCD, refCD);
+      }
+      catch (CompletionException e) {
+        fail("CompletionException", e);
+      }
+      System.out.println("Concretized CD:");
+      System.out.println(CD4CodeMill.prettyPrint(conCD, false));
+      
+      assertNoFindings("Findings while concretizing CD");
+      // 2. check if concretized CD equals expected output
+      assertTrue(conCD.deepEquals(expectedCD, false), "Concretized output does not match expected");
+    }
+    
+  }
+  
+  @Test
+  void testRepository() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut("evaluation/repository/DomainModel.cd",
+        "evaluation/repository/RepositoryRef.cd", "evaluation/repository/RepositoryOut.cd");
+  }
+  
+  @Nested
+  class CRUDBackend {
+    
+    @Test
+    void testCRUDBackend() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut("evaluation/crud-backend/DomainModel.cd",
+          "evaluation/crud-backend/CRUDBackendRef.cd", "evaluation/crud-backend/CRUDBackendOut.cd");
     }
     
   }

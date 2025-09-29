@@ -4,21 +4,29 @@ package de.monticore.cdconformance.inc;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdconcretization.util.MethodSignatureString;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsLocalIncMapping;
+import de.monticore.symbols.oosymbols.refmodel.OOSymbolsIncMapping;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.Names;
 
 import java.util.stream.Collectors;
 
 /**
- * Implementation of the {@link CDIncarnationBindings} interface, which supports overloaded
+ * Implementation of the {@link OOSymbolsIncMapping} interface, which supports overloaded
  * methods, i.e., we do not use the method symbol name as key in the bindings, but
  * the full signature of the method, which includes the parameter types.
  */
-public class MethodOverloadingCDIncBindings extends DefaultCDIncarnationBindings {
+public class MethodOverloadingOOSymbolsIncMapping extends OOSymbolsIncMapping {
+  
+  public MethodOverloadingOOSymbolsIncMapping(IOOSymbolsLocalIncMapping globalMapping,
+      IOOSymbolsScope referenceScope, IOOSymbolsScope concreteScope) {
+    super(globalMapping, referenceScope, concreteScope);
+  }
   
   /*
    * FUTURE WORK NOTE: If we would generate parts of the conformance check & concretization
-   * infrastructure in the future, DefaultCDIncarnationBindings could be generated and this
+   * infrastructure in the future, OOSymbolsIncMapping could be generated and this
    * is the only handwritten adjustment because method symbol names are not unique.
    */
   
