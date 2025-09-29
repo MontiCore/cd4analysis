@@ -723,7 +723,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         helper.deleteAssocsFromSubSrc(pair.getSuperAssoc(), getConnectedTypes(pair.getSuperAssoc()
             .getAssociation(), srcCD).a);
       }
-      helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
+      // Check if the association that we merged into the other one comes from a superclass - if that is the case, it gets removed from the subclass
+      if (pair.getSuperAssoc().isSuperAssoc()) {
+        helper.getSrcMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
+      }
     }
     for (Pair<ASTCDType, ASTCDRole> pair : srcAssocsToDelete) {
       helper.deleteAssocsFromSrc(pair.a, pair.b);
@@ -752,7 +755,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
         helper.deleteAssocFromSubTgt(pair.getSuperAssoc(), getConnectedTypes(pair.getSuperAssoc()
             .getAssociation(), tgtCD).a);
       }
-      helper.getTgtMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
+      // Check if the association that we merged into the other one comes from a superclass - if that is the case, it gets removed from the subclass
+      if (pair.getSuperAssoc().isSuperAssoc()) {
+        helper.getTgtMap().remove(pair.getAstcdClass(), pair.getSuperAssoc());
+      }
     }
     for (Pair<ASTCDType, ASTCDRole> pair : tgtAssocsToDelete) {
       helper.deleteAssocsFromTgt(pair.a, pair.b);
