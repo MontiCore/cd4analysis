@@ -6,6 +6,8 @@ import de.mclsg.lsp.document_management.DocumentInformation;
 import de.mclsg.lsp.document_management.DocumentManager;
 import de.mclsg.lsp.features.code_lens.CodeLensStrategy;
 import de.mclsg.lsp.features.reference.CommonReferencesProvider;
+import de.mclsg.lsp.modelpath.multiproject.ProjectLayout;
+import de.mclsg.lsp.modelpath.multiproject.ProjectLayoutBuilder;
 import de.mclsg.lsp.util.AsyncUtilWithSyncExec;
 import de.monticore.cd4analysis._lsp.AbstractLspServerTest;
 import de.monticore.cd4analysis._lsp.CD4AnalysisLanguageServer;
@@ -13,7 +15,6 @@ import de.monticore.cd4analysis._lsp.CD4AnalysisSymbolUsageResolutionProvider;
 import de.monticore.cd4analysis._lsp.CD4AnalysisTextDocumentService;
 import de.monticore.cd4analysis._lsp.MockLanguageClient;
 import de.monticore.cd4analysis._lsp.language_access.CD4AnalysisScopeManager;
-import de.monticore.io.paths.MCPath;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,8 +35,8 @@ public abstract class AbstractCodeLensTest extends AbstractLspServerTest {
     
     documentManager = new DocumentManager();
     symbolUsageResolutionProvider = new CD4AnalysisSymbolUsageResolutionProvider();
-    languageServer = new MockLanguageServer(documentManager, new MCPath(getPath()),
-        new CD4AnalysisScopeManager(), symbolUsageResolutionProvider);
+    languageServer = new MockLanguageServer(documentManager, new ProjectLayoutBuilder().projectpath(
+        getPath()).build(), new CD4AnalysisScopeManager(), symbolUsageResolutionProvider);
     
     MockLanguageClient client = new MockLanguageClient();
     languageServer.connect(client);
@@ -58,10 +59,10 @@ public abstract class AbstractCodeLensTest extends AbstractLspServerTest {
   
   private static class MockLanguageServer extends CD4AnalysisLanguageServer {
     
-    public MockLanguageServer(DocumentManager documentManager, MCPath modelPath,
+    public MockLanguageServer(DocumentManager documentManager, ProjectLayout layout,
         CD4AnalysisScopeManager scopeManager,
         ISymbolUsageResolutionProvider symbolUsageResolutionProvider) {
-      super(documentManager, modelPath, scopeManager, symbolUsageResolutionProvider);
+      super(documentManager, layout, scopeManager, symbolUsageResolutionProvider);
     }
     
     @Override
