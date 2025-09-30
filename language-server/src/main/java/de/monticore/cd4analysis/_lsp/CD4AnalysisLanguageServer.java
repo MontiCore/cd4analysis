@@ -10,7 +10,6 @@ import de.monticore.cd4analysis._lsp.features.code_action.ExtractSuperClassCodeA
 import de.monticore.cd4analysis._lsp.features.code_action.PullUpFieldCodeActionStrategy;
 import de.monticore.cd4analysis._lsp.features.code_action.UnfoldByAttributesStrategy;
 import de.monticore.cd4analysis._lsp.language_access.CD4AnalysisScopeManager;
-import de.monticore.io.paths.MCPath;
 
 public class CD4AnalysisLanguageServer extends CD4AnalysisLanguageServerTOP {
   
