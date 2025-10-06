@@ -326,4 +326,17 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     
   }
   
+  @Nested
+  class Evaluation {
+    
+    @Test
+    public void macocoConformsToItself() {
+      parseModels("evaluation/MaCoCo.cd", "evaluation/MaCoCo.cd");
+      checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING, METHOD_OVERLOADING));
+      assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+    }
+    
+  }
+  
 }
