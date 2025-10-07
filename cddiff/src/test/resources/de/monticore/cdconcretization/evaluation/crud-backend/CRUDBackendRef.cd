@@ -18,7 +18,7 @@ classdiagram CRUDBackendRef {
     <<forEach="Entity.id">> HttpResponse getById(any id);
     HttpResponse getAll();
     HttpResponse create(CreateEntityData data);
-    //<<forEach="Entity.id">> HttpResponse updateById(any id, UpdateEntityData data);
+    <<forEach="Entity.id">> HttpResponse updateById(any id, UpdateEntityData data);
     <<forEach="Entity.id">> HttpResponse removeById(any id);
   }
 

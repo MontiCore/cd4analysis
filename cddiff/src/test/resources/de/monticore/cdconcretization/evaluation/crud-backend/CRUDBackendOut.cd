@@ -40,6 +40,8 @@ classdiagram DomainModel {
      <<ref="CRUDBackendRef.EntityController.getById">> HttpResponse getByTaxId(String taxId);
      HttpResponse getAll();
      HttpResponse create(CreateEmployeeData data);
+     <<ref="CRUDBackendRef.EntityController.updateById">> HttpResponse updateById(String id, UpdateEmployeeData data);
+     <<ref="CRUDBackendRef.EntityController.updateById">> HttpResponse updateByTaxId(String taxId, UpdateEmployeeData data);
      <<ref="CRUDBackendRef.EntityController.removeById">> HttpResponse removeById(String id);
      <<ref="CRUDBackendRef.EntityController.removeById">> HttpResponse removeByTaxId(String taxId);
    }
@@ -48,6 +50,7 @@ classdiagram DomainModel {
      <<ref="CRUDBackendRef.EntityController.getById">> HttpResponse getByDepId(int depId);
      HttpResponse getAll();
      HttpResponse create(CreateDepartmentData data);
+     <<ref="CRUDBackendRef.EntityController.updateById">> HttpResponse updateByDepId(int depId, UpdateDepartmentData data);
      <<ref="CRUDBackendRef.EntityController.removeById">> HttpResponse removeByDepId(int depId);
    }
 
