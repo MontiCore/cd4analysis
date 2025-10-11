@@ -65,7 +65,8 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
     CDDiffUtil.refreshSymbolTable(employees8);
     employees8.getEnclosingScope().resolveCDType("Manager").ifPresent(src -> assertEquals(
         "ins.Employee", CDInheritanceHelper.resolveClosestType(src.getAstNode(), "Employee",
-            employees8.getEnclosingScope()).getSymbol().getFullName()));
+            (ICD4CodeArtifactScope) employees8.getEnclosingScope()).get().getSymbol()
+            .getFullName()));
   }
   
 }

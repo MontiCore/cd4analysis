@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.type.method;
 
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -16,16 +15,16 @@ import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.CDConfParameter;
-import de.monticore.cdconformance.inc.MethodOverloadingCDIncBindings;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.cdconformance.inc.MethodOverloadingOOSymbolsIncMapping;
 import de.se_rwth.commons.Names;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static de.monticore.cdconcretization.ConcretizationHelper.createQualifiedTypeInScope;
 
 public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
   
@@ -128,7 +127,7 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
         String newMethodQualifier = paramIncarnationDeclaringType.getFullName();
         String bindingContextKey;
         if (context.getConformanceParams().contains(CDConfParameter.METHOD_OVERLOADING)) {
-          bindingContextKey = MethodOverloadingCDIncBindings.computeMethodSymbolKey(
+          bindingContextKey = MethodOverloadingOOSymbolsIncMapping.computeMethodSymbolKey(
               newMethodQualifier, newMethod);
         }
         else {
@@ -244,20 +243,6 @@ public class ForEachMethodCompleter extends AbstractMethodInTypeCompleter {
       cloneParameter.setMCType(originalParameter.getMCType());
     }
     return clone;
-  }
-  
-  private static ASTMCQualifiedType createQualifiedTypeInScope(IBasicSymbolsScope scope,
-      String name) {
-    ASTMCQualifiedName mcQualifiedName = MCQualifiedNameFacade.createQualifiedName(name);
-    /*
-     * We have to set the enclosing scope so the type can be resolved if the type check is
-     * used on the cloned method.
-     */
-    mcQualifiedName.setEnclosingScope(scope);
-    ASTMCQualifiedType qualifiedType = CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
-        mcQualifiedName).build();
-    qualifiedType.setEnclosingScope(scope);
-    return qualifiedType;
   }
   
 }

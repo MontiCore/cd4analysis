@@ -1,0 +1,5 @@
+classdiagram SimpleMutualObserversConc {
+  <<ref1="Observer", ref2="Observed">> class Attacker;
+  <<ref1="Observed", ref2="Observer">> class Defender;
+  association watches [*] Attacker <-> Defender [*];
+}

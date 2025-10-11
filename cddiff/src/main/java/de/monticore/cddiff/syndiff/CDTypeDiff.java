@@ -71,7 +71,10 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
     // Load all matching elements from both types
     addAllMatchedElements(srcElem, tgtElem);
     // Find all added, deleted and changed attributes and constants
-    loadAllLists(srcElem, tgtElem, tgtCD, srcCD);
+    // unless this is a fake diff for a deleted / added type
+    if (srcElem != tgtElem) {
+      loadAllLists(srcElem, tgtElem, tgtCD, srcCD);
+    }
     // Set Strings for printing
     setTypeStrings();
   }

@@ -5,6 +5,9 @@ import static de.monticore.cdconformance.CDConfParameter.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Set;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -141,7 +144,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "Concrete.cd" })
+  @ValueSource(strings = { "Concrete.cd", "Unchanged.cd" })
   public void testAttributeTypeIncarnationValid(String concrete) {
     parseModels("attributes/typeIncarnation/valid/" + concrete,
         "attributes/typeIncarnation/Reference.cd");
@@ -150,7 +153,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "NotMarkedAsIncarnation.cd" })
+  @ValueSource(strings = { "NotMarkedAsIncarnation.cd", "TypeParamNoIncarnation.cd" })
   public void testAttributeTypeIncarnationInvalid(String concrete) {
     parseModels("attributes/typeIncarnation/invalid/" + concrete,
         "attributes/typeIncarnation/Reference.cd");
@@ -186,7 +189,7 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   }
   
   @ParameterizedTest
-  @ValueSource(strings = { "FalseDirection.cd", "FalseCard.cd" })
+  @ValueSource(strings = { "FalseDirection.cd", "FalseCard.cd", "MissingAssocInc.cd" })
   public void testDeepAssocConformanceInvalid(String concrete) {
     parseModels("associations/invalid/" + concrete, "associations/Reference.cd");
     checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING));
@@ -247,6 +250,80 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
     checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
         SRC_TARGET_ASSOC_MAPPING));
     assertFalse(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = { "Valid1.cd" })
+  public void testAssocImplicitRoleNameValid(String concrete) {
+    parseModels("associations/implicit_role_name/valid/" + concrete,
+        "associations/implicit_role_name/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = { "Valid1.cd" })
+  public void testAssocRoleNameDerivedFromTypeValid(String concrete) {
+    parseModels("associations/role_name_derived_from_type/valid/" + concrete,
+        "associations/role_name_derived_from_type/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  /**
+   * Example from KMR24 for multiple mappings.
+   */
+  @Test
+  public void testMutualObserversExample() {
+    parseModels("mutualObservers/SimpleMutualObserversConc.cd",
+        "mutualObservers/SimpleObserverRef.cd");
+    checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING, ALLOW_CARD_RESTRICTION));
+    assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref1", "ref2")));
+  }
+  
+  /**
+   * The conformance relation was defined as reflexive in [KRS+24]. However, we should question
+   * this as [KMR24] mentioned it is possible for some language elements to only be allowed in
+   * a reference model but not in a concrete model. This would contradict reflexivity, e.g.,
+   * how would we handle a {@code forEach} stereotype in a concrete model?
+   */
+  @Nested
+  class ReflexiveConformanceTests {
+    
+    @Test
+    public void visitorConformsToItself() {
+      parseModels("visitor/VisitorRef.cd", "visitor/VisitorRef.cd");
+      checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING, ALLOW_CARD_RESTRICTION, METHOD_OVERLOADING));
+      assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+    }
+    
+    /**
+     * This could work in theory, but currently we have issues when resolving symbols because
+     * two symbols with the same name exists (as reference model and concrete model are identical).
+     * Also, we currently report an error if the underspecified placeholder type ('any') is
+     * used in the concrete model.
+     */
+    @Disabled
+    @Test
+    public void builderAndMillConformsToItself() {
+      parseModels("builder/BuilderAndMillRef.cd", "builder/BuilderAndMillRef.cd");
+      checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING, ALLOW_CARD_RESTRICTION, METHOD_OVERLOADING));
+      assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+    }
+    
+    @Test
+    public void assocExampleConformsToItself() {
+      parseModels("associations/Reference.cd", "associations/Reference.cd");
+      checker = new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING,
+          SRC_TARGET_ASSOC_MAPPING, ALLOW_CARD_RESTRICTION, METHOD_OVERLOADING));
+      assertTrue(checker.checkConformance(conCD, refCD, Set.of("ref")));
+    }
+    
   }
   
 }

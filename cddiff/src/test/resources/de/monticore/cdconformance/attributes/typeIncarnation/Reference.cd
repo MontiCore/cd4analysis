@@ -1,3 +1,5 @@
+import java.lang.String;
+
 classdiagram Reference {
 
   class Address {
@@ -9,5 +11,13 @@ classdiagram Reference {
 
   class Employee {
     Address address;
+    // NOTE: Not super meaningful here, but we ensure all MCCollection types work
+    Set<Address> secondaryAddresses;
+    Optional<Address> invoiceAddress;
+    List<Address> orderedAddresses;
+    Map<String, Address> addressMap;
+    Map<Address, String> addressToStringMap;
+    // ensure we can still process primitive parameters without error
+    Set<int> favoriteNumbers;
   }
 }

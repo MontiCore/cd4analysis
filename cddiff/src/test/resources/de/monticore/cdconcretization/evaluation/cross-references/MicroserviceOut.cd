@@ -1,0 +1,31 @@
+import java.lang.String;
+
+classdiagram MicroserviceConc {
+  <<ref="Microservice">> class UserService {
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToUserService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToOrderService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToProductService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToInvoiceService(String message);
+  }
+
+  <<ref="Microservice">> class OrderService {
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToUserService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToOrderService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToProductService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToInvoiceService(String message);
+  }
+
+  <<ref="Microservice">> class ProductService {
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToUserService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToOrderService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToProductService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToInvoiceService(String message);
+  }
+
+  <<ref="Microservice">> class InvoiceService {
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToUserService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToOrderService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToProductService(String message);
+    <<ref="MicroserviceRef.Microservice.sendToMicroservice">> void sendToInvoiceService(String message);
+  }
+}

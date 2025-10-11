@@ -20,6 +20,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -42,8 +44,7 @@ public abstract class AbstractCDConcretizationTest {
   
   @BeforeAll
   public static void setup() {
-    Log.init();
-    Log.enableFailQuick(false);
+    LogStub.init();
   }
   
   @BeforeEach
@@ -159,7 +160,7 @@ public abstract class AbstractCDConcretizationTest {
   }
   
   // TODO Replace once there is a MontiCore method: MCAssertions#assertNoFindings()
-  private static void assertNoFindings(String message) {
+  protected static void assertNoFindings(String message) {
     if (!Log.getFindings().isEmpty()) {
       fail(message);
     }

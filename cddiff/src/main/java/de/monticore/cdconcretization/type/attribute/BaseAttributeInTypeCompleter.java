@@ -85,6 +85,9 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
       if (typeIncarnations.size() > 1) {
         // if we have more than one type incarnation, we need to add a suffix to the new attributes
         attributeIncarnation.setName(referenceAttribute.getName() + "_" + cAttributeType.getName());
+        // since name changed we also need to add a stereotype mapping
+        StereotypeUtil.addStereotype(attributeIncarnation.getModifier(), context.getMappingName(),
+            referenceAttribute.getSymbol().getFullName());
       }
       
       // 2. set type of incarnation
@@ -92,9 +95,6 @@ public class BaseAttributeInTypeCompleter extends AbstractAttributeInTypeComplet
       attributeIncarnation.setMCType(CD4CodeMill.mCQualifiedTypeBuilder().setMCQualifiedName(
           MCQualifiedNameFacade.createQualifiedName(cAttributeType.getSymbol()
               .getInternalQualifiedName())).build());
-      
-      StereotypeUtil.addStereotype(attributeIncarnation.getModifier(), context.getMappingName(),
-          referenceAttribute.getSymbol().getFullName());
       
       concreteType.addCDMember(attributeIncarnation);
     }

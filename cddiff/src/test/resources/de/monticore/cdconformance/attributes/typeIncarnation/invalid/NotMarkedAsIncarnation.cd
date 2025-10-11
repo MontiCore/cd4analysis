@@ -1,3 +1,5 @@
+import java.lang.String;
+
 classdiagram Concrete {
 
   class AddressInfo {
@@ -9,5 +11,11 @@ classdiagram Concrete {
 
   class Employee {
     AddressInfo address;
+    Set<AddressInfo> secondaryAddresses;
+    Optional<AddressInfo> invoiceAddress;
+    List<AddressInfo> orderedAddresses;
+    Map<String, AddressInfo> addressMap;
+    Map<AddressInfo, String> addressToStringMap;
+    Set<int> favoriteNumbers;
   }
 }

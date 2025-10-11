@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconformance.conf.ConformanceStrategy;
 import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.method.CDMethodChecker;
@@ -165,22 +166,102 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
         .getReferencingAssociations(refType, refCD));
   }
   
+  /**
+   * Checks if all reference associations are incarnated by one of the given concrete associations
+   * at least once.<br>
+   * If the reference association is annotated with the stereotype <code>optional</code>, it is not
+   * required to be incarnated.
+   *
+   * @param con the concrete associations
+   * @param ref the reference associations
+   * @return true if all required reference associations are incarnated, false otherwise
+   */
   protected boolean checkAssocIncarnation(Set<ASTCDAssociation> con, Set<ASTCDAssociation> ref) {
-    return ref.stream().allMatch(refAssoc -> (refAssoc.getModifier().isPresentStereotype()
-        && refAssoc.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            cAssoc -> incMapping.isIncarnation(cAssoc, refAssoc)));
+    return ref.stream().allMatch(refAssoc -> checkAssocIncarnation(refAssoc, con));
   }
   
+  /**
+   * Checks if the given reference association is incarnated by at least one of the concrete
+   * associations.
+   *
+   * @param ref the reference association to check
+   * @param concrete the concrete associations to check against
+   * @return true if the reference association is incarnated, false otherwise
+   */
+  protected boolean checkAssocIncarnation(ASTCDAssociation ref, Set<ASTCDAssociation> concrete) {
+    if (StereotypeUtil.isOptional(ref.getModifier())) {
+      return true; // optional methods do not need to be incarnated
+    }
+    if (concrete.stream().anyMatch(conMethod -> incMapping.isIncarnation(conMethod, ref))) {
+      return true; // at least one incarnation is present
+    }
+    Log.info("Missing incarnation for association in '" + ref.getEnclosingScope().getName() + "' ("
+        + ref.get_SourcePositionStart() + ")", getClass().getName());
+    return false;
+  }
+  
+  /**
+   * Checks if all the reference attributes are incarnated by at least one of the concrete
+   * attributes (unless they are optional).
+   *
+   * @param con the concrete attributes to check
+   * @param ref the reference attributes to check against
+   * @return true if all reference attributes are incarnated, false otherwise
+   */
   protected boolean checkAttributeIncarnation(Set<ASTCDAttribute> con, Set<ASTCDAttribute> ref) {
-    return ref.stream().allMatch(refAttr -> (refAttr.getModifier().isPresentStereotype() && refAttr
-        .getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            conAttr -> incMapping.isIncarnation(conAttr, refAttr)));
+    return ref.stream().allMatch(refAttr -> checkAttributeIncarnation(refAttr, con));
   }
   
+  /**
+   * Checks if the given reference attribute is incarnated by at least one of the concrete
+   * attributes.
+   *
+   * @param ref the reference attribute to check
+   * @param concrete the concrete attributes to check against
+   * @return true if the reference attribute is incarnated, false otherwise
+   */
+  protected boolean checkAttributeIncarnation(ASTCDAttribute ref, Set<ASTCDAttribute> concrete) {
+    if (StereotypeUtil.isOptional(ref.getModifier())) {
+      return true; // optional methods do not need to be incarnated
+    }
+    if (concrete.stream().anyMatch(conMethod -> incMapping.isIncarnation(conMethod, ref))) {
+      return true; // at least one incarnation is present
+    }
+    Log.info("Missing incarnation for attribute '" + ref.getName() + "' in '" + ref
+        .getEnclosingScope().getName() + "' (" + ref.get_SourcePositionStart() + ")", getClass()
+            .getName());
+    return false;
+  }
+  
+  /**
+   * Checks if all the reference methods are incarnated by at least one of the concrete methods
+   * (unless they are optional).
+   *
+   * @param con the concrete methods to check
+   * @param ref the reference methods to check against
+   * @return true if all reference methods are incarnated, false otherwise
+   */
   protected boolean checkMethodIncarnation(Set<ASTCDMethod> con, Set<ASTCDMethod> ref) {
-    return ref.stream().allMatch(refMethod -> (refMethod.getModifier().isPresentStereotype()
-        && refMethod.getModifier().getStereotype().contains("optional")) || con.stream().anyMatch(
-            conMethod -> incMapping.isIncarnation(conMethod, refMethod)));
+    return ref.stream().allMatch(refMethod -> checkMethodIncarnation(con, refMethod));
+  }
+  
+  /**
+   * Checks if the given reference method is incarnated by at least one of the concrete methods.
+   *
+   * @param concrete the concrete methods to check against
+   * @param ref the reference method to check
+   * @return true if the reference method is incarnated, false otherwise
+   */
+  protected boolean checkMethodIncarnation(Set<ASTCDMethod> concrete, ASTCDMethod ref) {
+    if (StereotypeUtil.isOptional(ref.getModifier())) {
+      return true; // optional methods do not need to be incarnated
+    }
+    if (concrete.stream().anyMatch(conMethod -> incMapping.isIncarnation(conMethod, ref))) {
+      return true; // at least one incarnation is present
+    }
+    Log.info("Missing incarnation for method '" + ref.getName() + "' in '" + ref.getEnclosingScope()
+        .getName() + "' (" + ref.get_SourcePositionStart() + ")", getClass().getName());
+    return false;
   }
   
   protected boolean checkAttributeConformance(Set<ASTCDAttribute> concrete, ASTCDType refType) {

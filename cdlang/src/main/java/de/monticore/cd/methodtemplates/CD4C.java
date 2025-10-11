@@ -480,6 +480,16 @@ public class CD4C {
     return th.astcdImport.get();
   }
   
+  /**
+   * Wrapper around {@link this#addImport(ASTCDType, String)} without a return type.
+   * To be used in method-templates as `${cd4c.doImport(ast, "java.util.List")}`,
+   * since `${cd4c.addImport(ast, "java.util.List")}` prints the returned ASTMCImportStatement into
+   * the generated code as ASTMCImportStatement@1234.
+   */
+  public void doImport(ASTCDType type, String signature) {
+    addImport(type, signature);
+  }
+  
   public Collection<ASTMCImportStatement> getImportList(ASTCDType astcdType) {
     return importMap.getOrDefault(astcdType, Sets.newHashSet());
   }

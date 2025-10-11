@@ -58,8 +58,7 @@ public class CDInheritanceHelper {
       ICD4CodeArtifactScope artifactScope) {
     Set<ASTCDType> extendsSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
-      String internalName = internalQualifiedName(superType.printType(), artifactScope);
-      extendsSet.add(resolveClosestType(cdType, internalName, artifactScope));
+      resolveClosestType(cdType, superType.printType(), artifactScope).ifPresent(extendsSet::add);
     }
     return extendsSet;
   }
@@ -69,46 +68,52 @@ public class CDInheritanceHelper {
       ICD4CodeArtifactScope artifactScope) {
     Set<ASTCDType> interfaceSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getInterfaceList()) {
-      interfaceSet.add(resolveClosestType(cdType, superType.printType(), artifactScope));
+      resolveClosestType(cdType, superType.printType(), artifactScope).ifPresent(interfaceSet::add);
     }
     return interfaceSet;
   }
   
   /** helper-method to resolve extended/implemented class/interface */
-  public static ASTCDType resolveClosestType(ASTCDType srcNode, String targetName,
-      ICDBasisScope scope) {
+  public static Optional<ASTCDType> resolveClosestType(ASTCDType srcNode, String targetName,
+      ICD4CodeArtifactScope scope) {
     
     ICDBasisScope currentScope = srcNode.getEnclosingScope();
-    List<CDTypeSymbol> symbolList;
     
-    while (currentScope != scope) {
-      symbolList = currentScope.resolveCDTypeDownMany(targetName);
-      if (!symbolList.isEmpty()) {
-        break;
-      }
+    List<CDTypeSymbol> symbolList = currentScope.resolveCDTypeMany(mkFullName(targetName, scope));
+    
+    while (currentScope != null && currentScope != scope) {
+      symbolList.addAll(currentScope.resolveCDTypeDownMany(internalQualifiedName(targetName,
+          scope)));
       currentScope = currentScope.getEnclosingScope();
     }
     
-    symbolList = currentScope.resolveCDTypeDownMany(targetName);
+    symbolList.addAll(scope.resolveCDTypeDownMany(internalQualifiedName(targetName, scope)));
     
     if (symbolList.isEmpty()) {
-      Log.error(String.format("0xCDD08: Could not resolve %s", targetName));
+      Log.error(String.format("0xCDD08: Could not resolve %s", internalQualifiedName(targetName,
+          scope)));
+      return Optional.empty();
     }
     
     CDTypeSymbol current = symbolList.get(0);
-    int currentMatch = getPositionWhereTextDiffer(current.getInternalQualifiedName(), srcNode
-        .getSymbol().getInternalQualifiedName());
+    int currentMatch = getPositionWhereTextDiffer(current.getFullName(), srcNode.getSymbol()
+        .getFullName());
     int nextMatch;
     
     for (CDTypeSymbol symbol : symbolList) {
-      nextMatch = getPositionWhereTextDiffer(symbol.getInternalQualifiedName(), srcNode.getSymbol()
-          .getInternalQualifiedName());
+      nextMatch = getPositionWhereTextDiffer(symbol.getFullName(), srcNode.getSymbol()
+          .getFullName());
       if (currentMatch < nextMatch) {
         current = symbol;
       }
     }
     
-    return current.getAstNode();
+    if (!current.getFullName().contains(scope.getFullName())) {
+      Log.error(String.format("0xCDD09: Could not resolve %s in %s", internalQualifiedName(
+          targetName, scope), scope.getFullName()));
+    }
+    
+    return Optional.of(current.getAstNode());
   }
   
   /** could not find an existing method like that */
@@ -141,6 +146,20 @@ public class CDInheritanceHelper {
           .contains(optSrc.get().getAstNode());
     }
     return false;
+  }
+  
+  protected static String mkFullName(String name, ICD4CodeArtifactScope artifactScope) {
+    String artifactName = "";
+    if (!artifactScope.getPackageName().isEmpty()) {
+      artifactName += artifactScope.getPackageName() + ".";
+    }
+    if (artifactScope.isPresentName()) {
+      artifactName += artifactScope.getName() + ".";
+    }
+    if (!name.startsWith(artifactName)) {
+      return artifactName + name;
+    }
+    return name;
   }
   
   protected static String internalQualifiedName(String fullName,

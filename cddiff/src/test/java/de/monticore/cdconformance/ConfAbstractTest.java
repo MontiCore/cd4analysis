@@ -1,16 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.LogStub;
+import org.junit.jupiter.api.BeforeEach;
+
 import java.io.IOException;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public abstract class ConfAbstractTest {
   
@@ -47,10 +48,9 @@ public abstract class ConfAbstractTest {
       else {
         fail("Could not parse CDs.");
       }
-      
     }
     catch (IOException e) {
-      fail(e.getMessage());
+      fail(e);
     }
   }
   

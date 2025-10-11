@@ -1,0 +1,18 @@
+classdiagram MutualObserversConc {
+
+  <<ref1="Observer", ref2="Subject">> class Attacker {
+    void update();
+    void register(Defender o);
+    void unregister(Defender o);
+    void notifyAll();
+
+  }
+  <<ref1="Subject", ref2="Observer">> class Defender {
+    void update();
+    void register(Attacker o);
+    void unregister(Attacker o);
+    void notifyAll();
+  }
+  association watches [*] Attacker (observers) <-> (observers) Defender[*];
+
+}
