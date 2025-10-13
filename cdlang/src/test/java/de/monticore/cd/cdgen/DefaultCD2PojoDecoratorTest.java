@@ -7,7 +7,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.runtime.junit.MCAssertions;
 
 import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
@@ -33,11 +33,7 @@ public class DefaultCD2PojoDecoratorTest extends AbstractDecoratorTest {
     
     super.doTest(opt.get());
     
-    // TODO: Remove once WIP Set Setter is implemented
-    Log.getFindings().remove(0);
-    Log.getFindings().remove(0);
-    
-    Assertions.assertTrue(Log.getFindings().isEmpty());
+    MCAssertions.assertNoFindings();
   }
   
   @Override

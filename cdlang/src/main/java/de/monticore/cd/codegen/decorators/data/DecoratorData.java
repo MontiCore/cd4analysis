@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators.data;
 
-import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.creators.ICreator;
+import de.monticore.cd.codegen.decorators.AttrHelper;
 import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd.codegen.decorators.matcher.MatcherData;
@@ -15,6 +15,8 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.tagging.SimpleSymbolTagger;
@@ -51,14 +53,19 @@ public class DecoratorData {
   protected SimpleSymbolTagger tagger = new SimpleSymbolTagger(this::_getTaggingUnits);
   protected ASTTagUnit internalTagUnit;
   
+  protected AttrHelper attrHelper;
+  
   public DecoratorData() {
     this.internalTagUnit = TagsMill.tagUnitBuilder().setName("__cd_decorator_internak").build();
+    this.attrHelper = new AttrHelper();
   }
   
   protected Iterable<ASTTagUnit> _getTaggingUnits() {
     // As a note: It might be interesting to limit to a subset of the loaded tags?
-    return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository
-        .getLoadedTagUnits());
+    //    return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository
+    //        .getLoadedTagUnits());
+    // As we are currently unable to aggregate the Tags+CD Mills, we disable tags for now
+    return TagRepository.getLoadedTagUnits();
   }
   
   public void simpleTag(ISymbol symbol, String name) {
@@ -144,6 +151,12 @@ public class DecoratorData {
     else if (node instanceof ASTCDMethod) {
       result = matchCDMethod((ASTCDMethod) node, matcherData);
     }
+    else if (node instanceof ASTCDInterface) {
+      result = matchCDInterface(((ASTCDInterface) node), matcherData);
+    }
+    else if (node instanceof ASTCDEnum) {
+      result = matchCDEnum(((ASTCDEnum) node), matcherData);
+    }
     else {
       Log.error(INTERNAL_ERROR_CODE + ": Unable add to parent of unknown type " + node.getClass()
           .getName(), node.get_SourcePositionStart());
@@ -164,6 +177,48 @@ public class DecoratorData {
   }
   
   protected MatchResult matchClass(ASTCDClass node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT)
+          return r;
+      }
+    }
+    
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+    }
+    
+    return MatchResult.DEFAULT;
+  }
+  
+  protected MatchResult matchCDInterface(ASTCDInterface node, MatcherData matcherData) {
+    if (node.getModifier().isPresentStereotype()) {
+      for (var s : node.getModifier().getStereotype().getValuesList()) {
+        var r = matchStereo(s, matcherData);
+        if (r != MatchResult.DEFAULT)
+          return r;
+      }
+    }
+    
+    if (node.isPresentSymbol()) {
+      var r = matchCLI(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+      r = matchTags(node.getSymbol(), matcherData);
+      if (r != MatchResult.DEFAULT)
+        return r;
+    }
+    
+    return MatchResult.DEFAULT;
+  }
+  
+  protected MatchResult matchCDEnum(ASTCDEnum node, MatcherData matcherData) {
     if (node.getModifier().isPresentStereotype()) {
       for (var s : node.getModifier().getStereotype().getValuesList()) {
         var r = matchStereo(s, matcherData);
@@ -297,5 +352,7 @@ public class DecoratorData {
   public <T extends ASTNode> T getAsDecorated(T originalClazz) {
     return (T) getCreatedData().getOriginalToDecoratedMap().get(originalClazz);
   }
+  
+  public AttrHelper getAttrHelper() { return attrHelper; }
   
 }

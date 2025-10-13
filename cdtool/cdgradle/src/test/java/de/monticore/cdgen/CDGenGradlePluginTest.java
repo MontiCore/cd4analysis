@@ -65,22 +65,49 @@ public class CDGenGradlePluginTest {
   
   void testCDGen(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
-    File libs = new File("../../cdlang/target/libs");
+    File langLibs = new File("../../cdlang/target/libs");
+    File runtimeLibs = new File("../../cd-runtime/target/libs");
     
     String projVersion = loadProperties().getProperty("version");
-    File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
+    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar");
+    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar");
     
-    assertTrue(libs.exists());
-    String buildFileContent = "plugins {" + "    id 'de.rwth.se.cdgen' " + "}\n "
-        + "repositories {\n" + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
-        + "  mavenLocal()\n" + " }\n"
-        + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
-        + " mavenCentral()\n" + "}\n" +
-        // We have to inject the cdlang jar for this project (as it is not yet published)
-        "dependencies {\n" + " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
-        + "')\n" +
-        // Along with the transitive dependencies
-        " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n " + "}";
+    assertTrue(cd4aJarFile.exists());
+    assertTrue(runtimeJarFile.exists());
+    // @formatter:off
+    String buildFileContent =
+        "plugins {"
+            + "    id 'de.rwth.se.cdgen' "
+            + "}\n "
+            + "repositories {\n"
+            + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
+            + "  mavenLocal()\n"
+            + " }\n"
+            + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
+            + " mavenCentral()\n"
+            + "}\n"
+            +
+            // We have to inject the cdlang jar for this project (as it is not yet published)
+            "dependencies {\n"
+            + " cdTool files('"
+            + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
+            + "')\n"
+            + "  api files('"
+            + runtimeJarFile.getAbsolutePath().replace("\\", "\\\\")
+            + "')\n"
+            // add the custom Log dependency
+            + "implementation \"de.monticore:monticore-runtime:"
+            + projVersion
+            + "\" \n"
+            +
+            // Along with the transitive dependencies
+            " cdTool \"de.monticore:monticore-grammar:"
+            + projVersion
+            + "\" \n "
+            + "}\n"
+            // Exclude runtime
+            + " configurations.api {\n exclude group:'de.monticore.lang', module: 'cd-runtime'\n}\n";
+    // @formatter:on
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
         .toPath());
@@ -147,29 +174,49 @@ public class CDGenGradlePluginTest {
    */
   void testCDGenOwnDecorator(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
-    File libs = new File("../../cdlang/target/libs");
+    File langLibs = new File("../../cdlang/target/libs");
+    File runtimeLibs = new File("../../cd-runtime/target/libs");
     
     String projVersion = loadProperties().getProperty("version");
-    File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
+    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar");
+    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar");
     
-    assertTrue(libs.exists());
-    String buildFileContent = "plugins {" + "    id 'de.rwth.se.cdgen' " + "}\n "
-        + "repositories {\n" + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
-        + "  mavenLocal()\n" + " }\n"
+    assertTrue(cd4aJarFile.exists());
+    assertTrue(runtimeLibs.exists());
+    // @formatter:off
+    String buildFileContent = "plugins {"
+        + "    id 'de.rwth.se.cdgen' "
+        + "}\n "
+        + "repositories {\n"
+        + " if ((\"true\").equals(getProperty('useLocalRepo'))) {\n "
+        + "  mavenLocal()\n"
+        + " }\n"
         + " maven{ url  'https://nexus.se.rwth-aachen.de/content/groups/public' }\n"
-        + " mavenCentral()\n" + "}\n" +
+        + " mavenCentral()\n"
+        + "}\n" +
         // Define a sourceset in which we write our own decorator
-        "sourceSets{\n" + "  decorators {\n" + "   java.srcDir('src/dec/java') \n" + " }" + "}\n" +
+        "sourceSets{\n"
+        + "  decorators {\n"
+        + "   java.srcDir('src/dec/java') \n"
+        + " }" + "}\n" +
         // We have to inject the cdlang jar for this project (as it is not yet published)
-        "dependencies {\n" + " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
-        + "')\n" +
+        "dependencies {\n"
+        + " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\") + "')\n" +
         // Along with the transitive dependencies
-        " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n " + "}\n" +
+        " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n "
+        + "  api files('"
+        + runtimeJarFile.getAbsolutePath().replace("\\", "\\\\")
+        + "')\n"
+        + "}\n"
         // the decorator sourceset requires the same dependencies as cdTool
-        "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
+        + "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
         + "generateClassDiagrams {\n" + "  configTemplate='CD2OwnDecorator' \n "
         + "  tmplDir=file('src/main/resources') \n "
-        + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n " + "}\n" + "\n";
+        + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n "
+        + "}\n"
+        // Exclude runtime
+        + "configurations.api {\n exclude group:'de.monticore.lang', module: 'cd-runtime'\n}\n";
+    // @formatter:on
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
         .toPath());

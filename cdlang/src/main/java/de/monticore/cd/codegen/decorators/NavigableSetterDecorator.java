@@ -42,7 +42,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
     
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
       // For every attribute, for which the SetterDecorator has created methods:
-      var methods = decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute);
+      var methods = decoratorData.getDecoratorData(SetterDecorator.class).getMethods(attribute);
       if (methods == null || methods.isEmpty())
         return;
       
@@ -81,8 +81,9 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
         // Add set${role}Local method
         decorateMandatoryLocal(otherClassDec, role.getOtherSide());
         // Call ${role}.set${otherRole}Local when updating
-        methods.forEach(m -> glexOpt.ifPresent(g -> g.addAfterTemplate("methods.Set", m,
-            new TemplateHookPoint("methods.CallLocal", role.getOtherSide().getName()))));
+        methods.forEach(m -> glexOpt.ifPresent(g -> g.addAfterTemplate("methods.Set", m
+            .getSetMethod(), new TemplateHookPoint("methods.CallLocal", role.getOtherSide()
+                .getName()))));
         // TODO: Unset old?
       }
     }

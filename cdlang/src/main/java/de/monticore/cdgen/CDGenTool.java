@@ -2,12 +2,14 @@
 package de.monticore.cdgen;
 
 import de.monticore.CDGeneratorTool;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.DecoratorConfig;
 import de.monticore.cd.codegen.trafo.DefaultVisibilityPublicTrafo;
 import de.monticore.cd.codegen.trafo.TOPTrafo;
 import de.monticore.cd.methodtemplates.CD4C;
+import de.monticore.cd4analysis._util.CD4AnalysisTypeDispatcher;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -76,9 +78,8 @@ public class CDGenTool extends CDGeneratorTool {
    * @param args array of the command line arguments
    */
   public void run(String[] args) {
-    
-    de.monticore.cd4code.CD4CodeMill.reset();
-    de.monticore.cd4code.CD4CodeMill.init();
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
     
     Options options = initOptions();
     
@@ -221,6 +222,9 @@ public class CDGenTool extends CDGeneratorTool {
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
       Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
+    glex.setGlobalValue("cdGenService", new CDGenService());
+    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher()); // TODO: Remove from templates
     
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
@@ -245,8 +249,6 @@ public class CDGenTool extends CDGeneratorTool {
       CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
       t.add4CDBasis(new CDBasisDefaultPackageTrafo());
       decorated.get().accept(t);
-      // Post-Decorate: make methods in interfaces abstract
-      this.makeMethodsInInterfacesAbstract(decorated.get());
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
       
@@ -304,11 +306,17 @@ public class CDGenTool extends CDGeneratorTool {
       // Load these symbols from an exported symbol table
       for (Class<?> c : Arrays.asList(List.class, Set.class, Collection.class, Iterator.class,
           ListIterator.class, Spliterator.class, Stream.class, Optional.class)) {
-        CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(c.getSimpleName())
-            .setFullName(c.getName()).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(
-                CDBasisMill.globalScope()).build());
+        registerFakeType(c.getSimpleName(), c.getName());
       }
+      registerFakeType("ICDObservable", "de.monticore.cd.ICDObservable");
+      registerFakeType("ICDObserver", "de.monticore.cd.ICDObserver");
     }
+  }
+  
+  protected void registerFakeType(String simplename, String fullName) {
+    CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
+        fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
+        .build());
   }
   
   /**
