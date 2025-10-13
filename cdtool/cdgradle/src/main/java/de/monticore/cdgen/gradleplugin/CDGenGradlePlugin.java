@@ -17,52 +17,52 @@ import org.gradle.api.tasks.SourceSet;
 
 @SuppressWarnings("unused")
 public class CDGenGradlePlugin implements Plugin<Project> {
-
+  
   public static final String CONFIG_TOOL = "cdTool";
-
+  
   @Override
   public void apply(Project project) {
     project.getPluginManager().apply(JavaLibraryPlugin.class);
-
+    
     // Setup cdTool dependency
     var properties = loadProperties();
     String version = properties.getProperty("version");
     var toolConfig = project.getConfigurations().maybeCreate(CONFIG_TOOL);
     toolConfig.setCanBeResolved(true);
-
+    
     toolConfig.defaultDependencies(dependencies -> {
       dependencies.add(project.getDependencies().create("de.monticore.lang:cd4analysis:"
           + version));
     });
-
+    
     project.getTasks().withType(CDGenTask.class).configureEach(t -> t.getExtraClasspathElements()
         .from(toolConfig));
-
+    
     project.getConfigurations().named("api").configure(api -> {
       api.withDependencies(dependencies -> {
         dependencies.add(project.getDependencies().create(
-          // de.monticore.lang:cd-runtime:7.8.0-SNAPSHOT:cd-runtime
+            // de.monticore.lang:cd-runtime:7.8.0-SNAPSHOT:cd-runtime
             "de.monticore.lang:cd-runtime:" + version + ":cd-runtime"));
       });
-
+      
     });
-
+    
     // Set up source-Sets
     project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
       var cdSrcDirSet = addSourceSetExtension(sourceSet, project);
-
+      
       var task = project.getTasks().register(sourceSet.getTaskName("generate", "ClassDiagrams"),
           CDGenTask.class, genTask -> {
             genTask.setDescription(
                 "Generates java code from the class diagram models in source set ${sourceSet.name}.");
-
+            
             genTask.getInput().from(cdSrcDirSet.getSourceDirectories());
             genTask.getOutputDir().set(cdSrcDirSet.getDestinationDirectory());
             genTask.getOriginalSymbolOutput().set(project.getLayout().getBuildDirectory().dir(
                 "cdgensymbols/" + sourceSet.getName() + "/original"));
             genTask.getDecoratedSymbolOutput().set(project.getLayout().getBuildDirectory().dir(
                 "cdgensymbols/" + sourceSet.getName() + "/decorated"));
-
+            
             sourceSet.getJava().srcDir(genTask.getOutputDir());
             genTask.getHandWrittenCodeDir().setFrom(project.provider(() -> sourceSet.getJava()
                 .getSourceDirectories().getFiles().stream().filter(it -> !it.toString().startsWith(
@@ -74,7 +74,7 @@ public class CDGenGradlePlugin implements Plugin<Project> {
           task));
     });
   }
-
+  
   public Properties loadProperties() {
     Properties properties = new Properties();
     try {
@@ -85,29 +85,29 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     }
     return properties;
   }
-
+  
   /** Adds the "cd" extension to every source set */
   protected CDSourceDirectorySet addSourceSetExtension(SourceSet sourceSet, Project project) {
     SourceDirectorySet vanillaSrcDirSet = project.getObjects().sourceDirectorySet(
         CDSourceDirectorySet.SOURCEDIRSET_NAME, sourceSet.getName() + " class diagram source");
-
+    
     CDSourceDirectorySet cdSrcDirSet = sourceSet.getExtensions().create(CDSourceDirectorySet.class,
         CDSourceDirectorySet.SOURCEDIRSET_NAME,
         CDSourceDirectorySet.DefaultCDSourceDirectorySet.class, vanillaSrcDirSet);
-
+    
     // By default, output into a generated/test-${NonMainName}sources/cdgen/sourcecode directory
     String buildDir = "generated-" + (SourceSet.isMain(sourceSet) ? "" : sourceSet.getName())
         + "sources/cdgen/sourcecode";
-
+    
     Provider<Directory> destinationDir = project.getLayout().getBuildDirectory().dir(buildDir);
     cdSrcDirSet.getDestinationDirectory().convention(destinationDir);
-
+    
     // Use the src/${sourcesetname}/${name} as an input by default
     cdSrcDirSet.srcDir(project.file("src/" + sourceSet.getName() + "/"
         + CDSourceDirectorySet.SOURCEDIRSET_NAME));
     // and only work on mc4 and mlc files
     cdSrcDirSet.getFilter().include("**/*.cd");
-
+    
     // Casting the SrcDirSet to a FileCollection seems to be necessary due to compatibility reasons
     // with the
     // configuration cache.
@@ -117,8 +117,8 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     sourceSet.getResources().exclude(SerializableLambdas.spec(el -> mcSrcSetCast.contains(el
         .getFile())));
     sourceSet.getAllSource().source(cdSrcDirSet);
-
+    
     return cdSrcDirSet;
   }
-
+  
 }

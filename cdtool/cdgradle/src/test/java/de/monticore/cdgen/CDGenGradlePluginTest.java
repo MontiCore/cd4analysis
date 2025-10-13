@@ -106,7 +106,7 @@ public class CDGenGradlePluginTest {
             + "\" \n "
             + "}\n"
             // Exclude runtime
-            + " configurations.api {\n exclude group:'de.monticore.lang.cd4analysis', module: 'cd-runtime'\n}\n";
+            + " configurations.api {\n exclude group:'de.monticore.lang', module: 'cd-runtime'\n}\n";
     // @formatter:on
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
@@ -215,9 +215,8 @@ public class CDGenGradlePluginTest {
         + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n "
         + "}\n"
         // Exclude runtime
-        + "configurations.api {\n exclude group:'de.monticore.lang.cd4analysis', module: 'cd-runtime'\n}\n";
+        + "configurations.api {\n exclude group:'de.monticore.lang', module: 'cd-runtime'\n}\n";
     // @formatter:on
-    System.out.println(buildFileContent);
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
         .toPath());

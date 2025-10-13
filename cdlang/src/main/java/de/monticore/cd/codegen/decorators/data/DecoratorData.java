@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators.data;
 
-import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.creators.ICreator;
@@ -63,8 +62,10 @@ public class DecoratorData {
   
   protected Iterable<ASTTagUnit> _getTaggingUnits() {
     // As a note: It might be interesting to limit to a subset of the loaded tags?
-    return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository
-        .getLoadedTagUnits());
+    //    return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository
+    //        .getLoadedTagUnits());
+    // As we are currently unable to aggregate the Tags+CD Mills, we disable tags for now
+    return TagRepository.getLoadedTagUnits();
   }
   
   public void simpleTag(ISymbol symbol, String name) {

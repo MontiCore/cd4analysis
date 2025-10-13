@@ -2,7 +2,6 @@
 package TestObserver;
 
 import java.util.Optional;
-import java.util.Set;
 
 public class Observer implements TestObserver.IOtherCObserver {
   
@@ -15,37 +14,42 @@ public class Observer implements TestObserver.IOtherCObserver {
   int countUpdateObserverOv = 0;
   
   @Override
-  public void update(OtherC clazz) {
+  public void notifyUpdate(OtherC clazz) {
     countUpdateObserver++;
   }
   
   @Override
-  public void updateObserverMyInt(OtherC clazz, int ov) {
+  public void notifyUpdateSetMyInt(OtherC clazz, int ov) {
     countUpdateObserverMyInt++;
   }
   
   @Override
-  public void updateObserverMyBool(OtherC clazz, boolean ov) {
+  public void notifyUpdateSetMyBool(OtherC clazz, boolean ov) {
     countUpdateObserverMyBool++;
   }
   
   @Override
-  public void updateObserverManyB(OtherC clazz, Set<B> ov) {
-    countUpdateObserverManyB++;
-  }
-  
-  @Override
-  public void updateObserverOptB(OtherC clazz, Optional<B> ov) {
+  public void notifyUpdateSetOptB(OtherC clazz, Optional<B> ov) {
     countUpdateObserverOptB++;
   }
   
   @Override
-  public void updateObserverOneB(OtherC clazz, B ov) {
+  public void notifyUpdateSetOneB(OtherC clazz, B ov) {
     countUpdateObserverOneB++;
   }
   
   @Override
-  public void updateObserverOv(OtherC clazz, int ov) {
+  public void notifyUpdateAddManyB(OtherC clazz, B newElem) {
+    countUpdateObserverManyB++;
+  }
+  
+  @Override
+  public void notifyUpdateRemoveManyB(OtherC clazz, B elem) {
+    countUpdateObserverManyB++;
+  }
+  
+  @Override
+  public void notifyUpdateSetOv(OtherC clazz, int ov) {
     countUpdateObserverOv++;
   }
   
