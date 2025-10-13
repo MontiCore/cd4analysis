@@ -7,7 +7,7 @@ import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.runtime.junit.MCAssertions;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -45,8 +45,7 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
     
     super.doTest(opt.get());
     
-    // TODO: Remove once WIP Set Setter is implemented
-    Log.getFindings().remove(0);
+    MCAssertions.assertNoFindings();
   }
   
   @Test

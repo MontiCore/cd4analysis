@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.creators.ICreator;
+import de.monticore.cd.codegen.decorators.AttrHelper;
 import de.monticore.cd.codegen.decorators.IDecorator;
 import de.monticore.cd.codegen.decorators.matcher.MatchResult;
 import de.monticore.cd.codegen.decorators.matcher.MatcherData;
@@ -53,8 +54,11 @@ public class DecoratorData {
   protected SimpleSymbolTagger tagger = new SimpleSymbolTagger(this::_getTaggingUnits);
   protected ASTTagUnit internalTagUnit;
   
+  protected AttrHelper attrHelper;
+  
   public DecoratorData() {
     this.internalTagUnit = TagsMill.tagUnitBuilder().setName("__cd_decorator_internak").build();
+    this.attrHelper = new AttrHelper();
   }
   
   protected Iterable<ASTTagUnit> _getTaggingUnits() {
@@ -347,5 +351,7 @@ public class DecoratorData {
   public <T extends ASTNode> T getAsDecorated(T originalClazz) {
     return (T) getCreatedData().getOriginalToDecoratedMap().get(originalClazz);
   }
+  
+  public AttrHelper getAttrHelper() { return attrHelper; }
   
 }

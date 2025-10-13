@@ -38,6 +38,14 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     project.getTasks().withType(CDGenTask.class).configureEach(t -> t.getExtraClasspathElements()
         .from(toolConfig));
     
+    project.getConfigurations().named("api").configure(api -> {
+      api.withDependencies(dependencies -> {
+        dependencies.add(project.getDependencies().create(
+            "de.monticore.lang.cd4analysis:cd-runtime:" + version));
+      });
+      
+    });
+    
     // Set up source-Sets
     project.getExtensions().getByType(JavaPluginExtension.class).getSourceSets().all(sourceSet -> {
       var cdSrcDirSet = addSourceSetExtension(sourceSet, project);

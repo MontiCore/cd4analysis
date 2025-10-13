@@ -32,6 +32,7 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
           originalClazz) instanceof de.monticore.cd4codebasis._ast.ASTCDClass) {
         var decClazz = (ASTCDClass) decoratorData.getAsDecorated(originalClazz);
         if (MCTypeFacade.getInstance().isBooleanType(attribute.getMCType())) {
+          // nothing
         }
         else if (MCCollectionSymTypeRelations.isList(attribute.getSymbol().getType())) {
           decorateList(decClazz, attribute);

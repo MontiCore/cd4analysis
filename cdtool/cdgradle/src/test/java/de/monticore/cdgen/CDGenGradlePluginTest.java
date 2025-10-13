@@ -65,12 +65,15 @@ public class CDGenGradlePluginTest {
   
   void testCDGen(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
-    File libs = new File("../../cdlang/target/libs");
+    File langLibs = new File("../../cdlang/target/libs");
+    File runtimeLibs = new File("../../cd-runtime/target/libs");
     
     String projVersion = loadProperties().getProperty("version");
-    File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
+    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar");
+    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar");
     
-    assertTrue(libs.exists());
+    assertTrue(cd4aJarFile.exists());
+    assertTrue(runtimeJarFile.exists());
     // @formatter:off
     String buildFileContent =
         "plugins {"
@@ -89,6 +92,9 @@ public class CDGenGradlePluginTest {
             + " cdTool files('"
             + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\")
             + "')\n"
+            + "  api files('"
+            + runtimeJarFile.getAbsolutePath().replace("\\", "\\\\")
+            + "')\n"
             // add the custom Log dependency
             + "implementation \"de.monticore:monticore-runtime:"
             + projVersion
@@ -98,7 +104,9 @@ public class CDGenGradlePluginTest {
             " cdTool \"de.monticore:monticore-grammar:"
             + projVersion
             + "\" \n "
-            + "}";
+            + "}\n"
+            // Exclude runtime
+            + " configurations.api {\n exclude group:'de.monticore.lang.cd4analysis', module: 'cd-runtime'\n}\n";
     // @formatter:on
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
@@ -166,12 +174,15 @@ public class CDGenGradlePluginTest {
    */
   void testCDGenOwnDecorator(String version) throws IOException {
     writeFile(settingsFile, "rootProject.name = 'hello-world'");
-    File libs = new File("../../cdlang/target/libs");
+    File langLibs = new File("../../cdlang/target/libs");
+    File runtimeLibs = new File("../../cd-runtime/target/libs");
     
     String projVersion = loadProperties().getProperty("version");
-    File cd4aJarFile = new File(libs, "cd4analysis-" + projVersion + ".jar");
+    File cd4aJarFile = new File(langLibs, "cd4analysis-" + projVersion + ".jar");
+    File runtimeJarFile = new File(runtimeLibs, "cd4analysis-" + projVersion + "-cd-runtime.jar");
     
-    assertTrue(libs.exists());
+    assertTrue(cd4aJarFile.exists());
+    assertTrue(runtimeLibs.exists());
     // @formatter:off
     String buildFileContent = "plugins {"
         + "    id 'de.rwth.se.cdgen' "
@@ -193,15 +204,20 @@ public class CDGenGradlePluginTest {
         + " cdTool files('" + cd4aJarFile.getAbsolutePath().replace("\\", "\\\\") + "')\n" +
         // Along with the transitive dependencies
         " cdTool \"de.monticore:monticore-grammar:" + projVersion + "\" \n "
-        + "}\n" +
+        + "  api files('"
+        + runtimeJarFile.getAbsolutePath().replace("\\", "\\\\")
+        + "')\n"
+        + "}\n"
         // the decorator sourceset requires the same dependencies as cdTool
-        "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
+        + "configurations.decoratorsImplementation.extendsFrom(configurations.cdTool)\n"
         + "generateClassDiagrams {\n" + "  configTemplate='CD2OwnDecorator' \n "
         + "  tmplDir=file('src/main/resources') \n "
         + "  getExtraClasspathElements().from(sourceSets.decorators.output) \n "
         + "}\n"
-        + "\n";
+        // Exclude runtime
+        + "configurations.api {\n exclude group:'de.monticore.lang.cd4analysis', module: 'cd-runtime'\n}\n";
     // @formatter:on
+    System.out.println(buildFileContent);
     writeFile(buildFile, buildFileContent);
     Files.copy(new File("src/test/resources/MyCD.cd").toPath(), new File(cdsDir, "MyCD.cd")
         .toPath());

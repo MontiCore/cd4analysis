@@ -1,5 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature("attribute")}
 ${defineHookPoint("Setter:Before")}
-this.${attribute.getName()} = ${attribute.getName()};
+var __ret = this.${attribute.getName()}.remove(${attribute.getName()});
 ${defineHookPoint("Setter:After")}
+return __ret;

@@ -81,6 +81,7 @@ dependencies {
   }
   testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
+  testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
 
   //dependencies for trafo
   if (withDSTLGen) {

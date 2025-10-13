@@ -29,12 +29,6 @@ ${decConfig.withSetters().ignoreOnName("noSetter").defaultApply()}
 <#-- And the NavigableSetters (for bidirectional assocs). -->
 <#-- The implementation of the NavigableSetters decorator requires that the Setter decorator has run before.-->
 ${decConfig.withNavigableSetters().ignoreOnName("noSetter").defaultApply()}
-<#-- The DeepCloneAndDeepEqualsDecorator is applied by default-->
-<#-- The implementation requires that no CD element excluded. Therefore we have no ignore Statement -->
-${decConfig.withDeepCloneAndDeepEquals().defaultApply()}
-<#-- The VisitorDecorator and the InheritanceVisitorDecorator are applied by default -->
-${decConfig.withVisitors().defaultApply()}
-${decConfig.withInheritanceVisitors().defaultApply()}
 <#--Method signatures will be turned into abstract methods-->
 ${decConfig.withAbstractMethodSignatures().ignoreOnName("nonAbstractMethod").defaultApply()}
 <#--The following decorators are not applied by default, instead they have to be explicitly configured using stereos/tags/etc-->

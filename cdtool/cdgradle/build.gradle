@@ -71,6 +71,7 @@ processResources {
 tasks.withType(Test) {
   useJUnitPlatform()
   dependsOn project.tasks.getByPath(":cdlang:jar")
+  dependsOn project.tasks.getByPath(":cd-runtime:jar")
   dependsOn generateResources
 
   // For the MontiVerse

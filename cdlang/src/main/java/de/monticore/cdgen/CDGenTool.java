@@ -313,11 +313,18 @@ public class CDGenTool extends CDGeneratorTool {
       // Load these symbols from an exported symbol table
       for (Class<?> c : Arrays.asList(List.class, Set.class, Collection.class, Iterator.class,
           ListIterator.class, Spliterator.class, Stream.class, Optional.class)) {
-        CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(c.getSimpleName())
-            .setFullName(c.getName()).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(
-                CDBasisMill.globalScope()).build());
+        registerFakeType(c.getSimpleName(), c.getName());
       }
+      registerFakeType("ICDObservable", "de.monticore.cd.ICDObservable");
+      registerFakeType("ICDObserver", "de.monticore.cd.ICDObserver");
     }
+  }
+  
+  protected void registerFakeType(String simplename, String fullName) {
+    CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
+        fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
+        .build());
+    
   }
   
   /**
