@@ -33,10 +33,10 @@ import java.util.*;
  */
 public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2 {
-  
+
   protected static final String SUFFIX = "Observer";
   protected static final String OBS_LIST_ATTR = "observerList";
-  
+
   @Override
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
@@ -45,7 +45,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
     return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
         SetterDecorator.class));
   }
-  
+
   @Override
   public void visit(ASTCDClass clazz) {
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
@@ -53,9 +53,9 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       // Get the parent (package or CDDef)
       ASTNode origParent = this.decoratorData.getParent(clazz).get();
       ASTNode decParent = this.decoratorData.getAsDecorated(origParent);
-      
+
       String packageName = clazz.getSymbol().getPackageName();
-      
+
       String observerInterfaceName = packageName.isEmpty() ? "I" + clazz.getName() + SUFFIX
           : packageName + ".I" + clazz.getName() + SUFFIX;
       ASTMCQualifiedType observerInterfaceQualifiedType = MCTypeFacade.getInstance()
@@ -66,7 +66,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       ASTMCType classType = MCTypeFacade.getInstance().createQualifiedType(clazz.getName());
       ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("clazz").setMCType(
           classType).build();
-      
+
       //make sure an attribute of the type and the name of an observer is not already present
       {
         //create an attribute of the type and the name of an observer
@@ -74,11 +74,11 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
             .setMCType(MCTypeFacade.getInstance().createListTypeOf(observerInterfaceQualifiedType))
             .setModifier(CD4CodeMill.modifierBuilder().PROTECTED().build()).build();
         decClazz.addCDMember(observerList);
-        
+
         glexOpt.ifPresent(glex -> glex.replaceTemplate(VALUE, observerList, new StringHookPoint(
             " = new ArrayList<>()")));
       }
-      
+
       //create own interface Observable and Observer for every class
       //      ASTCDInterface interfaceObservableArtifact =
       //        CD4CodeMill.cDInterfaceBuilder().setName("I" + decClazz.getName() + "Observable")
@@ -86,15 +86,15 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       ASTCDInterface interfaceObserverArtifact = CD4CodeMill.cDInterfaceBuilder().setName("I"
           + decClazz.getName() + "Observer").setModifier(CD4CodeMill.modifierBuilder().PUBLIC()
               .build()).build();
-      
+
       interfaceObserverArtifact.setCDExtendUsage(CD4CodeMill.cDExtendUsageBuilder()
           .setSuperclassList(List.of(MCTypeFacade.getInstance().createBasicGenericTypeOf(
               "de.monticore.cd.ICDObserver", clazz.getName()))).build());
-      
+
       //add the interfaces to the package
       //      addElementToParent(decParent, interfaceObservableArtifact);
       addElementToParent(decParent, interfaceObserverArtifact);
-      
+
       //build the methods
       ASTCDMethod addObserver = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "addObserver", observerParameter);
@@ -104,15 +104,15 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
           .modifierBuilder().PROTECTED().build(), "notifyObservers");
       ASTCDMethod update = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder()
           .PUBLIC().build(), "notifyUpdate", classParameter);
-      
+
       //add the methods to the interface Observable
       //      interfaceObservableArtifact.addCDMember(addObserver.deepClone());
       //      interfaceObservableArtifact.addCDMember(removeObserver.deepClone());
       //      interfaceObservableArtifact.addCDMember(notifyObservers.deepClone());
-      
+
       // add the methods to the interface Observer
       interfaceObserverArtifact.addCDMember(update.deepClone());
-      
+
       //add the interface methods to the pojo class
       addToClass(decClazz, addObserver);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, addObserver, new TemplateHookPoint(
@@ -126,7 +126,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, notifyObservers,
           new TemplateHookPoint("methods.observer.notifyObserver", OBS_LIST_ATTR, observerParameter
               .getMCType().printType())));
-      
+
       //add an interface list if not present in the clazz
       if (!decClazz.isPresentCDInterfaceUsage()) {
         decClazz.setCDInterfaceUsage(CD4CodeMill.cDInterfaceUsageBuilder().build());
@@ -135,19 +135,19 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       decClazz.getCDInterfaceUsage().addInterface(MCTypeFacade.getInstance()
           .createBasicGenericTypeOf("de.monticore.cd.ICDObservable", observerInterfaceName, clazz
               .getName()));
-      
+
       // add an import statement for the Observer interface
       //      CD4C.getInstance().addImport(decClazz, observableInterfaceName);
       CD4C.getInstance().addImport(decClazz, observerInterfaceName);
-      
+
       //To call a generated method whenever an attribute is changed in the pojo class, we need to transform the setters
       // into additionally calling the attribute specific notifyObserver${attributeName} method
-      
+
       observerInterfaceStack.push(interfaceObserverArtifact);
       this.decParent.push(decClazz);
     }
   }
-  
+
   @Override
   public void endVisit(ASTCDClass clazz) {
     if (decoratorData.shouldDecorate(this.getClass(), clazz)) {
@@ -155,29 +155,29 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       decParent.pop();
     }
   }
-  
+
   protected Stack<ASTCDInterface> observerInterfaceStack = new Stack<>();
   protected Stack<ASTCDClass> decParent = new Stack<>();
-  
+
   @Override
   public void visit(ASTCDAttribute attribute) {
     if (!decoratorData.shouldDecorate(this.getClass(), attribute) || observerInterfaceStack
         .isEmpty()) {
       return;
     }
-    
+
     if (attribute.getName().equals(OBS_LIST_ATTR)) {
       Log.error("0xA1234 The class " + decParent.peek().getName()
           + " already has an attribute with the name observerList");
       return;
     }
-    
+
     var attrInfo = decoratorData.getAttrHelper().getFromSymTypeExpr(attribute.getSymbol()
         .getType());
-    
+
     ASTCDParameter classParameter = CD4CodeMill.cDParameterBuilder().setName("clazz").setMCType(
         MCTypeFacade.getInstance().createQualifiedType(decParent.peek().getName())).build();
-    
+
     //To call a generated method whenever an attribute is changed in the pojo class, we need to transform the setters
     // into additionally calling the attribute specific notifyObserver${attributeName} method
     {
@@ -233,10 +233,10 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       else {
         Log.warn("0xTODO: No setter found for attribute " + attribute.getName(), attribute
             .get_SourcePositionStart());
-        
+
       }
     }
-    
+
     // Add notify methods to domain class & observer interface
     switch (attrInfo.getMultiplicity()) {
       case MANDATORY:
@@ -258,7 +258,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
               .createParameter(MCTypeFacade.getInstance().createIntType(), "index"), CD4CodeMill
                   .cDParameterBuilder().setName("newElem").setMCType(innerType).build()),
               "methods.observer.notifyObserverAttributeSpecificAssoc", "Add", "index, newElem");
-          
+
           createObserverMethod(attribute, "Remove", List.of(classParameter, CDParameterFacade
               .getInstance().createParameter(MCTypeFacade.getInstance().createIntType(), "index"),
               CD4CodeMill.cDParameterBuilder().setName("elem").setMCType(innerType).build()));
@@ -266,7 +266,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
               .createParameter(MCTypeFacade.getInstance().createIntType(), "index"), CD4CodeMill
                   .cDParameterBuilder().setName("elem").setMCType(innerType).build()),
               "methods.observer.notifyObserverAttributeSpecificAssoc", "Remove", "index, elem");
-          
+
         }
         else {
           createObserverMethod(attribute, "Add", List.of(classParameter, CD4CodeMill
@@ -274,7 +274,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
           createNotifyMethod(attribute, "Add", List.of(CD4CodeMill.cDParameterBuilder().setName(
               "newElem").setMCType(innerType).build()),
               "methods.observer.notifyObserverAttributeSpecificAssoc", "Add", "newElem");
-          
+
           createObserverMethod(attribute, "Remove", List.of(classParameter, CD4CodeMill
               .cDParameterBuilder().setName("elem").setMCType(innerType).build()));
           createNotifyMethod(attribute, "Remove", List.of(CD4CodeMill.cDParameterBuilder().setName(
@@ -284,7 +284,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
         break;
     }
   }
-  
+
   protected void createObserverMethod(ASTCDAttribute attribute, String prefix,
       List<ASTCDParameter> params) {
     var notifyUpdateMethod = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder()
@@ -292,28 +292,27 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
         params);
     observerInterfaceStack.peek().addCDMember(notifyUpdateMethod);
   }
-  
+
   protected void createNotifyMethod(ASTCDAttribute attribute, String prefix,
       List<ASTCDParameter> params, String template, Object... templateParams) {
     var mObservable = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder()
         .PROTECTED().build(), "notifyObservers" + prefix + StringUtils.capitalize(attribute
             .getName()), params);
     addToClass(decParent.peek(), mObservable);
-    
+
     Object[] realTemplateParams = new Object[templateParams.length + 3];
     System.arraycopy(templateParams, 0, realTemplateParams, 3, templateParams.length);
     realTemplateParams[0] = OBS_LIST_ATTR;
     realTemplateParams[1] = observerInterfaceStack.peek().getName();
     realTemplateParams[2] = attribute.getName();
-    System.err.println(Arrays.toString(realTemplateParams));
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, mObservable, new TemplateHookPoint(
         template, realTemplateParams)));
-    
+
   }
-  
+
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
-  
+
 }
