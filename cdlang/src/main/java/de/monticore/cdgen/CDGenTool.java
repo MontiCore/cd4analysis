@@ -81,7 +81,6 @@ public class CDGenTool extends CDGeneratorTool {
   public void run(String[] args) {
     // We might be using tags
     TagsMill.reset();
-    TagsMill.init();
     
     CD4CodeMill.reset();
     CD4CodeMill.init();
