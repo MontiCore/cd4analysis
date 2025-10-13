@@ -66,6 +66,9 @@ class BuilderDecoratorTest extends AbstractDecoratorTest {
     
     super.doTest(opt.get());
     
+    for (int i = 0; i < 7; i++) // Test, that the warning about missing setters is present
+      MCAssertions.assertHasFinding(f -> f.getMsg().startsWith("Requested setter of TestBuilder")
+          && f.isWarning());
     MCAssertions.assertNoFindings();
   }
   
