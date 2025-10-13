@@ -79,10 +79,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
             " = new ArrayList<>()")));
       }
       
-      //create own interface Observable and Observer for every class
-      //      ASTCDInterface interfaceObservableArtifact =
-      //        CD4CodeMill.cDInterfaceBuilder().setName("I" + decClazz.getName() + "Observable")
-      //          .setModifier(CD4CodeMill.modifierBuilder().PUBLIC().build()).build();
+      // create an Observer interface for the class
       ASTCDInterface interfaceObserverArtifact = CD4CodeMill.cDInterfaceBuilder().setName("I"
           + decClazz.getName() + "Observer").setModifier(CD4CodeMill.modifierBuilder().PUBLIC()
               .build()).build();
@@ -91,29 +88,24 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
           .setSuperclassList(List.of(MCTypeFacade.getInstance().createBasicGenericTypeOf(
               "de.monticore.cd.ICDObserver", clazz.getName()))).build());
       
-      //add the interfaces to the package
-      //      addElementToParent(decParent, interfaceObservableArtifact);
       addElementToParent(decParent, interfaceObserverArtifact);
       
-      //build the methods
+      // construct observer handling methods
       ASTCDMethod addObserver = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "addObserver", observerParameter);
       ASTCDMethod removeObserver = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PUBLIC().build(), "removeObserver", observerParameter);
+      
+      // generic-update methods
       ASTCDMethod notifyObservers = CDMethodFacade.getInstance().createMethod(CD4CodeMill
           .modifierBuilder().PROTECTED().build(), "notifyObservers");
       ASTCDMethod update = CDMethodFacade.getInstance().createMethod(CD4CodeMill.modifierBuilder()
           .PUBLIC().build(), "notifyUpdate", classParameter);
       
-      //add the methods to the interface Observable
-      //      interfaceObservableArtifact.addCDMember(addObserver.deepClone());
-      //      interfaceObservableArtifact.addCDMember(removeObserver.deepClone());
-      //      interfaceObservableArtifact.addCDMember(notifyObservers.deepClone());
-      
-      // add the methods to the interface Observer
+      // add the methods to the observer-interface
       interfaceObserverArtifact.addCDMember(update.deepClone());
       
-      //add the interface methods to the pojo class
+      // add the interface methods to the pojo class
       addToClass(decClazz, addObserver);
       glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, addObserver, new TemplateHookPoint(
           "methods.observer.addObserver", OBS_LIST_ATTR, observerInterfaceQualifiedType
@@ -140,9 +132,8 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       //      CD4C.getInstance().addImport(decClazz, observableInterfaceName);
       CD4C.getInstance().addImport(decClazz, observerInterfaceName);
       
-      //To call a generated method whenever an attribute is changed in the pojo class, we need to transform the setters
-      // into additionally calling the attribute specific notifyObserver${attributeName} method
-      
+      // To call a generated method whenever an attribute is changed in the pojo class, we need to transform the setters
+      //  into additionally calling the attribute specific notifyObserver${attributeName} method
       observerInterfaceStack.push(interfaceObserverArtifact);
       this.decParent.push(decClazz);
     }
@@ -241,6 +232,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
     switch (attrInfo.getMultiplicity()) {
       case MANDATORY:
       case OPTIONAL: {
+        // Set method
         createObserverMethod(attribute, "Set", List.of(classParameter, CD4CodeMill
             .cDParameterBuilder().setName("ov").setMCType(attribute.getMCType()).build()));
         createNotifyMethod(attribute, "Set", List.of(CD4CodeMill.cDParameterBuilder().setName("ov")
@@ -251,6 +243,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       case SET:
         var innerType = getCDGenService().getFirstTypeArgument(attribute.getMCType());
         if (attrInfo.isOrdered()) {
+          // add with index
           createObserverMethod(attribute, "Add", List.of(classParameter, CDParameterFacade
               .getInstance().createParameter(MCTypeFacade.getInstance().createIntType(), "index"),
               CD4CodeMill.cDParameterBuilder().setName("newElem").setMCType(innerType).build()));
@@ -259,6 +252,7 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
                   .cDParameterBuilder().setName("newElem").setMCType(innerType).build()),
               "methods.observer.notifyObserverAttributeSpecificAssoc", "Add", "index, newElem");
           
+          // remove with index
           createObserverMethod(attribute, "Remove", List.of(classParameter, CDParameterFacade
               .getInstance().createParameter(MCTypeFacade.getInstance().createIntType(), "index"),
               CD4CodeMill.cDParameterBuilder().setName("elem").setMCType(innerType).build()));
@@ -269,12 +263,14 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
           
         }
         else {
+          // add without index
           createObserverMethod(attribute, "Add", List.of(classParameter, CD4CodeMill
               .cDParameterBuilder().setName("newElem").setMCType(innerType).build()));
           createNotifyMethod(attribute, "Add", List.of(CD4CodeMill.cDParameterBuilder().setName(
               "newElem").setMCType(innerType).build()),
               "methods.observer.notifyObserverAttributeSpecificAssoc", "Add", "newElem");
           
+          // remove without index
           createObserverMethod(attribute, "Remove", List.of(classParameter, CD4CodeMill
               .cDParameterBuilder().setName("elem").setMCType(innerType).build()));
           createNotifyMethod(attribute, "Remove", List.of(CD4CodeMill.cDParameterBuilder().setName(

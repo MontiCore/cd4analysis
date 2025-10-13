@@ -34,6 +34,8 @@ import java.util.*;
 public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2 {
   
+  // TODO: Replace dispatcher with AttrHelper & use visit() instead of getAttributes()
+  // TODO: Remove type-dispatcher calls from the templates
   CD4AnalysisTypeDispatcher dispatcher = new CD4AnalysisTypeDispatcher();
   
   @Override
@@ -151,15 +153,11 @@ public class BuilderDecorator extends AbstractDecorator<AbstractDecorator.NoData
         // if this method does not exist,
         // we need to reference the attribute directly in the build method
         boolean hasSetterMethod;
-        List<ASTCDMethod> methods = decoratorData.getDecoratorData(SetterDecorator.class) != null
-            ? decoratorData.getDecoratorData(SetterDecorator.class).methods.get(attribute) : null;
-        if (methods == null || methods.isEmpty() || methods.stream().noneMatch(m -> m.getName()
-            .equals("set" + StringTransformations.capitalize(attribute.getName())))) {
-          hasSetterMethod = false;
-        }
-        else {
-          hasSetterMethod = true;
-        }
+        List<SetterDecorator.MethodInformation> methods = decoratorData.getDecoratorData(
+            SetterDecorator.class) != null ? decoratorData.getDecoratorData(SetterDecorator.class)
+                .getMethods(attribute) : List.of();
+        hasSetterMethod = methods.stream().anyMatch(mi -> mi.getKind()
+            == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT);
         
         // Add set attributes in the build method
         glexOpt.ifPresent(glex -> glex.addAfterTemplate("methods.builder.build:Inner", buildMethod,

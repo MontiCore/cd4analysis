@@ -27,7 +27,6 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.tagging.tags.TagsMill;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
@@ -79,9 +78,6 @@ public class CDGenTool extends CDGeneratorTool {
    * @param args array of the command line arguments
    */
   public void run(String[] args) {
-    // We might be using tags
-    TagsMill.reset();
-    
     CD4CodeMill.reset();
     CD4CodeMill.init();
     
@@ -226,9 +222,9 @@ public class CDGenTool extends CDGeneratorTool {
       Runnable initDecoratedGlobalScope, Consumer<ASTCDCompilationUnit> postDecorate,
       Collection<ASTCDCompilationUnit> asts) {
     glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance());
+    glex.setGlobalValue("mcTypeFacade", MCTypeFacade.getInstance()); // TODO: Remove from templates
     glex.setGlobalValue("cdGenService", new CDGenService());
-    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher());
+    glex.setGlobalValue("cd4AnalysisTypeDispatcher", new CD4AnalysisTypeDispatcher()); // TODO: Remove from templates
     
     CDGenerator generator = new CDGenerator(setup);
     DecoratorConfig decSetup = new DecoratorConfig();
@@ -253,8 +249,6 @@ public class CDGenTool extends CDGeneratorTool {
       CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
       t.add4CDBasis(new CDBasisDefaultPackageTrafo());
       decorated.get().accept(t);
-      // Post-Decorate: make methods in interfaces abstract
-      //this.makeMethodsInInterfacesAbstract(decorated.get());
       // Post-Decorate: map import statements to classes
       this.mapCD4CImports(decorated.get());
       
@@ -323,7 +317,6 @@ public class CDGenTool extends CDGeneratorTool {
     CDBasisMill.globalScope().add(CDBasisMill.typeSymbolBuilder().setName(simplename).setFullName(
         fullName).setSpannedScope(CDBasisMill.scope()).setEnclosingScope(CDBasisMill.globalScope())
         .build());
-    
   }
   
   /**
