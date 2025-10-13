@@ -9,8 +9,8 @@ package de.monticore.cd;
  */
 public interface ICDObservable<O extends ICDObserver<T>, T extends ICDObservable<O, T>> {
   
-  default void addObserver(O observer) {}
+  void addObserver(O observer);
   
-  default void removeObserver(O observer) {}
+  void removeObserver(O observer);
   
 }

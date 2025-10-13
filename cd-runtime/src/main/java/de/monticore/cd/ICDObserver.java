@@ -14,6 +14,6 @@ public interface ICDObserver<T extends ICDObservable<?, T>> {
    *
    * @param clazz the obj which has changed
    */
-  void notifyUpdate(T clazz);
+  default void notifyUpdate(T clazz) {}
   
 }
