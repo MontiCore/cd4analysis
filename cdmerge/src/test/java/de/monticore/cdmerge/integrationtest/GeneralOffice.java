@@ -4,6 +4,7 @@ package de.monticore.cdmerge.integrationtest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.MergeTool;
@@ -19,15 +20,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class GeneralOffice extends BaseTest {
-  
+
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/General";
-  
+
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/office/A.cd";
-  
+
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/office/B.cd";
-  
+
   private static final String EXPECTED = INPUT_MODEL_DIR + "/office/mergedCD.cd";
-  
+
   @Test
   public void testOffice() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -40,18 +41,18 @@ public class GeneralOffice extends BaseTest {
     assertTrue(parseCD(CDMergeUtils.prettyPrint(result.getMergedCD().get())).deepEquals(expectedCD,
         false));
   }
-  
+
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
     CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
         MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD").withParam(
             MergeParameter.MERGE_HETEROGENEOUS_TYPES).withParam(
                 MergeParameter.DISABLE_CONTEXT_CONDITIONS);
-    
+
     for (String m : inputModels) {
-      Preconditions.checkNotNull(loadModel(Paths.get(m)));
+      Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
-  
+
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 
 public class CDMerge {
-  
+
   /**
    * Set of Merge Parameters that are supported by the CD tool's CLI command `--mrg-config` as
    * defined in the README.
@@ -31,12 +31,12 @@ public class CDMerge {
       MergeParameter.MERGE_COMMENTS, MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS,
       MergeParameter.MERGE_HETEROGENEOUS_TYPES, MergeParameter.PRIMITIVE_TYPE_CONVERSION,
       MergeParameter.STRICT, MergeParameter.WARNINGS_AS_ERRORS, MergeParameter.LOG_STDERR);
-  
+
   @Deprecated
   public static ASTCDCompilationUnit merge(List<ASTCDCompilationUnit> inputs) {
     return merge(inputs, "Merge", new HashSet<>());
   }
-  
+
   /**
    * merges inputCDs into composite CD according to specified mergeParameters
    *
@@ -44,9 +44,9 @@ public class CDMerge {
    */
   public static ASTCDCompilationUnit merge(List<ASTCDCompilationUnit> inputCDs,
       String compositeCDName, Set<MergeParameter> mergeParameters) {
-    
+
     Optional<ASTCDCompilationUnit> optAST;
-    
+
     if (inputCDs.size() < 2) {
       optAST = inputCDs.stream().findAny();
       if (optAST.isPresent()) {
@@ -55,15 +55,15 @@ public class CDMerge {
       Log.error("No Input-CD!");
       return null;
     }
-    
+
     try {
       optAST = new MergeTool(getConfig(inputCDs, compositeCDName, mergeParameters)).mergeCDs()
           .getMergedCD();
-      
+
       if (optAST.isPresent()) {
         return optAST.get();
       }
-      
+
     }
     catch (MergingException e) {
       Log.error(e.getMessage());
@@ -72,22 +72,22 @@ public class CDMerge {
     Log.error("Unknown Error");
     return null;
   }
-  
+
   /** helper-method that constructs the CDMergeConfig */
   private static CDMergeConfig getConfig(List<ASTCDCompilationUnit> inputModels, String name,
       Set<MergeParameter> mergeParameters) {
     CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(
         MergeParameter.AST_BASED).withParam(MergeParameter.OUTPUT_NAME, name);
-    
+
     mergeParameters.forEach(builder::withParam);
-    
+
     for (ASTCDCompilationUnit cd : inputModels) {
       Preconditions.checkNotNull(cd);
       builder.addInputAST(cd);
     }
     return builder.build();
   }
-  
+
   /**
    * Parses a json-object containing "Merge Parameters" as a json-array. Unsupported and unknown
    * parameters are filtered out.
@@ -112,5 +112,5 @@ public class CDMerge {
     }
     return mergeParameters;
   }
-  
+
 }

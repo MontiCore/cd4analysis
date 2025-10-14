@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.MergeTool;
 import de.monticore.cdmerge.config.CDMergeConfig;
@@ -17,16 +18,16 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AssociativityTest extends BaseTest {
-  
+
   private static final String INPUT_MODEL_1 = "src/test/resources/class_diagrams"
       + "/notAssociative/A.cd";
-  
+
   private static final String INPUT_MODEL_2 = "src/test/resources/class_diagrams"
       + "/notAssociative/B.cd";
-  
+
   private static final String INPUT_MODEL_3 = "src/test/resources/class_diagrams"
       + "/notAssociative/C.cd";
-  
+
   @Test
   public void testAssociationNonAssociative() throws IOException {
     List<String> inputModels = new ArrayList<>();
@@ -42,16 +43,16 @@ public class AssociativityTest extends BaseTest {
       assertTrue(e.getMessage().contains("Input CDs are NOT associative"));
     }
   }
-  
+
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
     CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
         MergeParameter.ON).withParam(MergeParameter.ASSERT_ASSOCIATIVITY).withParam(
             MergeParameter.OUTPUT_NAME, "mergedCD");
     for (String m : inputModels) {
-      Preconditions.checkNotNull(loadModel(Paths.get(m)));
+      Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
-  
+
 }
