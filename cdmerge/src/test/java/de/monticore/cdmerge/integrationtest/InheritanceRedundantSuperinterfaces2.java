@@ -3,7 +3,6 @@ package de.monticore.cdmerge.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -20,15 +19,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class InheritanceRedundantSuperinterfaces2 extends BaseTest {
-
+  
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Inheritance";
-
+  
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/redundantSuperinterfaces2/A.cd";
-
+  
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/redundantSuperinterfaces2/B.cd";
-
+  
   private static final String EXPECTED = INPUT_MODEL_DIR + "/redundantSuperinterfaces2/mergedCD.cd";
-
+  
   @Test
   public void testInheritanceRedundantSuperinterfaces2() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -41,16 +40,16 @@ public class InheritanceRedundantSuperinterfaces2 extends BaseTest {
     assertTrue(parseCD(CDMergeUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD,
         false));
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
     CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
         MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
-
+    
     for (String m : inputModels) {
       Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
-
+  
 }

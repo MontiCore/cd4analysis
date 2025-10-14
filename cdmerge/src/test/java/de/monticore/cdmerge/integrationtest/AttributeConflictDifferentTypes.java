@@ -4,7 +4,6 @@ package de.monticore.cdmerge.integrationtest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.MergeTool;
@@ -20,13 +19,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AttributeConflictDifferentTypes extends BaseTest {
-
+  
   private static final String INPUT_MODEL_1 = "src/test/resources/class_diagrams/Attribute"
       + "/conflictDifferentTypes/A.cd";
-
+  
   private static final String INPUT_MODEL_2 = "src/test/resources/class_diagrams/Attribute"
       + "/conflictDifferentTypes/B.cd";
-
+  
   @Test
   public void testAttributeConflictDifferentTypes() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -43,17 +42,17 @@ public class AttributeConflictDifferentTypes extends BaseTest {
           "Name of the field or role 'birthday' is not unique for the class 'Person'"));
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
     CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
         MergeParameter.ON).withParam(MergeParameter.FAIL_FAST).withParam(MergeParameter.OUTPUT_NAME,
             "mergedCD");
-
+    
     for (String m : inputModels) {
       Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
-
+  
 }

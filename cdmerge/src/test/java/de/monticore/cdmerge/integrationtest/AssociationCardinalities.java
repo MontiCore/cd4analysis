@@ -4,7 +4,6 @@ package de.monticore.cdmerge.integrationtest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -21,15 +20,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AssociationCardinalities extends BaseTest {
-
+  
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Association";
-
+  
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/cardinalities/A.cd";
-
+  
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/cardinalities/B.cd";
-
+  
   private static final String EXPECTED = INPUT_MODEL_DIR + "/cardinalities/mergedCD.cd";
-
+  
   @Test
   public void testAssociationCardinalities() throws IOException {
     List<String> inputModels = new ArrayList<>();
@@ -48,7 +47,7 @@ public class AssociationCardinalities extends BaseTest {
       fail("Unexpected exception: " + e.getMessage());
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
     CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
         MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD").withParam(
@@ -59,5 +58,5 @@ public class AssociationCardinalities extends BaseTest {
     }
     return builder.build();
   }
-
+  
 }

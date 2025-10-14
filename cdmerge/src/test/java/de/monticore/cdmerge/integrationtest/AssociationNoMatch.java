@@ -4,7 +4,6 @@ package de.monticore.cdmerge.integrationtest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -21,15 +20,15 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class AssociationNoMatch extends BaseTest {
-
+  
   private static final String INPUT_MODEL_DIR = "src/test/resources/class_diagrams/Association";
-
+  
   private static final String INPUT_MODEL_1 = INPUT_MODEL_DIR + "/noMatch/A.cd";
-
+  
   private static final String INPUT_MODEL_2 = INPUT_MODEL_DIR + "/noMatch/B.cd";
-
+  
   private static final String EXPECTED = INPUT_MODEL_DIR + "/noMatch/mergedCD.cd";
-
+  
   @Test
   public void testAssociationNoMatch() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
@@ -43,7 +42,7 @@ public class AssociationNoMatch extends BaseTest {
       if (result.getMaxErrorLevel().ordinal() < ErrorLevel.WARNING.ordinal()) {
         fail("Warnings expected due to ambiguous association roles");
       }
-
+      
       if (!result.getLog(ErrorLevel.WARNING).hasLogWithMessageContaining(
           ".*Navigation over .* is ambiguous.*")) {
         fail("Warnings expected due to ambiguous association roles");
@@ -53,7 +52,7 @@ public class AssociationNoMatch extends BaseTest {
       fail("Unexpected Exception: " + unexpected.getMessage());
     }
   }
-
+  
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
     CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
         MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
@@ -63,5 +62,5 @@ public class AssociationNoMatch extends BaseTest {
     }
     return builder.build();
   }
-
+  
 }
