@@ -91,7 +91,7 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     ASTMCType type = getCDGenService().getFirstTypeArgument(attribute.getMCType()).deepClone();
     return decorate(clazz, attribute, SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.opt.Set4Opt",
         name, List.of(CDParameterFacade.getInstance().createParameter(type, attribute.getName())),
-        attribute);
+        attribute, "--unused--");
   }
   
   protected MethodInformation decorateOptionalAbsent(ASTCDClass clazz, ASTCDAttribute attribute) {
