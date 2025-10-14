@@ -14,10 +14,9 @@ import de.monticore.odlink._ast.ASTODLink;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Package {
-
+  
   private final ASTODObject leftObject;
   private final boolean isProcessedLeft;
   private final ASTODObject rightObject;
@@ -27,7 +26,7 @@ public class Package {
   private final ClassSide side;
   private final ODBuilder ODBuilder = new ODBuilder();
   private final ODGenHelper odGenHelper;
-
+  
   public Package(ASTCDClass leftObject, String idSrc, ASTCDClass rightObject, String idTgt,
       ASTCDAssociation association, ClassSide side, boolean isProcessedLeft,
       boolean isProcessedRight, Syn2SemDiffHelper helper, ODGenHelper odGenHelper) {
@@ -44,7 +43,7 @@ public class Package {
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
   }
-
+  
   public Package(ASTODObject leftObject, ASTODObject rightObject, ASTCDAssociation association,
       ClassSide side, boolean isProcessedLeft, boolean isProcessedRight, ODGenHelper odGenHelper) {
     this.leftObject = leftObject;
@@ -58,7 +57,7 @@ public class Package {
     this.isProcessedRight = isProcessedRight;
     this.odGenHelper = null;
   }
-
+  
   public Package(ASTCDClass leftObject, String idSrc, ASTODObject rightObject,
       ASTCDAssociation association, ClassSide side, boolean isProcessedLeft,
       boolean isProcessedRight, Syn2SemDiffHelper helper, ODGenHelper odGenHelper) {
@@ -74,7 +73,7 @@ public class Package {
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
   }
-
+  
   public Package(ASTODObject leftObject, ASTCDClass rightObject, String idTgt,
       ASTCDAssociation association, ClassSide side, boolean isProcessedLeft,
       boolean isProcessedRight, Syn2SemDiffHelper helper, ODGenHelper odGenHelper) {
@@ -90,7 +89,7 @@ public class Package {
     this.isProcessedLeft = isProcessedLeft;
     this.isProcessedRight = isProcessedRight;
   }
-
+  
   public Package(ASTODObject leftObject, ODGenHelper odGenHelper) {
     this.leftObject = leftObject;
     this.rightObject = null;
@@ -101,7 +100,7 @@ public class Package {
     this.isProcessedRight = false;
     this.odGenHelper = odGenHelper;
   }
-
+  
   public Package(ASTCDClass astcdClass, String id, Syn2SemDiffHelper helper,
       ODGenHelper odGenHelper) {
     this.odGenHelper = odGenHelper;
@@ -114,21 +113,21 @@ public class Package {
     this.isProcessedLeft = false;
     this.isProcessedRight = false;
   }
-
+  
   public ASTODObject getLeftObject() { return leftObject; }
-
+  
   public ASTODObject getRightObject() { return rightObject; }
-
+  
   public ASTODLink getAssociation() { return association; }
-
+  
   public ASTCDAssociation getAstcdAssociation() { return astcdAssociation; }
-
+  
   public ClassSide getSide() { return side; }
-
+  
   public boolean isProcessedLeft() { return isProcessedLeft; }
-
+  
   public boolean isProcessedRight() { return isProcessedRight; }
-
+  
   public List<ASTODAttribute> getAttributesOD(ASTCDClass astcdClass, Syn2SemDiffHelper helper) {
     List<ASTCDAttribute> attributes = helper.getAllAttr(astcdClass).b;
     List<ASTODAttribute> odAttributes = new ArrayList<>();
@@ -145,5 +144,5 @@ public class Package {
     }
     return odAttributes;
   }
-
+  
 }
