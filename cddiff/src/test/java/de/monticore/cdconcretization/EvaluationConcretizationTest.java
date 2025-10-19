@@ -215,4 +215,49 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     testConcretizedConformsToRefAndExpectedOut("evaluation/mill/LanguageInfrastructureConc.cd",
             "evaluation/mill/MillRef.cd", "evaluation/mill/MillOut.cd");
   }
+
+  @Nested
+  class StaticDelegator {
+
+    /**
+     * Disabled because currently 'method forEach method' is not support yet.
+     */
+    @Test
+    @Disabled
+    void testStaticDelegator() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut("evaluation/staticDelegator/StaticDelegatorConc.cd",
+              "evaluation/staticDelegator/StaticDelegatorRef.cd", "evaluation/staticDelegator/StaticDelegatorOut.cd");
+    }
+
+    @Test
+    void testStaticMethodExistsAttributeWorkaround() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+              "evaluation/staticDelegator/attrWorkaround/StaticExistsConc.cd",
+              "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
+              "evaluation/staticDelegator/attrWorkaround/StaticExistsOut.cd");
+    }
+
+    /**
+     * Disabled because forEach is not implemented to be "bidirectional". Thus, we cannot complete
+     * in both directions (static and instance methods) with having only a single forEach in the
+     * reference model.
+     * Further, if we add a second forEach for the instance methods, we run into problems with
+     * the current incarnation binding concept as the derived dependency elements cannot be found
+     * in the concrete model.
+     */
+    @Test
+    @Disabled
+    void testInstanceMethodExistsAttributeWorkaround() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+              "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsConc.cd",
+              "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
+              "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsOut.cd");
+    }
+  }
 }

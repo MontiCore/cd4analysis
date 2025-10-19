@@ -1,0 +1,7 @@
+classdiagram StaticDelegatorRef {
+
+  class StaticDelegator {
+    <<forEach="StaticDelegator.method">> any _method();
+    static any method();
+  }
+}
