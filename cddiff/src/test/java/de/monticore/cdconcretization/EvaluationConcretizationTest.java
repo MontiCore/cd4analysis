@@ -207,5 +207,12 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     }
     
   }
-  
+
+  @Test
+  void testMill() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut("evaluation/mill/LanguageInfrastructureConc.cd",
+            "evaluation/mill/MillRef.cd", "evaluation/mill/MillOut.cd");
+  }
 }

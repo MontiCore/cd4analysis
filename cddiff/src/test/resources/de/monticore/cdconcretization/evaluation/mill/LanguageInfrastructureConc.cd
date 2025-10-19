@@ -1,0 +1,8 @@
+classdiagram LanguageInfrastructureConc {
+
+  <<ref="MillProduct">> class G1Parser;
+  <<ref="MillProduct">> class G1Traverser;
+  <<ref="MillProduct">> class ASTFooBuilder;
+
+  <<ref="Mill">> class G1Mill;
+}
