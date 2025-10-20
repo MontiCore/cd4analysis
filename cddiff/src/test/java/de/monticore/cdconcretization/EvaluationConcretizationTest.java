@@ -260,4 +260,36 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
               "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsOut.cd");
     }
   }
+
+  @Nested
+  class TransitiveDependencies {
+
+    @Test
+    void testTransitiveDependencyInSyntacticalOrder() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+              "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
+              "evaluation/transitiveDependencies/TransitiveDependenciesRef.cd",
+              "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
+    }
+
+    /**
+     * Disabled because currently the forEach completion is dependent on the syntactical order of
+     * elements in the reference model. In this example, the {@code DataClassBuilderFactory}
+     * with a dependency on {@code DataClassBuilder} is declared before the {@code DataClassBuilder}
+     * itself. Therefore, during completion, no incarnation of {@code DataClassBuilder} can be found
+     * and thus no incarnation of {@code DataClassBuilderFactory} is added.
+     */
+    @Test
+    @Disabled
+    void testTransitiveDependencySwappedOrder() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+              "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
+              "evaluation/transitiveDependencies/TransitiveDependenciesSwappedOrderRef.cd",
+              "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
+    }
+  }
 }

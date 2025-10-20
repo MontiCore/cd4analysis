@@ -1,0 +1,8 @@
+classdiagram TransitiveDependenciesRef {
+
+  class DataClass;
+
+  <<forEach="DataClass">> class DataClassBuilder;
+
+  <<forEach="DataClassBuilder">> class DataClassBuilderFactory;
+}
