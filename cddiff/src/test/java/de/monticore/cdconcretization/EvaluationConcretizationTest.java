@@ -207,18 +207,18 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     }
     
   }
-
+  
   @Test
   void testMill() {
     // TODO Remove once we have explicit support for 'forEach' conformance check
     confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
     testConcretizedConformsToRefAndExpectedOut("evaluation/mill/LanguageInfrastructureConc.cd",
-            "evaluation/mill/MillRef.cd", "evaluation/mill/MillOut.cd");
+        "evaluation/mill/MillRef.cd", "evaluation/mill/MillOut.cd");
   }
-
+  
   @Nested
   class StaticDelegator {
-
+    
     /**
      * Disabled because currently 'method forEach method' is not support yet.
      */
@@ -227,20 +227,22 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     void testStaticDelegator() {
       // TODO Remove once we have explicit support for 'forEach' conformance check
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
-      testConcretizedConformsToRefAndExpectedOut("evaluation/staticDelegator/StaticDelegatorConc.cd",
-              "evaluation/staticDelegator/StaticDelegatorRef.cd", "evaluation/staticDelegator/StaticDelegatorOut.cd");
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/staticDelegator/StaticDelegatorConc.cd",
+          "evaluation/staticDelegator/StaticDelegatorRef.cd",
+          "evaluation/staticDelegator/StaticDelegatorOut.cd");
     }
-
+    
     @Test
     void testStaticMethodExistsAttributeWorkaround() {
       // TODO Remove once we have explicit support for 'forEach' conformance check
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
-              "evaluation/staticDelegator/attrWorkaround/StaticExistsConc.cd",
-              "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
-              "evaluation/staticDelegator/attrWorkaround/StaticExistsOut.cd");
+          "evaluation/staticDelegator/attrWorkaround/StaticExistsConc.cd",
+          "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
+          "evaluation/staticDelegator/attrWorkaround/StaticExistsOut.cd");
     }
-
+    
     /**
      * Disabled because forEach is not implemented to be "bidirectional". Thus, we cannot complete
      * in both directions (static and instance methods) with having only a single forEach in the
@@ -255,25 +257,26 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
       // TODO Remove once we have explicit support for 'forEach' conformance check
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
-              "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsConc.cd",
-              "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
-              "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsOut.cd");
+          "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsConc.cd",
+          "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
+          "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsOut.cd");
     }
+    
   }
-
+  
   @Nested
   class TransitiveDependencies {
-
+    
     @Test
     void testTransitiveDependencyInSyntacticalOrder() {
       // TODO Remove once we have explicit support for 'forEach' conformance check
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
-              "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
-              "evaluation/transitiveDependencies/TransitiveDependenciesRef.cd",
-              "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
+          "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesRef.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
     }
-
+    
     /**
      * Disabled because currently the forEach completion is dependent on the syntactical order of
      * elements in the reference model. In this example, the {@code DataClassBuilderFactory}
@@ -287,9 +290,11 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
       // TODO Remove once we have explicit support for 'forEach' conformance check
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut(
-              "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
-              "evaluation/transitiveDependencies/TransitiveDependenciesSwappedOrderRef.cd",
-              "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
+          "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesSwappedOrderRef.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
     }
+    
   }
+  
 }
