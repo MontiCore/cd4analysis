@@ -25,7 +25,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-/** Add special handling to the setters of bidirectional associations */
+/**
+ * Add special handling to the setters of bidirectional associations
+ * TODO: This decorator requires testing
+ * TODO: The previous values of elements are currently not updated
+ */
 public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2 {
   
@@ -132,7 +136,6 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
               attribute.get_SourcePositionStart());
       }
       
-      // TODO: Call remove/setAbsent of previous values!
     }
   }
   
