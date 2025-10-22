@@ -2,10 +2,10 @@
 package de.monticore.cd.codegen.decorators;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+import static de.monticore.cd.codegen.decorators.SetterDecorator.AFTER_SETTER_BODY;
 
 import com.google.common.collect.Iterables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
-import de.monticore.cd.codegen.decorators.data.ForwardingTemplateHookPoint;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -29,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
  * Add special handling to the setters of bidirectional associations
  * TODO: This decorator requires testing
  * TODO: The previous values of elements are currently not updated
+ * TODO: Store methods via Data
  */
 public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
     CDBasisVisitor2 {
@@ -68,6 +69,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
       if (!role.getOtherSide().isIsDefinitiveNavigable())
         return;
       
+      String thisName = role.getEnclosingScope().getName();
       var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
       var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
       
@@ -90,7 +92,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
               "methods.Set", name, List.of(CDParameterFacade.getInstance().createParameter(otherRole
                   .getType().printFullName(), otherRole.getName())), otherRole);
           
-          callLocal(thisSideAttrInfo, methods, role, "set");
+          callLocal(thisSideAttrInfo, methods, role, "set", thisName);
           
           break;
         case OPTIONAL:
@@ -99,9 +101,10 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
               .getName()) + "Local");
           decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT,
               "methods.opt.Set4Opt", name, List.of(CDParameterFacade.getInstance().createParameter(
-                  otherRole.getType().printFullName(), otherRole.getName())), otherRole);
+                  otherRole.getType().printFullName(), otherRole.getName())), otherRole,
+              "--unused--");
           
-          callLocal(thisSideAttrInfo, methods, role, "set");
+          callLocal(thisSideAttrInfo, methods, role, "set", thisName);
           break;
         case SET:
           // Add set${role}Local method for *
@@ -129,46 +132,58 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
                 MCTypeFacade.getInstance().createBooleanType()).build());
             
           }
-          callLocal(thisSideAttrInfo, methods, role, "add");
+          callLocal(thisSideAttrInfo, methods, role, "add", thisName);
           break;
         default:
-          Log.error("0xTODO: Unhandled multiplicty " + otherSideAttrInfo.getMultiplicity(),
-              attribute.get_SourcePositionStart());
+          Log.error("0xTODO: Unhandled multiplicity " + otherSideAttrInfo.getMultiplicity()
+              + " in NavigableSetter", attribute.get_SourcePositionStart());
       }
       
     }
   }
   
+  /**
+   * Use the template replacement mechanism to add
+   *
+   * @param thisSideAttrInfo attr info of this side
+   * @param methods setters of the domain class
+   * @param role the role
+   * @param method the methodName
+   * @param clazz the current class' name, to support TOP mechanism
+   */
   protected void callLocal(AttrHelper.AttrData thisSideAttrInfo,
-      List<SetterDecorator.MethodInformation> methods, CDRoleSymbol role, String method) {
+      List<SetterDecorator.MethodInformation> methods, CDRoleSymbol role, String method,
+      String clazz) {
     if (thisSideAttrInfo.getMultiplicity() == AttrHelper.Multiplicity.MANDATORY) {
       // Call ${role}.set${otherRole}Local when updating
       methods.stream().filter(m -> m.getKind()
           == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT).forEach(m -> glexOpt.ifPresent(
-              g -> g.addAfterTemplate(m.getTemplateName(), m.getSetMethod(), new TemplateHookPoint(
-                  "methods.navsetter.CallLocal", role.getOtherSide().getName(), method))));
+              g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(), new TemplateHookPoint(
+                  "methods.navsetter.CallLocal", role, role.getOtherSide().getName(), method,
+                  clazz))));
     }
     else if (thisSideAttrInfo.getMultiplicity() == AttrHelper.Multiplicity.OPTIONAL) {
       // Call ${role}.set${otherRole}Local when updating
       methods.stream().filter(m -> m.getKind()
           == SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT).forEach(m -> glexOpt.ifPresent(
-              g -> g.addAfterTemplate(m.getTemplateName(), m.getSetMethod(), new TemplateHookPoint(
-                  "methods.navsetter.CallLocalOpt", role.getOtherSide().getName(), method))));
+              g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(), new TemplateHookPoint(
+                  "methods.navsetter.CallLocalOpt", role, role.getOtherSide().getName(), method,
+                  clazz))));
     }
     else if (thisSideAttrInfo.getMultiplicity() == AttrHelper.Multiplicity.SET) {
       methods.stream().filter(m -> m.getKind() == SetterDecorator.SetterMethodKind.ADD).forEach(
-          m -> glexOpt.ifPresent(g -> g.addAfterTemplate("Setter:After", m.getSetMethod(),
+          m -> glexOpt.ifPresent(g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(),
               new TemplateHookPoint("methods.navsetter.CallLocalAddSet", role, role.getOtherSide()
-                  .getName(), method))));
+                  .getName(), method, clazz))));
       // Call remove of previous
       methods.stream().filter(m -> m.getKind() == SetterDecorator.SetterMethodKind.REM).forEach(
-          m -> glexOpt.ifPresent(g -> g.addAfterTemplate("Setter:After", m.getSetMethod(),
+          m -> glexOpt.ifPresent(g -> g.addAfterTemplate(AFTER_SETTER_BODY, m.getSetMethod(),
               new TemplateHookPoint("methods.navsetter.CallLocalRemSet", role, role.getOtherSide()
                   .getName(), method))));
     }
     else {
-      Log.warn("0xTODO: Unhandled multiplicty" + thisSideAttrInfo.getMultiplicity(), role
-          .getSourcePosition());
+      Log.warn("0xTODO: Unhandled multiplicity" + thisSideAttrInfo.getMultiplicity()
+          + " in NavigableSetter#callLocal", role.getSourcePosition());
     }
   }
   
@@ -178,8 +193,8 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
     
     ASTCDMethod method = CDMethodFacade.getInstance().createMethod(role.getAssocSide().getModifier()
         .deepClone(), methodName, params);
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
-        new ForwardingTemplateHookPoint(templateName, glex, templateParams)));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
+        templateName, templateParams)));
     
     addToClass(decParent, method);
     

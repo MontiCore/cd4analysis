@@ -23,6 +23,19 @@ classdiagram MyCD {
 
   association A <-> B;
 
+  // Test BiDirectional association generation
+  class A1;
+  class A2;
+  class A3;
+  class A4;
+  class A5;
+  class A6;
+  association [0..1] A<-> (a1) A1 [0..*] ;
+  association [0..1] A<-> (a2) A2 [0..1] ;
+  association [0..1] A<-> (a3) A3 [*]    ;
+  association [*] A<-> (a4) A4 [0..*] ;
+  association [*] A<-> (a5) A5 [0..1] ;
+  association [*] A<-> (a6) A6 [*]    ;
 
   public class ConfiguredFromCLI {
     // The build.gradle options
