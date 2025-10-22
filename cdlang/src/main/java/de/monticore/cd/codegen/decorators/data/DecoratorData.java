@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators.data;
 
+import com.google.common.collect.Iterables;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.creators.ICreator;
@@ -26,6 +27,8 @@ import de.monticore.tagging.tags._ast.ASTTagUnit;
 import de.monticore.umlstereotype._ast.ASTStereoValue;
 import de.monticore.visitor.IVisitor;
 import de.se_rwth.commons.logging.Log;
+
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.Supplier;
@@ -51,20 +54,25 @@ public class DecoratorData {
       new WeakHashMap<>();
   
   protected SimpleSymbolTagger tagger = new SimpleSymbolTagger(this::_getTaggingUnits);
+  @Nullable
   protected ASTTagUnit internalTagUnit;
   
   protected AttrHelper attrHelper;
   
   public DecoratorData() {
-    this.internalTagUnit = TagsMill.tagUnitBuilder().setName("__cd_decorator_internak").build();
     this.attrHelper = new AttrHelper();
+  }
+  
+  public void withTags() {
+    this.internalTagUnit = TagsMill.tagUnitBuilder().setName("__cd_decorator_internal").build();
   }
   
   protected Iterable<ASTTagUnit> _getTaggingUnits() {
     // As a note: It might be interesting to limit to a subset of the loaded tags?
-    //    return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository
-    //        .getLoadedTagUnits());
-    // As we are currently unable to aggregate the Tags+CD Mills, we disable tags for now
+    if (this.internalTagUnit != null)
+      return Iterables.concat(Collections.singleton(internalTagUnit), TagRepository
+          .getLoadedTagUnits());
+    // As we are currently unable to aggregate the Tags+CD Mills, we disable tags for now, unless explicitly enabled
     return TagRepository.getLoadedTagUnits();
   }
   

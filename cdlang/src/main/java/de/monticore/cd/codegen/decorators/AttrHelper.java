@@ -1,11 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.decorators;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types3.SymTypeRelations;
+import de.se_rwth.commons.logging.Log;
 
 public class AttrHelper {
   
@@ -48,12 +51,44 @@ public class AttrHelper {
     
     public SymTypeExpression getSymTypeExpression() { return symTypeExpression; }
     
+    @Override
+    public String toString() {
+      return "AttrData{" + "typeKind=" + typeKind + ", multiplicity=" + multiplicity + ", ordered="
+          + ordered + ", symTypeExpression=" + symTypeExpression.printFullName() + '}';
+    }
+    
   }
   
   protected SymTypeExpression stringSymTypeExpression;
   
   public AttrHelper() {
     stringSymTypeExpression = SymTypeExpressionFactory.createStringType();
+  }
+  
+  public AttrData getFromRole(CDRoleSymbol roleSymbol) {
+    // The cardinality of role-symbols is stored on the symbol, not its type!
+    AttrData data = getFromSymTypeExpr(roleSymbol.getType());
+    if (!roleSymbol.isPresentCardinality()) {
+      return data;
+    }
+    if (roleSymbol.getCardinality().isMult() || roleSymbol.getCardinality().isAtLeastOne()) {
+      return new AttrData(data.getTypeKind(), Multiplicity.SET, roleSymbol.isIsOrdered(), data
+          .getSymTypeExpression());
+    }
+    else if (roleSymbol.getCardinality().isOpt()) {
+      return new AttrData(data.getTypeKind(), Multiplicity.OPTIONAL, false, data
+          .getSymTypeExpression());
+    }
+    else if (roleSymbol.getCardinality().isOne()) {
+      return data;
+    }
+    else if (roleSymbol.getCardinality().toCardinality().isNoUpperLimit()) {
+      return new AttrData(data.getTypeKind(), Multiplicity.SET, roleSymbol.isIsOrdered(), data
+          .getSymTypeExpression());
+    }
+    Log.warn("0xTODO: Unhandled cardinality " + CD4AnalysisMill.prettyPrint(roleSymbol
+        .getCardinality().toCardinality(), false), roleSymbol.getSourcePosition());
+    return data;
   }
   
   public AttrData getFromSymTypeExpr(SymTypeExpression symTypeExpression) {

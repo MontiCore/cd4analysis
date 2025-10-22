@@ -5,7 +5,6 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
 import de.monticore.cd.codegen.decorators.data.DecoratorData;
-import de.monticore.cd.codegen.decorators.data.ForwardingTemplateHookPoint;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -15,6 +14,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterData> implements
     CDBasisVisitor2 {
+  
+  public static final String AFTER_SETTER_BODY = "Setter:After";
   
   protected SetterData setterData;
   
@@ -149,8 +151,8 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
     
     ASTCDMethod method = CDMethodFacade.getInstance().createMethod(attribute.getModifier()
         .deepClone(), methodName, params);
-    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method,
-        new ForwardingTemplateHookPoint(templateName, glex, templateParams)));
+    glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
+        templateName, templateParams)));
     
     addToClass(decParent, method);
     
