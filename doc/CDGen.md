@@ -37,9 +37,6 @@ repositories {
   maven { url 'https://nexus.se.rwth-aachen.de/content/groups/public' }
   mavenCentral()
 }
-dependencies {
-  implementation "de.monticore:monticore-runtime:7.8.0-SNAPSHOT"
-}
 ```
 
 For the main source set, all `.cd` files within the `src/main/cds` directory will be processed.

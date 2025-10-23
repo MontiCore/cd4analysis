@@ -40,9 +40,8 @@ public class CDGenGradlePlugin implements Plugin<Project> {
     
     project.getConfigurations().named("api").configure(api -> {
       api.withDependencies(dependencies -> {
-        dependencies.add(project.getDependencies().create(
-            // de.monticore.lang:cd-runtime:7.8.0-SNAPSHOT:cd-runtime
-            "de.monticore.lang:cd-runtime:" + version + ":cd-runtime"));
+        dependencies.add(project.getDependencies().create("de.monticore.lang:cd-runtime:" + version
+            + ":cd-runtime"));
       });
       
     });
