@@ -23,12 +23,13 @@ if(!hasProperty('bootstrap')) {
   include(':cd2smt')
   include(':cdmerge')
   include(':cdtool')
-  include(':symtabdefinitiontool')
-  include(':symtabdefinitiontool:stdefgradle')
   include(':language-server')
   if("true".equals(getProperty('genTR'))){
     include(":trafo-library")
   }
   include(':cdtool:cdgradle')
-  include(':cd-runtime')
 }
+include(':cd-runtime')
+include(':symtabdefinitiontool')
+include(':symtabdefinitiontool:stdefgradle')
+

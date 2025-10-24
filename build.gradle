@@ -44,14 +44,8 @@ subprojects {
 
   sourceCompatibility = JavaVersion.VERSION_11
 
-  if (!hasProperty('bootstrap')) {
-    allprojects {
-      group = "de.monticore.lang.cd4analysis"
-    }
-  } else {
-    allprojects {
-      group = "de.monticore.lang.bs.cd4analysis"
-    }
+  allprojects {
+    group = "de.monticore.lang.cd4analysis"
   }
 
   ext.grammarDir = 'src/main/grammars'
@@ -125,31 +119,35 @@ publishing {
     // Use the Jar and grammarsJar, as well as the dependencies and module information from :cdlang
     publ.from project(":cdlang").components.java
 
-    // trafolib is different
-    // cdtool as -tool
-    def subprojectsToBePublished = [
-      ":cd2plantuml",
-      ":cd2smt",
-      ":cddiff",
-      ":cdlang",
-      ":cdmerge",
-      ":language-server"
-    ]
-
-    subprojectsToBePublished
-      .findAll { it != ':cdlang' }
-      .each { subprojectName ->
-        publ.artifact(project(subprojectName).tasks.jar) {
-          group "de.monticore.lang"
+    // the bootstrap property causes us to only build the main projects,
+    // which are required by most downstream projects (cdlang & the symtabdef tool)
+    if (!project.hasProperty('bootstrap')) {
+      println("bootstrapbootstrapbootstrapbootstrapbootstrap")
+      // trafolib is different
+      // cdtool as -tool
+      def subprojectsToBePublished = [
+        ":cd2plantuml",
+        ":cd2smt",
+        ":cddiff",
+        ":cdlang",
+        ":cdmerge",
+        ":language-server"
+      ]
+      subprojectsToBePublished
+        .findAll { it != ':cdlang' }
+        .each { subprojectName ->
+          publ.artifact(project(subprojectName).tasks.jar) {
+            group "de.monticore.lang"
+          }
         }
+
+      publ.artifact(project(":cdtool").tasks.jar) {
+        group "de.monticore.lang"
+        classifier "tool"
       }
 
-    publ.artifact(project(":cdtool").tasks.jar){
-      group "de.monticore.lang"
-      classifier "tool"
+      publ.artifact(project(":cdtool").tasks.shadowJar)
     }
-
-    publ.artifact(project(":cdtool").tasks.shadowJar)
     publ.artifact(project(":symtabdefinitiontool").tasks.shadowJar)
     publ.artifact(project(":symtabdefinitiontool:stdefgradle").tasks.jar)
 

@@ -12,12 +12,7 @@ plugins {
 archivesBaseName = "cd4analysis"
 
 def var_path = "de.monticore"
-if (hasProperty('bootstrap')) {
-  group = "de.monticore.lang.bs"
-  var_path = "de.monticore.bs"
-} else {
-  group = "de.monticore.lang"
-}
+group = "de.monticore.lang"
 
 def withDSTLGen = ("true").equals(getProperty('genTR'))
 
