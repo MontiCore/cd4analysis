@@ -4,7 +4,7 @@ classdiagram AssocMultipleTypeIncarnationConc {
   <<ref="Department">>class MathDept;
   <<ref="Department">>class ScienceDept;
 
-  association Teacher (hasTeacher_Teacher) <-> (teachesIn_MathDept) MathDept;
-  association Teacher (hasTeacher_Teacher) <-> (teachesIn_ScienceDept) ScienceDept;
+  association Teacher (hasTeacher) <-> (teachesIn_MathDept) MathDept;
+  association Teacher (hasTeacher) <-> (teachesIn_ScienceDept) ScienceDept;
 
 }

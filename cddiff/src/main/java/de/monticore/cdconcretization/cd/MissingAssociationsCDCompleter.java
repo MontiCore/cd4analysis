@@ -107,10 +107,10 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
       
       // Finally, process any remaining type incarnations that still need to be handled
       // Process the remaining left-type incarnations against right-type incarnations
-      addAssociationIncarnations(ccd, leftTypeInc2Process, rRightTypeIncarnations, rAssoc);
+      addAssociationIncarnations(ccd, leftTypeInc2Process, rRightTypeIncarnations, rAssoc, context);
       
       // Process the remaining right-type incarnations against left-type incarnations
-      addAssociationIncarnations(ccd, rLeftTypeIncarnations, rightTypeInc2Process, rAssoc);
+      addAssociationIncarnations(ccd, rLeftTypeIncarnations, rightTypeInc2Process, rAssoc, context);
       Log.debug("=== DONE processing assoc: " + CD4CodeMill.prettyPrint(rAssoc, false), LOG_NAME);
     }
     super.complete(ccd, rcd, context);
@@ -234,7 +234,8 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
    */
   private void addAssociationIncarnations(ASTCDCompilationUnit concreteCD,
       Set<ASTCDType> leftTypesIncs, Set<ASTCDType> rightTypeIncs,
-      ASTCDAssociation referenceAssociation) {
+      ASTCDAssociation referenceAssociation, CDCompletionContext context)
+      throws CompletionException {
     
     for (ASTCDType leftTypeInc : leftTypesIncs) {
       for (ASTCDType rightTypeInc : rightTypeIncs) {
@@ -250,12 +251,21 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
         
         // If the right type does not have a role name, it is implicitly the type incarnation's
         // name (first character lowercase) anyway.
-        if (association.getRight().isPresentCDRole()) {
-          // If a role name is already present, append the type incarnation's name to it
+        // If a role name is already present and there are multiple incarnations of the
+        // type, append the type incarnation's name to it to avoid name conflicts.
+        // NOTE: leftTypesIncs, and rightTypeIncs are ONLY the sets of type incarnations that still need an
+        // association incarnation. We need to consider the TOTAL number of type incarnations to decide
+        // whether we need to append the type incarnation name or not.
+        int totalRightTypeIncs = context.getIncarnationMapping().getIncarnations(
+            ConcretizationHelper.getAssocRightType(context.getReferenceCD(), referenceAssociation))
+            .size();
+        if (association.getRight().isPresentCDRole() && totalRightTypeIncs > 1) {
           association.getRight().getCDRole().setName(association.getRight().getCDRole().getName()
               + "_" + rightTypeInc.getName());
         }
-        if (association.getLeft().isPresentCDRole()) {
+        int totalLeftTypeIncs = context.getIncarnationMapping().getIncarnations(ConcretizationHelper
+            .getAssocLeftType(context.getReferenceCD(), referenceAssociation)).size();
+        if (association.getLeft().isPresentCDRole() && totalLeftTypeIncs > 1) {
           association.getLeft().getCDRole().setName(association.getLeft().getCDRole().getName()
               + "_" + leftTypeInc.getName());
         }
