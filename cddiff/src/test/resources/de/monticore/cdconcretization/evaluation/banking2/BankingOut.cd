@@ -1,0 +1,43 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram BankingConc {
+
+  <<ref="Bank">> class SEPABank implements Auditable {
+    <<ref="id">> String bic;
+    <<ref="overallBalance">> double totalMoney; // money of all accounts together
+  }
+
+  <<ref="Account">> abstract class BankAccount implements Auditable {
+    <<ref="id">> String iban;
+    double balance;
+    AccountStatus status;
+    void withdraw(double amount);
+    void deposit(double amount);
+    void transfer(BankAccount targetAccount, double amount);
+  }
+
+  interface Auditable {
+    String generateReport();
+  }
+
+  class SavingsAccount extends BankAccount;
+  class CheckingAccount extends BankAccount;
+
+  enum AccountStatus {
+    PENDING, ACTIVE, CLOSED;
+  }
+
+  class Customer;
+
+  class Transaction {
+    double amount;
+  }
+
+  association SEPABank -> BankAccount [*];
+  association allCustomers SEPABank -> Customer [*];
+  association [*] BankAccount <-> Customer [*];
+  association BankAccount -> Transaction [*] {ordered};
+  association Transaction -> (source) BankAccount [1];
+  association Transaction -> (target) BankAccount [1];
+}

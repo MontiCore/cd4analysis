@@ -135,6 +135,12 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
           "evaluation/banking/BankingRef.cd", "evaluation/banking/singleInc/BankingOut.cd");
     }
     
+    @Test
+    void banking2() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/banking2/BankingConc.cd",
+          "evaluation/banking2/BankingRef.cd", "evaluation/banking2/BankingOut.cd");
+    }
+    
     /*
      * Should be resolved when using new incarnation mapping/binding abstractions.
      * See https://git.rwth-aachen.de/se-student/theses/ma-jorden/master-theses/-/issues/68

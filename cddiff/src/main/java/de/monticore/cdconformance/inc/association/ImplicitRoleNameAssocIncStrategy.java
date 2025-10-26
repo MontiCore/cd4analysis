@@ -4,9 +4,9 @@ package de.monticore.cdconformance.inc.association;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDAssocsBySrcTypeAndTgtRole;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
@@ -41,8 +41,8 @@ public class ImplicitRoleNameAssocIncStrategy extends MatchCDAssocsBySrcTypeAndT
     
     if (conType.isPresent() && refType.isPresent() && typeMatcher.isMatched(conType.get(), refType
         .get())) {
-      String implicitRefRoleName = StringUtils.uncapitalize(reference.getName());
-      String implicitConRoleName = StringUtils.uncapitalize(concrete.getName());
+      String implicitRefRoleName = CDDiffUtil.getDefaultRoleName(reference);
+      String implicitConRoleName = CDDiffUtil.getDefaultRoleName(concrete);
       
       if (concrete.isPresentCDRole()) {
         String conRoleName = concrete.getCDRole().getName();
