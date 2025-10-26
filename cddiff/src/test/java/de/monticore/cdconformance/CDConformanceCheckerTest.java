@@ -1,16 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconformance;
 
-import static de.monticore.cdconformance.CDConfParameter.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Set;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Set;
+
+import static de.monticore.cdconformance.CDConfParameter.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CDConformanceCheckerTest extends ConfAbstractTest {
   
@@ -267,6 +268,37 @@ public class CDConformanceCheckerTest extends ConfAbstractTest {
   public void testAssocRoleNameDerivedFromTypeValid(String concrete) {
     parseModels("associations/role_name_derived_from_type/valid/" + concrete,
         "associations/role_name_derived_from_type/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = { "ExactSame.cd" })
+  public void testAssocSameTypeMultipleRolesValid(String concrete) {
+    parseModels("associations/sameTypeMultipleRoles/valid/" + concrete,
+        "associations/sameTypeMultipleRoles/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertTrue(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = { "BothMissing.cd", "OneRoleMissing1.cd", "OneRoleMissing2.cd",
+      "DifferentRoleNames.cd" })
+  public void testAssocSameTypeMultipleRolesInvalid(String concrete) {
+    parseModels("associations/sameTypeMultipleRoles/invalid/" + concrete,
+        "associations/sameTypeMultipleRoles/Reference.cd");
+    checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
+        SRC_TARGET_ASSOC_MAPPING));
+    assertFalse(checker.checkConformance(conCD, refCD, "ref"));
+  }
+  
+  @ParameterizedTest
+  @ValueSource(strings = { "DifferentRoleNamesSTMapped.cd" })
+  public void testAssocSameTypeMultipleRolesExplicitAssocNamesValid(String concrete) {
+    parseModels("associations/sameTypeMultipleRoles/valid/" + concrete,
+        "associations/sameTypeMultipleRoles/ReferenceExplicitAssocName.cd");
     checker = new CDConformanceChecker(Set.of(INHERITANCE, NAME_MAPPING, STEREOTYPE_MAPPING,
         SRC_TARGET_ASSOC_MAPPING));
     assertTrue(checker.checkConformance(conCD, refCD, "ref"));
