@@ -303,4 +303,15 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
     
   }
   
+  @Nested
+  class MaCoCo {
+    
+    @Test
+    void testConcreteEmpty() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/macoco/EmptyConc.cd",
+          "evaluation/macoco/MaCoCoRef.cd", "evaluation/macoco/EmptyConcOut.cd");
+    }
+    
+  }
+  
 }
