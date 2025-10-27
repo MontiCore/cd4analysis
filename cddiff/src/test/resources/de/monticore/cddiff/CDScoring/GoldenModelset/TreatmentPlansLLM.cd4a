@@ -1,85 +1,59 @@
-/* (c) CD4A Class Diagram for Hospital Examinations and Treatments */
 
-classdiagram TreatmentPlansLLM {
+classdiagram HospitalManagement {
 
-  class Hospital {
+class Hospital {
     String name;
-    String location;
-  }
+    List<String> permissions; // List of allowed examination types
+}
 
-  class Doctor {
+class Doctor {
     String name;
-    String specialization;
-  }
+    String specialty;
+    Hospital affiliatedHospital; // Association to the hospital
+}
 
-  class Patient {
+class Patient {
     String name;
-    Date dateOfBirth;
-  }
+    int age;
+    String medicalRecordId;
+}
 
-  class Examination {
-    DateTime date;
-  }
+enum ExaminationType {
+    CARDIOLOGIC_TEST,
+    ECHOGRAPHY,
+    RADIOLOGY,
+    SCANNER,
+    NMR;
+}
 
-  class ExaminationType {
-    String name;
+class Examination {
+    ExaminationType type;
+    Hospital performingHospital;
+}
+
+class Problem {
     String description;
-  }
+}
 
-  class Problem {
-    String description;
-  }
+class TreatmentPlan {
+    List<ExaminationType> advisedExaminations;
+    Problem relatedProblem; // Association to the problem
+}
 
-  class TreatmentPlan {
-    String planName;
-  }
+class ActualTreatment {
+    Problem diagnosedProblem; // Association to the diagnosed problem
+    Doctor responsibleDoctor; // Association to the doctor prescribing the treatment
+    List<Examination> examinationsPerformed;
+    List<String> additionalMedicalActions; // Actions not part of the treatment plan
+}
 
-  class ActualTreatment {
-    String notes;
-  }
-
-  class MedicalAction {
-    String description;
-  }
-
-  // ----------------- Associations -----------------
-
-  // A hospital employs doctors
-  association [1] Hospital -> (doctors) Doctor [*];
-
-  // A patient can be treated at one hospital
-  association [1] Patient -> (hospital) Hospital [1];
-
-  // A doctor is affiliated with one hospital
-  association [1] Doctor -> (hospital) Hospital [1];
-
-  // A hospital has permissions for examination types
-  association [1] Hospital -> (permittedTypes) ExaminationType [*];
-
-  // Each examination is of exactly one type
-  association [1] Examination -> (type) ExaminationType [1];
-
-  // A patient undergoes examinations
-  association [1] Patient -> (examinations) Examination [*];
-
-  // A doctor prescribes examinations
-  association [1] Doctor -> (prescribedExaminations) Examination [*];
-
-  // A treatment plan belongs to a problem
-  association [1] Problem -> (treatmentPlans) TreatmentPlan [*];
-
-  // A treatment plan advises certain examination types
-  association [1] TreatmentPlan -> (advisedExaminations) ExaminationType [*];
-
-  // A patient diagnosed with a problem
-  association [1] Patient -> (problems) Problem [*];
-
-  // A doctor defines actual treatments for a patient based on a plan
-  association [1] ActualTreatment -> (basedOn) TreatmentPlan [0..1];
-  association [1] ActualTreatment -> (patient) Patient [1];
-  association [1] ActualTreatment -> (doctor) Doctor [1];
-
-  // An actual treatment consists of examinations and additional actions
-  association [1] ActualTreatment -> (examinations) Examination [*];
-  association [1] ActualTreatment -> (actions) MedicalAction [*];
+// Associations
+association affiliated [1] Doctor -> Hospital [1];
+association visits [1] Patient -> Hospital [1..*];
+association diagnosed [1] Doctor -> Problem [*];
+association definesTreatmentPlan [1] Problem -> TreatmentPlan [1..*];
+association prescribes [1] Doctor -> ActualTreatment [*];
+association advises [1..*] TreatmentPlan -> (advisedFor) ExaminationType [*];
+association performs [1..*] ActualTreatment -> Examination [*];
+association [1] Examination -> Hospital [1];
 }

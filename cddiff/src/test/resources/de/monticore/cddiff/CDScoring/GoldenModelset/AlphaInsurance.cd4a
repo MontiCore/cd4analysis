@@ -1,35 +1,35 @@
 classdiagram AlphaInsurance {
 class Customer {
-    String Name;
+    String name;
     String email;
 }
 class InsurancePolicy {
-    String Type;
-    Double MonthlyPrice;
-    Double YearlyPrice;
+    String type;
+    Double monthlyPrice;
+    Double yearlyPrice;
 }
 class Contract {
-    String Status;
-    String InvoiceFrequency;
+    String status;
+    String invoiceFrequency;
 }
 class Invoice {}
 
 class Broker{
-    String Name;
+    String name;
 }
 class Claim {
-    Double CompensationTotal;
+    Double compensationTotal;
 }
 class ClaimCase {
-    String Status;
-    String CompensationDecision;
+    String status;
+    String compensationDecision;
 }
 class Report {}
 class Estimator {
-    String AreaOfExpertise;
+    String areaOfExpertise;
 }
 class CompensationPayment {
-    Date PaymentDate;
+    Date paymentDate;
 }
 
 association [1] Customer -- Contract [0..*];

@@ -1,52 +1,58 @@
-/* (c) EBike System Model */
 
-classdiagram EBikeLLM {
+classdiagram EBikeSystem {
 
-  class EBike {}
+class EBike {
+    Frame frame;
+    DriveSystem driveSystem;
+    Controller controller;
+    Optional<Battery> battery;
+}
 
-  class Frame {
-    String material = "Steel";
-  }
+class Frame {
+    String material = "steel";
+    List<Wheel> wheels;
+}
 
-  class Wheel {}
+class Wheel {
+    int size; // Could represent wheel size in inches
+}
 
-  class DriveSystem {}
+class DriveSystem {
+    Motor motor;
+}
 
-  class Motor {}
+class Motor {
+    int power; // Power in watts
+}
 
-  class Battery {
-    double storedEnergyWh;
-  }
+class Battery {
+    int storedEnergy; // Energy stored in Watt-hours (Wh)
+}
 
-  class Controller {}
+// Base Controller class
+abstract class Controller {
+    ControllerState state; // The state of the Controller (On, Off, Charging)
+}
 
-  class BasicController extends Controller {}
-
-  class AdvancedController extends Controller {
-    Date nextMaintenanceDate;
-  }
-
-  enum ControllerState {
+// Enum for ControllerState
+enum ControllerState {
     ON,
     OFF,
     CHARGING;
-  }
+}
 
-  // Associations
-  association [1] EBike -> (frame) Frame [1];
-  association [1] EBike -> (driveSystem) DriveSystem [1];
-  association [1] EBike -> (controller) Controller [1];
-  association [1] Frame -> (wheels) Wheel [2];
+// Specialized Controller classes
+class BasicController extends Controller {
+}
 
-  association [1] DriveSystem -> (motor) Motor [1];
+class AdvancedController extends Controller {
+    Optional<Date> nextInspectionDate; // Estimated maintenance date
+}
 
-  // "Removable battery" means optional:
-  association [1] EBike -> (battery) Battery [0..1];
-
-  // Controller manages battery if connected:
-  association [0..1] Controller -> (controlledBattery) Battery [0..1];
-
-  // Controller commands the drive system:
-  association [1] Controller -> (controlledDrive) DriveSystem [1];
+// Associations
+association EBike (controls) -> Controller [1];
+association Controller (command) -> Battery [0..1];
+association Controller (command) -> DriveSystem [1];
+association contains Frame -> Wheel [2];
 
 }

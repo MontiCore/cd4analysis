@@ -20,7 +20,7 @@ public class CDTypeEmbeddingWithAttributesSimilarity extends CDEmbeddingSimilari
   @Override
   public Double computeWeight(ASTCDType srcElem, ASTCDType tgtElem) {
     return matchMultipleNamesWithEmbedding(srcElem, tgtElem, this::getClassAndAttributeNames,
-        vectorNormalize, vectorConcatenate, vectorNormalize);
+        doNothing, vectorNormalize);
   }
 
   public List<String> getClassAndAttributeNames(ASTCDType elem) {

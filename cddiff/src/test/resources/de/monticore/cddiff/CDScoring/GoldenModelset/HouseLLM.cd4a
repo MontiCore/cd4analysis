@@ -1,64 +1,57 @@
-/* (c) CD4A Model */
 
-classdiagram HouseLLM {
+classdiagram housingModel {
 
-
-  class House {
+class House {
     String address;
-    BuildingMaterial buildingMaterial;
-  }
+    String buildingMaterial; // Options: "Wood", "Brick", "Concrete"
+    Optional<Basement> basement;
+    List<Company> servicedBy; // Companies servicing this house
+}
 
-  enum BuildingMaterial {
-    WOOD,
-    BRICK,
-    CONCRETE;
-  }
-
-  class Basement {
+abstract class Basement {
     String name;
-    double size;
-  }
+    double size; // Size in square meters
+}
 
-  class EarthBasement extends Basement {
+class EarthBasement extends Basement {
     double humidityLevel;
-  }
+}
 
-  class ConcreteBasement extends Basement {}
+class ConcreteBasement extends Basement {}
 
-  class SemiDetachedHouse extends House {
+class SemiDetachedHouse extends House {
     boolean hasOwnGarden;
     int numberOfWindows;
-  }
+    GarageOrCarport parking;
+}
 
-  class Carport {
+abstract class GarageOrCarport {}
+
+class Carport extends GarageOrCarport {
     boolean isDoubleCarport;
     boolean hasFlatRoof;
-  }
+}
 
-  class Garage {
-    boolean hasAutomaticDoor;
-  }
+class Garage extends GarageOrCarport {
+    boolean hasAutomaticGarageDoor;
+}
 
-  class Company {
+class Company {
     String name;
     String address;
-  }
+    List<JobLog> jobs; // Job logs for this company
+}
 
-  class JobLog {
-    int hours;
+class JobLog {
+    double hoursWorked;
     double agreedPrice;
-  }
+    House relatedHouse; // House where the job was performed
+}
 
-  // Each House may have a Basement
-  association [1] House -> (basement) Basement [0..1];
-
-  association [1] SemiDetachedHouse -> (carports) Carport [0..2];
-  association [1] SemiDetachedHouse -> (garage) Garage [0..1];
-
-  // Each House serviced by several Companies
-  association [1] House <-> (services) Company [*];
-
-  // Jobs carried out by Companies in Houses
-  association [1] JobLog -> (house) House [1];
-  association [1] JobLog -> (company) Company [1];
+// Associations
+association [1] House (servicedBy) -> Company [1..*];
+association performsJob [*] Company -> JobLog [*];
+association [0..1] House -> Basement [1];
+association ofType [1] SemiDetachedHouse -> GarageOrCarport [2];
+association performsJobAt [*] JobLog -> House [1];
 }

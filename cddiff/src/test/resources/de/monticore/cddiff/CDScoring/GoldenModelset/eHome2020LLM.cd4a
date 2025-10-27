@@ -1,82 +1,67 @@
-/* (c) E-Home-2020 CD4A Model */
 
-classdiagram eHome2020LLM {
+classdiagram EHome2020 {
 
-  // ===========================
-  // Core System Components
-  // ===========================
-  class SensorController {
-    String systemName;
-  }
-
-  class EMonitor {}
-
-  association [1] EMonitor -> (monitoredController) SensorController [1];
-
-  // ===========================
-  // Apartment / Inhabitants
-  // ===========================
-  class Apartment {
+class Apartment {
     String address;
-    Optional<String> email; // optional email for alerts
-  }
+    List<Room> rooms;
+    Optional<String> emailAddress; // For receiving alert messages
+}
 
-  class Inhabitant {
+class Room {
+    String description; // e.g., "living room"
+    List<Sensor> sensors;
+}
+
+class Sensor {
+    String vendorId;
+    String description; // e.g., "temperature radiator living room"
+    String unit; // CELSIUS, WATT
+    Room assignedRoom; // Association, defined below
+    List<SensorValue> values;
+    Optional<SensorValue> lastValue; // Direct access to the last measured value
+    Optional<Float> threshold;
+}
+
+class TemperatureSensor extends Sensor {
+    Float minValue;
+    Float maxValue; // Valid value range
+}
+
+class PowerSensor extends Sensor {
+    Float counterReading; // Total power consumption
+}
+
+class SensorValue {
+    Float measuredValue; // Floating point number
+    Timestamp timestamp; // DateTime of the measurement
+}
+
+class SensorController {
+    List<Account> accounts; // Both inhabitants and admins
+    Apartment apartment;
+}
+
+class Account {
     String username;
     String password;
-    boolean isAdmin; // admin flag for configuration rights
-  }
+    Boolean isAdmin; // Indicates whether the account has administrative rights
+}
 
-  association [1] Apartment -> (inhabitants) Inhabitant [*];
-  association [1] SensorController -> (apartment) Apartment [1];
+class EMonitor {
+    // External system that checks sensor thresholds
+}
 
-  // ===========================
-  // Rooms and Sensors
-  // ===========================
-  class Room {
-    String description;
-  }
-
-  association [1] Apartment -> (rooms) Room [2..*];
-
-  abstract class Sensor {
-    String vendorId;      // unique identifier
-    String description;   // e.g. "temperature radiator living room"
-    Unit unit;
-  }
-
-  class TemperatureSensor extends Sensor {
-    double minValue;
-    double maxValue;
-  }
-
-  class PowerSensor extends Sensor {
-    double counterReading; // total power consumption
-  }
-
-  enum Unit {
+// Enumerations
+enum Unit {
     CELSIUS,
     WATT;
-  }
+}
 
-  association [1] Room -> (sensors) Sensor [*];
-  association [1] SensorController -> (sensors) Sensor [*];
+// Associations
+association [*] Apartment -> Room [2..*]; // Apartment consists of at least two rooms
+association [1] Room <- Sensor [*]; // Each sensor belongs to exactly one room
+association managesSensors Account -> SensorController [1]; // Accounts log on to SensorController
+association [1] SensorController -> Apartment [1]; // SensorController stores apartment information
+association monitorsThreshold [1] EMonitor -> Sensor [*]; // EMonitor automatically checks sensor thresholds
 
-  // ===========================
-  // Thresholds & Values
-  // ===========================
-  class Threshold {
-    double limit;
-  }
-
-  class SensorValue {
-    DateTime timestamp;
-    double value;
-  }
-
-  association [1] Sensor -> (threshold) Threshold [0..1];
-  association [1] Sensor -> (values) SensorValue [*];
-
-  // NOTE: "last value" of a sensor is conceptually the most recent SensorValue,
-  // but is not explicitly modeled as a separate association.
 }

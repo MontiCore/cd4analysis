@@ -1,62 +1,62 @@
 
 classdiagram AirTravel {
 class Airline {
- String Name;
+ String name;
 }
 
 class Employee {
- String Name;
- Date StartDate;
+ String name;
+ Date startDate;
 }
 
 class Airport {
- String Name;
- String Address;
- Integer RunwayCount;
+ String name;
+ String address;
+ Integer runwayCount;
 }
 
 class FlightAttendant extends Employee {
- Boolean Purser;
+ Boolean purser;
 }
 
 class Airplane {
- String Name;
- String Type;
- Date ConstructionYear;
- Date NextInspection;
+ String name;
+ String type;
+ Date constructionYear;
+ Date nextInspection;
 }
 
 class Flight {
- String FlightNumber;
+ String flightNumber;
 }
 
 class Pilot extends Employee {
- String License;
+ String license;
 }
 
 class PassengerPlane extends Airplane {
- Integer Seats;
+ Integer seats;
 }
 
 class FlightExecution {
- Date Date;
+ Date date;
 }
 
 class SeatCategory {
- String Description;
- Boolean Enterainment;
- Integer SeatCount;
+ String description;
+ Boolean entertainment;
+ Integer seatCount;
 }
 
 class Passenger {
- String Name;
- String PassportNumber;
+ String name;
+ String passportNumber;
 }
 
 class Ticket {
- String TicketId;
- Float Price;
- Boolean Upgrade;
+ String ticketId;
+ Float price;
+ Boolean upgrade;
 }
 
 association [0..1] Airline -> Employee [0..*];

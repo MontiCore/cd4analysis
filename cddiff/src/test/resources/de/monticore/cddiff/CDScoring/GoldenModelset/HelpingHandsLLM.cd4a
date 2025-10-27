@@ -1,0 +1,94 @@
+
+classdiagram HelpingHandsStore {
+
+class H2S_Location {
+    String cityName;
+    DistributionCenter distributionCenter;
+    Optional<FoodBank> foodBank; // FoodBank may not be available in all cities.
+}
+
+class DistributionCenter {
+    List<RFIDTaggedArticle> inventory;
+    List<Employee> employees;
+    List<PickupVehicle> fleet;
+    List<VolunteerDriver> volunteerDrivers;
+    Map<Category, List<RFIDTaggedArticle>> categorizedInventory; // Organizes inventory by predefined categories.
+}
+
+class FoodBank {
+    List<NonPerishableFoodArticle> inventory;
+}
+
+class Resident {
+    String name;
+    String streetAddress;
+    String phoneNumber;
+    Optional<String> emailAddress;
+}
+
+class PickupRequest {
+    Resident requestor;
+    String descriptionOfItems;
+    Date requestedPickupDate;
+    List<Article> articles;
+    boolean requiresPickup; // Distinguishes delivery-only scenario from pickup.
+}
+
+class Article {
+    String description;
+    double weight; // in kilograms
+    Dimensions dimensions; // Includes length, width, height
+    boolean isSecondHandArticle;
+}
+
+class NonPerishableFoodArticle extends Article {
+    Date expirationDate;
+}
+
+class RFIDTaggedArticle extends Article {
+    String rfidTag;
+    Category category;
+    String correctedDescription; // Corrected after employee inspection.
+}
+
+class Category {
+    String name; // One of 134 predefined categories
+}
+
+class PickupRoute {
+    List<PickupRequest> scheduledPickups;
+    List<RFIDTaggedArticle> articlesForDelivery; // For clients unable to visit the distribution center
+    PickupVehicle pickupVehicle;
+    VolunteerDriver driver;
+}
+
+class PickupVehicle {
+    String licensePlate;
+    double availableStorageSpace;
+}
+
+class VolunteerDriver {
+    String name;
+    List<Date> availableDates;
+}
+
+class Employee {
+    String name;
+    H2S_Location worksAt;
+}
+
+// Associations
+association operatesIn [1..*] HelpingHandsStore -> H2S_Location [1..*]; // H2S operates in multiple cities.
+association makesRequest [1] Resident -> PickupRequest [*];
+association fulfills [1] PickupRoute -> PickupRequest [*];
+association drives [1] VolunteerDriver -> PickupVehicle [1];
+association inspects [1..*] Employee -> Article [1..*]; // Employees inspect items.
+association categorizes [1..*] Employee -> RFIDTaggedArticle [1..*];
+association belongsTo [*] Article -> H2S_Location [1..1];
+association dropsOffAt [1] PickupRoute -> DistributionCenter [1];
+association dropsFoodAt [1] PickupRoute -> FoodBank [1];
+association delivers [*] RFIDTaggedArticle -> Resident [*]; // To handle delivery requests by clients.
+association taggedInventory [1] DistributionCenter -> RFIDTaggedArticle [*];
+association nonPerishableInventory [1..*] FoodBank -> NonPerishableFoodArticle [*];
+
+}

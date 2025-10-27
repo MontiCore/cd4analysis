@@ -1,44 +1,34 @@
-/* (c) CD4A Class Diagram */
 
-classdiagram BoeingLLM {
+classdiagram boeingAircraftSales {
 
-  class AirlineCompany {
+class AirlineCompany {
     String name;
-    String country;
-  }
+    Optional<AirlineCompany> parentCompany; // Indicates mother-daughter relationship
+}
 
-  // Self-association to represent mother-daughter airline relationships
-  association [0..1] AirlineCompany (mother) <-> (daughter) AirlineCompany [*];
-
-  class Contract {
-    String contractNumber;
+class Contract {
+    String contractId;
     String deliveryConditions;
-    String legalAspects;
-  }
+    String legalDetails;
+    List<Acquisition> acquisitions; // List of airplane acquisitions within the contract
+}
 
-  class Acquisition {
-    double price;
+class Acquisition {
+    String acquisitionId;
+    String airplaneModel;
+    double negotiatedPrice;
+    List<String> options; // Customizations chosen for the airplane
     Date deliveryDate;
-    String optionsAndCustomizations;
-  }
+}
 
-  class AircraftModel {
-    String modelName;
-    String version;
-  }
-
-  class Employee {
+class Salesperson {
     String employeeId;
     String name;
-  }
+}
 
-  // Associations
-  association [1] AirlineCompany -> (contracts) Contract [*];
-  association [1] Contract -> (acquisitions) Acquisition [*];
-  association [1] Acquisition -> (aircraftModel) AircraftModel [1];
-
-  // A contract always has one responsible salesperson,
-  // but over time it may change (historical tracking not modeled here)
-  association [1] Employee -> (managedContracts) Contract [*];
+// Associations
+association managesContract [1] Salesperson -> Contract [*]; // Salesperson manages many contracts
+association hasAcquisition [1] Contract -> Acquisition [*];  // Contract consists of several acquisitions
+association [0..*] AirlineCompany -> (relatedTo) AirlineCompany [0..*]; // Airlines may have mother-daughter relationships
 
 }

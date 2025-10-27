@@ -1,45 +1,44 @@
-/* (c) https://github.com/MontiCore/monticore */
+classdiagram facepage {
 
-classdiagram FacepageLLM {
-
-  class User {
-    String id;
+class User {
+    String userId; // unique
     String name;
     String email;
     Date dateOfBirth;
-  }
+}
 
-  class Account {
-    String accountNumber;
-  }
+class Account {
+    String accountNumber; // unique
+    String accountType; // BUSINESS or PERSONAL
+}
 
-  class BusinessAccount extends Account {
+class BusinessAccount extends Account {
     String companyName;
     double monthlyFee;
-  }
+}
 
-  class PersonalAccount extends Account {}
+class PersonalAccount extends Account {
+    boolean canSendFriendRequest;
+}
 
-  class Page {
-    String name;
+class Page {
+    String pageName; // unique per account
     int numberOfVisits;
-  }
+}
 
-  class AdvertisementPage extends Page {
+class AdvertisementPage extends Page {
     double bounceRate;
     double clickThroughRate;
     double conversionRate;
-  }
+}
 
-  // Each User has exactly one Account
-  association [1] User -> (account) Account [1];
+// Associations
+association [1] User -> (owns) Account [1];
+association [1] Account -> (administers) Page [*];
+association [*] PersonalAccount -> (hasPrivilegesOver) Page [*]; // For pages belonging to other PersonalAccounts
+association [0..*] BusinessAccount -> AdvertisementPage [*]; // Only BusinessAccount can create AdvertisementPages
 
-  // Each Account can have several Pages, each Page belongs to exactly one Account
-  association [1] Account -> (pages) Page [*];
-
-  // Personal accounts can have privileges on other personal pages
-  association privileges [*] PersonalAccount -> (privilegedPages) Page [*];
-
-  // Only PersonalAccounts can send and receive friend requests
-  association friendRequests [*] PersonalAccount <-> (friends) PersonalAccount [*];
+// Notes
+// - A User cannot have more than one Account (Personal or Business).
+// - Personal Accounts can send and receive friend requests, but Business Accounts cannot.
 }

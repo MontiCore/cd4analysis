@@ -1,0 +1,82 @@
+
+classdiagram HBMS {
+
+class Traveller {
+    String name;
+    String companyName;
+    String billingAddress;
+    Optional<List<String>> travelPreferences; // e.g., breakfast included, free wifi, etc.
+    String creditCardInformation; // Required for finalizing bookings
+    float reliabilityRating; // Calculated based on past bookings
+}
+
+class Booking {
+    String bookingId; // Unique identifier
+    Date arrivalDate;
+    Date departureDate;
+    int numberOfRooms;
+    String roomType; // e.g., single, double, twin
+    int hotelRating; // Minimum required rating
+    float maxCostPerNight; // Tentative budget
+    Optional<List<String>> travelPreferences; // Filters
+    boolean isPrePaid; // Indicates if booking is pre-paid
+    Optional<Date> cancellationDeadline; // Deadline before penalty
+}
+
+class PreliminaryBooking extends Booking {
+    // Key attributes for competitive offers
+    float price;
+    String cityArea;
+    List<String> keyPreferences; // e.g., free wifi, breakfast, etc.
+}
+
+enum BookingStatus {
+    CONFIRMED,
+    CANCELLED,
+    PENDING_CONFIRMATION;
+}
+
+class FinalizedBooking extends Booking {
+    BookingStatus status;
+}
+
+class Hotel {
+    String name;
+    Address location;
+    Optional<String> chainName; // Hotel chain name
+}
+
+class Address {
+    String street;
+    String city;
+    String state;
+    String postalCode;
+}
+
+class RoomType {
+    String name; // e.g., single, double, twin
+    int maxOccupancy;
+    boolean isAvailable; // Availability for the given period
+}
+
+class SpecialOffer {
+    float price; // Special offer price
+    String cityArea;
+    int rating; // Minimum hotel rating
+    List<String> keyPreferences; // Key attributes of the offer
+}
+
+// Associations
+association registers [1] Traveller -> HBMS [1];
+association [0..*] Traveller -> Booking [*];
+association [0..*] Traveller -> PreliminaryBooking [*];
+association [0..1] PreliminaryBooking -> (competesWith) SpecialOffer [0..*];
+association announcesAvailability [1] Hotel -> RoomType [0..*];
+association [1] HBMS -> (forwardPreliminaryBookingTo) Hotel [0..*];
+association [1] Hotel -> (sendsConfirmationTo) Traveller [1];
+association [0..*] SpecialOffer -> (offeredBy) Hotel [1];
+association reimbursementRequired [1] HBMS -> Traveller [1];
+association [1] RoomType -> (relatedTo) Booking [*];
+association [1] Traveller -> (ratingAffectedBy) Booking [*];
+
+}

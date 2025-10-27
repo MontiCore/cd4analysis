@@ -1,39 +1,46 @@
-/* (c) https://github.com/MontiCore/monticore */
 
-classdiagram GasStation_TUWLLM {
+classdiagram gasStationManagement {
 
-  class GasStation {
+class GasStation {
     String id;
     String address;
-  }
+    List<FuelPump> fuelPumps; // Up to 12 pumps
+    List<DailyFuelPrice> archivedFuelPrices;
+}
 
-  class FuelPump {
-    int number;
-    boolean selfService;
-  }
+class FuelPump {
+    int number; // Unique within a gas station
+    boolean isSelfService;
+    List<Fuel> offeredFuels;
+}
 
-  class Fuel {
-    String name; // unique
+class Fuel {
+    String name;
     int octaneRating;
-  }
+}
 
-  class DailyPrice {
-    Date date;
+class DailyFuelPrice {
+    String date; // ISO Date format
+    Fuel fuel; // Associated Fuel
+    GasStation gasStation; // Associated Gas Station
     double pricePerLiter;
-  }
+}
 
-  class FuelPurchase {
-    String id;
-    double liters;
-  }
+class FuelPurchase {
+    String id; // Unique identifier
+    FuelPump fuelPump; // Associated Fuel Pump
+    Fuel fuel; // Purchased fuel
+    DailyFuelPrice dailyPrice; // Associated price information
+    double litersDispensed;
+}
 
-  // Associations
-  association [1] GasStation -> (fuelPumps) FuelPump [1..12];
-  association [*] FuelPump -> (fuels) Fuel [*];
-  association [1] GasStation -> (dailyPrices) DailyPrice [*];
-  association [1] DailyPrice -> (fuel) Fuel [1];
-  association [1] FuelPurchase -> (pump) FuelPump [1];
-  association [1] FuelPurchase -> (fuel) Fuel [1];
-  association [1] FuelPurchase -> (price) DailyPrice [1];
+// Associations
+association [1] GasStation -> (hasFuelPump) FuelPump [1..12];
+association [*] FuelPump -> (offers) Fuel [*];
+association [1] DailyFuelPrice -> Fuel [1];
+association [1] DailyFuelPrice -> GasStation [1];
+association [1] FuelPurchase -> FuelPump [1];
+association [1] FuelPurchase -> Fuel [1];
+association [1] FuelPurchase -> DailyFuelPrice [1];
 
 }

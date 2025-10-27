@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmatcher.caching;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -201,6 +202,44 @@ public class StructureCache {
     CachedType cachedType = typeCache.get(type);
     if (cachedType != null) {
       return cachedType.getDirectSubTypes();
+    }
+    return Set.of();
+  }
+
+  public boolean addAllMethods(ASTCDType type, Set<ASTCDMethod> methods) {
+    CachedType cachedType = typeCache.get(type);
+    if (cachedType == null) {
+      return false;
+    }
+    for (ASTCDMethod method : methods) {
+      cachedType.addMethod(method);
+    }
+    return true;
+  }
+
+  public Set<ASTCDMethod> getMethods(ASTCDType type) {
+    CachedType cachedType = typeCache.get(type);
+    if (cachedType != null) {
+      return cachedType.getMethods();
+    }
+    return Set.of();
+  }
+
+  public boolean addAllDirectMethods(ASTCDType type, Set<ASTCDMethod> methods) {
+    CachedType cachedType = typeCache.get(type);
+    if (cachedType == null) {
+      return false;
+    }
+    for (ASTCDMethod method : methods) {
+      cachedType.addDirectMethod(method);
+    }
+    return true;
+  }
+
+  public Set<ASTCDMethod> getDirectMethods(ASTCDType type) {
+    CachedType cachedType = typeCache.get(type);
+    if (cachedType != null) {
+      return cachedType.getDirectMethods();
     }
     return Set.of();
   }

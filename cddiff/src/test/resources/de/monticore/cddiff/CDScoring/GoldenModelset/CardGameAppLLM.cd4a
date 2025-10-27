@@ -1,64 +1,75 @@
-/* (c) https://github.com/MontiCore/monticore */
 
-classdiagram CardGameAppLLM {
+classdiagram game {
 
-  // ---------------- Base Classes ----------------
-  abstract class BaseEntity {
-    String id; // unique ID for every object
-  }
+class Game {
+    UUID id;
+    int maxPlayers = 4;
+    Deck deck;
+    ScoringTable scoringTable;
+}
 
-  class Game extends BaseEntity {}
+class Player {
+    UUID id;
+    String name;
+}
 
-  class Player extends BaseEntity {}
+class Deck {
+    UUID id;
+    int maxCards = 48;
+    List<Card> cards;
+}
 
-  class Deck extends BaseEntity {}
+class Card {
+    UUID id;
+    Suit suit;
+    int height;
+}
 
-  class Card extends BaseEntity {
-    CardSuit suit;
-    // has a comparison method -> not modeled (methods are not allowed in CD4A diagrams)
-  }
-
-  enum CardSuit {
+enum Suit {
     DIAMONDS,
     HEARTS,
     SPADES,
     CLUBS;
-  }
+}
 
-  class ScoringTable extends BaseEntity {}
+enum ComparisonResult {
+    LOWER,
+    EQUAL,
+    HIGHER;
+}
 
-  class Round extends BaseEntity {
-    int pointValue;
-  }
-
-  class JackRound extends Round {}
-
-  class SoloRound extends Round {
-    SoloType type;
-  }
-
-  class MandatorySoloRound extends SoloRound {}
-
-  enum SoloType {
+enum SoloType {
     TRUMP,
     JACK,
     QUEEN;
-  }
+}
 
-  // ---------------- Associations ----------------
-  association [1] Game -> (players) Player [4];
+class ScoringTable {
+    UUID id;
+    List<Round> rounds;
+}
 
-  association [1] Game -> (deck) Deck [1];
-  association [1] Game -> (scoringTable) ScoringTable [1];
+class Round {
+    UUID id;
+    List<Player> winningPlayers;
+    int pointValue;
+    boolean isJackRound;
+    boolean isSoloRound;
+    boolean isMandatorySoloRound;
+    Optional<SoloRound> soloRoundDetails; // Expanded solo-specific attributes
+}
 
-  association [1] Deck -> (cards) Card [0..48];
+class SoloRound {
+    SoloType type;
+    Player soloPlayer; // Ensures a single solo player association for the round
+}
 
-  association [1] ScoringTable -> (rounds) Round [*];
-
-  // Each round has winning players
-  association [1] Round -> (winningPlayers) Player [*];
-
-  // SoloRound has exactly one solo player -> cannot enforce "exactly one" with [1], but modeled as [1]:
-  association [1] SoloRound -> (soloPlayer) Player [1];
+// Associations
+association [4] Game -> (hasPlayers) Player [*]; // Game has exactly 4 players
+association [1] Game -> Deck [1];
+association [1] Game -> ScoringTable [1];
+association [*] Deck -> Card [*]; // Deck holds up to 48 cards
+association [*] ScoringTable -> (hasRounds) Round [*];
+association [1] Round -> (soloPlayedBy) SoloRound [1..*]; // Optional solo details
 
 }

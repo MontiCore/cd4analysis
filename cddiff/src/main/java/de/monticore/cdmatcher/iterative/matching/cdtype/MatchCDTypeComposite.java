@@ -38,6 +38,7 @@ public class MatchCDTypeComposite implements MatchingStrategy<ASTCDType> {
   @Override
   public double getScore(ASTCDType srcElem, ASTCDType tgtElem) {
     double score;
+
     if(srcElem instanceof ASTCDEnum && tgtElem instanceof ASTCDEnum) {
       score = enumStrategy.getScore((ASTCDEnum) srcElem, (ASTCDEnum) tgtElem);
     }

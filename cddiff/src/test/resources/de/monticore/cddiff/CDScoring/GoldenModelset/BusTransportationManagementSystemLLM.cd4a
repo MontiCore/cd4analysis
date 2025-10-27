@@ -1,0 +1,34 @@
+
+classdiagram BTMS {
+
+class Driver {
+    String name;
+    int driverId; // Automatically generated
+    boolean onSickLeave;
+}
+
+class Bus {
+    String licencePlate; // Up to 10 characters
+    boolean inRepairShop;
+}
+
+class Route {
+    int routeNumber; // Unique, max value 9999
+    List<String> shifts; // "Morning", "Afternoon", "Night"
+}
+
+class ShiftAssignment {
+    Date assignmentDate;
+    String shift; // "Morning", "Afternoon", "Night"
+    Driver driver;
+    Bus bus;
+    Route route;
+}
+
+// Associations
+association [1] Route -> Bus [*];
+association [*] ShiftAssignment -> Driver [1];
+association [*] ShiftAssignment -> Bus [1];
+association [*] ShiftAssignment -> Route [1];
+
+}

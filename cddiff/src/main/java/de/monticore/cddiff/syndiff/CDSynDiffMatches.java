@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syndiff;
 
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -26,10 +27,12 @@ import de.monticore.cdmatcher.iterative.matching.attribute.MatchCDAttributeByNam
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDEnum;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAssocs;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectAttributes;
+import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectMethods;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSubClasses;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeByDirectSuperClasses;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeComposite;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeFromCache;
+import de.monticore.cdmatcher.iterative.matching.method.MatchCDMethod;
 import de.monticore.cdmatcher.similarity.CDAssocEmbeddingSimilarity;
 import de.monticore.cdmatcher.similarity.CDAssocSimilarity4Iterative;
 import de.monticore.cdmatcher.similarity.CDTypeEmbeddingSimilarity;
@@ -99,7 +102,8 @@ public class CDSynDiffMatches {
       HashMap<MatchingStrategy<ASTCDType>, BiFunction<ASTCDType, ASTCDType, Boolean>> matchingStrategies = new HashMap<>((Map.of(
         new MatchBySimilarity<>(new CDTypeEmbeddingWithAttributesSimilarity(structureCache)), ALWAYS_APPLY,
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocEmbeddingSimilarity())), structureCache), ALWAYS_APPLY,
-        new MatchCDTypeByDirectAttributes(structureCache, new MatchBySimilarity<>(new NameEmbeddingSimilarity<>(ASTCDAttribute::getName))), ALWAYS_APPLY,
+        new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, new MatchBySimilarity<>(new NameEmbeddingSimilarity<>(ASTCDAttribute::getName)))), ALWAYS_APPLY,
+        new MatchCDTypeByDirectMethods(structureCache, new MatchCDMethod(cachedMatches,  new MatchBySimilarity<>(new NameEmbeddingSimilarity<>(ASTCDMethod::getName)))), MatchCDTypeComposite.notBothEmpty(structureCache::getDirectMethods),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache), MatchCDTypeComposite.notBothEmpty(structureCache::getDirectSubTypes),
         new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache), MatchCDTypeComposite.notBothEmpty(structureCache::getDirectSuperTypes)
       )));
@@ -111,6 +115,7 @@ public class CDSynDiffMatches {
         new MatchBySimilarity<>(new CDTypeSimilarity()), ALWAYS_APPLY,
         new MatchCDTypeByDirectAssocs(new MatchCDAssocByBestSuperType(cachedMatches, structureCache, new MatchBySimilarity<>(new CDAssocSimilarity4Iterative())), structureCache), ALWAYS_APPLY,
         new MatchCDTypeByDirectAttributes(structureCache, new MatchCDAttributeByNameAndType(cachedMatches, new MatchBySimilarity<>(new NameSimilarity<>(ASTCDAttribute::getName)))), ALWAYS_APPLY,
+        new MatchCDTypeByDirectMethods(structureCache, new MatchCDMethod(cachedMatches,  new MatchBySimilarity<>(new NameSimilarity<>(ASTCDMethod::getName)))), MatchCDTypeComposite.notBothEmpty(structureCache::getDirectMethods),
         new MatchCDTypeByDirectSubClasses(cachedMatches, structureCache), MatchCDTypeComposite.notBothEmpty(structureCache::getDirectSubTypes),
         new MatchCDTypeByDirectSuperClasses(cachedMatches, structureCache), MatchCDTypeComposite.notBothEmpty(structureCache::getDirectSuperTypes)
       )));
@@ -208,7 +213,8 @@ public class CDSynDiffMatches {
       success =
         structureCache.addAllDirectSuperTypes(type, CDInheritanceHelper.getDirectSuperClasses(type, (ICD4CodeArtifactScope) cD.getEnclosingScope())) &&
           structureCache.addAllDirectAssociations(type, CDAssociationHelper.getDirectAssociations(type, cD)) &&
-          structureCache.addAllDirectAttributes(type, CDAttributeHelper.getAttributes(type));
+          structureCache.addAllDirectAttributes(type, CDAttributeHelper.getAttributes(type)) &&
+          structureCache.addAllDirectMethods(type, new HashSet<>(type.getCDMethodList()));
       if (!success) {
         Log.warn("StructureCache already contains members from  type: " + type.getName());
       }
@@ -234,6 +240,13 @@ public class CDSynDiffMatches {
       success = structureCache.addAllAttributes(type, attributes);
       if (!success) {
         Log.warn("StructureCache already contains attributes from type: " + type.getName());
+      }
+
+      Set<ASTCDMethod> methods = superTypes.stream().map(structureCache::getDirectMethods).collect(HashSet::new, Set::addAll, Set::addAll);
+      methods.addAll(structureCache.getDirectMethods(type));
+      success = structureCache.addAllMethods(type, methods);
+      if (!success) {
+        Log.warn("StructureCache already contains methods from type: " + type.getName());
       }
     }
 

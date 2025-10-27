@@ -1,144 +1,76 @@
-/* (c) CD4A - Gas Station / Fuel Card Domain Model */
 
-classdiagram GasStation_KULLLM {
+classdiagram OilCompany {
 
-  // -------------------- Domain Entities --------------------
-
-  class Company {
+class GasStation {
     String name;
-    String country;
-  }
+    String location;
+    List<Pump> pumps;
+}
 
-  class GasStation {
-    String stationId;
-    String name;
-    String address;
-  }
-
-  enum FuelType {
-    GASOLINE,
-    DIESEL;
-    // add other fuel types as needed
-  }
-
-  class Pump {
-    String pumpId;
-    FuelType fuelType;
-    boolean blocked;              // permanently blocked (e.g. critical low or manual)
-    boolean temporarilyBlocked;   // temporarily blocked e.g. after refill (~1 hour)
-    double currentLevel;          // in liters
-    double capacity;              // in liters
-    double reorderLevel;          // below this -> should order
-    double criticalLevel;         // below this -> auto block
-    // quantityToOrder is computed (commented below)
-  }
-
-  class Reservoir {
-    String reservoirId;
+class Pump {
+    String id;
+    String gasolineType;
     double capacity;
     double currentLevel;
     double reorderLevel;
     double criticalLevel;
-  }
+    boolean isBlocked;
+}
 
-  class Customer {
-    String customerId;
+class Customer {
     String name;
-    String address;
-    String email;
-    CustomerStatus status;
-    int creditScore;              // used to adjust blocking threshold (higher -> more slack)
-  }
+    String customerId;
+    String state; // NORMAL, SUSPENDED
+    List<RefuelTurn> refuelTurns;
+    RefuelCard refuelCard; // Optional
+}
 
-  enum CustomerStatus {
-    ACTIVE,
-    SUSPENDED;
-  }
-
-  class FuelCard {
+class RefuelCard {
     String cardId;
-    boolean blocked;              // card blocked when customer suspended
-    String billingAddress;
-  }
+    String status; // ACTIVE, BLOCKED
+    List<Invoice> invoices;
+}
 
-  class CreditCard {
-    String cardNumber;            // masked in real system
-    String holderName;
-    String expiry;
-  }
-
-  class RefuelTurn {
-    String refuelId;
-    DateTime startTime;
-    DateTime endTime;
-    double liters;
-    double amount;
-    // each RefuelTurn occurs at exactly one Pump and by exactly one Customer
-    // appears on at most one Invoice (the invoice of the month of the refuel turn)
-  }
-
-  class Invoice {
+class Invoice {
     String invoiceId;
-    YearMonth invoiceMonth; // month the invoice covers
-    DateTime sentAt;   // when invoice was sent
     double totalAmount;
-    boolean paid;                     // true when fully paid
-    int reminderCount;                // how many times re-sent
-  }
+    Date issuedDate;
+    List<RefuelTurn> refuelTurns;
+    String paymentStatus; // PAID, UNPAID
+    double discountApplied;
+}
 
-  class Payment {
-    String paymentId;
-    DateTime paidAt;
+class RefuelTurn {
+    String id;
+    Date refuelDate;
     double amount;
-    PaymentMethod method;
-  }
+    double pricePerLiter;
+    Pump pumpUsed;
+}
 
-  enum PaymentMethod {
-    CASH,
-    CREDIT_CARD,
-    FUEL_CARD; // payment for invoice using e.g. bank transfer linked to FuelCard holder or other
-  }
+class DailyReport {
+    Date reportDate;
+    List<PumpReorderInfo> reorderInfo;
+}
 
-  class DailyReport {
-    Date date;
-    String generatedBy; // system/user id
-  }
-
-  class PumpReport {
-    String pumpId;
+class PumpReorderInfo {
+    Pump pump;
     double currentLevel;
     double quantityToOrder;
-    boolean needsRefill;
-  }
+}
 
-  // -------------------- Associations --------------------
+// Associations
+association [1..*] OilCompany -> GasStation [0..*];
+association [*] GasStation -> Pump [1..*];
+association [*] Customer -> RefuelTurn [0..*];
+association [1] Customer (owner) -> RefuelCard [0..1];
+association [1..*] RefuelCard -> Invoice [0..*];
+association [0..1] RefuelTurn -> Pump [1];
+association [1] DailyReport -> PumpReorderInfo [*];
+association [1] PumpReorderInfo (appliesTo) -> Pump [1];
 
-  association [1] Company -> (stations) GasStation [*];
-  association [1] GasStation -> (pumps) Pump [*];
-  association [1] Pump -> (reservoir) Reservoir [1];
-
-  association [1] GasStation -> (reports) DailyReport [*];
-  association [1] DailyReport -> (pumpReports) PumpReport [*];
-
-  association [1] Customer -> (fuelCard) FuelCard [0..1];
-  association [1] Customer -> (creditCards) CreditCard [*];
-
-  association [1] Customer -> (refuelTurns) RefuelTurn [*];
-  association [1] Pump -> (performedRefuels) RefuelTurn [*];
-
-  association [1] FuelCard -> (invoices) Invoice [*];
-  association [1] Invoice -> (payments) Payment [*];
-
-  association [1] Invoice -> (refuelTurns) RefuelTurn [*]; // Each invoice contains the refuel turns of that invoiceMonth
-
-  // -------------------- System / App --------------------
-
-  class App {
-    String systemName;
-    String version;
-  }
-
-  association [1] App -> (company) Company [1];
-  association [1] App -> (dailyReports) DailyReport [*];
-
+// Comments
+// 1. A Pump can only be used for refueling when it is not blocked.
+// 2. Customer state changes based on payment behavior (e.g., NORMAL, SUSPENDED).
+// 3. Invoice contains refuel turns for the given month only.
 }

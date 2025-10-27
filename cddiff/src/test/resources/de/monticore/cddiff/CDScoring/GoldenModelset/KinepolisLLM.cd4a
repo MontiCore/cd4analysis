@@ -1,97 +1,91 @@
-/* (c) https://github.com/MontiCore/monticore */
 
-classdiagram KinepolisLLM {
+classdiagram kinepolis {
 
-  // ---------------- Core Domain ----------------
-
-  class Kinepolis {
+class Cinema {
     String name;
-  }
+    String location;
+    List<Theatre> theatres;
+}
 
-  class Cinema {
-    String town;
-    String name;
-  }
+class Theatre {
+    int theatreNumber;
+    int seatingCapacity;
+    List<Show> shows;
+}
 
-  association [1] Kinepolis -> (cinemas) Cinema [*];
-
-  class Theatre {
-    String name;
-    int seatCount;
-  }
-
-  association [1] Cinema -> (theatres) Theatre [*];
-
-  class Movie {
-    String title;
-    String genre;
-    int durationMinutes;
-  }
-
-  class Copy {
+class MovieCopy {
     String copyId;
-  }
+    Movie movie;
+    Cinema currentLocation;
+}
 
-  association [1] Cinema -> (copies) Copy [*];
-  association [1] Movie -> (copies) Copy [*];
+class Movie {
+    String title;
+    int duration; // minutes
+    String genre;
+}
 
-  // Comment: Copy is shown only in the theatres of its cinema,
-  // this restriction cannot be modeled directly in CD4A.
-
-  class Show {
+class Show {
     DateTime startTime;
-    boolean published;
-  }
+    DateTime endTime;
+    Theatre theatre;
+    MovieCopy movieCopy;
+    List<SeatReservation> reservations;
+    boolean isPublished;
+}
 
-  association [1] Theatre -> (shows) Show [*];
-  association [1] Copy -> (shows) Show [*];
-
-  // ---------------- Reservation & Ticketing ----------------
-
-  class Reservation {
-    DateTime reservationDate;
-    boolean paid;
-  }
-
-  association [1] Show -> (reservations) Reservation [*];
-
-  class CreditCard {
-    String number;
-    String holderName;
-    String expirationDate;
-  }
-
-  association [1] Reservation -> (payment) CreditCard [1];
-
-  class Seat {
+class Seat {
     int seatNumber;
-  }
+    Theatre theatre;
+}
 
-  association [1] Theatre -> (seats) Seat [*];
-  association [0..1] Reservation -> (reservedSeat) Seat [1];
+class SeatReservation {
+    Seat reservedSeat;
+    Customer customer;
+    Show show;
+    boolean isCancelled;
+}
 
-  class Ticket {
-    int ticketNumber;
-    boolean anonymous;
-  }
+class Customer {
+    String name;
+    String email;
+    CreditCard creditCard;
+}
 
-  association [1] Show -> (tickets) Ticket [*];
-  association [0..1] Ticket -> (seat) Seat [0..1];
+class CreditCard {
+    String cardNumber;
+    String cardHolderName;
+    String expirationDate;
+}
 
-  // ---------------- Cancellation & Offers ----------------
+class Ticket {
+    Seat assignedSeat;
+    Show show;
+    boolean isOnlineReservation; // true if reserved online, false if purchased at entrance
+}
 
-  class Offer {
-    DateTime expiration;
-    boolean accepted;
-  }
+// Enumerations
+enum CancellationStatus {
+    ACCEPTED,
+    DECLINED,
+    EXPIRED;
+}
 
-  association [0..1] Offer -> (reservation) Reservation [1];
-  association [0..1] Offer -> (newSeat) Seat [0..1];
+// Associations
+association [1..*] Cinema -> Theatre [*];
+association [1] Movie -> MovieCopy [*];
+association [1..*] MovieCopy -> Cinema [1];
+association showsMovie [*] Theatre -> Show [*];
+association [1] Show -> MovieCopy [1];
+association [1] Theatre -> Seat [*];
+association [*] Show -> SeatReservation [*];
+association [1] SeatReservation -> Customer [1];
+association [1] Ticket -> Show [1];
+association [1] Ticket -> Seat [1];
+association [0..1] SeatReservation -> (replacementOffer) Show [0..1]; // Linked to alternative shows with the same movie
 
-  class FreeTicket {
-    int freeTicketNumber;
-  }
-
-  association [0..1] Offer -> (compensation) FreeTicket [0..1];
-
+// Notes:
+// - Credit cards are only charged after the cancellation period ends.
+// - Tickets purchased at the entrance are anonymous and non-refundable.
+// - Shows can be cancelled if there are no reservations.
 }

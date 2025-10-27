@@ -3,17 +3,17 @@ classdiagram Louvre {
   class Collector {}
 
   class Piece {
-    String Title;
-    String Description;
+    String title;
+    String description;
   }
 
   class Item {
-    String Description;
+    String description;
   }
 
   class Exhibition {
-    String Title;
-    String Stage;
+    String title;
+    String stage;
   }
 
   class Location {}
@@ -21,7 +21,7 @@ classdiagram Louvre {
   class Room {}
 
   class Employee {
-    String Level;
+    String level;
   }
 
   association [1] Collector -> Piece [*];

@@ -1,35 +1,35 @@
-/* (c) CD4A Diagram for Game Area System */
 
-classdiagram GameAreaLLM {
+classdiagram gameModel {
 
-  class GameArea {
+class GameArea {
     String name;
-  }
+}
 
-  class GameElement {
-    long x;
-    long y;
-  }
+class GameElement {
+    protected long x;
+    private long y;
+}
 
-  class Shape extends GameElement {}
+class Shape extends GameElement {
+    // Shapes can be connected to other Shapes
+}
 
-  class Object extends GameElement {}
+class Object extends GameElement {
+    // Objects are general game elements
+}
 
-  class Opponent extends GameElement {
-    int lives;
-  }
+class Opponent extends GameElement {
+    protected int lives;
+    boolean isKilled; // Attribute approximates the ability to be killed
+}
 
-  // Associations
-  association [1] GameArea -> (elements) GameElement [1..*];
+class Boss extends Opponent {
+    // Boss is a specific type of Opponent
+}
 
-  // A game area consists of one or two game pieces
-  association [1] GameArea -> (pieces) GamePiece [1..2];
-
-  class GamePiece {}
-
-  // Shapes can be connected to any number of other shapes
-  association Shape <-> (connectedShapes) Shape [*];
-
-  // Exactly one opponent is known to the game area as the boss
-  association [1] GameArea -> (boss) Opponent [1];
+// Associations
+association [1..*] GameArea -> GameElement [*]; // GameArea must have at least one GameElement
+association [1..2] GameArea -> (hasGamePieces) GameElement [*]; // GameArea contains one or two game pieces
+association [1] GameArea -> Boss [1]; // GameArea has exactly one Boss
+association [1] Shape -> (connectsTo) Shape [*];
 }

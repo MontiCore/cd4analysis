@@ -1,91 +1,84 @@
-/* (c) Transport Company System*/
 
-classdiagram TransportCompanyLLM {
+classdiagram transportCompany {
 
-  // ----------------- Employees -----------------
-
-  class Employee {
+class Person {
     String name;
     String socialSecurityNumber;
-  }
+}
 
-  class Driver extends Employee {}
+class Employee extends Person {
+}
 
-  class Planner extends Employee {
+class Driver extends Employee {
+}
+
+class Planner extends Employee {
     String username;
     String password;
-  }
+}
 
-  class AdministrativeStaff extends Employee {
+class AdministrativeStaff extends Employee {
     String username;
     String password;
     String fieldOfActivity;
-  }
+}
 
-  // ----------------- Customers -----------------
-
-  class Customer {
+class Customer {
     String name;
     String billingAddress;
-  }
+}
 
-  // ----------------- Partner Company -----------------
-
-  class PartnerCompany {
-    String name;
-    String address;
-  }
-
-  // ----------------- Vehicles -----------------
-
-  class Vehicle {
+class Vehicle {
     String licensePlateNumber;
-    double mileage;
-  }
+    int mileage;
+    VehicleType type;
+}
 
-  class RefrigeratedTruck extends Vehicle {}
-  class SmallVan extends Vehicle {}
-  class LoadingPlatform extends Vehicle {}
-  class BoxTruck extends Vehicle {}
+enum VehicleType {
+    REFRIGERATED_TRUCK,
+    SMALL_VAN,
+    LOADING_PLATFORM,
+    BOX_TRUCK;
+}
 
-  // ----------------- Repair Shops & Repairs -----------------
-
-  class RepairShop {
+class RepairShop {
     String name;
     String address;
-  }
+}
 
-  class Repair {
+class Repair {
+    RepairShop repairShop;
+    Employee responsibleEmployee;
+    int durationInHours;
     double cost;
-    String duration;
-  }
+}
 
-  association [1] Repair -> (repairShop) RepairShop [1];
-  association [1] Repair -> (vehicle) Vehicle [1];
-  association [1] Repair -> (responsibleEmployee) Employee [1];
-
-  // ----------------- Orders -----------------
-
-  class Order {
-    String packageSize;
-    String pickupAddress;
-    String deliveryAddress;
+class Order {
     String comment;
-    DateTime startTime;
-    DateTime endTime;
-  }
+    String pickUpAddress;
+    String deliveryAddress;
+    Timestamp startTime;
+    Timestamp endTime;
+    Planner assignedPlanner;
+    Driver responsibleDriver;
+    Vehicle assignedVehicle;
+    Customer client;
+}
 
-  // Each order has exactly one customer
-  association [1] Order -> (client) Customer [1]; // always exactly one client
+class PartnerCompany {
+    String name;
+    String address;
+}
 
-  // Each order is placed either by Admin Staff OR PartnerCompany
-  association [0..1] Order -> (placedByAdmin) AdministrativeStaff [1];
-  association [0..1] Order -> (placedByPartner) PartnerCompany [1];
+// Associations
+association handledBy [1] Planner -> Order [*];
+association fulfills [*] Driver -> Order [*];
+association requires [1] Order -> Vehicle [1];
+association [1] Order -> (placedBy) Customer [1..*];
+association [0..1] Order -> (placedVia) PartnerCompany [0..1];
+association assignedTo [1] Driver -> Vehicle [*];
+association [*] Repair -> RepairShop [1];
+association [*] Repair -> (responsibleEmployee) Employee [1];
+association [1..*] Vehicle -> Repair [*];
 
-  // Orders involve assignment by a Planner
-  association [1] Order -> (assignedBy) Planner [1];
-
-  // Orders are carried out by a Driver with a Vehicle
-  association [1] Order -> (driver) Driver [1];
-  association [1] Order -> (vehicle) Vehicle [1];
 }

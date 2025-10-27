@@ -3,34 +3,34 @@
 classdiagram CardGameApp {
 
   class Game {
-    int ID;
+    int iD;
   }
 
   class Player {
-    int ID;
+    int iD;
   }
 
   class Deck {
-    int ID;
+    int iD;
   }
 
   class Card {
-    int ID;
+    int iD;
     Suit suit;
     Compare compare;
   }
 
   class Scoreboard {
-    int ID;
+    int iD;
   }
 
   class Round {
-    int ID;
+    int iD;
     int points;
   }
 
   abstract class RoundType {
-    int ID;
+    int iD;
   }
 
   class SoloRound extends RoundType {

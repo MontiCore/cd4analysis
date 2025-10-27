@@ -1,81 +1,77 @@
-classdiagram AlphaInsuranceLLM {
+
+classdiagram AlphaInsurance {
+
 class Customer {
     String customerId;
-    String name;
-    String contactInfo;
+    String fullName;
+    String emailAddress;
+    List<String> phoneNumbers;
+    List<InsurancePolicy> policies;
 }
 
 class Broker {
     String brokerId;
-    String name;
-    String contactInfo;
+    String fullName;
+    String emailAddress;
+    String phoneNumber;
+    List<Customer> assignedCustomers;
 }
 
 class InsurancePolicy {
     String policyId;
-    String type;
-    Double price;
-}
-
-class PreliminaryOffer {
-    String offerId;
-    Date dateIssued;
-    String deliveryMethod;
+    String policyType; // e.g., life, health, car, etc.
+    Optional<String> description;
+    double price;
+    String paymentCycle; // monthly or yearly
 }
 
 class Contract {
     String contractId;
-    Date startDate;
-    Date endDate;
-    String billingFrequency;
-}
-
-class Invoice {
-    String invoiceId;
-    Double amount;
-    Date dateIssued;
+    Date signingDate;
+    InsurancePolicy insurancePolicy;
+    Customer customer;
+    Broker broker;
 }
 
 class Claim {
     String claimId;
-    Date dateSubmitted;
-    String status;
+    Date claimDate;
+    Optional<String> description;
+    List<ClaimCase> cases;
 }
 
 class ClaimCase {
     String caseId;
-    String type;
-    String status;
+    String type; // e.g., material damage, physical damage
+    Optional<String> description;
+    List<EstimatorReport> reports;
+    boolean isApproved;
+    double compensationAmount;
 }
 
 class Estimator {
     String estimatorId;
-    String name;
-    String expertise;
+    String fullName;
+    String areaOfExpertise;
 }
 
 class EstimatorReport {
     String reportId;
-    Date dateIssued;
-    String content;
+    Date reportDate;
+    Estimator estimator;
+    ClaimCase claimCase;
+    Optional<String> findings;
 }
 
-class CompensationDecision {
-    String decisionId;
-    Double amount;
-    Date date;
-}
+// Associations
+association [1] Broker -> (assignedTo) Customer [*];
+association [1] Customer -> (hasPurchased) InsurancePolicy [*];
+association [1] Contract -> Customer [1];
+association [1] Contract -> Broker [1];
+association [1] Contract -> InsurancePolicy [1];
+association [1] Customer -> (hasFiled) Claim [*];
+association [1] Claim -> ClaimCase [*];
+association [1..*] ClaimCase -> EstimatorReport [*];
+association [1] EstimatorReport -> Estimator [1];
 
-association assignedTo [1] Customer -- Broker [1];
-association interestedIn [1] Customer -- InsurancePolicy [0..*];
-association receives [1] Customer -- PreliminaryOffer [0..*];
-association signs [1] Customer -- Contract [0..*];
-association generates [1] Contract -- Invoice [0..*];
-
-association submittedBy [1] Claim -- Customer [1];
-association consistsOf [1] Claim -- ClaimCase [0..*];
-association assessedBy [0..*] ClaimCase -> Estimator [1];
-association generates [1] ClaimCase -- EstimatorReport [0..*];
-association resultsIn [1] ClaimCase -> CompensationDecision [0..1];
-association paidTo [1] CompensationDecision -- Customer [1];
 }

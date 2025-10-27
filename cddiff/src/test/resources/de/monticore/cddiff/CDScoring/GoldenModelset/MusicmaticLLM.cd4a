@@ -1,68 +1,56 @@
-/* (c) Musicmatic Class Diagram */
 
-classdiagram MusicmaticLLM {
+classdiagram Musicmatic {
 
-  // ------------------- Core Domain -------------------
-
-  class Song {
+class Song {
     String title;
     int year;
     double length;
     String genre;
-  }
+}
 
-  class Artist {
-    String name;
+class Artist {
+    String name; // Unique identifier
     Date dateOfBirth;
-    String url;
-  }
+    String url; // URL to additional artist info
+}
 
-  association [1] Song -> (artist) Artist [1];
-  // Each song belongs to exactly one artist.
+// Associations for Songs and Artists
+association belongsTo [1] Song -> Artist [1];
 
-  // ------------------- Users -------------------
-
-  class User {
-    int id;
+class User {
+    String id; // Unique identifier
     String name;
     String address;
-  }
+}
 
-  class RegularUser extends User {}
+class RegularUser extends User {
+    List<Album> albumsOwned; // Albums purchased by the regular user
+    List<Song> singlesOwned; // Singles purchased by the regular user
+}
 
-  class BusinessUser extends User {
+class BusinessUser extends User {
     String vatNumber;
-  }
+    List<Song> songsUploaded; // Songs uploaded by the business user
+}
 
-  // Note: A user can act both as RegularUser and BusinessUser.
-  // This dual role is difficult to represent in CD4A directly,
-  // but we document it here for clarity.
+abstract class Single {
+    boolean isAvailableForPurchase;
+}
 
-  // ------------------- Song Types -------------------
+class Hit extends Song {
+    boolean isPartOfAlbum;
+}
 
-  class Single extends Song {}
-  class Hit extends Song {}
-
-  // Business Users upload Songs
-  association [1] BusinessUser -> (uploads) Song [*];
-
-  // Regular Users buy Singles
-  association [1] RegularUser -> (purchases) Single [*];
-
-  // ------------------- Albums -------------------
-
-  class Album {
+class Album {
     String name;
-  }
+    List<Hit> songs;
+    List<int> trackNumbers; // Track number positions
+}
 
-  // Album consists of multiple Hits
-  association [1] Album -> (tracks) Hit [*];
+// Associations for User roles
+association [1..*] BusinessUser (uploads) -> Single [*];
+association [1..*] RegularUser (purchases) -> Album [*];
+association [1] RegularUser (purchasesSingle) -> Single [*];
+association [*] Album -> (suggestedTo) RegularUser [*]; // Suggestion links between users
 
-  // Regular Users can create Albums
-  association [1] RegularUser -> (creates) Album [*];
-
-  // ------------------- Suggestions -------------------
-
-  // An Album of a RegularUser can be suggested to other RegularUsers
-  association [*] RegularUser -> (suggestedAlbums) Album [*];
 }

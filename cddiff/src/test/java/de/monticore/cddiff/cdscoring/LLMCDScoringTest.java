@@ -8,6 +8,8 @@ import de.monticore.cdmatcher.similarity.CDEmbeddingSimilarity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.TestWatcher;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,9 +30,27 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class LLMCDScoringTest extends SynDiffTestBasis {
 
+  static class ScoreFailedTests implements TestWatcher {
+
+    @Override
+    public void testFailed(org.junit.jupiter.api.extension.ExtensionContext context, Throwable cause) {
+      try {
+        File out = new File(dir + "LLMScores.txt");
+        Files.writeString(out.toPath(), "Syntax Error\n", out.exists() ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+      } catch (IOException e) {
+        System.out.println("Could not write to FailedScores.txt: " + e.getMessage());
+      }
+    }
+
+  }
+
   @BeforeAll
   public static void init() {
     dir = "src/test/resources/de/monticore/cddiff/CDScoring/";
+    File out = new File(dir + "LLMScores.txt");
+    if (out.exists()) {
+      out.delete();
+    }
     CDEmbeddingSimilarity.initialize("src/main/resources/crawl-300d-2M-subword.bin");
   }
 
@@ -53,6 +73,7 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
 
   @ParameterizedTest
   @MethodSource("LLMTestData")
+  @ExtendWith(ScoreFailedTests.class)
   public void testLLMModels(String srcFile, String tgtFile) throws IOException {
     parseModels(srcFile, tgtFile);
     CDScoring llmCDScoring = new CDScoring(src, tgt);

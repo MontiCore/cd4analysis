@@ -1,49 +1,55 @@
-/* (c) Research Project Management Model */
+ 
+classdiagram research_project_management {
 
-classdiagram ProjectManagementLLM {
-
-  class University {
+class University {
     String name;
-  }
+    List<ResearchGroup> researchGroups;
+}
 
-  class Department {
+class Department {
     String name;
-  }
+    Optional<University> university;
+    List<ResearchGroup> researchGroups;
+}
 
-  class ResearchGroup {
+class ResearchGroup {
+    String groupName;
+    Department department;
+    List<Researcher> researchers;
+    List<WorkPackage> leadingWorkPackages;
+}
+
+class Researcher {
     String name;
-  }
+    ResearchGroup currentGroup;
+    List<Assignment> assignments;
+}
 
-  class Researcher {
-    String name;
-  }
+class Project {
+    String projectName;
+    List<WorkPackage> workPackages;
+}
 
-  class Project {
-    String title;
-  }
-
-  class WorkPackage {
-    String title;
+class WorkPackage {
     String description;
-  }
+    ResearchGroup leaderGroup;
+    List<Assignment> teamMembers;
+}
 
-  // A University consists of multiple Departments
-  association [1] University -> (departments) Department [*];
+class Assignment {
+    Researcher researcher;
+    WorkPackage workPackage;
+    Date assignmentStartDate;
+    Date assignmentEndDate;
+    ResearchGroup providedServiceFrom; // Tracks "service delivery"
+}
 
-  // A Department consists of multiple ResearchGroups
-  association [1] Department -> (researchGroups) ResearchGroup [*];
-
-  // A ResearchGroup consists of multiple Researchers
-  association [1] ResearchGroup -> (members) Researcher [*];
-
-  // A Project consists of multiple WorkPackages
-  association [1] Project -> (workPackages) WorkPackage [*];
-
-  // Each WorkPackage has exactly one ResearchGroup as leader
-  association [1] WorkPackage -> (leader) ResearchGroup [1];
-
-  // Researchers can be assigned to any WorkPackage
-  // This assignment represents "service delivery" between groups
-  association [*] Researcher -> (assignments) WorkPackage [*];
+// Associations
+association [*] University -> Department [*];
+association belongsTo [*] ResearchGroup -> Department [1];
+association leads [1] ResearchGroup -> WorkPackage [*];
+association teamMember [*] Researcher -> WorkPackage [*];
+association hasAssignments [1] Researcher -> Assignment [*];
+association traceableServiceFrom [1] Assignment -> ResearchGroup [1];
 
 }

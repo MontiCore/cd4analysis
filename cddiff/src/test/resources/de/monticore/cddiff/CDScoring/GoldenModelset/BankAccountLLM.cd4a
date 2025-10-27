@@ -1,18 +1,26 @@
-classdiagram BankAccountLLM {
+
+classdiagram BankSystem {
+
 class Bank {
+    String bankName;
+    List<Branch> branches;
+    List<Customer> customers;
 }
 
 class Branch {
+    String branchName;
+    String branchAddress;
 }
 
 class Customer {
     String firstName;
     String lastName;
+    List<Account> accounts; // Minimum 1, maximum 5 accounts.
 }
 
 class Account {
     int accountNumber;
-    double balance;
+    double currentBalance;
 }
 
 class CurrentAccount extends Account {
@@ -22,7 +30,9 @@ class CurrentAccount extends Account {
 class SavingsAccount extends Account {
 }
 
-association owns [1] Customer <-> Account [1..5];
-association manages [1] Bank <-> Customer [0..*];
-association has [1] Bank <-> Branch [0..*];
+// Associations
+association [0..*] Bank -> Branch [1..*];
+association [1..*] Bank -> Customer [1..*];
+association [1] Account (owner) -> Customer [*];
+
 }

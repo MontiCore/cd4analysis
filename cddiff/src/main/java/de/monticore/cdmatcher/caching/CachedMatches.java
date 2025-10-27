@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmatcher.caching;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -10,6 +11,7 @@ public class CachedMatches {
   private final CachedMatch<ASTCDType> typeMatches = new CachedMatch<>();
   private final CachedMatch<ASTCDAttribute> attributeMatches = new CachedMatch<>();
   private final CachedMatch<ASTCDAssociation> assocMatches = new CachedMatch<>();
+  private final CachedMatch<ASTCDMethod> methodMatches = new CachedMatch<>();
   private double biggestChange = 0.0;
 
   public void putMatch(ASTCDType srcElem, ASTCDType tgtElem, Double value) {
@@ -27,6 +29,11 @@ public class CachedMatches {
     updateBiggestChange(oldValue, value);
   }
 
+  public void  putMatch(ASTCDMethod srcElem, ASTCDMethod tgtElem, Double value) {
+    Double oldValue = methodMatches.putMatch(srcElem, tgtElem, value);
+    updateBiggestChange(oldValue, value);
+  }
+
   public Double getMatch(ASTCDType srcElem, ASTCDType tgtElem) {
     return typeMatches.getMatch(srcElem, tgtElem);
   }
@@ -39,11 +46,17 @@ public class CachedMatches {
     return assocMatches.getMatch(srcElem, tgtElem);
   }
 
+  public Double getMatch(ASTCDMethod srcElem, ASTCDMethod tgtElem) {
+    return methodMatches.getMatch(srcElem, tgtElem);
+  }
+
   public CachedMatch<ASTCDType> getTypeMatches() { return typeMatches; }
 
   public CachedMatch<ASTCDAttribute> getAttributeMatches() { return attributeMatches; }
 
   public CachedMatch<ASTCDAssociation> getAssocMatches() { return assocMatches; }
+
+  public CachedMatch<ASTCDMethod> getMethodMatches() { return methodMatches; }
 
   public double getBiggestChange() {
     return biggestChange;

@@ -1,39 +1,43 @@
-/* (c) CD4A Class Diagram for Course Appointment System */
 
-classdiagram StudentAppointmentLLM {
+classdiagram model {
 
-  class Student {
+class Person {
     String name;
+    int age;
+}
+
+class Student extends Person {
     String studentId;
-    String email;
-  }
+}
 
-  class TeachingAssistant {
-    String name;
-    String taId;
-    String email;
-  }
+class TeachingAssistant extends Person {
+    String employeeId;
+}
 
-  class Course {
-    String courseId;
-    String title;
-    String description;
-  }
+enum CourseType {
+    MANDATORY,
+    ELECTIVE;
+}
 
-  class Appointment {
-    DateTime dateTime;
+class Course {
+    Optional<String> courseName;
+    String courseCode;
+    List<String> tags;
+    CourseType type;
+    int credits;
+}
+
+class Appointment {
+    Date appointmentTime;
     String location;
-  }
+}
 
-  // Students can register for multiple courses
-  association [*] Student -> (registeredCourses) Course [*];
-  // Teaching assistants can teach multiple courses
-  association [*] TeachingAssistant -> (teachingCourses) Course [*];
+// Associations
+association [10..*] Student -> (enrolledIn) Course [*]; // A student is enrolled in one or more courses.
+association [1..*] TeachingAssistant -> (teaches) Course [*]; // A TA teaches at least one course.
 
-  // An appointment is for one specific course
-  association [1] Appointment -> (course) Course [1];
-  // An appointment is with one teaching assistant (who teaches the course)
-  association [1] Appointment -> (assistant) TeachingAssistant [1];
-  // An appointment is with one or more students (who are registered in the course)
-  association [*] Appointment -> (participants) Student [1..*];
+association [*] Student -> (hasAppointment) Appointment [*]; // A student can have multiple appointments.
+association [*] TeachingAssistant -> (hasAppointment) Appointment [*]; // A TA can have multiple appointments.
+association [1] Appointment -> (forCourse) Course [1]; // Each appointment is for one specific course.
+association [1] Appointment -> (withAssistant) TeachingAssistant [1]; // Each appointment is with one specific TA.
 }

@@ -1,47 +1,48 @@
-/* (c) https://github.com/MontiCore/monticore */
 
-classdiagram TruckLogisticsLLM {
+// Class Diagram in CD4A format
 
-  class Location {
+classdiagram location_management_system {
+
+class Location {
     String address;
-  }
+    List<Driver> drivers;
+    List<Vehicle> vehicles;
+}
 
-  class Driver {
+class Driver {
     String firstName;
     String lastName;
-  }
+    Optional<Order> currentOrder; // Drivers can carry out at most one order at a time
+}
 
-  class Vehicle {
+class Vehicle {
     String vehicleNumber;
-  }
+    Optional<Driver> assignedDriver; // Vehicles can be assigned up to one driver
+}
 
-  class Truck extends Vehicle {
-    double weight;
-  }
+class Truck extends Vehicle {
+    int weight;
+}
 
-  class Car extends Vehicle {
+class Car extends Vehicle {
     int numberOfSeats;
-  }
+}
 
-  class Van extends Vehicle {}
+class Van extends Vehicle { }
 
-  class Order {
-    String origin;
-    String destination;
-    Date dateOfExecution;
-  }
+class Order {
+    Location origin;
+    Location destination;
+    List<Driver> assignedDrivers; // At least one driver is required
+    Date executionDate;
+}
 
-  // Associations
+// Associations
+association manages [1] Location -> (contains) Driver [*];
+association manages [1] Location -> (contains) Vehicle [*];
+association [1] Driver (executes) -> Order [0..1];
+association drives [1] Driver -> Vehicle [0..1];
+association originates [1] Order -> Location [1];
+association completes [1] Order -> Location [1];
 
-  association [1] Location -> (drivers) Driver [*];
-  association [1] Location -> (vehicles) Vehicle [*];
-
-  // Each driver can have at most one current order
-  association [0..1] Order -> (assignedDrivers) Driver [1]; // at least one driver per order
-
-  // NOTE: Drivers carry out at most one order at a time
-  association [1] Driver -> (currentOrder) Order [0..1];
-
-  // Vehicles are assigned to at most one driver
-  association [0..1] Vehicle -> (assignedDriver) Driver [1];
 }

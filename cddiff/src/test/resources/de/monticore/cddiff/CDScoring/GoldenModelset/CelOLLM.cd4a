@@ -1,0 +1,78 @@
+ 
+classdiagram CelebrationsOrganizationSystem {
+
+class Organizer {
+    String firstName;
+    String lastName;
+    String email; // Acts as username
+    String postalAddress;
+    String phoneNumber;
+    String password;
+    List<Event> managingEvents; // List of events an organizer manages
+}
+
+class Event {
+    String occasion;
+    EventType type; // Predefined or custom event type
+    DateTime startDateTime;
+    DateTime endDateTime;
+    Location location;
+    List<Attendee> attendees;
+    List<Task> checklist; // Tasks related to the event
+}
+
+enum EventType {
+    BIRTHDAY_PARTY,
+    GRADUATION_PARTY,
+    CUSTOM_EVENT;
+}
+
+class Location {
+    String name;
+    String address;
+}
+
+class Attendee {
+    String firstName;
+    String lastName;
+    String email; // Acts as username
+    Optional<String> password;
+    AttendanceStatus attendanceStatus;
+    List<Task> assignedTasks; // Tasks chosen by attendee
+}
+
+enum AttendanceStatus {
+    ATTENDING,
+    MAYBE,
+    NOT_ATTENDING;
+}
+
+class Task {
+    String description;
+    TaskStatus status;
+    Optional<Attendee> assignedTo; // Attendee assigned for this task (if applicable)
+}
+
+enum TaskStatus {
+    TO_BE_DONE,
+    COMPLETED,
+    NOT_APPLICABLE;
+}
+
+// Associations
+association manages [1..*] Organizer -> Event [1..*];
+association invites [1..*] Organizer -> Attendee [*];
+association attends [0..1] Organizer -> Event [1..*];
+association [1..*] Event -> Location [1..1];
+association [*] Event -> Task [*];
+association assignedTasks [0..*] Attendee -> Task [*];
+
+}
+ 
+
+### Notes:
+1. Organizers can manage multiple events and invite attendees. They can also attend events themselves but this is optional (`attends` association).
+2. Locations are used for events (can be predefined or custom).
+3. Event type defines the kind (birthday, graduation, or custom). Organizers can add custom event types.
+4. Tasks in the checklist are associated with events, and they can optionally be assigned to attendees.
+5. Attendees have an account tied to their email and can provide their attendance status. They can choose tasks assigned to them for the event.

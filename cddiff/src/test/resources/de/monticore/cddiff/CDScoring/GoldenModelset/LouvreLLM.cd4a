@@ -1,61 +1,63 @@
-/* (c) Louvre Museum Management System */
 
-classdiagram LouvreMuseum {
+classdiagram LouvreManagementSystem {
 
-  // ---------------- Core Museum Structure ----------------
-  class Museum {
+class Museum {
     String name;
-    String address;
-  }
+    List<Location> locations;
+}
 
-  class Location {
+class Location {
     String name;
-    String description;
-  }
+    Optional<String> description;
+    List<Exhibition> exhibitions;
+}
 
-  association [1] Museum -> (locations) Location [*];
-
-  class Exhibition {
-    String title;
-    Date startDate;
-    Date endDate;
+class Exhibition {
+    String name;
     Date planningStartDate;
-  }
+    Date openingDate;
+    Employee coordinator;
+    List<ExhibitionItem> items;
+}
 
-  association [1] Location -> (exhibitions) Exhibition [*];
-
-  // ---------------- Employees ----------------
-  class Employee {
+class ExhibitionItem {
     String name;
-    String role;
-  }
+    Optional<String> description;
+    List<RequestedPiece> requestedPieces;
+}
 
-  association coordinator [1] Exhibition -> (coordinator) Employee [1];
+class RequestedPiece {
+    Piece sourcedPiece;
+    Collector sourceCollector;
+}
 
-  // Coaching relation: one senior can coach multiple juniors, each junior has one senior
-  association coaching [*] Employee (junior) -> (senior) Employee [1];
-
-  // ---------------- Exhibition Items ----------------
-  class ExhibitionItem {
-    String description;
-  }
-
-  association [1] Exhibition -> (desiredItems) ExhibitionItem [*];
-
-  class Piece {
+class Piece {
     String title;
     String artist;
-    String period;
-  }
+    Optional<String> description;
+    Optional<Date> creationDate;
+}
 
-  class Collector {
+class Collector {
     String name;
-    String contactInfo;
-  }
+    Optional<String> contactInfo;
+    List<Piece> ownedPieces;
+}
 
-  // Some items may be linked to several possible pieces
-  association [1] ExhibitionItem -> (candidatePieces) Piece [*];
+class Employee {
+    String name;
+    String employeeId;
+    Optional<String> role;
+}
 
-  // Requested pieces are tracked per collector
-  association [*] Collector -> (pieces) Piece [*];
+// Associations
+association [1..*] Museum -> (spans) Location [*];
+association [1..*] Location -> (hosts) Exhibition [*];
+association [1] Exhibition -> (coordinatedBy) Employee [1];
+association [*] Exhibition -> (includes) ExhibitionItem [*];
+association [1] ExhibitionItem -> (requests) RequestedPiece [1..*];
+association [1] RequestedPiece -> Piece [1];
+association [1] RequestedPiece -> (from) Collector [1];
+association [0..*] Collector -> Piece [*];
+association [0..*] Employee (coachedBy) -> Employee [0..1]; // Junior employees have at most one coach
 }

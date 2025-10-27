@@ -25,8 +25,8 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
     if (!initialized) {
       Log.error("Initialize MatchByNameEmbedding before using an Embedding based MatchingStrategy");
     }
-    String srcName = extractName.apply(srcElem);
-    String tgtName = extractName.apply(tgtElem);
+    String srcName = extractName.apply(srcElem).toLowerCase();
+    String tgtName = extractName.apply(tgtElem).toLowerCase();
 
     List<Float> srcVector = jft.getVector(srcName);
     List<Float> tgtVector = jft.getVector(tgtName);
@@ -41,10 +41,12 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
 
   public Double matchMultipleNamesWithEmbedding(T srcElem, T tgtElem,
       Function<T, List<String>> extractNames, Consumer<List<Float>> vectorPreprocessing,
-      BiConsumer<List<Float>, List<Float>> vectorAccumulator,
       Consumer<List<Float>> vectorPostprocessing) {
     List<String> srcNames = extractNames.apply(srcElem);
     List<String> tgtNames = extractNames.apply(tgtElem);
+
+    srcNames = srcNames.stream().map(String::toLowerCase).collect(Collectors.toList());
+    tgtNames = tgtNames.stream().map(String::toLowerCase).collect(Collectors.toList());
 
     List<List<Float>> srcVectors = srcNames.stream().map(jft::getVector).collect(Collectors
         .toList());
@@ -59,12 +61,8 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
       Log.error("Source and Target Vectors must be of the same size for cosine similarity calculation. Make sure the preprocessing step does not change the size of the vectors.");
     }
 
-    int vectorSize = srcVectors.get(0).size();
-
-    List<Float> srcAccumulated = srcVectors.stream().collect(emptyVectorSupplier(vectorSize), vectorAccumulator,
-        vectorAccumulator);
-    List<Float> tgtAccumulated = tgtVectors.stream().collect(emptyVectorSupplier(vectorSize), vectorAccumulator,
-        vectorAccumulator);
+    List<Float> srcAccumulated = vectorAverage(srcVectors);
+    List<Float> tgtAccumulated = vectorAverage(tgtVectors);
 
     vectorPostprocessing.accept(srcAccumulated);
     vectorPostprocessing.accept(tgtAccumulated);
@@ -91,6 +89,24 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
     return dotProduct / (Math.sqrt(sum1) * Math.sqrt(sum2));
   }
 
+  private List<Float> vectorAverage(List<List<Float>> vectors) {
+    if(vectors.stream().map(List::size).distinct().count() != 1) {
+      Log.error("Vectors must be of the same size for averaging.");
+    }
+    int vectorSize = vectors.get(0).size();
+    List<Float> accumulated = vectors.stream().collect(emptyVectorSupplier(vectorSize), vectorAdd, vectorAdd);
+    accumulated.replaceAll(entry -> entry / vectors.size());
+    return accumulated;
+  }
+
+  private final BiConsumer<List<Float>, List<Float>> vectorAdd = (List<Float> firstVector,
+                                                                  List<Float> secondVector) -> {
+    // Both Lists should be the same size, otherwise additional entries will be ignored
+    for (int i = 0; i < Math.min(firstVector.size(), secondVector.size()); i++) {
+      firstVector.set(i, firstVector.get(i) + secondVector.get(i));
+    }
+  };
+
   public static void initialize(String vectorFile) {
     if (!(new File(vectorFile).exists())) {
       Log.error("vector file does not exist, run cddiff:downloadVectors");
@@ -100,13 +116,8 @@ public abstract class CDEmbeddingSimilarity<T> implements CDSimilarity<T> {
     }
   }
 
-  //Both Lists should be the same size, otherwise they will be trimmed to the shorter one
-  public static BiConsumer<List<Float>, List<Float>> vectorConcatenate = (List<Float> firstVector,
-      List<Float> secondVector) -> {
-    for (int i = 0; i < Math.min(firstVector.size(), secondVector.size()); i++) {
-      firstVector.set(i, firstVector.get(i) + secondVector.get(i));
-    }
-  };
+  //Concatenation of embedding vectors is done by appending on to the end of another, when the same amount of vectors are concatenated relative distances are preserved
+  public static BiConsumer<List<Float>, List<Float>> vectorConcatenate = List::addAll;
 
   public static Consumer<List<Float>> vectorNormalize = (List<Float> vector) -> {
     float sum = vector.stream().reduce(0f, Float::sum);

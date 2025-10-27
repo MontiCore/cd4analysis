@@ -1,53 +1,45 @@
-/* (c) Conan Fitness - CD4A model
-   Modelled according to the provided requirements.
-*/
 
-classdiagram FitnessCompanyConanLLM {
+classdiagram FitnessCompany {
 
-  // People
-  class Person {
-    String firstName;
-    String familyName;
-    Date birthDate;
-  }
+class FitnessCenter {
+    String name; // Unique name
+    String address;
+    List<Room> rooms; // Association to Room
+}
 
-  // Trainers are persons with an additional diploma attribute.
-  class Trainer extends Person {
-    String diploma;
-  }
-
-  // Centers and Rooms
-  class Center {
-    String name;
-    String address; // atomic
-  }
-
-  class Room {
-    int number;
+class Room {
+    int number; // Unique within a FitnessCenter
     int maxCapacity;
-  }
+}
 
-  // Sessions: abstract base
-  class Session {
-    Date date;
-    DateTime startTime;
-  }
+class Session {
+    String date;
+    String startHour;
+}
 
-  class GroupSession extends Session {
-    String type; // e.g., aerobics, bodystyling, ...
-  }
+class GroupSession extends Session {
+    String type; // Type like aerobics, bodystyling, etc.
+}
 
-  class IndividualSession extends Session {
-    // no trainer
-  }
+class IndividualSession extends Session {
+    // No additional attributes
+}
 
-  // Associations
-  association centersRooms [1] Center -> (rooms) Room [*];
+class Person {
+    String firstName;
+    String lastName;
+    String birthDate; // Unique identifier for Person
+}
 
-  association sessionRoom [1] Session -> (room) Room [1];
+class Trainer extends Person {
+    String diploma;
+    // Trainer can also be a Person participating in other sessions
+}
 
-  association participants [*] Session -> (participants) Person [*];
-
-  association trainerAssignment [1] GroupSession -> (trainer) Trainer [*];
+// Associations
+association [1] FitnessCenter -> Room [1..*]; // A center has one or more rooms
+association [1] Room -> Session [0..1]; // At most one session can start in a room at a given time
+association [0..*] Person -> (participantIn) Session [*]; // People participating in sessions
+association [1] Trainer -> (supervises) GroupSession [1]; // Group sessions are supervised by exactly one trainer
 
 }

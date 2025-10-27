@@ -1,60 +1,59 @@
-/* (c) CD4A Class Diagram based on University Project Description */
 
-classdiagram UniversityLLM {
+classdiagram university {
 
-  class University {
+class University {
     int totalEmployees;
-  }
+}
 
-  class Faculty {
+class Faculty {
     String name;
-  }
+}
 
-  class Institute {
+class Institute {
     String name;
     String address;
-  }
+}
 
-  association [1] University -> (faculties) Faculty [*];
-  association [1] Faculty -> (institutes) Institute [*];
+class Dean extends Employee {
+}
 
-  class Employee {
-    String ssn;
+class Employee {
+    String socialSecurityNumber;
     String name;
-    String email;
-  }
+    String emailAddress;
+}
 
-  // Each faculty is headed by a dean, who is an employee of the university.
-  association [1] Faculty -> (dean) Employee [1];
-
-  class ResearchStaff extends Employee {}
-
-  class AdministrativeStaff extends Employee {}
-
-  class ResearchAssistant extends ResearchStaff {
+class ResearchAssistant extends Employee {
     String fieldOfResearch;
-  }
+}
 
-  // Research assistants are assigned to at least one institute
-  association [1..*] ResearchAssistant -> Institute [*];
+class AdministrativeStaff extends Employee {
+}
 
-  class Project {
+class Lecturer extends ResearchAssistant {
+    // Lecturer is a specialized Research Assistant handling courses.
+}
+
+class Project {
     String name;
     Date startDate;
     Date endDate;
-  }
+    int allocatedHours;
+}
 
-  // RAs can be involved in projects for a certain number of hours
-  association [*] ResearchAssistant -> (projects) Project [*];
-
-  class Lecturer extends ResearchAssistant {}
-
-  class Course {
-    int id;
+class Course {
+    String id; // Unique identifier
     String name;
-    int weeklyHours;
-  }
+    int weeklyDurationHours;
+}
 
-  // Some RAs (Lecturers) teach courses
-  association [*] Lecturer -> (courses) Course [*];
+// Associations
+association [*] University -> Faculty [*];
+association [*] Faculty -> Institute [*];
+association [1] Faculty (headedBy) -> Dean [1];
+association [1] Institute (employs) -> Employee [*];
+association [1..*] Institute -> ResearchAssistant [*];
+association involves [*] ResearchAssistant -> Project [*];
+association teaches [*] Lecturer -> Course [*];
+
 }

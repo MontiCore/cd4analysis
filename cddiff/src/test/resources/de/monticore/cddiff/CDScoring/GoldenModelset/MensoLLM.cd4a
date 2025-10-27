@@ -1,72 +1,68 @@
-/* (c) De Lijn - MENSO Project */
 
-classdiagram MensoLLM {
+classdiagram DeLijn {
 
-  // ------------------ Core Domain ------------------
-
-  class Bus {
+class Bus {
     int busNumber;
-  }
+}
 
-  class Line {
-    int lineNumber;
-    LineCategory category;
-  }
+class Trajectory {
+    String destination;
+    String startPoint;
+    String approvalStatus; // e.g., APPROVED, REFUSED, PENDING, CHANGEREQUESTED
+    Boolean isOperational;
+    Boolean isSuspended;
+    Boolean isCancelled;
+    List<String> routePoints; // Points that define the trajectory
+}
 
-  class Trajectory {
+class Line {
     String name;
-    TrajectoryStatus status;
-  }
+    String category; // Used for MENSO ticket pricing
+    List<Trajectory> trajectories;
+}
 
-  enum TrajectoryStatus {
-    REQUESTED,
-    REFUSED,
-    APPROVED,
-    OPERATIONAL,
-    SUSPENDED,
-    CANCELLED;
-  }
+enum MensoDiscount {
+    NONE,
+    FIVE_PERCENT,
+    TEN_PERCENT,
+    FIFTEEN_PERCENT,
+    TWENTY_PERCENT;
+}
 
-  enum LineCategory {
-    URBAN,
-    REGIONAL,
-    EXPRESS;
-    // Example categories; could be extended
-  }
+class MensoCard {
+    String cardNumber;
+    String holderName;
+    List<Trip> trips;
+}
 
-  association [*] Line -> (trajectories) Trajectory [*];
-  association [*] Bus -> (assignedLine) Line [1];
-  // A bus always belongs to exactly one line,
-  // but the description might imply more flexibility
+class Trip {
+    Date timestamp;
+    Line line;
+    MensoDiscount appliedDiscount; // Discount applied on this trip
+}
 
-  // ------------------ MENSO System ------------------
-
-  class Customer {
+class Customer {
     String name;
     String homeAddress;
     String officeAddress;
     String workingHours;
-  }
+    MensoCard mensoCard;
+    List<Invoice> invoices;
+}
 
-  class MensoCard {
-    String cardId;
-    Date validUntil;
-  }
-
-  class Trip {
-    DateTime dateTime;
-  }
-
-  class Invoice {
+class Invoice {
     Date issueDate;
-    double amount;
-    double discount;
-    boolean isPaid;
-  }
+    Double amount;
+    Boolean isPaid;
+    MensoDiscount totalDiscount; // Discount applied on total amount
+}
 
-  association [1] Customer -> (mensoCard) MensoCard [0..1];
-  association [1] MensoCard -> (trips) Trip [*];
-  association [1] Trip -> (line) Line [1];
-  association [1] Customer -> (invoices) Invoice [*];
+// Associations
+association [1..*] Bus -> (assignedTo) Trajectory [*];
+association [*] Trajectory (groupedIn) -> Line [1];
+association [*] Customer -> (uses) MensoCard [1];
+association [*] Trip -> (onLine) Line [1];
+association [1] Customer -> (receives) Invoice [*];
+association [1] Invoice -> (generatedFrom) Trip [*];
 
 }

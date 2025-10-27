@@ -1,73 +1,56 @@
-/* (c) HospitalHouseMD Class Diagram */
 
-classdiagram HospitalHouseMDLLM {
+classdiagram HospitalHouseMD {
 
-  // ---------------- Core Entities ----------------
-
-  class Patient {
-    String name;
-    boolean consentGiven;  // true if patient signed consent for stage upgrade
-  }
-
-  class Doctor {
-    String name;
-  }
-
-  class HeadDoctor extends Doctor {}
-
-  class Nurse {
-    String name;
-  }
-
-  class Illness {
-    String name;
-    PriorityScore priority;
-  }
-
-  enum PriorityScore {
+enum PriorityScore {
     HIGH,
     LOW;
-  }
+}
 
-  class Diagnosis {
-    String description;
-    boolean approved; // true if head doctor approved
-  }
+enum TreatmentStage {
+    STAGE_1,
+    STAGE_2,
+    STAGE_3;
+}
 
-  class Treatment {
+class Patient {
+    String name;
+    int age;
+    boolean consentGiven;
+}
+
+class Doctor {
+    String name;
+    String specialization;
+    boolean isHeadDoctor;
+}
+
+class Illness {
+    String name;
+    PriorityScore priority;
+}
+
+class Diagnosis {
+    Illness illness;
+    Doctor approvedBy; // Reference to the head doctor who approves the diagnosis
+    List<Treatment> treatments;
+}
+
+class Treatment {
     String name;
     TreatmentStage stage;
-  }
+    boolean isStage3FollowupNeeded;
+}
 
-  enum TreatmentStage {
-    STAGE1,
-    STAGE2,
-    STAGE3;
-  }
+class Nurse {
+    String name;
+}
 
-
-  // ---------------- Associations ----------------
-
-  // Patients are treated by multiple doctors
-  association [1] Patient -> (assignedDoctors) Doctor [*];
-
-  // Patients have illnesses
-  association [1] Patient -> (illnesses) Illness [*];
-
-  // Doctors make diagnoses for patients
-  association [1] Doctor -> (diagnoses) Diagnosis [*];
-  association [1] Patient -> (diagnoses) Diagnosis [*];
-
-  // Each diagnosis must be approved by the head doctor
-  association [1] Diagnosis -> (approvedBy) HeadDoctor [0..1];
-
-  // Each illness has possible treatments stored in the database
-  association [1] Illness -> (possibleTreatments) Treatment [*];
-
-  // Diagnoses can have applied treatments
-  association [1] Diagnosis -> (appliedTreatments) Treatment [*];
-
-  // Nurses follow up patients (especially important in stage 3)
-  association [1] Nurse -> (followUpPatients) Patient [*];
+// Associations
+association [*] Patient -> (assignedTo) Doctor [1..*];
+association [*] Doctor -> (makes) Diagnosis [*];
+association [1] Diagnosis -> Treatment [*];
+association [*] Patient -> (receivesDiagnosisFor) Diagnosis [*];
+association [*] Illness -> (hasTreatmentOptions) Treatment [*];
+association [*] Nurse -> (followsUpOn) Treatment [0..*];
 
 }

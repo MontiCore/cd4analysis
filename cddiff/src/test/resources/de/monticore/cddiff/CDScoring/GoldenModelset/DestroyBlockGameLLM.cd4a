@@ -1,0 +1,96 @@
+
+classdiagram DestroyBlock {
+
+class User {
+    String username; // unique
+    String password;
+    boolean isAdmin; // indicates if user is admin or player
+}
+
+class Game {
+    String name; // unique
+    HallOfFame hallOfFame;
+    List<Block> blockSet;
+    List<Level> levels;
+    
+    int minSpeed;
+    float speedIncreaseFactor;
+    int minPaddleLength;
+    int maxPaddleLength;
+    int initialBlocksPerLevel; // blocks to start each level
+}
+
+class HallOfFame {
+    List<HighScoreEntry> highScores;
+}
+
+class HighScoreEntry {
+    User player;
+    int score;
+}
+
+class Block {
+    String color;
+    int points; // between 1 and 1000
+}
+
+class Level {
+    int levelNumber; // numbered sequentially starting from 1
+    Grid startGrid; // block arrangement for the level
+    boolean isRandom; // if the level uses a random block arrangement
+    int blockCount; // initial number of blocks in level
+}
+
+class Grid {
+    List<Cell> cells;
+}
+
+class Cell {
+    int x; // x-coordinate, e.g., column number
+    int y; // y-coordinate, e.g., row number
+    Optional<Block> block; // block placed in this cell
+}
+
+class Ball {
+    float speed;
+    Direction direction;
+}
+
+class Paddle {
+    int length;
+    Position position; // current position on the play area
+}
+
+class Direction {
+    float angle; // direction of ball movement
+}
+
+class Position {
+    int x;
+    int y;
+}
+
+class GameSession {
+    User player;
+    Game playedGame;
+    int score;
+    int remainingLives; // starts with 3 lives
+    int currentLevelNumber;
+    boolean isPaused; // true if paused
+}
+
+// Associations
+association [1] User -> (owns) Game [0..*]; // user creates games (only admin)
+association [1] Game -> HallOfFame [1]; // each game has its own hall of fame
+association [1] HallOfFame -> HighScoreEntry [*]; // hall of fame stores high score entries
+association [1..99] Game -> (hasLevels) Level [*]; // game consists of multiple levels (up to 99)
+association [*] Level -> (isArrangedIn) Grid [1]; // levels are defined using a grid system
+association [1] User -> (plays) GameSession [*]; // user plays multiple sessions
+association [1] GameSession -> (handles) Paddle [1]; // each session has one paddle
+association [1] GameSession -> (includes) Ball [1]; // each session has one ball
+
+// Comments
+// - A user can choose admin or player mode when logging in.
+// - A game has only one admin.
+// - Players compete for high scores in the game's hall of fame.
+}

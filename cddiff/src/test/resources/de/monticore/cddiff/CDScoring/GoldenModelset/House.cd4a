@@ -3,12 +3,12 @@
 classdiagram House {
 
   class ConcreteBasement extends Basement {
-    Double Quality;
+    Double quality;
   }
 
   abstract class Basement {
-    Double Size;
-    String Name;
+    Double size;
+    String name;
   }
 
   enum BMType {
@@ -18,22 +18,22 @@ classdiagram House {
   }
 
   class EarthBasement extends Basement {
-    Double Humidity;
+    Double humidity;
   }
 
   abstract class SemiDetached extends House {
-    Boolean Garden;
-    int Windows;
+    Boolean garden;
+    int windows;
   }
 
   class House {
-    String Address;
-    BMType BuildingMaterial;
+    String address;
+    BMType buildingMaterial;
   }
 
   class JobLog {
-    int Hours;
-    Double Price;
+    int hours;
+    Double price;
   }
 
   class SemiDetachedWithCarport extends SemiDetached {}
@@ -41,17 +41,17 @@ classdiagram House {
   class SemiDetachedWithGarage extends SemiDetached {}
 
   class Company {
-    String Name;
-    String Address;
+    String name;
+    String address;
   }
 
   class Carport {
-    Boolean DoublePort;
+    Boolean doublePort;
     Boolean flatRoof;
   }
 
   class Garage {
-    Boolean Automatic;
+    Boolean automatic;
   }
 
   association [0..1] Basement -> (house) House [1];

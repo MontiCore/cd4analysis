@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmatcher.caching;
 
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -23,6 +24,9 @@ public class CachedType {
 
   private final Set<ASTCDAssociation> directAssociations = new HashSet<>();
   private final Set<ASTCDAssociation> associations = new HashSet<>();
+
+  private final Set<ASTCDMethod> directMethods = new HashSet<>();
+  private final Set<ASTCDMethod> methods = new HashSet<>();
 
   public CachedType(ASTCDType cachedType) {
     this.cachedType = cachedType;
@@ -76,6 +80,22 @@ public class CachedType {
 
   public void addAssociation(ASTCDAssociation association) {
     associations.add(association);
+  }
+
+  public Set<ASTCDMethod> getDirectMethods() {
+    return directMethods;
+  }
+
+  public void addDirectMethod(ASTCDMethod directMethod) {
+    directMethods.add(directMethod);
+  }
+
+  public Set<ASTCDMethod> getMethods() {
+    return methods;
+  }
+
+  public void addMethod(ASTCDMethod method) {
+    methods.add(method);
   }
 
 }

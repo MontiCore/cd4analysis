@@ -1,52 +1,55 @@
-/* (c) Clothing Management System */
+classdiagram clothingApp {
 
-classdiagram ClothingCompanyLLM {
+    // Class representing products
+    class Product {
+        String uniqueName;
+        String description;
+        double netPrice;
+        String manufacturerName;
+        String manufacturerCountry;
+    }
 
-  class Product {
-    String name;
-    String description;
-    double netPrice;
-  }
+    // Class representing countries, the VAT rate and currency information
+    class Country {
+        String name;
+        double vatRate;
+        String currency;
+        double conversionRateToEuro;
+    }
 
-  class Company {
-    String name;
-  }
+    // Association indicating in which country a product is available
+    association isAvailableIn [*] Product -> Country [*];
 
-  class Country {
-    String name;
-    double vatRate;
-    String currency;
-    double conversionRateToEuro;
-  }
+    // Class representing representatives
+    class Representative {
+        String firstName;
+        String lastName;
+        String socialSecurityNumber;
+        String telephoneNumber;
+        String emailAddress;
+    }
 
-  class Representative {
-    String firstName;
-    String lastName;
-    String socialSecurityNumber;
-    String phoneNumber;
-    String email;
-  }
+    // Association indicating the country a representative is responsible for
+    association responsibleFor [1] Representative -> Country [1];
 
-  class Customer {
-    String name;
-    String address;
-    String phoneNumber;
-    String email;
-  }
+    // Class representing customer information
+    class Customer {
+        String name;
+        String address;
+        String telephoneNumber;
+        String emailAddress;
+        List<Country> resellingCountries;
+    }
 
-  class Order {
-    String orderId;
-    int quantity;
-    Date orderDate;
-    Date deliveryDate;
-  }
+    // Class representing orders
+    class Order {
+        String orderId; // Unique identifier
+        int orderQuantity;
+        Date orderDate;
+        Date deliveryDate;
+    }
 
-  // Associations
-  association [1] Product -> (manufacturer) Company [1];
-  association [*] Product -> (availableIn) Country [*]; // not every product is available in every country
-  association [1] Representative -> (responsibleCountry) Country [1];
-  association [*] Customer -> (resellsIn) Country [*];
-  association [1] Order -> (product) Product [1];
-  association [1] Order -> (customer) Customer [1];
-  association [1] Order -> (placedBy) Representative [1];
+    // Associations tying orders, representatives, and products
+    association placedBy [1] Order -> Representative [1];
+    association refersTo [1] Order -> Product [1];
 }

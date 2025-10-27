@@ -8,51 +8,51 @@ classdiagram FilmSet {
   }
 
   abstract class Employee {
-    String Name;
-    int Ssn;
+    String name;
+    int ssn;
   }
 
   abstract class CreativeEmployee extends Employee {
-    boolean Oscar;
+    boolean oscar;
   }
 
   class Technician extends Employee {
-    String FieldOfActivity;
+    String fieldOfActivity;
   }
 
   class Director extends CreativeEmployee {
-    String AssistentName;
+    String assistentName;
   }
 
   class Actor extends CreativeEmployee {
-    String Education;
+    String education;
   }
 
   class Screenplay {
-    String Title;
-    String Version;
-    Date Date;
-    int NumberOfScenes;
-    String Plot;
+    String title;
+    String version;
+    Date date;
+    int numberOfScenes;
+    String plot;
   }
 
   class FilmSet {
-    String Location;
+    String location;
   }
 
   class Film {
-    String Title;
-    int Year;
-    Genre Genre;
+    String title;
+    int year;
+    Genre genre;
   }
 
   class ScreenplayAuthor {
-    String Name;
+    String name;
   }
 
   class Book {
-    String Title;
-    String Author;
+    String title;
+    String author;
   }
 
   class Concept {}

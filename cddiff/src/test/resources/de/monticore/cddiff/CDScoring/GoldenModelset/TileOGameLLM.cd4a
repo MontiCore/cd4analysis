@@ -1,0 +1,87 @@
+
+classdiagram TileOGame {
+
+class GameDesigner {
+    String name;
+}
+
+class BoardGame {
+    String name;
+    List<Tile> tiles;
+    List<ConnectionPiece> connectionPieces;
+    Optional<Tile> hiddenTile;
+    List<PlayingPiece> startingPositions;
+    List<ActionTile> actionTiles;
+    ActionDeck actionDeck;
+    int maxPlayers;
+}
+
+class Tile {
+    Optional<Color> color; // Indicates visited (black) or unvisited (white).
+    Optional<ActionTileBehavior> actionTileBehavior; // Specifies action tile turns.
+    List<ConnectionPiece> connections;
+}
+
+enum Direction {
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM;
+}
+
+association [0..1] Tile -> (connectedTo) Tile [0..1];
+association [1] Tile -> (connectedBy) ConnectionPiece [0..1];
+
+class ActionTile extends Tile {
+}
+
+class ActionTileBehavior {
+    int turnDuration;
+}
+
+class ConnectionPiece {
+    boolean isSpare;
+}
+
+class ActionDeck {
+    List<ActionCard> cards;
+}
+
+class ActionCard {
+    CardType type;
+    String description; // Describes behavior (e.g., extra turn, move tile, etc.).
+}
+
+enum CardType {
+    EXTRA_TURN,
+    CONNECT_TILES,
+    REMOVE_CONNECTION,
+    MOVE_PLAYING_PIECE,
+    LOSE_TURN;
+}
+
+class PlayingPiece {
+    String color;
+    Tile currentTile;
+}
+
+class Player {
+    String name;
+    PlayingPiece piece;
+}
+
+class Die {
+    int faceValue; // Value shown on roll.
+}
+
+// Associations
+association [0..1] Player -> PlayingPiece [1];
+association [1] PlayingPiece -> Tile [1];
+association playsWith [1..4] Player -> BoardGame [1];
+association designs [1] GameDesigner -> BoardGame [1];
+association contains [1..*] ActionDeck -> ActionCard [32];
+association defines [1] GameDesigner -> ActionDeck [1];
+association modifies [1] Player -> Tile [*];
+association rolls [1] Player -> Die [1];
+
+}

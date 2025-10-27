@@ -1,67 +1,58 @@
-/* (c) Science Connect Research Database */
 
-classdiagram EUScienceConnectLLM {
+classdiagram ScienceConnect {
 
-  // =========================
-  // Core Domain Classes
-  // =========================
-
-  class Person {
-    String personId;
+class Person {
+    String personID; // Unique identifier
     String phoneNumber;
-    List<String> keywords;
-  }
+    List<String> researchKeywords;
+}
 
-  class Institution {
-    String institutionCode;
-  }
+class ResearchInstitution {
+    String institutionCode; // Unique identifier
+    String name;
+}
 
-  class ScientificArticle {
-    String doi;
+class ScientificArticle {
+    String DOI; // Document object identifier (unique)
     String title;
-  }
+    List<AuthorPosition> authors; // Position for each author in the publication
+}
 
-  class PeerReviewedPaper extends ScientificArticle {
-    int citationCount;
-  }
-
-  class TechnicalReport extends ScientificArticle {}
-
-  class Publisher {
-    String name;
-  }
-
-  class Journal {
-    String name;
-    double impactFactor;
-  }
-
-  // =========================
-  // Associations
-  // =========================
-
-  // Person works for an Institution
-  association [*] Person -> (worksAt) Institution [1];
-
-  // Author relationships (with position stored separately)
-  class Authorship {
+class AuthorPosition {
+    Person author;
     int position;
-  }
-  association [1] Person -> (authored) Authorship [*];
-  association [1] ScientificArticle -> (hasAuthor) Authorship [*];
+}
 
-  // Reviewer relationships (only for PeerReviewedPapers)
-  association [*] Person -> (reviews) PeerReviewedPaper [*];
+class PeerReviewedPaper extends ScientificArticle {
+    int citationCount; // Number of citations
+    List<Person> reviewers;
+}
 
-  // TechnicalReport published by one Institution
-  association [1] Institution -> (publishedReports) TechnicalReport [*];
+class TechnicalReport extends ScientificArticle {
+    ResearchInstitution publishedBy; // Single institution publishing the report
+}
 
-  // Publisher - Journal
-  association [1] Publisher -> (journals) Journal [*];
+class Publisher {
+    String name; // Unique name
+    List<Journal> journals;
+}
 
-  // Institution subscribes to Journals
-  association [*] Institution -> (subscriptions) Journal [*];
+class Journal {
+    String title; // Journal name
+    double impactFactor; // Scientific impact measure
+    Publisher publisher;
+}
 
-  // Only PeerReviewedPapers are published in Journals
-  association [1] Journal -> (papers) PeerReviewedPaper [*];
+enum ArticleType {
+    PEER_REVIEWED_PAPER,
+    TECHNICAL_REPORT;
+}
+
+// Associations
+association [1] Person -> (worksFor) ResearchInstitution [1];
+association [1..*] ScientificArticle -> (hasAuthorPosition) AuthorPosition [1..*];
+association [1] PeerReviewedPaper -> (publishedIn) Journal [*];
+association [1] Journal -> Publisher [1];
+association [*] TechnicalReport -> (publishedBy) ResearchInstitution [1];
+
 }
