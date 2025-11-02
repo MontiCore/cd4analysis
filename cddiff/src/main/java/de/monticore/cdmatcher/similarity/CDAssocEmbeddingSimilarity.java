@@ -12,15 +12,18 @@ public class CDAssocEmbeddingSimilarity extends CDEmbeddingSimilarity<ASTCDAssoc
 
   @Override
   public Double computeWeight(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
-    // MutablePair<weight, value> in order: nameSimilarity, leftNameSimilarity, rightNameSimilarity, typeSimilarity, directionSimilarity
-    List<MutablePair<Double, Double>> weightsValues = new ArrayList<>(List.of(new MutablePair<>(0.4,
-        -1.0), new MutablePair<>(0.05, -1.0), new MutablePair<>(0.05, -1.0), new MutablePair<>(0.3,
+    // MutablePair<weight, value> in order: nameSimilarity, leftNameSimilarity, rightNameSimilarity, leftCardinalitySimilarity, rightCardinalitySimilarity, typeSimilarity, directionSimilarity
+    List<MutablePair<Double, Double>> weightsValues = new ArrayList<>(List.of(new MutablePair<>(0.3,
+        -1.0), new MutablePair<>(0.05, -1.0), new MutablePair<>(0.05, -1.0), new MutablePair<>(0.1, -1.0), new MutablePair<>(0.1, -1.0), new MutablePair<>(0.2,
             -1.0), new MutablePair<>(0.2, -1.0)));
 
+    // association name
     if (srcElem.isPresentName() && tgtElem.isPresentName()) {
       weightsValues.get(0).setB(matchNameWithEmbedding(srcElem, tgtElem,
           ASTCDAssociationTOP::getName));
     }
+
+    // role names
     if (srcElem.getLeft().isPresentCDRole() && tgtElem.getLeft().isPresentCDRole()) {
       weightsValues.get(1).setB(matchNameWithEmbedding(srcElem, tgtElem, assoc -> assoc.getLeft()
           .getName()));
@@ -29,9 +32,20 @@ public class CDAssocEmbeddingSimilarity extends CDEmbeddingSimilarity<ASTCDAssoc
       weightsValues.get(2).setB(matchNameWithEmbedding(srcElem, tgtElem, assoc -> assoc.getRight()
           .getName()));
     }
-    weightsValues.get(3).setB(srcElem.getCDAssocDir().getClass().equals(tgtElem.getCDAssocDir()
+
+    // cardinalities
+    CDCardinalitySimilarity cardinalitySimilarity = new CDCardinalitySimilarity();
+    if(srcElem.getLeft().isPresentCDCardinality() && tgtElem.getLeft().isPresentCDCardinality()) {
+      weightsValues.get(3).setB(cardinalitySimilarity.computeWeight(srcElem.getLeft().getCDCardinality(), tgtElem.getLeft().getCDCardinality()));
+    }
+    if(srcElem.getRight().isPresentCDCardinality() && tgtElem.getRight().isPresentCDCardinality()){
+      weightsValues.get(4).setB(cardinalitySimilarity.computeWeight(srcElem.getRight().getCDCardinality(), tgtElem.getRight().getCDCardinality()));
+    }
+
+    // association type and direction
+    weightsValues.get(5).setB(srcElem.getCDAssocDir().getClass().equals(tgtElem.getCDAssocDir()
         .getClass()) ? 1.0 : 0.0); //ASTCDAssocDir does not implement equals
-    weightsValues.get(4).setB(srcElem.getCDAssocType().getClass().equals(tgtElem.getCDAssocType()
+    weightsValues.get(6).setB(srcElem.getCDAssocType().getClass().equals(tgtElem.getCDAssocType()
         .getClass()) ? 1.0 : 0.0); //ASTCDAssocType does not implement equals
 
     // preserves the relative weights even when some values cannot be calculated because names are not present
