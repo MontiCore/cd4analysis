@@ -8,9 +8,12 @@ import de.monticore.cdmatcher.MatchingStrategy;
 import de.monticore.cdmatcher.MultipleMatchingStrategy;
 import de.monticore.cdmatcher.caching.CachedMatches;
 import de.monticore.cdmatcher.iterative.matching.MatchMCType;
+import de.monticore.cdmatcher.iterative.matching.MatchModifier;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.google.common.math.DoubleMath.mean;
 
@@ -34,7 +37,9 @@ public class MatchCDMethod extends MultipleMatchingStrategy<ASTCDMethod, ASTCDPa
     MatchMCType mcTypeMatcher = new MatchMCType(cachedMatches, srcScope, tgtScope);
     MatchingStrategy<ASTCDParameter> parameterMatcher = new MatchCDParameter(cachedMatches, parameterNameMatcher);
 
-    double nameScore = nameMatcher.getScore(srcElem, tgtElem);
+    List<Double> scores = new LinkedList<>();
+
+    scores.add(nameMatcher.getScore(srcElem, tgtElem));
     double returnScore = 0.0;
 
     if(!srcElem.getMCReturnType().isPresentMCType() && !tgtElem.getMCReturnType().isPresentMCType()) {
@@ -46,11 +51,18 @@ public class MatchCDMethod extends MultipleMatchingStrategy<ASTCDMethod, ASTCDPa
       returnScore = mcTypeMatcher.getScore(srcReturnType, tgtReturnType);
     }
 
-    double paramScore = getBestMatchingScore(srcElem, tgtElem,
-      method -> new HashSet<>(method.getCDParameterList()),
-      parameterMatcher);
+    scores.add(returnScore);
 
-    double score = mean(nameScore, returnScore, paramScore);
+    scores.add(getBestMatchingScore(srcElem, tgtElem,
+      method -> new HashSet<>(method.getCDParameterList()),
+      parameterMatcher));
+
+    if(MatchModifier.hasModifier(srcElem.getModifier()) || MatchModifier.hasModifier(tgtElem.getModifier())) {
+      scores.add(new MatchModifier()
+        .getScore(srcElem.getModifier(), tgtElem.getModifier()));
+    }
+
+    double score = mean(scores);
 
 
     cachedMatches.putMatch(srcElem, tgtElem, score);
