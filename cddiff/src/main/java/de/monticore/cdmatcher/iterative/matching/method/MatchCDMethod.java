@@ -18,10 +18,12 @@ public class MatchCDMethod extends MultipleMatchingStrategy<ASTCDMethod, ASTCDPa
 
   private final CachedMatches cachedMatches;
   private final MatchingStrategy<ASTCDMethod> nameMatcher;
+  private final MatchingStrategy<ASTCDParameter> parameterNameMatcher;
 
-  public MatchCDMethod(CachedMatches cachedMatches, MatchingStrategy<ASTCDMethod> nameMatcher) {
+  public MatchCDMethod(CachedMatches cachedMatches, MatchingStrategy<ASTCDMethod> nameMatcher, MatchingStrategy<ASTCDParameter> parameterNameMatcher) {
     this.cachedMatches = cachedMatches;
     this.nameMatcher = nameMatcher;
+    this.parameterNameMatcher = parameterNameMatcher;
   }
 
 
@@ -30,6 +32,7 @@ public class MatchCDMethod extends MultipleMatchingStrategy<ASTCDMethod, ASTCDPa
     ICD4CodeArtifactScope srcScope = CDAttributeHelper.getCD4CodeArtifactScope(srcElem.getEnclosingScope());
     ICD4CodeArtifactScope tgtScope = CDAttributeHelper.getCD4CodeArtifactScope(tgtElem.getEnclosingScope());
     MatchMCType mcTypeMatcher = new MatchMCType(cachedMatches, srcScope, tgtScope);
+    MatchingStrategy<ASTCDParameter> parameterMatcher = new MatchCDParameter(cachedMatches, parameterNameMatcher);
 
     double nameScore = nameMatcher.getScore(srcElem, tgtElem);
     double returnScore = 0.0;
@@ -45,7 +48,7 @@ public class MatchCDMethod extends MultipleMatchingStrategy<ASTCDMethod, ASTCDPa
 
     double paramScore = getBestMatchingScore(srcElem, tgtElem,
       method -> new HashSet<>(method.getCDParameterList()),
-      (srcParam, tgtParam) -> mcTypeMatcher.getScore(srcParam.getMCType(), tgtParam.getMCType()));
+      parameterMatcher);
 
     double score = mean(nameScore, returnScore, paramScore);
 
