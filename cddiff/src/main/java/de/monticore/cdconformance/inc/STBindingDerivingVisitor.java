@@ -69,20 +69,24 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
   
   @Override
   public void visit(ASTCDAssociation node) {
-    // TODO check this when working on associations
     // an association side has only a symbol if it has a name
-    // Either, we not allow binding stereotypes on unnamed associations or we add the bindings
-    // from the association level to each association side (always having an implicit name from the
-    // source/target type).
-    //checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    // TODO Either, we not allow binding stereotypes on unnamed associations or we add the bindings
+    //   from the association level to each association side (always having an implicit name from the
+    //   source/target type).
+    if (node.isPresentSymbol()) {
+      checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    }
   }
   
   @Override
   public void visit(ASTCDAssocSide node) {
-    // TODO check this when working on associations
     // an association side has only a symbol if it has a role name
-    //  However, we can always have an implicit name from the source/target type!
-    //checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    // However, we can always have an implicit name from the source/target type!
+    // TODO Think about always executing a tafo to add implicit role names before conformance
+    //   checking/concretization to ensure there is a symbol for each assoc side.
+    if (node.isPresentSymbol()) {
+      checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    }
   }
   
   @Override
