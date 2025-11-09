@@ -28,6 +28,10 @@ public class MatchCDAssocByBestSuperType extends
 
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
+    Double cachedScore = cachedMatches.getMatch(srcElem, tgtElem);
+    if (cachedScore != null) {
+      return cachedScore;
+    }
 
     double nameScore = nameMatcher.getScore(srcElem, tgtElem);
     double typeScore = -1;

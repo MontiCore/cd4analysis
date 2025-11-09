@@ -27,6 +27,11 @@ public class MatchCDAttributeByNameAndType implements MatchingStrategy<ASTCDAttr
 
   @Override
   public double getScore(ASTCDAttribute srcElem, ASTCDAttribute tgtElem) {
+    Double cachedScore = cachedMatches.getMatch(srcElem, tgtElem);
+    if (cachedScore != null) {
+      return cachedScore;
+    }
+
     ICD4CodeArtifactScope srcScope = CDAttributeHelper.getCD4CodeArtifactScope(srcElem.getEnclosingScope());
     ICD4CodeArtifactScope tgtScope = CDAttributeHelper.getCD4CodeArtifactScope(tgtElem.getEnclosingScope());
 

@@ -127,6 +127,9 @@ public class CDSynDiffMatches {
 
     for(int i = 0; i < matchingIterations; i++) {
       cachedMatches.resetBiggestChange();
+      cachedMatches.getMethodMatches().clear();
+      cachedMatches.getAssocMatches().clear();
+      cachedMatches.getAttributeMatches().clear();
       for (ASTCDType srcType : srcTypes) {
         for (ASTCDType tgtType : tgtTypes) {
           typeMatcher.getScore(srcType, tgtType);

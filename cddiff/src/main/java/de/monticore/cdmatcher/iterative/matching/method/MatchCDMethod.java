@@ -32,6 +32,11 @@ public class MatchCDMethod extends MultipleMatchingStrategy<ASTCDMethod, ASTCDPa
 
   @Override
   public double getScore(ASTCDMethod srcElem, ASTCDMethod tgtElem) {
+    Double cachedScore = cachedMatches.getMatch(srcElem, tgtElem);
+    if (cachedScore != null) {
+      return cachedScore;
+    }
+
     ICD4CodeArtifactScope srcScope = CDAttributeHelper.getCD4CodeArtifactScope(srcElem.getEnclosingScope());
     ICD4CodeArtifactScope tgtScope = CDAttributeHelper.getCD4CodeArtifactScope(tgtElem.getEnclosingScope());
     MatchMCType mcTypeMatcher = new MatchMCType(cachedMatches, srcScope, tgtScope);

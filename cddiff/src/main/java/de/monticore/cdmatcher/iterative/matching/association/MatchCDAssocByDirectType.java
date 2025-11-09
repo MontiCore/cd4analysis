@@ -25,6 +25,11 @@ public class MatchCDAssocByDirectType implements MatchingStrategy<ASTCDAssociati
 
   @Override
   public double getScore(ASTCDAssociation srcElem, ASTCDAssociation tgtElem) {
+    Double cachedScore = cachedMatches.getMatch(srcElem, tgtElem);
+    if (cachedScore != null) {
+      return cachedScore;
+    }
+
     Optional<ASTCDType> srcRightType = structureCache.getRightType(srcElem);
     Optional<ASTCDType> srcLeftType = structureCache.getLeftType(srcElem);
     Optional<ASTCDType> tgtRightType = structureCache.getRightType(tgtElem);
