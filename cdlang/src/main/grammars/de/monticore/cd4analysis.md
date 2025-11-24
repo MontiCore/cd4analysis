@@ -653,41 +653,41 @@ The method body definition is exactly the same.
 #### Symboltable (`0xCDAXX`)
 #### Other Errors (`0xCD0XX`)
 
-[CD4AGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/grammars/de/monticore/CD4Analysis.mc4
-[CD4CGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/grammars/de/monticore/CD4Code.mc4
-[CDBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/grammars/de/monticore/CDBasis.mc4
-[CDIAEGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/grammars/de/monticore/CDInterfaceAndEnum.mc4
-[CDAssocGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/grammars/de/monticore/CDAssociation.mc4
-[CD4CBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/grammars/de/monticore/CD4CodeBasis.mc4
+[CD4AGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/grammars/de/monticore/CD4Analysis.mc4
+[CD4CGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/grammars/de/monticore/CD4Code.mc4
+[CDBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/grammars/de/monticore/CDBasis.mc4
+[CDIAEGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/grammars/de/monticore/CDInterfaceAndEnum.mc4
+[CDAssocGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/grammars/de/monticore/CDAssociation.mc4
+[CD4CBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/grammars/de/monticore/CD4CodeBasis.mc4
 
-[ASTCDDefinition]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdbasis/_ast/ASTCDDefinition.java
-[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/trafo/CD4AnalysisAfterParseTrafo.java
-[CDBasisDefaultPackageTrafo]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdbasis/trafo/CDBasisDefaultPackageTrafo.java
-[CDAssociationDirectCompositionTrafo]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/trafo/CDAssociationDirectCompositionTrafo.java
-[CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/trafo/CDAssociationCreateFieldsFromAllRoles.java
-[CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
-[CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
-[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisDeSer.java
-[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
+[ASTCDDefinition]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdbasis/_ast/ASTCDDefinition.java
+[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/trafo/CD4AnalysisAfterParseTrafo.java
+[CDBasisDefaultPackageTrafo]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdbasis/trafo/CDBasisDefaultPackageTrafo.java
+[CDAssociationDirectCompositionTrafo]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdassociation/trafo/CDAssociationDirectCompositionTrafo.java
+[CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/trafo/CDAssociationCreateFieldsFromAllRoles.java
+[CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
+[CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
+[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisDeSer.java
+[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
 [SymTypeExpression]: https://github.com/MontiCore/monticore/blob/HEAD/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
-[SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
-[CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
-[reporting]: https://github.com/MontiCore/cd4analysis/tree/HEAD/src/main/java/de/monticore/cd4analysis/reporting
-[CDTool]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/tool/java/de/monticore/CD4CodeTool.java
-[LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
-[ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/HEAD/src/test/resources/de/monticore/cd4analysis/
-[ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
-[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisFullPrettyPrinter.java
-[ASTCDType]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdbasis/_ast/ASTCDType.java
-[BuiltInTypes]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd/_symboltable/BuiltInTypes.java
+[SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
+[CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
+[reporting]: https://github.com/MontiCore/cd4analysis/tree/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/reporting
+[CDTool]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/tool/java/de/monticore/CD4CodeTool.java
+[LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
+[ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/HEAD/cdlang/src/test/resources/de/monticore/cd4analysis/
+[ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
+[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisFullPrettyPrinter.java
+[ASTCDType]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cdbasis/_ast/ASTCDType.java
+[BuiltInTypes]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd/_symboltable/BuiltInTypes.java
 
-[CD4ACoCos]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/cocos/CD4AnalysisCoCosDelegator.java
-[CD4AParser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisParser.java
-[CD4CLanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
-[CD4CExampleModels]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/test/resources/de/monticore/cd4code/
-[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4code/prettyprint/CD4CodeFullPrettyPrinter.java
-[CD4C]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd/methodtemplates/CD4C.java
-[CD4CTest]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/test/java/de/monticore/cd/methodtemplates/CD4CTest.java
+[CD4ACoCos]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/cocos/CD4AnalysisCoCosDelegator.java
+[CD4AParser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisParser.java
+[CD4CLanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
+[CD4CExampleModels]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/test/resources/de/monticore/cd4code/
+[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd4code/prettyprint/CD4CodeFullPrettyPrinter.java
+[CD4C]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/main/java/de/monticore/cd/methodtemplates/CD4C.java
+[CD4CTest]: https://github.com/MontiCore/cd4analysis/blob/HEAD/cdlang/src/test/java/de/monticore/cd/methodtemplates/CD4CTest.java
 
 [OOSymbols]: https://github.com/MontiCore/monticore/blob/HEAD/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
 [MCCollectionTypes]: https://github.com/MontiCore/monticore/blob/HEAD/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4
