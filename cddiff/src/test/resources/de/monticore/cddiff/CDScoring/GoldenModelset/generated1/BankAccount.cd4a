@@ -1,0 +1,31 @@
+
+// CD4A Model for a Bank
+classdiagram Bank {
+
+class Customer {
+    String firstName;
+    String lastName;
+}
+
+abstract class Account {
+    int accountNumber;
+    double balance;
+    Customer owner; // each account has an owner who is a customer
+}
+
+// CurrentAccount inherits from Account
+class CurrentAccount extends Account {
+    double overdraftLimit; // overdraft limit for current accounts
+}
+
+// SavingsAccount inherits from Account
+class SavingsAccount extends Account {}
+
+class Branch {
+    // Details of the branch can be added here
+}
+
+association [1..*] Bank <-> Customer [0..*]; // A bank manages multiple customers
+association [1..*] Bank <-> Branch [0..*]; // A bank consists of multiple branches
+association [1] Customer <-> Account [1..5]; // A customer can have 1 to 5 accounts
+}

@@ -1,0 +1,28 @@
+classdiagram GameArea {
+
+class GameArea {
+    String name;
+}
+
+class GameCharacter {}
+
+class GameElement {
+    long x;
+    long y;
+}
+
+class Shape extends GameElement {}
+
+class Item extends GameElement {}
+
+class Enemy extends GameElement {
+    int numberOfLives;
+    void toKill();
+}
+
+association [1] GameArea -- GameCharacter [1..2];
+association [1] GameArea -- GameElement [1..*];
+association [*] Shape <-> (isConnectedWith) Shape [*];
+association [1] GameArea -> (finalBoss) Enemy [1];
+
+}

@@ -1,0 +1,44 @@
+classdiagram School {
+
+abstract class Person {
+    String firstName;
+    String lastName;
+}
+
+class Teacher extends Person {
+    String email;
+}
+
+class Student extends Person {}
+
+class ClassGroup {
+    String name;
+}
+
+class TeacherAssignment {
+    int hours;
+}
+
+class School {
+    String name;
+}
+
+abstract class Room {
+    String name;
+}
+
+class ClassRoom extends Room {
+    int capacity;
+}
+
+class OtherRoom extends Room {
+    double size;
+}
+
+association [*] Teacher <-> School [0..3];
+association [1] Teacher (principal) <-> School [0..1];
+association [1] School <-> Room [*];
+association [10..31] Student -- ClassGroup [0..1];
+association [1] ClassGroup <-> ClassRoom [1];
+
+}

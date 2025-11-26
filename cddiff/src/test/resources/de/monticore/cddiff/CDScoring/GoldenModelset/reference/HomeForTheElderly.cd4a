@@ -1,0 +1,54 @@
+classdiagram HomeForTheElderly {
+
+class Department {}
+
+class Category {
+    double price;
+    String type;
+}
+
+class Room {}
+
+class Bed {}
+
+class Proposal {
+    String status;
+    boolean validated;
+}
+
+class Stay {
+    Date intakeDate;
+    Date endDate;
+}
+
+class Person {
+    String name;
+    Date birthdate;
+    Date registrationDate;
+    String abilities;
+}
+
+class Invoice {
+    Date invoiceDate;
+    double outstandingAmount;
+    double payment(double paymentAmount);
+    String status;
+}
+
+class InvoiceItem {}
+
+class InvoiceLine {}
+
+
+association [1] Department <-> Room [0..*];
+association [1] Category <-> Room [0..*];
+association [1] Room <-> Bed [0..*];
+association [0..1] Bed <-> Person [0..1];
+association [1] Person <-> Stay [0..*];
+association [1] Bed <-> Stay [0..*];
+association [1] Person <-> Invoice [0..*];
+association [1] Invoice <-> InvoiceLine [0..*];
+association [1] InvoiceItem <-> InvoiceLine [0..1];
+association [1] Stay <-> InvoiceItem [0..*];
+
+}

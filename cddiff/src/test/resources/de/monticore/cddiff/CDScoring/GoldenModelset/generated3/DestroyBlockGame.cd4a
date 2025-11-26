@@ -1,0 +1,69 @@
+
+// CD4A Class Diagram for DestroyBlock application
+
+classdiagram DestroyBlock {
+
+    class User {
+        String username;
+        String password;
+        // User can be either Player or Admin
+    }
+
+    class Player extends User {}
+
+    class Admin extends User {}
+
+    class Game {
+        String name;
+        int maxLevels = 99; // Constant for maximum number of levels
+        Speed speed; // Speed attributes specified by the admin
+        PaddleLength paddleLength; // Paddle attributes specified by the admin
+    }
+
+    class Level {
+        int levelNumber;
+        BlockArrangement arrangement;
+        boolean isRandom; // Whether level is random or not
+    }
+
+    class Block {
+        String color;
+        int points; // Points between 1 and 1000
+    }
+
+    class BlockArrangement {
+        Block[][] grid; // Blocks are placed in a grid
+    }
+
+    class Speed {
+        int minimumSpeed;
+        int speedIncreaseFactor;
+    }
+
+    class PaddleLength {
+        int maximumLength;
+        int minimumLength;
+    }
+
+    class Ball {
+        int speed; // Speed of the ball
+        String direction; // Direction of the ball
+    }
+
+    class HallOfFame {
+        Player[] players; // Players who scored
+    }
+
+    class GameSession {
+        int lives = 3; // Starting lives
+        int totalScore; // Total score when game ends
+        boolean isPaused; // Indicates paused state
+    }
+
+    association [1] Game <-> Admin [1]; // One admin per game
+    association [1] Game <-> Level [*]; // A game has multiple levels
+    association [*] Level <-> BlockArrangement [1]; // Each level has a block arrangement
+    association [*] Game <-> Player [*]; // Players may play multiple games
+    association [1] HallOfFame <-> Player [*]; // Players are recorded in the hall of fame
+    association [1] GameSession <-> Game [1]; // Game session is related to one game
+}

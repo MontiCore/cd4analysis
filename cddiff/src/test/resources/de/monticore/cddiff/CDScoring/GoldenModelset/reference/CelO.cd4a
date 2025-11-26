@@ -1,0 +1,74 @@
+classdiagram CelO {
+
+enum AttendeeStatus {
+    Yes,
+    Maybe,
+    No,
+    NoResponse;
+}
+
+enum CompletionStatus {
+    ToBeDone,
+    Done,
+    NotApplicable,
+    Attendee;
+}
+
+class Person {
+    String lastName;
+    String firstName;
+    String emailAddress;
+    String password;
+}
+
+abstract class PersonRole {}
+
+class Organizer extends PersonRole {
+    String address;
+    String phoneNumber;
+}
+
+class Attendee extends PersonRole {}
+
+class TaskStatus {
+    CompletionStatus status;
+}
+
+class Registration {
+    AttendeeStatus status;
+}
+
+class CheckListTask {
+    String description;
+}
+
+class Location {
+    String name;
+    String address;
+}
+
+class Event {
+    String occasion;
+    Date startTime;
+    Date endTime;
+}
+
+class EventType {
+    String name;
+}
+
+
+association [1] Person <-> PersonRole [0..2];
+
+association [1..*] Organizer <-> Event [*];
+association [0..1] Attendee <-> TaskStatus [*];
+
+association [*] Attendee <-> Event [*];
+
+association [*] Event <-> CheckListTask [*];
+
+association [1] Location <-> Event [*];
+association [1] EventType <-> Event [*];
+association [1] EventType <-> CheckListTask [*];
+
+}

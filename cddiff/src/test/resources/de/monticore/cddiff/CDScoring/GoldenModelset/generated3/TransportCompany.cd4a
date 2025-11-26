@@ -1,0 +1,67 @@
+
+// Class diagram for the Transport Company
+classdiagram TransportCompany {
+
+class Employee {
+    String name;
+    String ssn;
+}
+
+class Driver extends Employee {
+    // Additional driver-specific attributes can be added here
+}
+
+class Planner extends Employee {
+    // Additional planner-specific attributes can be added here
+}
+
+class AdministrativeStaff extends Employee {
+    String fieldOfActivity;
+    String username;
+    String password;
+}
+
+class Customer {
+    String name;
+    String billingAddress;
+}
+
+class Vehicle {
+    String licensePlate;
+    int mileage;
+}
+
+enum VehicleType {
+    RefrigeratedTruck,
+    SmallVan,
+    LoadingPlatform,
+    BoxTruck;
+}
+
+class RepairShop {
+    String name;
+    String address;
+}
+
+class Order {
+    String pickupAddress;
+    String deliveryAddress;
+    String comment;
+    Date startTime;
+    Date endTime;
+}
+
+class PartnerCompany {
+        //comment: The LLM did not generated the class, added to avoid errors
+}
+
+// Association between classes
+association [1] Planner <-> (assigns) Order [*];
+association [1] Driver <-> (completes) Order [*];
+association [1] Order <-> Customer [1];
+association [1] Vehicle <-> (assignedTo) Order [1];
+association [1] Order <-> RepairShop [0..*]; // An Order can be related to multiple repair instances
+association [1] AdministrativeStaff <-> (takesOrder) Order [0..*];
+association [1] PartnerCompany <-> (places) Order [*]; // Partner company is not defined in detail but linked
+
+}

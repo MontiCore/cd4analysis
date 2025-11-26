@@ -9,6 +9,7 @@ import de.monticore.cdmatcher.caching.CachedMatches;
 import de.monticore.cdmatcher.caching.StructureCache;
 import de.monticore.cdmatcher.iterative.matching.cdtype.MatchCDTypeFromCache;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.math.DoubleMath.mean;
@@ -56,7 +57,7 @@ public class MatchCDAssocByBestSuperType extends
   }
 
   private Set<ASTCDType> getSuperIncludingSelf(ASTCDType type) {
-    Set<ASTCDType> associations = structureCache.getSuperTypes(type);
+    Set<ASTCDType> associations = new HashSet<>(structureCache.getSuperTypes(type));
     associations.add(type);
     return associations;
   }

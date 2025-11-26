@@ -1,0 +1,58 @@
+
+// CD4A class diagram for a web portal system with buildings and users
+classdiagram WebPortal {
+
+class WebPortal {
+    String versionNumber;
+    String url;
+}
+
+class Building {
+    int id;
+    String name;
+    EnergyClass energyClass;
+    String address;
+    int yearOfConstruction;
+}
+
+class User {
+    String username;
+    String email;
+    String password;
+}
+
+class Entry {
+    String name;
+    String textValue; // optional
+    double numericValue; // optional
+    String unit; // optional
+    boolean releasedPublicly;
+}
+
+class Image {
+    String filename;
+}
+
+class Visitor extends User {}
+
+class Administrator extends User {
+    String idCardNumber;
+}
+
+// Energy Class can have values A, B, C, D
+enum EnergyClass {
+    A,
+    B,
+    C,
+    D;
+}
+
+association [1] WebPortal -> Building [*];
+association [1] Building -- Entry [*];
+association [1] Building <-> Image [0..*];
+association [1] User <-> Building [0..*];
+association [1] User <-> Comment [0..*];
+association [1] User <-> Visitor [0..1];
+association [1] Administrator <-> User [1];
+
+}

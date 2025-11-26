@@ -1,0 +1,36 @@
+classdiagram Sightseeing {
+
+class City {
+    String name;
+    int numberOfInhabitants;
+}
+
+class Attraction {
+    String name;
+    String address;
+}
+
+class Visitor extends Person {}
+
+class GuidedTour {
+    int number;
+    int duration;
+}
+
+class Discount {
+    int discount;
+}
+
+class Person {
+    String name;
+}
+
+class Guide extends Person {}
+
+
+association [1] City <-> Attraction [*];
+association [1..20] Visitor <-> GuidedTour [*];
+association [1] Attraction <-> GuidedTour [*];
+association [*] GuidedTour <-> Guide [1];
+
+}

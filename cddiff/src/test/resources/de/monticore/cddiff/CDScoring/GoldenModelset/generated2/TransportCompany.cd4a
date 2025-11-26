@@ -1,0 +1,63 @@
+
+// Class Diagram for Transport Company
+
+classdiagram TransportCompany {
+
+class Employee {
+    String name;
+    String ssn;
+}
+
+class Planner extends Employee {
+    // additional attributes for Planner can be added here
+}
+
+class AdministrativeStaff extends Employee {
+    String fieldOfActivity;
+    String username;
+    String password;
+}
+
+class Customer {
+    String name;
+    String billingAddress;
+}
+
+class Vehicle {
+    String licensePlate;
+    int mileage;
+}
+
+class RepairShop {
+    String name;
+    String address;
+}
+
+class Repair {
+    int duration; // duration in hours
+    double cost;
+}
+
+class Order {
+    String additionalInformation;
+    Date startTime;
+    Date finishTime;
+}
+
+class PartnerCompany {
+    String name;
+    String address;
+}
+
+
+association [1] Employee <-> Order [*]; // employees can handle multiple orders
+association [1] Planner <-> (assigns) Order [*]; // planners assign orders
+association [1] AdministrativeStaff <-> Order [*]; // administrative staff can handle orders
+association [1] Customer <-> Order [*]; // each order has one customer
+association [1] Order <-> Vehicle [1]; // each order is assigned to one vehicle
+association [1] Vehicle <-> Repair [*]; // vehicles can have multiple repairs
+association [1] RepairShop <-> Repair [*]; // repair shops can perform multiple repairs
+association [1] Order <-> (handledBy) Planner [1]; // each order is assigned by one planner
+association [1] Order <-> PartnerCompany [0..1]; // orders can also be placed with a partner company
+
+}

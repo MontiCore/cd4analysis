@@ -1,0 +1,39 @@
+classdiagram Boeing {
+
+class AirplaneModel {
+    int modelId;
+}
+
+class Airplane {
+    int airPlaneId;
+}
+
+class Acquisition {
+    int acquisitionId;
+    float negotiatedPrice;
+    String options;
+    DateTime deliveryDate;
+}
+
+class Contract {
+    int contractId;
+    String text;
+}
+
+class Employee {
+    int employeeId;
+}
+
+class Airline {
+    String name;
+}
+
+
+association [1] AirplaneModel <-> Airplane [0..*];
+association [0..1] Airplane <-> (partOf) Acquisition [0..1];
+association [0..*] Acquisition <-> (partOf) Contract [1];
+association [0..*] Contract <-> Airline [1];
+association [0..*] Contract <-> Employee [1];
+association [0..1] Airline <-> Airline [0..*];
+
+}

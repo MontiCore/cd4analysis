@@ -1,0 +1,42 @@
+
+// Class diagram for hospital examination and treatment management system
+classdiagram HospitalSystem {
+
+    class Hospital {
+        String name;
+        String location;
+    }
+
+    class Doctor {
+        String firstName;
+        String lastName;
+    }
+
+    class Patient {
+        String firstName;
+        String lastName;
+    }
+
+    class Examination {
+        String type;
+    }
+
+    class TreatmentPlan {
+        String problemType;
+    }
+
+    class ActualTreatment {
+        String description;
+    }
+
+    association [1] Hospital -> Doctor [*];
+    association [1] Hospital -> Patient [*];
+    association [1] Hospital -> Examination [*];
+    association [1] Hospital -> TreatmentPlan [*];
+    association [1] Doctor -> Patient [*];
+    association [1] Doctor -> ActualTreatment [*];
+    association [1] TreatmentPlan -> Examination [*]; // Advised examinations per treatment plan
+    association [0..*] Examination -> Hospital [0..*]; // Allowed examinations per hospital
+    association [1] Patient -> ActualTreatment [*]; // Patient has one or more actual treatments
+
+}

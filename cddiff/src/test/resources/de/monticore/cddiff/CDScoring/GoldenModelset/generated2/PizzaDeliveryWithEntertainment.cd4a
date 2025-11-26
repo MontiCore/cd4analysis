@@ -1,0 +1,71 @@
+
+// CD4A Class Diagram for Pizza Delivery with Entertainment app
+classdiagram PizzaDeliveryApp {
+
+enum DayOfWeek {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday;
+}
+
+class User {
+    String name;
+    String address;
+    String birthday;
+    String userId; // Unique identifier for every user
+}
+
+class BusinessOwner extends User {
+    String linkedInAccount;
+}
+
+class PizzaRestaurant {
+    String zipCode;
+    String address;
+    String phoneNumber;
+    String website;
+    String openingHours;
+}
+
+class Pizza {
+    String name; // Pizza name (e.g., margarita)
+    String crustStructure; // Crust type (e.g., classic Italian crust)
+    double price;
+}
+
+class HungryCustomer extends User {
+    String deliveryAddress;
+}
+
+class Order {
+    int orderId; // Unique identifier for each order
+    Date orderDate;
+    Time orderTime;
+    Time latestDeliveryTime;
+    int numberOfPeople;
+}
+
+class EntertainmentOrder extends Order {
+    String entertainmentType; // Type of entertainment requested
+    int duration; // Duration in minutes
+}
+
+class Entertainer extends User {
+    String stageName;
+    String bio;
+    double pricePer30Minutes; // Price for 30 minutes of entertainment
+}
+
+association [1] BusinessOwner <-> (owns) PizzaRestaurant [*];
+association [1] PizzaRestaurant <-> (offers) Pizza [*];
+association [1] HungryCustomer <-> (makes) Order [*];
+association [1] Order <-> (includes) Pizza [*];
+association [1] EntertainmentOrder <-> (entertainedBy) Entertainer [1];
+association [1] Entertainer <-> (worksAt) PizzaRestaurant [*];
+association [1] Entertainer <-> (availability) DayOfWeek [0..7]; // Days of availability can be zero or more
+
+}

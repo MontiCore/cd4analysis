@@ -1,0 +1,69 @@
+
+classdiagram CruiseManagement {
+
+class Provider {
+    String name;
+    String location;
+}
+
+class Cruise {
+    int number;
+    String name;
+    Date startDate;
+    Date endDate;
+}
+
+class Employee {
+    String name;
+    String socialSecurityNumber;
+}
+
+class Guest {
+    String name;
+    boolean isVIP;
+}
+
+class Ship {
+    String name;
+    int numberOfDecks;
+    float length;
+    int numberOfPassengers;
+}
+
+class TravelAgency {
+    String name;
+    String address;
+}
+
+class Booking {
+    int bookingNumber;
+    Date bookingDate;
+}
+
+class DestinationArea {
+    String name;
+    String seaName;
+}
+
+class Show {
+    String title;
+    float duration;
+}
+
+class Ticket {
+    // No specific attributes mentioned
+}
+
+// Associations
+association [1] Provider <-> Cruise [0..*];
+association [1] Cruise <-> Employee [1..*];
+association [0..*] Guest <-> Cruise [0..*];
+association [1] Ship <-> Cruise [0..*];
+association [1] TravelAgency <-> Booking [0..*];
+association [1] Booking <-> Guest [1];
+association [1] Cruise -> DestinationArea [1];
+association [0..*] Cruise <-> Show [0..*];
+association [1] Ticket <-> Cruise [1];
+association [0..*] Ticket <-> Guest [0..*];
+
+}

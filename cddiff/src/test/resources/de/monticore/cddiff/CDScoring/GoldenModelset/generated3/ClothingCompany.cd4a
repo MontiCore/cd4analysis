@@ -1,0 +1,52 @@
+
+// CD4A Model for Clothing Management Application
+classdiagram ClothingManagement {
+
+class Product {
+    String name;
+    String description;
+    double netPrice; // price before VAT
+}
+
+class Manufacturer {
+    String name;
+    String country;
+}
+
+class Country {
+    String name;
+    double vatRate;
+    String currency;
+    double conversionRateToEuro;
+}
+
+class Representative {
+    String firstName;
+    String lastName;
+    String socialSecurityNumber;
+    String telephoneNumber;
+    String emailAddress;
+}
+
+class Customer {
+    String name;
+    String address;
+    String telephoneNumber;
+    String emailAddress;
+}
+
+class Order {
+    int orderId; // unique identifier for the order
+    int quantity;
+    Date orderDate;
+    Date deliveryDate;
+}
+
+association [1] Product -- (manufacturedBy) Manufacturer [1];
+association [1] Country -- (productsAvailable) Product [*];
+association [1] Country -- (rep) Representative [1];
+association [1] Representative -- (responsibleFor) Country [1];
+association [1] Representative -- (orders) Order [*];
+association [1] Customer -- (orders) Order [*];
+
+}

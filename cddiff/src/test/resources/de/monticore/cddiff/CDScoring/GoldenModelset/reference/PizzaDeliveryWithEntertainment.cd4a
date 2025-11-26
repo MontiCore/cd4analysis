@@ -1,0 +1,65 @@
+classdiagram PizzaDeliveryWithEntertainment {
+
+class User {
+    int userId;
+    Date birthDate;
+    String name;
+    String address;
+}
+
+class Customer extends User {
+    String deliveryAddress;
+}
+
+class Order {
+    int orderId;
+    DateTime orderPlacement;
+    DateTime latestDelivery;
+    int numberOfPeople;
+}
+
+
+class EntertainmentOrder extends Order {
+    String entertainmentType;
+    int duration;
+}
+
+
+class BusinessOwner extends User {
+    String linkedInAccount;
+}
+
+class PizzaRestaurant {
+    int zipCode;
+    String address;
+    String phoneNumber;
+    String website;
+    String openingHours;
+}
+
+class Pizza {
+    String name;
+    String crustStructure;
+    double price;
+}
+
+
+class Entertainer extends User {
+    String stageName;
+    String bio;
+    double priceThirtyMin;
+}
+
+class Employment {
+    String availability;
+}
+
+association [1] Customer <-> Order [*];
+association [1] BusinessOwner <-> PizzaRestaurant [*];
+association [*] PizzaRestaurant <-> Pizza [*];
+association [*] Order <-> PizzaRestaurant [1];
+association [*] Order <-> Pizza [1..*];
+association [*] PizzaRestaurant <-> Entertainer [*];
+association [1] Entertainer <-> EntertainmentOrder [*];
+
+}

@@ -1,0 +1,32 @@
+classdiagram HospitalHouseMD {
+
+class Patient {
+    boolean consent;
+}
+
+class Doctor {}
+
+class Diagnosis {
+    int stage;
+    int upgradeStage();
+    int downgradeStage();
+    int priorityUpgrade();
+}
+
+class Illness {
+    String priority;
+}
+
+class Treatment {}
+
+class AppliedTreatment {}
+
+
+association [1] Patient <-> Diagnosis [0..*];
+association [1] Doctor <-> Diagnosis [0..*];
+association [1] Illness <-> Diagnosis [0..*];
+association [1] Diagnosis <-> AppliedTreatment [0..*];
+association [1] Illness <-> Treatment [0..*];
+association [1] Treatment <-> AppliedTreatment [0..*];
+
+}

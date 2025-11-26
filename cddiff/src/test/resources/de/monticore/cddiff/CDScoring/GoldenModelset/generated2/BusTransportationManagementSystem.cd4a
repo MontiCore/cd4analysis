@@ -1,0 +1,36 @@
+
+// Class diagram for Bus Transportation Management System (BTMS)
+classdiagram BTMS {
+
+class Driver {
+    String name;
+    int driverID; // unique ID assigned to each driver
+}
+
+class Bus {
+    String licensePlate; // unique license plate number, up to 10 characters
+}
+
+class BusRoute {
+    int routeNumber; // unique bus route number, max 9999
+}
+
+class Schedule {
+    Date date;
+}
+
+class Shift {
+    String shiftType; // morning, afternoon, or night
+}
+
+class Assignment {
+    // This class indicates the relationship between drivers, buses, and shifts
+}
+
+association [1] Driver <-> Assignment [*];
+association [1] Bus <-> Assignment [*];
+association [1] BusRoute <-> Assignment [*];
+association [1] Schedule <-> Assignment [*];
+association [1] Shift <-> Assignment [*];
+
+}

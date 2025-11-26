@@ -1,0 +1,46 @@
+classdiagram Musicmatic {
+
+class Song {
+    String title;
+    int year;
+    int length;
+    String genre;
+}
+
+class Artist {
+    Date birthDate;
+    String name;
+    String website;
+}
+
+class User {
+    int userId;
+    String name;
+    String address;
+}
+
+class RegularUser extends User {}
+
+class BusinessUser extends User {
+    int vATNumber;
+}
+
+class Single extends Song {}
+
+class Hit extends Song {}
+
+class Track {
+    int trackNumber;
+}
+
+
+association [1] Artist <-> Song [*];
+
+association [*] Hit <-> Album [*];
+association [*] Song <-> BusinessUser [1];
+
+association [*] Single <-> RegularUser [*];
+association [1] RegularUser <-> (compose) Album [*];
+association [*] RegularUser <-> (suggestion) Album [*];
+
+}

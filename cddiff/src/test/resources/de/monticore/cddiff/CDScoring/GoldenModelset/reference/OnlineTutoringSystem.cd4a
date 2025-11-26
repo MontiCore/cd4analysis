@@ -1,0 +1,89 @@
+classdiagram OnlineTutoringSystem {
+
+enum LevelOfTutoring {
+    PrimarySchool,
+    HighSchool,
+    University;
+ }
+
+enum SessionStatus { 
+    Proposed,
+    Confirmed,
+    Completed,
+    Paid,
+    Cancelled;
+ }
+
+enum PaymentKind { 
+    CreditCard,
+    WireTransfer;
+}
+
+class User {
+    String name;
+    String email;
+}
+
+class BestTutorAward {
+    int year;
+    int month;
+}
+
+class Tutor extends TutoringRole {
+    String bankAccount;
+}
+
+class TutoringOffer extends TutoringElement {
+    float hourlyPrice;
+}
+
+class Subject {
+    String name;
+}
+
+class TutorAvailability {
+    Date startTime;
+    Time endTime;
+}
+
+abstract class TutoringRole {}
+abstract class TutoringElement {
+    LevelOfTutoring tutoringLevel;
+}
+
+class Student extends TutoringRole {}
+
+class TutoringRequest extends TutoringElement {}
+
+class TutoringSession {
+    Date sessionDate;
+    float totalPrice;
+    SessionStatus sessionStatus;
+}
+
+class Payment {
+    PaymentKind paymentForm;
+    Date paymentDate;
+}
+
+
+association [1] Tutor -- TutoringOffer [*];
+association [1] Tutor -- TutorAvailability [*];
+
+association [1] User -- (roles) TutoringRole [0..2];
+
+association [1] Student -- TutoringRequest [*];
+
+association [1] TutoringRequest -- (allSessions) TutoringSession [*];
+association [1] TutoringSession -- Payment [0..1];
+
+association [1] Subject <-> TutoringOffer [*];
+association [1] Subject <-> TutoringRequest [*];
+
+association [0..1] TutoringOffer <-> TutoringRequest [*];
+
+association [1] TutoringSession -> (nextSession) TutoringSession [0..1];
+association [1] TutoringRequest -> (firstSession) TutoringSession [0..1];
+
+association [1] Tutor <-> BestTutorAward [*];
+}

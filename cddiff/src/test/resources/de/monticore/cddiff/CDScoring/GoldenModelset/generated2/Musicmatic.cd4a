@@ -1,0 +1,48 @@
+
+// Class Diagram for Musicmatic
+
+classdiagram Musicmatic {
+
+class Song {
+    String title;
+    int year;
+    double length; // in minutes
+    String genre;
+}
+
+class Artist {
+    String name; // unique identifier
+    Date dateOfBirth;
+    String websiteURL;
+}
+
+class User {
+    int id; // unique identifier
+    String name;
+    String address;
+}
+
+class RegularUser extends User {}
+
+class BusinessUser extends User {
+    String vatNumber;
+}
+
+//class Album {
+//    String title;
+//}
+
+class Hit {
+    int trackNumber;
+}
+
+class Single extends Song {}
+
+association [1] Artist <-> Song [*]; // A song belongs to exactly one artist
+// association [1] User <-> Album [0..*]; // A user can have multiple albums
+// association [0..*] Album <-> Hit [0..*]; // An album can have multiple hits
+// association [1] Album <-> RegularUser [0..*]; // Regular user can own albums
+association [1] BusinessUser <-> (uploads) Single [0..*]; // Business users upload singles only
+association [1] RegularUser <-> (buys) Single [0..*]; // Regular users buy singles
+
+}

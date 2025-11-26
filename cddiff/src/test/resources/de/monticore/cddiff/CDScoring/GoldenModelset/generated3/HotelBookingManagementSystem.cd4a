@@ -1,0 +1,84 @@
+
+// CD4A Class Diagram for HMBS (Hotel Booking Management System)
+
+classdiagram HMBS {
+
+class Traveller {
+    String name;
+    BillingInformation billingInfo; // Includes company name and address
+    TravelPreferences travelPreferences; // Optional
+}
+
+class BillingInformation {
+    String companyName;
+    String address;
+}
+
+class TravelPreferences {
+    boolean breakfastIncluded;
+    boolean freeWiFi;
+    boolean frontDesk24_7;
+    // Additional preferences can be added here
+}
+
+class Hotel {
+    String name;
+    String address;
+    City city;
+    HotelChain hotelChain; // Optional
+}
+
+class City {
+    String name;
+}
+
+class HotelChain {
+    String name;
+}
+
+class RoomType {
+    String type; // e.g., single, double, twin
+}
+
+class Booking {
+    String uniqueIdentifier;
+    float price;
+    String cityArea;
+    int hotelRating; // Stars
+    TravelPreferences preferences; // Key preferences
+    CreditCardInformation creditCardInfo;
+    boolean isPrePaid; // True if paid immediately
+    DateTime cancellationDeadline; // Deadline for free cancellation
+}
+
+class CreditCardInformation {
+    String cardNumber;
+    String expiryDate;
+}
+
+class PreliminaryBooking {
+    Booking booking; // Key parameters forwarded to competitor hotels
+    DateTime deadline; // 24-hour deadline for competing offers
+}
+
+class SpecialOffer {
+    String hotelName;
+    float price;
+    String offerDetails; // Details of the special offer
+}
+
+class ReliabilityRating {
+    float rating; // Calculation based on past bookings
+}
+
+// Association for the relationships
+
+association [1] Traveller <-> Booking [0..*]; // A traveller makes multiple bookings
+association [1] Hotel <-> RoomType [0..*]; // A hotel has multiple room types
+association [1] Hotel <-> (offers) SpecialOffer [0..*]; // Hotels make special offers
+association [1] Booking <-> PreliminaryBooking [0..1]; // A booking may start as a preliminary booking
+association [1] Booking <-> ReliabilityRating [0..1]; // A booking has a reliability rating
+association [1] Hotel <-> City [1]; // A hotel is in one city
+association [0..1] Hotel <-> HotelChain [0..1]; // A hotel may be part of a hotel chain
+
+}

@@ -1,0 +1,51 @@
+
+// CD4A Class Diagram for a University System
+classdiagram UniversitySystem {
+
+class University {
+    int totalEmployees;
+}
+
+class Faculty {
+    String name;
+}
+
+class Institute {
+    String name;
+    String address;
+}
+
+class Employee {
+    String socialSecurityNumber;
+    String name;
+    String emailAddress;
+}
+
+class ResearchAssistant extends Employee {
+    String fieldOfResearch;
+}
+
+class Project {
+    String name;
+    Date startDate;
+    Date endDate;
+}
+
+class Lecturer extends ResearchAssistant {}
+
+class Course {
+    String courseId; // unique number
+    String name;
+    int weeklyDuration; // in hours
+}
+
+class Dean extends Employee {}
+
+// Associations
+association [1] University -- Faculty [*];
+association [1] Faculty -- Institute [*];
+association [1] Faculty -- Dean [1];
+association [1] Institute <-> ResearchAssistant [*];
+association [*] ResearchAssistant <-> Project [*];
+association [0..*] ResearchAssistant <-> Course [*];
+}

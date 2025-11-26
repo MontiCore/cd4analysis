@@ -1,0 +1,46 @@
+classdiagram Facepage {
+
+class User {
+    int userId;
+    String name;
+    String email;
+    Date birthDate;
+}
+
+abstract class Account {
+    int accountNumber;
+}
+
+class BusinessAccount extends Account {
+    String companyName;
+}
+
+class PersonalAccount extends Account {}
+
+class FriendRequest {}
+
+abstract class Page {
+    String pageName;
+    int visits;
+}
+
+class PersonalPage extends Page {}
+
+class Privilege {
+    String typeOfPrivilege;
+}
+
+class AdvertisementPage extends Page {
+    double bounceRate;
+    double clickThroughRate;
+    double conversionRate;
+}
+
+association [1] User <-> Account [1];
+association [1] BusinessAccount <-> AdvertisementPage [*];
+association [1] PersonalAccount <-> PersonalPage [*];
+association [*] PersonalAccount <-> PersonalPage [*];
+association [*] FriendRequest <-> (sender) PersonalAccount [1];
+association [*] FriendRequest <-> (receiver) PersonalAccount [1];
+
+}

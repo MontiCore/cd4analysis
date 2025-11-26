@@ -1,0 +1,38 @@
+
+// Class diagram for Gas Station Management System
+classdiagram GasStationManagementSystem {
+
+class GasStation {
+    String id;  // Unique identifier for gas station
+    String address;
+}
+
+class FuelPump {
+    int number;  // Identifier for fuel pump
+    boolean isSelfService;
+}
+
+class Fuel {
+    String name;  // Unique identifier for fuel
+    double octaneRating;
+}
+
+class DailyFuelPrice {
+    Date date;  // Date of the price
+    double pricePerLiter;  // Price per liter
+}
+
+class FuelPurchase {
+    String id;  // Unique identifier for fuel purchase
+    int litersDispensed;  // Number of liters dispensed
+}
+
+association [1] GasStation -- (fuelPumps) FuelPump [1..12];
+association [1] FuelPump -> (offers) Fuel [1..*];
+association [1] GasStation -- (dailyPrices) DailyFuelPrice [0..*];
+association [1] DailyFuelPrice -- (fuels) Fuel [1];
+association [1] FuelPurchase -> (fuelPump) FuelPump [1];
+association [1] FuelPurchase -> (dailyPrice) DailyFuelPrice [1];
+association [1] FuelPurchase -> (fuel) Fuel [1];
+
+}

@@ -1,0 +1,56 @@
+classdiagram eHome2020 {
+
+    class SensorController {
+        int id;
+    }
+
+    class Sensor {
+        int id;
+        String description;
+        double threshold;
+    }
+
+    class Measurement {
+        double value;
+        long timestamp;
+    }
+
+    class TemperatureSensor extends Sensor {
+        double min;
+        double max;
+    }
+
+    class PowerMeter extends Sensor {
+        double totalConsumption;
+    }
+
+    enum Unit {
+        CELSIUS,
+        WATT;
+    }
+
+    class Room {
+        String label;
+    }
+
+    class Apartment {
+        String address;
+        String email;
+    }
+
+    class Resident {
+        String username;
+        String password;
+        boolean isAdmin;
+    }
+
+    association [1] SensorController -> Sensor [0..1];
+    association [1] Sensor -> Measurement [*];
+    association [1] Sensor -> (lastValue) Measurement [1];
+    association [1] Sensor -> Unit [1];
+    association [1] SensorController -> Room [1];
+    association [2..*] Room -- Apartment [1];
+    association [1] Apartment -> Resident [*];
+    association [1] Apartment -> Sensor [*];
+
+}

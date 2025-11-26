@@ -1,0 +1,33 @@
+
+// CD4A Class Diagram for Game Area
+classdiagram GameArea {
+
+class GameArea {
+    String name;
+}
+
+class GameElement {
+    protected long x;
+    private long y;
+}
+
+class Shape extends GameElement {
+    // Shapes can be connected to any number of other shapes
+}
+
+class Object extends GameElement {}
+
+class Opponent extends GameElement {
+    protected int lives;
+    boolean isKilled();
+}
+
+// Boss is a specific type of opponent
+class Boss extends Opponent {}
+
+// Association to represent the relationship between GameArea and its elements
+association [1] GameArea <-> GameElement [1..*];
+association [1] GameArea <-> Opponent [1];
+association [0..*] Shape <-> Shape [*]; // Shapes can connect to each other
+
+}

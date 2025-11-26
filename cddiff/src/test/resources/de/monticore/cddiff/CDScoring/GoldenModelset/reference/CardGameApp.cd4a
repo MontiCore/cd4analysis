@@ -1,0 +1,76 @@
+classdiagram CardGameApp {
+
+class Game {
+  int id;
+}
+
+class Player {
+  int id;
+}
+
+class Deck {
+  int id;
+}
+
+class Card {
+  int id;
+  Suit suit;
+  Compare compare(Card card);
+}
+
+class Scoreboard {
+  int id;
+}
+
+class Round {
+  int id;
+  int points;
+}
+
+abstract class RoundType {
+  int id;
+}
+
+class SoloRound extends RoundType {
+  SoloType solo;
+}
+
+class MandatorySolo extends SoloRound {}
+
+class DoubleRound extends RoundType {}
+
+enum Suit {
+    Diamonds,
+    Hearts,
+    Spades,
+    Clubs;
+}
+
+enum Compare {
+    Lower,
+    Higher,
+    Equal;
+}
+
+enum SoloType  {
+    Trump,
+    Jacks,
+    Queens;
+}
+
+association [1] Game -> Scoreboard [1];
+association [1] Game -> Deck [1];
+association [1] Game -> Player [4];
+
+association [1] Deck -> Card [0..48];
+
+association [1] Scoreboard -> Round [*];
+
+association [1] Player -> Round [1..3];
+association [1] Player -> RoundType [1..2];
+
+association [1] Card -> Suit [1];
+association [1] Card -> Compare [1];
+association [1] SoloRound -> SoloType [1];
+
+}

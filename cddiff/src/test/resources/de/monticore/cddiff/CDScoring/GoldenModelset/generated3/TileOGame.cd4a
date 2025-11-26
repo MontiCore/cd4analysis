@@ -1,0 +1,74 @@
+
+// Class Diagram for Tile-O Application
+classdiagram TileO {
+
+    class GameDesigner {
+        void defineGame();
+        void placeTile(Tile tile, ConnectionPiece connectionPiece);
+        void defineHiddenTile(Tile tile);
+        void defineStartingPositions(Player player, Tile tile);
+        void defineActionTiles(Tile tile);
+        void defineActionCardDeck();
+    }
+
+    class Game {
+        Board board;
+        Player[] players; // 2 to 4 players
+        void startGame();
+    }
+
+    class Board {
+        Tile[][] tiles; // Represents the layout
+        ConnectionPiece[] connectionPieces;
+    }
+
+    class Color {
+            //comment: The LLM did not generated the class, added to avoid errors
+    }
+
+    class Tile {
+        Color color; // Initially white
+        boolean isHiddenTile;
+        boolean isActionTile;
+        int turnsAsRegularTile; // Number of turns as specified by designer
+    }
+
+    class Player {
+        String name;
+        Color color; // Each player has a different color
+        PlayingPiece playingPiece;
+        void rollDie();
+        void movePlayingPiece(Tile tile);
+    }
+
+    class PlayingPiece {
+        Color color; // Matches player's color
+        Tile currentTile;
+    }
+
+    class Die {
+        int roll();
+    }
+
+    class ActionCard {
+        ActionType actionType; // Defines the action associated with the card
+    }
+
+    enum ActionType {
+        EXTRA_TURN,
+        CONNECT_TILES,
+        REMOVE_CONNECTION,
+        MOVE_TO_ARBITRARY_TILE,
+        LOSE_TURN;
+    }
+
+    class ConnectionPiece {}
+
+    association [1] GameDesigner -> Game [1];
+    association [1] Game -> Board [1];
+    association [1] Board -> Tile [*];
+    association [2..4] Game -> Player [2..4];
+    association [1] Player -> PlayingPiece [1];
+    association [1] Player -> Tile [1]; // Current position of the player
+    association [1] Tile <-> ActionCard [0..*];
+}

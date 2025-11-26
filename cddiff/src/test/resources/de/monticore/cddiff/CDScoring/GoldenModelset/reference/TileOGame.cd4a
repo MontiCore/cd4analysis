@@ -1,0 +1,81 @@
+classdiagram TileOGame {
+
+enum Mode { 
+    DESIGN,
+    GAME;
+ }
+
+enum Color { 
+    RED,
+    BLUE,
+    GREEN,
+    YELLOW;
+}
+
+class TileO {}
+
+class Game {
+    int currentConnectionPieces;
+    Mode mode;
+    final int spareConnectionPieces = 32;
+    final int numberOfActionCards = 32;
+}
+
+class Connection {}
+
+class Die {}
+
+class Deck {}
+
+abstract class Tile{
+    int x;
+    int y;
+    boolean hasBeenVisited;
+}
+
+abstract class ActionCard {
+    String instructions;
+}
+
+class RollDieActionCard extends ActionCard {}
+
+class ConnectTilesActionCard extends ActionCard {}
+
+class RemoveConnectionActionCard extends ActionCard {}
+
+class TeleportActionCard extends ActionCard {}
+
+class LoseTurnActionCard extends ActionCard {}
+
+class WinTile extends Tile {}
+
+class ActionTile extends Tile {
+   int inactivityPeriod;
+   int turnsUntilActive;
+}
+
+class NormalTile extends Tile {}
+
+class Player {
+    int number;
+    int turnsUntilActive;
+    Color color;
+}
+
+
+association [1] TileO -- (games) Game [*];
+association [1] Game -- (tiles) Tile [*];
+association [1] Game -- (connections) Connection [*];
+association [1] Game -- (die) Die [1];
+association [1] Game -- (deck) Deck [1];
+association [1] Game -> (currentPlayer) Player [0..1];
+association [1] Game -- (players) Player [2..4];
+association [1] Deck -- (cards) ActionCard [0..32];
+
+association [1] Game -> (winTile) WinTile [0..1];
+association [2] Tile <-> (connections) Connection [0..4];
+association [1] Player -> (startingTile) Tile [0..1];
+association [0..4] Player -> (currentTile) Tile [0..1];
+association [1] Deck -> (currentCard) ActionCard [0..1];
+
+}

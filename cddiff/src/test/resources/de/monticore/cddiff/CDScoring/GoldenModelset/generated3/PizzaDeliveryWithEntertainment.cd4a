@@ -1,0 +1,71 @@
+
+// CD4A class diagram for Pizza Delivery with Entertainment app
+
+classdiagram PizzaDeliveryEntertainment {
+
+enum DayOfWeek {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday;
+}
+
+class User {
+    String userId; // Unique identifier for the user
+    String name;
+    String address;
+    Date birthday;
+}
+
+class BusinessOwner extends User {
+    String linkedInAccount; // LinkedIn account for networking
+}
+
+class PizzaRestaurant {
+    String zipCode;
+    String address;
+    String phoneNumber;
+    String website;
+    String openingHours;
+}
+
+class Pizza {
+    String name; // Name of the pizza (e.g., margarita, quattro stagioni)
+    String crustStructure; // Crust structure (e.g., classic, cheese)
+    double price; // Price of the pizza
+}
+
+class HungryCustomer extends User {
+    String deliveryAddress; // Address where the pizza should be delivered
+}
+
+class Order {
+    String orderId; // Unique identifier for the order
+    Date orderDate; // Date and time when the order was placed
+    Date latestDeliveryTime; // Latest time for delivery
+    int numberOfPeople; // Number of people the order is for
+}
+
+class EntertainmentOrder extends Order {
+    String entertainmentType; // Type of entertainment requested
+    int duration; // Duration of entertainment in minutes
+}
+
+class Entertainer extends User {
+    String stageName; // Stage name of the entertainer
+    String bio; // Short biography of the entertainer
+    double pricePer30Minutes; // Price per 30 minutes for entertainment
+}
+
+association [1] BusinessOwner (owner) <-> PizzaRestaurant [*]; // A business owner can own multiple restaurants
+association [1] PizzaRestaurant -- (offers) Pizza [*]; // Each restaurant offers many pizzas
+association [1] HungryCustomer (customer) <-> Order [*]; // Each hungry customer can make multiple orders
+association [1] Order -- (contains) Pizza [*]; // An order can contain multiple pizzas
+association [1] EntertainmentOrder <-> Entertainer [1]; // Each entertainment order is fulfilled by one entertainer
+association [1] Entertainer (entertainer) <-> PizzaRestaurant [*]; // An entertainer can choose multiple restaurants
+association [1] Entertainer -- (availability) DayOfWeek [*]; // An entertainer indicates availability for days of the week
+
+}

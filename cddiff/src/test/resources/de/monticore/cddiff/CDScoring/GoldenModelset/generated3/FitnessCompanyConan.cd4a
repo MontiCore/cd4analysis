@@ -1,0 +1,50 @@
+
+// Class Diagram for Fitness Company "Conan"
+classdiagram FitnessConan {
+
+class Address {
+    String street;
+    String city;
+    String postalCode;
+}
+
+class Room {
+    int number;
+    int maxCapacity;
+}
+
+class FitnessCenter {
+    String name; // Unique name of the fitness center
+    Address address;
+}
+
+class Person {
+    String firstName;
+    String familyName;
+    Date birthDate; // Assuming Date type represents birth dates in a suitable format
+}
+
+class Trainer extends Person {
+    String diploma; // Trainer's diploma information
+}
+
+class Session {
+    Date date;
+    String startHour;
+}
+
+class GroupSession extends Session {
+    String type; // e.g., aerobics, bodystyling, etc.
+}
+
+// This class can represent either individual or group participant
+class Participation {
+    Person participant; // Can represent members or trainers participating
+}
+
+association [1] FitnessCenter <-> Room [1..*]; // A center has one or more rooms
+association [1] Room <-> Session [0..*]; // A room can have multiple sessions
+association [1..*] Person <-> Participation [*]; // A person can participate in multiple sessions
+association [0..1] Trainer <-> GroupSession [1]; // A trainer supervises exactly one group session
+
+}

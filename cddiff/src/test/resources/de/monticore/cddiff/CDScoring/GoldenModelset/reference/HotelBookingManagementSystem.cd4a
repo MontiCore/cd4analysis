@@ -1,0 +1,107 @@
+classdiagram HotelBookingManagementSystem {
+
+enum RoomType {
+    SINGLE,
+    DOUBLE,
+    TWIN;
+}
+
+enum BookingStatus {
+    FINALIZED,
+    CONFIRMED,
+    CANCELLED_BY_HBMS,
+    PRELIMINARY,
+    CANCELLED_BY_TRAVELLER,
+    CANCELLED_BY_HOTEL;
+}
+
+enum PaymentType {
+    PREPAID,
+    PAID_AT_HOTEL;
+}
+
+class HotelChain {}
+
+class HotelBookingManager {}
+
+class Traveller {
+    String name;
+    int reliabilityRating;
+}
+
+class BillingInformation {
+    String companyName;
+    String address;
+}
+
+class TravelPreference {
+    String preference;
+    String value;
+}
+
+class Hotel {
+    String city;
+    String country;
+    String area;
+    RoomAvailability availability;
+}
+
+abstract class Offer {}
+
+class SpecialOffer extends Offer {}
+
+class RegularOffer extends Offer {}
+
+class TravelSearch {}
+
+class SearchInfo extends TripInfo {}
+
+class RoomAvailability extends TripInfo {}
+
+abstract class TripInfo {
+    int numberOfRooms;
+    RoomType roomType;
+    Date arrivalDate;
+    Date departureDate;
+    float budgetPerNight;
+}
+
+class BookingInfo extends TripInfo {}
+
+class Booking {
+    int bookingId;
+    Date cancellationDeadline;
+    String creditCardNumber;
+    BookingStatus bookingStatus;
+    PaymentType paymentType;
+    Date confirmationDate;
+    float paidAmount;
+}
+
+
+association [1] HotelChain -- Hotel [*];
+association [1] HotelBookingManager -- HotelChain [*];
+association [1] HotelBookingManager -- Traveller [*];
+
+association [1] Hotel -- Offer [*];
+association [1] Hotel -- RoomAvailability [*];
+
+association [1] Traveller -- TravelSearch [*];
+association [1] Traveller -- TravelPreference [*];
+association [1] Traveller -- BillingInformation [1];
+
+association [1] TravelSearch -- SearchInfo [1];
+association [1] TravelSearch -- TravelPreference [*];
+
+association [1] Booking -- BookingInfo [1];
+
+association [*] RegularOffer <-> TravelSearch [*];
+
+association [1] Hotel <-> Booking [*];
+association [0..1] Booking <-> Offer [1];
+association [*] Booking <-> Traveller [1];
+
+association [*] SpecialOffer <-> BookingInfo [1];
+association [0..5] BookingInfo <-> SpecialOffer [*];
+
+}

@@ -1,0 +1,70 @@
+
+// Class Diagram for Celebrations Organization System
+classdiagram CelebrationsOrganizationSystem {
+
+class Organizer {
+    String firstName;
+    String lastName;
+    String email; // also used as username
+    String postalAddress;
+    String phoneNumber;
+    String password;
+}
+
+class Event {
+    DateTime startDateTime;
+    DateTime endDateTime;
+    String occasion;
+    String location;
+}
+
+class Location {
+    String name;
+    String address;
+}
+
+class Attendee {
+    String firstName;
+    String lastName;
+    String email; // also used as username
+    String attendanceStatus; // can be "will attend", "maybe", "cannot attend"
+}
+
+class Task {
+    String description;
+    String status; // can be "needs to be done", "has been done", "not applicable"
+}
+
+class Checklist {
+    Task[] tasks;
+}
+
+class Invitation {
+    Organizer organizer;
+    Attendee attendee;
+    boolean hasResponded;
+}
+
+// Association between Organizer and Event
+association [1] Organizer -- Event [*];
+
+// Association between Event and Attendee
+association [0..*] Event -> Attendee [*];
+
+// Association between Event and Location
+association [1] Event -> Location [1];
+
+// Association between Event and Checklist
+association [1] Event -- Checklist [0..1];
+
+// Association between Organizer and Task
+association [0..*] Organizer -- Task [*];
+
+// Association between Task and Attendee
+association [0..*] Task -> Attendee [*];
+
+// Association between Invitation and Attendee
+association [1] Invitation -> Attendee [1];
+association [1] Invitation -> Organizer [1];
+
+}

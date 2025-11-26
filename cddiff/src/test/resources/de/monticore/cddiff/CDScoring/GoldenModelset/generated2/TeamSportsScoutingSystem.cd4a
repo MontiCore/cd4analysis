@@ -1,0 +1,62 @@
+
+classdiagram TeamSportsScoutingSystem {
+
+    class Employee {
+        String name;
+        String role; // Possible roles: Head Coach, Director, Scout
+    }
+
+    class HeadCoach extends Employee {
+        void identifyPlayerProfile(String targetPosition, Attribute[] attributes);
+    }
+
+    class Director extends Employee {
+        void makeOffer(Player player);
+    }
+
+    class Scout extends Employee {
+        void notePlayer(Player player);
+        ScoutingReport submitScoutingReport(Player player);
+    }
+
+    class Player {
+        String name;
+        String position; // e.g. GK, LB
+    }
+
+    class Attribute {
+        String name;
+        String value;
+    }
+
+    class ScoutingReport {
+        Player player;
+        String pros; // summarization of positive aspects
+        String cons; // summarization of negative aspects
+        Recommendation recommendation; // e.g. key player, first team player, etc.
+    }
+
+    enum Recommendation {
+        KEY_PLAYER,
+        FIRST_TEAM_PLAYER,
+        RESERVE_TEAM_PLAYER,
+        PROSPECTIVE_PLAYER,
+        NOT_A_GOOD_SIGNING;
+    }
+
+    class LongList {
+        Player[] players; // Players noted by scouts
+    }
+
+    class ShortList {
+        Player[] players; // Players shortlisted for further evaluation
+    }
+
+    association [0..*] Employee -> (managedBy) Employee [1]; // Employees may be managed by other employees
+    association [1] HeadCoach -> (identifies) Player [*];
+    association [1] Scout -> (notes) Player [*];
+    association [1] Scout -> (submits) ScoutingReport [*];
+    association [1] HeadCoach -> (evaluates) LongList [1];
+    association [1] HeadCoach -> (decides) ShortList [1];
+    association [1] Director -> (makes) Player [*]; // Director can make offers for multiple players
+}

@@ -1,0 +1,75 @@
+
+// CD4A Class Diagram for Aircraft Management System
+classdiagram AircraftManagementSystem {
+
+class Aircraft {
+    String name;
+    String type;
+    int yearOfManufacture;
+    Date nextInspectionDate;
+}
+
+class Flight {
+    String flightNumber;
+    Date flightDate;
+}
+
+class Passenger {
+    String name;
+    String passportNumber;
+}
+
+class Ticket {
+    String ticketNumber;
+    float price;
+    boolean upgradeDesired;
+}
+
+class PassengerAircraft extends Aircraft {
+    int numberOfSeats;
+}
+
+class SeatCategory {
+    String designation;
+    boolean entertainmentProgram;
+    int numberOfSeats;
+}
+
+class Airline {
+    String name;
+}
+
+class FlightAttendant {
+    String name;
+    Date dateOfEmployment;
+    boolean isChiefSteward;
+}
+
+class Pilot {
+    String name;
+    Date dateOfEmployment;
+    String license;
+}
+
+class Airport {
+    String name;
+    String address;
+    int numberOfRunways;
+}
+
+association [1] Aircraft -- Flight [*];
+association [*] Passenger -- Flight [*];
+association [1] Ticket -- Flight [1];
+association [1] PassengerAircraft -- SeatCategory [*];
+
+association [1] Airline -- FlightAttendant [*];
+association [1] Airline -- Pilot [*];
+
+association [*] FlightAttendant -- Flight [*];
+association [1] Pilot -- Flight [1];
+
+association [1] Aircraft -- Airport [1]; // Home airport
+association [1] Flight -- Airport [1]; // Departure airport
+association [1] Flight -- Airport [1]; // Destination airport
+
+}

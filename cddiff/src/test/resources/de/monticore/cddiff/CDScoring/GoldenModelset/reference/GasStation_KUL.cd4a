@@ -1,0 +1,44 @@
+classdiagram GasStation_KUL {
+
+class CardHolder{
+    String name;
+    boolean suspended;
+}
+
+class Invoice {
+    int number;
+    double discount;
+    String status;
+}
+
+class InvoiceLine{
+    int number;
+}
+
+class GasStation{
+    String name;
+}
+
+class Pump {
+    String type;
+    boolean inUse;
+    double refillThreshold;
+    boolean blocked;
+}
+
+class RefuelTurn {
+    int refuelTurnNumber;
+}
+
+class CashTurn {}
+
+
+association [1] Pump <-> RefuelTurn [0..*];
+association [1] Pump <-> CashTurn [0..*];
+association [1] GasStation <-> Pump [0..*];
+association [1] CardHolder <-> Invoice [0..*];
+association [1] CardHolder <-> RefuelTurn [0..*];
+association [1] Invoice <-> InvoiceLine [0..*];
+association [1] RefuelTurn <-> InvoiceLine [0..1];
+
+}

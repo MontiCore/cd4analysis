@@ -1,0 +1,86 @@
+
+classdiagram HelpingHandsStore {
+
+    class H2S {
+        String name;
+        List<Location> locations;
+    }
+
+    class Location {
+        String city;
+        DistributionCenter distributionCenter;
+        List<VolunteerDriver> drivers;
+    }
+
+    class PickupRequest {
+        String residentName;
+        String streetAddress;
+        String phoneNumber;
+        String email; // optional
+        String itemDescription;
+        Time pickupTime;
+    }
+
+    class Vehicle {
+        String licensePlate;
+        int storageCapacity; // in liters or cubic meters
+        List<Item> scheduledItems; // items picked up
+    }
+
+    class VolunteerDriver {
+        String name;
+        List<DayOfWeek> availableDays;
+        void indicateAvailability();
+    }
+
+    class DistributionCenter {
+        List<ReceivedArticle> receivedArticles;
+        void examineArticle(ReceivedArticle article);
+    }
+
+    class ReceivedArticle {
+        String description;
+        String rfidTag;
+        String category;
+        void tag();
+    }
+
+    class DeliveryService {
+        Client client;
+        List<String> requestedCategories;
+        void arrangeDelivery(ReceivedArticle article);
+    }
+
+    class Client {
+        String name;
+        String contactNumber;
+        String address;
+        List<String> requestedCategories;
+    }
+
+    class Item {
+        String name;
+        double weight; // in kilograms
+        double dimension; // e.g., volume
+    }
+
+    enum DayOfWeek {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday;
+    }
+
+    association [*] H2S -> (location) Location [*];
+    association [*] Location -> (pickupRequest) PickupRequest [*];
+    association [1] Location -> (distributionCenter) DistributionCenter [1];
+    association [1] DistributionCenter <-> ReceivedArticle [0..*];
+    association [*] Vehicle <-> (scheduledForPickup) PickupRequest [*];
+    association [*] VolunteerDriver <-> PickupRequest [*];
+    association [1] Client <-> DeliveryService [0..*];
+    association [*] DeliveryService <-> ReceivedArticle [*];
+    
+}

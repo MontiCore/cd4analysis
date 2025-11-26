@@ -1,0 +1,52 @@
+
+// CD4A Class Diagram for Louvre Museum Exhibition Management System
+classdiagram LouvreMuseum {
+
+class MuseumLocation {
+    String name;
+    String description;
+}
+
+class Exhibition {
+    Date openingDate;
+    String title;
+}
+
+class Employee {
+    String firstName;
+    String lastName;
+}
+
+class JuniorEmployee extends Employee {}
+
+class SeniorEmployee extends Employee {
+    // Senior employee can coach junior employees
+}
+
+class ExhibitionItem {
+    String description;
+}
+
+class Collector {
+    String name;
+    String contactDetails;
+}
+
+class ExhibitionRequest {
+    ExhibitionItem item;
+    Collector collector;
+}
+
+// Coaching relationship between employees
+association [0..*] SeniorEmployee <-> JuniorEmployee [0..*];
+
+// Relationship between locations and exhibitions
+association [1] MuseumLocation <-> Exhibition [0..*];
+
+// Relationship between exhibitions and items
+association [1] Exhibition <-> ExhibitionItem [0..*];
+
+// Requests from collectors for exhibition items
+association [1] ExhibitionItem <-> ExhibitionRequest [1];
+
+}

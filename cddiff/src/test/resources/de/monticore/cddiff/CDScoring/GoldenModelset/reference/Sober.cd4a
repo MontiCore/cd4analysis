@@ -1,0 +1,79 @@
+classdiagram Sober {
+
+class Ride {
+    int rideNr;
+    DateTime pickupDateTime;
+    DateTime dropOffDateTime;
+    int duration;
+    String pickupLocation;
+    String dropOffLocation;
+    int distance;
+    int fee;
+
+    int getRideNr();
+    void setRideNr(int newRideNr);
+    void calcDuration();
+}
+
+class RideHailing extends Ride {
+    int passengers;
+    Time waitTime;
+    String requestType;
+
+    int getPassengers();
+}
+
+class RideSharing extends Ride {
+    void numberOfCustomers();
+}
+
+class Customer {
+    int custNr;
+    String custName;
+
+    int getCustNr();
+    void setCustNr(int newCustNr);
+    void top5customerHail();
+    void top5customerShare();
+}
+
+class Car {
+    int carNr;
+    String carType;
+
+    int getCarNr();
+    void setCarNr(int newCarNr);
+    int numberOfRides();
+}
+
+class SoberCar extends Car {
+    int numberOfSoberCars();
+}
+
+class OtherCar extends Car {}
+
+class Involved {
+    int damageAmount;
+
+    void generateReport();
+}
+
+class Accident {
+    int accNr;
+    String accLocation;
+    DateTime accDateTime;
+
+    int getAccNr();
+    void setAccNr(int newAccNr);
+    void Top3AccidentHotSports();
+    void Top3AccidentPeakTimes();
+}
+
+
+association [*] RideHailing -- (leadCustomer) Customer [1];
+association [*] RideSharing -- (book) Customer [1];
+association [*] Ride <-> (operatedBy) Car [1];
+association [*] OtherCar -- (owns) Customer [1];
+association [1..*] Car <-> Accident [*];
+
+}

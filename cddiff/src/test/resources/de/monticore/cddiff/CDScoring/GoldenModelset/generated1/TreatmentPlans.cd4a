@@ -1,0 +1,46 @@
+
+// Class diagram for Hospital Examination System
+classdiagram HospitalExaminationSystem {
+
+    class Hospital {
+        String name;
+        String address;
+    }
+
+    class Doctor {
+        String firstName;
+        String lastName;
+    }
+
+    class Patient {
+        String firstName;
+        String lastName;
+    }
+
+    class Examination {
+        String type;
+    }
+
+    class TreatmentPlan {
+        String problem;
+    }
+
+    class ActualTreatment {
+        String deviationDetails;
+    }
+
+    enum ExaminationType {
+        CARDIOLOGIC_TEST,
+        ECHOGRAPHY,
+        RADIOLOGY,
+        SCANNER;
+    }
+
+    association [1] Hospital -> Examination [*];
+    association [1] Hospital <-> TreatmentPlan [0..*];
+    association [1] TreatmentPlan -> Examination [*];  // advised types of examinations
+    association [1] Patient <-> ActualTreatment [0..*]; // A patient can have multiple treatments
+    association [1] Doctor -> Patient [*];  // A doctor can have multiple patients
+    association [1] Doctor -> ActualTreatment [*]; // A doctor defines actual treatments
+    association [1] Examination <-> Hospital [0..*]; // A hospital can apply for permissions for examinations
+}

@@ -1,0 +1,70 @@
+
+// CD4A Class Diagram for the Tile-O application
+
+classdiagram TileO {
+
+    class Game {
+        Board board;
+        Player[] players;
+        Player currentPlayer;
+        void rollDie();
+        void movePiece(Player player, Tile destination);
+    }
+
+    class Board {
+        Tile[][] tiles;
+        ActionTile actionTile;
+        Tile hiddenTile;
+        ConnectionPiece spareConnectionPieces;
+    }
+
+    class Tile {
+        Color color; // Color can be WHITE or BLACK
+        Tile leftConnection;
+        Tile rightConnection;
+        Tile topConnection;
+        Tile bottomConnection;
+    }
+
+    class ActionTile extends Tile {
+        int turnsToRegular;
+    }
+
+    class ConnectionPiece {}
+
+    class Player {
+        String name;
+        Color pieceColor; // Color of the player's piece
+        Tile currentTile;
+        void takeTurn();
+    }
+
+    class Die {
+        int roll();
+    }
+
+    class ActionCard {
+        String description; // e.g., "roll the die for an extra turn"
+        void executeAction(Player player, Game game);
+    }
+
+    class ActionCardDeck {
+        ActionCard[] actionCards;
+        ActionCard drawCard();
+    }
+
+    enum Color {
+        WHITE,
+        BLACK;
+    }
+
+    association [2..4] Game (player) <-> Player [*];
+    association [1] Game -> Board [1];
+    association [1] Board -> Tile [*];
+    association [0..1] Board -> ActionTile [1];
+    association [1] Board -> ConnectionPiece [*];
+    association [1] Player -> Tile [1];
+    association [1] Player -> Die [1];
+    association [1] Board -> ActionCardDeck [1];
+}
+

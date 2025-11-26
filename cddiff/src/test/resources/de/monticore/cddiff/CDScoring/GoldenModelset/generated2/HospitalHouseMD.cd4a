@@ -1,0 +1,38 @@
+
+classdiagram HospitalHouseMD {
+
+    class Patient {
+        boolean consent; // Indicates if the patient has signed consent
+    }
+
+    class Doctor {
+        // Attributes and methods for Doctor can be defined here
+    }
+
+    class HeadDoctor extends Doctor {
+        // HeadDoctor specific attributes and methods can be defined here
+    }
+
+    class Illness {
+        PriorityScore priorityScore; // high or low
+    }
+
+    enum PriorityScore {
+        HIGH,
+        LOW;
+    }
+
+    class Treatment {
+        int stage; // 1, 2, or 3
+    }
+
+    class FollowUp {
+        // Attributes for FollowUp can be defined here, relating to frequency
+    }
+
+    association [1..*] Patient <-> Doctor [1..*]; // Patients can have multiple doctors
+    association [1..*] Illness <-> Treatment [1..*]; // Illnesses can have multiple treatments
+    association [1] HeadDoctor <-> Treatment [0..*]; // HeadDoctor approves treatments
+    association [1..*] Treatment <-> FollowUp [0..*]; // Treatments can have follow-ups
+
+}

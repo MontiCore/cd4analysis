@@ -1,0 +1,25 @@
+classdiagram ProjectManagement {
+
+class ResearchGroup {}
+
+class Department {}
+
+class Researcher {}
+
+class Project {}
+
+class WorkPackage {}
+
+class WorkPackageLeader {}
+
+class Service {}
+
+
+association [1] Department <-> ResearchGroup [0..*];
+association [1] ResearchGroup <-> Researcher [0..*];
+association [1] Project <-> WorkPackage [1..*];
+association [0..*] WorkPackage <-> ResearchGroup [0..1];
+association [1] ResearchGroupMember <-> Service [0..*];
+association [1] WorkPackageLeader <-> Service [0..*];
+
+}

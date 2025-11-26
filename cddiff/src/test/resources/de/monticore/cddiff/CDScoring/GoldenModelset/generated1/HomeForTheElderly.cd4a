@@ -1,0 +1,63 @@
+
+// CD4A Class Diagram for Home for the Elderly
+classdiagram HomeForElderly {
+
+class Home {
+    String name;
+}
+
+class Department {
+    String name;
+}
+
+class Room {
+    int roomNumber;
+}
+
+class Bed {
+    String category;
+}
+
+class Stay {
+    String type;
+    Date intakeDate;
+    boolean isActive;
+    double amountInvoiced;
+}
+
+class Inhabitant {
+    String name;
+    String identificationData;
+    int waitingListPosition;
+}
+
+class Assessment {
+    String needsForHelp;
+    Stay assignedStay;
+}
+
+class Invoice {
+    double outstandingAmount;
+    boolean isPaid;
+}
+
+class PaymentEvent {
+    double amountPaid;
+}
+
+// Registration process for individuals 
+class Registration {
+    Inhabitant inhabitant; // Reference to the person being registered
+}
+
+// Association for registration process
+association [1] Registration <-> Inhabitant [1];
+association [*] Home <-> Department [*];
+association [*] Department <-> Room [*];
+association [*] Room <-> Bed [*];
+association [1] Inhabitant <-> Stay [*];
+association [1] Inhabitant <-> Assessment [1];
+association [1] Stay <-> Invoice [0..*];
+association [1] Invoice <-> PaymentEvent [0..*];
+
+}

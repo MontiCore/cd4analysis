@@ -1,0 +1,36 @@
+classdiagram GasStation_TUW {
+
+class GasStation {
+    int id;
+    String address;
+}
+
+class DailyPrice {
+    Date date;
+    double price;
+}
+
+class FuelPurchase {
+    int id;
+    int liter;
+}
+
+class FuelPump {
+    int pumpNumber;
+    boolean selfService;
+}
+
+class Fuel {
+    String name;
+    int octane;
+}
+
+
+association [1] GasStation <-> DailyPrice [*];
+association [1] GasStation -- FuelPump [1..12];
+association [*] DailyPrice <-> Fuel [1];
+association [1] FuelPump <-> FuelPurchase [*];
+association [*] FuelPurchase <-> DailyPrice [1];
+association [*] FuelPump <-> Fuel [*];
+
+}

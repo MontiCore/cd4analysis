@@ -1,0 +1,67 @@
+
+classdiagram OilCompany {
+
+class Customer {
+    int customerId;
+    String name;
+    boolean isSuspended;
+
+    void payInvoice(Invoice invoice);
+    void requestRefuelCard();
+}
+
+class RefuelCard {
+    int cardNumber;
+    Customer owner;
+
+    void generateInvoice();
+}
+
+class Invoice {
+    int invoiceNumber;
+    Date invoiceDate;
+    double totalAmount;
+    double discount;
+
+    void sendReminder();
+    void markAsPaid();
+}
+
+class Payment {
+    int paymentId;
+    Date paymentDate;
+    double amount;
+
+    void processPayment(Invoice invoice);
+}
+
+class GasStation {
+    int stationId;
+    String location;
+}
+
+class Pump {
+    int pumpId;
+    double gasolineLevel;
+    boolean isBlocked;
+
+    void startRefueling(Customer customer);
+    void stopRefueling();
+    void refill(double amount);
+}
+
+class Report {
+    Date reportDate;
+    List<Pump> pumpsToRefill;
+
+    void generateDailyReport();
+}
+
+// Association between classes
+association [0..*] GasStation <-> Pump [1];
+association [1] Pump -> Customer [0..1]; // A pump can be used by one customer at a time
+association [0..*] Customer <-> Invoice [0..*]; // A customer can have many invoices
+association [1] Invoice <-> Payment [0..*]; // An invoice can have multiple payments, but must be paid at least once
+association [0..*] RefuelCard <-> Customer [1]; // A refuel card is owned by one customer
+
+}

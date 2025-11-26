@@ -1,0 +1,71 @@
+
+// Class diagram for a transport company management system
+classdiagram TransportCompany {
+
+class Employee {
+    String name;
+    String ssn;
+}
+
+class Planner extends Employee {
+    // Additional functionality for planners
+}
+
+class AdminStaff extends Employee {
+    String fieldOfActivity;
+    String username;
+    String password;
+}
+
+class Customer {
+    String name;
+    String billingAddress;
+}
+
+abstract class Vehicle {
+    String licensePlate;
+    int mileage;
+}
+
+class RefrigeratedTruck extends Vehicle {}
+
+class SmallVan extends Vehicle {}
+
+class LoadingPlatform extends Vehicle {}
+
+class BoxTruck extends Vehicle {}
+
+class RepairShop {
+    String name;
+    String address;
+}
+
+class Repair {
+    int duration; // in days
+    double cost;
+}
+
+class Order {
+    String pickupAddress;
+    String deliveryAddress;
+    String additionalInfo;
+    Date startDate;
+    Date endDate;
+}
+
+class PartnerCompany {
+    String name;
+    String address;
+}
+
+association [1] Customer <-> Order [0..*];
+association [1] Employee (assignedBy) <-> Order [0..*];
+association [1] Planner <-> Order [0..*];
+association [1] Driver <-> Order [0..*];
+association [1] Order <-> Vehicle [1];
+association [1] RepairShop <-> Repair [0..*];
+association [1] Vehicle <-> Repair [0..*];
+association [1] Vehicle <-> (tookToRepair) Employee [0..1];
+association [1] Order <-> PartnerCompany [0..1];
+association [1] Employee <-> Vehicle [0..*];
+}

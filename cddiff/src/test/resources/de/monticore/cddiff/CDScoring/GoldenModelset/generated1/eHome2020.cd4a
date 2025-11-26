@@ -1,0 +1,58 @@
+
+// CD4A class diagram for the E-Home-2020 system
+classdiagram EHome2020 {
+
+class Sensor {
+    String vendorId;
+    String description;
+    String unit;
+}
+
+class TemperatureSensor extends Sensor {
+    float minValue;
+    float maxValue;
+    float getLastValue();
+}
+
+class PowerSensor extends Sensor {
+    float totalPowerConsumption;
+    float getLastValue();
+}
+
+class Room {
+    String description;
+}
+
+class SensorController {
+    void querySensorValues();
+    void configureSensor();
+}
+
+class Apartment {
+    String address;
+}
+
+class Inhabitant {
+    String username;
+    String password;
+    boolean hasAdminRights; 
+}
+
+class EMonitor {
+    void checkThresholds();
+    void sendAlert();
+}
+
+class SensorValue {
+    float value;
+    Date timestamp;
+}
+
+association [1] Apartment -- Room [2..*];
+association [1] Room <-> Sensor [1..*];
+association [1] Inhabitant <-> Apartment [1];
+association [1] SensorController <-> Apartment [1];
+association [1] EMonitor <-> Sensor [*];
+association [1..*] Sensor <-> (measures) SensorValue [*];
+
+}

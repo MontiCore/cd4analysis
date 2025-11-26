@@ -1,0 +1,77 @@
+
+classdiagram LabTracker {
+
+class Doctor {
+    int practitionerNumber;
+    String fullName;
+    String address;
+    String phoneNumber;
+    String signature; // Digital signature image
+    Date validFrom;
+}
+
+class Patient {
+    String healthNumber;
+    String firstName;
+    String lastName;
+    Date dateOfBirth;
+    String address;
+    String phoneNumber;
+}
+
+class Requisition {
+    int id;
+    Date date;
+    Doctor doctor;
+    Patient patient;
+    TestGroup testGroup;
+    int repeatCount;
+    Interval repeatInterval;
+    
+    void addTest(Test test);
+}
+
+class Test {
+    String name;
+    int duration; // Duration defined by lab network
+    boolean requiresAppointment;
+    boolean isWalkInOnly;
+    boolean requiresSampleDropOff;
+}
+
+class TestGroup {
+    String groupName;
+}
+
+class Appointment {
+    int confirmationNumber;
+    Date appointmentDate;
+    Time startTime;
+    Time endTime;
+    Lab lab;
+}
+
+class Lab {
+    String name;
+    String address;
+    String registrationNumber;
+    String businessHours;
+    double cancellationFee;
+}
+
+enum Interval {
+    Weekly,
+    Monthly,
+    HalfYearly,
+    Yearly;
+}
+
+association [1] Doctor -> Requisition [*];  // Doctor can create multiple requisitions
+association [1] Patient -> Requisition [*];  // Patient can have multiple requisitions
+association [1] Requisition -> TestGroup [1]; // Each requisition belongs to one test group
+association [1] Requisition -> Patient [1];   // Each requisition is for one patient
+association [*] Requisition -> Test [*];       // A requisition can have multiple tests
+association [1] Lab -> Appointment [*];        // A lab can have multiple appointments
+association [1] Appointment -> Lab [1];        // Each appointment is for one lab
+
+}

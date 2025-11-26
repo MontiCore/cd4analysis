@@ -1,0 +1,52 @@
+
+// CD4A class diagram for Smart Home Automation System (SHAS)
+
+classdiagram SmartHomeAutomationSystem {
+
+class SmartHome {
+    String address;
+}
+
+class Room {
+    String name;
+}
+
+class Device {
+    String deviceId;
+}
+
+class Sensor extends Device {
+    double measuredValue;
+    Date timestamp;
+}
+
+class Actuator extends Device {
+    String status; // e.g. requested, completed, failed
+    Date commandTimestamp;
+    String controlCommand; // e.g. lockDoor, turnOnHeating
+}
+
+class ActivityLog {
+    String action;
+    Date timestamp;
+}
+
+class AutomationRule {
+    String precondition; // Boolean expression
+    String action; // sequence of control commands
+    boolean isActive; // status of the rule
+}
+
+class RuleTrigger {
+    Date timestamp;
+}
+
+association [*] SmartHome <-> Room [0..*];
+association [0..*] Room <-> Sensor [0..*];
+association [0..*] Room <-> Actuator [0..*];
+association [1] ActivityLog <-> (records) Sensor [0..*];
+association [1] ActivityLog <-> (records) Actuator [0..*];
+association [0..*] AutomationRule <-> (basedOn) AutomationRule [0..*]; // Rule dependencies
+association [0..*] AutomationRule <-> RuleTrigger [0..*];
+
+}

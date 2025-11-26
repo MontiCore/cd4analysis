@@ -1,0 +1,51 @@
+
+// Class diagram for Smart Home Automation System (SHAS)
+classdiagram SmartHomeAutomationSystem {
+
+class SmartHome {
+    String physicalAddress;
+}
+
+class Room {
+    String name;
+}
+
+class Device {
+    String deviceId;
+}
+
+class Sensor extends Device {
+    float readingValue;
+    Date timestamp;
+}
+
+class Actuator extends Device {
+    String status; // e.g., requested, completed, failed
+    Date commandTimestamp;
+}
+
+class ActivityLog {
+    String logEntry; // Description of the activity
+    Date timestamp;
+}
+
+class AutomationRule {
+    String precondition; // Boolean expression
+    String action; // Sequence of control commands
+    boolean isActive;
+    Date triggeredTimestamp;
+}
+
+class ControlCommand {
+    String commandType; // e.g., lockDoor, turnOnHeating
+    Date commandTimestamp;
+}
+
+association [1] SmartHome <-> Room [*];
+association [*] Room <-> Sensor [*];
+association [*] Room <-> Actuator [*];
+association [0..*] Device <-> ActivityLog [*];
+association [0..*] AutomationRule <-> ActivityLog [*];
+association [0..*] AutomationRule <-> AutomationRule [0..*]; // for rule dependencies and conflicts
+
+}

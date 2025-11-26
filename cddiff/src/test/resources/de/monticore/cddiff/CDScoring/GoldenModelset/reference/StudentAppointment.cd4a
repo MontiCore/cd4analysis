@@ -1,0 +1,22 @@
+classdiagram StudentAppointment {
+
+class Student {}
+
+class Course {}
+
+class Assistant {}
+
+class TeachingAssistant {}
+
+class CourseSubscription {}
+
+class Appointment {}
+
+association [0..*] Student <-> Course [0..*];
+
+association [0..*] Course <-> Assistant [0..*];
+
+association [1] CourseSubscription <-> Appointment [0..*];
+association [1] TeachingAssistant <-> Appointment [0..*];
+
+}

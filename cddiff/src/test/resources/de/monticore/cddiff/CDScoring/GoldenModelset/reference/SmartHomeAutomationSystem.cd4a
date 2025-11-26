@@ -1,0 +1,112 @@
+classdiagram SmartHomeAutomationSystem {
+
+
+class SmartHome {}
+
+class Address {
+    String address;
+}
+
+class User {
+    String name;
+}
+
+class Room {}
+
+abstract class Device {
+    DeviceStatus deviceStatus;
+    int deviceID;
+}
+
+class ActivityLog {}
+
+class Sensor extends Device {}
+
+class Actuator extends Device {}
+
+class CommandSequence {}
+
+abstract class RuntimeElement {
+    Time timestamp;
+}
+
+class SensorReading extends RuntimeElement {
+    double value;
+}
+
+class ControlCommand extends RuntimeElement {
+    CommandType commandType;
+    CommandStatus commandStatus;
+}
+
+class AlertRule {
+    RuleStatus ruleStatus;
+}
+
+abstract class BooleanExpression {}
+
+class RelationalTerm extends BooleanExpression {}
+
+class NotExpression extends BooleanExpression {}
+
+class BinaryExpression extends BooleanExpression {}
+
+enum DeviceStatus {
+    Activated,
+    Deactivated;
+}
+
+enum CommandType {
+    lockDoor,
+    turnOnHeating;
+}
+
+enum CommandStatus {
+    Requested,
+    Completed,
+    Failed;
+}
+
+enum RuleStatus {
+    created,
+    edited,
+    activated,
+    deactivated;
+}
+
+enum BinaryOp {
+    AND,
+    OR;
+}
+
+
+association [1] SmartHome -- (address) Address [0..1];
+association [1] SmartHome -- (rooms) Room [*];
+association [1] SmartHome -- (log) ActivityLog [0..1];
+association [*] User <-> (owners) SmartHome [*];
+
+association [1] Room -- (sensors) Sensor [*];
+association [1] Room -- (actuators) Actuator [*];
+
+association [1] ActivityLog -- (recordedReadings) SensorReading [*];
+association [1] ActivityLog -- (recordedCommands) ControlCommand [*];
+
+association [*] CommandSequence <-> (nextCommand) CommandSequence [0..1];
+association [1] CommandSequence -- (command) ControlCommand [0..1];
+
+association [*] SensorReading <-> (sensor) Sensor [1];
+association [*] ControlCommand <-> (actuator) Actuator [1];
+
+association [1] AlertRule -- (precondition) BooleanExpression [0..1];
+association [1] AlertRule -- (actions) CommandSequence [*];
+
+association [*] RelationalTerm <-> Room [0..1];
+association [*] RelationalTerm <-> Device [0..1];
+association [*] RelationalTerm <-> RuntimeElement [0..1];
+
+association [0..1] NotExpression <-> (expression) BooleanExpression [1];
+
+association [0..1] BinaryExpression <-> (leftExpr) BooleanExpression [1];
+association [0..1] BinaryExpression <-> (rightExpr) BooleanExpression [1];
+
+}

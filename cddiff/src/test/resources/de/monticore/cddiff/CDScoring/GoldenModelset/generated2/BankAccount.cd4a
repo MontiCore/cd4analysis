@@ -1,0 +1,28 @@
+
+classdiagram Bank {
+
+    class Customer {
+        String firstName;
+        String lastName;
+    }
+
+    class BankBranch {
+        // Represents a branch of the bank
+    }
+
+    class Account {
+        int accountNumber;
+        double balance;
+    }
+
+    class CurrentAccount extends Account {
+        double overdraftLimit;
+    }
+
+    class SavingsAccount extends Account {}
+
+    association [1..*] BankBranch -> Customer [*]; // A branch can have many customers
+    association [1..5] Customer -> Account [*]; // A customer can have between 1 to 5 accounts
+    association [1] Account -> Customer [1]; // Each account has one owner who is a customer
+
+}

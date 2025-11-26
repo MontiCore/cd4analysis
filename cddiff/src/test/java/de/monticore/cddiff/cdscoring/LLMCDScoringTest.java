@@ -20,10 +20,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -54,33 +57,56 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
     CDEmbeddingSimilarity.initialize("src/main/resources/crawl-300d-2M-subword.bin");
   }
 
-  public static Stream<Arguments> LLMTestData() {
+  public static Stream<Arguments> LLMTestData() throws IOException {
     File root = new File(dir, "GoldenModelset");
-    try (
-      Stream<Path> artifacts = Files.walk(root.toPath())) {
-      return artifacts.filter(Files::isRegularFile)
-        .filter(f -> f.getFileName().toString().endsWith("LLM.cd4a"))
-        .filter(artifact -> Files.exists(artifact.resolveSibling(artifact.getFileName().toString().replace("LLM", ""))))
-        .map(artifact -> Arguments.of(
-          "GoldenModelset/" + artifact.getFileName().toString().replace("LLM", ""), "GoldenModelset/" + artifact.getFileName()
-        )).collect(Collectors.toList()).stream();
-    } catch (
-      IOException e) {
-      fail("Could not read directory: " + root.getAbsolutePath() + " - " + e.getMessage());
-      return Stream.empty();
+    File referenceDir = new File(root, "reference");
+    Set<String> generatedFileNames;
+    try (Stream<Path> paths = Files.walk(new File(root, "generated1").toPath())) {
+      generatedFileNames = paths
+        .filter(Files::isRegularFile)
+        .map(path -> path.getFileName().toString())
+        .collect(Collectors.toSet());
+    }
+    for(int i = 2; i <=3 ; i++) {
+      try (Stream<Path> paths = Files.walk(new File(root, "generated" + i).toPath())) {
+        Set<String> currentGeneratedFileNames = paths
+          .filter(Files::isRegularFile)
+          .map(path -> path.getFileName().toString())
+          .collect(Collectors.toSet());
+        generatedFileNames.retainAll(currentGeneratedFileNames);
+      }
+    }
+
+    try (Stream<Path> artifacts = Files.walk(referenceDir.toPath())) {
+      // Ensure files exist in all generated dirs
+      return artifacts.filter(Files::isRegularFile).map(path -> {
+        Assertions.assertTrue(generatedFileNames.contains(path.getFileName().toString()),
+          "Reference file " + path.getFileName() + " does not have generated counterparts in all generated directories.");
+        return Arguments.of(
+          "GoldenModelset/reference/" + path.getFileName(),
+          IntStream.rangeClosed(1, 3)
+            .mapToObj(i -> "GoldenModelset/generated" + i + "/" + path.getFileName())
+            .collect(Collectors.toList())
+        );
+      }).collect(Collectors.toList()).stream();
     }
   }
 
   @ParameterizedTest
   @MethodSource("LLMTestData")
   @ExtendWith(ScoreFailedTests.class)
-  public void testLLMModels(String srcFile, String tgtFile) throws IOException {
-    parseModels(srcFile, tgtFile);
-    CDScoring llmCDScoring = new CDScoring(src, tgt);
-    double score = llmCDScoring.score(5, 0.5, true);
-    System.out.println("Score: " + score);
+  public void testLLMModels(String referenceFile, List<String> generatedFiles) throws IOException {
+    List<Double> scores = new LinkedList<>();
+    for(String generatedFile : generatedFiles) {
+      parseModels(generatedFile, referenceFile);
+      CDScoring llmCDScoring = new CDScoring(src, tgt);
+      double score = llmCDScoring.score(5, 0.5, true);
+      scores.add(score);
+      System.out.println("Score for " + generatedFile + " - " + referenceFile + ": " + score);
+    }
     File out = new File(dir + "LLMScores.txt");
-    Files.writeString(out.toPath(), score + "\n", out.exists() ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+
+    Files.writeString(out.toPath(), scores.stream().map(Object::toString).collect(Collectors.joining("\t")) + "\n", out.exists() ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
   }
 
   @ParameterizedTest

@@ -1,0 +1,48 @@
+classdiagram EUScienceConnect {
+
+class Person {
+    int personId;
+    String phoneNumber;
+    String keywords;
+}
+
+class ResearchInstitution {
+    int institutionCode;
+}
+
+class Article {
+    int dOI;
+    String title;
+}
+
+class Author {
+    int position;
+}
+
+class PeerReviewedPaper extends Article {
+    int citationCount;
+}
+
+class TechnicalReport extends Article {
+
+}
+
+class Publisher {
+    String name;
+}
+
+class Journal {
+    String name;
+    double impactFactor;
+}
+
+
+association [*] Article <-> Person [*];
+association [1] ResearchInstitution <-> (worksFor) Person [*];
+association [*] Person <-> (reviews) PeerReviewedPaper [*];
+association [*] ResearchInstitution <-> (subscribesTo) Journal [*];
+association [1] Publisher <-> (publishes) Journal [*];
+association [1] Journal <-> PeerReviewedPaper [*];
+association [1] ResearchInstitution <-> (publishes) TechnicalReport [*];
+
+}

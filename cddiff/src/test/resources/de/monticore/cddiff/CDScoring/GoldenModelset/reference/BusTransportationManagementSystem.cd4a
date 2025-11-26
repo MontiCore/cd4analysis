@@ -1,0 +1,39 @@
+classdiagram BusTransportationManagementSystem {
+
+enum Shift {
+    Morning,
+    Afternoon,
+    Night;
+}
+
+
+class BusVehicle {
+    String licencePlate;
+    boolean inRepairShop;
+}
+
+class Route {
+    int number;
+}
+
+class RouteAssignment {
+    Date date;
+}
+
+class Driver {
+    String name;
+    String id;
+    boolean onSickLeave;
+}
+
+class DriverSchedule{
+    Shift shift;
+}
+
+association [1] BusVehicle <-> RouteAssignment [0..*];
+association [1] Route <-> RouteAssignment [0..*];
+
+association [1] Driver <-> DriverSchedule [0..*];
+association [1] RouteAssignment <-> DriverSchedule [0..*];
+
+}

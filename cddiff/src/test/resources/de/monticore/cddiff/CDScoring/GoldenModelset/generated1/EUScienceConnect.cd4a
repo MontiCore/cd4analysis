@@ -1,0 +1,53 @@
+
+// Class diagram for Science Connect Database
+classdiagram ScienceConnect {
+
+    class Person {
+        String personID; // uniquely identifies each person
+        String phoneNumber;
+        List<String> keywords; // identifies key research topics
+        Institution institution; // works for 
+    }
+
+    class Institution {
+        String institutionCode; // uniquely identifies each institution
+    }
+
+    class ScientificArticle {
+        String DOI; // uniquely identifies each article
+        String title;
+        List<AuthorPosition> authors; // authors and their positions
+    }
+
+    class PeerReviewedPaper extends ScientificArticle {
+        int citationCount;
+        Person reviewer; // reviewer of the paper
+    }
+
+    class TechnicalReport extends ScientificArticle {
+        Institution publishedBy; // published by a single institution
+    }
+
+    class Publisher {
+        String name; // identifies the publisher
+        List<Journal> journals; // publishes multiple journals
+    }
+
+    class Journal {
+        String journalName; // name given by the publisher
+        float impactFactor; // scientific impact of the journal
+    }
+
+    class AuthorPosition {
+        Person author;
+        int position; // position of the author in the article
+    }
+
+    // Associations
+    association [0..1] Person -> (author) PeerReviewedPaper [1];
+    association [0..1] Person -> (reviewer) PeerReviewedPaper [1];
+    association [1] Institution -- TechnicalReport [*];
+    association [1] Publisher -> Journal [*];
+    association [1] Journal -> (published) PeerReviewedPaper [*];
+
+}

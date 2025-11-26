@@ -1,0 +1,32 @@
+
+// Class diagram for managing appointments between students and teaching assistants for courses
+classdiagram CourseAppointmentSystem {
+
+    class Student {
+        String name;
+        int studentId;
+    }
+
+    class Course {
+        String courseName;
+        String courseCode;
+    }
+
+    class TeachingAssistant {
+        String name;
+        int taId;
+    }
+
+    class Appointment {
+        String appointmentTime;
+        String appointmentDate;
+    }
+
+    association [1] Course <-> Student [0..*]; // A student can register for multiple courses
+    association [1] Course <-> TeachingAssistant [1]; // A course is taught by one teaching assistant
+    association [1] TeachingAssistant <-> Appointment [0..*]; // A teaching assistant can have multiple appointments
+    association [1] Student <-> Appointment [0..*]; // A student can request multiple appointments
+    association [1] Appointment -> Course [1]; // An appointment is for one specific course
+    association [1] Appointment -> TeachingAssistant [1]; // An appointment is with one specific teaching assistant
+
+}

@@ -1,0 +1,101 @@
+
+// Class diagram for Helping Hands Store (H2S)
+classdiagram HelpingHandsStore {
+
+    class H2S {
+        String name;
+        String location;
+    }
+
+    class Resident {
+        String name;
+        String streetAddress;
+        String phoneNumber;
+        String emailAddress; // optional
+        String itemDescription;
+    }
+
+    class PickupRequest {
+        Resident resident;
+        Date pickupDate;
+        Time pickupTime; // between 8:00 and 14:00
+    }
+
+    class PickupVehicle {
+        String vehicleID;
+        float storageSpace; // in cubic meters
+    }
+
+    class VolunteerDriver {
+        String name;
+        String availableDays;
+    }
+
+    class DistributionCenter {
+        H2SEmployee employee;
+        List<Article> receivedArticles;
+        
+        void examineArticle(Article article);
+        void assignCategory(Article article, Category category);
+    }
+
+    class H2SEmployee {
+        String name;
+    }
+
+    class Article {
+        String description;
+        RFID rfidTag;
+        Category category;
+        boolean isUsable;
+    }
+
+    class RFID {
+        String tagID;
+    }
+
+    class Category {
+        String name;
+    }
+
+    class FoodBank {
+        void receiveFoodItems(FoodItem foodItem);
+    }
+
+    class FoodItem {
+        String description;
+    }
+
+    class Client {
+        String name;
+        String homeAddress;
+        List<Category> requestedCategories;
+    }
+
+    class Delivery {
+        Article article;
+        VolunteerDriver driver;
+        Client client;
+    }
+
+    class PickupRoute {
+        List<PickupRequest> requests;
+        PickupVehicle vehicle;
+    }
+
+    association [*] H2S -> (locations) Location [*];
+    association [*] Resident -> (pickupRequests) PickupRequest [*];
+    association [1] PickupRequest -> (vehicle) PickupVehicle [1];
+    association [1] PickupRequest -> (resident) Resident [1];
+    association [*] PickupVehicle -> (drivers) VolunteerDriver [*];
+    association [*] PickupVehicle -> (routes) PickupRoute [*];
+    association [*] DistributionCenter -> (receivedArticles) Article [*];
+    association [1] H2S -> (foodBank) FoodBank [1];
+    association [*] DistributionCenter -> (employees) H2SEmployee [1];
+    association [1] FoodBank -> (foodItems) FoodItem [*];
+    association [*] DistributionCenter -> (deliveries) Delivery [*];
+    association [1] Delivery -> (article) Article [1];
+    association [1] Delivery -> (client) Client [1];
+
+    // Note: Include additional details where needed (e.g. constraints or business logic)
+}

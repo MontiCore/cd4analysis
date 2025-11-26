@@ -1,0 +1,74 @@
+import java.util.Date;
+
+// Class diagram for Helping Hands Store (H2S)
+classdiagram HelpingHandsStore {
+
+    class Resident {
+        String name;
+        String streetAddress;
+        String phoneNumber;
+        String email; // optional
+        String itemDescription;
+        void schedulePickup(Date date, Time time);
+    }
+
+    class PickupService {
+        void createPickupSchedule();
+        void assignPickupRoute();
+    }
+
+    class PickupVehicle {
+        String vehicleID;
+        int storageCapacity;
+    }
+
+    class VolunteerDriver {
+        String name;
+        List<Day> availableDays; // Indicates which days driver is available
+    }
+
+    class Pickup {
+        Date date;
+        Time startTime; // between 8:00 and 14:00
+        Resident resident;
+        PickupVehicle vehicle;
+    }
+
+    class DistributionCenter {
+        void examineReceivedArticles();
+        void tagWithRFID(Article article);
+        void assignCategory(Article article, Category category);
+    }
+
+    class Article {
+        String description;
+        Category category;
+        boolean isUsable;
+    }
+
+    class Employee {
+        String name;
+        void notifyClient(Client client);
+        void arrangeDelivery(Article article, Client client);
+    }
+
+    class Client {
+        String name;
+        String address;
+        List<Category> requestedCategories;
+        void indicateNeededCategories();
+    }
+
+    class Category {
+        String name;
+    }
+
+    association [1] Pickup <-> (resident) Resident [1];
+    association [1] Pickup <-> (vehicle) PickupVehicle [1];
+    association [1] PickupVehicle <-> (driver) VolunteerDriver [1];
+    association [1] DistributionCenter <-> (examines) Article [*];
+    association [1] DistributionCenter <-> (employee) Employee [*];
+    association [1] Employee <-> (notifies) Client [*];
+    association [0..*] Client <-> (requests) Category [*];
+    association [0..*] Resident <-> (schedules) Pickup [*];
+}

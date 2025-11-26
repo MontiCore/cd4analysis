@@ -1,0 +1,59 @@
+classdiagram TreatmentPlans {
+
+class ProblemType {
+    String type;
+}
+
+class TreatmentPlan {}
+
+class AdvisedExaminationType {}
+
+class ExaminationType {
+    String type;
+}
+
+class Diagnosis {}
+
+class Treatment {}
+
+class AdvisedExamination {}
+
+class Permission {}
+
+class Consultation {}
+
+class FreeExamination {}
+
+class Patient {}
+
+class Affiliation {}
+
+class Doctor {}
+
+class Hospital {}
+
+association [1] ProblemType <-> TreatmentPlan [0..1];
+association [0..*] TreatmentPlan <-> ExaminationType [0..*];
+
+association [1] ProblemType <-> Diagnosis [0..*];
+association [1] TreatmentPlan <-> Treatment [0..*];
+
+association [1] Diagnosis <-> Treatment [0..*];
+association [0..*] Diagnosis <-> Consultation [1];
+association [1] Treatment <-> AdvisedExamination [0..*];
+association [1] Treatment <-> FreeExamination [0..*];
+
+association [1] AdvisedExaminationType <-> AdvisedExamination [0..*];
+
+association [0..*] AdvisedExamination <-> Permission [1];
+association [0..*] FreeExamination <-> Permission [1];
+association [1] ExaminationType <-> Permission [0..*];
+
+association [0..*] Consultation <-> Affiliation [1];
+association [0..*] Consultation <-> Patient [1];
+
+association [0..*] Affiliation <-> Doctor [1];
+association [0..*] Affiliation <-> Hospital [1];
+association [0..*] Permission <-> Hospital [1];
+
+}

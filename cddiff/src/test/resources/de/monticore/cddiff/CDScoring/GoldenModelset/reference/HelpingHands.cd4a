@@ -1,0 +1,61 @@
+classdiagram HelpingHands {
+
+enum ItemCategory {
+    BabyClothing,
+    Fridge;
+}
+
+class Person {
+    String name;
+    String address;
+    String phoneNumber;
+    String emailAddress;
+}
+
+abstract class UserRole {}
+
+class Client extends UserRole {
+    ItemCategory[] neededCategories;
+}
+
+class Volunteer extends UserRole {}
+
+class Resident extends UserRole {}
+
+class Date {}
+
+class FoodItem extends Item {}
+
+class SecondHandArticle extends Item {
+    String codeRFID;
+    boolean discarded;
+    ItemCategory category;
+}
+
+class Vehicle {
+    String dimension;
+    int weightRestriction;
+}
+
+abstract class Item {
+    String description;
+    String dimension;
+    int weight;
+    Date requestedPickedDate;
+}
+
+class Route {
+    Date date;
+}
+
+
+association [*] Volunteer -> (availableDates) Date [0..*];
+association [1] Person <-> UserRole [0..*];
+association [0..1] Client <-> SecondHandArticle [0..*];
+association [1] Volunteer <-> Route [0..*];
+association [0..*] Route <-> Vehicle [1];
+association [0..1] Route <-> (pickupRoute) Item [0..*];
+association [0..*] Route <-> (dropOffRoute) SecondHandArticle [0..*];
+association [1] Resident <-> Item [0..*];
+
+}

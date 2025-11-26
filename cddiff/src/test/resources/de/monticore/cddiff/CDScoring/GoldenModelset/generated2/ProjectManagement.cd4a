@@ -1,0 +1,32 @@
+
+// CD4A Class Diagram for Research Project Management
+
+classdiagram ResearchProjectManagement {
+
+    class University {
+    }
+
+    class Department {
+    }
+
+    class ResearchGroup {
+    }
+
+    class Researcher {
+        String name;
+    }
+
+    class Project {
+    }
+
+    class WorkPackage {
+        ResearchGroup wpLeader;
+    }
+
+    association [*] University -- Department [*];
+    association [*] Department -- ResearchGroup [*];
+    association [1] Researcher -> (group) ResearchGroup [1];
+    association [1] WorkPackage -> (leader) ResearchGroup [1];
+    association [*] WorkPackage <-> Researcher [*]; // service delivery tracking
+
+}

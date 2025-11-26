@@ -1,0 +1,50 @@
+classdiagram University {
+
+
+abstract class Employee {
+  int ssNo;
+  String name;
+  String email;
+  int counter;
+}
+
+class Faculty {
+  String name;
+}
+
+class AdministrativeEmployee extends Employee {}
+
+class ResearchAssociate extends Employee {
+  String fieldOfStudy;
+}
+
+class Institute {
+  String name;
+  String address;
+}
+
+class Course {
+  String name;
+  int id;
+  float hours;
+}
+
+class Lecturer extends ResearchAssociate {}
+
+class Project {
+  String name;
+  Date start;
+  Date end;
+}
+
+class Participation {
+  int hours;
+}
+
+association [1] Employee <-> (leads) Faculty [0..1];
+association [1] Faculty -- Institute [1..*];
+association [1..*] Institute -- ResearchAssociate [1..*];
+association [1..*] ResearchAssociate <-> Project [0..*];
+association [1..*] Lecturer <-> (teaches) Course [1..*];
+
+}

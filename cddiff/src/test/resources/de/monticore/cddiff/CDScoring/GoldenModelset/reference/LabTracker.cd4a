@@ -1,0 +1,103 @@
+classdiagram LabTracker {
+
+enum Interval {
+    Weekly,
+    Monthly,
+    EveryHalfYear,
+    Yearly;
+}
+
+enum AccessType {
+    Reservable,
+    WalkIn,
+    DropOff;
+}
+
+enum DayOfWeek {
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Sunday;
+}
+
+
+class Person {
+    String lastName;
+    String firstName;
+    String address;
+    String phoneNumber;
+}
+
+abstract class PersonRole {
+    int idNumber;
+}
+
+class Patient extends PersonRole {
+    String dateOfBirth;
+}
+
+class Doctor extends PersonRole {
+    String signature;
+}
+
+class Requisition {
+    String effectiveDate;
+    int repetitionCount;
+    Interval repetitionInterval;
+}
+
+class TestResult {
+    boolean result;
+    String report;
+}
+
+class SpecificTest {
+    Date date;
+}
+
+class Appointment {
+    String confirmation;
+    Date date;
+    String startTime;
+    String endTime;
+}
+
+class BusinessHour {
+    DayOfWeek dayOfWeek;
+    String startTime;
+    String endTime;
+}
+
+class Lab {
+    String registrationNumber;
+    String name;
+    String address;
+    boolean changeCancelFee;
+}
+
+class Test {
+    String name;
+    String duration;
+}
+
+class TestType {
+    String name;
+    String durationAdditive;
+    AccessType access;
+}
+
+association [1] Person <-> PersonRole [0..2];
+association [1] Patient <-> Requisition [*];
+association [1] Lab <-> Requisition [*];
+
+association [1] Doctor <-> Requisition [*];
+association [1] Requisition <-> SpecificTest [*];
+association [1] SpecificTest <-> TestResult [0..1];
+association [7] BusinessHour <-> Lab [1];
+association [1] SpecificTest <-> Test [1];
+association [*] Test <-> TestType [1];
+
+}

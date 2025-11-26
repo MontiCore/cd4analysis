@@ -1,0 +1,57 @@
+
+classdiagram SmartHomeAutomationSystem {
+
+class SmartHome {
+    String physicalAddress;
+}
+
+class Room {
+    String name;
+}
+
+abstract class Device {
+    String deviceId;
+}
+
+class Sensor extends Device {
+    double sensorReading;
+    Date timestamp;
+}
+
+class Actuator extends Device {
+    String command;
+    Date timestamp;
+    CommandStatus status;
+}
+
+enum CommandStatus {
+    Requested,
+    Completed,
+    Failed;
+}
+
+class ActivityLog {
+    String entryDetails;
+}
+
+class AutomationRule {
+    String precondition; // Boolean expression
+    String action; // Sequence of control commands
+    boolean isActive;
+}
+
+class Alert {
+    String alertMessage; 
+    Date timestamp;
+}
+
+association [1] SmartHome <-> Room [*];
+association [*] Room <-> Device [0..*];
+association [1] SmartHome <-> ActivityLog [0..*];
+association [1] SmartHome <-> AutomationRule [0..*];
+association [0..*] AutomationRule <-> AutomationRule [0..*]; // for dependencies and conflicts
+
+association [*] Sensor <-> ActivityLog [0..*];
+association [*] Actuator <-> ActivityLog [0..*];
+
+}

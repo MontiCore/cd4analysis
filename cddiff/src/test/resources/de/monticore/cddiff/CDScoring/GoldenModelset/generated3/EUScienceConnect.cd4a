@@ -1,0 +1,49 @@
+
+// CD4A Class Diagram for Science Connect Database
+
+classdiagram ScienceConnectDatabase {
+
+    class Person {
+        String personID; // Unique identifier for a person
+        String phoneNumber; 
+        List<String> keywords; // Keywords identifying research topics
+        Institution institution; // Associated institution
+    }
+
+    class Institution {
+        String institutionCode; // Unique identifier for an institution
+    }
+
+    class ScientificArticle {
+        String DOI; // Unique identifier for the article
+        String title; 
+        List<Person> authors; // List of authors (Persons)
+        int position; // Position of each author in the case of multiple authors
+    }
+
+    class PeerReviewedPaper extends ScientificArticle {
+        int citationCount; // Number of citations
+        Person reviewer; // Reviewer of the paper
+    }
+
+    class TechnicalReport extends ScientificArticle {
+        Institution publishedBy; // Institution that published the report
+    }
+
+    class Publisher {
+        String name; // Name of the publisher
+    }
+
+    class Journal {
+        String name; // Name of the journal
+        float impactFactor; // Measures scientific impact
+    }
+
+    association [1] Person -> Institution [1]; // A person works for one institution
+    association [1] ScientificArticle -> (writtenBy) Person [*]; // Scientific articles have authors
+    association [1] PeerReviewedPaper -> (reviewedBy) Person [1]; // Peer-reviewed papers have one reviewer
+    association [1] TechnicalReport -> Institution [1]; // Each technical report is published by one institution
+    association [1] Publisher -- Journal [*]; // Publisher can publish multiple journals
+    association [1] Journal -> (subscribedBy) Institution [*]; // Institutions can subscribe to multiple journals
+    association [1] ScientificArticle <-> Journal [0..1]; // Only peer-reviewed papers are published in journals
+}

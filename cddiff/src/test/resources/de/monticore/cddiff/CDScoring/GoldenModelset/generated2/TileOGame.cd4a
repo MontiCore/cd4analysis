@@ -1,0 +1,68 @@
+
+// CD4A Class Diagram for the Tile-O application
+classdiagram TileO {
+
+    class Game {
+        Board board;
+        Player[] players; // up to 4 players
+        Player currentPlayer;
+        void rollDie();
+        void movePiece(Player player, Tile targetTile);
+        boolean checkWin(Player player);
+    }
+
+    class Board {
+        Tile[][] tiles;
+        ConnectionPiece[] spareConnectionPieces;
+        Tile hiddenTile;
+    }
+
+    class Color {
+     //Comment: LLM did not generate the class, add to avoid errors
+    }
+
+    class Tile {
+        Color color; // assume Color is a predefined type
+        boolean isActionTile;
+        int turnsAsRegular;
+        Tile rightConnection;
+        Tile leftConnection;
+        Tile topConnection;
+        Tile bottomConnection;
+        void changeColorToBlack();
+    }
+
+    class ConnectionPiece {}
+
+    class Player {
+        String name;
+        Color pieceColor; // piece color for the player
+        Tile currentTile;
+        void takeTurn();
+    }
+
+    class ActionCard {
+        ActionType actionType; // predefined enumeration
+        void execute(Player player);
+    }
+
+    class Designer {
+        void defineGame(Board board, Player[] players);
+        void defineActionCardDeck(ActionCard[] deck);
+    }
+
+    enum ActionType {
+        EXTRA_TURN,
+        CONNECT_TWO_TILES,
+        REMOVE_CONNECTION,
+        MOVE_TO_ARBITRARY_TILE,
+        LOSE_NEXT_TURN;
+    }
+
+    association [1] Game -> Board [1];
+    association [1] Game -> Player [2..4];
+    association [1] Board -> Tile [*];
+    association [0..32] Board -> ActionCard [0..32];
+    association [1] Designer -> Game [1];
+    association [1] Player -> Tile [1];
+}

@@ -1,0 +1,38 @@
+
+classdiagram GasStationManagement {
+
+class GasStation {
+    String uniqueID;
+    String address;
+}
+
+class FuelPump {
+    int number;
+    boolean isSelfService;
+}
+
+class Fuel {
+    String name;
+    double octaneRating;
+}
+
+class DailyFuelPrice {
+    Date date;
+    double pricePerLiter;
+}
+
+class FuelPurchase {
+    String uniqueID;
+    int litersDispensed;
+}
+
+association [1] GasStation -> (pumps) FuelPump [0..12];
+association [1] FuelPump -> (fuels) Fuel [0..*];
+association [1] GasStation -> (dailyPrices) DailyFuelPrice [0..*];
+association [1] DailyFuelPrice -> (fuel) Fuel [1];
+association [1] DailyFuelPrice -> (gasStation) GasStation [1];
+association [1] FuelPurchase -> (fuelPump) FuelPump [1];
+association [1] FuelPurchase -> (dailyPrice) DailyFuelPrice [1];
+association [1] FuelPurchase -> (fuel) Fuel [1];
+
+}

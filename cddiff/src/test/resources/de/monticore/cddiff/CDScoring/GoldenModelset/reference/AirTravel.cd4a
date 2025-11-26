@@ -1,0 +1,77 @@
+classdiagram AirTravel {
+
+class Airline {
+ String name;
+}
+
+class Employee {
+ String name;
+ Date startDate;
+}
+
+class Airport {
+ String name;
+ String address;
+ int runwayCount;
+}
+
+class FlightAttendant extends Employee {
+ boolean purser;
+}
+
+class Airplane {
+ String name;
+ String type;
+ Date constructionYear;
+ Date nextInspection;
+}
+
+class Flight {
+ String flightNumber;
+}
+
+class Pilot extends Employee {
+ String license;
+}
+
+class PassengerPlane extends Airplane {
+ int seats;
+}
+
+class FlightExecution {
+ Date date;
+}
+
+class SeatCategory {
+ String description;
+ boolean entertainment;
+ int seatCount;
+}
+
+class Passenger {
+ String name;
+ String passportNumber;
+}
+
+class Ticket {
+ String ticketId;
+ float price;
+ boolean upgrade;
+}
+
+
+association [0..1] Airline <-> Employee [0..*];
+association [0..1] Airline -- Airplane [0..*];
+association [0..*] Airplane <-> Airport [0..1];
+association [0..1] Airplane <-> FlightExecution [0..*];
+association [0..1] Airport <-> (source) Flight [0..*];
+association [0..1] Airport <-> (destination) Flight [0..*];
+association [0..1] Flight <-> FlightExecution [0..*];
+association [0..*] FlightExecution <-> FlightAttendant [0..*];
+association [0..*] FlightExecution <-> (captain) Pilot [0..1];
+association [0..*] FlightExecution <-> (coPilot) Pilot [0..2];
+association [0..*] FlightExecution <-> Passenger [0..*];
+association [0..1] PassengerPlane <-> SeatCategory [0..*];
+association [0..1] SeatCategory <-> Ticket [0..*];
+
+}

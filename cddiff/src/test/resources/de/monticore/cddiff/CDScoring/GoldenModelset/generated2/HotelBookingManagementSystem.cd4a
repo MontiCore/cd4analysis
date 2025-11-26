@@ -1,0 +1,61 @@
+
+// CD4A class diagram for Hotel Booking Management System (HBMS)
+
+classdiagram HBMS {
+
+class Traveller {
+    String name;
+    String billingInfo;
+    String companyName;
+    String address;
+    String travelPreferences; // e.g. breakfast included, free wifi, 24/7 front desk
+    String creditCardInfo;
+}
+
+class Hotel {
+    String name;
+    String city;
+    String address;
+    String hotelChain;
+    int rating; // stars
+}
+
+class Room {
+    String roomType; // e.g. single, double, twin
+    float pricePerNight;
+}
+
+class Booking {
+    String bookingId;
+    float totalCost;
+    boolean prePaid; // true if paid immediately
+    boolean confirmed; // true if booking is confirmed by the hotel
+    DateTime cancellationDeadline;
+}
+
+class SpecialOffer {
+    float offerPrice;
+    String cityArea;
+    int hotelRating;
+    String keyPreferences;
+}
+
+class PastBooking {
+    String bookingId;
+    float cost;
+    boolean isFinalized;
+}
+
+class Competition {
+    String competitorHotel;
+    SpecialOffer offer;
+}
+
+association [1] Traveller <-> Booking [0..*]; // A traveller can have multiple bookings
+association [1] Hotel <-> Booking [0..*]; // A hotel can have multiple bookings
+association [1] Hotel <-> Room [0..*]; // A hotel can have multiple room types
+association [1] Booking <-> SpecialOffer [0..*]; // A booking can receive multiple special offers
+association [0..*] Booking <-> PastBooking [0..*]; // A booking can become a past booking
+association [1] Booking <-> Competition [0..*]; // Booking generates competition with offers from other hotels
+
+}

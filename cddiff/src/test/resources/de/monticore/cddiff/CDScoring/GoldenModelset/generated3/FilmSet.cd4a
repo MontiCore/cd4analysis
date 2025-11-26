@@ -1,0 +1,69 @@
+
+// CD4A Class Diagram for Film Set Management
+
+classdiagram FilmSet {
+
+class Employee {
+    String name;
+    String ssNo;
+}
+
+class CreativeEmployee extends Employee {
+    boolean hasOscar;
+}
+
+class Director extends CreativeEmployee {
+    String assistantName;
+}
+
+class Actor extends CreativeEmployee {
+    String education;
+}
+
+class Technician extends Employee {
+    String fieldOfActivity;
+}
+
+class FilmSet {
+    String location;
+}
+
+class Film {
+    String title;
+    int year;
+}
+
+enum Genre {
+    THRILLER,
+    ACTION,
+    HORROR,
+    COMEDY;
+}
+
+class Screenwriter {
+    String name;
+    String mostSuccessfulFilm;
+}
+
+class Screenplay {
+    String title;
+    String version;
+    Date date;
+    int numberOfScenes;
+    String plot;
+}
+
+class Novel {
+    String title;
+    String author;
+}
+
+association [0..*] FilmSet <-> Film [0..*];
+association [1] Film <-> (writtenBy) Screenplay [1];
+association [1] Screenplay <-> (createdBy) Screenwriter [1];
+association [1] Screenplay -- Novel [0..1];
+association [1..*] Film <-> (features) Actor [0..*];
+association [1] Film <-> (directedBy) Director [1];
+association [1] Screenplay <-> Film [1];
+
+}

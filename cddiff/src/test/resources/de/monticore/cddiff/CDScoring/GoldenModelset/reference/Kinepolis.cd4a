@@ -1,0 +1,68 @@
+classdiagram Kinepolis {
+
+    class Cinema {
+        String name;
+        String city;
+    }
+    class Theatre {
+        int number;
+    }
+    class Movie {
+        String title;
+        int durationMinutes;
+    }
+    class MovieCopy {
+        int id;
+    }
+    class CopyLocation {
+        DateTime startDate;
+        DateTime endDate;
+    }
+    class Seat {
+        int seatNumber;
+    }
+    class Show {
+        DateTime startTime;
+        DateTime endTime;
+      void publish();
+      void cancelShow();
+    }
+    class Ticket {
+      int ticketId;
+      float price;
+    }
+    class Customer {
+      String name;
+      int customerId;
+    }
+    class OnlineTicket {
+      int onlineTicketId;
+      float price;
+      void cancelReservationCustomer();
+      void cancelReservationKinepolis();
+    }
+    class AlternativeOffer {
+      int alternativeOfferId;
+      void accept();
+      void decline();
+      void expire();
+      void refund();
+    }
+
+    association [1] Cinema <-> Theatre [0..*];
+    association [1] Movie <-> MovieCopy [0..*];
+    association [1] Cinema <-> CopyLocation [0..*];
+    association [1] MovieCopy <-> CopyLocation [0..*];
+    association [1] Theatre <-> Seat [0..*];
+    association [1] Theatre <-> Show [0..*];
+    association [1] CopyLocation <-> Show [0..*];
+    association [1] Seat <-> Ticket [0..*];
+    association [1] Show <-> Ticket [0..*];
+    association [1] Customer <-> OnlineTicket [0..*];
+    association [1] Seat <-> OnlineTicket [0..*];
+    association [1] Show <-> OnlineTicket [0..*];
+    association [1] OnlineTicket <-> AlternativeOffer [0..1];
+    association [1] Seat <-> AlternativeOffer [0..*];
+    association [1] Show <-> AlternativeOffer [0..*];
+
+}

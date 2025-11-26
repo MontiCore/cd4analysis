@@ -1,0 +1,55 @@
+
+// Class diagram for Hotel Management Booking System (HMBS)
+classdiagram HMBS {
+
+    class Traveller {
+        String name;
+        String billingCompany;
+        String billingAddress;
+        String travelPreferences; // e.g. breakfast, free wifi, 24/7 front desk
+        String creditCardInfo;
+    }
+
+    class Hotel {
+        String name;
+        String address;
+        String city;
+        HotelChain hotelChain; // Optional association with hotel chain
+    }
+
+    class Booking {
+        String bookingIdentifier;
+        float price;
+        String cityArea;
+        int hotelRating; // Stars
+        String keyPreferences; // e.g. traveller preferences
+        boolean isPrePaid; // True if paid immediately
+        DateTime cancellationDeadline;
+        boolean isConfirmed;
+    }
+
+    class HotelChain {
+        String chainName;
+    }
+
+    class RoomType {
+        String type; // e.g. single, double, twin
+        int availableRooms;
+    }
+
+    class SpecialOffer {
+        float offerPrice;
+        String hotelName;
+    }
+
+    class ReliabilityRating {
+        float rating;
+    }
+
+    association [1] Traveller <-> Booking [0..*];
+    association [0..*] Hotel <-> RoomType [1..*];
+    association [0..*] Hotel <-> (runs) HotelChain [0..1];
+    association [0..*] Booking <-> SpecialOffer [0..*];
+    association [1] Traveller <-> ReliabilityRating [0..1];
+    
+}

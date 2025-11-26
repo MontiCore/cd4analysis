@@ -1,0 +1,61 @@
+
+// CD4A Class Diagram for Alpha Insurance
+classdiagram AlphaInsurance {
+
+class Customer {
+    String name;
+    String contactInfo;
+}
+
+class Broker {
+    String name;
+    String registrationId;
+}
+
+class InsurancePolicy {
+    String type;
+    double price;
+    String frequency; // "monthly" or "yearly"
+}
+
+class Contract {
+    Date signingDate;
+    String status; // "active", "pending", etc.
+}
+
+class Claim {
+    String description;
+    Date claimDate;
+}
+
+class ClaimCase {
+    String caseId;
+    String status; // "open", "closed"
+}
+
+class Estimator {
+    String name;
+    String areaOfExpertise;
+}
+
+class CompensationDecision {
+    double amount;
+    String details;
+}
+
+class EstimatorReport {
+    String reportId;
+    Date submissionDate;
+}
+
+// Associations
+association [1] Broker <-> Customer [0..1]; // Broker manages Customer
+association [1] Customer <-> InsurancePolicy [0..*]; // Customer can have multiple Insurance Policies
+association [1] InsurancePolicy <-> Contract [0..1]; // Insurance Policy leads to Contract
+association [1] Customer <-> Claim [0..*]; // Customer can file multiple Claims
+association [1] Claim <-> ClaimCase [0..*]; // Claim can lead to one or more Claim Cases
+association [1] ClaimCase <-> Estimator [1..*]; // Each Claim Case is assessed by one or more Estimators
+association [1] Estimator <-> EstimatorReport [0..*]; // Estimator produces multiple Reports
+association [1] ClaimCase <-> CompensationDecision [0..1]; // Claim Case can have a Compensation Decision
+
+}

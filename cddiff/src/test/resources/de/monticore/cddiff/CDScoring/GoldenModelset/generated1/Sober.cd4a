@@ -1,0 +1,59 @@
+
+// Class Diagram for Sober Taxi Company
+classdiagram SoberTaxi {
+
+class Customer {
+    String name;
+    String contactInfo;
+}
+
+class CarOwner {
+    String name;
+    String contactInfo;
+}
+
+class SelfDrivingTaxi {
+    String licensePlate;
+    String model;
+}
+
+class RideHailService {
+    DateTime pickUpTime;
+    DateTime dropOffTime;
+    String pickUpLocation;
+    String dropOffLocation;
+    double rideDuration;
+    double distance;
+    int passengerCount; // max 6
+    double fee;
+    String requestType; // either 'Sober App' or 'Hand-waving'
+    Customer leadCustomer;
+}
+
+class RideShareService {
+    DateTime pickUpTime;
+    DateTime dropOffTime;
+    String pickUpLocation;
+    String dropOffLocation;
+    double rideDuration;
+    double distance;
+    List<Customer> customers; // max 10
+    double negotiatedFee;
+    boolean ecoIncentive; // e.g., tree planting for every 20 rides
+}
+
+class Accident {
+    DateTime accidentDate;
+    String location;
+    double damageAmount;
+}
+
+
+association [1] SelfDrivingTaxi <-> RideHailService [0..*];
+association [1] SelfDrivingTaxi <-> RideShareService [0..*];
+association [0..*] CarOwner <-> SelfDrivingTaxi [0..*];
+association [0..*] Customer <-> RideHailService [0..*];
+association [0..*] Customer <-> RideShareService [0..*];
+association [1] SelfDrivingTaxi <-> Accident [0..*];
+
+}

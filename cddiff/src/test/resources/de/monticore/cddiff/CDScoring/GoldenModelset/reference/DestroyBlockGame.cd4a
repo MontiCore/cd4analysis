@@ -1,0 +1,99 @@
+classdiagram DestroyBlockGame {
+
+class User {
+    String username;
+    String password;
+}
+
+class BlockAssignment {
+    int gridHorizontalPosition;
+    int gridVerticalPosition;
+}
+
+class Level {
+    boolean isRandom;
+}
+
+class Game {
+    String name;
+    int nrBlocksPerLevel;
+    boolean published;
+}
+
+class Block {
+    int id;
+    int red;
+    int green;
+    int blue;
+    int points;
+}
+
+class Paddle {
+    int maxPaddleLength;
+    int minPaddleLength;
+}
+
+class Ball {
+    int minBallSpeedX;
+    int minBallSpeedY;
+    double ballSpeedIncreaseFactor;
+}
+
+class HallOfFameEntry {
+    int score;
+}
+
+class PlayedGame {
+    int id;
+    int score;
+    int lives;
+    int currentLevel;
+}
+
+class PlayedBall {
+    double ballDirectionX;
+    double ballDirectionY;
+    double currentBallX;
+    double currentBallY;
+}
+
+class PlayedPaddle {
+    double currentPaddleLength;
+    double currentPaddleX;
+    double currentPaddleY;
+}
+
+class PlayedBlockAssignment {
+    int x;
+    int y;
+}
+
+class Player {}
+
+class Admin {}
+
+
+association [1] Game -- (blocks) Block [*];
+association [1] Game -- (paddle) Paddle [1];
+association [1] Game -- (ball) Ball [1];
+association [1] Game -- (levels) Level [1..99];
+association [1] Game -- (blockAssignments) BlockAssignment [*];
+association [1] Game -> (mostRecentEntry) HallOfFameEntry [0..1];
+association [1] Game <-> (game) PlayedGame [*];
+
+association [1] Level <-> (level) BlockAssignment [*];
+
+association [1] PlayedGame -- (blocks) PlayedBlockAssignment [*];
+association [1] PlayedGame -- PlayedPaddle [1];
+association [1] PlayedGame -- PlayedBall [1];
+
+association [1] Player (player) <-> User [1];
+association [1] Player (player) <-> PlayedGame [*];
+association [1] Player (player) <-> HallOfFameEntry [*];
+association [0..1] Admin (admin) <-> User [1];
+
+association [1] Admin (admin) <-> Game [*];
+
+association [1] Block (block) <-> PlayedBlockAssignment [*];
+
+}

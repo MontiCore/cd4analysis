@@ -1,0 +1,46 @@
+classdiagram TruckLogistics {
+
+    class Assignment {
+        Date date;
+    }
+
+    class Location {
+        String address;
+    }
+
+    class Driver {
+        String firstName;
+        String lastName;
+    }
+
+    class Vehicle {
+        int vehicleNumber;
+    }
+
+    class Truck extends Vehicle {
+        double tonnage;
+    }
+
+    class PassengerCar extends Vehicle {
+        int seats;
+    }
+
+    class Transporter extends Vehicle {}
+
+    enum VehicleStatus {
+        READY,
+        ASSIGNMENT,
+        MAINTENANCE;
+    }
+
+    association [0..1] Assignment -> (executes) Driver [*];
+    association [*] Assignment -> (from) Location [1];
+    association [*] Assignment -> (to) Location [1];
+    association [1] Location -- Vehicle [1];
+
+    association [1..*] Driver -> (driver) Vehicle [*];
+    association [0..1] Vehicle -> (driver) Driver [*];
+
+    association [1] Vehicle -> (status) VehicleStatus [1];
+
+}

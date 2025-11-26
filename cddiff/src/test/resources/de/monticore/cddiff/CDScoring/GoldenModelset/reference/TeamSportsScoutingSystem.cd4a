@@ -1,0 +1,83 @@
+classdiagram TeamSportsScoutingSystem {
+
+enum Position {
+    Goalkeeper,
+    LeftBack;
+}
+
+enum Recommendation {
+    KeyPlayer,
+    FirstTeamPlayer,
+    ReserveTeamPlayer,
+    ProspectivePlayer,
+    NotRecommended;
+}
+
+enum ScoutingStatus {
+    LongListed,
+    ShortListed,
+    RecommendedForSigning,
+    OfferMade;
+}
+
+enum ScoutKind {
+    RegularScout,
+    HeadScout;
+}
+
+abstract class Person {
+    String firstName;
+    String lastName;
+}
+
+class Player extends Person {
+    ScoutingStatus status;
+}
+
+class HeadCoach extends Person {}
+
+class Director extends Person {}
+
+class Scout extends Person {
+    ScoutKind scoutKind;
+}
+
+class Club {}
+
+class Offer {
+    int value;
+}
+
+class ScoutingAssignment {}
+
+class ScoutReport {
+    String pro;
+    String con;
+    Recommendation recommendation;
+}
+
+class PlayerProfile {
+    Position position;
+}
+
+class PlayerAttribute {
+    String name;
+    int value;
+}
+
+association [*] Director -> Offer [0..*];
+association [*] Club -> Director [0..1];
+association [*] Club -> HeadCoach [0..1];
+association [*] Club -> Player [0..*];
+association [*] Club -> Scout [0..*];
+association [*] Scout -> ScoutingAssignment [0..*];
+association [*] ScoutingAssignment -> ScoutReport [0..1];
+association [*] HeadCoach -> PlayerProfile [0..*];
+association [*] PlayerProfile -> PlayerAttribute [0..*];
+
+association [0..1] Player <-> Offer [0..*];
+association [0..1] Player <-> PlayerProfile [0..1];
+association [1..1] Player <-> ScoutingAssignment [0..*];
+association [0..1] ScoutReport <-> (nextReport) ScoutReport [0..1];
+
+}

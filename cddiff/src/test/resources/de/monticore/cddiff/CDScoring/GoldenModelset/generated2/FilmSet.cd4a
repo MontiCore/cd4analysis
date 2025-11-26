@@ -1,0 +1,67 @@
+
+// CD4A Model representing a film set with various employee roles and film details
+classdiagram FilmSet {
+
+class Employee {
+    String name;
+    String ssNo; // Social security number
+}
+
+class CreativeEmployee extends Employee {
+    boolean hasOscar; // Whether the person has an Oscar
+}
+
+class Actor extends CreativeEmployee {
+    String education; // Education completed by actor
+}
+
+class Director extends CreativeEmployee {
+    String assistantName; // Name of the director's assistant
+}
+
+class Technician extends Employee {
+    String fieldOfActivity; // Field of activity for each technician
+}
+
+class FilmSet {
+    String location; // Specific location of the film set
+}
+
+class Film {
+    String title; // Title of the film
+    int releaseYear; // Year of release
+}
+
+enum Genre {
+    thriller,
+    action,
+    horror,
+    comedy;
+}
+
+class Screenwriter {
+    String name; // Name of the screenwriter
+    String mostSuccessfulFilm; // Most successful film
+}
+
+class Screenplay {
+    String title; // Title of the screenplay
+    String version; // Version of the screenplay
+    Date date; // Date of screenplay
+    int numberOfScenes; // Number of scenes
+    String plot; // Plot of the screenplay
+}
+
+class Novel {
+    String title; // Title of the novel
+    String author; // Author of the novel
+}
+
+// Associations
+association [1..*] FilmSet <-> Film [0..*]; // A film set can be used for several films
+association [1..*] Film <-> Screenplay [1]; // A screenplay is written for exactly one film
+association [1] Screenwriter <-> Screenplay [0..*]; // A screenwriter creates several screenplays
+association [1] Screenplay <-> (basedOn) Novel [0..1]; // A screenplay is based on a novel
+association [0..*] Film <-> Actor [1..*]; // Actors appear in a film and prepare for roles by reading the screenplay
+association [1] Film <-> (implementedBy) Director [1]; // Director implements the screenplay
+}

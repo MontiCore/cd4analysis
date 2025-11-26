@@ -1,0 +1,68 @@
+
+// CD4A Class Diagram for Oil Company Gas Stations
+
+classdiagram OilCompany {
+
+class Customer {
+    int customerId;
+    String name;
+    String address;
+    boolean suspended;
+
+    void receiveInvoice();
+    void payInvoice();
+}
+
+class RefuelCard {
+    int cardNumber;
+
+    void issueCard(Customer customer);
+}
+
+class Invoice {
+    int invoiceNumber;
+    Date invoiceDate;
+    double totalAmount;
+
+    void sendInvoice();
+    void remindPayment();
+}
+
+class Payment {
+    int paymentId;
+    Date paymentDate;
+    double amount;
+
+    void processPayment(Invoice invoice);
+}
+
+class GasStation {
+    int stationId;
+    String location;
+
+    void generateDailyReport();
+}
+
+class Pump {
+    int pumpId;
+    String gasolineType;
+    double currentLevel;
+    double reorderLevel;
+    boolean isBlocked;
+
+    void startRefueling(Customer customer);
+    void stopRefueling();
+    void refill(double quantity);
+}
+
+class Report {
+    void generatePumpStatus(GasStation station);
+}
+
+association [1] Customer <-> RefuelCard [0..*];
+association [1] Customer <-> Invoice [0..*];
+association [1] Invoice <-> Payment [0..*];
+association [1] GasStation <-> Pump [*];
+association [0..*] Pump <-> Invoice [0..*];
+
+}

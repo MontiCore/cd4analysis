@@ -1,0 +1,73 @@
+
+// Class diagram for the E-Home-2020 system
+classdiagram EHome2020 {
+
+enum Unit {
+    CELSIUS,
+    WATT;
+}
+
+class Sensor {
+    String vendorId;
+    String description;
+    Unit unit;
+}
+
+class TemperatureSensor extends Sensor {
+    float minValue;
+    float maxValue;
+}
+
+class PowerSensor extends Sensor {
+    float totalConsumption;
+}
+
+class Room {
+    String description;
+}
+
+class Apartment {
+    String address;
+}
+
+class SensorController {
+    String username;
+    String password;
+    String email;
+}
+
+class Inhabitant {
+    String name;
+    boolean isAdmin; // Indicates if the inhabitant has administrative rights
+}
+
+class MeasuredValue {
+    float value;
+    Date timestamp;
+}
+
+class Threshold {
+    float thresholdValue;  
+}
+
+class EMonitor {
+    // Monitors sensor thresholds and sends alerts
+}
+
+association [1] Apartment -- (inhabitants) Inhabitant [*];
+association [1] Apartment -- Room [2..*];
+association [1] Room -> (assignedSensors) Sensor [*];
+
+// Associations to signify relationships between sensors and their measured values
+association [1] Sensor -- (measuredValues) MeasuredValue [*];
+association [1] Sensor -- Threshold [0..1];
+
+// Each sensor is associated with exactly one room
+association [1] Sensor -> Room [1];
+
+// EMonitor checks thresholds for all sensors
+association [1] EMonitor -- Sensor [*];
+
+// Each SensorController is associated with one Apartment
+association [1] Apartment <-> SensorController [1];
+}
