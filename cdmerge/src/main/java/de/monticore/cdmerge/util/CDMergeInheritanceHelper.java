@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class CDMergeInheritanceHelper {
   
   public static Optional<ASTCDAttribute> getAttributeFromSuperClass(ASTCDClass srcClass,
       String attributeName) {
-    Set<ASTCDAttribute> attributeList = new HashSet<>();
+    Set<ASTCDAttribute> attributeList = new LinkedHashSet<>();
     getStrictSuperClasses(srcClass).forEach(superClass -> attributeList.addAll(superClass
         .getCDAttributeList()));
     return attributeList.stream().filter(attribute -> attribute.getName().equals(attributeName))
@@ -56,14 +56,14 @@ public class CDMergeInheritanceHelper {
   }
   
   public static Set<ASTCDClass> getStrictSuperClasses(ASTCDClass cdClass) {
-    HashSet<ASTCDClass> superClasses = new HashSet<>();
+    LinkedHashSet<ASTCDClass> superClasses = new LinkedHashSet<>();
     if (cdClass.getSymbol().getSuperClassesOnly().isEmpty()) {
       return superClasses;
     }
     else {
       superClasses.addAll(cdClass.getSymbol().getSuperClassesOnly().stream().map(
           exp -> (ASTCDClass) exp.getTypeInfo().getAstNode()).collect(Collectors.toSet()));
-      HashSet<ASTCDClass> superSuperClasses = new HashSet<>();
+      LinkedHashSet<ASTCDClass> superSuperClasses = new LinkedHashSet<>();
       superClasses.forEach(superClass -> superSuperClasses.addAll(getStrictSuperClasses(
           superClass)));
       superClasses.addAll(superSuperClasses);

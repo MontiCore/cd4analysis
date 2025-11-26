@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ public class P1RuleTest extends CDDiffTestBasis {
     String[] lines = p1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjAttrib[Vehicle,licensePlate,type_String]");
     expectedResult.add("ObjAttrib[Vehicle,regDate,type_Date]");
     expectedResult.add("ObjAttrib[Car,licensePlate,type_String]");
@@ -80,7 +80,7 @@ public class P1RuleTest extends CDDiffTestBasis {
     String[] lines = p1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjAttrib[Task,startDate,type_Date]");
     expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDEmployees1]");
     
@@ -93,7 +93,7 @@ public class P1RuleTest extends CDDiffTestBasis {
     String[] lines = p1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjAttrib[Task,startDate,type_Date]");
     expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDEmployees2]");
     expectedResult.add("ObjAttrib[Manager,kind,PositionKindEnumCDEmployees2]");

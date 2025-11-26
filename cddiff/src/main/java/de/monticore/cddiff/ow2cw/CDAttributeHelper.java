@@ -5,7 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,7 +22,7 @@ public class CDAttributeHelper {
   }
   
   public static Set<ASTCDAttribute> getAttributes(ASTCDType cdType) {
-    return new HashSet<>(cdType.getCDAttributeList());
+    return new LinkedHashSet<>(cdType.getCDAttributeList());
   }
   
 }

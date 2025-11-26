@@ -6,7 +6,7 @@ import com.microsoft.z3.DatatypeSort;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import de.monticore.cdbasis._ast.ASTCDType;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /***
@@ -21,8 +21,8 @@ public class InheritanceFeatures {
   private FuncDecl<Sort> getSubClass;
   
   InheritanceFeatures() {
-    this.subClassConstructorList = new HashMap<>();
-    this.convert2SuperTypeFuncMap = new HashMap<>();
+    this.subClassConstructorList = new LinkedHashMap<>();
+    this.convert2SuperTypeFuncMap = new LinkedHashMap<>();
   }
   
   public FuncDecl<Sort> getSubClass() { return getSubClass; }

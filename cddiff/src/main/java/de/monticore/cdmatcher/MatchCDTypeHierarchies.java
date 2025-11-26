@@ -4,7 +4,7 @@ package de.monticore.cdmatcher;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffUtil;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +19,8 @@ public class MatchCDTypeHierarchies implements ExternalCandidatesMatchingStrateg
   protected BooleanMatchingStrategy<ASTCDType> typeMatcher;
   protected Set<ASTCDType> srcTypes;
   protected Set<ASTCDType> tgtTypes;
-  protected Map<ASTCDType, Set<ASTCDType>> srcCDType2Hierarchy = new HashMap<>();
-  protected Map<ASTCDType, Set<ASTCDType>> tgtCDType2Hierarchy = new HashMap<>();
+  protected Map<ASTCDType, Set<ASTCDType>> srcCDType2Hierarchy = new LinkedHashMap<>();
+  protected Map<ASTCDType, Set<ASTCDType>> tgtCDType2Hierarchy = new LinkedHashMap<>();
   
   public MatchCDTypeHierarchies(BooleanMatchingStrategy<ASTCDType> typeMatcher,
       ASTCDCompilationUnit srcCD, ASTCDCompilationUnit tgtCD) {

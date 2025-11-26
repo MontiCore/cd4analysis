@@ -13,13 +13,13 @@ import java.util.*;
 /** Handles user-precedence overrides for the merging process */
 public class PrecedenceConfig {
   
-  private final Set<String> precedenceCDs = new HashSet<>(); // CD
+  private final Set<String> precedenceCDs = new LinkedHashSet<>(); // CD
   
-  private final Set<String> precedenceTypes = new HashSet<>(); // CD.Type
+  private final Set<String> precedenceTypes = new LinkedHashSet<>(); // CD.Type
   
-  private final Set<String> precedenceAssocs = new HashSet<>(); // CD.association
+  private final Set<String> precedenceAssocs = new LinkedHashSet<>(); // CD.association
   
-  private final Set<String> precedenceFields = new HashSet<>(); // CD.Type.field
+  private final Set<String> precedenceFields = new LinkedHashSet<>(); // CD.Type.field
   
   /**
    * Adds a precedence for a model element (user-precedence override)

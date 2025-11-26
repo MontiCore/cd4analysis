@@ -47,11 +47,11 @@ public class SSClassStrategy implements ClassStrategy {
   protected FuncDecl<BoolSort> hasTypeFunc;
   protected Sort sort;
   
-  protected Set<IdentifiableBoolExpr> classConstraints = new HashSet<>();
+  protected Set<IdentifiableBoolExpr> classConstraints = new LinkedHashSet<>();
   
-  protected Map<ASTCDType, Constructor<? extends Sort>> typeMap = new HashMap<>();
-  protected Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new HashMap<>();
-  protected Map<ASTCDEnum, SMTEnum> enumMap = new HashMap<>();
+  protected Map<ASTCDType, Constructor<? extends Sort>> typeMap = new LinkedHashMap<>();
+  protected Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new LinkedHashMap<>();
+  protected Map<ASTCDEnum, SMTEnum> enumMap = new LinkedHashMap<>();
   
   @Override
   public Sort getSort(ASTCDType astCdType) {
@@ -226,7 +226,7 @@ public class SSClassStrategy implements ClassStrategy {
    */
   @Override
   public Set<MinObject> smt2od(Model model, Boolean partial) {
-    Set<MinObject> objectSet = new HashSet<>();
+    Set<MinObject> objectSet = new LinkedHashSet<>();
     
     Sort[] sorts = model.getSorts();
     Sort Object = Arrays.stream(sorts).filter(x -> x.toString().equals("Object")).findAny().orElse(
@@ -259,7 +259,7 @@ public class SSClassStrategy implements ClassStrategy {
   
   /** collect the CDType constructor of each class and interface. */
   protected Constructor<Sort>[] collectTypeConstructors() {
-    Set<Constructor<? extends Sort>> constructors = new HashSet<>(typeMap.values());
+    Set<Constructor<? extends Sort>> constructors = new LinkedHashSet<>(typeMap.values());
     
     // constructors.add(ctx.mkConstructor("SS_NO_TYPE", "SS_IS_" + "NO_TYPE", null, null, null));
     
@@ -274,7 +274,7 @@ public class SSClassStrategy implements ClassStrategy {
   private static class SMTEnum {
     
     DatatypeSort<Sort> sort;
-    Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap = new HashMap<>();
+    Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap = new LinkedHashMap<>();
     
     public void setSort(DatatypeSort<Sort> sort) { this.sort = sort; }
     

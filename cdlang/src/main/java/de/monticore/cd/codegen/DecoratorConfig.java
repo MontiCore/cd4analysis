@@ -157,8 +157,8 @@ public class DecoratorConfig {
   
   List<DecoratorPhase> createPhases() {
     // Perform some topological sorting: Adapted Kahn's algorithm
-    Map<IDecorator<?>, Integer> inDegrees = new HashMap<>();
-    Map<IDecorator<?>, List<IDecorator<?>>> graph = new HashMap<>();
+    Map<IDecorator<?>, Integer> inDegrees = new LinkedHashMap<>();
+    Map<IDecorator<?>, List<IDecorator<?>>> graph = new LinkedHashMap<>();
     
     // Initialize DAG nodes
     for (IDecorator<?> node : this.decorators) {

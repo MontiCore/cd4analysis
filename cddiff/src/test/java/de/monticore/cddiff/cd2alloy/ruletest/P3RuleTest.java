@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class P3RuleTest extends CDDiffTestBasis {
     String[] lines = p3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("no Vehicle");
     expectedResult.add("no Driveable");
     
@@ -66,7 +66,7 @@ public class P3RuleTest extends CDDiffTestBasis {
     String[] lines = p3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     
     checkP3(lines, expectedResult);
   }
@@ -77,7 +77,7 @@ public class P3RuleTest extends CDDiffTestBasis {
     String[] lines = p3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     
     checkP3(lines, expectedResult);
   }

@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconcretization.ConcretizationHelper;
 import de.monticore.cddiff.CDDiffUtil;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class DefaultAssocCompleter implements IAssociationCompleter {
@@ -73,7 +73,7 @@ public class DefaultAssocCompleter implements IAssociationCompleter {
     ASTCDType oppositeType = ConcretizationHelper.getAssocTypeByQName(ccd, oppositeQName);
     
     // Create a set to store the full hierarchy (all supertypes and subtypes) of the opposite type.
-    Set<ASTCDType> typeFullHierarchy = new HashSet<>();
+    Set<ASTCDType> typeFullHierarchy = new LinkedHashSet<>();
     typeFullHierarchy.add(oppositeType);
     typeFullHierarchy.addAll(CDDiffUtil.getAllSuperTypes(oppositeType, ccd.getCDDefinition()));
     typeFullHierarchy.addAll(CDDiffUtil.getAllStrictSubTypes(oppositeType, ccd.getCDDefinition()));

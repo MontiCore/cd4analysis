@@ -14,7 +14,7 @@ public class CDAfterParseHelper {
   protected Set<ASTCDDirectComposition> removedDirectCompositions;
   
   public CDAfterParseHelper() {
-    this(new Stack<>(), new Stack<>(), new ArrayList<>(), new HashSet<>());
+    this(new Stack<>(), new Stack<>(), new ArrayList<>(), new LinkedHashSet<>());
   }
   
   public CDAfterParseHelper(CDAfterParseHelper cdAfterParseHelper) {

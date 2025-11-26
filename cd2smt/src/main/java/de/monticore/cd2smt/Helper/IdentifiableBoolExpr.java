@@ -5,14 +5,14 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import de.se_rwth.commons.SourcePosition;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class IdentifiableBoolExpr {
   
   protected static int counter = 0;
-  protected static Map<Integer, IdentifiableBoolExpr> constraintMap = new HashMap<>();
+  protected static Map<Integer, IdentifiableBoolExpr> constraintMap = new LinkedHashMap<>();
   protected final int id;
   protected final SourcePosition sourcePosition;
   protected final BoolExpr value;

@@ -8,7 +8,7 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.OpenWorldGenerator;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(ast1);
     asts.add(ast2);
     
@@ -50,7 +50,7 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy2");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(ast1);
     asts.add(ast2);
     
@@ -72,7 +72,7 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy3");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(ast1);
     asts.add(ast2);
     
@@ -94,7 +94,7 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy4");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(ast1);
     asts.add(ast2);
     

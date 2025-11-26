@@ -7,6 +7,7 @@ import de.monticore.refmodel.Bindings;
 import de.monticore.symbols.basicsymbols._symboltable.*;
 import de.monticore.types.check.SymTypeExpression;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -101,7 +102,7 @@ public class BasicSymbolsBindings extends BasicSymbolsBindingsBase {
     // 1. handle the type itself
     TypeSymbol refType = refSymType.getTypeInfo();
     Set<TypeSymbol> conTypes = conSymTypes.stream().map(SymTypeExpression::getTypeInfo).collect(
-        Collectors.toSet());
+        Collectors.toCollection(LinkedHashSet::new));
     if (strict) {
       bindings.addTypeBinding(Binding.createStrict(refType, conTypes.stream().findFirst()
           .orElseThrow()));

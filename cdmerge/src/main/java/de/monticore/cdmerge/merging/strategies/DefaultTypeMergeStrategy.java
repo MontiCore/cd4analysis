@@ -593,7 +593,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
       List<ASTMCObjectType> interfaces2) {
     
     List<ASTMCObjectType> mergedInterfaces = new ArrayList<>(interfaces1);
-    Set<String> names = new HashSet<>();
+    Set<String> names = new LinkedHashSet<>();
     mergedInterfaces.stream().map(CDMergeUtils::getName).forEach(names::add);
     // Add remaining from 2
     for (ASTMCObjectType iface : interfaces2) {

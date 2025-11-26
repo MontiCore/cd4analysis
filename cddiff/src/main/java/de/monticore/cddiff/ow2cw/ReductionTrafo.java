@@ -58,7 +58,7 @@ public class ReductionTrafo {
     Add classes and interfaces exclusive to second as classes without attributes, extends and
     implements and built new associations for classes that are only <<complete>> in second
      */
-    Set<ASTCDAssociation> newAssocs = new HashSet<>(expander1.getDummies4Diff(typeList,
+    Set<ASTCDAssociation> newAssocs = new LinkedHashSet<>(expander1.getDummies4Diff(typeList,
         COMMON_INTERFACE));
     
     // Add missing Enums and new EnumConstant if Enum is <<complete>> in second.
@@ -114,7 +114,7 @@ public class ReductionTrafo {
     */
     
     // add all non-conflicting associations from first to second
-    Set<ASTCDAssociation> noConflictSet = new HashSet<>(first.getCDDefinition()
+    Set<ASTCDAssociation> noConflictSet = new LinkedHashSet<>(first.getCDDefinition()
         .getCDAssociationsList());
     noConflictSet.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
     
@@ -122,7 +122,7 @@ public class ReductionTrafo {
   }
   
   private void copyImportStatements(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
-    Set<ASTMCImportStatement> imports = new HashSet<>(first.getMCImportStatementList());
+    Set<ASTMCImportStatement> imports = new LinkedHashSet<>(first.getMCImportStatementList());
     imports.addAll(second.getMCImportStatementList().stream().filter(newImport -> imports.stream()
         .noneMatch(i -> i.getQName().equals(newImport.getQName()))).collect(Collectors.toSet()));
     first.setMCImportStatementList(new ArrayList<>(imports));
@@ -218,17 +218,18 @@ public class ReductionTrafo {
     ICD4CodeArtifactScope targetScope = (ICD4CodeArtifactScope) targetCD.getEnclosingScope();
     
     // Create a map that maps each type to all its supertypes according to both CDs
-    Map<ASTCDType, Set<ASTCDType>> inheritanceGraph = new HashMap<>();
+    Map<ASTCDType, Set<ASTCDType>> inheritanceGraph = new LinkedHashMap<>();
     
     List<ASTCDClass> classes = targetCD.getCDDefinition().getCDClassesList();
     List<ASTCDInterface> interfaces = targetCD.getCDDefinition().getCDInterfacesList();
     
-    Set<ASTCDType> typeSet = new HashSet<>();
+    Set<ASTCDType> typeSet = new LinkedHashSet<>();
     typeSet.addAll(classes);
     typeSet.addAll(interfaces);
     
     for (ASTCDType type : typeSet) {
-      inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, targetScope)));
+      inheritanceGraph.put(type, new LinkedHashSet<>(CDInheritanceHelper.getAllSuper(type,
+          targetScope)));
       Optional<CDTypeSymbol> optType = srcScope.resolveCDTypeDown(type.getSymbol()
           .getInternalQualifiedName());
       if (optType.isPresent()) {
@@ -255,7 +256,7 @@ public class ReductionTrafo {
     
     // remove redundant inheritance
     for (ASTCDType type : typeSet) {
-      Set<ASTCDType> superSet = new HashSet<>(inheritanceGraph.get(type));
+      Set<ASTCDType> superSet = new LinkedHashSet<>(inheritanceGraph.get(type));
       for (ASTCDType superType : inheritanceGraph.get(type)) {
         superSet.removeAll(inheritanceGraph.get(superType));
       }
@@ -266,7 +267,7 @@ public class ReductionTrafo {
     FullExpander expander = new FullExpander(new VariableExpander(targetCD));
     
     for (ASTCDInterface current : interfaces) {
-      Set<String> extendsSet = new HashSet<>();
+      Set<String> extendsSet = new LinkedHashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (interfaces.contains(superType)) {
           extendsSet.add(superType.getSymbol().getInternalQualifiedName());
@@ -275,8 +276,8 @@ public class ReductionTrafo {
       expander.updateExtends(current, extendsSet);
     }
     for (ASTCDClass current : classes) {
-      Set<String> extendsSet = new HashSet<>();
-      Set<String> implementsSet = new HashSet<>();
+      Set<String> extendsSet = new LinkedHashSet<>();
+      Set<String> implementsSet = new LinkedHashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (classes.contains(superType)) {
           extendsSet.add(superType.getSymbol().getInternalQualifiedName());

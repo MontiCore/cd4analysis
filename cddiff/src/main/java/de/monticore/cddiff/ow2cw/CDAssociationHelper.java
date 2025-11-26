@@ -11,7 +11,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,7 +43,7 @@ public class CDAssociationHelper {
     
     if (targetAST.getEnclosingScope() instanceof ICD4CodeArtifactScope) {
       ICD4CodeArtifactScope targetScope = (ICD4CodeArtifactScope) targetAST.getEnclosingScope();
-      Set<ASTCDAssociation> superAssociations = new HashSet<>();
+      Set<ASTCDAssociation> superAssociations = new LinkedHashSet<>();
       for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
         for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
           if (isSuperAssociation(srcAssoc, targetAssoc, targetScope) || isSuperAssociationInReverse(
@@ -64,7 +64,7 @@ public class CDAssociationHelper {
     
     if (targetAST.getEnclosingScope() instanceof ICD4CodeArtifactScope) {
       ICD4CodeArtifactScope targetScope = (ICD4CodeArtifactScope) targetAST.getEnclosingScope();
-      Set<ASTCDAssociation> conflicts = new HashSet<>();
+      Set<ASTCDAssociation> conflicts = new LinkedHashSet<>();
       for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
         for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
           if (inConflict(srcAssoc, targetAssoc, targetScope)) {

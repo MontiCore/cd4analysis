@@ -24,15 +24,16 @@ import java.util.*;
 public class DSClassStrategy implements ClassStrategy {
   
   protected Map<ASTCDType, Sort> typeMap;
-  private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new HashMap<>();
-  protected Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap = new HashMap<>();
+  private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributeMap = new LinkedHashMap<>();
+  protected Map<ASTCDEnumConstant, Constructor<? extends Sort>> enumConstantMap =
+      new LinkedHashMap<>();
   
   protected Context ctx;
   
   protected ASTCDCompilationUnit ast;
   
   public DSClassStrategy() {
-    typeMap = new HashMap<>();
+    typeMap = new LinkedHashMap<>();
   }
   
   @Override
@@ -59,7 +60,7 @@ public class DSClassStrategy implements ClassStrategy {
   public ASTCDCompilationUnit getClassDiagram() { return ast; }
   
   @Override
-  public Set<IdentifiableBoolExpr> getClassConstraints() { return new HashSet<>(); }
+  public Set<IdentifiableBoolExpr> getClassConstraints() { return new LinkedHashSet<>(); }
   
   @Override
   public Context getContext() { return ctx; }
@@ -177,7 +178,7 @@ public class DSClassStrategy implements ClassStrategy {
    */
   @Override
   public Set<MinObject> smt2od(Model model, Boolean partial) {
-    Set<MinObject> objectSet = new HashSet<>();
+    Set<MinObject> objectSet = new LinkedHashSet<>();
     
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {

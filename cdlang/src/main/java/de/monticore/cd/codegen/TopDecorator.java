@@ -20,7 +20,7 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereoValue;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -46,7 +46,7 @@ public class TopDecorator {
   
   protected final MCPath hwPath;
   
-  protected Map<ASTCDType, String> nameMap = new HashMap<>();
+  protected Map<ASTCDType, String> nameMap = new LinkedHashMap<>();
   
   public TopDecorator(MCPath hwPath) {
     this.hwPath = hwPath;

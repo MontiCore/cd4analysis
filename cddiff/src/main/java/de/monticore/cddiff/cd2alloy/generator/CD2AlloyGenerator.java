@@ -130,14 +130,16 @@ public class CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
     
     // Union of all classes
-    Set<ASTCDType> typeUnion = new HashSet<>();
+    Set<ASTCDType> typeUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList()));
-      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
+      typeUnion.addAll(new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
+          .getCDClassesList()));
+      typeUnion.addAll(new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
+          .getCDInterfacesList()));
     }
     
     // Union of all type names
-    Set<String> typeNameUnion = new HashSet<>();
+    Set<String> typeNameUnion = new LinkedHashSet<>();
     for (ASTCDType astcdType : typeUnion) {
       typeNameUnion.add(CDDiffUtil.escape2Alloy(astcdType.getSymbol().getInternalQualifiedName()));
     }
@@ -160,50 +162,50 @@ public class CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
     
     // Union of all classes
-    Set<ASTCDClass> classUnion = new HashSet<>();
+    Set<ASTCDClass> classUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDClass> classSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDClassesList());
       classUnion.addAll(classSet);
     }
     
     // Union of all interfaces
-    Set<ASTCDInterface> interfaceUnion = new HashSet<>();
+    Set<ASTCDInterface> interfaceUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDInterface> interfaceSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDInterface> interfaceSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDInterfacesList());
       interfaceUnion.addAll(interfaceSet);
     }
     
     // Union of all attributes in all classes
-    Set<ASTCDAttribute> attributeUnion = new HashSet<>();
+    Set<ASTCDAttribute> attributeUnion = new LinkedHashSet<>();
     for (ASTCDClass astcdClass : classUnion) {
-      Set<ASTCDAttribute> attributes = new HashSet<>(astcdClass.getCDAttributeList());
+      Set<ASTCDAttribute> attributes = new LinkedHashSet<>(astcdClass.getCDAttributeList());
       attributeUnion.addAll(attributes);
     }
     
     // Union of all attributes in all interfaces
     for (ASTCDInterface astcdInterface : interfaceUnion) {
-      Set<ASTCDAttribute> attributes = new HashSet<>(astcdInterface.getCDAttributeList());
+      Set<ASTCDAttribute> attributes = new LinkedHashSet<>(astcdInterface.getCDAttributeList());
       attributeUnion.addAll(attributes);
     }
     
     // Union of all Attribute Names
-    Set<String> attributeNameUnion = new HashSet<>();
+    Set<String> attributeNameUnion = new LinkedHashSet<>();
     for (ASTCDAttribute astcdAttribute : attributeUnion) {
       attributeNameUnion.add(astcdAttribute.getName());
     }
     
     // Union of all Associations
-    Set<ASTCDAssociation> associationUnion = new HashSet<>();
+    Set<ASTCDAssociation> associationUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDAssociation> associationSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
-          .getCDAssociationsList());
+      Set<ASTCDAssociation> associationSet = new LinkedHashSet<>(astcdCompilationUnit
+          .getCDDefinition().getCDAssociationsList());
       associationUnion.addAll(associationSet);
     }
     
     // Union of all Role Names
-    Set<String> roleNameUnion = new HashSet<>();
+    Set<String> roleNameUnion = new LinkedHashSet<>();
     for (ASTCDAssociation association : associationUnion) {
       
       String leftRole = CDDiffUtil.inferRole(association.getLeft());
@@ -225,7 +227,7 @@ public class CD2AlloyGenerator {
     }
     
     // Union of all attribute and role names
-    Set<String> nameUnion = new HashSet<>();
+    Set<String> nameUnion = new LinkedHashSet<>();
     nameUnion.addAll(attributeNameUnion);
     nameUnion.addAll(roleNameUnion);
     
@@ -246,60 +248,60 @@ public class CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
     
     // Union of all classes
-    Set<ASTCDClass> classUnion = new HashSet<>();
+    Set<ASTCDClass> classUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDClass> classSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDClassesList());
       classUnion.addAll(classSet);
     }
     
     // Union of all class Names
-    Set<String> classNameUnion = new HashSet<>();
+    Set<String> classNameUnion = new LinkedHashSet<>();
     for (ASTCDClass astcdClass : classUnion) {
       classNameUnion.add(CDDiffUtil.escape2Alloy(astcdClass.getSymbol()
           .getInternalQualifiedName()));
     }
     
     // Union of all attributes in all classes
-    Set<ASTCDAttribute> attributeUnion = new HashSet<>();
+    Set<ASTCDAttribute> attributeUnion = new LinkedHashSet<>();
     for (ASTCDClass astcdClass : classUnion) {
-      Set<ASTCDAttribute> attributes = new HashSet<>(astcdClass.getCDAttributeList());
+      Set<ASTCDAttribute> attributes = new LinkedHashSet<>(astcdClass.getCDAttributeList());
       attributeUnion.addAll(attributes);
     }
     
     // Union of all Interfaces
-    Set<ASTCDInterface> interfaceUnion = new HashSet<>();
+    Set<ASTCDInterface> interfaceUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDInterface> interfaceSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDInterface> interfaceSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDInterfacesList());
       interfaceUnion.addAll(interfaceSet);
     }
     // Union of all interface Names
-    Set<String> interfaceNameUnion = new HashSet<>();
+    Set<String> interfaceNameUnion = new LinkedHashSet<>();
     for (ASTCDInterface astcdInterface : interfaceUnion) {
       interfaceNameUnion.add(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol()
           .getInternalQualifiedName()));
     }
     // Union of all Enums
-    Set<ASTCDEnum> enumUnion = new HashSet<>();
+    Set<ASTCDEnum> enumUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDEnum> enumSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDEnum> enumSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
     // Union of all Enum Names
-    Set<String> enumNameUnion = new HashSet<>();
+    Set<String> enumNameUnion = new LinkedHashSet<>();
     for (ASTCDEnum astcdEnum : enumUnion) {
       enumNameUnion.add(CDDiffUtil.escape2Alloy(astcdEnum.getSymbol().getInternalQualifiedName()));
     }
     
     // Union of all Class or Interface Type Names
-    Set<String> ciTypes = new HashSet<>();
+    Set<String> ciTypes = new LinkedHashSet<>();
     ciTypes.addAll(classNameUnion);
     ciTypes.addAll(interfaceNameUnion);
     
     // Union of all primitive or unknown types
-    Set<String> puTypes = new HashSet<>();
+    Set<String> puTypes = new LinkedHashSet<>();
     for (ASTCDAttribute astcdAttribute : attributeUnion) {
       // TODO: Im Tech.-Report sind enums drin, im Beispiel nicht, klären!
       String typeName = CDDiffUtil.escape2Alloy(astcdAttribute.getMCType().printType());
@@ -325,14 +327,14 @@ public class CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
     
     // Union of all Enums
-    Set<ASTCDEnum> enumUnion = new HashSet<>();
+    Set<ASTCDEnum> enumUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDEnum> enumSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDEnum> enumSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
     
-    Set<String> enumTypeNameUnion = new HashSet<>();
+    Set<String> enumTypeNameUnion = new LinkedHashSet<>();
     for (ASTCDEnum e : enumUnion) {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
@@ -364,14 +366,16 @@ public class CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
     
     // Union of all classes and interfaces
-    Set<ASTCDType> typeUnion = new HashSet<>();
+    Set<ASTCDType> typeUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList()));
-      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
+      typeUnion.addAll(new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
+          .getCDClassesList()));
+      typeUnion.addAll(new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
+          .getCDInterfacesList()));
     }
     
     // Union of all class Names
-    Set<String> classNameUnion = new HashSet<>();
+    Set<String> classNameUnion = new LinkedHashSet<>();
     for (ASTCDType astcdType : typeUnion) {
       classNameUnion.add(CDDiffUtil.escape2Alloy(astcdType.getSymbol().getInternalQualifiedName()));
     }
@@ -390,7 +394,7 @@ public class CD2AlloyGenerator {
     }
     
     // Union of all type names
-    Set<String> typeNameUnion = new HashSet<>();
+    Set<String> typeNameUnion = new LinkedHashSet<>();
     for (ASTCDType astcdType : typeUnion) {
       typeNameUnion.add(astcdType.getSymbol().getInternalQualifiedName());
     }
@@ -442,12 +446,12 @@ public class CD2AlloyGenerator {
     StringBuilder classFunctions = new StringBuilder();
     
     // The set of all classes in the class diagram
-    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+    Set<ASTCDClass> classes = new LinkedHashSet<>(cd.getCDDefinition().getCDClassesList());
     
     classFunctions.append("// F1: Function returning all atoms of all subclasses of the class. ")
         .append(System.lineSeparator());
     for (ASTCDClass astcdClass : classes) {
-      Set<ASTCDClass> subs = new HashSet<>();
+      Set<ASTCDClass> subs = new LinkedHashSet<>();
       
       // Computation of Superclasses
       for (ASTCDClass sub : classes) {
@@ -485,19 +489,20 @@ public class CD2AlloyGenerator {
     StringBuilder classFunctions = new StringBuilder();
     
     // The set of all classes in the class diagram
-    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+    Set<ASTCDClass> classes = new LinkedHashSet<>(cd.getCDDefinition().getCDClassesList());
     
     classFunctions.append(
         "// F2: Functions returning all instances of classes implementing the interface. ").append(
             System.lineSeparator());
-    Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+    Set<ASTCDInterface> interfaces = new LinkedHashSet<>(cd.getCDDefinition()
+        .getCDInterfacesList());
     for (ASTCDInterface astcdInterface : interfaces) {
       classFunctions.append("fun ").append(CDDiffUtil.escape2Alloy(astcdInterface.getSymbol()
           .getInternalQualifiedName())).append("SubsCD").append(cd.getCDDefinition().getName())
           .append(": set Obj { ");
       
       // Compute the set of all classes implementing the interface.
-      Set<ASTCDClass> impls = new HashSet<>();
+      Set<ASTCDClass> impls = new LinkedHashSet<>();
       for (ASTCDClass astcdClass : classes) {
         Set<ASTCDClass> superclasses = CDDiffUtil.getAllSuperclasses(astcdClass, classes);
         
@@ -541,7 +546,7 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
     
     // The set of all enums in the class diagram
-    Set<ASTCDEnum> enums = new HashSet<>(cdDefinition.getCDEnumsList());
+    Set<ASTCDEnum> enums = new LinkedHashSet<>(cdDefinition.getCDEnumsList());
     
     // Comment for F3 rule
     classFunctions.append(
@@ -587,7 +592,7 @@ public class CD2AlloyGenerator {
     List<ASTCDAssociation> associations = cdDefinition.getCDAssociationsList();
     
     // The Parts Set
-    Set<String> parts = new HashSet<>();
+    Set<String> parts = new LinkedHashSet<>();
     for (ASTCDAssociation a : associations) {
       if (a.getCDAssocType().isComposition()) {
         parts.add(a.getRightQualifiedName().getQName());
@@ -600,7 +605,7 @@ public class CD2AlloyGenerator {
         .append(System.lineSeparator());
     for (String part : parts) {
       // Compute Comps
-      Set<ASTCDAssociation> comps = new HashSet<>();
+      Set<ASTCDAssociation> comps = new LinkedHashSet<>();
       for (ASTCDAssociation comp : associations) {
         if (comp.getCDAssocType().isComposition()) {
           if (comp.getRightQualifiedName().getQName().equals(part)) {
@@ -692,15 +697,17 @@ public class CD2AlloyGenerator {
     StringBuilder classFunctions = new StringBuilder();
     
     // The set of all classes in the class diagram
-    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+    Set<ASTCDClass> classes = new LinkedHashSet<>(cd.getCDDefinition().getCDClassesList());
     
     classFunctions.append("// P0: New rule for multi-instance semantics. ").append(System
         .lineSeparator());
     for (ASTCDClass astcdClass : classes) {
       
       // Computation of Superclasses
-      Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
-      Set<ASTCDType> superList = new HashSet<>(CDDiffUtil.getAllSuperclasses(astcdClass, classes));
+      Set<ASTCDInterface> allInterfaces = new LinkedHashSet<>(cd.getCDDefinition()
+          .getCDInterfacesList());
+      Set<ASTCDType> superList = new LinkedHashSet<>(CDDiffUtil.getAllSuperclasses(astcdClass,
+          classes));
       for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, classes)) {
         superList.addAll(CDDiffUtil.getAllInterfaces(superclass, allInterfaces));
       }
@@ -745,14 +752,14 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
     
     // All classes of the cd
-    Set<ASTCDClass> cdClasses = new HashSet<>(cdDefinition.getCDClassesList());
-    Set<ASTCDInterface> cdInterfaces = new HashSet<>(cdDefinition.getCDInterfacesList());
+    Set<ASTCDClass> cdClasses = new LinkedHashSet<>(cdDefinition.getCDClassesList());
+    Set<ASTCDInterface> cdInterfaces = new LinkedHashSet<>(cdDefinition.getCDInterfacesList());
     
     // Comment
     predicate.append("// P1: Attribute declaration").append(System.lineSeparator());
     for (ASTCDClass astcdClass : cdClasses) {
       // Compute the attribute union of all superclasses
-      Set<ASTCDAttribute> attributeUnion = new HashSet<>();
+      Set<ASTCDAttribute> attributeUnion = new LinkedHashSet<>();
       for (ASTCDClass attributeClass : CDDiffUtil.getAllSuperclasses(astcdClass, cdClasses)) {
         attributeUnion.addAll(attributeClass.getCDAttributeList());
       }
@@ -784,10 +791,10 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
     
     // All classes of the cd
-    Set<ASTCDClass> cdClasses = new HashSet<>(cdDefinition.getCDClassesList());
+    Set<ASTCDClass> cdClasses = new LinkedHashSet<>(cdDefinition.getCDClassesList());
     
     // All interfaces of the cd
-    Set<ASTCDInterface> cdInterfaces = new HashSet<>(cdDefinition.getCDInterfacesList());
+    Set<ASTCDInterface> cdInterfaces = new LinkedHashSet<>(cdDefinition.getCDInterfacesList());
     
     // Comment
     predicate.append(
@@ -798,7 +805,7 @@ public class CD2AlloyGenerator {
     
     for (ASTCDClass astcdClass : cdClasses) {
       // All names of superclasses and their interfaces
-      Set<String> superNames = new HashSet<>();
+      Set<String> superNames = new LinkedHashSet<>();
       for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, cdClasses)) {
         // Add all names of super classes
         superNames.add(CDDiffUtil.escape2Alloy(superclass.getSymbol().getInternalQualifiedName()));
@@ -810,7 +817,7 @@ public class CD2AlloyGenerator {
       }
       
       // Computation of fields
-      Set<String> fields = new HashSet<>();
+      Set<String> fields = new LinkedHashSet<>();
       
       // All attributes of the superclasses
       for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, cdClasses)) {
@@ -890,9 +897,9 @@ public class CD2AlloyGenerator {
     
     // Abstract classes should not have objects
     // The set of abstract classes:
-    Set<ASTCDClass> abstractClasses = new HashSet<>();
+    Set<ASTCDClass> abstractClasses = new LinkedHashSet<>();
     // The set of singleton classes
-    Set<ASTCDClass> singletonClasses = new HashSet<>();
+    Set<ASTCDClass> singletonClasses = new LinkedHashSet<>();
     for (ASTCDClass astcdClass : cdDefinition.getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
         abstractClasses.add(astcdClass);
@@ -1422,7 +1429,7 @@ public class CD2AlloyGenerator {
       }
     }
     if (changed) {
-      asts = new HashSet<>();
+      asts = new LinkedHashSet<>();
       for (Object o : astsArray) {
         ASTCDCompilationUnit ast = (ASTCDCompilationUnit) o;
         asts.add(ast);
@@ -1512,7 +1519,7 @@ public class CD2AlloyGenerator {
    * @param filePaths ?
    */
   public String generateModuleFromFiles(Set<String> filePaths) {
-    Set<ASTCDCompilationUnit> cds = new HashSet<>();
+    Set<ASTCDCompilationUnit> cds = new LinkedHashSet<>();
     
     for (String modelFile : filePaths) {
       Path model = Paths.get(modelFile);

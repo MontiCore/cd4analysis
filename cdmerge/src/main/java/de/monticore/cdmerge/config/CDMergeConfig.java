@@ -45,7 +45,7 @@ public class CDMergeConfig {
     
     private static final String INPUT_SEPARATOR = ",";
     
-    private final Map<MergeParameter, String> _parameters = new HashMap<>();
+    private final Map<MergeParameter, String> _parameters = new LinkedHashMap<>();
     
     private List<String> _inputFiles;
     

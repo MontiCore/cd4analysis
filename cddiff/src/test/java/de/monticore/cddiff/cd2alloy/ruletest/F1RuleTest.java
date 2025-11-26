@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,10 +44,10 @@ public class F1RuleTest extends CDDiffTestBasis {
     assertEquals(expectedResult.size(), (result.length - 1));
     
     // Preprocess expected results such that sets can be recognized
-    Set<Set<String>> expSets = new HashSet<>();
+    Set<Set<String>> expSets = new LinkedHashSet<>();
     for (String string : expectedResult) {
       if (string.matches("fun [\\w]+\\: set Obj \\{ ([\\w]+ [\\+ [\\w]+]+) \\}")) {
-        Set<String> objSetExp = new HashSet<>();
+        Set<String> objSetExp = new LinkedHashSet<>();
         
         // Remove static part, which is already checked
         String remRes = string.replaceAll("fun [\\w]+\\: set Obj \\{", "");
@@ -78,7 +78,7 @@ public class F1RuleTest extends CDDiffTestBasis {
       if (!(expectedResult.contains(result[i]))) {
         // We have a set and may need further preprocessing?
         if (result[i].matches("fun [\\w]+\\: set Obj \\{ ([\\w]+ [\\+ [\\w]+]+) \\}")) {
-          Set<String> objSetRes = new HashSet<>();
+          Set<String> objSetRes = new LinkedHashSet<>();
           
           // Remove static part, which is already checked
           String remRes = result[i].replaceAll("fun [\\w]+\\: set Obj \\{", "");
@@ -115,7 +115,7 @@ public class F1RuleTest extends CDDiffTestBasis {
     String[] lines = f1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("fun VehicleSubsCDcd1: set Obj { Vehicle + Car + Truck }");
     expectedResult.add("fun CompanySubsCDcd1: set Obj { Company }");
     expectedResult.add("fun EmployeeSubsCDcd1: set Obj { Employee + Driver }");
@@ -134,7 +134,7 @@ public class F1RuleTest extends CDDiffTestBasis {
     String[] lines = f1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("fun TaskSubsCDEmployees1: set Obj { Task }");
     expectedResult.add("fun EmployeeSubsCDEmployees1: set Obj { Employee }");
     expectedResult.add("fun ManagerSubsCDEmployees1: set Obj { Manager }");
@@ -148,7 +148,7 @@ public class F1RuleTest extends CDDiffTestBasis {
     String[] lines = f1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("fun TaskSubsCDEmployees2: set Obj { Task }");
     expectedResult.add("fun EmployeeSubsCDEmployees2: set Obj { Employee + Manager }");
     expectedResult.add("fun ManagerSubsCDEmployees2: set Obj { Manager }");

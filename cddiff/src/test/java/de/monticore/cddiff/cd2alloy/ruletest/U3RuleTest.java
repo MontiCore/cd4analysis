@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,14 +59,14 @@ public class U3RuleTest extends CDDiffTestBasis {
   
   @Test
   public void testU3_MV() {
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(mvAst);
     
     String u3 = CD2AlloyGenerator.getInstance().executeRuleU3(asts);
     String[] lines = u3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("one sig type_Date extends Val {}");
     expectedResult.add("one sig type_String extends Val {}");
     
@@ -75,7 +75,7 @@ public class U3RuleTest extends CDDiffTestBasis {
   
   @Test
   public void testU3_cd2v1_cd2v2() {
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(m1Ast);
     asts.add(m2Ast);
     
@@ -83,7 +83,7 @@ public class U3RuleTest extends CDDiffTestBasis {
     String[] lines = u3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("one sig type_Date extends Val {}");
     checkU3(lines, expectedResult);
   }

@@ -36,7 +36,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
         new ASTMatchGraph<ASTCDAssociation, ASTCDDefinition>(getCurrentCDs());
     // We must apply some stronger matching rules if two types share more
     // than one association. In that case, all matches must match with Name
-    Map<ASTCDDefinition, List<ASTCDAssociation>> multipleAssociations = new HashMap<>();
+    Map<ASTCDDefinition, List<ASTCDAssociation>> multipleAssociations = new LinkedHashMap<>();
     for (int j = 0; j < matches.getParents().size(); j++) {
       multipleAssociations.put(matches.getParents().get(j), getMultipleAssoc(matches.getParents()
           .get(j)));
@@ -55,9 +55,11 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
             // Force unambiguous matching for multi-associations
             if (multipleAssociations.get(cd1).contains(assoc1) || multipleAssociations.get(cd2)
                 .contains(assoc2)) {
-              Set<ASTCDAssociation> alternatives1 = new HashSet<>(multipleAssociations.get(cd1));
+              Set<ASTCDAssociation> alternatives1 = new LinkedHashSet<>(multipleAssociations.get(
+                  cd1));
               alternatives1.remove(assoc1);
-              Set<ASTCDAssociation> alternatives2 = new HashSet<>(multipleAssociations.get(cd2));
+              Set<ASTCDAssociation> alternatives2 = new LinkedHashSet<>(multipleAssociations.get(
+                  cd2));
               alternatives2.remove(assoc2);
               if (!nameMatch(assoc1, assoc2, true)) {
                 if (!match(assoc1, assoc2)) {
@@ -101,7 +103,7 @@ public class DefaultAssociationMatcher extends MatcherBase implements Associatio
    * connecting association
    */
   private List<ASTCDAssociation> getMultipleAssoc(ASTCDDefinition astcdDefinition) {
-    Map<String, List<ASTCDAssociation>> associationsBetweenTypes = new HashMap<>();
+    Map<String, List<ASTCDAssociation>> associationsBetweenTypes = new LinkedHashMap<>();
     Iterator<ASTCDAssociation> assocIterator = astcdDefinition.getCDAssociationsList().iterator();
     ASTCDAssociation assoc;
     while (assocIterator.hasNext()) {

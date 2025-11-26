@@ -140,24 +140,24 @@ public class BasicTypeConfStrategy implements ConformanceStrategy<ASTCDType> {
   
   /** check if all attributes of the reference type are incarnated */
   protected boolean checkAttributeIncarnation(ASTCDType con, ASTCDType ref) {
-    return checkAttributeIncarnation((new HashSet<>(con.getCDAttributeList())), new HashSet<>(ref
-        .getCDAttributeList()));
+    return checkAttributeIncarnation((new LinkedHashSet<>(con.getCDAttributeList())),
+        new LinkedHashSet<>(ref.getCDAttributeList()));
   }
   
   /** check if all methods of the reference type are incarnated */
   protected boolean checkMethodIncarnation(ASTCDType con, ASTCDType ref) {
-    return checkMethodIncarnation((new HashSet<>(con.getCDMethodList())), new HashSet<>(ref
-        .getCDMethodList()));
+    return checkMethodIncarnation((new LinkedHashSet<>(con.getCDMethodList())), new LinkedHashSet<>(
+        ref.getCDMethodList()));
   }
   
   /** check if all attributes that are incarnations are conformed to the references */
   protected boolean checkAttributeConformance(ASTCDType con, ASTCDType refType) {
-    return checkAttributeConformance(new HashSet<>(con.getCDAttributeList()), refType);
+    return checkAttributeConformance(new LinkedHashSet<>(con.getCDAttributeList()), refType);
   }
   
   /** check if all methods that are incarnations are conformed to the references */
   protected boolean checkMethodConformance(ASTCDType con, ASTCDType refType) {
-    return checkMethodConformance(new HashSet<>(con.getCDMethodList()), refType);
+    return checkMethodConformance(new LinkedHashSet<>(con.getCDMethodList()), refType);
   }
   
   /** check if all associations of the reference type are incarnated */

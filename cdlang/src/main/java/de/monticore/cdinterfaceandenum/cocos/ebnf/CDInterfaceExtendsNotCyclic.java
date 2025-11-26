@@ -8,7 +8,7 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -18,7 +18,7 @@ public class CDInterfaceExtendsNotCyclic implements CDInterfaceAndEnumASTCDInter
   
   @Override
   public void check(ASTCDInterface node) {
-    findCycle(node.getSymbol(), new HashSet<>(), new HashSet<>());
+    findCycle(node.getSymbol(), new LinkedHashSet<>(), new LinkedHashSet<>());
   }
   
   /**

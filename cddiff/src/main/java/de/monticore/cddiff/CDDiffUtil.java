@@ -161,7 +161,7 @@ public class CDDiffUtil {
   public static Set<ASTCDClass> getAllSuperclasses(ASTCDClass astcdClass,
       Collection<ASTCDClass> classes) {
     // Initialize variables
-    Set<ASTCDClass> superclasses = new HashSet<>();
+    Set<ASTCDClass> superclasses = new LinkedHashSet<>();
     LinkedList<ASTCDClass> toProcess = new LinkedList<>();
     toProcess.add(astcdClass);
     superclasses.add(astcdClass);
@@ -198,7 +198,7 @@ public class CDDiffUtil {
   public static Set<ASTCDInterface> getAllInterfaces(ASTCDClass superClass,
       Collection<ASTCDInterface> allowedInterfaces) {
     // Initialize variables
-    Set<ASTCDInterface> interfaces = new HashSet<>();
+    Set<ASTCDInterface> interfaces = new LinkedHashSet<>();
     LinkedList<ASTCDInterface> toProcess = new LinkedList<>();
     
     // Add all interfaces of the superclass to the processing List
@@ -250,10 +250,10 @@ public class CDDiffUtil {
   @Deprecated
   public static Set<ASTCDInterface> getAllInterfaces(ASTCDInterface astcdInterface,
       Collection<ASTCDInterface> allowedInterfaces) {
-    Set<ASTCDInterface> interfaces = new HashSet<>();
+    Set<ASTCDInterface> interfaces = new LinkedHashSet<>();
     interfaces.add(astcdInterface);
     
-    Set<ASTCDInterface> remaining = new HashSet<>(allowedInterfaces);
+    Set<ASTCDInterface> remaining = new LinkedHashSet<>(allowedInterfaces);
     remaining.remove(astcdInterface);
     
     for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
@@ -275,7 +275,7 @@ public class CDDiffUtil {
    */
   @Deprecated
   public static Set<ASTCDType> getAllSuperTypes(ASTCDClass type, ASTCDDefinition cd) {
-    Set<ASTCDType> superTypes = new HashSet<>();
+    Set<ASTCDType> superTypes = new LinkedHashSet<>();
     superTypes.addAll(getAllSuperclasses(type, cd.getCDClassesList()));
     superTypes.addAll(getAllInterfaces(type, cd.getCDInterfacesList()));
     return superTypes;
@@ -291,14 +291,14 @@ public class CDDiffUtil {
     ICDBasisScope scope = type.getEnclosingScope();
     while (scope != null && !(scope instanceof ICD4CodeArtifactScope)) {
       if (scope instanceof ICDBasisGlobalScope) {
-        return new HashSet<>();
+        return new LinkedHashSet<>();
       }
       scope = scope.getEnclosingScope();
     }
     if (scope != null) {
       return CDInheritanceHelper.getAllSuper(type, (ICD4CodeArtifactScope) scope);
     }
-    return new HashSet<>();
+    return new LinkedHashSet<>();
   }
   
   /**
@@ -310,9 +310,9 @@ public class CDDiffUtil {
       return getAllSuperTypes((ASTCDClass) type, cd);
     }
     if (type instanceof ASTCDInterface) {
-      return new HashSet<>(getAllInterfaces((ASTCDInterface) type, cd.getCDInterfacesList()));
+      return new LinkedHashSet<>(getAllInterfaces((ASTCDInterface) type, cd.getCDInterfacesList()));
     }
-    return new HashSet<>();
+    return new LinkedHashSet<>();
   }
   
   /** A helper function to compute all associations in cd that reference astcdType. */
@@ -349,8 +349,8 @@ public class CDDiffUtil {
   
   /** A helper function that collects all strict subtypes of a type in cd. */
   public static Set<ASTCDType> getAllStrictSubTypes(ASTCDType type, ASTCDDefinition cd) {
-    Set<ASTCDType> result = new HashSet<>();
-    Set<ASTCDType> allTypes = new HashSet<>();
+    Set<ASTCDType> result = new LinkedHashSet<>();
+    Set<ASTCDType> allTypes = new LinkedHashSet<>();
     allTypes.addAll(cd.getCDInterfacesList());
     allTypes.addAll(cd.getCDClassesList());
     

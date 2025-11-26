@@ -13,7 +13,7 @@ import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +32,7 @@ public class OOSymbolsIncMapping implements IOOSymbolsIncMapping {
    * is not present in the mapping, it means that the mapping needs to be resolved in the parent
    * scope.
    */
-  private final Map<String, IOOSymbolsBindings> ooSymbolsBindings = new HashMap<>();
+  private final Map<String, IOOSymbolsBindings> ooSymbolsBindings = new LinkedHashMap<>();
   
   public OOSymbolsIncMapping(IOOSymbolsLocalIncMapping globalMapping,
       IOOSymbolsScope referenceScope, IOOSymbolsScope concreteScope) {

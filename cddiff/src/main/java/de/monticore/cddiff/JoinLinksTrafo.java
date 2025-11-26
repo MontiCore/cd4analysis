@@ -14,7 +14,7 @@ import de.monticore.odlink._ast.ASTODLeftToRightDir;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,7 +43,7 @@ public class JoinLinksTrafo {
   }
   
   protected void transformLinks4Assoc(ASTODArtifact od, ASTCDAssociation assoc) {
-    Set<ASTODLink> links = new HashSet<>();
+    Set<ASTODLink> links = new LinkedHashSet<>();
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
       if (element instanceof ASTODLink) {
         links.add((ASTODLink) element);
@@ -127,7 +127,7 @@ public class JoinLinksTrafo {
   }
   
   protected Optional<ASTODNamedObject> findObjectInOD(String name, ASTODArtifact od) {
-    Set<ASTODNamedObject> objects = new HashSet<>();
+    Set<ASTODNamedObject> objects = new LinkedHashSet<>();
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
       if (element instanceof ASTODNamedObject) {
         objects.add((ASTODNamedObject) element);

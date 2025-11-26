@@ -44,7 +44,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
     CD4CodeMill.globalScope().init();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     ctx = new Context(cfg);
   }

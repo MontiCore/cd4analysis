@@ -34,8 +34,8 @@ public class DefaultAssocStrategy implements AssociationStrategy {
   protected final Set<IdentifiableBoolExpr> assocConstraints;
   
   public DefaultAssocStrategy() {
-    assocFuncMap = new HashMap<>();
-    assocConstraints = new HashSet<>();
+    assocFuncMap = new LinkedHashMap<>();
+    assocConstraints = new LinkedHashSet<>();
   }
   
   @Override

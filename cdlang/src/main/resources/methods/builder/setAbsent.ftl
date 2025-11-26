@@ -5,7 +5,7 @@ ${tc.signature("attribute")}
 this.${attribute.name} = new ArrayList<>();
   <#else>
   <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCSetType(attribute)>
-this.${attribute.name} = new HashSet<>();
+this.${attribute.name} = new LinkedHashSet<>();
     <#else>
     <#if CD4AnalysisTypeDispatcher.isMCCollectionTypesASTMCOptionalType(attribute)>
 this.${attribute.name} = Optional.empty();

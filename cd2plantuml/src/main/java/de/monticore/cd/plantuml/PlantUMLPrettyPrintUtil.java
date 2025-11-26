@@ -6,7 +6,7 @@ import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
@@ -27,7 +27,7 @@ public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
     super(printer);
     this.nameStack = new Stack<>();
     this.plantUMLConfig = config;
-    this.associations = new HashSet<>();
+    this.associations = new LinkedHashSet<>();
   }
   
   public PlantUMLPrettyPrintUtil(PlantUMLPrettyPrintUtil other) {

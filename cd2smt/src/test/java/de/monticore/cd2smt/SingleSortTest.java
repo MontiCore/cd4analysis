@@ -25,7 +25,7 @@ public class SingleSortTest extends CD2SMTAbstractTest {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     ctx = new Context(cfg);
   }
@@ -46,7 +46,7 @@ public class SingleSortTest extends CD2SMTAbstractTest {
     ast.getCDDefinition().getCDInterfacesList().forEach(astcdclass -> constraints.add(
         cd2SMTGenerator.hasType(obj, astcdclass)));
     
-    Set<IdentifiableBoolExpr> UNSATConstrList = new HashSet<>();
+    Set<IdentifiableBoolExpr> UNSATConstrList = new LinkedHashSet<>();
     
     for (int i = 0; i < constraints.size(); i++) {
       for (int j = 0; j < constraints.size(); j++) {

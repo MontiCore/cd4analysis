@@ -8,7 +8,7 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.merging.strategies.AssociationMerger;
 import de.monticore.cdmerge.merging.strategies.TypeMerger;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +25,7 @@ public class DefaultCDMerger extends CDMerger {
     merged.get_PostCommentList().clear();
     merged.get_PreCommentList().clear();
     // We always assume, that the comments are only prior to an element
-    Set<Comment> comments = new HashSet<Comment>();
+    Set<Comment> comments = new LinkedHashSet<Comment>();
     comments.addAll(left.get_PreCommentList());
     comments.addAll(right.get_PreCommentList());
     merged.addAll_PreComments(comments);
@@ -36,7 +36,7 @@ public class DefaultCDMerger extends CDMerger {
     // Clean up anything from possibly cloned AST Nodes
     merged.clear_PreComments();
     merged.clear_PostComments();
-    Set<Comment> comments = new HashSet<Comment>();
+    Set<Comment> comments = new LinkedHashSet<Comment>();
     
     // merge PreComments
     List<Comment> preComments = left.get_PreCommentList();

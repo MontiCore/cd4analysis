@@ -33,9 +33,9 @@ public class SEInheritanceStrategy extends SSClassStrategy implements Inheritanc
   private boolean partial = false;
   
   public SEInheritanceStrategy() {
-    classConstraints = new HashSet<>();
-    inheritanceConstraints = new HashSet<>();
-    typeMap = new HashMap<>();
+    classConstraints = new LinkedHashSet<>();
+    inheritanceConstraints = new LinkedHashSet<>();
+    typeMap = new LinkedHashMap<>();
   }
   
   @Override

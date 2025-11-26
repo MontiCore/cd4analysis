@@ -143,7 +143,7 @@ public class FullExpander implements CDExpander {
   public Set<ASTCDAssociation> buildSuperAssociations(Collection<ASTCDAssociation> originals,
       String dummyClassName) {
     
-    Set<ASTCDAssociation> superSet = new HashSet<>();
+    Set<ASTCDAssociation> superSet = new LinkedHashSet<>();
     String roleName;
     
     for (ASTCDAssociation original : originals) {
@@ -174,7 +174,7 @@ public class FullExpander implements CDExpander {
   public Set<ASTCDAssociation> getDummies4Diff(Collection<ASTCDType> typeCol,
       String assocTargetName) {
     ICD4CodeArtifactScope scope = (ICD4CodeArtifactScope) getCD().getEnclosingScope();
-    Set<ASTCDAssociation> newAssocs = new HashSet<>();
+    Set<ASTCDAssociation> newAssocs = new LinkedHashSet<>();
     for (ASTCDType srcType : typeCol) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(srcType.getSymbol()
           .getInternalQualifiedName());

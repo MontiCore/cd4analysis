@@ -28,19 +28,20 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     ICD4CodeArtifactScope tgtCDScope = (ICD4CodeArtifactScope) tgtCD.getEnclosingScope();
     
     // Create a map that maps each type to all its supertypes according to both CDs
-    Map<ASTCDType, Set<ASTCDType>> inheritanceGraph = new HashMap<>();
+    Map<ASTCDType, Set<ASTCDType>> inheritanceGraph = new LinkedHashMap<>();
     
     List<ASTCDClass> classes = tgtCD.getCDDefinition().getCDClassesList();
     List<ASTCDInterface> interfaces = tgtCD.getCDDefinition().getCDInterfacesList();
     
-    Set<ASTCDType> typeSet = new HashSet<>();
+    Set<ASTCDType> typeSet = new LinkedHashSet<>();
     typeSet.addAll(classes);
     typeSet.addAll(interfaces);
     
     CDIncarnationMapping incMapping = context.getIncarnationMapping();
     
     for (ASTCDType type : typeSet) {
-      inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, tgtCDScope)));
+      inheritanceGraph.put(type, new LinkedHashSet<>(CDInheritanceHelper.getAllSuper(type,
+          tgtCDScope)));
       
       // for all matching types
       for (ASTCDType matchingTypeInsrcCD : incMapping.getReferenceElements(type)) {
@@ -74,7 +75,7 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     
     // remove redundant inheritance
     for (ASTCDType type : typeSet) {
-      Set<ASTCDType> superSet = new HashSet<>(inheritanceGraph.get(type));
+      Set<ASTCDType> superSet = new LinkedHashSet<>(inheritanceGraph.get(type));
       for (ASTCDType superType : inheritanceGraph.get(type)) {
         superSet.removeAll(inheritanceGraph.get(superType));
       }
@@ -85,7 +86,7 @@ public class InheritanceCompleter extends AbstractCDCompleter {
     FullExpander expander = new FullExpander(new VariableExpander(tgtCD));
     
     for (ASTCDInterface current : interfaces) {
-      Set<String> extendsSet = new HashSet<>();
+      Set<String> extendsSet = new LinkedHashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (interfaces.contains(superType)) {
           extendsSet.add(superType.getSymbol().getInternalQualifiedName());
@@ -94,8 +95,8 @@ public class InheritanceCompleter extends AbstractCDCompleter {
       expander.updateExtends(current, extendsSet);
     }
     for (ASTCDClass current : classes) {
-      Set<String> extendsSet = new HashSet<>();
-      Set<String> implementsSet = new HashSet<>();
+      Set<String> extendsSet = new LinkedHashSet<>();
+      Set<String> implementsSet = new LinkedHashSet<>();
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (classes.contains(superType)) {
           extendsSet.add(superType.getSymbol().getInternalQualifiedName());

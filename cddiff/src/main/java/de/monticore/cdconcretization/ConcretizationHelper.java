@@ -39,9 +39,9 @@ public class ConcretizationHelper {
     this.rcd = rcd;
     this.typeIncStrategy = compTypeIncStrategy;
     this.assocIncStrategy = compAssocIncStrategy;
-    this.typeMapping = new HashMap<>();
-    this.roleMapping = new HashMap<>();
-    this.roleToTypeMapping = new HashMap<>();
+    this.typeMapping = new LinkedHashMap<>();
+    this.roleMapping = new LinkedHashMap<>();
+    this.roleToTypeMapping = new LinkedHashMap<>();
   }
   
   // Main function to map reference roles to concrete roles
@@ -61,7 +61,7 @@ public class ConcretizationHelper {
       // Process each concrete type that incarnates refType
       for (ASTCDType conType : concreteTypes) {
         // Map reference type to concrete type
-        typeMapping.computeIfAbsent(refType.getSymbol(), k -> new HashSet<>()).add(conType
+        typeMapping.computeIfAbsent(refType.getSymbol(), k -> new LinkedHashSet<>()).add(conType
             .getSymbol());
         
         // Get concrete associations incarnating the reference association and referencing conType
@@ -108,7 +108,7 @@ public class ConcretizationHelper {
   // Helper to get all concrete associations for a given concrete type and reference association
   private Set<ASTCDAssociation> getConcreteAssociationsForType(ASTCDType conType,
       ASTCDAssociation refAssoc) throws CompletionException {
-    Set<ASTCDAssociation> set = new HashSet<>();
+    Set<ASTCDAssociation> set = new LinkedHashSet<>();
     for (ASTCDAssociation assoc : ccd.getCDDefinition().getCDAssociationsList()) {
       if (assocIncStrategy.isMatched(assoc, refAssoc) && (getTypeFromAssocSide(assoc.getLeft())
           .equals(conType) || getTypeFromAssocSide(assoc.getRight()).equals(conType))) {
@@ -145,13 +145,13 @@ public class ConcretizationHelper {
   private void addToMapping(Map<CDRoleSymbol, Set<CDTypeSymbol>> map, CDRoleSymbol key,
       CDTypeSymbol value) {
     // If the key doesn't exist, create a new set for it
-    map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
+    map.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value);
   }
   
   private void addToMapping(Map<CDRoleSymbol, Set<CDRoleSymbol>> map, CDRoleSymbol key,
       CDRoleSymbol value) {
     // If the key doesn't exist, create a new set for it
-    map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
+    map.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value);
   }
   
   // Helper to get the role name of an association side
@@ -175,7 +175,7 @@ public class ConcretizationHelper {
   }
   
   public static Set<ASTCDType> getCDTypes(ASTCDCompilationUnit cd) {
-    Set<ASTCDType> cdTypes = new HashSet<>();
+    Set<ASTCDType> cdTypes = new LinkedHashSet<>();
     cdTypes.addAll(cd.getCDDefinition().getCDClassesList());
     cdTypes.addAll(cd.getCDDefinition().getCDInterfacesList());
     cdTypes.addAll(cd.getCDDefinition().getCDEnumsList());

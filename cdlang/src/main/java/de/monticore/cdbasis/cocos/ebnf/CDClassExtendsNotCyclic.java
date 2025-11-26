@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._cocos.CDBasisASTCDClassCoCo;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /** Checks that there are no cycles in the class hierarchy. */
@@ -15,7 +15,7 @@ public class CDClassExtendsNotCyclic implements CDBasisASTCDClassCoCo {
   /** @param node class to check. */
   @Override
   public void check(ASTCDClass node) {
-    findInheritanceCycleDepthFirst(node, node.getSymbol(), new HashSet<>());
+    findInheritanceCycleDepthFirst(node, node.getSymbol(), new LinkedHashSet<>());
   }
   
   protected void findInheritanceCycleDepthFirst(ASTCDClass origin, TypeSymbol next,
@@ -30,7 +30,7 @@ public class CDClassExtendsNotCyclic implements CDBasisASTCDClassCoCo {
     visitedTypes.add(next.getFullName());
     next.getSuperClassesOnly().forEach(s -> {
       if (s.hasTypeInfo()) {
-        findInheritanceCycleDepthFirst(origin, s.getTypeInfo(), new HashSet<>(visitedTypes));
+        findInheritanceCycleDepthFirst(origin, s.getTypeInfo(), new LinkedHashSet<>(visitedTypes));
       }
       else {
         Log.error("0xE822B: Can not find symbol for superclass " + s.print(), origin

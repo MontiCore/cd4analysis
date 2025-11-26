@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,14 +59,14 @@ public class U1RuleTest extends CDDiffTestBasis {
   
   @Test
   public void testU1_MV() {
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(mvAst);
     
     String u1 = CD2AlloyGenerator.getInstance().executeRuleU1(asts);
     String[] lines = u1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("sig Vehicle extends Obj {}");
     expectedResult.add("sig Company extends Obj {}");
     expectedResult.add("sig Employee extends Obj {}");
@@ -82,7 +82,7 @@ public class U1RuleTest extends CDDiffTestBasis {
   
   @Test
   public void testU1_cd2v1_cd2v2() {
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(m1Ast);
     asts.add(m2Ast);
     
@@ -90,7 +90,7 @@ public class U1RuleTest extends CDDiffTestBasis {
     String[] lines = u1.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("sig Task extends Obj {}");
     expectedResult.add("sig Employee extends Obj {}");
     expectedResult.add("sig Manager extends Obj {}");

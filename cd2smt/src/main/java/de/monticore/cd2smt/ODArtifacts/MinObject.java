@@ -6,7 +6,7 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** this class is used to saved data for a minimal object (object without links and inheritance) */
@@ -14,7 +14,7 @@ public class MinObject {
   
   private final Expr<? extends Sort> smtExpr;
   private final ASTCDType astcdType;
-  public Map<ASTCDAttribute, Expr<? extends Sort>> attributes = new HashMap<>();
+  public Map<ASTCDAttribute, Expr<? extends Sort>> attributes = new LinkedHashMap<>();
   private CDHelper.ObjType type;
   
   /**

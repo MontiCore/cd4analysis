@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +58,7 @@ public class F4RuleTest extends CDDiffTestBasis {
     
     // Preprocess expected result to extract expected names and function
     // implementations
-    Map<String, String> expNameImpl = new HashMap<>();
+    Map<String, String> expNameImpl = new LinkedHashMap<>();
     for (String string : expectedResult) {
       // extract function name
       String funName = string;
@@ -101,7 +101,7 @@ public class F4RuleTest extends CDDiffTestBasis {
     String f4 = CD2AlloyGenerator.getInstance().executeRuleF4(mvAst);
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("fun InsuranceCompFieldsCDcd1:Obj->Obj {rel[EmployeeSubsCDcd1, ins]}");
     
     checkF4(f4, expectedResult);
@@ -112,7 +112,7 @@ public class F4RuleTest extends CDDiffTestBasis {
     String f4 = CD2AlloyGenerator.getInstance().executeRuleF4(m1Ast);
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     
     checkF4(f4, expectedResult);
   }
@@ -122,7 +122,7 @@ public class F4RuleTest extends CDDiffTestBasis {
     String f4 = CD2AlloyGenerator.getInstance().executeRuleF4(m2Ast);
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     
     checkF4(f4, expectedResult);
   }

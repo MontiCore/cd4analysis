@@ -33,8 +33,8 @@ public class AssociationsMatcher {
   private CDSemantics semantics;
   
   public AssociationsMatcher() {
-    srcMap = new HashMap<>();
-    targetMap = new HashMap<>();
+    srcMap = new LinkedHashMap<>();
+    targetMap = new LinkedHashMap<>();
   }
   
   /** check if links in od match associations in cd according to semantics */
@@ -45,11 +45,11 @@ public class AssociationsMatcher {
     
     this.semantics = semantics;
     
-    this.objects = new HashSet<>(ODHelper.getAllNamedObjects(od.getObjectDiagram()));
+    this.objects = new LinkedHashSet<>(ODHelper.getAllNamedObjects(od.getObjectDiagram()));
     
     // we split bidirectional links and make them all left-to-right
-    this.links = new HashSet<>(new NormalizeLinksTrafo().transformLinksToLTR(ODHelper.getAllLinks(od
-        .getObjectDiagram())));
+    this.links = new LinkedHashSet<>(new NormalizeLinksTrafo().transformLinksToLTR(ODHelper
+        .getAllLinks(od.getObjectDiagram())));
     
     /* initialize srcMap and targetMap:
     srcMap(object) = { association in cd | object intanceof association.srcType}

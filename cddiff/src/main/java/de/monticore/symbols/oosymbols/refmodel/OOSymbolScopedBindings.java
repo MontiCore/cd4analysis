@@ -11,7 +11,7 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -59,7 +59,7 @@ public class OOSymbolScopedBindings implements IOOSymbolsBindings {
   
   @Override
   public Set<Binding<OOTypeSymbol>> getOOTypeBindings() {
-    Set<Binding<OOTypeSymbol>> result = new HashSet<>();
+    Set<Binding<OOTypeSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getOOTypeBindings());
     result.addAll(inheritedBindings.getOOTypeBindings());
     return result;
@@ -92,7 +92,7 @@ public class OOSymbolScopedBindings implements IOOSymbolsBindings {
   
   @Override
   public Set<Binding<FieldSymbol>> getFieldBindings() {
-    Set<Binding<FieldSymbol>> result = new HashSet<>();
+    Set<Binding<FieldSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getFieldBindings());
     result.addAll(inheritedBindings.getFieldBindings());
     return result;
@@ -127,7 +127,7 @@ public class OOSymbolScopedBindings implements IOOSymbolsBindings {
   
   @Override
   public Set<Binding<MethodSymbol>> getMethodBindings() {
-    Set<Binding<MethodSymbol>> result = new HashSet<>();
+    Set<Binding<MethodSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getMethodBindings());
     result.addAll(inheritedBindings.getMethodBindings());
     return result;
@@ -174,7 +174,7 @@ public class OOSymbolScopedBindings implements IOOSymbolsBindings {
   
   @Override
   public Set<Binding<TypeSymbol>> getTypeBindings() {
-    Set<Binding<TypeSymbol>> result = new HashSet<>();
+    Set<Binding<TypeSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getTypeBindings());
     result.addAll(inheritedBindings.getTypeBindings());
     return result;
@@ -209,7 +209,7 @@ public class OOSymbolScopedBindings implements IOOSymbolsBindings {
   
   @Override
   public Set<Binding<VariableSymbol>> getVariableBindings() {
-    Set<Binding<VariableSymbol>> result = new HashSet<>();
+    Set<Binding<VariableSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getVariableBindings());
     result.addAll(inheritedBindings.getVariableBindings());
     return result;
@@ -244,7 +244,7 @@ public class OOSymbolScopedBindings implements IOOSymbolsBindings {
   
   @Override
   public Set<Binding<FunctionSymbol>> getFunctionBindings() {
-    Set<Binding<FunctionSymbol>> result = new HashSet<>();
+    Set<Binding<FunctionSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getFunctionBindings());
     result.addAll(inheritedBindings.getFunctionBindings());
     return result;

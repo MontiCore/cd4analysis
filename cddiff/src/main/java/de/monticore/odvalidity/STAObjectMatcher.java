@@ -200,7 +200,7 @@ public class STAObjectMatcher {
     Optional<CDTypeSymbol> classSymbol = scope.resolveCDTypeDown(objType);
     
     // initialize output variable
-    Set<String> superSet = new HashSet<>();
+    Set<String> superSet = new LinkedHashSet<>();
     
     // get all superclasses and implemented interfaces
     if (classSymbol.isPresent()) {
@@ -234,7 +234,7 @@ public class STAObjectMatcher {
     
     // collect all classes which have the class "objType" as superclass
     // the set contains the class "objType" itself
-    Set<ASTCDClass> astSubClasses = new HashSet<>();
+    Set<ASTCDClass> astSubClasses = new LinkedHashSet<>();
     for (ASTCDClass astClass : astClasses) {
       if (CDInheritanceHelper.isSuperOf(objType, astClass.getSymbol().getInternalQualifiedName(),
           scope)) {
@@ -243,7 +243,7 @@ public class STAObjectMatcher {
     }
     
     // initialize output variable
-    Set<String> subClasses = new HashSet<>();
+    Set<String> subClasses = new LinkedHashSet<>();
     
     // transform set of AST nodes to a set of their full qualified names
     for (ASTCDType cdType : astSubClasses) {
@@ -285,7 +285,7 @@ public class STAObjectMatcher {
         // split String by ","
         String[] temp = instanceStereotype.split(",");
         // return split "instanceOf" values in a set
-        Set<String> superSet = new HashSet<>();
+        Set<String> superSet = new LinkedHashSet<>();
         Collections.addAll(superSet, temp);
         return Optional.of(superSet);
       }

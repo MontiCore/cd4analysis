@@ -52,7 +52,7 @@ public class ClassMatcher {
     // Set all parameters
     List<ASTODObject> odObjects = ODHelper.getAllObjects(od.getObjectDiagram());
     
-    Set<ASTODObject> objectSet = new HashSet<>(odObjects);
+    Set<ASTODObject> objectSet = new LinkedHashSet<>(odObjects);
     
     if (cd.getCDDefinition().getCDClassesList().stream().filter(c -> c.getModifier()
         .isPresentStereotype()).filter(c -> c.getModifier().getStereotype().contains("singleton"))
@@ -173,7 +173,7 @@ public class ClassMatcher {
    */
   private Set<ASTCDAttribute> buildClassAttributeList(ASTCDType type) {
     
-    Set<ASTCDAttribute> attrSet = new HashSet<>(type.getCDAttributeList());
+    Set<ASTCDAttribute> attrSet = new LinkedHashSet<>(type.getCDAttributeList());
     for (ASTCDType superType : CDInheritanceHelper.getAllSuper(type, scope)) {
       attrSet.addAll(superType.getCDAttributeList());
     }

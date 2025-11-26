@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 public class FiniteSSClassStrategy extends SSClassStrategy {
   
-  private Map<ASTCDType, Integer> cardMap = new HashMap<>();
+  private Map<ASTCDType, Integer> cardMap = new LinkedHashMap<>();
   protected FuncDecl<Sort> getType;
-  Map<ASTCDType, List<Constructor<Sort>>> constants = new HashMap<>();
+  Map<ASTCDType, List<Constructor<Sort>>> constants = new LinkedHashMap<>();
   
   @Override
   public BoolExpr mkForall(ASTCDType type, Expr<?> var, BoolExpr body) {
@@ -105,7 +105,7 @@ public class FiniteSSClassStrategy extends SSClassStrategy {
   
   @Override
   protected Constructor<Sort>[] collectTypeConstructors() {
-    Set<Constructor<? extends Sort>> constructors = new HashSet<>(typeMap.values());
+    Set<Constructor<? extends Sort>> constructors = new LinkedHashSet<>(typeMap.values());
     anonymousType = ctx.mkConstructor("SS_NO_TYPE", "SS_IS_" + "NO_TYPE", null, null, null);
     constructors.add(anonymousType);
     
@@ -118,7 +118,7 @@ public class FiniteSSClassStrategy extends SSClassStrategy {
   
   @Override
   public Set<MinObject> smt2od(Model model, Boolean partial) {
-    Set<MinObject> objectSet = new HashSet<>();
+    Set<MinObject> objectSet = new LinkedHashSet<>();
     
     for (Map.Entry<ASTCDType, List<Constructor<Sort>>> entry : constants.entrySet()) {
       for (Constructor<Sort> constructor : entry.getValue()) {

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,14 +59,14 @@ public class U4RuleTest extends CDDiffTestBasis {
   
   @Test
   public void testU4_MV() {
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(mvAst);
     
     String u4 = CD2AlloyGenerator.getInstance().executeRuleU4(asts);
     String[] lines = u4.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("one sig enum_InsuranceKind_q_dot_international extends EnumVal {}");
     expectedResult.add("one sig enum_DrivingExp_q_dot_expert extends EnumVal {}");
     // TODO Does not exist in example
@@ -79,7 +79,7 @@ public class U4RuleTest extends CDDiffTestBasis {
   
   @Test
   public void testU4_cd2v1_cd2v2() {
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(m1Ast);
     asts.add(m2Ast);
     
@@ -87,7 +87,7 @@ public class U4RuleTest extends CDDiffTestBasis {
     String[] lines = u4.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("one sig enum_PositionKind_q_dot_partTime extends EnumVal {}");
     expectedResult.add("one sig enum_PositionKind_q_dot_external extends EnumVal {}");
     expectedResult.add("one sig enum_PositionKind_q_dot_fullTime extends EnumVal {}");

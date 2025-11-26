@@ -21,7 +21,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
   
   public ASTMatchGraph(Collection<P> parents) {
     this.parents = new ArrayList<P>(parents);
-    this.matches = new HashMap<P, List<MatchNode<E, P>>>();
+    this.matches = new LinkedHashMap<P, List<MatchNode<E, P>>>();
     for (P parent : parents) {
       matches.put(parent, new ArrayList<MatchNode<E, P>>());
     }
@@ -214,7 +214,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
   
   @Override
   public String toString() {
-    Set<MatchNode<E, P>> visitedNodes = new HashSet<MatchNode<E, P>>();
+    Set<MatchNode<E, P>> visitedNodes = new LinkedHashSet<MatchNode<E, P>>();
     StringBuilder sb = new StringBuilder();
     sb.append("MatchGraph for");
     this.parents.forEach(parent -> sb.append(" [" + CDMergeUtils.getName(parent) + "]"));

@@ -22,7 +22,7 @@ public class FiniteDSClassStrategy extends DSClassStrategy {
   }
   
   public FiniteDSClassStrategy() {
-    typeMap = new HashMap<>();
+    typeMap = new LinkedHashMap<>();
     this.cardMap = CD2SMTMill.getCardinalities();
   }
   
@@ -74,7 +74,7 @@ public class FiniteDSClassStrategy extends DSClassStrategy {
   
   @Override
   public Set<MinObject> smt2od(Model model, Boolean partial) {
-    Set<MinObject> objectSet = new HashSet<>();
+    Set<MinObject> objectSet = new LinkedHashSet<>();
     
     for (Map.Entry<ASTCDType, Sort> entry : typeMap.entrySet()) {
       if (!(entry.getKey() instanceof ASTCDEnum)) {

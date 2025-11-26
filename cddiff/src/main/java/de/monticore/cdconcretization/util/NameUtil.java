@@ -5,6 +5,7 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.se_rwth.commons.Names;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -121,7 +122,7 @@ public class NameUtil {
       String adaptedName) {
     if (templatedName.contains(variable)) {
       return extractTemplateVariableRaw(templatedName, variable, adaptedName).stream().collect(
-          Collectors.toSet());
+          Collectors.toCollection(LinkedHashSet::new));
     }
     else if (templatedName.startsWith(StringUtils.uncapitalize(variable))) {
       // e.g., if variable name is "dataClass" and template is "DataClass", we want to replace

@@ -12,6 +12,7 @@ import de.monticore.cdconcretization.util.NameUtil;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class ForEachTypeInCDCompleter extends AbstractTypeInCDCompleter {
     
     Set<ASTCDType> paramTypeIncarnations = ConcretizationHelper.getCDTypes(context.getConcreteCD())
         .stream().filter(type -> context.getTypeIncStrategy().isMatched(type, paramType)).collect(
-            Collectors.toSet());
+            Collectors.toCollection(LinkedHashSet::new));
     Log.debug("Found type incarnations for " + paramType.getName() + ": " + paramTypeIncarnations,
         LOG_NAME);
     
