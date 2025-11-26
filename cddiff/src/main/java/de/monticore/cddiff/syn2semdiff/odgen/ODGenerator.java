@@ -23,7 +23,7 @@ public class ODGenerator {
   private final Syn2SemDiffHelper helper;
   private final ODGenHelper odGenHelper;
   private final ODBuilder odBuilder = new ODBuilder();
-  private final Map<ASTCDClass, Integer> map = new HashMap<>();
+  private final Map<ASTCDClass, Integer> map = new LinkedHashMap<>();
   private final int maxNumberOfClasses;
   
   /**
@@ -66,20 +66,20 @@ public class ODGenerator {
    * @return set of unprocessed objects.
    */
   public static Set<ASTODObject> findUnprocessedObjects(Set<Package> packages) {
-    Map<ASTODObject, Set<Boolean>> unprocessedMap = new HashMap<>();
+    Map<ASTODObject, Set<Boolean>> unprocessedMap = new LinkedHashMap<>();
     
     for (Package pack : packages) {
       if (pack.getLeftObject() != null) {
-        unprocessedMap.computeIfAbsent(pack.getLeftObject(), k -> new HashSet<>()).add(pack
+        unprocessedMap.computeIfAbsent(pack.getLeftObject(), k -> new LinkedHashSet<>()).add(pack
             .isProcessedLeft());
       }
       if (pack.getRightObject() != null) {
-        unprocessedMap.computeIfAbsent(pack.getRightObject(), k -> new HashSet<>()).add(pack
+        unprocessedMap.computeIfAbsent(pack.getRightObject(), k -> new LinkedHashSet<>()).add(pack
             .isProcessedRight());
       }
     }
     
-    Set<ASTODObject> unprocessedObjects = new HashSet<>();
+    Set<ASTODObject> unprocessedObjects = new LinkedHashSet<>();
     for (Map.Entry<ASTODObject, Set<Boolean>> entry : unprocessedMap.entrySet()) {
       if (!entry.getValue().contains(true) && entry.getValue().contains(false)) { // Object unprocessed in only one side
         unprocessedObjects.add(entry.getKey());
@@ -103,7 +103,7 @@ public class ODGenerator {
   public Set<Package> createChains(ASTCDAssociation association, int cardinalityLeft,
       int cardinalityRight, ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc,
       ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt) {
-    Set<Package> objectSet = new HashSet<>();
+    Set<Package> objectSet = new LinkedHashSet<>();
     Pair<ASTCDClass, ASTCDClass> pair = getClassesToUse(association);
     if (pair == null) {
       return null;
@@ -240,7 +240,7 @@ public class ODGenerator {
       ASTCDAssociation association, Pair<ASTCDAttribute, String> attrPair, Integer cardinalityLeft,
       Integer cardinalityRight) {
     
-    Set<ASTODElement> elements = new HashSet<>();
+    Set<ASTODElement> elements = new LinkedHashSet<>();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapSrc = ArrayListMultimap
         .create();
     ArrayListMultimap<ASTODObject, Pair<AssocStruct, ClassSide>> mapTgt = ArrayListMultimap
@@ -260,15 +260,18 @@ public class ODGenerator {
       if (sub.isEmpty())
         return new Pair<>(elements, Optional.empty());
       classToUse = sub.get();
-      packages = createChainsForNewClass(classToUse, new HashSet<>(), mapSrc, mapTgt, attrPair);
+      packages = createChainsForNewClass(classToUse, new LinkedHashSet<>(), mapSrc, mapTgt,
+          attrPair);
     }
     else {
       // ASTCDType handling for concrete classes
       classToUse = (ASTCDClass) astcdType;
-      packages = createChainsForNewClass(classToUse, new HashSet<>(), mapSrc, mapTgt, attrPair);
+      packages = createChainsForNewClass(classToUse, new LinkedHashSet<>(), mapSrc, mapTgt,
+          attrPair);
       if (cardinalityLeft == -1 && cardinalityRight == -1) {
         // Add one more instance of the class for the change from singleton to non-singleton
-        packages.addAll(createChainsForNewClass(classToUse, new HashSet<>(), mapSrc, mapTgt, null));
+        packages.addAll(createChainsForNewClass(classToUse, new LinkedHashSet<>(), mapSrc, mapTgt,
+            null));
       }
     }
     
@@ -849,7 +852,7 @@ public class ODGenerator {
         }
       }
     }
-    Set<ASTODObject> listToIterate = new HashSet<>();
+    Set<ASTODObject> listToIterate = new LinkedHashSet<>();
     listToIterate.addAll(typeObjects);
     listToIterate.addAll(typeObjectsSrc);
     Optional<ASTCDClass> leftClassAssoc = odGenHelper.getClassForTypeSrc(getConnectedTypes(
@@ -1025,7 +1028,7 @@ public class ODGenerator {
           }
         }
       }
-      Set<ASTODObject> listToIterate = new HashSet<>();
+      Set<ASTODObject> listToIterate = new LinkedHashSet<>();
       listToIterate.addAll(objectsOfType);
       listToIterate.addAll(objectsOfTypeSrc);
       Optional<ASTCDClass> leftClassAssoc = odGenHelper.getClassForTypeSrc(getConnectedTypes(
@@ -1174,7 +1177,7 @@ public class ODGenerator {
     for (ASTCDClass subClass : subClasses) {
       List<ASTODObject> objectsOfType = odGenHelper.getObjectsOfType(subClass, srcMap);
       List<ASTODObject> objectsOfTypeTgt = odGenHelper.getObjectsOfType(subClass, tgtMap);
-      Set<ASTODObject> listToIterate = new HashSet<>();
+      Set<ASTODObject> listToIterate = new LinkedHashSet<>();
       listToIterate.addAll(objectsOfType);
       listToIterate.addAll(objectsOfTypeTgt);
       for (ASTODObject subObject : listToIterate) {
@@ -1345,7 +1348,7 @@ public class ODGenerator {
         }
       }
     }
-    Set<ASTODObject> listToIterate = new HashSet<>();
+    Set<ASTODObject> listToIterate = new LinkedHashSet<>();
     listToIterate.addAll(typeObjects);
     listToIterate.addAll(typeObjectsTgt);
     Optional<ASTCDClass> leftClassAssoc = odGenHelper.getClassForTypeSrc(getConnectedTypes(

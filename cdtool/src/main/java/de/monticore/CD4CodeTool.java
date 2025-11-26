@@ -750,7 +750,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     cdName = cdName.substring(0, cdName.length() - 3);
     
-    Set<MergeParameter> paramSet = new HashSet<>();
+    Set<MergeParameter> paramSet = new LinkedHashSet<>();
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);
     paramSet.add(MergeParameter.FAIL_AMBIGUOUS);
     if (cmd.hasOption("mrg-config") && cmd.getOptionValue("mrg-config") != null) {

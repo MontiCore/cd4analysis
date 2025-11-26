@@ -9,7 +9,7 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import de.se_rwth.commons.logging.Log;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,10 +45,10 @@ public class F3RuleTest extends CDDiffTestBasis {
     assertEquals(expectedResult.size(), (result.length - 1));
     
     // Preprocess expected results such that sets can be recognized
-    Set<Set<String>> expSets = new HashSet<>();
+    Set<Set<String>> expSets = new LinkedHashSet<>();
     for (String string : expectedResult) {
       if (string.matches("fun [\\w]+\\: set EnumVal \\{ ([\\w]+ [\\+ [\\w]+]*) \\}")) {
-        Set<String> objSetExp = new HashSet<>();
+        Set<String> objSetExp = new LinkedHashSet<>();
         
         // Remove static part, which is already checked
         String remRes = string.replaceAll("fun [\\w]+\\: set EnumVal \\{", "");
@@ -80,7 +80,7 @@ public class F3RuleTest extends CDDiffTestBasis {
       if (!(expectedResult.contains(result[i]))) {
         // We have a set and may need further preprocessing?
         if (result[i].matches("fun [\\w]+\\: set EnumVal \\{ ([\\w]+ [\\+ [\\w]+]*) \\}")) {
-          Set<String> objSetRes = new HashSet<>();
+          Set<String> objSetRes = new LinkedHashSet<>();
           
           // Remove static part, which is already checked
           String remRes = result[i].replaceAll("fun [\\w]+\\: set EnumVal \\{", "");
@@ -117,7 +117,7 @@ public class F3RuleTest extends CDDiffTestBasis {
     String[] lines = f3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_q_dot_expert + "
         + "enum_DrivingExp_q_dot_beginner" + " }");
     expectedResult.add(
@@ -133,7 +133,7 @@ public class F3RuleTest extends CDDiffTestBasis {
     String[] lines = f3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add(
         "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_q_dot_partTime + "
             + "enum_PositionKind_q_dot_fullTime }");
@@ -147,7 +147,7 @@ public class F3RuleTest extends CDDiffTestBasis {
     String[] lines = f3.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add(
         "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_q_dot_partTime + "
             + "enum_PositionKind_q_dot_external + enum_PositionKind_q_dot_fullTime }");

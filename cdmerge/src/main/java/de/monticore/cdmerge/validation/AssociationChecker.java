@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +59,7 @@ public class AssociationChecker extends ModelValidatorBase {
   
   /** All associations between two types must have identical names */
   protected void checkUniqueAssociationNames(ASTCDDefinition cd) {
-    Map<String, ASTCDAssociation> namedAssociations = new HashMap<>();
+    Map<String, ASTCDAssociation> namedAssociations = new LinkedHashMap<>();
     ASTCDAssociation other;
     for (ASTCDAssociation assoc : getBlackBoard().getIntermediateMergedCD().getCDDefinition()
         .getCDAssociationsList()) {

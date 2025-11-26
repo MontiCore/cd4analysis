@@ -5,22 +5,22 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class CachedType {
   
   private final ASTCDType cachedType;
   
-  private final Set<ASTCDType> superTypes = new HashSet<>();
-  private final Set<ASTCDType> directSuperTypes = new HashSet<>();
-  private final Set<ASTCDType> directSubTypes = new HashSet<>();
+  private final Set<ASTCDType> superTypes = new LinkedHashSet<>();
+  private final Set<ASTCDType> directSuperTypes = new LinkedHashSet<>();
+  private final Set<ASTCDType> directSubTypes = new LinkedHashSet<>();
   
-  private final Set<ASTCDAttribute> directAttributes = new HashSet<>();
-  private final Set<ASTCDAttribute> attributes = new HashSet<>();
+  private final Set<ASTCDAttribute> directAttributes = new LinkedHashSet<>();
+  private final Set<ASTCDAttribute> attributes = new LinkedHashSet<>();
   
-  private final Set<ASTCDAssociation> directAssociations = new HashSet<>();
-  private final Set<ASTCDAssociation> associations = new HashSet<>();
+  private final Set<ASTCDAssociation> directAssociations = new LinkedHashSet<>();
+  private final Set<ASTCDAssociation> associations = new LinkedHashSet<>();
   
   public CachedType(ASTCDType cachedType) {
     this.cachedType = cachedType;

@@ -61,7 +61,7 @@ public class CombinedFunctionalityTest {
     List<ASTCDCompilationUnit> mergeSet = Arrays.stream(Paths.get(base_path, "parts").toFile()
         .listFiles()).map(f -> parseCDModel(f.getAbsolutePath())).collect(Collectors.toList());
     
-    Set<MergeParameter> paramSet = new HashSet<>();
+    Set<MergeParameter> paramSet = new LinkedHashSet<>();
     paramSet.add(MergeParameter.LOG_TO_CONSOLE);
     
     ASTCDCompilationUnit merged = CDMerge.merge(mergeSet, "MergedDomain", paramSet);

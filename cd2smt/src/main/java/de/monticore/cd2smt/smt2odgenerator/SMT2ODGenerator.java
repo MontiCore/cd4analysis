@@ -102,7 +102,7 @@ public class SMT2ODGenerator {
   
   protected Set<SMTLink> buildLinkSet(Set<SMTObject> objectMap, Model model,
       DataWrapper dataWrapper) {
-    Set<SMTLink> links = new HashSet<>();
+    Set<SMTLink> links = new LinkedHashSet<>();
     // inherit links of sub instances
     for (SMTObject obj : objectMap) {
       for (LinkedSMTObject linkedObj : getSuperInstanceLinks(obj, new ArrayList<>())) {

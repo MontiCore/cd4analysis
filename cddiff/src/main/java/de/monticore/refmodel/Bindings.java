@@ -4,7 +4,7 @@ package de.monticore.refmodel;
 import com.google.common.base.Preconditions;
 import de.monticore.symboltable.ISymbol;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +28,7 @@ public class Bindings<T extends ISymbol> {
    * The map of bindings, where the key is computed from the reference element of the binding.
    * The key is computed using the {@link #computeKeyFunction}.
    */
-  private final Map<String, Binding<T>> bindings = new HashMap<>();
+  private final Map<String, Binding<T>> bindings = new LinkedHashMap<>();
   
   /*
    * This is a workaround so we do not have to deal with multiple instances of the same symbol

@@ -24,7 +24,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
   
   @Override
   public ASTMatchGraph<ASTCDType, ASTCDDefinition> findMatchingTypes() {
-    Set<String> names = new HashSet<>();
+    Set<String> names = new LinkedHashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getTypeNames()));
     BiFunction<Integer, String, Optional<ASTCDType>> getTypeFunc = ((i,
         name) -> getCurrentCDHelper().get(i).getType(name));
@@ -33,7 +33,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
   
   @Override
   public ASTMatchGraph<ASTCDClass, ASTCDDefinition> findMatchingClasses() {
-    Set<String> names = new HashSet<>();
+    Set<String> names = new LinkedHashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getClassNames()));
     BiFunction<Integer, String, Optional<ASTCDClass>> getClassFunc = ((i,
         name) -> getCurrentCDHelper().get(i).getClass(name));
@@ -42,7 +42,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
   
   @Override
   public ASTMatchGraph<ASTCDInterface, ASTCDDefinition> findMatchingInterfaces() {
-    Set<String> names = new HashSet<>();
+    Set<String> names = new LinkedHashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getInterfaceNames()));
     BiFunction<Integer, String, Optional<ASTCDInterface>> getInterfaceFunc = ((i,
         name) -> getCurrentCDHelper().get(i).getInterface(name));
@@ -51,7 +51,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
   
   @Override
   public ASTMatchGraph<ASTCDEnum, ASTCDDefinition> findMatchingEnums() {
-    Set<String> names = new HashSet<>();
+    Set<String> names = new LinkedHashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getEnumNames()));
     BiFunction<Integer, String, Optional<ASTCDEnum>> getEnumFunc = ((i,
         name) -> getCurrentCDHelper().get(i).getEnum(name));

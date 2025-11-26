@@ -23,7 +23,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -187,14 +187,15 @@ public class CDBasisSTCompleterTest {
       List<DiagramSymbol> resolvedDiagram = artifactScope.resolveDiagramMany("MyTypes");
       assertEquals(1, resolvedDiagram.size());
       
-      Set<TypeSymbol> resolvedTypes1 = new HashSet<>(artifactScope.resolveTypeMany(
+      Set<TypeSymbol> resolvedTypes1 = new LinkedHashSet<>(artifactScope.resolveTypeMany(
           "SomeImportedType"));
       assertFalse(resolvedTypes1.isEmpty());
       
       // UNCOMMENT THE FOLLOWING LINE AFTER THE DOUBLE RESOLVE BUG IS FIXED
       //      assertEquals(2, resolvedTypes1.size());
       
-      Set<TypeSymbol> resolvedTypes2 = new HashSet<>(artifactScope.resolveTypeMany("NOTEXISTING"));
+      Set<TypeSymbol> resolvedTypes2 = new LinkedHashSet<>(artifactScope.resolveTypeMany(
+          "NOTEXISTING"));
       assertEquals(0, resolvedTypes2.size());
       
       assertEquals(0, Log.getErrorCount());

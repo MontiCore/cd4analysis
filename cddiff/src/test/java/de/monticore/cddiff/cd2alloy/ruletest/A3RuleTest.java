@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ public class A3RuleTest extends CDDiffTestBasis {
     System.out.println(a);
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjLUAttrib[CarSubsCDcd1,drivenBy,DriverSubsCDcd1,1,1]");
     expectedResult.add("ObjLAttrib[CompanySubsCDcd1,emps,EmployeeSubsCDcd1,0]");
     expectedResult.add("ObjLUAttrib[LicenseSubsCDcd1,owner,DriverSubsCDcd1,1,1]");

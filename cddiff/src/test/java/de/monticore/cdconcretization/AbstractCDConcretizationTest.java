@@ -18,7 +18,7 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import de.se_rwth.commons.logging.LogStub;
@@ -55,7 +55,7 @@ public abstract class AbstractCDConcretizationTest {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     UnderspecifiedPlaceholderType.addPlaceholderType(CD4CodeMill.globalScope());
-    confParameters = new HashSet<>(DEFAULT_CONFORMANCE_PARAMS);
+    confParameters = new LinkedHashSet<>(DEFAULT_CONFORMANCE_PARAMS);
   }
   
   /***

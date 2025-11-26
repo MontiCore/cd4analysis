@@ -15,7 +15,7 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /** Sets an initial value of an empty optional, list or set for suitable elements */
@@ -66,7 +66,7 @@ public class CardinalityDefaultDecorator extends AbstractDecorator<AbstractDecor
     // Setting the initial value of the attribute fails, as
     // "new"/CreatorExpression is not part of CD4C
     glex.addAfterTemplate(EMPTY_BODY, c, new TemplateHookPoint("methods.Instantiation", attribute
-        .getName(), HashSet.class.getName()))));
+        .getName(), LinkedHashSet.class.getName()))));
   }
   
   protected void decorateList(ASTCDClass decoratedClazz, ASTCDAttribute attribute) {

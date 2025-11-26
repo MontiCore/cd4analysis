@@ -38,7 +38,7 @@ public class P2RuleTest extends CDDiffTestBasis {
     checkAlloyStructs("ObjFNames", result, 2);
     
     // Process expected results
-    Map<String, Set<String>> procExpResults = new HashMap<>();
+    Map<String, Set<String>> procExpResults = new LinkedHashMap<>();
     for (String res : expectedResult) {
       // Remove white spaces
       res = res.replaceAll("\\p{Space}", "");
@@ -52,7 +52,7 @@ public class P2RuleTest extends CDDiffTestBasis {
       values = values.replaceAll("\\].*", "");
       
       String[] vals = values.split("[+]");
-      Set<String> valSet = new HashSet<>();
+      Set<String> valSet = new LinkedHashSet<>();
       Collections.addAll(valSet, vals);
       
       // Put result to processed expected results
@@ -76,7 +76,7 @@ public class P2RuleTest extends CDDiffTestBasis {
         values = values.replaceAll("\\].*", "");
         
         String[] vals = values.split("[+]");
-        Set<String> valSet = new HashSet<>();
+        Set<String> valSet = new LinkedHashSet<>();
         Collections.addAll(valSet, vals);
         
         // Extract result and check sets
@@ -108,7 +108,7 @@ public class P2RuleTest extends CDDiffTestBasis {
     System.out.println(p2);
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjFNames[Vehicle, licensePlate + regDate + none]");
     expectedResult.add("ObjFNames[Company, cars + emps + none]");
     expectedResult.add("ObjFNames[Employee, ins + none]");
@@ -127,7 +127,7 @@ public class P2RuleTest extends CDDiffTestBasis {
     String[] lines = p2.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjFNames[Task, startDate + employee + none]");
     expectedResult.add("ObjFNames[Employee, kind + task + managedBy + none]");
     expectedResult.add("ObjFNames[Manager, none]");
@@ -141,7 +141,7 @@ public class P2RuleTest extends CDDiffTestBasis {
     String[] lines = p2.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("ObjFNames[Task, startDate + employee + none]");
     expectedResult.add("ObjFNames[Employee, kind + task + managedBy + none]");
     expectedResult.add("ObjFNames[Manager, kind + task + managedBy + none]");

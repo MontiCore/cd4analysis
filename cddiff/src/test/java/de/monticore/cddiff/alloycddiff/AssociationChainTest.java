@@ -11,7 +11,7 @@ import de.monticore.odbasis._ast.ASTODObject;
 import edu.mit.csail.sdg.translator.A4Solution;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -63,7 +63,7 @@ public class AssociationChainTest extends CDDiffTestBasis {
     assertNotNull(astV2);
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(astV1);
     asts.add(astV2);
     

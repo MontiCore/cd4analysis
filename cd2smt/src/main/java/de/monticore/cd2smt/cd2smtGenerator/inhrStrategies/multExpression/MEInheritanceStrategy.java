@@ -53,8 +53,8 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
   private ASTCDDefinition cd;
   
   public MEInheritanceStrategy() {
-    inheritanceConstraints = new HashSet<>();
-    inheritanceFeaturesMap = new HashMap<>();
+    inheritanceConstraints = new LinkedHashSet<>();
+    inheritanceFeaturesMap = new LinkedHashMap<>();
   }
   
   @Override
@@ -171,7 +171,7 @@ public class MEInheritanceStrategy implements InheritanceStrategy {
   
   protected Map<ASTCDType, Constructor<Sort>> buildSubclassConstructorList(ASTCDType astcdType) {
     List<ASTCDType> subTypeList = CDHelper.getSubTypeList(cd, astcdType);
-    Map<ASTCDType, Constructor<Sort>> res = new HashMap<>();
+    Map<ASTCDType, Constructor<Sort>> res = new LinkedHashMap<>();
     
     // build Constructor for subclasses of the class astcdtype
     for (ASTCDType entry : subTypeList) {

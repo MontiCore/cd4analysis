@@ -10,7 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import org.junit.jupiter.api.Test;
 
 public class VariableDiffTest extends CDDiffTestBasis {
@@ -44,7 +44,7 @@ public class VariableDiffTest extends CDDiffTestBasis {
     assertEquals(3, cd2.getCDDefinition().getCDAssociationsList().size());
     
     int found = 0;
-    for (ASTCDClass current : new HashSet<>(cd1.getCDDefinition().getCDClassesList())) {
+    for (ASTCDClass current : new LinkedHashSet<>(cd1.getCDDefinition().getCDClassesList())) {
       if (current.getName().equals("Employee")) {
         assertFalse(CDInheritanceHelper.isSuperOf("Insurable", "Employee", scope1));
         found++;

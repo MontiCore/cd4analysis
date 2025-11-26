@@ -26,7 +26,7 @@ public class CDAssociationDirectCompositionTrafo implements CDBasisVisitor2, CDA
   protected Optional<ASTCDDefinition> cd = Optional.empty();
   protected Optional<ASTCDType> type = Optional.empty();
   
-  protected Map<ASTCDType, List<ASTCDMember>> toRemove = new HashMap<>();
+  protected Map<ASTCDType, List<ASTCDMember>> toRemove = new LinkedHashMap<>();
   protected List<ASTCDElement> toAdd = new ArrayList<>();
   
   @Override

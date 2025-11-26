@@ -17,7 +17,7 @@ import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.cdmatcher.MatchCDAssocsGreedy;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,8 +84,8 @@ public class MissingAssociationsCDCompleter extends AbstractCDCompleter {
               .toSet());
       
       // Initialize sets to track which type incarnations still need processing
-      Set<ASTCDType> leftTypeInc2Process = new HashSet<>(rLeftTypeIncarnations);
-      Set<ASTCDType> rightTypeInc2Process = new HashSet<>(rRightTypeIncarnations);
+      Set<ASTCDType> leftTypeInc2Process = new LinkedHashSet<>(rLeftTypeIncarnations);
+      Set<ASTCDType> rightTypeInc2Process = new LinkedHashSet<>(rRightTypeIncarnations);
       
       // Process the type incarnations to find and handle matching associations
       // First, process left-type incarnations against right-type incarnations

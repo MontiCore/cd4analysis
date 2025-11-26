@@ -26,7 +26,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,8 +38,8 @@ public class CDAssociationCreateFieldsFromAllRoles implements CDAssociationVisit
   protected CDAssociationTraverser traverser;
   protected List<ASTMCImportStatement> imports;
   protected ASTMCQualifiedName packageDeclaration;
-  protected Map<FieldSymbol, SourcePosition> createdFields = new HashMap<>();
-  protected Map<FieldSymbol, CDRoleSymbol> fieldToRoles = new HashMap<>();
+  protected Map<FieldSymbol, SourcePosition> createdFields = new LinkedHashMap<>();
+  protected Map<FieldSymbol, CDRoleSymbol> fieldToRoles = new LinkedHashMap<>();
   
   @Override
   public CDAssociationTraverser getTraverser() { return traverser; }

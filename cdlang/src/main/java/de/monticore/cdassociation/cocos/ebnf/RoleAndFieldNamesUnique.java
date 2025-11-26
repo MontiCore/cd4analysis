@@ -29,10 +29,10 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
       return;
     }
     
-    Set<String> fieldAndRoleNames = new HashSet<>();
+    Set<String> fieldAndRoleNames = new LinkedHashSet<>();
     Deque<OOTypeSymbol> toProcess = new ArrayDeque<>();
     toProcess.add(node.getSymbol());
-    Set<OOTypeSymbol> processed = new HashSet<>();
+    Set<OOTypeSymbol> processed = new LinkedHashSet<>();
     
     while (!toProcess.isEmpty()) {
       OOTypeSymbol curSymbol = toProcess.pop();

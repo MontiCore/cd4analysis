@@ -9,7 +9,7 @@ import de.monticore.cdconformance.conf.attribute.CDAttributeChecker;
 import de.monticore.cdconformance.conf.method.CDMethodChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.cddiff.CDDiffUtil;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,26 +23,26 @@ public class DeepTypeConfStrategy extends BasicTypeConfStrategy {
   
   @Override
   protected boolean checkAttributeIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return checkAttributeIncarnation(new HashSet<>(CDSymbolTables.getAttributesInHierarchy(
-        concrete)), new HashSet<>(ref.getCDAttributeList()));
+    return checkAttributeIncarnation(new LinkedHashSet<>(CDSymbolTables.getAttributesInHierarchy(
+        concrete)), new LinkedHashSet<>(ref.getCDAttributeList()));
   }
   
   @Override
   protected boolean checkMethodIncarnation(ASTCDType concrete, ASTCDType ref) {
-    return checkMethodIncarnation(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)),
-        new HashSet<>(ref.getCDMethodList()));
+    return checkMethodIncarnation(new LinkedHashSet<>(CDSymbolTables.getMethodsInHierarchy(
+        concrete)), new LinkedHashSet<>(ref.getCDMethodList()));
   }
   
   @Override
   protected boolean checkAttributeConformance(ASTCDType concrete, ASTCDType refType) {
-    return checkAttributeConformance(new HashSet<>(CDSymbolTables.getAttributesInHierarchy(
+    return checkAttributeConformance(new LinkedHashSet<>(CDSymbolTables.getAttributesInHierarchy(
         concrete)), refType);
   }
   
   @Override
   protected boolean checkMethodConformance(ASTCDType concrete, ASTCDType refType) {
-    return checkMethodConformance(new HashSet<>(CDSymbolTables.getMethodsInHierarchy(concrete)),
-        refType);
+    return checkMethodConformance(new LinkedHashSet<>(CDSymbolTables.getMethodsInHierarchy(
+        concrete)), refType);
   }
   
   @Override

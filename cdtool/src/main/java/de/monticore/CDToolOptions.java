@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.cli.*;
 
@@ -9,7 +9,7 @@ public class CDToolOptions {
   
   protected final Options options = new Options();
   
-  protected final Map<SubCommand, Options> subCommands = new HashMap<>();
+  protected final Map<SubCommand, Options> subCommands = new LinkedHashMap<>();
   
   protected final DefaultParser parser = new DefaultParser();
   

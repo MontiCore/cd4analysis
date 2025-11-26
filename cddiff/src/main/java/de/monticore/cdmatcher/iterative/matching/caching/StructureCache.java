@@ -5,15 +5,15 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 public class StructureCache {
   
-  private final Map<ASTCDAssociation, CachedAssoc> assocCache = new HashMap<>();
-  private final Map<ASTCDType, CachedType> typeCache = new HashMap<>();
+  private final Map<ASTCDAssociation, CachedAssoc> assocCache = new LinkedHashMap<>();
+  private final Map<ASTCDType, CachedType> typeCache = new LinkedHashMap<>();
   
   public boolean addAssociation(ASTCDAssociation assoc, ASTCDType leftType, ASTCDType rightType) {
     if (assocCache.containsKey(assoc)) {

@@ -26,7 +26,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -63,7 +63,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public Set<ASTCDType> getReferenceElements(ASTCDType concreteType) {
-    return new HashSet<>(typeIncStrategy.getMatchedElements(concreteType));
+    return new LinkedHashSet<>(typeIncStrategy.getMatchedElements(concreteType));
   }
   
   @Override
@@ -135,7 +135,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   public Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute concreteAttribute) {
     ASTCDType concreteType = (ASTCDType) concreteAttribute.getSymbol().getEnclosingScope()
         .getAstNode();
-    Set<ASTCDAttribute> refElements = new HashSet<>();
+    Set<ASTCDAttribute> refElements = new LinkedHashSet<>();
     for (ASTCDType declaringRefType : getReferenceElements(concreteType)) {
       refElements.addAll(getReferenceElements(concreteAttribute, declaringRefType));
     }
@@ -146,7 +146,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   public Set<ASTCDAttribute> getReferenceElements(ASTCDAttribute concreteAttribute,
       ASTCDType declaringRefType) {
     attributeIncStrategy.setReferenceType(declaringRefType);
-    return new HashSet<>(attributeIncStrategy.getMatchedElements(concreteAttribute));
+    return new LinkedHashSet<>(attributeIncStrategy.getMatchedElements(concreteAttribute));
   }
   
   @Override
@@ -213,7 +213,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   public Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteMethod) {
     ASTCDType concreteType = (ASTCDType) concreteMethod.getSymbol().getEnclosingScope()
         .getAstNode();
-    Set<ASTCDMethod> refElements = new HashSet<>();
+    Set<ASTCDMethod> refElements = new LinkedHashSet<>();
     for (ASTCDType declaringRefType : getReferenceElements(concreteType)) {
       refElements.addAll(getReferenceElements(concreteMethod, declaringRefType));
     }
@@ -224,7 +224,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   public Set<ASTCDMethod> getReferenceElements(ASTCDMethod concreteMethod,
       ASTCDType declaringRefType) {
     methodIncStrategy.setReferenceType(declaringRefType);
-    return new HashSet<>(methodIncStrategy.getMatchedElements(concreteMethod));
+    return new LinkedHashSet<>(methodIncStrategy.getMatchedElements(concreteMethod));
   }
   
   @Override
@@ -283,7 +283,7 @@ public class DefaultCDIncarnationMapping implements CDIncarnationMapping {
   
   @Override
   public Set<ASTCDAssociation> getReferenceElements(ASTCDAssociation concreteAssoc) {
-    return new HashSet<>(associationIncStrategy.getMatchedElements(concreteAssoc));
+    return new LinkedHashSet<>(associationIncStrategy.getMatchedElements(concreteAssoc));
   }
   
   @Override

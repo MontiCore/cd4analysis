@@ -9,7 +9,7 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
@@ -36,7 +36,8 @@ public class CD4AnalysisScopeManager extends CD4AnalysisScopeManagerTOP {
   @Override
   public Map<ASTCDCompilationUnit, CD4AnalysisArtifactScopeWithFindings> createAllArtifactScopes(
       Collection<ASTCDCompilationUnit> astNodes) {
-    final Map<ASTCDCompilationUnit, CD4AnalysisArtifactScopeWithFindings> res = new HashMap<>();
+    final Map<ASTCDCompilationUnit, CD4AnalysisArtifactScopeWithFindings> res =
+        new LinkedHashMap<>();
     syncAccessGlobalScope(gs -> {
       clearGlobalScope();
       if (supportsIterativeScopeAppending()) {

@@ -24,7 +24,7 @@ public abstract class AttributeMatcherBase extends MatcherBase implements Attrib
       ASTMatchGraph<ASTCDClass, ASTCDDefinition> matchedClasses) {
     
     Map<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>> matchingAttributes =
-        new HashMap<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>>();
+        new LinkedHashMap<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>>();
     
     String parentClassName;
     MatchNode<ASTCDAttribute, ASTCDClass> node1, node2;

@@ -7,7 +7,7 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CD2SMTMill {
@@ -15,7 +15,7 @@ public class CD2SMTMill {
   private static ClassStrategy.Strategy cs;
   private static InheritanceData.Strategy is;
   private static AssociationStrategy.Strategy as;
-  private static Map<ASTCDType, Integer> cardinalities = new HashMap<>();
+  private static Map<ASTCDType, Integer> cardinalities = new LinkedHashMap<>();
   
   public static void init(ClassStrategy.Strategy cs, InheritanceData.Strategy is,
       AssociationStrategy.Strategy as) {

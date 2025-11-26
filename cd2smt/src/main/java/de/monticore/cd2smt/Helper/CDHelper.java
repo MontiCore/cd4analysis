@@ -83,7 +83,7 @@ public class CDHelper {
   }
   
   public static Set<ASTCDType> getSubTypeAllDeep(ASTCDType astcdType, ASTCDCompilationUnit ast) {
-    Set<ASTCDType> res = new HashSet<>();
+    Set<ASTCDType> res = new LinkedHashSet<>();
     getSubTypeAllDeepHelper(astcdType, ast.getCDDefinition(), res);
     res.remove(astcdType);
     return res;
@@ -301,7 +301,7 @@ public class CDHelper {
   }
   
   public static Set<ASTCDType> getSuperTypeAllDeep(ASTCDType astcdType, ASTCDDefinition cd) {
-    Set<ASTCDType> res = new HashSet<>();
+    Set<ASTCDType> res = new LinkedHashSet<>();
     getSuperTypeAllDeepHelper(astcdType, cd, res);
     res.remove(astcdType);
     return res;

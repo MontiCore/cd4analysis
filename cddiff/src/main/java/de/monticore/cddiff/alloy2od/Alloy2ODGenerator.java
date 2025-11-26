@@ -91,19 +91,19 @@ public class Alloy2ODGenerator {
     
     // Derive all necessary information
     // The set of all value names
-    Set<String> valNames = new HashSet<>();
+    Set<String> valNames = new LinkedHashSet<>();
     for (A4Tuple value : val) {
       valNames.add(value.toString());
     }
     
     // The set of all enum names
-    Set<String> enumValNames = new HashSet<>();
+    Set<String> enumValNames = new LinkedHashSet<>();
     for (A4Tuple value : enumVal) {
       enumValNames.add(value.toString());
     }
     
     // The set of all object names
-    Set<String> objNames = new HashSet<>();
+    Set<String> objNames = new LinkedHashSet<>();
     for (A4Tuple value : obj) {
       objNames.add(value.toString());
     }

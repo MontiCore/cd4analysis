@@ -6,7 +6,7 @@ import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cddiff.cd2alloy.generator.OpenWorldGenerator;
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -19,7 +19,7 @@ public class DiffModuleGenerator {
   private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
       CDSemantics semantics) {
     // Create inputs
-    Set<ASTCDCompilationUnit> cds = new HashSet<>();
+    Set<ASTCDCompilationUnit> cds = new LinkedHashSet<>();
     cds.add(cd1);
     cds.add(cd2);
     
@@ -76,7 +76,7 @@ public class DiffModuleGenerator {
       int k, CDSemantics semantics, File outputDirectory) {
     
     // Initialize set of asts
-    Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(cd1);
     asts.add(cd2);
     

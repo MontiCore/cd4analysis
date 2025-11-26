@@ -21,7 +21,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -62,7 +62,7 @@ public class CDFullNameTrafo {
   
   protected void qualifyInheritance(ASTCDClass cdClass) {
     if (cdClass.isPresentCDExtendUsage()) {
-      Set<String> extendsList = new HashSet<>();
+      Set<String> extendsList = new LinkedHashSet<>();
       for (ASTMCObjectType type : cdClass.getCDExtendUsage().getSuperclassList()) {
         assert type.getDefiningSymbol().isPresent();
         type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(retrieveFullName(symbol)));
@@ -71,7 +71,7 @@ public class CDFullNameTrafo {
           .toArray(new String[0])));
     }
     if (cdClass.isPresentCDInterfaceUsage()) {
-      Set<String> implementsList = new HashSet<>();
+      Set<String> implementsList = new LinkedHashSet<>();
       for (ASTMCObjectType type : cdClass.getCDInterfaceUsage().getInterfaceList()) {
         assert type.getDefiningSymbol().isPresent();
         type.getDefiningSymbol().ifPresent(symbol -> implementsList.add(retrieveFullName(symbol)));
@@ -83,7 +83,7 @@ public class CDFullNameTrafo {
   
   protected void qualifyInheritance(ASTCDInterface cdInterface) {
     if (cdInterface.isPresentCDExtendUsage()) {
-      Set<String> extendsList = new HashSet<>();
+      Set<String> extendsList = new LinkedHashSet<>();
       for (ASTMCObjectType type : cdInterface.getCDExtendUsage().getSuperclassList()) {
         assert type.getDefiningSymbol().isPresent();
         type.getDefiningSymbol().ifPresent(symbol -> extendsList.add(retrieveFullName(symbol)));

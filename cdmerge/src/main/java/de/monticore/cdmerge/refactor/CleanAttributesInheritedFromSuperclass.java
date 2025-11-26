@@ -8,7 +8,7 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.ASTCDHelper;
 import de.monticore.cdmerge.util.CDMergeUtils;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase
         // subclass shadowed the one from the superclass. We
         // don't pull-up these Attributes as there was a
         // semantic intention to keep both prior to the merge.
-        Set<String> attributesToCheck = new HashSet<>();
+        Set<String> attributesToCheck = new LinkedHashSet<>();
         if (cdInput1.cdContainsClass(c.getName())) {
           ASTCDClass classInCD1;
           if (cdInput1.getClass(c.getName()).get().isPresentCDExtendUsage()) {
@@ -80,7 +80,7 @@ public class CleanAttributesInheritedFromSuperclass extends ModelRefactoringBase
   
   private void cleanAttributes(ASTCDClass merged, List<ASTCDClass> superClasses,
       Set<String> attributesToCheck) {
-    Set<ASTCDAttribute> remove = new HashSet<>();
+    Set<ASTCDAttribute> remove = new LinkedHashSet<>();
     for (String attrName : attributesToCheck) {
       Optional<ASTCDAttribute> attr = CDMergeUtils.getAttributeFromClass(attrName, merged);
       if (attr.isPresent()) {

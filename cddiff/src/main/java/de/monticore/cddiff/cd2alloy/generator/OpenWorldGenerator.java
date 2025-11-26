@@ -6,7 +6,7 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -47,18 +47,18 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
     
     // Union of all Enums
-    Set<ASTCDEnum> enumUnion = new HashSet<>();
+    Set<ASTCDEnum> enumUnion = new LinkedHashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDEnum> enumSet = new HashSet<>(astcdCompilationUnit.getCDDefinition()
+      Set<ASTCDEnum> enumSet = new LinkedHashSet<>(astcdCompilationUnit.getCDDefinition()
           .getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
     // Union of all Enum Names
-    Set<String> enumNameUnion = new HashSet<>();
+    Set<String> enumNameUnion = new LinkedHashSet<>();
     for (ASTCDEnum astcdEnum : enumUnion) {
       enumNameUnion.add(CDDiffUtil.escape2Alloy(astcdEnum.getSymbol().getInternalQualifiedName()));
     }
-    Set<String> enumTypeNameUnion = new HashSet<>();
+    Set<String> enumTypeNameUnion = new LinkedHashSet<>();
     for (ASTCDEnum e : enumUnion) {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
@@ -101,15 +101,17 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     StringBuilder classFunctions = new StringBuilder();
     
     // The set of all classes in the class diagram
-    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+    Set<ASTCDClass> classes = new LinkedHashSet<>(cd.getCDDefinition().getCDClassesList());
     
     classFunctions.append("// P0: New rule for multi-instance semantics. ").append(System
         .lineSeparator());
     for (ASTCDClass astcdClass : classes) {
       
       // Computation of Superclasses
-      Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
-      Set<ASTCDType> superList = new HashSet<>(CDDiffUtil.getAllSuperclasses(astcdClass, classes));
+      Set<ASTCDInterface> allInterfaces = new LinkedHashSet<>(cd.getCDDefinition()
+          .getCDInterfacesList());
+      Set<ASTCDType> superList = new LinkedHashSet<>(CDDiffUtil.getAllSuperclasses(astcdClass,
+          classes));
       for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, classes)) {
         superList.addAll(CDDiffUtil.getAllInterfaces(superclass, allInterfaces));
       }
@@ -131,12 +133,14 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       }
     }
     
-    Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+    Set<ASTCDInterface> interfaces = new LinkedHashSet<>(cd.getCDDefinition()
+        .getCDInterfacesList());
     for (ASTCDInterface astcdInterface : interfaces) {
       
       // Computation of Superclasses
-      Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
-      Set<ASTCDType> superList = new HashSet<>(CDDiffUtil.getAllInterfaces(astcdInterface,
+      Set<ASTCDInterface> allInterfaces = new LinkedHashSet<>(cd.getCDDefinition()
+          .getCDInterfacesList());
+      Set<ASTCDType> superList = new LinkedHashSet<>(CDDiffUtil.getAllInterfaces(astcdInterface,
           allInterfaces));
       
       // Output P0
@@ -173,7 +177,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
     
     // All classes of the cd
-    Set<ASTCDType> cdTypes = new HashSet<>(cdDefinition.getCDClassesList());
+    Set<ASTCDType> cdTypes = new LinkedHashSet<>(cdDefinition.getCDClassesList());
     cdTypes.addAll(cdDefinition.getCDInterfacesList());
     
     // Comment
@@ -207,7 +211,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     StringBuilder classFunctions = new StringBuilder();
     
     // The set of all classes in the class diagram
-    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+    Set<ASTCDClass> classes = new LinkedHashSet<>(cd.getCDDefinition().getCDClassesList());
     
     classFunctions.append("// F1: Function returning all atoms of all subclasses of the class. ")
         .append(System.lineSeparator());
@@ -234,7 +238,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     StringBuilder interfaceFunctions = new StringBuilder();
     
     // The set of all classes in the class diagram
-    Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+    Set<ASTCDInterface> interfaces = new LinkedHashSet<>(cd.getCDDefinition()
+        .getCDInterfacesList());
     
     interfaceFunctions.append("// F2: Function returning all atoms of all classes implementing "
         + "the interface" + ". ").append(System.lineSeparator());
@@ -266,7 +271,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
     
     // The set of all enums in the class diagram
-    Set<ASTCDEnum> enums = new HashSet<>(cdDefinition.getCDEnumsList());
+    Set<ASTCDEnum> enums = new LinkedHashSet<>(cdDefinition.getCDEnumsList());
     
     // Comment for F3 rule
     classFunctions.append(

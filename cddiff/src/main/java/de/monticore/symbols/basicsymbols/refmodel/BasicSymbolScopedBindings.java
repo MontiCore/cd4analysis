@@ -7,7 +7,7 @@ import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -55,7 +55,7 @@ public class BasicSymbolScopedBindings implements IBasicSymbolsBindings {
   
   @Override
   public Set<Binding<TypeSymbol>> getTypeBindings() {
-    Set<Binding<TypeSymbol>> result = new HashSet<>();
+    Set<Binding<TypeSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getTypeBindings());
     result.addAll(inheritedBindings.getTypeBindings());
     return result;
@@ -88,7 +88,7 @@ public class BasicSymbolScopedBindings implements IBasicSymbolsBindings {
   
   @Override
   public Set<Binding<VariableSymbol>> getVariableBindings() {
-    Set<Binding<VariableSymbol>> result = new HashSet<>();
+    Set<Binding<VariableSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getVariableBindings());
     result.addAll(inheritedBindings.getVariableBindings());
     return result;
@@ -122,7 +122,7 @@ public class BasicSymbolScopedBindings implements IBasicSymbolsBindings {
   
   @Override
   public Set<Binding<FunctionSymbol>> getFunctionBindings() {
-    Set<Binding<FunctionSymbol>> result = new HashSet<>();
+    Set<Binding<FunctionSymbol>> result = new LinkedHashSet<>();
     result.addAll(localBindings.getFunctionBindings());
     result.addAll(inheritedBindings.getFunctionBindings());
     return result;

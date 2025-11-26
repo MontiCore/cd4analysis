@@ -125,7 +125,7 @@ public class CD2JsonTransform {
   protected static ObjectNode getAttribute(SymTypeExpression attr) {
     
     // Mapping from Java to TypeScript types
-    Map<String, String> m = new HashMap<>();
+    Map<String, String> m = new LinkedHashMap<>();
     m.put("float", "number");
     m.put("Float", "number");
     m.put("int", "number");

@@ -84,7 +84,7 @@ public class MergeTool {
   
   private void mergeImports(MergeBlackBoard mergeBlackBoard, ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2) {
-    Map<String, ASTMCImportStatement> newImports = new HashMap<>();
+    Map<String, ASTMCImportStatement> newImports = new LinkedHashMap<>();
     for (ASTMCImportStatement impStatement : cd1.getMCImportStatementList()) {
       if (!isImportMergedModel(impStatement)) {
         newImports.put(impStatement.getQName(), impStatement);

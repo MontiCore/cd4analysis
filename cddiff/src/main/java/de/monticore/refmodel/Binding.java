@@ -3,6 +3,7 @@ package de.monticore.refmodel;
 
 import de.monticore.symboltable.ISymbol;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -91,7 +92,7 @@ public class Binding<T extends ISymbol> {
     Set<String> thisConcreteKeys = concreteElements.stream().map(computeKeyFun).collect(Collectors
         .toSet());
     Set<String> otherConcreteKeys = other.concreteElements.stream().map(computeKeyFun).collect(
-        Collectors.toSet());
+        Collectors.toCollection(LinkedHashSet::new));
     if (this.isStrict() && other.isStrict()) {
       return !thisConcreteKeys.equals(otherConcreteKeys);
     }
@@ -111,7 +112,7 @@ public class Binding<T extends ISymbol> {
     Set<String> thisConcreteKeys = concreteElements.stream().map(computeKeyFun).collect(Collectors
         .toSet());
     Set<String> otherConcreteKeys = other.concreteElements.stream().map(computeKeyFun).collect(
-        Collectors.toSet());
+        Collectors.toCollection(LinkedHashSet::new));
     if (this.isStrict() && other.isStrict()) {
       if (thisConcreteKeys.equals(otherConcreteKeys)) {
         return this; // No conflict, return the existing binding

@@ -30,7 +30,7 @@ public class CDMemberVisitor implements CD4CodeVisitor2, CDBasisVisitor2,
   protected final List<ASTCDMember> elements;
   
   public CDMemberVisitor(Options... options) {
-    this.options = new HashSet<>(Arrays.asList(options));
+    this.options = new LinkedHashSet<>(Arrays.asList(options));
     if (this.options.isEmpty()) {
       this.options.add(Options.ALL);
     }

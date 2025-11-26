@@ -74,8 +74,8 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     this.matches = new CDSynDiffMatches(this.srcCD, this.tgtCD, structureMatch);
     
     helper = new Syn2SemDiffHelper(matches); // Don't change the order of the calls!
-    helper.setNotInstClassesSrc(new HashSet<>());
-    helper.setNotInstClassesTgt(new HashSet<>());
+    helper.setNotInstClassesSrc(new LinkedHashSet<>());
+    helper.setNotInstClassesTgt(new LinkedHashSet<>());
     helper.setMatchingStrategies(matchingStrategies);
     helper.setSrcCD(srcCD);
     helper.setTgtCD(tgtCD);
@@ -277,13 +277,13 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public Set<Pair<ASTCDType, Set<ASTCDType>>> deletedInheritance() {
-    Set<Pair<ASTCDType, Set<ASTCDType>>> diff = new HashSet<>();
+    Set<Pair<ASTCDType, Set<ASTCDType>>> diff = new LinkedHashSet<>();
     for (Pair<ASTCDType, List<ASTCDType>> struc : deletedInheritance) {
       Optional<ASTCDType> src = helper.findMatchedTypeSrc(struc.a);
       if (src.isPresent() && !helper.getNotInstClassesSrc().contains(src.get()) && !helper
           .getNotInstClassesTgt().contains(struc.a)) {
         List<ASTCDType> superClasses = struc.b; // deleted superclasses from tgtCD
-        Set<ASTCDType> currentDiff = new HashSet<>();
+        Set<ASTCDType> currentDiff = new LinkedHashSet<>();
         for (ASTCDType superClass : superClasses) {
           if (!helper.getNotInstClassesTgt().contains(superClass) && isInheritanceDeleted(
               superClass, src.get())) {
@@ -358,10 +358,10 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   // CHECKED
   @Override
   public Set<Pair<ASTCDType, Set<ASTCDType>>> addedInheritance() {
-    Set<Pair<ASTCDType, Set<ASTCDType>>> diff = new HashSet<>();
+    Set<Pair<ASTCDType, Set<ASTCDType>>> diff = new LinkedHashSet<>();
     for (Pair<ASTCDType, List<ASTCDType>> struc : addedInheritance) {
       List<ASTCDType> superClasses = struc.b;
-      Set<ASTCDType> currentDiff = new HashSet<>();
+      Set<ASTCDType> currentDiff = new LinkedHashSet<>();
       for (ASTCDType superClass : superClasses) {
         if (!helper.getNotInstClassesSrc().contains(struc.a) && helper.findMatchedTypeTgt(struc.a)
             .isPresent() && !helper.getNotInstClassesTgt().contains(helper.findMatchedTypeTgt(
@@ -382,7 +382,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   public Set<InheritanceDiff> mergeInheritanceDiffs() {
     Set<Pair<ASTCDType, Set<ASTCDType>>> added = addedInheritance();
     Set<Pair<ASTCDType, Set<ASTCDType>>> deleted = deletedInheritance();
-    Set<InheritanceDiff> set = new HashSet<>();
+    Set<InheritanceDiff> set = new LinkedHashSet<>();
     for (Pair<ASTCDType, Set<ASTCDType>> pair : added) {
       InheritanceDiff diff = new InheritanceDiff(new Pair<>(pair.a, helper.findMatchedTypeTgt(
           pair.a).get()));
@@ -614,14 +614,14 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
   
   @Override
   public void findOverlappingAssocs() {
-    Set<ASTCDType> srcToDelete = new HashSet<>();
-    Set<Pair<ASTCDType, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
-    Set<DeleteStruct> srcAssocsToMergeWithDelete = new HashSet<>();
-    Set<ASTCDType> tgtToDelete = new HashSet<>();
-    Set<Pair<ASTCDType, ASTCDRole>> tgtAssocsToDelete = new HashSet<>();
-    Set<DeleteStruct> tgtAssocsToMergeWithDelete = new HashSet<>();
+    Set<ASTCDType> srcToDelete = new LinkedHashSet<>();
+    Set<Pair<ASTCDType, ASTCDRole>> srcAssocsToDelete = new LinkedHashSet<>();
+    Set<DeleteStruct> srcAssocsToMergeWithDelete = new LinkedHashSet<>();
+    Set<ASTCDType> tgtToDelete = new LinkedHashSet<>();
+    Set<Pair<ASTCDType, ASTCDRole>> tgtAssocsToDelete = new LinkedHashSet<>();
+    Set<DeleteStruct> tgtAssocsToMergeWithDelete = new LinkedHashSet<>();
     for (ASTCDType astcdClass : helper.getSrcMap().keySet()) {
-      Set<Pair<AssocStruct, AssocStruct>> toCheck = new HashSet<>();
+      Set<Pair<AssocStruct, AssocStruct>> toCheck = new LinkedHashSet<>();
       OverlappingAssocsDirect pairs = helper.computeDirectForType(astcdClass, helper.getSrcMap(),
           helper.getSrcCD());
       toCheck.addAll(pairs.getDirectOverlappingAssocs());
@@ -652,7 +652,7 @@ public class CDSyntaxDiff extends SyntaxDiffHelper implements ICDSyntaxDiff {
     }
     
     for (ASTCDType astcdClass : helper.getTgtMap().keySet()) {
-      Set<Pair<AssocStruct, AssocStruct>> toCheck = new HashSet<>();
+      Set<Pair<AssocStruct, AssocStruct>> toCheck = new LinkedHashSet<>();
       OverlappingAssocsDirect pairs = helper.computeDirectForType(astcdClass, helper.getTgtMap(),
           helper.getTgtCD());
       toCheck.addAll(pairs.getDirectOverlappingAssocs());

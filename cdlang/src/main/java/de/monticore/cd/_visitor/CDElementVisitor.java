@@ -22,7 +22,7 @@ public class CDElementVisitor implements CD4CodeVisitor2, CDBasisVisitor2,
   protected final List<ASTCDElement> elements;
   
   public CDElementVisitor(Options... options) {
-    this.options = new HashSet<>(Arrays.asList(options));
+    this.options = new LinkedHashSet<>(Arrays.asList(options));
     if (this.options.isEmpty()) {
       this.options.add(CDElementVisitor.Options.ALL);
     }

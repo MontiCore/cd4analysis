@@ -38,10 +38,10 @@ public class CDInheritanceHelper {
   
   /** return all superclasses and interfaces of cdType */
   public static Set<ASTCDType> getAllSuper(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
-    Set<ASTCDType> superSet = new HashSet<>(getDirectSuperClasses(cdType, artifactScope));
+    Set<ASTCDType> superSet = new LinkedHashSet<>(getDirectSuperClasses(cdType, artifactScope));
     superSet.addAll(getDirectInterfaces(cdType, artifactScope));
     
-    Set<ASTCDType> nextSuperSuperSet = new HashSet<>();
+    Set<ASTCDType> nextSuperSuperSet = new LinkedHashSet<>();
     for (ASTCDType nextSuper : superSet) {
       nextSuperSuperSet.addAll(getAllSuper(nextSuper, artifactScope));
     }
@@ -56,7 +56,7 @@ public class CDInheritanceHelper {
    */
   public static Set<ASTCDType> getDirectSuperClasses(ASTCDType cdType,
       ICD4CodeArtifactScope artifactScope) {
-    Set<ASTCDType> extendsSet = new HashSet<>();
+    Set<ASTCDType> extendsSet = new LinkedHashSet<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
       resolveClosestType(cdType, superType.printType(), artifactScope).ifPresent(extendsSet::add);
     }
@@ -66,7 +66,7 @@ public class CDInheritanceHelper {
   /** return all interfaces from InterfaceList since I cannot use getSymbol().getInterfaceList() */
   public static Set<ASTCDType> getDirectInterfaces(ASTCDType cdType,
       ICD4CodeArtifactScope artifactScope) {
-    Set<ASTCDType> interfaceSet = new HashSet<>();
+    Set<ASTCDType> interfaceSet = new LinkedHashSet<>();
     for (ASTMCObjectType superType : cdType.getInterfaceList()) {
       resolveClosestType(cdType, superType.printType(), artifactScope).ifPresent(interfaceSet::add);
     }

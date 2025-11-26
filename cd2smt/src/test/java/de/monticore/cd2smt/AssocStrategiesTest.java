@@ -12,7 +12,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,7 +30,7 @@ public class AssocStrategiesTest extends CD2SMTAbstractTest {
   
   @Test
   public void testOptionalCard() {
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     Context ctx = new Context(cfg);
     ASTCDCompilationUnit ast = parseModel("/assocStrategies/Optional.cd");

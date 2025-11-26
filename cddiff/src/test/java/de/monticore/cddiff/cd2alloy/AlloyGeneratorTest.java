@@ -10,7 +10,7 @@ import de.monticore.cddiff.alloycddiff.DiffModuleGenerator;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(ast);
     
     // Call generator
@@ -49,7 +49,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(astV1);
     asts.add(astV2);
     
@@ -71,7 +71,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(astV1);
     asts.add(astV2);
     
@@ -93,7 +93,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/new-semantics");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(astV1);
     asts.add(astV2);
     
@@ -115,7 +115,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/full-name");
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(astV1);
     asts.add(astV2);
     
@@ -135,7 +135,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     assertNotNull(astV2);
     
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    final Set<ASTCDCompilationUnit> asts = new LinkedHashSet<>();
     asts.add(astV1);
     asts.add(astV2);
     

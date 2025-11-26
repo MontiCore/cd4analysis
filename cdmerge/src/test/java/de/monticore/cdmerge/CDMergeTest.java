@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.MergeParameter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +30,7 @@ public class CDMergeTest extends BaseTest {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
     
-    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new HashSet<>());
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new LinkedHashSet<>());
     
     assertNotNull(mergedCD);
     System.out.println(CD4CodeMill.prettyPrint(mergedCD, true));
@@ -48,7 +48,7 @@ public class CDMergeTest extends BaseTest {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
     
-    HashSet<MergeParameter> params = new HashSet<>();
+    LinkedHashSet<MergeParameter> params = new LinkedHashSet<>();
     
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);
@@ -73,7 +73,7 @@ public class CDMergeTest extends BaseTest {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
     
-    HashSet<MergeParameter> params = new HashSet<>();
+    LinkedHashSet<MergeParameter> params = new LinkedHashSet<>();
     
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);
@@ -102,7 +102,7 @@ public class CDMergeTest extends BaseTest {
     
     // Test all permutations of the merging order
     for (List<ASTCDCompilationUnit> permutation : computeAllPermutations(inputSet)) {
-      HashSet<MergeParameter> params = new HashSet<>();
+      LinkedHashSet<MergeParameter> params = new LinkedHashSet<>();
       
       System.out.println("Merging " + permutation.stream().map(cd -> cd.getCDDefinition().getName())
           .collect(Collectors.toList()));
@@ -119,7 +119,7 @@ public class CDMergeTest extends BaseTest {
   // recursive helper function that produces all permutations of a list
   private Set<List<ASTCDCompilationUnit>> computeAllPermutations(
       List<ASTCDCompilationUnit> inputSet) {
-    Set<List<ASTCDCompilationUnit>> permutations = new HashSet<>();
+    Set<List<ASTCDCompilationUnit>> permutations = new LinkedHashSet<>();
     if (inputSet.isEmpty() || inputSet.size() == 1) {
       permutations.add(inputSet);
       return permutations;
@@ -159,7 +159,7 @@ public class CDMergeTest extends BaseTest {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
     
-    HashSet<MergeParameter> params = new HashSet<>();
+    LinkedHashSet<MergeParameter> params = new LinkedHashSet<>();
     
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);

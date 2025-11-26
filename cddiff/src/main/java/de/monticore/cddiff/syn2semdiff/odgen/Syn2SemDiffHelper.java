@@ -2362,8 +2362,8 @@ public class Syn2SemDiffHelper {
    */
   public OverlappingAssocsDirect computeDirectForType(ASTCDType astcdType,
       ArrayListMultimap<ASTCDType, AssocStruct> map, ASTCDCompilationUnit compilationUnit) {
-    Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs = new HashSet<>();
-    Set<Pair<AssocStruct, AssocStruct>> directOverlappingNoRelation = new HashSet<>();
+    Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs = new LinkedHashSet<>();
+    Set<Pair<AssocStruct, AssocStruct>> directOverlappingNoRelation = new LinkedHashSet<>();
     for (AssocStruct assocStruct : map.get(astcdType)) {
       for (AssocStruct assocStruct1 : map.get(astcdType)) {
         if (assocStruct != assocStruct1) {
@@ -2428,8 +2428,8 @@ public class Syn2SemDiffHelper {
   public OverlappingAssocsDirect computeDirectForTypeNew(ASTCDType astcdType,
       ArrayListMultimap<ASTCDType, AssocStruct> map, ASTCDCompilationUnit compilationUnit) {
     
-    Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs = new HashSet<>();
-    Set<Pair<AssocStruct, AssocStruct>> directOverlappingNoRelation = new HashSet<>();
+    Set<Pair<AssocStruct, AssocStruct>> directOverlappingAssocs = new LinkedHashSet<>();
+    Set<Pair<AssocStruct, AssocStruct>> directOverlappingNoRelation = new LinkedHashSet<>();
     
     List<AssocStruct> assocStructs = map.get(astcdType);
     for (AssocStruct assoc1 : assocStructs) {
@@ -2568,7 +2568,7 @@ public class Syn2SemDiffHelper {
   
   public List<Pair<ASTCDClass, List<AssocStruct>>> sortDiffs(
       List<Pair<ASTCDClass, AssocStruct>> input) {
-    Map<ASTCDClass, List<AssocStruct>> resultMap = new HashMap<>();
+    Map<ASTCDClass, List<AssocStruct>> resultMap = new LinkedHashMap<>();
     
     for (Pair<ASTCDClass, AssocStruct> pair : input) {
       ASTCDClass cdClass = pair.a;
@@ -2599,12 +2599,12 @@ public class Syn2SemDiffHelper {
    * cases should be treated in the other function, but they are left just in case.
    */
   public void findDuplicatedAssocs() {
-    Set<ASTCDType> srcToDelete = new HashSet<>();
-    Set<Pair<ASTCDType, ASTCDRole>> srcAssocsToDelete = new HashSet<>();
-    Set<DeleteStruct> srcAssocsToMergeWithDelete = new HashSet<>();
-    Set<ASTCDType> tgtToDelete = new HashSet<>();
-    Set<Pair<ASTCDType, ASTCDRole>> tgtAssocsToDelete = new HashSet<>();
-    Set<DeleteStruct> tgtAssocsToMergeWithDelete = new HashSet<>();
+    Set<ASTCDType> srcToDelete = new LinkedHashSet<>();
+    Set<Pair<ASTCDType, ASTCDRole>> srcAssocsToDelete = new LinkedHashSet<>();
+    Set<DeleteStruct> srcAssocsToMergeWithDelete = new LinkedHashSet<>();
+    Set<ASTCDType> tgtToDelete = new LinkedHashSet<>();
+    Set<Pair<ASTCDType, ASTCDRole>> tgtAssocsToDelete = new LinkedHashSet<>();
+    Set<DeleteStruct> tgtAssocsToMergeWithDelete = new LinkedHashSet<>();
     
     // Process source associations
     processAssociationMap(srcMap, srcCD, srcAssocsToMergeWithDelete, srcAssocsToDelete, srcToDelete,
@@ -2852,7 +2852,7 @@ public class Syn2SemDiffHelper {
       deleted.addAll(typeDiffStruct.getDeletedAttributes());
     }
     
-    Map<ASTCDClass, AddedDeletedAtt> classAttributeMap = new HashMap<>();
+    Map<ASTCDClass, AddedDeletedAtt> classAttributeMap = new LinkedHashMap<>();
     
     for (Pair<ASTCDClass, List<ASTCDAttribute>> pair : added) {
       ASTCDClass clazz = pair.a;

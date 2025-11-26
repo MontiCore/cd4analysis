@@ -11,7 +11,7 @@ import de.monticore.symboltable.serialization.json.JsonObject;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -34,7 +34,7 @@ public class CDMerge {
   
   @Deprecated
   public static ASTCDCompilationUnit merge(List<ASTCDCompilationUnit> inputs) {
-    return merge(inputs, "Merge", new HashSet<>());
+    return merge(inputs, "Merge", new LinkedHashSet<>());
   }
   
   /**
@@ -96,7 +96,7 @@ public class CDMerge {
    * @return set of supported MergeParameter specified in the json-array
    */
   public static Set<MergeParameter> parseMrgConfig(String file) {
-    Set<MergeParameter> mergeParameters = new HashSet<>();
+    Set<MergeParameter> mergeParameters = new LinkedHashSet<>();
     try {
       String fileContent = FileUtils.readFileToString(new File(file), "UTF-8");
       JsonObject jsonObject = JsonParser.parseJsonObject(fileContent);

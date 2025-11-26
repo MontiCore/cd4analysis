@@ -20,7 +20,7 @@ public abstract class CD2CDCombinedMatching<T> {
     this.matcherList = matcherList;
     this.srcCD = srcCD;
     this.tgtCD = tgtCD;
-    this.matches = new HashMap<>();
+    this.matches = new LinkedHashMap<>();
     getMatchMap();
   }
   

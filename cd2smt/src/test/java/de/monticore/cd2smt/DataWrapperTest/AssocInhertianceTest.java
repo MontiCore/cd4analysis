@@ -17,7 +17,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.se_rwth.commons.logging.Log;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -39,7 +39,7 @@ public class AssocInhertianceTest extends CD2SMTAbstractTest {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     
     ASTCDCompilationUnit ast = parseModel(Paths.get(

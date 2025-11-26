@@ -27,7 +27,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -222,7 +222,7 @@ public class CD2SMTGenerator {
     // get all objects
     Set<MinObject> minObjects = classStrategy.smt2od(model, partial);
     // transform MinObject into SMTObjects
-    Set<SMTObject> objectSet2 = new HashSet<>();
+    Set<SMTObject> objectSet2 = new LinkedHashSet<>();
     for (MinObject entry : minObjects) {
       objectSet2.add(new SMTObject(entry));
     }
@@ -234,7 +234,7 @@ public class CD2SMTGenerator {
     objectSet2 = associationStrategy.smt2od(model, objectSet2);
     
     // remove the subclass instances and their links and Interface  objects
-    Set<SMTObject> objectSet = new HashSet<>();
+    Set<SMTObject> objectSet = new LinkedHashSet<>();
     for (SMTObject entry : objectSet2) {
       if (!(entry.getType() == CDHelper.ObjType.ABSTRACT_OBJ)) {
         objectSet.add(entry);

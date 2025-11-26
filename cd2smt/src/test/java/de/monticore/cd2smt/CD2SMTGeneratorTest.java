@@ -19,7 +19,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -45,7 +45,7 @@ public class CD2SMTGeneratorTest {
   }
   
   void setup(String fileName) {
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     context = new Context(cfg);
     

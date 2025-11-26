@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ public class P4RuleTest extends CDDiffTestBasis {
     
     // Extract expected result
     String expPrefix = "";
-    Set<String> expClasses = new HashSet<>();
+    Set<String> expClasses = new LinkedHashSet<>();
     for (String string : expectedResult) {
       // Replace Whitespaces
       string = string.replaceAll("\\p{Space}", "");
@@ -97,7 +97,7 @@ public class P4RuleTest extends CDDiffTestBasis {
     String[] lines = p4.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add(
         "Obj = (Vehicle + Company + Employee + Car + Insurance + License + Driver + Truck)");
     
@@ -110,7 +110,7 @@ public class P4RuleTest extends CDDiffTestBasis {
     String[] lines = p4.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("Obj = (Task + Employee + Manager)");
     
     checkP4(lines, expectedResult);
@@ -122,7 +122,7 @@ public class P4RuleTest extends CDDiffTestBasis {
     String[] lines = p4.split(System.getProperty("line.separator"));
     
     // Definition of expected result
-    Set<String> expectedResult = new HashSet<>();
+    Set<String> expectedResult = new LinkedHashSet<>();
     expectedResult.add("Obj = (Task + Employee + Manager)");
     
     checkP4(lines, expectedResult);

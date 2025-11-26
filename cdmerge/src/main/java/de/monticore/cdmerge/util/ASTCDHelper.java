@@ -87,18 +87,18 @@ public class ASTCDHelper {
   
   private ASTCDHelper() {
     
-    this.classes = new HashMap<String, ASTCDClass>();
-    this.interfaces = new HashMap<String, ASTCDInterface>();
-    this.enums = new HashMap<String, ASTCDEnum>();
-    this.namedAssociations = new HashMap<String, ASTCDAssociation>();
-    this.attributesForClass = new HashMap<String, List<ASTCDAttribute>>();
-    this.associationPerReference = new HashMap<String, List<ASTCDAssociation>>();
+    this.classes = new LinkedHashMap<String, ASTCDClass>();
+    this.interfaces = new LinkedHashMap<String, ASTCDInterface>();
+    this.enums = new LinkedHashMap<String, ASTCDEnum>();
+    this.namedAssociations = new LinkedHashMap<String, ASTCDAssociation>();
+    this.attributesForClass = new LinkedHashMap<String, List<ASTCDAttribute>>();
+    this.associationPerReference = new LinkedHashMap<String, List<ASTCDAssociation>>();
     this.associationsWithExternalReference = new ArrayList<ASTCDAssociation>();
     this.associationsCDInternalTypes = new ArrayList<ASTCDAssociation>();
-    this.superClasses = new HashMap<String, String>();
-    this.superInterfaces = new HashMap<String, List<String>>();
-    this.cdPackages = new HashMap<String, List<ASTCDElement>>();
-    this.cdPackagesLookup = new HashMap<ASTCDElement, ASTCDPackage>();
+    this.superClasses = new LinkedHashMap<String, String>();
+    this.superInterfaces = new LinkedHashMap<String, List<String>>();
+    this.cdPackages = new LinkedHashMap<String, List<ASTCDElement>>();
+    this.cdPackagesLookup = new LinkedHashMap<ASTCDElement, ASTCDPackage>();
   }
   
   public boolean cdContainsClass(final String className) {
@@ -464,7 +464,7 @@ public class ASTCDHelper {
    * Returns the names of all types inn (Classes, Interfaces, Enums) declared in this class diagram
    */
   public Set<String> getTypeNames() {
-    Set<String> types = new HashSet<String>();
+    Set<String> types = new LinkedHashSet<String>();
     types.addAll(getClassNames());
     types.addAll(getInterfaceNames());
     types.addAll(getEnumNames());

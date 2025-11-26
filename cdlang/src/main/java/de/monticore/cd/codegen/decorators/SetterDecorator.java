@@ -180,8 +180,9 @@ public class SetterDecorator extends AbstractDecorator<SetterDecorator.SetterDat
   public static class SetterData {
     
     @Deprecated
-    Map<ASTCDAttribute, List<ASTCDMethod>> methods = new HashMap<>();
-    protected final Map<ASTCDAttribute, List<MethodInformation>> attributesData = new HashMap<>();
+    Map<ASTCDAttribute, List<ASTCDMethod>> methods = new LinkedHashMap<>();
+    protected final Map<ASTCDAttribute, List<MethodInformation>> attributesData =
+        new LinkedHashMap<>();
     
     public List<MethodInformation> getMethods(ASTCDAttribute node) {
       var ret = attributesData.get(node);

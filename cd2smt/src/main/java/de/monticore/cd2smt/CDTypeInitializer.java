@@ -32,7 +32,7 @@ public class CDTypeInitializer {
       boolean miWorld) {
     
     // init
-    Map<ASTCDType, IntExpr> vars = new HashMap<>();
+    Map<ASTCDType, IntExpr> vars = new LinkedHashMap<>();
     Context ctx = new Context();
     Solver solver = ctx.mkSolver();
     
@@ -78,7 +78,7 @@ public class CDTypeInitializer {
   }
   
   static Map<ASTCDType, Integer> evaluateModel(Model model, Map<ASTCDType, IntExpr> vars) {
-    Map<ASTCDType, Integer> res = new HashMap<>();
+    Map<ASTCDType, Integer> res = new LinkedHashMap<>();
     
     // evaluate model
     for (Map.Entry<ASTCDType, IntExpr> val : vars.entrySet()) {
@@ -91,7 +91,7 @@ public class CDTypeInitializer {
   static Set<BoolExpr> mkAssocConstraints(Context ctx, ASTCDCompilationUnit ast, long max,
       boolean multiInstanceWorld, Map<ASTCDType, IntExpr> vars) {
     
-    Set<BoolExpr> constraints = new HashSet<>();
+    Set<BoolExpr> constraints = new LinkedHashSet<>();
     IntExpr sum = ctx.mkInt(0);
     
     // the size of each type universe must positive
@@ -133,7 +133,7 @@ public class CDTypeInitializer {
   
   private static Set<BiFunction<IntExpr, IntExpr, BoolExpr>> getAssocConstraint(
       ASTCDAssociation assoc, Context ctx) {
-    Set<BiFunction<IntExpr, IntExpr, BoolExpr>> constraints = new HashSet<>();
+    Set<BiFunction<IntExpr, IntExpr, BoolExpr>> constraints = new LinkedHashSet<>();
     if (leftCard(assoc).isOne() && rightCard(assoc).isOne()) {
       constraints.add(ctx::mkEq);
     }

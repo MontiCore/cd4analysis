@@ -138,32 +138,32 @@ class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
     
     Map<CDTypeSymbol, Set<CDTypeSymbol>> actualMap = helper.typeMapping;
     
-    Map<String, Set<String>> expectedMap = new HashMap<>();
-    expectedMap.put("B", new HashSet<>(Arrays.asList("B", "C", "D")));
-    expectedMap.put("A", new HashSet<>(Collections.singleton("A")));
+    Map<String, Set<String>> expectedMap = new LinkedHashMap<>();
+    expectedMap.put("B", new LinkedHashSet<>(Arrays.asList("B", "C", "D")));
+    expectedMap.put("A", new LinkedHashSet<>(Collections.singleton("A")));
     
-    Map<String, Set<String>> actualMapTemp = new HashMap<>();
+    Map<String, Set<String>> actualMapTemp = new LinkedHashMap<>();
     for (Map.Entry<CDTypeSymbol, Set<CDTypeSymbol>> entry : actualMap.entrySet()) {
       String keyName = entry.getKey().getName();
       Set<String> valueNames = entry.getValue().stream().map(CDTypeSymbol::getName).collect(
-          Collectors.toSet());
+          Collectors.toCollection(LinkedHashSet::new));
       actualMapTemp.put(keyName, valueNames);
     }
     assertEquals(actualMapTemp, expectedMap);
     
     Map<CDRoleSymbol, Set<CDRoleSymbol>> actualMap2 = helper.roleMapping;
     
-    Map<String, Set<String>> expectedMap2 = new HashMap<>();
-    expectedMap2.put("roleNameRight", new HashSet<>(Arrays.asList("roleNameRight_C",
+    Map<String, Set<String>> expectedMap2 = new LinkedHashMap<>();
+    expectedMap2.put("roleNameRight", new LinkedHashSet<>(Arrays.asList("roleNameRight_C",
         "roleNameRight_D", "roleNameRight_B")));
-    expectedMap2.put("roleNameLeft", new HashSet<>(Arrays.asList("roleNameLeft_A", "roleNameLeft_A",
-        "roleNameLeft_A")));
+    expectedMap2.put("roleNameLeft", new LinkedHashSet<>(Arrays.asList("roleNameLeft_A",
+        "roleNameLeft_A", "roleNameLeft_A")));
     
-    Map<String, Set<String>> actualMapTemp2 = new HashMap<>();
+    Map<String, Set<String>> actualMapTemp2 = new LinkedHashMap<>();
     for (Map.Entry<CDRoleSymbol, Set<CDRoleSymbol>> entry : actualMap2.entrySet()) {
       String keyName = entry.getKey().getName();
       Set<String> valueNames = entry.getValue().stream().map(CDRoleSymbol::getName).collect(
-          Collectors.toSet());
+          Collectors.toCollection(LinkedHashSet::new));
       actualMapTemp2.put(keyName, valueNames);
     }
     assertEquals(actualMapTemp2, expectedMap2);
@@ -172,14 +172,14 @@ class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
     
     Map<CDRoleSymbol, Set<CDTypeSymbol>> actualMap3 = helper.roleToTypeMapping;
     
-    Map<String, Set<String>> expectedMap3 = new HashMap<>();
-    expectedMap3.put("roleNameRight_D", new HashSet<>(Collections.singleton("A")));
-    expectedMap3.put("roleNameRight_B", new HashSet<>(Collections.singleton("A")));
-    expectedMap3.put("roleNameRight_C", new HashSet<>(Collections.singleton("A")));
-    expectedMap3.put("roleNameLeft_A", new HashSet<>(Arrays.asList("C", "B", "D")));
+    Map<String, Set<String>> expectedMap3 = new LinkedHashMap<>();
+    expectedMap3.put("roleNameRight_D", new LinkedHashSet<>(Collections.singleton("A")));
+    expectedMap3.put("roleNameRight_B", new LinkedHashSet<>(Collections.singleton("A")));
+    expectedMap3.put("roleNameRight_C", new LinkedHashSet<>(Collections.singleton("A")));
+    expectedMap3.put("roleNameLeft_A", new LinkedHashSet<>(Arrays.asList("C", "B", "D")));
     
     
-    Map<String, Set<String>> actualMapTemp3 = new HashMap<>();
+    Map<String, Set<String>> actualMapTemp3 = new LinkedHashMap<>();
     for (Map.Entry<CDRoleSymbol, Set<CDTypeSymbol>> entry : actualMap3.entrySet()) {
       String keyName = entry.getKey().getName();
       Set<String> valueNames = entry.getValue().stream()

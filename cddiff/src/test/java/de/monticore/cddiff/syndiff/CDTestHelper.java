@@ -10,7 +10,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -111,7 +111,7 @@ public class CDTestHelper {
   }
   
   public static Set<ASTCDType> getSuperTypeAllDeep(ASTCDType astcdType, ASTCDDefinition cd) {
-    Set<ASTCDType> res = new HashSet<>();
+    Set<ASTCDType> res = new LinkedHashSet<>();
     getSuperTypeAllDeepHelper(astcdType, cd, res);
     res.remove(astcdType);
     return res;

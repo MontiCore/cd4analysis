@@ -11,7 +11,7 @@ import de.monticore.cdmerge.util.ASTCDHelper;
 import de.monticore.cdmerge.util.CDMergeUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -82,7 +82,7 @@ public class RemoveRedundantInterfaces extends ModelRefactoringBase {
   }
   
   private void cleanInterfaces(ASTCDType baseType, List<ASTMCObjectType> superIntefaces) {
-    Set<ASTMCObjectType> remove = new HashSet<>();
+    Set<ASTMCObjectType> remove = new LinkedHashSet<>();
     for (ASTMCObjectType interface1 : baseType.getInterfaceList()) {
       for (ASTMCObjectType interface2 : superIntefaces) {
         if (CDMergeUtils.getName(interface1).equals(CDMergeUtils.getName(interface2))) {

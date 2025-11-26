@@ -394,7 +394,7 @@ public class CDTypeDiff extends SyntaxDiffHelper implements ICDTypeDiff {
   }
   
   private Set<ASTCDAttribute> collectInheritedAttributes(ASTCDType type, ASTCDCompilationUnit cd) {
-    Set<ASTCDAttribute> inheritedAttributes = new HashSet<>();
+    Set<ASTCDAttribute> inheritedAttributes = new LinkedHashSet<>();
     
     // collect all attributes of all super-types
     getAllSuper(type, (ICD4CodeArtifactScope) cd.getEnclosingScope()).forEach(

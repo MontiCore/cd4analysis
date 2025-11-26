@@ -69,7 +69,7 @@ public class CopyCreator extends AbstractDecorator<CopyCreator.Created> implemen
     
     protected ASTCDCompilationUnit original;
     protected ASTCDCompilationUnit decorated;
-    protected final Map<ASTNode, ASTNode> originalToDecorated = new HashMap<>();
+    protected final Map<ASTNode, ASTNode> originalToDecorated = new LinkedHashMap<>();
     
     public ASTCDCompilationUnit getOriginal() { return original; }
     
