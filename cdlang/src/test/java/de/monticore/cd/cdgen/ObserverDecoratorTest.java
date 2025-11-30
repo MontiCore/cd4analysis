@@ -8,7 +8,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.runtime.junit.MCAssertions;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import java.nio.file.Files;
@@ -25,21 +24,26 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
    */
   @Test
   void testObserver() throws Exception {
-    var opt = // @formatter:off
-      CD4CodeMill.parser()
-        .parse_String("classdiagram TestObserver {\n" +
-        " <<setter,observer>> public class OtherC { \n" +
-        " public int myInt;\n" +
-        " public boolean myBool;\n" +
-        " -> (manyB) B [*] public;\n" +
-        " -> (optB) B [0..1] public;\n" +
-        " -> (oneB) B [1] public;\n" +
-        " public int ov;\n" +
-        " }\n" +
-        "<<setter>>public class B { " +
-        "}\n " +
-        "}");
-    // @formatter:on
+    var opt = CD4CodeMill.parser().parse_String(" classdiagram TestObserver {\n"
+        + " <<setter,observable>> public class OtherC {\n" + "   public int myInt;\n"
+        + "   public boolean myBool;\n" + "   -> (manyB) B [*] public;\n"
+        + "   -> (optB) B [0..1] public;\n" + "   -> (oneB) B [1] public;\n" + "   public int ov;\n"
+        + " }\n" + "<<setter>>public class B {}\n" + "\n"
+        + "  // Test Setter&Observer interaction\n" + "  <<observable,setter>>   class CA {}\n"
+        + "  <<observable,setter>>   class CB {}\n" + "  <<observable,setter>>   class CC {}\n"
+        + "  <<observable,setter>>   class CD {}\n" + "  association CA <-> CB;\n"
+        + "  association CA <-> CC [*];\n" + "  association CA <-> CD [0..1];\n" + "\n"
+        + "  <<observable,setter>>   class DA {}\n" + "  <<setter>>              class DB {}\n"
+        + "  <<setter>>              class DC {}\n" + "  <<setter>>              class DD {}\n"
+        + "  association DA <-> DB;\n" + "  association DA <-> DC [*];\n"
+        + "  association DA <-> DD [0..1];\n" + "\n" + "  <<setter>>              class EA {}\n"
+        + "  <<observable,setter>>   class EB {}\n" + "  <<observable,setter>>   class EC {}\n"
+        + "  <<observable,setter>>   class ED {}\n" + "  association EA <-> EB;\n"
+        + "  association EA <-> EC [*];\n" + "  association EA <-> ED [0..1];\n" + "\n" + "}");
+    
+    // The classes CA, CB, CC, and CD test observers with bidirectional assocs
+    // The classes DA, ..., DD test observers with bidirectional assocs (if only the DA class is observable)
+    // The classes EA, ..., ED test observers with bidirectional assocs (if only the B...D classes are observable)
     
     Assertions.assertTrue(opt.isPresent());
     
@@ -58,7 +62,7 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
     templatePaths.add(Paths.get(
         "src/main/resources/methods/observer/notifyObserverAttributeSpecific.ftl"));
     for (Path temPath : templatePaths) {
-      Assert.assertTrue(Files.exists(temPath));
+      Assertions.assertTrue(Files.exists(temPath));
     }
   }
   
@@ -72,9 +76,12 @@ class ObserverDecoratorTest extends AbstractDecoratorTest {
     config.withDecorator(new SetterDecorator());
     config.configApplyMatchName(SetterDecorator.class, "setter");
     config.configIgnoreMatchName(SetterDecorator.class, "noSetter");
+    config.withDecorator(new NavigableSetterDecorator());
+    config.configApplyMatchName(NavigableSetterDecorator.class, "setter");
+    config.configIgnoreMatchName(NavigableSetterDecorator.class, "noSetter");
     config.withDecorator(new ObserverDecorator());
-    config.configApplyMatchName(ObserverDecorator.class, "observer");
-    config.configIgnoreMatchName(ObserverDecorator.class, "noObserver");
+    config.configApplyMatchName(ObserverDecorator.class, "observable");
+    config.configIgnoreMatchName(ObserverDecorator.class, "notObservable");
     config.withDecorator(new CardinalityDefaultDecorator());
     config.configDefault(CardinalityDefaultDecorator.class, MatchResult.APPLY);
   }

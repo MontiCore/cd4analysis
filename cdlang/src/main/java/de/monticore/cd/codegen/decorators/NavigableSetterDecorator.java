@@ -6,6 +6,7 @@ import static de.monticore.cd.codegen.decorators.SetterDecorator.AFTER_SETTER_BO
 
 import com.google.common.collect.Iterables;
 import de.monticore.cd.codegen.decorators.data.AbstractDecorator;
+import de.monticore.cd.codegen.decorators.data.DecoratorData;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -15,13 +16,14 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,10 +31,11 @@ import org.apache.commons.lang3.StringUtils;
  * Add special handling to the setters of bidirectional associations
  * TODO: This decorator requires testing
  * TODO: The previous values of elements are currently not updated
- * TODO: Store methods via Data
  */
-public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorator.NoData> implements
-    CDBasisVisitor2 {
+public class NavigableSetterDecorator extends
+    AbstractDecorator<NavigableSetterDecorator.NavSetterData> implements CDBasisVisitor2 {
+  
+  protected NavSetterData setterData;
   
   @Override
   @SuppressWarnings("rawtypes")
@@ -40,6 +43,13 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
     // We require data of the Setter Decorator
     return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
         SetterDecorator.class));
+  }
+  
+  @Override
+  public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
+    super.init(util, glexOpt);
+    this.setterData = this.decoratorData.createDataIfAbsent(this.getClass(),
+        NavigableSetterDecorator.NavSetterData::new);
   }
   
   @Override
@@ -69,6 +79,10 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
       if (!role.getOtherSide().isIsDefinitiveNavigable())
         return;
       
+      // We have to store the "local" method on the other side of the assoc
+      var other = this.decoratorData.rolesToFields.get(role.getOtherSide());
+      ASTCDAttribute otherSideAttr = (ASTCDAttribute) other.getAstNode();
+      
       String thisName = role.getEnclosingScope().getName();
       var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
       var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
@@ -88,9 +102,10 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
           // Add set${role}Local method
           String name = "set" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
               .getName()) + "Local");
-          decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT,
-              "methods.Set", name, List.of(CDParameterFacade.getInstance().createParameter(otherRole
-                  .getType().printFullName(), otherRole.getName())), otherRole);
+          this.setterData.getOrCreateMethods(otherSideAttr).add(decorate(otherClassDec, otherRole,
+              SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.Set", name, List.of(
+                  CDParameterFacade.getInstance().createParameter(otherRole.getType()
+                      .printFullName(), otherRole.getName())), otherRole.getName(), otherRole));
           
           callLocal(thisSideAttrInfo, methods, role, "set", thisName);
           
@@ -99,10 +114,11 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
           // Add set${role}Local method for opt
           name = "set" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
               .getName()) + "Local");
-          decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT,
-              "methods.opt.Set4Opt", name, List.of(CDParameterFacade.getInstance().createParameter(
-                  otherRole.getType().printFullName(), otherRole.getName())), otherRole,
-              "--unused--");
+          this.setterData.getOrCreateMethods(otherSideAttr).add(decorate(otherClassDec, otherRole,
+              SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.opt.Set4Opt", name,
+              List.of(CDParameterFacade.getInstance().createParameter(otherRole.getType()
+                  .printFullName(), otherRole.getName())), otherRole.getName(), otherRole,
+              "--unused--"));
           
           callLocal(thisSideAttrInfo, methods, role, "set", thisName);
           break;
@@ -118,19 +134,20 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
             var m = decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.ADD,
                 "methods.list.AddUnordered", name, List.of(CDParameterFacade.getInstance()
                     .createParameter(otherRole.getType().printFullName(), otherRole.getName())),
-                otherRole);
+                otherRole.getName(), otherRole);
             m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
                 MCTypeFacade.getInstance().createBooleanType()).build());
+            this.setterData.getOrCreateMethods(otherSideAttr).add(m);
             
             name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
                 .getName()) + "Local");
             m = decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.REM,
                 "methods.list.RemUnordered", name, List.of(CDParameterFacade.getInstance()
                     .createParameter(otherRole.getType().printFullName(), otherRole.getName())),
-                otherRole);
+                otherRole.getName(), otherRole);
             m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
                 MCTypeFacade.getInstance().createBooleanType()).build());
-            
+            this.setterData.getOrCreateMethods(otherSideAttr).add(m);
           }
           callLocal(thisSideAttrInfo, methods, role, "add", thisName);
           break;
@@ -189,7 +206,7 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
   
   protected SetterDecorator.MethodInformation decorate(ASTCDClass decParent, CDRoleSymbol role,
       SetterDecorator.SetterMethodKind kind, String templateName, String methodName,
-      List<ASTCDParameter> params, Object... templateParams) {
+      List<ASTCDParameter> params, String paramName, Object... templateParams) {
     
     ASTCDMethod method = CDMethodFacade.getInstance().createMethod(role.getAssocSide().getModifier()
         .deepClone(), methodName, params);
@@ -198,12 +215,28 @@ public class NavigableSetterDecorator extends AbstractDecorator<AbstractDecorato
     
     addToClass(decParent, method);
     
-    return new SetterDecorator.MethodInformation(kind, method, templateName, role.getName());
+    return new SetterDecorator.MethodInformation(kind, method, templateName, paramName);
   }
   
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
+  }
+  
+  public static class NavSetterData {
+    
+    protected final Map<ASTCDAttribute, List<SetterDecorator.MethodInformation>> attributesData =
+        new LinkedHashMap<>();
+    
+    public List<SetterDecorator.MethodInformation> getMethods(ASTCDAttribute node) {
+      var ret = attributesData.get(node);
+      return ret == null ? Collections.emptyList() : ret;
+    }
+    
+    protected List<SetterDecorator.MethodInformation> getOrCreateMethods(ASTCDAttribute node) {
+      return this.attributesData.computeIfAbsent(node, a -> new ArrayList<>());
+    }
+    
   }
   
 }

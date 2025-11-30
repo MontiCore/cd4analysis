@@ -39,7 +39,8 @@ public class DecoratorData {
   
   // TODO: If not found, walk upwards up to IDecorator
   public Map<Class<? extends IDecorator>, Object> decoratorDataMap = new IdentityHashMap<>();
-  public Map<FieldSymbol, CDRoleSymbol> fieldToRoles; // Assoc -> Field
+  public Map<FieldSymbol, CDRoleSymbol> fieldToRoles; // field(assoc) -> role
+  public Map<CDRoleSymbol, FieldSymbol> rolesToFields; // Role -> field symbol
   protected Map<Class<? extends IDecorator<?>>, MatcherData> matchers = new IdentityHashMap<>();
   
   protected String[][] cliConfig;

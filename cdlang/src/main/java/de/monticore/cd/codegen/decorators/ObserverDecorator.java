@@ -42,8 +42,9 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
     //We check that the SetterDecorator has added a Setter for an attribute,
     // thus the Setter decorator has to run before.
-    return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
-        SetterDecorator.class));
+    return Iterables.concat(super.getMustRunAfter(), List.of(SetterDecorator.class,
+        NavigableSetterDecorator.class) // this also includes the navigableSetter
+    );
   }
   
   @Override
@@ -175,56 +176,53 @@ public class ObserverDecorator extends AbstractDecorator<AbstractDecorator.NoDat
       //We expect that the SetterDecorator has added a Setter for this attribute to the pojo class
       List<SetterDecorator.MethodInformation> methods = decoratorData.getDecoratorData(
           SetterDecorator.class) != null ? decoratorData.getDecoratorData(SetterDecorator.class)
-              .getMethods(attribute) : null;
-      if (!(methods == null || methods.isEmpty())) {
-        for (SetterDecorator.MethodInformation mi : methods) {
-          switch (mi.getKind()) {
-            case SET_MANDATORY_OR_OPT:
-            case UNSET_OPTIONAL:
-              glexOpt.ifPresent(glex -> glex.addBeforeTemplate("Setter:Before", mi.getSetMethod(),
-                  new StringHookPoint("var _oldValue = this." + mi.getParamName() + ";")));
+              .getMethods(attribute) : Collections.emptyList();
+      List<SetterDecorator.MethodInformation> methodsNav = decoratorData.getDecoratorData(
+          NavigableSetterDecorator.class) != null ? decoratorData.getDecoratorData(
+              NavigableSetterDecorator.class).getMethods(attribute) : Collections.emptyList();
+      
+      for (SetterDecorator.MethodInformation mi : Iterables.concat(methods, methodsNav)) {
+        switch (mi.getKind()) {
+          case SET_MANDATORY_OR_OPT:
+          case UNSET_OPTIONAL:
+            glexOpt.ifPresent(glex -> glex.addBeforeTemplate("Setter:Before", mi.getSetMethod(),
+                new StringHookPoint("var _oldValue = this." + mi.getParamName() + ";")));
+            glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
+                new StringHookPoint("this.notifyObserversSet" + StringTransformations.capitalize(mi
+                    .getParamName()) + "(_oldValue );\nthis.notifyObservers();")));
+            break;
+          case ADD:
+            if (attrInfo.isOrdered()) {
               glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
-                  new StringHookPoint("this.notifyObserversSet" + StringTransformations.capitalize(
-                      mi.getParamName()) + "(_oldValue );\nthis.notifyObservers();")));
-              break;
-            case ADD:
-              if (attrInfo.isOrdered()) {
-                glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
-                    new StringHookPoint("this.notifyObserversAdd" + StringTransformations
-                        .capitalize(mi.getParamName()) + "(index, " + attribute.getName()
-                        + " );\nthis.notifyObservers();\n")));
-              }
-              else {
-                glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
-                    new StringHookPoint("if(__ret){\n this.notifyObserversAdd"
-                        + StringTransformations.capitalize(mi.getParamName()) + "(" + attribute
-                            .getName() + " );\nthis.notifyObservers();\n}")));
-              }
-              break;
-            case REM:
-              if (attrInfo.isOrdered()) {
-                glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
-                    new StringHookPoint("this.notifyObserversRemove" + StringTransformations
-                        .capitalize(mi.getParamName())
-                        + "(index, __ret );\nthis.notifyObservers();\n")));
-              }
-              else {
-                glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
-                    new StringHookPoint("if(__ret){\n this.notifyObserversRemove"
-                        + StringTransformations.capitalize(mi.getParamName()) + "(" + attribute
-                            .getName() + " );\nthis.notifyObservers();\n}")));
-              }
-              break;
-            default:
-              Log.warn("0xTODO: Unexpected method kind " + mi.getKind(), attribute
-                  .get_SourcePositionStart());
-          }
+                  new StringHookPoint("this.notifyObserversAdd" + StringTransformations.capitalize(
+                      mi.getParamName()) + "(index, " + mi.getParamName()
+                      + " );\nthis.notifyObservers();\n")));
+            }
+            else {
+              glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
+                  new StringHookPoint("if(__ret){\n this.notifyObserversAdd" + StringTransformations
+                      .capitalize(mi.getParamName()) + "(" + mi.getParamName()
+                      + " );\nthis.notifyObservers();\n}")));
+            }
+            break;
+          case REM:
+            if (attrInfo.isOrdered()) {
+              glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
+                  new StringHookPoint("this.notifyObserversRemove" + StringTransformations
+                      .capitalize(mi.getParamName())
+                      + "(index, __ret );\nthis.notifyObservers();\n")));
+            }
+            else {
+              glexOpt.ifPresent(glex -> glex.addAfterTemplate("Setter:After", mi.getSetMethod(),
+                  new StringHookPoint("if(__ret){\n this.notifyObserversRemove"
+                      + StringTransformations.capitalize(mi.getParamName()) + "(" + mi
+                          .getParamName() + " );\nthis.notifyObservers();\n}")));
+            }
+            break;
+          default:
+            Log.warn("0xTODO: Unexpected method kind " + mi.getKind(), attribute
+                .get_SourcePositionStart());
         }
-      }
-      else {
-        Log.warn("0xTODO: No setter found for attribute " + attribute.getName(), attribute
-            .get_SourcePositionStart());
-        
       }
     }
     

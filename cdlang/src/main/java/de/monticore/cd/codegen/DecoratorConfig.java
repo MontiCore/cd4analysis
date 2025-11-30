@@ -219,7 +219,9 @@ public class DecoratorConfig {
     // Create the parent-child tree relationship
     decoratorData.setupParents(root, cliConfig);
     decoratorData.fieldToRoles = fieldToRoles;
-    
+    // Also store the reverse mapping
+    decoratorData.rolesToFields = new LinkedHashMap<>();
+    decoratorData.fieldToRoles.forEach((key, value) -> decoratorData.rolesToFields.put(value, key));
     // Some safeguard: "hash" the original AST (by pretty printing it)
     // We will then re-hash it after every phase to check if a phase has modified it
     String initialAsString = CD4CodeMill.prettyPrint(root, true);
