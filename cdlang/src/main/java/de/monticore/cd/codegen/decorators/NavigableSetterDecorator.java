@@ -34,9 +34,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class NavigableSetterDecorator extends
     AbstractDecorator<NavigableSetterDecorator.NavSetterData> implements CDBasisVisitor2 {
-
+  
   protected NavSetterData setterData;
-
+  
   @Override
   @SuppressWarnings("rawtypes")
   public Iterable<Class<? extends IDecorator>> getMustRunAfter() {
@@ -44,28 +44,28 @@ public class NavigableSetterDecorator extends
     return Iterables.concat(super.getMustRunAfter(), Collections.singletonList(
         SetterDecorator.class));
   }
-
+  
   @Override
   public void init(DecoratorData util, Optional<GlobalExtensionManagement> glexOpt) {
     super.init(util, glexOpt);
     this.setterData = this.decoratorData.createDataIfAbsent(this.getClass(),
         NavigableSetterDecorator.NavSetterData::new);
   }
-
+  
   @Override
   public void visit(ASTCDAttribute attribute) {
     if (attribute.getModifier().isDerived() || attribute.getModifier().isReadonly() || attribute
         .getModifier().isFinal())
       return;
-
+    
     if (decoratorData.shouldDecorate(this.getClass(), attribute)) {
       // For every attribute, for which the SetterDecorator has created methods:
       var methods = decoratorData.getDecoratorData(SetterDecorator.class).getMethods(attribute);
       if (methods == null || methods.isEmpty())
         return;
-
+      
       var role = this.decoratorData.fieldToRoles.get(attribute.getSymbol());
-
+      
       // And for which a role symbol was present (before being transformed away) and which is
       // navigable in both directions
       if (role == null || !role.isIsDefinitiveNavigable()) {
@@ -78,20 +78,20 @@ public class NavigableSetterDecorator extends
       }
       if (!role.getOtherSide().isIsDefinitiveNavigable())
         return;
-
+      
       // We have to store the "local" method on the other side of the assoc
       var other = this.decoratorData.rolesToFields.get(role.getOtherSide());
       ASTCDAttribute otherSideAttr = (ASTCDAttribute) other.getAstNode();
-
+      
       String thisName = role.getEnclosingScope().getName();
       var otherClassOrig = (ASTCDClass) role.getOtherSide().getEnclosingScope().getAstNode();
       var otherClassDec = decoratorData.getAsDecorated(otherClassOrig);
-
+      
       var thisSideAttrInfo = decoratorData.getAttrHelper().getFromRole(role);
       var otherSideAttrInfo = decoratorData.getAttrHelper().getFromRole(role.getOtherSide());
-
+      
       var otherRole = role.getOtherSide();
-
+      
       if (otherSideAttrInfo.getTypeKind() != AttrHelper.TypeKind.DOMAIN) {
         Log.error("0xCDD60: Unable to have a navigable assoc to a type of " + otherSideAttrInfo
             .getSymTypeExpression().print(), role.getSourcePosition());
@@ -106,9 +106,9 @@ public class NavigableSetterDecorator extends
               SetterDecorator.SetterMethodKind.SET_MANDATORY_OR_OPT, "methods.Set", name, List.of(
                   CDParameterFacade.getInstance().createParameter(otherRole.getType()
                       .printFullName(), otherRole.getName())), otherRole.getName(), otherRole));
-
+          
           callLocal(thisSideAttrInfo, methods, role, "set", thisName);
-
+          
           break;
         case OPTIONAL:
           // Add set${role}Local method for opt
@@ -119,7 +119,7 @@ public class NavigableSetterDecorator extends
               List.of(CDParameterFacade.getInstance().createParameter(otherRole.getType()
                   .printFullName(), otherRole.getName())), otherRole.getName(), otherRole,
               "--unused--"));
-
+          
           callLocal(thisSideAttrInfo, methods, role, "set", thisName);
           break;
         case SET:
@@ -138,7 +138,7 @@ public class NavigableSetterDecorator extends
             m.getSetMethod().setMCReturnType(MCBasicTypesMill.mCReturnTypeBuilder().setMCType(
                 MCTypeFacade.getInstance().createBooleanType()).build());
             this.setterData.getOrCreateMethods(otherSideAttr).add(m);
-
+            
             name = "remove" + StringUtils.capitalize(StringTransformations.capitalize(otherRole
                 .getName()) + "Local");
             m = decorate(otherClassDec, otherRole, SetterDecorator.SetterMethodKind.REM,
@@ -155,10 +155,10 @@ public class NavigableSetterDecorator extends
           Log.error("0xTODO: Unhandled multiplicity " + otherSideAttrInfo.getMultiplicity()
               + " in NavigableSetter", attribute.get_SourcePositionStart());
       }
-
+      
     }
   }
-
+  
   /**
    * Use the template replacement mechanism to add
    *
@@ -203,40 +203,40 @@ public class NavigableSetterDecorator extends
           + " in NavigableSetter#callLocal", role.getSourcePosition());
     }
   }
-
+  
   protected SetterDecorator.MethodInformation decorate(ASTCDClass decParent, CDRoleSymbol role,
       SetterDecorator.SetterMethodKind kind, String templateName, String methodName,
       List<ASTCDParameter> params, String paramName, Object... templateParams) {
-
+    
     ASTCDMethod method = CDMethodFacade.getInstance().createMethod(role.getAssocSide().getModifier()
         .deepClone(), methodName, params);
     glexOpt.ifPresent(glex -> glex.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint(
         templateName, templateParams)));
-
+    
     addToClass(decParent, method);
-
+    
     return new SetterDecorator.MethodInformation(kind, method, templateName, paramName);
   }
-
+  
   @Override
   public void addToTraverser(CD4CodeTraverser traverser) {
     traverser.add4CDBasis(this);
   }
-
+  
   public static class NavSetterData {
-
+    
     protected final Map<ASTCDAttribute, List<SetterDecorator.MethodInformation>> attributesData =
         new LinkedHashMap<>();
-
+    
     public List<SetterDecorator.MethodInformation> getMethods(ASTCDAttribute node) {
       var ret = attributesData.get(node);
       return ret == null ? Collections.emptyList() : ret;
     }
-
+    
     protected List<SetterDecorator.MethodInformation> getOrCreateMethods(ASTCDAttribute node) {
       return this.attributesData.computeIfAbsent(node, a -> new ArrayList<>());
     }
-
+    
   }
-
+  
 }

@@ -23,123 +23,123 @@ import javax.annotation.Nonnull;
 
 /** This class configures a set of {@link IDecorator} with their matchers and order of execution */
 public class DecoratorConfig {
-
+  
   protected DecoratorData decoratorData = new DecoratorData();
   protected String[][] cliConfig = new String[][] {};
-
+  
   protected final Collection<IDecorator<?>> decorators = new ArrayList<>();
-
+  
   @SuppressWarnings("unchecked")
   public ChainableGenSetup withDecorator(IDecorator<?> decorator) {
     this.decorators.add(decorator);
     return new ChainableGenSetup((Class<? extends IDecorator<?>>) decorator.getClass());
   }
-
+  
   public ChainableGenSetup withCopyCreator() {
     return this.withDecorator(new CopyCreator());
   }
-
+  
   public ChainableGenSetup withDefaultsForCardinalityAttrs() {
     return this.withDecorator(new CardinalityDefaultDecorator());
   }
-
+  
   public ChainableGenSetup withGetters() {
     return this.withDecorator(new GetterDecorator());
   }
-
+  
   public ChainableGenSetup withSetters() {
     return this.withDecorator(new SetterDecorator());
   }
-
+  
   public ChainableGenSetup withNavigableSetters() {
     return this.withDecorator(new NavigableSetterDecorator());
   }
-
+  
   public ChainableGenSetup withAbstractMethodSignatures() {
     return this.withDecorator(new AbstractMethodDecorator());
   }
-
+  
   public ChainableGenSetup withBuilders() {
     return this.withDecorator(new BuilderDecorator());
   }
-
+  
   public ChainableGenSetup withObservers() {
     return this.withDecorator(new ObserverDecorator());
   }
-
+  
   @SuppressWarnings("unchecked")
   public ChainableGenSetup withDecorator(String className) {
     IDecorator<?> newObj = (IDecorator<?>) ObjectFactory.createObject(className);
     this.withDecorator(newObj);
     return new ChainableGenSetup((Class<? extends IDecorator<?>>) newObj.getClass());
   }
-
+  
   /**
    * This class is a chainable setup helper for the {@link #withDecorator(String)} It is used by the
    * config templates
    */
   @SuppressWarnings("unused")
   public class ChainableGenSetup {
-
+    
     Class<? extends IDecorator<?>> dec;
-
+    
     ChainableGenSetup(Class<? extends IDecorator<?>> dec) {
       this.dec = dec;
     }
-
+    
     public ChainableGenSetup applyOnName(String name) {
       configApplyMatchName(this.dec, name);
       return this;
     }
-
+    
     public ChainableGenSetup ignoreOnName(String name) {
       configIgnoreMatchName(this.dec, name);
       return this;
     }
-
+    
     public ChainableGenSetup doDefault(MatchResult matchResult) {
       configDefault(this.dec, matchResult);
       return this;
     }
-
+    
     public ChainableGenSetup defaultApply() {
       return this.doDefault(MatchResult.APPLY);
     }
-
+    
     public ChainableGenSetup defaultIgnore() {
       return this.doDefault(MatchResult.IGNORE);
     }
-
+    
   }
-
+  
   public void configStereo(Class<? extends IDecorator<?>> dec, IStereoMatcher stereoMatcher) {
     this.decoratorData.getOrCreateMatcherData(dec).getStereoMatchers().add(stereoMatcher);
   }
-
+  
   public void configTag(Class<? extends IDecorator<?>> dec, ITagMatcher tagMatcher) {
     this.decoratorData.getOrCreateMatcherData(dec).getTagMatchers().add(tagMatcher);
   }
-
+  
   public void configCLI(Class<? extends IDecorator<?>> dec, ICLIMatcher cliMatcher) {
     this.decoratorData.getOrCreateMatcherData(dec).getCLIMatchers().add(cliMatcher);
   }
-
+  
   public void configDefault(Class<? extends IDecorator<?>> dec, MatchResult def) {
     this.decoratorData.getOrCreateMatcherData(dec).setGlobalDefault(def);
   }
-
+  
   public void configApplyMatchName(Class<? extends IDecorator<?>> dec, String name) {
     this.configStereo(dec, IStereoMatcher.applyName(name));
     this.configTag(dec, ITagMatcher.applyName(name));
     this.configCLI(dec, ICLIMatcher.applyName(name));
   }
-
+  
   public void configIgnoreMatchName(Class<? extends IDecorator<?>> dec, String name) {
     this.configStereo(dec, IStereoMatcher.ignoreName(name));
     this.configTag(dec, ITagMatcher.ignoreName(name));
     this.configCLI(dec, ICLIMatcher.ignoreName(name));
   }
-
+  
   public void withCLIConfig(List<String> options) {
     var pattern = Pattern.compile("([a-zA-Z0-9_.]+):([a-zA-Z0-9_.]+)(=[a-zA-Z0-9_.]+)?");
     List<String[]> r = new ArrayList<>();
@@ -154,12 +154,12 @@ public class DecoratorConfig {
     }
     this.cliConfig = r.toArray(new String[0][3]);
   }
-
+  
   List<DecoratorPhase> createPhases() {
     // Perform some topological sorting: Adapted Kahn's algorithm
     Map<IDecorator<?>, Integer> inDegrees = new LinkedHashMap<>();
     Map<IDecorator<?>, List<IDecorator<?>>> graph = new LinkedHashMap<>();
-
+    
     // Initialize DAG nodes
     for (IDecorator<?> node : this.decorators) {
       inDegrees.put(node, 0);
@@ -184,7 +184,7 @@ public class DecoratorConfig {
         queue.offer(node);
       }
     }
-
+    
     List<DecoratorPhase> phases = new ArrayList<>();
     while (!queue.isEmpty()) {
       DecoratorPhase phase = new DecoratorPhase();
@@ -201,21 +201,21 @@ public class DecoratorConfig {
       }
       phases.add(phase);
     }
-
+    
     if (!phases.isEmpty() && phases.get(0).decorators.stream().noneMatch(
         d -> d instanceof ICreator)) {
       Log.error("0xCDD10: Missing creating decorator (such as withCopyCreator())");
     }
-
+    
     return phases;
   }
-
+  
   @Nonnull
   public Optional<ASTCDCompilationUnit> decorate(ASTCDCompilationUnit root,
       Map<FieldSymbol, CDRoleSymbol> fieldToRoles, Optional<GlobalExtensionManagement> glexOpt) {
     // Start by ordering the phases
     List<DecoratorPhase> phases = createPhases();
-
+    
     // Create the parent-child tree relationship
     decoratorData.setupParents(root, cliConfig);
     decoratorData.fieldToRoles = fieldToRoles;
@@ -240,29 +240,29 @@ public class DecoratorConfig {
             + " has modified the original CD instead of the decorated CD");
       }
     }
-
+    
     if (!(decoratorData.getData(ICreator.class) instanceof ICreator.ICreatedData)) {
       Log.error("0xCDD11: Missing creating decorator (such as withCopyCreator())");
       return Optional.empty();
     }
-
+    
     return Optional.ofNullable(((ICreator.ICreatedData) decoratorData.getData(ICreator.class))
         .getDecorated());
   }
-
+  
   /**
    * The decoration occurs in phases. During each phase the original AST is traversed and decorators
    * get the chance to decorate the target CD
    */
   static class DecoratorPhase {
-
+    
     final List<IDecorator<?>> decorators = new ArrayList<>();
-
+    
     @Override
     public String toString() {
       return "DecoratorPhase{" + "decorators=" + decorators + '}';
     }
-
+    
   }
-
+  
 }
