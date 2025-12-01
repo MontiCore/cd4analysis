@@ -1,0 +1,20 @@
+import java.lang.String;
+
+classdiagram ForEachAttributeInheritanceConc {
+  class Person {
+    <<ref="DataClass.attribute">> String firstName;
+    <<ref="DataClass.attribute">> String lastName;
+  }
+
+  <<ref="DataClass">> class Employee extends Person {
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  class Builder {
+    <<ref="ForEachAttributeRef.Builder.attribute">> String firstName;
+    <<ref="ForEachAttributeRef.Builder.attribute">> String lastName;
+    <<ref="ForEachAttributeRef.Builder.attribute">> int number;
+    <<ref="ForEachAttributeRef.Builder.attribute">> int salary;
+  }
+}

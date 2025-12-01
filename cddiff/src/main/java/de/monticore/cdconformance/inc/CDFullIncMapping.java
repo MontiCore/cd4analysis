@@ -4,8 +4,10 @@ package de.monticore.cdconformance.inc;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdconcretization.ConcretizationHelper;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -18,32 +20,33 @@ import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsLocalIncMapping;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * Represents the artifact-wide incarnation mapping between a reference and a concrete CD model
- * <i>without</i> ony restrictions by bindings.<br>
+ * Represents the full incarnation mapping between a reference and a concrete CD model
+ * <i>without</i> any restrictions by bindings.<br>
  * <br>
  * This is basically, the "link" between the AST-based, handwritten matching strategies and the
  * systematic, symbol-based incarnation mapping & binding infrastructure which could be generated
  * automatically in the future.
  */
-// TODO naming "global" sounds reasonable, but it is not fully global
-//   alternative: "UnrestrictedCDIncMapping" because it is not restricted to a specific scope
-public class CDArtifactIncMapping implements IOOSymbolsLocalIncMapping {
+public class CDFullIncMapping implements IOOSymbolsLocalIncMapping {
   
   private final ASTCDCompilationUnit concreteCD;
   private final ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy;
   private final CDAttributeMatchingStrategy attributeIncStrategy;
   private final CDMethodMatchingStrategy methodIncStrategy;
+  private final Set<CDConfParameter> confParams;
   
-  public CDArtifactIncMapping(ASTCDCompilationUnit concreteCD,
+  public CDFullIncMapping(ASTCDCompilationUnit concreteCD,
       ExternalCandidatesMatchingStrategy<ASTCDType> typeIncStrategy,
-      CDAttributeMatchingStrategy attributeIncStrategy,
-      CDMethodMatchingStrategy methodIncStrategy) {
+      CDAttributeMatchingStrategy attributeIncStrategy, CDMethodMatchingStrategy methodIncStrategy,
+      Set<CDConfParameter> confParameters) {
     this.concreteCD = concreteCD;
     this.typeIncStrategy = typeIncStrategy;
     this.attributeIncStrategy = attributeIncStrategy;
     this.methodIncStrategy = methodIncStrategy;
+    this.confParams = confParameters;
   }
   
   @Override
@@ -83,14 +86,20 @@ public class CDArtifactIncMapping implements IOOSymbolsLocalIncMapping {
       ASTCDType attributeDeclaringType = (ASTCDType) variableSymbol.getEnclosingScope()
           .getAstNode();
       
-      // TODO What about the "deep" case where attributes are matched in supertypes?
-      return getASTCDTypeIncarnations(attributeDeclaringType).stream().flatMap(
-          cAttributeDeclaringType -> {
-            attributeIncStrategy.setReferenceType(attributeDeclaringType);
-            return cAttributeDeclaringType.getCDAttributeList().stream().filter(
-                attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
-                    referenceAttribute));
-          }).map(ASTCDAttribute::getSymbol).collect(Collectors.toSet());
+      Stream<ASTCDType> declaringTypeIncs = getASTCDTypeIncarnations(attributeDeclaringType)
+          .stream();
+      if (confParams.contains(CDConfParameter.INHERITANCE)) {
+        // If inheritance is allowed, also consider all super types of the incarnations of the
+        // declaring type as potential declaring types of attribute incarnations
+        declaringTypeIncs = declaringTypeIncs.flatMap(inc -> CDDiffUtil.getAllSuperTypes(inc)
+            .stream());
+      }
+      return declaringTypeIncs.flatMap(cAttributeDeclaringType -> {
+        attributeIncStrategy.setReferenceType(attributeDeclaringType);
+        return cAttributeDeclaringType.getCDAttributeList().stream().filter(
+            attributeIncarnation -> attributeIncStrategy.isMatched(attributeIncarnation,
+                referenceAttribute));
+      }).map(ASTCDAttribute::getSymbol).collect(Collectors.toSet());
     }
     else {
       return Collections.emptySet();
@@ -103,8 +112,14 @@ public class CDArtifactIncMapping implements IOOSymbolsLocalIncMapping {
       ASTCDMethod referenceMethod = (ASTCDMethod) functionSymbol.getAstNode();
       ASTCDType declaringType = (ASTCDType) functionSymbol.getEnclosingScope().getAstNode();
       
-      // TODO What about the "deep" case where attributes are matched in supertypes?
-      return getASTCDTypeIncarnations(declaringType).stream().flatMap(cAttributeDeclaringType -> {
+      Stream<ASTCDType> declaringTypeIncs = getASTCDTypeIncarnations(declaringType).stream();
+      if (confParams.contains(CDConfParameter.INHERITANCE)) {
+        // If inheritance is allowed, also consider all super types of the incarnations of the
+        // declaring type as potential declaring types of attribute incarnations
+        declaringTypeIncs = declaringTypeIncs.flatMap(inc -> CDDiffUtil.getAllSuperTypes(inc)
+            .stream());
+      }
+      return declaringTypeIncs.flatMap(cAttributeDeclaringType -> {
         methodIncStrategy.setReferenceType(declaringType);
         return cAttributeDeclaringType.getCDMethodList().stream().filter(
             methodInc -> methodIncStrategy.isMatched(methodInc, referenceMethod));
