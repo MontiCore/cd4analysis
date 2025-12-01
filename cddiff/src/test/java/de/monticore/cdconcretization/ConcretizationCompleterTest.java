@@ -156,8 +156,8 @@ class ConcretizationCompleterTest extends AbstractCDConcretizationTest {
     Map<String, Set<String>> expectedMap2 = new LinkedHashMap<>();
     expectedMap2.put("roleNameRight", new LinkedHashSet<>(Arrays.asList("roleNameRight_C",
         "roleNameRight_D", "roleNameRight_B")));
-    expectedMap2.put("roleNameLeft", new LinkedHashSet<>(Arrays.asList("roleNameLeft_A",
-        "roleNameLeft_A", "roleNameLeft_A")));
+    expectedMap2.put("roleNameLeft", new LinkedHashSet<>(Arrays.asList("roleNameLeft",
+        "roleNameLeft", "roleNameLeft")));
     
     Map<String, Set<String>> actualMapTemp2 = new LinkedHashMap<>();
     for (Map.Entry<CDRoleSymbol, Set<CDRoleSymbol>> entry : actualMap2.entrySet()) {

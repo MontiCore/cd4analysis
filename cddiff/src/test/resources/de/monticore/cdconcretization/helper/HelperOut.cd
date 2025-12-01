@@ -4,7 +4,7 @@ classdiagram HelperConc {
   <<ref="B">> class C;
   <<ref="B">> class D;
 
-  association A (roleNameLeft_A) <-> (roleNameRight_B) B;
-  association A (roleNameLeft_A) <-> (roleNameRight_C) C;
-  association A (roleNameLeft_A) <-> (roleNameRight_D) D;
+  association A (roleNameLeft) <-> (roleNameRight_B) B;
+  association A (roleNameLeft) <-> (roleNameRight_C) C;
+  association A (roleNameLeft) <-> (roleNameRight_D) D;
 }

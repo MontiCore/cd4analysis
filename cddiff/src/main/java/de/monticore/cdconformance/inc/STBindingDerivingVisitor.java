@@ -16,8 +16,10 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdconcretization.CDRefSymbolHandlerDelegator;
 import de.monticore.cdconcretization.stereotype.BindingValue;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
+import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
@@ -67,20 +69,24 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
   
   @Override
   public void visit(ASTCDAssociation node) {
-    // TODO check this when working on associations
     // an association side has only a symbol if it has a name
-    // Either, we not allow binding stereotypes on unnamed associations or we add the bindings
-    // from the association level to each association side (always having an implicit name from the
-    // source/target type).
-    //checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    // TODO Either, we not allow binding stereotypes on unnamed associations or we add the bindings
+    //   from the association level to each association side (always having an implicit name from the
+    //   source/target type).
+    if (node.isPresentSymbol()) {
+      checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    }
   }
   
   @Override
   public void visit(ASTCDAssocSide node) {
-    // TODO check this when working on associations
     // an association side has only a symbol if it has a role name
-    //  However, we can always have an implicit name from the source/target type!
-    //checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    // However, we can always have an implicit name from the source/target type!
+    // TODO Think about always executing a tafo to add implicit role names before conformance
+    //   checking/concretization to ensure there is a symbol for each assoc side.
+    if (node.isPresentSymbol()) {
+      checkForBindingStereotype(node.getEnclosingScope(), node.getSymbol(), node.getModifier());
+    }
   }
   
   @Override
@@ -107,7 +113,9 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
           .get()));
       handler.onAttribute((refAttribute) -> handleAttributeBinding(concreteScope, cdSymbol,
           refAttribute, binding.get()));
-      // TODO support methods & associations
+      handler.onMethod((refMethod) -> handleMethodBinding(concreteScope, cdSymbol, refMethod,
+          binding.get()));
+      // TODO support associations
       handler.resolveSymbol(concreteScope, binding.get().getReferenceName(), modifier
           .get_SourcePositionStart());
     }
@@ -182,6 +190,45 @@ public class STBindingDerivingVisitor implements CDBasisVisitor2, CD4CodeBasisVi
         Log.warn("The incarnation binding '" + incarnationName + "' cannot be resolved as a "
             + "CDAttribute. Reference attribute: '" + referenceAttribute.getName() + "'",
             annotatedSymbol.getSourcePosition());
+        foundInvalidBinding = true;
+      }
+    }
+  }
+  
+  /**
+   * Handles the binding for a reference method by resolving each incarnation as method symbol
+   * in the given scope and adding the bindings to the incarnation mapping.
+   *
+   * @param scope the scope in which symbols are resolved
+   * @param annotatedSymbol the symbol that is annotated with the binding stereotype
+   * @param referenceMethod the reference method that is bound with this binding
+   * @param binding the binding value that contains the incarnation names
+   */
+  private void handleMethodBinding(ICDBasisScope scope, ISymbol annotatedSymbol,
+      ASTCDMethod referenceMethod, BindingValue binding) {
+    for (String incarnationName : binding.getIncarnationNames()) {
+      Optional<MethodSymbol> incarnationMethod = MethodSignatureString.resolveMethodSignature(scope,
+          incarnationName);
+      if (incarnationMethod.isPresent()) {
+        if (incMapping.isIncarnation(SymbolUtil.cdMethodFromMethodSymbol(incarnationMethod.get()),
+            referenceMethod)) {
+          incMapping.addBinding(annotatedSymbol, referenceMethod.getSymbol(), incarnationMethod
+              .get());
+          Log.info("Added binding from stereotype @ '" + annotatedSymbol.getFullName() + "':  "
+              + referenceMethod.getSymbol().getFullName() + "=" + incarnationMethod.get()
+                  .getFullName(), LOG_NAME);
+        }
+        else {
+          Log.warn("The incarnation binding '" + incarnationMethod.get().getFullName()
+              + "' is not an incarnation of reference method '" + referenceMethod.getSymbol()
+                  .getFullName() + "'.", annotatedSymbol.getSourcePosition());
+          foundInvalidBinding = true;
+        }
+      }
+      else {
+        Log.warn("The incarnation binding '" + incarnationName + "' cannot be resolved as a "
+            + "CDMethod. Reference method: '" + referenceMethod.getName() + "'", annotatedSymbol
+                .getSourcePosition());
         foundInvalidBinding = true;
       }
     }

@@ -1,0 +1,11 @@
+classdiagram TransitiveDependenciesConc {
+
+  <<ref="DataClass">> class Employee;
+  <<ref="DataClass">> class Department;
+
+  <<ref="TransitiveDependenciesRef.DataClassBuilder">> class EmployeeBuilder;
+  <<ref="TransitiveDependenciesRef.DataClassBuilder">> class DepartmentBuilder;
+
+  <<ref="TransitiveDependenciesRef.DataClassBuilderFactory">> class EmployeeBuilderFactory;
+  <<ref="TransitiveDependenciesRef.DataClassBuilderFactory">> class DepartmentBuilderFactory;
+}

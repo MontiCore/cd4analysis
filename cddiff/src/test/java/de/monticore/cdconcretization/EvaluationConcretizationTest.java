@@ -135,6 +135,12 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
           "evaluation/banking/BankingRef.cd", "evaluation/banking/singleInc/BankingOut.cd");
     }
     
+    @Test
+    void banking2() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/banking2/BankingConc.cd",
+          "evaluation/banking2/BankingRef.cd", "evaluation/banking2/BankingOut.cd");
+    }
+    
     /*
      * Should be resolved when using new incarnation mapping/binding abstractions.
      * See https://git.rwth-aachen.de/se-student/theses/ma-jorden/master-theses/-/issues/68
@@ -204,6 +210,106 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testConcretizedConformsToRefAndExpectedOut("evaluation/crud-backend/DomainModel.cd",
           "evaluation/crud-backend/CRUDBackendRef.cd", "evaluation/crud-backend/CRUDBackendOut.cd");
+    }
+    
+  }
+  
+  @Test
+  void testMill() {
+    // TODO Remove once we have explicit support for 'forEach' conformance check
+    confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+    testConcretizedConformsToRefAndExpectedOut("evaluation/mill/LanguageInfrastructureConc.cd",
+        "evaluation/mill/MillRef.cd", "evaluation/mill/MillOut.cd");
+  }
+  
+  @Nested
+  class StaticDelegator {
+    
+    /**
+     * Disabled because currently 'method forEach method' is not support yet.
+     */
+    @Test
+    @Disabled
+    void testStaticDelegator() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/staticDelegator/StaticDelegatorConc.cd",
+          "evaluation/staticDelegator/StaticDelegatorRef.cd",
+          "evaluation/staticDelegator/StaticDelegatorOut.cd");
+    }
+    
+    @Test
+    void testStaticMethodExistsAttributeWorkaround() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/staticDelegator/attrWorkaround/StaticExistsConc.cd",
+          "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
+          "evaluation/staticDelegator/attrWorkaround/StaticExistsOut.cd");
+    }
+    
+    /**
+     * Disabled because forEach is not implemented to be "bidirectional". Thus, we cannot complete
+     * in both directions (static and instance methods) with having only a single forEach in the
+     * reference model.
+     * Further, if we add a second forEach for the instance methods, we run into problems with
+     * the current incarnation binding concept as the derived dependency elements cannot be found
+     * in the concrete model.
+     */
+    @Test
+    @Disabled
+    void testInstanceMethodExistsAttributeWorkaround() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsConc.cd",
+          "evaluation/staticDelegator/attrWorkaround/StaticDelegatorRef.cd",
+          "evaluation/staticDelegator/attrWorkaround/InstanceMethodExistsOut.cd");
+    }
+    
+  }
+  
+  @Nested
+  class TransitiveDependencies {
+    
+    @Test
+    void testTransitiveDependencyInSyntacticalOrder() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesRef.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
+    }
+    
+    /**
+     * Disabled because currently the forEach completion is dependent on the syntactical order of
+     * elements in the reference model. In this example, the {@code DataClassBuilderFactory}
+     * with a dependency on {@code DataClassBuilder} is declared before the {@code DataClassBuilder}
+     * itself. Therefore, during completion, no incarnation of {@code DataClassBuilder} can be found
+     * and thus no incarnation of {@code DataClassBuilderFactory} is added.
+     */
+    @Test
+    @Disabled
+    void testTransitiveDependencySwappedOrder() {
+      // TODO Remove once we have explicit support for 'forEach' conformance check
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testConcretizedConformsToRefAndExpectedOut(
+          "evaluation/transitiveDependencies/TransitiveDependenciesConc.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesSwappedOrderRef.cd",
+          "evaluation/transitiveDependencies/TransitiveDependenciesOut.cd");
+    }
+    
+  }
+  
+  @Nested
+  class MaCoCo {
+    
+    @Test
+    void testConcreteEmpty() {
+      testConcretizedConformsToRefAndExpectedOut("evaluation/macoco/EmptyConc.cd",
+          "evaluation/macoco/MaCoCoRef.cd", "evaluation/macoco/EmptyConcOut.cd");
     }
     
   }

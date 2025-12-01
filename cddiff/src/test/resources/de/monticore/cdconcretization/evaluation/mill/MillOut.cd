@@ -1,0 +1,17 @@
+classdiagram LanguageInfrastructureConc {
+
+  <<ref="MillProduct">> class G1Parser;
+  <<ref="MillProduct">> class G1Traverser;
+  <<ref="MillProduct">> class ASTFooBuilder;
+
+  <<ref="Mill">> class G1Mill {
+    static void init();
+    static void initMe(G1Mill me);
+    <<ref="MillRef.Mill._MillProduct">> G1Parser _G1Parser();
+    <<ref="MillRef.Mill._MillProduct">> G1Traverser _G1Traverser();
+    <<ref="MillRef.Mill._MillProduct">> ASTFooBuilder _ASTFooBuilder();
+    <<ref="MillRef.Mill.millProduct">> static G1Parser g1Parser();
+    <<ref="MillRef.Mill.millProduct">> static G1Traverser g1Traverser();
+    <<ref="MillRef.Mill.millProduct">> static ASTFooBuilder aSTFooBuilder();
+  }
+}

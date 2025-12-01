@@ -1,0 +1,12 @@
+classdiagram StaticDelegatorConc {
+
+  <<ref="StaticDelegator">> class MyLanguageMill {
+    <<ref="method">> static void foo();
+    <<ref="method">> static int getId();
+    <<ref="method">> static void doSomething();
+
+    <<ref="StaticDelegatorRef.StaticDelegator._method">> void _foo();
+    <<ref="StaticDelegatorRef.StaticDelegator._method">> int _getId();
+    <<ref="StaticDelegatorRef.StaticDelegator._method">> void _doSomething();
+  }
+}

@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /** Collection of helper-methods for CDDiff. */
 public class CDDiffUtil {
@@ -70,17 +71,23 @@ public class CDDiffUtil {
   }
   
   /**
-   * The default role-name for a referenced type is the (simple) type-name with the first letter in
-   * lower case.
+   * If a role name is explicitly given, it is returned. Otherwise, the default role name is
+   * inferred from the type name.
    */
   public static String inferRole(ASTCDAssocSide assocSide) {
     if (assocSide.isPresentCDRole()) {
       return assocSide.getCDRole().getName();
     }
-    char[] roleName = assocSide.getMCQualifiedType().getMCQualifiedName().getBaseName()
-        .toCharArray();
-    roleName[0] = Character.toLowerCase(roleName[0]);
-    return new String(roleName);
+    return getDefaultRoleName(assocSide);
+  }
+  
+  /**
+   * The default role-name for a referenced type is the (simple) type-name with the first letter in
+   * lower case.
+   */
+  public static String getDefaultRoleName(ASTCDAssocSide assocSide) {
+    return StringUtils.uncapitalize(assocSide.getMCQualifiedType().getMCQualifiedName()
+        .getBaseName());
   }
   
   public static void saveDiffCDs2File(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,

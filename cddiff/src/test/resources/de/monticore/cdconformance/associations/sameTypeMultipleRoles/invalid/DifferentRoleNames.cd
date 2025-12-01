@@ -1,0 +1,11 @@
+classdiagram BothExist {
+
+  class Account;
+  class Transaction;
+
+  // NOTE: for this does case DO NOT use something like 'sourceAccount' as role name, because
+  // this would be matched to the correct reference assoc because of the "role prefix if present"
+  // matching strategy.
+  association Transaction -> (srcAcc) Account [1];
+  association Transaction -> (tgtAcc) Account [1];
+}

@@ -1,0 +1,8 @@
+classdiagram StaticExistsConc {
+
+  <<ref="StaticDelegator">> class MyLanguageMill {
+    <<ref="StaticDelegator.method">> static int foo;
+    <<ref="StaticDelegator.method">> static int getId;
+    <<ref="StaticDelegator.method">> static boolean doSomething;
+  }
+}
