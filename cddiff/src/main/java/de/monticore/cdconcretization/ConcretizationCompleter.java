@@ -174,7 +174,7 @@ public class ConcretizationCompleter {
     }
     if (checkConformance) {
       completerChainBuilder.add(new ConformanceCheckCompletionStep(mapping, conformanceParams,
-          "Completion result is not conform"));
+          underspecifiedPlaceholderTypeName, "Completion result is not conform"));
     }
     
     // perform the actual concretization

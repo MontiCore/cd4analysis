@@ -1,14 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdconcretization.cd;
 
-import static de.monticore.cdconformance.CDConfParameter.*;
-
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.CompletionException;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Set;
 
 /**
@@ -24,10 +23,11 @@ public class ConformanceCheckCompletionStep extends AbstractCDCompleter {
   private final CDConformanceChecker conformanceChecker;
   
   public ConformanceCheckCompletionStep(String mapping, Set<CDConfParameter> params,
-      String errorMessage) {
+      String underspecifiedTypeName, String errorMessage) {
     this.mapping = mapping;
     this.errorMessage = errorMessage;
     this.conformanceChecker = new CDConformanceChecker(params);
+    this.conformanceChecker.setUnderspecifiedTypeName(underspecifiedTypeName);
   }
   
   @Override
