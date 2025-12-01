@@ -128,13 +128,13 @@ public abstract class AbstractCDConcretizationTest {
   }
   
   protected void parseAndConcretize(String conc, String ref) throws CompletionException {
-    parseAndConcretize(new ConcretizationCompleter("ref", confParameters), conc, ref);
+    parseAndConcretize(new ConcretizationCompleter(confParameters), conc, ref);
   }
   
   protected void parseAndConcretize(ConcretizationCompleter completer, String conc, String ref)
       throws CompletionException {
     parseModels(conc, ref);
-    completer.completeCD(conCD, refCD);
+    completer.completeCD(conCD, refCD, "ref");
     System.out.println("Concretized CD:");
     System.out.println(CD4CodeMill.prettyPrint(conCD, false));
   }
