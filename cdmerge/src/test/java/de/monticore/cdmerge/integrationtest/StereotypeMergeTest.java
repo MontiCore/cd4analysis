@@ -4,7 +4,7 @@ package de.monticore.cdmerge.integrationtest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -166,7 +166,7 @@ public class StereotypeMergeTest extends BaseTest {
         MergeParameter.ON).withParam(MergeParameter.FAIL_FAST).withParam(MergeParameter.OUTPUT_NAME,
             "mergedCD");
     for (String m : inputModels) {
-      Preconditions.checkNotNull(loadModel(Paths.get(m)));
+      Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();

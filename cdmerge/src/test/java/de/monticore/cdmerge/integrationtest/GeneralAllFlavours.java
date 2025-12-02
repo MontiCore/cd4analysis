@@ -3,7 +3,7 @@ package de.monticore.cdmerge.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.MergeTool;
@@ -48,7 +48,7 @@ public class GeneralAllFlavours extends BaseTest {
                 MergeParameter.DISABLE_CONTEXT_CONDITIONS);
     
     for (String m : inputModels) {
-      Preconditions.checkNotNull(loadModel(Paths.get(m)));
+      Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();

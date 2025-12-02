@@ -3,6 +3,7 @@ package de.monticore;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.google.common.base.Verify;
 import de.monticore.cd.OutTestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -23,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -250,8 +250,8 @@ public class ExampleCommandTest extends OutTestBasis {
         outputPath + "out" });
     
     try {
-      ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
-      ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
+      ASTCDCompilationUnit ast1 = Verify.verifyNotNull(CDDiffUtil.loadCD(cd1)).deepClone();
+      ASTCDCompilationUnit ast2 = Verify.verifyNotNull(CDDiffUtil.loadCD(cd2)).deepClone();
       
       // then corresponding .od files are generated
       File[] odFiles = Paths.get(outputPath + "out").toFile().listFiles();

@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.odgen;
 
+import com.google.common.base.Verify;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -13,7 +14,6 @@ import de.monticore.odlink._ast.ASTODLink;
 import edu.mit.csail.sdg.alloy4.Pair;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Package {
   
@@ -36,8 +36,8 @@ public class Package {
     this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(),
         odGenHelper.getSuperTypes(rightObject), getAttributesOD(rightObject, helper));
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association
-        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects
-            .requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Verify
+            .verifyNotNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
@@ -49,8 +49,8 @@ public class Package {
     this.leftObject = leftObject;
     this.rightObject = rightObject;
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association
-        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects
-            .requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Verify
+            .verifyNotNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
@@ -66,8 +66,8 @@ public class Package {
         odGenHelper.getSuperTypes(leftObject), getAttributesOD(leftObject, helper));
     this.rightObject = rightObject;
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association
-        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects
-            .requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Verify
+            .verifyNotNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;
@@ -82,8 +82,8 @@ public class Package {
     this.rightObject = ODBuilder.buildObj(idTgt, rightObject.getSymbol().getInternalQualifiedName(),
         odGenHelper.getSuperTypes(rightObject), getAttributesOD(rightObject, helper));
     this.association = ODBuilder.buildLink(this.leftObject, CDDiffUtil.inferRole(association
-        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Objects
-            .requireNonNull(Syn2SemDiffHelper.getDirection(association)));
+        .getLeft()), CDDiffUtil.inferRole(association.getRight()), this.rightObject, Verify
+            .verifyNotNull(Syn2SemDiffHelper.getDirection(association)));
     this.astcdAssociation = association;
     this.side = side;
     this.isProcessedLeft = isProcessedLeft;

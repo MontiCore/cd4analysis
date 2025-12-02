@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.odgen;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -435,16 +436,16 @@ public class Syn2SemDiffHelper {
     association.getAssociation().setCDAssocDir(direction);
     association.setDirection(getDirection(association.getAssociation()));
     if (association.getSide().equals(ClassSide.Left)) {
-      association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects
-          .requireNonNull(cardinalityLeft)));
-      association.getAssociation().getRight().setCDCardinality(createCardinality(Objects
-          .requireNonNull(cardinalityRight)));
+      association.getAssociation().getLeft().setCDCardinality(createCardinality(Verify
+          .verifyNotNull(cardinalityLeft)));
+      association.getAssociation().getRight().setCDCardinality(createCardinality(Verify
+          .verifyNotNull(cardinalityRight)));
     }
     else {
-      association.getAssociation().getLeft().setCDCardinality(createCardinality(Objects
-          .requireNonNull(cardinalityRight)));
-      association.getAssociation().getRight().setCDCardinality(createCardinality(Objects
-          .requireNonNull(cardinalityLeft)));
+      association.getAssociation().getLeft().setCDCardinality(createCardinality(Verify
+          .verifyNotNull(cardinalityRight)));
+      association.getAssociation().getRight().setCDCardinality(createCardinality(Verify
+          .verifyNotNull(cardinalityLeft)));
     }
   }
   

@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syn2semdiff.odgen;
 
+import com.google.common.base.Verify;
 import de.monticore.cddiff.syn2semdiff.datastructures.AssocDirection;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis.ODBasisMill;
@@ -38,7 +39,8 @@ public class ODBuilder implements IODBuilder {
     catch (Exception exception) {
       Log.error("Attributes couldn't be created");
     }
-    assert Objects.requireNonNull(attribute).isPresent();
+    Verify.verifyNotNull(attribute, "Attribute is null");
+    Verify.verify(attribute.isPresent(), "Attribute value must be present");
     return attribute.get();
   }
   
@@ -58,7 +60,8 @@ public class ODBuilder implements IODBuilder {
     catch (Exception exception) {
       Log.error("Attributes couldn't be created");
     }
-    assert Objects.requireNonNull(attribute).isPresent();
+    Verify.verifyNotNull(attribute, "Attribute is null");
+    Verify.verify(attribute.isPresent(), "Attribute value must be present");
     return attribute.get();
   }
   

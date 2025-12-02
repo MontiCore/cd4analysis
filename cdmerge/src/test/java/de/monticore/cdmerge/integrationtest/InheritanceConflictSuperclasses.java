@@ -4,7 +4,7 @@ package de.monticore.cdmerge.integrationtest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.MergeTool;
 import de.monticore.cdmerge.config.CDMergeConfig;
@@ -49,7 +49,7 @@ public class InheritanceConflictSuperclasses extends BaseTest {
         MergeParameter.ON).withParam(MergeParameter.FAIL_FAST).withParam(MergeParameter.OUTPUT_NAME,
             "mergedCD");
     for (String m : inputModels) {
-      Preconditions.checkNotNull(loadModel(Paths.get(m)));
+      Verify.verifyNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
