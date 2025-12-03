@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram DataModelCon {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+}
