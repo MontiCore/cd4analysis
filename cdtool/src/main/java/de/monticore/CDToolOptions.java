@@ -3,6 +3,8 @@ package de.monticore;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.cli.*;
 
 public class CDToolOptions {
@@ -54,7 +56,7 @@ public class CDToolOptions {
     initSemDiffOptions();
     initSyntaxDiffOptions();
     initMergeOptions();
-    initConformanceCheckOptions();
+    initReferenceModelOptions();
   }
   
   protected void initCheck() {
@@ -248,7 +250,7 @@ public class CDToolOptions {
   }
   
   /** adds options for Conformance Check */
-  public void initConformanceCheckOptions() {
+  public void initReferenceModelOptions() {
     options.addOption(Option.builder().longOpt("reference").hasArg().type(String.class).argName(
         "file").numberOfArgs(1).desc(
             "Parses the file as a reference CD and checks if the the input CD specified by `-i`"
@@ -256,8 +258,24 @@ public class CDToolOptions {
     
     options.addOption(Option.builder().longOpt("map").hasArg().type(String.class).argName("names")
         .hasArgs().desc(
-            "Specify the names of stereotypes that are used as incarnation mappings in the "
-                + "concrete model. Default : 'incarnates'").build());
+            "Specifies the names of stereotypes that are used as incarnation mappings in the "
+                + "concrete model. Default : '" + CD4CodeTool.DEFAULT_INC_MAPPING_NAME + "'")
+        .build());
+    
+    options.addOption(Option.builder().longOpt("ref-param").hasArg().type(String.class).argName(
+        "params").hasArgs().desc("Specifies the conformance parameters to use "
+            + "for reference CD conformance checking and completion. Default: '"
+            + CD4CodeTool.DEFAULT_CONF_PARAMS.stream().map(Enum::name).collect(Collectors.joining(
+                ", ")) + "'").build());
+    
+    options.addOption(Option.builder().longOpt("complete").desc("Completes a possible "
+        + "incomplete CD specified by `-i` such that it conforms to the reference CD "
+        + "specified by `--reference`.").build());
+    
+    options.addOption(Option.builder().longOpt("anytype").hasArg().type(String.class).argName(
+        "typename").desc("Specifies the placeholder type name used for "
+            + "underspecified types in the reference CD specified by `--reference`. "
+            + "Default : '" + CD4CodeTool.DEFAULT_UNDERSPECIFIED_TYPE_NAME + "'").build());
   }
   
 }

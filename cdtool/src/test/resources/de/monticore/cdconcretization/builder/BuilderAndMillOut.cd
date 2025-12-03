@@ -1,0 +1,43 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram DataModelCon {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+
+  <<ref="BuilderAndMillRef.DataClassBuilder">>
+  class EmployeeBuilder {
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> String firstName;
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> String lastName;
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> int number;
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> int salary;
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder firstName(String firstName);
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder lastName(String lastName);
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder number(int number);
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder salary(int salary);
+    Employee build();
+  }
+
+  <<ref="BuilderAndMillRef.DataClassBuilder">>
+  class DepartmentBuilder {
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> String managerName;
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> int depId;
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> DepartmentBuilder managerName(String managerName);
+    <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> DepartmentBuilder depId(int depId);
+    Department build();
+  }
+
+  class Mill {
+    <<ref="BuilderAndMillRef.Mill.dataClassBuilder">> DepartmentBuilder departmentBuilder();
+    <<ref="BuilderAndMillRef.Mill.dataClassBuilder">> EmployeeBuilder employeeBuilder();
+  }
+}

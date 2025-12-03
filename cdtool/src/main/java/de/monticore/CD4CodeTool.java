@@ -32,6 +32,10 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisCombinePackagesTrafo;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cdconcretization.CompletionException;
+import de.monticore.cdconcretization.ConcretizationCompleter;
+import de.monticore.cdconcretization.UnderspecifiedPlaceholderType;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDDiffUtil;
@@ -89,6 +93,14 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   
   public static final String REPORT_NAME = "report";
   
+  public static final String DEFAULT_INC_MAPPING_NAME = "incarnates";
+  
+  public static final Set<CDConfParameter> DEFAULT_CONF_PARAMS = Set.of(STEREOTYPE_MAPPING,
+      NAME_MAPPING, SRC_TARGET_ASSOC_MAPPING, INHERITANCE, ALLOW_CARD_RESTRICTION,
+      METHOD_OVERLOADING);
+  
+  public static final String DEFAULT_UNDERSPECIFIED_TYPE_NAME = "anytype";
+  
   protected String modelName;
   
   protected String modelFile;
@@ -108,6 +120,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   protected CommandLine cmd;
   
   protected boolean stopRunEarly;
+  
+  protected String underspecifiedTypeName = DEFAULT_UNDERSPECIFIED_TYPE_NAME;
+  
+  protected Set<CDConfParameter> confParameters = DEFAULT_CONF_PARAMS;
   
   @Override
   public void run(String[] args) {
@@ -155,7 +171,18 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           if (useBuiltInTypes) {
             BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
           }
-          checkConformance();
+          if (cmd.hasOption("anytype")) {
+            underspecifiedTypeName = cmd.getOptionValue("anytype");
+          }
+          UnderspecifiedPlaceholderType.addPlaceholderType(CD4CodeMill.globalScope(),
+              underspecifiedTypeName);
+          parseConformanceParams();
+          if (cmd.hasOption("complete")) {
+            completeWithReferenceCD();
+          }
+          else {
+            checkConformance();
+          }
           CD4CodeMill.globalScope().clear();
         }
         
@@ -718,22 +745,67 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
   
+  protected void parseConformanceParams() {
+    if (cmd.hasOption("ref-param")) {
+      confParameters = new HashSet<>();
+      String[] rawParams = cmd.getOptionValues("ref-param");
+      if (rawParams != null) {
+        for (String confParam : cmd.getOptionValues("ref-param")) {
+          try {
+            CDConfParameter parameter = CDConfParameter.valueOf(confParam);
+            confParameters.add(parameter);
+          }
+          catch (IllegalArgumentException e) {
+            Log.error("0xCDD22: Unknown conformance parameter '" + confParam + "'.");
+          }
+        }
+      }
+    }
+  }
+  
   /** perform a conformance check */
   protected void checkConformance() {
     ASTCDCompilationUnit con = ast.deepClone();
     new CD4CodeDirectCompositionTrafo().transform(con);
     CDDiffUtil.refreshSymbolTable(con);
     ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
-    List<String> mappings = List.of("incarnates");
+    List<String> mappings = List.of(DEFAULT_INC_MAPPING_NAME);
     if (cmd.hasOption("map")) {
       mappings = List.of(cmd.getOptionValues("map"));
     }
     if (ref != null) {
       new CD4CodeDirectCompositionTrafo().transform(ref);
       CDDiffUtil.refreshSymbolTable(ref);
-      new CDConformanceChecker(Set.of(STEREOTYPE_MAPPING, NAME_MAPPING, SRC_TARGET_ASSOC_MAPPING,
-          INHERITANCE, ALLOW_CARD_RESTRICTION)).checkConformance(con, ref, new LinkedHashSet<>(
-              mappings));
+      new CDConformanceChecker(confParameters).checkConformance(con, ref, new LinkedHashSet<>(
+          mappings));
+    }
+  }
+  
+  /** perform completion with reference CD */
+  public void completeWithReferenceCD() {
+    ASTCDCompilationUnit con = ast.deepClone();
+    new CD4CodeDirectCompositionTrafo().transform(con);
+    CDDiffUtil.refreshSymbolTable(con);
+    ASTCDCompilationUnit ref = parse(cmd.getOptionValue("reference"));
+    List<String> mappings = List.of(DEFAULT_INC_MAPPING_NAME);
+    if (cmd.hasOption("map")) {
+      mappings = List.of(cmd.getOptionValues("map"));
+    }
+    if (ref != null) {
+      new CD4CodeDirectCompositionTrafo().transform(ref);
+      CDDiffUtil.refreshSymbolTable(ref);
+      ConcretizationCompleter completer = new ConcretizationCompleter(confParameters);
+      completer.setUnderspecifiedPlaceholderTypeName(underspecifiedTypeName);
+      try {
+        completer.completeCD(con, ref, mappings);
+        ast = con; // continue with the completed CD
+      }
+      catch (CompletionException e) {
+        Log.error("0xCDD21 Cannot complete CD: " + e.getMessage());
+      }
+    }
+    else {
+      Log.error("0xCDD19 No reference CD provided for completion.");
     }
   }
   
