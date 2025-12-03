@@ -776,8 +776,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     if (ref != null) {
       new CD4CodeDirectCompositionTrafo().transform(ref);
       CDDiffUtil.refreshSymbolTable(ref);
-      new CDConformanceChecker(confParameters).checkConformance(con, ref, new LinkedHashSet<>(
-          mappings));
+      CDConformanceChecker checker = new CDConformanceChecker(confParameters);
+      checker.setUnderspecifiedTypeName(underspecifiedTypeName);
+      checker.checkConformance(con, ref, new LinkedHashSet<>(mappings));
     }
   }
   
