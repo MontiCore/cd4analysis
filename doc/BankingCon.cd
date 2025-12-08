@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram BankingCon {
+
+  <<m1="Bank">> class SEPABank {
+    <<m1="id">> String bic;
+    <<m1="overallBalance">> double totalMoney; // money of all accounts together
+  }
+
+  <<m1="Account">> class BankAccount {
+    <<m1="id">> String iban;
+  }
+}

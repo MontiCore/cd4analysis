@@ -37,6 +37,8 @@ import de.se_rwth.commons.logging.Log;
 import de.monticore.cdconformance.inc.attribute.CDAttributeMatchingStrategy;
 import de.monticore.cdconformance.inc.method.CDMethodMatchingStrategy;
 import de.monticore.cdmatcher.ExternalCandidatesMatchingStrategy;
+
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,11 +46,9 @@ import java.util.Set;
  * reference CD. The completion process is implemented using multiple modular completer
  * implementations for each element kind in a CD. This class is the facade with easy to use
  * configuration parameters and a single method to perform the completion: {@link
- * #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit)}).
+ * #completeCD(ASTCDCompilationUnit, ASTCDCompilationUnit, String)}).
  */
 public class ConcretizationCompleter {
-  
-  private String mapping;
   
   /**
    * If true, the conformance checker is used to check the conformance of the concretization result.
@@ -79,9 +79,25 @@ public class ConcretizationCompleter {
   
   protected Set<CDConfParameter> conformanceParams;
   
-  public ConcretizationCompleter(String mapping, Set<CDConfParameter> conformanceParams) {
-    this.mapping = mapping;
+  public ConcretizationCompleter(Set<CDConfParameter> conformanceParams) {
     this.conformanceParams = conformanceParams;
+  }
+  
+  /**
+   * Completes the given concrete CD such that it conforms to a given reference CD for multiple
+   * mappings.<br>
+   * Completion is performed in the order of the given mapping names.
+   *
+   * @param concreteCD the concrete CD to be completed
+   * @param referenceCD the reference CD to be used for completion
+   * @param mappings the mapping names to be used for the completion
+   * @throws CompletionException
+   */
+  public void completeCD(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD,
+      List<String> mappings) throws CompletionException {
+    for (String mapping : mappings) {
+      completeCD(concreteCD, referenceCD, mapping);
+    }
   }
   
   /**
@@ -89,10 +105,11 @@ public class ConcretizationCompleter {
    *
    * @param concreteCD the concrete CD to be completed
    * @param referenceCD the reference CD to be used for completion
+   * @param mapping the mapping name to be used for the completion
    * @throws CompletionException if the concrete CD cannot be completed to conform to the reference.
    */
-  public void completeCD(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD)
-      throws CompletionException {
+  public void completeCD(ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD,
+      String mapping) throws CompletionException {
     
     /*
      * Basically we do a couple of dependency initialization here. We create a chain of completers
@@ -157,14 +174,12 @@ public class ConcretizationCompleter {
     }
     if (checkConformance) {
       completerChainBuilder.add(new ConformanceCheckCompletionStep(mapping, conformanceParams,
-          "Completion result is not conform"));
+          underspecifiedPlaceholderTypeName, "Completion result is not conform"));
     }
     
     // perform the actual concretization
     completerChainBuilder.build().complete(concreteCD, referenceCD, context);
   }
-  
-  public void setMapping(String mapping) { this.mapping = mapping; }
   
   /**
    * Configures if the conformance checker should be used to check the conformance of the

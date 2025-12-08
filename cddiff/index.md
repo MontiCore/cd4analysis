@@ -272,6 +272,8 @@ the mapping names:
 java -jar cdtool/target/libs/MCCD.jar -i doc/GraphAdapter.cd --reference doc/Adapter.cd --map m1 m2
 ```
 
+The set of conformance parameters (`CDConfParameter`) can be adjusted via the `--ref-param` option.
+
 If no mapping name is specified via `--map`, the conformance checker assumes 
 that the stereotype `<<incarnates="...">>` is applied to elements in the 
 concrete CD (e.g., classes) in order to map them to corresponding elements in 
@@ -317,8 +319,138 @@ The matching strategies are used both in the syntactic difference analysis and
 the conformance checker to identify incarnations.
 In both cases multiple matching strategies are used in combination.
 
-## Completing Concretizations of Reference Class Diagrams (upcoming)
+## Completing Concretizations of Reference Class Diagrams
 
-We are currently developing a tool that would allow for automatic completion of
-incomplete Class Diagrams based on a Reference Model.
-As of now, the tool is still under development and not ready to use.
+We developed a tool that allows for automatic completion of incomplete
+Class Diagrams based on a Reference CD, such that the completed CD
+conforms to the reference CD.
+
+The completion tool is implemented in the package
+`de.monticore.cdconcretization` and can be used via the class
+`ConcretizationCompleter`.
+The method `completeCD` takes as input the concrete and reference CD, each
+as an `ASTCDCompilationUnit`, as well as a list of names of incarnation mappings encoded via
+stereotypes in the concrete CD.
+Same as the conformance checker, the `ConcretizationCompleter` is initialized with a set of
+parameters from `CDConfParameter` to adjust the completion behavior.
+
+CD Completion can also be used via the CD tool, using the options
+`--reference` to specify a reference CD, the command `--map` to specify
+the mapping names, and the command `--complete` to trigger the completion instead of conformance
+checking:
+
+```
+java -jar cdtool/target/libs/MCCD.jar -i doc/BankingCon.cd --reference doc/BankingRef.cd --map m1 --complete -pp
+```
+(`-pp` pretty-prints the completion result to the console)
+
+### Explicit Dependencies in Reference Class Diagrams
+
+To model more complex reference CDs, for example, design patterns, we introduce the concept of
+*explicit dependencies* between elements in the reference CD.
+For each incarnation of a *dependency element* in the concrete CD, the *dependent element* must
+also be incarnated at least once.
+Dependencies are encoded in the reference CD using the stereotype `<<forEach="...">>`.
+
+When completing CDs with a reference CD that contains explicit dependencies, the completion tool
+applies certain strategies to adapt a reference element with information from incarnations of the
+dependency element (e.g., types, names).
+
+As an example, consider the following reference CD modeling the builder pattern.
+It contains an explicit dependency from `DataClassBuilder` to `DataClass`, so one builder is
+introduced for each incarnation of `DataClass` in the concrete CD.
+Additionally, for each incarnation of `DataClass.attribute`, an attribute and a corresponding
+"setter method" is introduced in the builder.
+
+To allow for arbitrary attribute types in incarnations of `DataClass`, the attribute type in the 
+reference CD is underspecified using the placeholder type `anytype`.
+
+```
+classdiagram BuilderRef {
+  class DataClass {
+    anytype attribute;
+  }
+
+  <<forEach="DataClass">> class DataClassBuilder {
+    <<forEach="DataClass.attribute">> anytype attribute;
+    <<forEach="DataClass.attribute">> DataClassBuilder attribute(anytype attribute);
+    DataClass build();
+  }
+}
+```
+
+The following concrete CD has two `DataClass` incarnations: `Employee` and `Department`.
+When completing the CD with the `BuilderRef` reference CD, the completion tool will
+introduce two `DataClassBuilder` incarnations: `EmployeeBuilder` and `DepartmentBuilder.
+
+```
+import java.lang.String;
+
+classdiagram DataModelCon {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+}
+```
+
+The completion result will be the original `DataModelCon` CD, extended with the following two 
+classes:
+
+```
+<<ref="BuilderAndMillRef.DataClassBuilder">>
+class EmployeeBuilder {
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> String firstName;
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> String lastName;
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> int number;
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> int salary;
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder firstName(String firstName);
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder lastName(String lastName);
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder number(int number);
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> EmployeeBuilder salary(int salary);
+  Employee build();
+}
+
+<<ref="BuilderAndMillRef.DataClassBuilder">>
+class DepartmentBuilder {
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> String managerName;
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> int depId;
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> DepartmentBuilder managerName(String managerName);
+  <<ref="BuilderAndMillRef.DataClassBuilder.attribute">> DepartmentBuilder depId(int depId);
+  Department build();
+}
+```
+
+**Important**: The completion tool performs a conformance check after completing the CD to make sure
+the results are correct.
+For this conformance check to succeed, the parameter `CDConfParameter.STRICT_PARAMETER_ORDER` must
+be set to allow, for example, the method `firstName(String firstName)` to incarnate
+`DataClassBuilder.attribute(anytype attribute)`.
+By default, parameters are matched by type *and name*, which would prevent this incarnation.
+
+The same result can be achieved using the CLI tool:
+
+```
+java -jar cdtool/target/libs/MCCD.jar -i doc/DataModelCon.cd --reference doc/BuilderRef.cd --map ref --complete --ref-param NAME_MAPPING STEREOTYPE_MAPPING STRICT_PARAMETER_ORDER -pp
+```
+(`-pp` pretty-prints the completion result to the console)
+
+
+### Underspecified Types in Reference Class Diagrams
+
+Unfortunately, CD4Analysis does not support underspecified types, which is why we use the placeholder
+type `anytype` here.
+The name of the placeholder type can be adjusted via `ConcretizationCompleter.setUnderspecifiedPlaceholderTypeName`
+and `CDConformanceChecker.setUnderspecifiedTypeName`.
+Further, the type must be initialized using
+`UnderspecifiedPlaceholderType.addPlaceholderType(CD4CodeMill.globalScope(), <name>);` to be
+available in the symbol table.
+
+When using the CLI, the placeholder type name can be configured via the `--anytype <name>` option.

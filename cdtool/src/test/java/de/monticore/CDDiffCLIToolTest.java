@@ -1,23 +1,26 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.google.common.collect.ObjectArrays;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+import org.apache.commons.io.file.PathUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import org.apache.commons.io.file.PathUtils;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CDDiffCLIToolTest {
   
@@ -62,6 +65,67 @@ public class CDDiffCLIToolTest {
     
     // assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertEquals(Log.getErrorCount(), 0);
+  }
+  
+  @Test
+  public void testConcretizationSimple() {
+    final String con = TOOL_PATH + "cdconcretization/banking/BankingCon.cd";
+    final String ref = TOOL_PATH + "cdconcretization/banking/BankingRef.cd";
+    
+    final String expectedOutCd = TOOL_PATH + "cdconcretization/banking/BankingOut.cd";
+    testConcretization(con, ref, expectedOutCd);
+  }
+  
+  @Test
+  public void testConcretizationForEach() {
+    final String con = TOOL_PATH + "cdconcretization/builder/DataModelCon.cd";
+    final String ref = TOOL_PATH + "cdconcretization/builder/BuilderAndMillRef.cd";
+    
+    final String expectedOutCd = TOOL_PATH + "cdconcretization/builder/BuilderAndMillOut.cd";
+    testConcretization(con, ref, expectedOutCd, "--anytype", "anytype", "--ref-param",
+        CDConfParameter.STEREOTYPE_MAPPING.name(), CDConfParameter.NAME_MAPPING.name(),
+        CDConfParameter.STRICT_PARAMETER_ORDER.name());
+  }
+  
+  /**
+   * Tests the concretization of a CD con w.r.t. a reference CD ref and compares the result to
+   * an expected output CD.
+   *
+   * @param con Path to the concrete CD
+   * @param ref Path to the reference CD
+   * @param expectedOutCd Path to the expected output CD
+   * @param additionalArgs Additional arguments for the CD4CodeTool CLI
+   */
+  protected void testConcretization(String con, String ref, String expectedOutCd,
+      String... additionalArgs) {
+    final String output = "./target/generated/cddiff-test/CLITestConcretization";
+    final String outFileName = "Concretized.cd";
+    
+    String[] args = new String[] { "-i", con, "--reference", ref, "--map", "ref", "--complete",
+        "-o", output, "-pp", outFileName };
+    CD4CodeTool.main(ObjectArrays.concat(args, additionalArgs, String.class));
+    
+    assertEquals(Log.getErrorCount(), 0, "unexpected error during execution");
+    
+    try {
+      ASTCDCompilationUnit expectedOut = Objects.requireNonNull(CDDiffUtil.loadCD(expectedOutCd));
+      ASTCDCompilationUnit actualOut = Objects.requireNonNull(CDDiffUtil.loadCD(Paths.get(output,
+          outFileName).toFile().getPath()));
+      
+      assertTrue(actualOut.deepEquals(expectedOut, false),
+          "Concretized out does not deepEquals expected");
+    }
+    catch (IOException e) {
+      fail(e.getMessage());
+    }
+    
+    // clean-up
+    try {
+      PathUtils.delete(Paths.get(output));
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
   }
   
   @Test

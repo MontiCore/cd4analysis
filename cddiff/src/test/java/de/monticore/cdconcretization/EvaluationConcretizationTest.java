@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -171,14 +173,12 @@ class EvaluationConcretizationTest extends AbstractCDConcretizationTest {
       ASTCDCompilationUnit expectedCD = parseCD(
           "evaluation/observer/mutualObservers/MutualObserversOut.cd");
       
-      ConcretizationCompleter completer = new ConcretizationCompleter("ref1", confParameters);
+      ConcretizationCompleter completer = new ConcretizationCompleter(confParameters);
       
       // 1. concretize and check conformance
       try {
         // TODO Improve API to handle multiple mappings after we tested the basics
-        completer.completeCD(conCD, refCD);
-        completer.setMapping("ref2");
-        completer.completeCD(conCD, refCD);
+        completer.completeCD(conCD, refCD, List.of("ref1", "ref2"));
       }
       catch (CompletionException e) {
         fail("CompletionException", e);

@@ -47,8 +47,7 @@ class TypeConcretizationTest extends AbstractCDConcretizationTest {
    */
   @Test
   void testTypeForEachTypeWithInfixReplacementDisabled() {
-    ConcretizationCompleter completer = new ConcretizationCompleter("ref",
-        DEFAULT_CONFORMANCE_PARAMS);
+    ConcretizationCompleter completer = new ConcretizationCompleter(DEFAULT_CONFORMANCE_PARAMS);
     completer.setForEachNameAdaptationEnabled(false);
     testConcretizedEqualsExpectedOut(completer, "types/forEach/ForEachTypeInfixReplaceConc.cd",
         "types/forEach/ForEachTypeInfixReplaceRef.cd",
