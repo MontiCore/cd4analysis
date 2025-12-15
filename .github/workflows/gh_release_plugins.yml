@@ -1,0 +1,109 @@
+# (c) https://github.com/MontiCore/monticore
+name: Release Editor Plugins
+
+concurrency: # run this test workflow only once per branch
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.5
+
+      - name: Build with Gradle
+        run: gradle :language-server:cd4a-intellij-plugin:buildPlugin :language-server:packageCD4AnalysisVscodePlugin -PbuildVscodePlugin=true -PbuildIntelliJPlugin=true
+
+      - name: Extract version name
+        shell: bash
+        run: |
+          echo "version=$(grep -Eo '[0-9]\.[0-9]+\.[0-9]+' gradle.properties)" >> $GITHUB_OUTPUT
+          echo "full_version=$(grep -Eo '[0-9]\.[0-9]+\.[0-9]+(-[a-zA-Z]+)?' gradle.properties)" >> $GITHUB_OUTPUT
+        id: extract_version
+
+      - name: Rename and move artifacts
+        run: |
+          mkdir dist
+          mv language-server/target/generated-sources/CD4Analysis/plugins/cd4analysis-vscode-plugin/cd4analysis-lsp-${{ steps.extract_version.outputs.full_version }}.vsix dist/CD4Analysis-${{ steps.extract_version.outputs.version }}.vsix
+          mv language-server/cd4a-intellij-plugin/target/distributions/cd4a-intellij-plugin-${{ steps.extract_version.outputs.full_version }}.zip dist/CD4Analysis-Intellij-Plugin-${{ steps.extract_version.outputs.version }}.zip
+
+      # Upload the build.
+      - name: 'Upload Vscode Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: CD4Analysis-${{ steps.extract_version.outputs.version }}.vsix
+          path: dist/CD4Analysis-${{ steps.extract_version.outputs.version }}.vsix
+          if-no-files-found: warn
+      - name: 'Upload Intellij Artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: CD4Analysis-Intellij-Plugin-${{ steps.extract_version.outputs.version }}.zip
+          path: dist/CD4Analysis-Intellij-Plugin-${{ steps.extract_version.outputs.version }}.zip
+          if-no-files-found: warn
+
+  snapshot-release:
+    name: Release SNAPSHOT
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'MontiCore' && github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: package
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract version name
+        shell: bash
+        run: echo "version=$(grep -Eo '[0-9]\.[0-9]+\.[0-9]+' gradle.properties)" >> $GITHUB_OUTPUT
+        id: extract_version
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      # GitHub Releases require a tag
+      - name: Delete release if exist then create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view "snapshot" && gh release delete "snapshot" -y --cleanup-tag
+          gh release create "snapshot" "./dist/*" -p -t "CD4Analysis ${{ steps.extract_version.outputs.version }} SNAPSHOT" --generate-notes
+
+  tag-release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'MontiCore' && startsWith(github.ref, 'refs/tags/')
+    needs: package
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract version name
+        shell: bash
+        run: echo "version=$(grep -Eo '[0-9]\.[0-9]+\.[0-9]+' gradle.properties)" >> $GITHUB_OUTPUT
+        id: extract_version
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" "./dist/*" --verify-tag -d -t "CD4Analysis ${{ steps.extract_version.outputs.version }}" --generate-notes
