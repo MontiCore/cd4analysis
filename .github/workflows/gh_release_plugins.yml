@@ -86,7 +86,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release view "snapshot" && gh release delete "snapshot" -y --cleanup-tag
+          gh release view "snapshot" && gh release delete "snapshot" -y --cleanup-tag || true
           gh release create "snapshot" "./dist/*" -p -t "CD4Analysis ${{ steps.extract_version.outputs.version }} SNAPSHOT" --generate-notes
 
   tag-release:
