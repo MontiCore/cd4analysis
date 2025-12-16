@@ -7,8 +7,11 @@ concurrency: # run this test workflow only once per branch
 
 on:
   push:
+    # Always trigger plugin build, release upload is filtered in jobs
     branches:
-      - dev
+      - '**'
+    tags:
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -63,6 +66,7 @@ jobs:
   snapshot-release:
     name: Release SNAPSHOT
     runs-on: ubuntu-latest
+    # Only upload snapshot release on dev branch
     if: github.repository_owner == 'MontiCore' && github.event_name == 'push' && github.ref == 'refs/heads/dev'
     needs: build
     permissions:
@@ -88,6 +92,7 @@ jobs:
   tag-release:
     name: Release
     runs-on: ubuntu-latest
+    # Only upload release on tag
     if: github.repository_owner == 'MontiCore' && startsWith(github.ref, 'refs/tags/')
     needs: build
     permissions:
