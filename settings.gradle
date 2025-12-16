@@ -36,3 +36,6 @@ include(':cd-runtime')
 include(':symtabdefinitiontool')
 include(':symtabdefinitiontool:stdefgradle')
 
+if(("true").equals(getProperty('buildIntelliJPlugin'))){
+  include(':language-server:cd4a-intellij-plugin')
+}

@@ -1,3 +1,5 @@
+import de.mclsg.TaskTypes
+
 plugins {
   id 'java'
   id 'de.monticore.language-server' version "$mc_version"
@@ -64,6 +66,9 @@ task autoconfigure(type: de.mclsg.task.AutoconfigureTask) {
   mclsg {
     languageName = "de.monticore.CD4Analysis"
     fileExtension = "cd"
+  }
+  if(("true").equals(getProperty('buildVscodePlugin'))){
+    including(TaskTypes.VSCODE_PLUGIN)
   }
 }
 compileJava.dependsOn autoconfigure
