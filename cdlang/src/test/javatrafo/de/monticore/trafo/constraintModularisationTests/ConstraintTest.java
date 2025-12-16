@@ -12,7 +12,6 @@ import de.monticore.tf.*;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /** Created by Alexander Wilts on 31.10.2016. */
@@ -384,7 +383,6 @@ public class ConstraintTest {
   }
   
   @Test
-  @Disabled // TODO: This test fails due to the order of interfaces and classes
   public void testTrafoOptionalInOrInList() throws IOException {
     Optional<ASTCDCompilationUnit> astOpt = CD4CodeMill.parser().parse(DexInfrastructureCD);
     

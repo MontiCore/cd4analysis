@@ -109,7 +109,7 @@ public class ExtractIntermediateClassTest {
     assertEquals("ClassB2", utility.getAst().getCDDefinition().getCDClassesList().get(5).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(5)
         .getCDAttributeList().size());
-    assertEquals("ClassA1ClassA3ClassA2", utility.getAst().getCDDefinition().getCDClassesList().get(
+    assertEquals("ClassA3ClassA2ClassA1", utility.getAst().getCDDefinition().getCDClassesList().get(
         6).getName());
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().get(6)
         .getCDAttributeList().size());

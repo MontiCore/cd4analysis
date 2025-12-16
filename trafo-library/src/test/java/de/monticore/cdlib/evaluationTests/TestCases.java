@@ -117,22 +117,22 @@ public class TestCases {
         .getCDAttributeList().size());
     assertEquals("attributeA", utility.getAst().getCDDefinition().getCDClassesList().get(2)
         .getCDAttributeList().get(0).getName());
-    assertEquals("ClassBClassDClassC", utility.getAst().getCDDefinition().getCDClassesList().get(2)
+    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(2)
         .printSuperclasses());
     
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(3)
         .getCDAttributeList().size());
-    assertEquals("ClassBClassDClassC", utility.getAst().getCDDefinition().getCDClassesList().get(3)
+    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(3)
         .printSuperclasses());
     
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(4)
         .getCDAttributeList().size());
-    assertEquals("ClassBClassDClassC", utility.getAst().getCDDefinition().getCDClassesList().get(4)
+    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(4)
         .printSuperclasses());
     
-    assertEquals("ClassBClassDClassC", utility.getAst().getCDDefinition().getCDClassesList().get(5)
+    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(5)
         .getName());
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().get(5)
         .getCDAttributeList().size());
