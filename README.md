@@ -32,6 +32,11 @@ The CD languages are mainly intended for
 * [Example Models][ExampleModels]
 * [Download Page for all of our public MontiCore Tools][MCDownloadPage]
 
+### Editor plugins
+The latest editor plugins can be downloaded from the [Github releases page](https://github.com/MontiCore/cd4analysis/releases/tag/snapshot).
+The Visual Studio Code plugin is provided as a `.vsix` file and can be installed as explained [here](https://code.visualstudio.com/docs/configure/extensions/extension-marketplace#_install-from-a-vsix).
+Similarly, the IntelliJ plugin is provided as a `.zip` file and can be installed as explained [here](https://www.jetbrains.com/help/idea/managing-plugins.html#install_plugin_from_disk).
+
 ## An Example Model
 
 The following example CD [`MyCompany`](doc/MyCompany.cd) illustrates the textual 
