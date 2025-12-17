@@ -5,38 +5,34 @@
 The decorating CD generator is available as a simple gradle plugin,
 as a standalone CLI-jar, and as a library for inclusion.
 
-An example gradle configuration can be found below:
+An example Gradle configuration can be found below:
+
+### Gradle Usage
+
+By adding the `de.rwth.se.cdgen` Gradle plugin to your project,
+all class diagrams in the _cds_ source-directory-set (e.g., _src/main/cds_, _src/test/cds_) are generated to Java code.
+
 
 ```groovy
 // build.gradle
 plugins {
   id 'java-library'
-  id 'de.rwth.se.cdgen' version '7.8.0-SNAPSHOT'
-}
-
-tasks.named("generateClassDiagrams") {
-  // Tag-like configuration of the "MyCD.ConfiguredFromCLI" element
-  options.add("MyCD.ConfiguredFromCLI:noGetter")
-  options.add("MyCD.ConfiguredFromCLI:noSetter")
-  // Optionally, enable class2mc
-  // getClass2MC().set(true)
-  // Optionally, disable CoCo checks (not encouraged!)
-  // getCoCos().set(false)
-  // Change the output directory of the original ST, default: cdgensymbols/main/original
-  // getOriginalSymbolOutput().set(...)
-  // Change the output directory of the decorated ST, default: cdgensymbols/main/decorated
-  // getDecoratedSymbolOutput().set(...)
-  // Change the config template used to configure the decorators, default see below
-  // getConfigTemplate().set(...)
-  // Change the output directory
-  // getOutputDir().set(...)
-  // ... and further MCAllFilesTask properties
+  id 'de.rwth.se.cdgen' version '$mc_version'
 }
 
 repositories {
   maven { url 'https://nexus.se.rwth-aachen.de/content/groups/public' }
-  mavenCentral()
 }
+
+// settings.gradle
+pluginManagement {
+  repositories {
+    maven {
+      url "https://nexus.se.rwth-aachen.de/content/groups/public"
+    }
+  }
+}
+
 ```
 
 For the main source set, all `.cd` files within the `src/main/cds` directory will be processed.
@@ -71,8 +67,37 @@ A decorator will work on an element if the element is marked for this decorator 
 If no positive or negative configuration is found, the elements parents are tested until a parent is marked or the root is reached.
 Finally, the default, as configured via the config template, is applied.
 
-Modellers should select a suitable config template and use stereotypes for class diagram specific configuration.
+Modelers should select a suitable config template and use stereotypes for class diagram specific configuration.
 Tool-developers should provide their own config template.
+
+### Configuring via Gradle
+```groovy
+// build.gradle
+// optionally: continue to configure the generate Task for the main sourceset (src/main/cds)
+tasks.named("generateClassDiagrams") {
+  // Tag-like configuration of the "MyCD.ConfiguredFromCLI" element
+  options.add("MyCD.ConfiguredFromCLI:noGetter")
+  options.add("MyCD.ConfiguredFromCLI:noSetter")
+  // Optionally, enable class2mc
+  // getClass2MC().set(true)
+  // Optionally, disable CoCo checks (not encouraged!)
+  // getCoCos().set(false)
+  // Change the output directory of the original ST, default: cdgensymbols/main/original
+  // getOriginalSymbolOutput().set(...)
+  // Change the output directory of the decorated ST, default: cdgensymbols/main/decorated
+  // getDecoratedSymbolOutput().set(...)
+  // Change the config template used to configure the decorators, default see below
+  // getConfigTemplate().set(...)
+  // Change the output directory
+  // getOutputDir().set(...)
+  // ... and further MCAllFilesTask properties
+}
+
+repositories {
+  maven { url 'https://nexus.se.rwth-aachen.de/content/groups/public' }
+  mavenCentral()
+}
+```
 
 ### Writing Your Own Decorator
 
