@@ -1,49 +1,53 @@
 
-// CD4A Class Diagram for Science Connect Database
-
-classdiagram ScienceConnectDatabase {
+classdiagram ScienceConnect {
 
     class Person {
-        String personID; // Unique identifier for a person
-        String phoneNumber; 
-        List<String> keywords; // Keywords identifying research topics
-        Institution institution; // Associated institution
+        String personID;
+        String phoneNumber;
+        List<String> keywords;
+        Institution institution;
     }
 
     class Institution {
-        String institutionCode; // Unique identifier for an institution
+        String institutionCode;
     }
 
-    class ScientificArticle {
-        String DOI; // Unique identifier for the article
-        String title; 
-        List<Person> authors; // List of authors (Persons)
-        int position; // Position of each author in the case of multiple authors
+    class Article {
+        String DOI;
+        String title;
+        List<Author> authors;
     }
 
-    class PeerReviewedPaper extends ScientificArticle {
-        int citationCount; // Number of citations
-        Person reviewer; // Reviewer of the paper
+    class PeerReviewedPaper extends Article {
+        int citationCount;
+        Reviewer reviewer;
     }
 
-    class TechnicalReport extends ScientificArticle {
-        Institution publishedBy; // Institution that published the report
+    class TechnicalReport extends Article {
+        Institution institution;
     }
 
     class Publisher {
-        String name; // Name of the publisher
+        String name;
+        List<Journal> journals;
     }
 
     class Journal {
-        String name; // Name of the journal
-        float impactFactor; // Measures scientific impact
+        String name;
+        float impactFactor;
     }
 
-    association [1] Person -> Institution [1]; // A person works for one institution
-    association [1] ScientificArticle -> (writtenBy) Person [*]; // Scientific articles have authors
-    association [1] PeerReviewedPaper -> (reviewedBy) Person [1]; // Peer-reviewed papers have one reviewer
-    association [1] TechnicalReport -> Institution [1]; // Each technical report is published by one institution
-    association [1] Publisher -- Journal [*]; // Publisher can publish multiple journals
-    association [1] Journal -> (subscribedBy) Institution [*]; // Institutions can subscribe to multiple journals
-    association [1] ScientificArticle <-> Journal [0..1]; // Only peer-reviewed papers are published in journals
+    class Author {
+        int position;
+    }
+
+    class Reviewer {}
+
+    association [1] Person -> (institution) Institution [1];
+    association [1] Article -> (authors) Author [*];
+    association [1] PeerReviewedPaper -> (reviewer) Reviewer [1];
+    association [1] TechnicalReport -> (institution) Institution [1];
+    association [1] Publisher -> (journals) Journal [*];
+    association [1] Journal -> (papers) PeerReviewedPaper [*];
+
 }

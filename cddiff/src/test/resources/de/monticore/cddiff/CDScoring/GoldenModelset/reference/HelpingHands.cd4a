@@ -22,8 +22,6 @@ class Volunteer extends UserRole {}
 
 class Resident extends UserRole {}
 
-class Date {}
-
 class FoodItem extends Item {}
 
 class SecondHandArticle extends Item {

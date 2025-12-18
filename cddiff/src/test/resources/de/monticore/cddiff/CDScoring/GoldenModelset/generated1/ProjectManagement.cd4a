@@ -1,33 +1,32 @@
 
-// CD4A class diagram for research project management in a university
+// CD4A Class Diagram for Research Project Management
+
 classdiagram ResearchProjectManagement {
-    
+
     class University {}
 
     class Department {}
 
     class ResearchGroup {
-        // Each research group belongs to one department
+        // Research group attributes if any
     }
 
     class Researcher {
-        // Each researcher belongs to exactly one research group
+        // Researcher attributes if any
     }
 
     class Project {
-        // A project is decomposed into Work Packages (WP)
+        // Project attributes if any
     }
-    
+
     class WorkPackage {
-        // Each WP has one research group as leader
+        // Work Package attributes if any
     }
 
-    association [*] University -> Department [*];
-    association [*] Department -> ResearchGroup [*];
-    association [1] ResearchGroup -> Researcher [*];
-    association [1] WorkPackage -> ResearchGroup [1]; // WP leader
-    association [*] WorkPackage -> Researcher [*]; // Researchers can be assigned to any WP
+    association [*] University -- Department [*];
+    association [*] Department -- ResearchGroup [*];
+    association [1] ResearchGroup <-> Researcher [*];
+    association [1] ResearchGroup -> WorkPackage [1];
+    association [*] WorkPackage <-> Researcher [*];
 
-    // Service delivery implication on assignments
-    association [0..*] ResearchGroup <-> Researcher [*]; // Traceable service delivery from one group to another
 }

@@ -1,5 +1,4 @@
 
-// CD4A Class Diagram for Aircraft Management System
 classdiagram AircraftManagementSystem {
 
 class Aircraft {
@@ -11,7 +10,7 @@ class Aircraft {
 
 class Flight {
     String flightNumber;
-    Date flightDate;
+    Date date;
 }
 
 class Passenger {
@@ -57,19 +56,17 @@ class Airport {
     int numberOfRunways;
 }
 
-association [1] Aircraft -- Flight [*];
-association [*] Passenger -- Flight [*];
-association [1] Ticket -- Flight [1];
+association [*] Aircraft -- Flight [*];
+association [*] Flight -- Passenger [*];
+association [1] Ticket -- SeatCategory [1];
 association [1] PassengerAircraft -- SeatCategory [*];
-
-association [1] Airline -- FlightAttendant [*];
+association [1] Aircraft -- Airline [0..1];
+association [*] Airline -- FlightAttendant [*];
 association [1] Airline -- Pilot [*];
-
-association [*] FlightAttendant -- Flight [*];
-association [1] Pilot -- Flight [1];
-
-association [1] Aircraft -- Airport [1]; // Home airport
-association [1] Flight -- Airport [1]; // Departure airport
-association [1] Flight -- Airport [1]; // Destination airport
+association [*] Flight -- FlightAttendant [*];
+association [1] Flight -- Pilot [1];
+association [1] Aircraft -- Airport [0..1];
+association [1] Flight -- (departure) Airport [1];
+association [1] Flight -> (destination) Airport [1];
 
 }

@@ -1,24 +1,8 @@
 
-// Class Diagram for Fitness Company "Conan"
-classdiagram ConanFitness {
+// CD4A Model
+classdiagram FitnessCenter {
 
-class Address {
-    String street;
-    String city;
-    String zipCode;
-}
-
-class Room {
-    int roomNumber;
-    int maxCapacity;
-}
-
-class FitnessCenter {
-    String uniqueName; // e.g., Fitplaza, my6pack
-    Address address;
-}
-
-abstract class Person {
+class Person {
     String firstName;
     String familyName;
     Date birthDate;
@@ -28,27 +12,37 @@ class Trainer extends Person {
     String diploma;
 }
 
-class Participant extends Person {
-    // Inherits properties from Person
+class FitnessCenter {
+    String uniqueName;
+    Address address;
+}
+
+class Room {
+    int roomNumber;
+    int maxCapacity;
 }
 
 class Session {
     Date date;
-    String startHour;
-}
-
-class IndividualSession extends Session {
-    // No additional attributes, inherits from Session
+    Time startHour;
 }
 
 class GroupSession extends Session {
-    String type; // e.g., aerobics, bodystyling
+    String type;
 }
 
-// Associating Participants and Trainers with Sessions
-association [1] Trainer <-> GroupSession [*]; // Each group session requires exactly one trainer
-association [0..*] Participant <-> Session [*]; // Participants can be in individual or group sessions
-association [1] FitnessCenter <-> Room [*]; // A center has one or more rooms
-association [*] Room <-> Session [*]; // Sessions can be held in any room of a center
+class IndividualSession extends Session {}
+
+class Address {
+    String street;
+    String city;
+    String postalCode;
+}
+
+association [1] FitnessCenter <-> Room [*];
+association [1] FitnessCenter <-> (hosts) Session [*];
+association [0..*] Person <-> (participatesIn) Session [*];
+association [1] GroupSession <-> (supervisedBy) Trainer [1];
+association [1] Session <-> (includes) Trainer [0..1];
 
 }

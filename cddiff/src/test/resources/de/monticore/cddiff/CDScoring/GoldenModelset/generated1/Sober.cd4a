@@ -1,20 +1,13 @@
 
-// Class Diagram for Sober Taxi Company
 classdiagram SoberTaxi {
 
-class Customer {
-    String name;
-    String contactInfo;
-}
-
-class CarOwner {
-    String name;
-    String contactInfo;
-}
-
-class SelfDrivingTaxi {
+class SelfDrivingCab {
     String licensePlate;
-    String model;
+}
+
+class Owner {
+    String name;
+    String contactInfo;
 }
 
 class RideHailService {
@@ -22,12 +15,12 @@ class RideHailService {
     DateTime dropOffTime;
     String pickUpLocation;
     String dropOffLocation;
-    double rideDuration;
+    Duration rideDuration;
     double distance;
-    int passengerCount; // max 6
+    int numberOfPassengers;
     double fee;
-    String requestType; // either 'Sober App' or 'Hand-waving'
-    Customer leadCustomer;
+    String requestType; // "Sober App" or "Hand-Waving"
+    String leadCustomerName;
 }
 
 class RideShareService {
@@ -35,25 +28,29 @@ class RideShareService {
     DateTime dropOffTime;
     String pickUpLocation;
     String dropOffLocation;
-    double rideDuration;
+    Duration rideDuration;
     double distance;
-    List<Customer> customers; // max 10
+    List<String> customerNames;
     double negotiatedFee;
-    boolean ecoIncentive; // e.g., tree planting for every 20 rides
 }
 
 class Accident {
-    DateTime accidentDate;
+    Date accidentDate;
     String location;
     double damageAmount;
 }
 
+class SoberApp {
+    String version;
+}
 
-association [1] SelfDrivingTaxi <-> RideHailService [0..*];
-association [1] SelfDrivingTaxi <-> RideShareService [0..*];
-association [0..*] CarOwner <-> SelfDrivingTaxi [0..*];
-association [0..*] Customer <-> RideHailService [0..*];
-association [0..*] Customer <-> RideShareService [0..*];
-association [1] SelfDrivingTaxi <-> Accident [0..*];
+class ImageRecognitionSystem {}
 
+
+// Associations
+association [1] SelfDrivingCab <-> Owner [0..*];
+association [1] SelfDrivingCab <-> RideHailService [0..*];
+association [1] SelfDrivingCab <-> RideShareService [0..*];
+association [0..*] RideHailService <-> RideShareService [0..*];
+association [0..*] SelfDrivingCab <-> Accident [0..*];
 }

@@ -29,6 +29,10 @@ class Single extends Song {}
 
 class Hit extends Song {}
 
+class Album {
+    String title;
+}
+
 class Track {
     int trackNumber;
 }

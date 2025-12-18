@@ -1,67 +1,71 @@
 
-// CD4A Model representing a film set with various employee roles and film details
 classdiagram FilmSet {
 
 class Employee {
     String name;
-    String ssNo; // Social security number
+    String socialSecurityNumber;
+    boolean hasOscar;
 }
 
 class CreativeEmployee extends Employee {
-    boolean hasOscar; // Whether the person has an Oscar
+    String assistantName;
 }
+
+class Director extends CreativeEmployee {}
 
 class Actor extends CreativeEmployee {
-    String education; // Education completed by actor
-}
-
-class Director extends CreativeEmployee {
-    String assistantName; // Name of the director's assistant
+    String education;
 }
 
 class Technician extends Employee {
-    String fieldOfActivity; // Field of activity for each technician
-}
-
-class FilmSet {
-    String location; // Specific location of the film set
+    String fieldOfActivity;
 }
 
 class Film {
-    String title; // Title of the film
-    int releaseYear; // Year of release
+    String title;
+    int year;
 }
 
-enum Genre {
-    thriller,
-    action,
-    horror,
-    comedy;
+class Genre {
+    GenreType type;
 }
+
+enum GenreType {
+        THRILLER,
+        ACTION,
+        HORROR,
+        COMEDY;
+    }
 
 class Screenwriter {
-    String name; // Name of the screenwriter
-    String mostSuccessfulFilm; // Most successful film
+    String name;
+    Film mostSuccessfulFilm;
 }
 
 class Screenplay {
-    String title; // Title of the screenplay
-    String version; // Version of the screenplay
-    Date date; // Date of screenplay
-    int numberOfScenes; // Number of scenes
-    String plot; // Plot of the screenplay
+    String title;
+    String version;
+    String date;
+    int numberOfScenes;
+    String plot;
 }
 
 class Novel {
-    String title; // Title of the novel
-    String author; // Author of the novel
+    String title;
+    String author;
 }
 
-// Associations
-association [1..*] FilmSet <-> Film [0..*]; // A film set can be used for several films
-association [1..*] Film <-> Screenplay [1]; // A screenplay is written for exactly one film
-association [1] Screenwriter <-> Screenplay [0..*]; // A screenwriter creates several screenplays
-association [1] Screenplay <-> (basedOn) Novel [0..1]; // A screenplay is based on a novel
-association [0..*] Film <-> Actor [1..*]; // Actors appear in a film and prepare for roles by reading the screenplay
-association [1] Film <-> (implementedBy) Director [1]; // Director implements the screenplay
+class FilmSet {
+    // The LLM did not generate this class, adding it to avoid errors.
+}
+
+association [0..*] FilmSet <-> Film [0..*];
+association [0..*] Film <-> Screenplay [1];
+association [0..*] Screenwriter <-> Screenplay [1];
+association [1] Screenplay <-> Novel [0..1];
+association [1] Film <-> (director) Director [0..1];
+association [0..*] Film <-> Actor [0..*];
+association [1] Film <-> (implementedBy) Director [0..1];
+association [0..*] Film <-> (preparedBy) Actor [0..*];
+
 }

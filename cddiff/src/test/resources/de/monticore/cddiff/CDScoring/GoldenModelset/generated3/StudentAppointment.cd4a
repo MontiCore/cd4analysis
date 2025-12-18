@@ -1,32 +1,25 @@
 
-// CD4A Model for Appointment Management System
+classdiagram CourseAppointmentSystem {
 
-classdiagram AppointmentManagementSystem {
+class Student {
+    String name;
+}
 
-    class Student {
-        String name;
-        String studentId;
-    }
+class Course {
+    String courseName;
+}
 
-    class Course {
-        String courseId;
-        String courseName;
-    }
+class TeachingAssistant {
+    String name;
+}
 
-    class TeachingAssistant {
-        String name;
-        String taId;
-    }
+class Appointment {
+    String dateTime;
+}
 
-    class Appointment {
-        String appointmentId;
-        String dateTime;
-    }
-
-    association [1] Student -> Course [1..*]; // A student can register for multiple courses
-    association [1] TeachingAssistant -> Course [1..*]; // A TA can teach multiple courses
-    association [1] Course -> Appointment [0..*]; // A course can have multiple appointments
-    association [1] TeachingAssistant <-> Appointment [0..*]; // A TA can have multiple appointments
-    association [1] Student <-> Appointment [0..*]; // A student can have multiple appointments
+association [1] Course <-> Student [0..*];
+association [1] Course <-> TeachingAssistant [0..*];
+association [1] TeachingAssistant <-> Appointment [0..*];
+association [1] Student <-> Appointment [0..*];
 
 }

@@ -1,33 +1,34 @@
 
+// Class Diagram for City Attractions
 classdiagram CityAttractions {
 
-    class City {
-        String name;
-        int inhabitants;
-    }
+class City {
+    String name;
+    int inhabitants;
+}
 
-    class Attraction {
-        String name;
-        String address;
-    }
+class Attraction {
+    String name;
+    String address;
+}
 
-    class GuidedTour {
-        int duration;
-        int numberOfVisitors;
-        double discountAmount; // for certain visitors
-    }
+class GuidedTour {
+    int duration;
+    int number;
+}
 
-    class Visitor {
-        String name;
-    }
+class Visitor {
+    String name;
+    double discount; // discount may be applicable for guided tours
+}
 
-    class Guide {
-        String name;
-    }
+class Guide {
+    String name;
+}
 
-    association [1] City <-> Attraction [0..*];
-    association [1] Attraction <-> GuidedTour [0..*];
-    association [0..20] GuidedTour <-> Visitor [0..*]; // max 20 visitors per tour
-    association [1] GuidedTour <-> Guide [1];
+association [*] City -> Attraction [*];
+association [*] Attraction -> GuidedTour [*];
+association [0..*] GuidedTour -> Visitor [20]; // maximum of 20 visitors
+association [1] GuidedTour -> Guide [1];
 
 }

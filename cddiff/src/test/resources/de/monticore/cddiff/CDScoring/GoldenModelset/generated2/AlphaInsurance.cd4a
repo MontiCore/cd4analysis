@@ -1,61 +1,64 @@
 
-// CD4A class diagram for Alpha Insurance
+// CD4A Class Diagram for Alpha Insurance
+
 classdiagram AlphaInsurance {
 
 class Customer {
     String name;
-    String contactInfo;
+    String contactDetails;
+    String address;
 }
 
 class Broker {
     String name;
-    String id;
+    String employeeId;
 }
 
-class Policy {
-    String type;
+class InsurancePolicy {
+    String policyType;
     double price;
-    String billingFrequency; // monthly or yearly
+    String frequency;
 }
 
 class Contract {
     Date signingDate;
-    boolean isSigned;
+    String status;
 }
 
 class Claim {
-    String description;
     Date claimDate;
+    String description;
 }
 
 class ClaimCase {
-    boolean isApproved;
-    List<EstimatorReport> reports;
+    Date caseOpenedDate;
+    String status;
 }
 
-class EstimatorReport {
+class Estimator {
+    String name;
     String areaOfExpertise;
-    String findings;
 }
 
 class CompensationDecision {
+    double amount;
     String eligibleCosts;
-    double compensationAmount;
 }
 
-class Invoice {
-    Date invoiceDate;
-    double amountDue;
+class Payment {
+    Date paymentDate;
+    double amount;
 }
 
 
 // Associations
-association [1] Broker <-> Customer [0..1]; // A broker is assigned to a customer
-association [1] Customer <-> Policy [0..*]; // A customer can select multiple policies
-association [1] Policy <-> Contract [1..1]; // Each policy has a contract
-association [1] Customer <-> Claim [0..*]; // A customer can send multiple claims
-association [1] Claim <-> ClaimCase [1..*]; // Each claim can open multiple cases
-association [1] ClaimCase <-> EstimatorReport [0..*]; // Each claim case can have multiple estimator reports
-association [1] ClaimCase <-> CompensationDecision [0..1]; // Each claim case can have one compensation decision
-association [1] Customer <-> Invoice [0..*]; // A customer can have multiple invoices
+association [1] Customer <-> Broker [0..1];
+association [1] Customer <-> InsurancePolicy [0..*];
+association [1] Customer <-> Contract [0..*];
+association [1] Customer <-> Claim [0..*];
+association [1] Claim <-> ClaimCase [0..*];
+association [1] ClaimCase <-> Estimator [0..*];
+association [1] ClaimCase <-> CompensationDecision [0..1];
+association [1] CompensationDecision <-> Payment [0..1];
+
 }

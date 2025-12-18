@@ -1,61 +1,86 @@
 
-// CD4A class diagram for Hotel Booking Management System (HBMS)
-
-classdiagram HBMS {
+classdiagram HotelBookingManagementSystem {
 
 class Traveller {
-    String name;
-    String billingInfo;
-    String companyName;
-    String address;
-    String travelPreferences; // e.g. breakfast included, free wifi, 24/7 front desk
-    String creditCardInfo;
+ String name;
+ BillingInformation billingInfo;
+ TravelPreferences preferences;
 }
 
-class Hotel {
-    String name;
-    String city;
-    String address;
-    String hotelChain;
-    int rating; // stars
+class BillingInformation {
+ String companyName;
+ String address;
+ String creditCardInfo;
 }
 
-class Room {
-    String roomType; // e.g. single, double, twin
-    float pricePerNight;
+class TravelPreferences {
+ boolean breakfast;
+ boolean freeWifi;
+ boolean frontDesk24_7;
+}
+
+class AccommodationSearch {
+ String city;
+ Date arrivalDate;
+ Date departureDate;
+ int roomCount;
+ RoomType roomType;
+ int minRating;
+ float maxCostPerNight;
+ TravelPreferences additionalPreferences;
+}
+
+enum RoomType {
+ SINGLE,
+ DOUBLE,
+ TWIN;
 }
 
 class Booking {
-    String bookingId;
-    float totalCost;
-    boolean prePaid; // true if paid immediately
-    boolean confirmed; // true if booking is confirmed by the hotel
-    DateTime cancellationDeadline;
+ String bookingId;
+ float price;
+ String cityArea;
+ int hotelRating;
+ TravelPreferences keyPreferences;
+ boolean confirmed;
+ boolean prePaid;
+ Date cancellationDeadline;
 }
 
-class SpecialOffer {
-    float offerPrice;
-    String cityArea;
-    int hotelRating;
-    String keyPreferences;
+class Hotel {
+ String name;
+ String address;
+ City city;
+ HotelChain chain;
+}
+
+class City {
+ String name;
+}
+
+class HotelChain {
+ String name;
+}
+
+class Room {
+ RoomType type;
+ boolean fullyBooked;
+}
+
+class CompetitorOffer {
+ Booking booking;
 }
 
 class PastBooking {
-    String bookingId;
-    float cost;
-    boolean isFinalized;
+ Booking booking;
+ int reliabilityRating;
 }
 
-class Competition {
-    String competitorHotel;
-    SpecialOffer offer;
-}
-
-association [1] Traveller <-> Booking [0..*]; // A traveller can have multiple bookings
-association [1] Hotel <-> Booking [0..*]; // A hotel can have multiple bookings
-association [1] Hotel <-> Room [0..*]; // A hotel can have multiple room types
-association [1] Booking <-> SpecialOffer [0..*]; // A booking can receive multiple special offers
-association [0..*] Booking <-> PastBooking [0..*]; // A booking can become a past booking
-association [1] Booking <-> Competition [0..*]; // Booking generates competition with offers from other hotels
+association [0..*] Traveller <-> PastBooking [0..*];
+association [0..1] Hotel <-> City [0..1];
+association [0..1] Hotel <-> HotelChain [0..1];
+association [0..*] Hotel <-> Room [0..*];
+association [0..*] Traveller <-> Booking [0..*];
+association [0..*] Booking <-> CompetitorOffer [0..*];
 
 }

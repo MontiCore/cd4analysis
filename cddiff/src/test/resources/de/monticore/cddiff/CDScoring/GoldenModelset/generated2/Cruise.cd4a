@@ -1,6 +1,4 @@
-
-// Class Diagram for Cruise Management System
-classdiagram CruiseManagement {
+classdiagram CruiseBookingSystem {
 
 class Provider {
     String name;
@@ -28,7 +26,7 @@ class Ship {
     String name;
     int numberOfDecks;
     double length;
-    int passengerCapacity;
+    int numberOfPassengers;
 }
 
 class TravelAgency {
@@ -48,22 +46,19 @@ class DestinationArea {
 
 class Show {
     String title;
-    int duration; // duration in minutes
+    Duration duration;
 }
 
-class Ticket {
-    String ticketId; // unique identifier for each ticket
-}
+class Ticket {}
 
 association [1] Provider <-> Cruise [0..*];
 association [0..*] Cruise <-> Employee [0..*];
 association [0..*] Cruise <-> Guest [0..*];
-association [1] Ship <-> Cruise [0..*];
+association [1] Cruise <-> Ship [0..*];
 association [1] TravelAgency <-> Booking [0..*];
-association [1] Booking <-> Guest [0..*];
 association [1] Cruise <-> DestinationArea [1];
 association [1] Cruise <-> Show [0..*];
 association [1] Cruise <-> Ticket [0..*];
-association [1] Guest <-> Ticket [0..*];
+association [0..*] Guest <-> Ticket [0..*];
 
 }

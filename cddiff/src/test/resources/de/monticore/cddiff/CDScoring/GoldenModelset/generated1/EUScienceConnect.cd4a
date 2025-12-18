@@ -1,53 +1,57 @@
 
-// Class diagram for Science Connect Database
 classdiagram ScienceConnect {
 
     class Person {
-        String personID; // uniquely identifies each person
+        String personID;
         String phoneNumber;
-        List<String> keywords; // identifies key research topics
-        Institution institution; // works for 
+        List<String> researchKeywords;
+        Institution institution;
     }
 
     class Institution {
-        String institutionCode; // uniquely identifies each institution
+        String institutionCode;
+        List<TechnicalReport> technicalReports;
     }
 
     class ScientificArticle {
-        String DOI; // uniquely identifies each article
+        String DOI;
         String title;
-        List<AuthorPosition> authors; // authors and their positions
+        List<Author> authors;
     }
 
     class PeerReviewedPaper extends ScientificArticle {
         int citationCount;
-        Person reviewer; // reviewer of the paper
+        Reviewer reviewer;
     }
 
     class TechnicalReport extends ScientificArticle {
-        Institution publishedBy; // published by a single institution
+        Institution publishedBy;
     }
 
     class Publisher {
-        String name; // identifies the publisher
-        List<Journal> journals; // publishes multiple journals
+        String name;
+        List<Journal> journals;
     }
 
     class Journal {
-        String journalName; // name given by the publisher
-        float impactFactor; // scientific impact of the journal
+        String name;
+        float impactFactor;
     }
 
-    class AuthorPosition {
-        Person author;
-        int position; // position of the author in the article
+    class Author {
+        Person person;
+        int position;
     }
 
-    // Associations
-    association [0..1] Person -> (author) PeerReviewedPaper [1];
-    association [0..1] Person -> (reviewer) PeerReviewedPaper [1];
-    association [1] Institution -- TechnicalReport [*];
-    association [1] Publisher -> Journal [*];
-    association [1] Journal -> (published) PeerReviewedPaper [*];
+    class Reviewer {
+        Person person;
+    }
 
+    association [1] Person -> (institution) Institution [1];
+    association [1] Institution -> (technicalReport) TechnicalReport [0..*];
+    association [1] ScientificArticle -> (author) Author [1..*];
+    association [1] PeerReviewedPaper -> (reviewer) Reviewer [1];
+    association [1] TechnicalReport -> (publishedBy) Institution [1];
+    association [1] Publisher -> (journal) Journal [1..*];
+    association [1] Journal -> (publishedPaper) PeerReviewedPaper [0..*];
 }

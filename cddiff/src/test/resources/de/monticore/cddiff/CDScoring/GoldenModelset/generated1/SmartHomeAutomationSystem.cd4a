@@ -9,49 +9,35 @@ class Room {
     String name;
 }
 
-abstract class Device {
+class Device {
     String deviceId;
 }
 
 class Sensor extends Device {
-    double sensorReading;
+    double value;
     Date timestamp;
 }
 
 class Actuator extends Device {
     String command;
     Date timestamp;
-    CommandStatus status;
-}
-
-enum CommandStatus {
-    Requested,
-    Completed,
-    Failed;
+    String status; // e.g. requested, completed, failed
 }
 
 class ActivityLog {
-    String entryDetails;
 }
 
 class AutomationRule {
     String precondition; // Boolean expression
-    String action; // Sequence of control commands
+    String action; // sequence of control commands
     boolean isActive;
+    Date triggerTimestamp;
 }
 
-class Alert {
-    String alertMessage; 
-    Date timestamp;
-}
-
-association [1] SmartHome <-> Room [*];
-association [*] Room <-> Device [0..*];
+association [1] SmartHome <-> Room [0..*];
+association [1] Room <-> Sensor [0..*];
+association [1] Room <-> Actuator [0..*];
 association [1] SmartHome <-> ActivityLog [0..*];
 association [1] SmartHome <-> AutomationRule [0..*];
-association [0..*] AutomationRule <-> AutomationRule [0..*]; // for dependencies and conflicts
-
-association [*] Sensor <-> ActivityLog [0..*];
-association [*] Actuator <-> ActivityLog [0..*];
 
 }

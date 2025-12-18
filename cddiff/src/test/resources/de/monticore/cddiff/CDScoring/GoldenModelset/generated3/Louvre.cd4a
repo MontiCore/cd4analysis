@@ -1,50 +1,26 @@
 
-// Class Diagram for Louvre Museum Exhibition Management System
-classdiagram LouvreMuseumExhibition {
+classdiagram LouvreMuseum {
 
-class Location {
-    String name;
-    String description;
-}
+class Museum {}
 
-class Exhibition {
-    String title;
-    Date openingDate;
-    int advancementStage; // e.g., planning, ongoing, completed
-}
+class Room {}
 
-class Employee {
-    String firstName;
-    String lastName;
-    String id;
-}
+class Exhibition {}
 
-class Coordinator extends Employee {}
+class Employee {}
 
-class ExhibitionItem {
-    String description;
-}
+class ExhibitionItem {}
 
-class Collector {
-    String name;
-    String contactInfo;
-}
+class Collector {}
 
-class Piece {
-    String title;
-    int year;
-}
+class Coaching {}
 
-class CoachingRelationship {
-    // Represents the relationship between junior and senior employees
-}
-
-association [1] Location <-> Exhibition [0..*];
-association [1] Exhibition <-> Coordinator [0..1];
+association [1] Museum <-> Room [0..*];
+association [1] Room <-> Exhibition [0..*];
+association [1] Exhibition <-> Employee [1..1];
 association [1] Exhibition <-> ExhibitionItem [0..*];
-association [1] ExhibitionItem <-> Piece [0..*];
-association [1] Piece <-> Collector [1..*];
-association [1] Employee <-> CoachingRelationship [0..*];
-association [1] Employee <-> Employee [0..*]; // junior -> senior relationship
+association [1] ExhibitionItem <-> Collector [0..*];
+association [1] Employee <-> Coaching [0..*];
+association [1] Employee <-> Employee [0..1];
 
 }

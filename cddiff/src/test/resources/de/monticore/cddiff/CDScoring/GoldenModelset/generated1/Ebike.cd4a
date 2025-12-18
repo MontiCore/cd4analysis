@@ -1,57 +1,50 @@
 
-// CD4A Class Diagram for the EBike system
-classdiagram EBikeSystem {
+classdiagram EBike {
 
-    class EBike {
-        Frame frame;
-        DriveSystem driveSystem;
-        Controller controller;
-        Battery battery; // optional
-    }
+class EBike {
+    Frame frame;
+    DriveSystem driveSystem;
+    Controller controller;
+    Battery battery;
+}
 
-    class Frame {
-        String material; // e.g., "steel"
-    }
+class Frame {
+    String material; // e.g., "steel"
+}
 
-    class DriveSystem {
-        Motor motor;
-    }
+class DriveSystem {
+    Motor motor;
+}
 
-    class Motor {
-        // motor details can be added here
-    }
+class Motor {
+    // class body
+}
 
-    class Battery {
-        double storedEnergy; // in Watt-hours (Wh)
-    }
+class Battery {
+    int storedEnergy; // in Watt-hours (Wh)
+}
 
-    enum ControllerState {
-        ON,
-        OFF,
-        CHARGING;
-    }
+class Controller {
+    ControllerState state;
+}
 
-    class Controller {
-        ControllerState state;
-        // Method for commanding drive system
-        void commandDriveSystem();
-        // Method for controlling battery
-        void controlBattery();
-    }
+enum ControllerState {
+    On,
+    Off,
+    Charging;
+}
 
-    class BasicController extends Controller {
-        // basic controller features
-    }
+class BasicController extends Controller {
+    // class body
+}
 
-    class AdvancedController extends Controller {
-        // Method for estimating inspection date
-        Date estimateNextInspection();
-    }
+class AdvancedController extends Controller {
+    Date estimateNextInspectionDate();
+}
 
-    association [1] EBike -> Frame [1];
-    association [1] EBike -> DriveSystem [1];
-    association [1] EBike -> Controller [1];
-    association [0..1] EBike -> Battery [1];
-    association [1] DriveSystem -> Motor [1];
+association [2] Frame -> Wheel [2];
+association [1] EBike -> (controls) Controller [1];
+association [1] Controller -> Battery [0..1];
+association [1] Controller -> DriveSystem [1];
 
 }

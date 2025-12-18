@@ -1,5 +1,4 @@
 
-// CD4A Class Diagram for Alpha Insurance
 classdiagram AlphaInsurance {
 
 class Customer {
@@ -9,28 +8,27 @@ class Customer {
 
 class Broker {
     String name;
-    String registrationId;
+    String registrationNumber;
 }
 
-class InsurancePolicy {
+class Policy {
     String type;
     double price;
-    String frequency; // "monthly" or "yearly"
 }
 
 class Contract {
     Date signingDate;
-    String status; // "active", "pending", etc.
+    String status;
 }
 
 class Claim {
-    String description;
     Date claimDate;
+    String description;
 }
 
 class ClaimCase {
-    String caseId;
-    String status; // "open", "closed"
+    String caseType;
+    String status;
 }
 
 class Estimator {
@@ -40,22 +38,22 @@ class Estimator {
 
 class CompensationDecision {
     double amount;
-    String details;
+    String eligibleCosts;
 }
 
-class EstimatorReport {
-    String reportId;
-    Date submissionDate;
+class Invoice {
+    Date invoiceDate;
+    double amountDue;
+    String frequency; // Monthly or Yearly
 }
 
-// Associations
-association [1] Broker <-> Customer [0..1]; // Broker manages Customer
-association [1] Customer <-> InsurancePolicy [0..*]; // Customer can have multiple Insurance Policies
-association [1] InsurancePolicy <-> Contract [0..1]; // Insurance Policy leads to Contract
-association [1] Customer <-> Claim [0..*]; // Customer can file multiple Claims
-association [1] Claim <-> ClaimCase [0..*]; // Claim can lead to one or more Claim Cases
-association [1] ClaimCase <-> Estimator [1..*]; // Each Claim Case is assessed by one or more Estimators
-association [1] Estimator <-> EstimatorReport [0..*]; // Estimator produces multiple Reports
-association [1] ClaimCase <-> CompensationDecision [0..1]; // Claim Case can have a Compensation Decision
+association [1] Customer <-> Broker [1];
+association [1] Customer <-> Policy [0..*];
+association [1] Customer <-> Contract [0..*];
+association [1] Customer <-> Claim [0..*];
+association [1] Claim <-> ClaimCase [0..*];
+association [1] ClaimCase <-> Estimator [0..*];
+association [1] ClaimCase <-> CompensationDecision [0..1];
+association [1] Customer <-> Invoice [0..*];
 
 }

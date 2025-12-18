@@ -1,30 +1,14 @@
 
-// CD4A Class Diagram for E-Home-2020 system
 classdiagram EHome2020 {
 
-enum Unit {
+enum SensorUnit {
     CELSIUS,
     WATT;
 }
 
-class Sensor {
-    String vendorId;
-    String description;
-    Unit unit;
-    Room room; // Each sensor assigned to exactly one room
-}
-
-class TemperatureSensor extends Sensor {
-    float validMin;
-    float validMax;
-}
-
-class PowerSensor extends Sensor {
-    float totalConsumption; // Counter reading
-}
-
-class SensorController {
-    Apartment apartment; // SensorController stores information about the apartment
+class User {
+    String username;
+    String password;
 }
 
 class Apartment {
@@ -35,34 +19,45 @@ class Room {
     String description;
 }
 
-class Inhabitant {
-    String username;
-    String password;
-    String email; // Email for alert messages
-    boolean isAdmin; // Indicates if the inhabitant has administrative rights
+class Sensor {
+    String vendorId;
+    String description;
+    SensorUnit unit;
 }
 
-class MeasuredValue {
-    float value; // The sensor's measured value
-    Date timestamp; // Timestamp of the measured value
+class TemperatureSensor extends Sensor {
+    float minValue;
+    float maxValue;
+}
+
+class PowerSensor extends Sensor {
+    float totalPowerConsumption;
+}
+
+class SensorController {
+    Apartment apartment;
+}
+
+class SensorValue {
+    Date timestamp;
+    float value;
+}
+
+class Threshold {
+    float value;
 }
 
 class EMonitor {
-    // External system that checks sensor thresholds
+    void checkThresholds();
 }
 
-class Alert {
-    String message; // Message to be sent to the email address
-}
-
-// Associations
-association [1] Apartment <-> Room [2..*]; // An apartment consists of at least two rooms
-association [1] Room <-> Sensor [*]; // Each room can have multiple sensors
-association [1] SensorController <-> Sensor [*]; // SensorController manages multiple sensors
-association [1] Apartment <-> Inhabitant [1..*]; // An apartment can have multiple inhabitants
-association [1] Inhabitant -> (logsInTo) SensorController [0..1]; // Inhabitant can log in to the SensorController
-association [1] Sensor <-> MeasuredValue [0..*]; // Each sensor has multiple measured values
-association [1] EMonitor -> Sensor [*]; // E-Monitor checks all thresholds for each sensor
-association [1] Alert -> EMonitor [0..*]; // Alerts are sent through E-Monitor
-
+association [1] Apartment -- Room [2..*];
+association [1] Apartment -- User [0..*];
+association [1] SensorController -- (sensors) Sensor [*];
+association [1] Sensor -- (lastValue) SensorValue [1];
+association [1] Sensor -- (threshold) Threshold [0..1];
+association [1] Room -- Sensor [1];
+association [1] User -- (administrativeRights) User [0..1];
+association [1] User -- (configured) Sensor [0..*];
+association [1] EMonitor -- Sensor [*];
 }

@@ -1,24 +1,23 @@
 
-// Class diagram for the Transport Company
+// Class Diagram for Transport Company
+
 classdiagram TransportCompany {
 
 class Employee {
     String name;
-    String ssn;
-}
-
-class Driver extends Employee {
-    // Additional driver-specific attributes can be added here
+    int ssn;
 }
 
 class Planner extends Employee {
-    // Additional planner-specific attributes can be added here
+    String username;
+    String password;
+}
+
+class Driver extends Employee {
 }
 
 class AdministrativeStaff extends Employee {
     String fieldOfActivity;
-    String username;
-    String password;
 }
 
 class Customer {
@@ -26,42 +25,50 @@ class Customer {
     String billingAddress;
 }
 
-class Vehicle {
-    String licensePlate;
+abstract class Vehicle {
+    String licensePlateNumber;
     int mileage;
 }
 
-enum VehicleType {
-    RefrigeratedTruck,
-    SmallVan,
-    LoadingPlatform,
-    BoxTruck;
-}
+class RefrigeratedTruck extends Vehicle {}
+
+class SmallVan extends Vehicle {}
+
+class LoadingPlatform extends Vehicle {}
+
+class BoxTruck extends Vehicle {}
 
 class RepairShop {
     String name;
     String address;
 }
 
+class Repair {
+    Employee employee;
+    int duration;
+    double cost;
+}
+
 class Order {
-    String pickupAddress;
-    String deliveryAddress;
+    String packageSize;
     String comment;
     Date startTime;
     Date endTime;
 }
 
 class PartnerCompany {
-        //comment: The LLM did not generated the class, added to avoid errors
+    String name;
+    String address;
 }
 
-// Association between classes
-association [1] Planner <-> (assigns) Order [*];
-association [1] Driver <-> (completes) Order [*];
-association [1] Order <-> Customer [1];
-association [1] Vehicle <-> (assignedTo) Order [1];
-association [1] Order <-> RepairShop [0..*]; // An Order can be related to multiple repair instances
-association [1] AdministrativeStaff <-> (takesOrder) Order [0..*];
-association [1] PartnerCompany <-> (places) Order [*]; // Partner company is not defined in detail but linked
+// Associations
+association [*] Driver <-> (completed) Order [*];
+association [*] Order <-> Customer [1];
+association [*] Order <-> Planner [1];
+association [*] Order <-> Vehicle [1];
+association [1] Vehicle <-> (needs) Repair [0..*];
+association [1] Repair <-> RepairShop [1];
+association [*] Order <-> AdministrativeStaff [0..1];
+association [*] AdministrativeStaff <-> PartnerCompany [0..*];
 
 }

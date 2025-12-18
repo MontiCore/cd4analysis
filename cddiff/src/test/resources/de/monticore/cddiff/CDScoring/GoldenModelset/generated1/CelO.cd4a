@@ -1,70 +1,57 @@
 
-// Class Diagram for Celebrations Organization System
-classdiagram CelebrationsOrganizationSystem {
+classdiagram CelebrationsOrganization {
 
-class Organizer {
-    String firstName;
-    String lastName;
-    String email; // also used as username
-    String postalAddress;
-    String phoneNumber;
-    String password;
-}
+    class Organizer {
+        String firstName;
+        String lastName;
+        String email;
+        String postalAddress;
+        String phoneNumber;
+        String password;
+    }
 
-class Event {
-    DateTime startDateTime;
-    DateTime endDateTime;
-    String occasion;
-    String location;
-}
+    class Event {
+        DateTime startDateTime;
+        DateTime endDateTime;
+        String occasion;
+    }
 
-class Location {
-    String name;
-    String address;
-}
+    class Location {
+        String name;
+        String address;
+    }
 
-class Attendee {
-    String firstName;
-    String lastName;
-    String email; // also used as username
-    String attendanceStatus; // can be "will attend", "maybe", "cannot attend"
-}
+    class Attendee {
+        String firstName;
+        String lastName;
+        String email;
+        String password;
+        AttendanceStatus status;
+    }
 
-class Task {
-    String description;
-    String status; // can be "needs to be done", "has been done", "not applicable"
-}
+    class Task {
+        String description;
+        TaskStatus status;
+    }
 
-class Checklist {
-    Task[] tasks;
-}
+    enum AttendanceStatus {
+        ATTENDING,
+        MAYBE,
+        NOT_ATTENDING;
+    }
 
-class Invitation {
-    Organizer organizer;
-    Attendee attendee;
-    boolean hasResponded;
-}
+    enum TaskStatus {
+        NOT_DONE,
+        DONE,
+        NOT_APPLICABLE;
+    }
 
-// Association between Organizer and Event
-association [1] Organizer -- Event [*];
+    association [1] Organizer -> (organizes) Event [*];
+    association [1] Event -> (at) Location [1];
+    association [1] Event -> (invites) Attendee [*];
+    association [1] Event -> (has) Task [*];
+    association [*] Organizer <-> (attends) Attendee [*];
 
-// Association between Event and Attendee
-association [0..*] Event -> Attendee [*];
-
-// Association between Event and Location
-association [1] Event -> Location [1];
-
-// Association between Event and Checklist
-association [1] Event -- Checklist [0..1];
-
-// Association between Organizer and Task
-association [0..*] Organizer -- Task [*];
-
-// Association between Task and Attendee
-association [0..*] Task -> Attendee [*];
-
-// Association between Invitation and Attendee
-association [1] Invitation -> Attendee [1];
-association [1] Invitation -> Organizer [1];
-
+    association [1] Attendee -> (responds) Event [*];
+    association [1] Task -> (isAssignedTo) Attendee [*];
 }

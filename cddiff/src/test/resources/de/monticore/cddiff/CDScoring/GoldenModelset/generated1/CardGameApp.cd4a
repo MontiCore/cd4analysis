@@ -1,71 +1,58 @@
 
-// Class Diagram for the Game
-
+// CD4A Model
 classdiagram Game {
 
-    class Game {
-        int uniqueId; // Unique identifier for the game
-    }
+enum Suit {
+    Diamonds,
+    Hearts,
+    Spades,
+    Clubs;
+}
 
-    class Player {
-        int uniqueId; // Unique identifier for the player
-    }
+enum SoloType {
+    Trump,
+    Jack,
+    Queen;
+}
 
-    class Deck {
-        int uniqueId; // Unique identifier for the deck
-    }
+class Card {
+    String id;
+    Suit suit;
 
-    class Card {
-        int uniqueId; // Unique identifier for the card
-        Suit suit; // Suit of the card
-        int height; // Height of the card for comparison
+    int compareHeight(Card otherCard);
+}
 
-        ComparisonResult compare(Card other);
-    }
+class Deck {
+    String id;
+    Card[] cards; // up to 48 cards
+}
 
-    enum Suit {
-        DIAMONDS,
-        HEARTS,
-        SPADES,
-        CLUBS;
-    }
+class Round {
+    String id;
+    Player[] winningPlayers; // any number of winning players
+    int pointValue;
+}
 
-    enum ComparisonResult {
-        LOWER,
-        EQUAL,
-        HIGHER;
-    }
+class JackRound extends Round {
+    // class body
+}
 
-    class ScoringTable {
-        int uniqueId; // Unique identifier for the scoring table
-    }
+class SoloRound extends Round {
+    SoloType soloType;
+    Player soloPlayer; // exactly one solo player
+}
 
-    class Round {
-        int uniqueId; // Unique identifier for the round
-        Player[] winningPlayers; // Winning players of the round
-        int pointValue; // Points awarded for the round
-    }
+class MandatorySoloRound extends SoloRound {
+    // class body
+}
 
-    class SoloRound extends Round {
-        SoloType soloType; // Type of solo
-        Player soloPlayer; // The player who is solo
-    }
+class ScoringTable {
+    String id;
+    Round[] rounds; // any number of rounds
+}
 
-    class JackRound extends Round {}
+class Player {
+    String id;
+}
 
-    class MandatorySoloRound extends SoloRound {}
-
-    enum SoloType {
-        TRUMP,
-        JACK,
-        QUEEN;
-    }
-
-    association [4] Game <-> Player [4]; // A game consists of 4 players
-    association [1] Game -> Deck [1]; // A game has one deck
-    association [*] Game -> ScoringTable [1]; // A game has one scoring table
-    association [*] ScoringTable -> Round [*]; // A scoring table has many rounds
-    association [0..1] Round <-> JackRound [0..*]; // Round can be a Jack round
-    association [0..1] Round <-> SoloRound [0..*]; // Round can be a Solo round
-    association [0..1] SoloRound <-> MandatorySoloRound [0..*]; // Mandatory Solo rounds are a special case of Solo rounds
 }

@@ -1,55 +1,74 @@
 
-// Class diagram for Hotel Management Booking System (HMBS)
-classdiagram HMBS {
+classdiagram HBMS {
 
-    class Traveller {
-        String name;
-        String billingCompany;
-        String billingAddress;
-        String travelPreferences; // e.g. breakfast, free wifi, 24/7 front desk
-        String creditCardInfo;
-    }
+class Traveller {
+ String name;
+ String billingInformation;
+ String companyName;
+ String address;
+ TravelPreferences travelPreferences;
+ CreditCardInfo creditCardInfo;
+}
 
-    class Hotel {
-        String name;
-        String address;
-        String city;
-        HotelChain hotelChain; // Optional association with hotel chain
-    }
+class TravelPreferences {
+ boolean breakfastIncluded;
+ boolean freeWifi;
+ boolean frontDesk247;
+}
 
-    class Booking {
-        String bookingIdentifier;
-        float price;
-        String cityArea;
-        int hotelRating; // Stars
-        String keyPreferences; // e.g. traveller preferences
-        boolean isPrePaid; // True if paid immediately
-        DateTime cancellationDeadline;
-        boolean isConfirmed;
-    }
+class AccommodationSearch {
+ String city;
+ Date arrivalDate;
+ Date departureDate;
+ int numberOfRooms;
+ RoomType roomType;
+ int minHotelRating;
+ float maxCostPerNight;
+ TravelPreferences optionalTravelPreferences;
+}
 
-    class HotelChain {
-        String chainName;
-    }
+class Hotel {
+ String address;
+ String city;
+ HotelChain hotelChain;
+}
 
-    class RoomType {
-        String type; // e.g. single, double, twin
-        int availableRooms;
-    }
+class RoomType {
+ String type; // e.g. single, double, twin
+}
 
-    class SpecialOffer {
-        float offerPrice;
-        String hotelName;
-    }
+class Booking {
+ String bookingId;
+ float price;
+ String cityArea;
+ int hotelRating;
+ TravelPreferences keyPreferences;
+ BookingStatus status;
+ Date cancellationDeadline;
+}
 
-    class ReliabilityRating {
-        float rating;
-    }
+class CreditCardInfo {
+ String cardNumber;
+ Date expiryDate;
+}
 
-    association [1] Traveller <-> Booking [0..*];
-    association [0..*] Hotel <-> RoomType [1..*];
-    association [0..*] Hotel <-> (runs) HotelChain [0..1];
-    association [0..*] Booking <-> SpecialOffer [0..*];
-    association [1] Traveller <-> ReliabilityRating [0..1];
-    
+class HotelChain {
+ String name;
+}
+
+class SpecialOffer {
+ String offerDetails;
+}
+
+enum BookingStatus {
+ PRE_PAID,
+ PAID_AT_HOTEL;
+}
+
+association [0..*] Traveller <-> Booking [0..*];
+association [0..*] Hotel <-> AccommodationSearch [0..*];
+association [0..*] Hotel <-> Booking [0..*];
+association [0..*] Booking <-> SpecialOffer [0..*];
+association [0..*] Traveller <-> TravelPreferences [0..1];
+
 }

@@ -1,5 +1,4 @@
 
-// CD4A Class Diagram for LabTracker Software
 classdiagram LabTracker {
 
 class Doctor {
@@ -8,6 +7,7 @@ class Doctor {
     String address;
     String phoneNumber;
     Image digitalSignature;
+    Date requisitionValidFrom;
 }
 
 class Patient {
@@ -20,11 +20,16 @@ class Patient {
 }
 
 class Requisition {
-    Date validFrom;
+    int id;
+    List<Test> tests;
 }
 
 class Test {
-    int duration; // duration in minutes
+    int id;
+    Duration duration;
+    boolean appointmentRequired;
+    boolean walkInOnly;
+    boolean sampleDropOff;
 }
 
 class Appointment {
@@ -32,40 +37,38 @@ class Appointment {
     Date date;
     Time startTime;
     Time endTime;
+    String labName;
+    String labRegistrationNumber;
+    Fee changeCancellationFee;
 }
 
 class Lab {
     String address;
     String businessHours;
-    double cancellationFee;
+    Fee cancellationFee;
 }
 
 enum RepetitionInterval {
     Weekly,
     Monthly,
-    HalfYear,
+    EveryHalfYear,
     Yearly;
 }
 
+class RepeatedTest {
+    int numberOfRepetitions;
+    RepetitionInterval interval;
+}
+
 class TestGroup {
-    String groupName;
+    String name;
 }
 
-class Result {
-    boolean isPositive;
-    String report;
-}
-
-association [1] Doctor -> Requisition [*]; // A doctor can have multiple requisitions
-association [1] Requisition -> Patient [1]; // Each requisition must have one patient
-association [*] Requisition -- Test [*]; // A requisition can contain multiple tests, but all must be of the same group
-association [1] Test -> TestGroup [1]; // Each test belongs to one test group
-association [*] Appointment <-> Requisition [1]; // Requisitions requiring an appointment
-association [1] Appointment -> Lab [1]; // Each appointment is scheduled at one lab
-association [0..1] Lab -> Test [*]; // Labs offer multiple tests
-association [1] Patient -> Appointment [*]; // A patient can have multiple appointments
-association [1] Requisition -> Result [*]; // A requisition can have multiple results
-association [1] Requisition -> Doctor [1]; // Requisition is prescribed by one doctor
-association [1] Doctor <-> Doctor [*]; // A doctor can prescribe tests for other doctors, not themselves 
+association [1] Doctor -> Requisition [*];
+association [1] Requisition -> Patient [1];
+association [1] Requisition -> Test [*];
+association [1] Test -> TestGroup [1];
+association [1] Test -> Appointment [0..1];
+association [1] Appointment -> Lab [1];
 
 }

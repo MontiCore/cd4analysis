@@ -1,41 +1,41 @@
 
-// Class diagram for Boeing aircraft sales management
-classdiagram BoeingAircraftSales {
+classdiagram Boeing {
 
 class Aircraft {
     String model;
-    double price;
-    String deliveryDate;
+    double negotiatedPrice;
     String options;
+    Date deliveryDate;
 }
 
 class SalesAgreement {
-    Date agreementDate;
-}
-
-class Contract {
     String deliveryConditions;
     String legalAspects;
 }
 
 class Acquisition {
-    Aircraft aircraftDetails;
-    double negotiatedPrice;
+    SalesAgreement salesAgreement;
+    Aircraft aircraft;
 }
 
-class SalesPerson {
+class Contract {
+    SalesAgreement globalAgreement;
+}
+
+class Airline {
     String name;
-    String employeeId;
 }
 
-class AirlineCompany {
+class Salesperson {
     String name;
-    AirlineCompany parentCompany;
 }
 
-association [1] SalesAgreement <-> Contract [*]; // A sales agreement can lead to multiple contracts
-association [1] Contract <-> Acquisition [*]; // A contract can consist of multiple acquisitions
-association [1] SalesPerson <-> Contract [*]; // A salesperson can manage multiple contracts
-association [0..1] AirlineCompany <-> AirlineCompany [0..*]; // Mother-daughter relationship between airline companies
+association [1] Salesperson <-> Contract [*];
+
+association [1] Contract <-> Acquisition [*];
+
+association [1] Airline <-> Acquisition [*];
+
+association [1] Airline <-> (parent) Airline [0..1];
 
 }

@@ -1,4 +1,6 @@
 
+// CD4A Class Diagram
+
 classdiagram AircraftManagementSystem {
 
 class Aircraft {
@@ -56,18 +58,16 @@ class Airport {
     int numberOfRunways;
 }
 
+// Associations
 association [1] Aircraft -- Flight [*];
 association [*] Flight <-> Passenger [*];
-association [1] Passenger -- Ticket [*];
+association [1] Flight <-> Ticket [*];
 association [1] PassengerAircraft -- SeatCategory [*];
-
+association [1] Aircraft -- Airline [1];
 association [1] Airline -- FlightAttendant [*];
 association [1] Airline -- Pilot [*];
-
-association [1] FlightAttendant -- Flight [*];
+association [*] FlightAttendant -- Flight [*];
 association [1] Pilot -- Flight [1];
-
-association [1] Aircraft -- Airport [1]; // Home airport
-association [1] Flight -- (departure) Airport [1];
-association [1] Flight -- (destination) Airport [1];
+association [1] Airport -- Aircraft [1];
+association [1] Flight <-> Airport [2]; // (departure, destination)
 }

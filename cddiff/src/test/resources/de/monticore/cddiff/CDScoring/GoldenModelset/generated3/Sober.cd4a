@@ -1,48 +1,38 @@
 
-// Class diagram for the Sober Taxi Company
 classdiagram SoberTaxi {
 
-class SoberApp {
-    // Information related to the app can be added here
-}
+class TaxiCompany {}
 
-enum ServiceType {
-    RIDE_HAILING,
-    RIDE_SHARING;
-}
+class SelfDrivingCab {}
 
-class TaxiService {
-    ServiceType type;
-}
+class Customer {}
 
-class RideHailing extends TaxiService {
-    Date pickupTime;
-    Date dropoffTime;
-    String pickupLocation;
-    String dropoffLocation;
+class RideHailService {
+    DateTime pickUpTime;
+    DateTime dropOffTime;
+    String pickUpLocation;
+    String dropOffLocation;
     Duration rideDuration;
     double distance;
     int numberOfPassengers;
     double fee;
-    String requestType; // "App" or "Hand-waving"
+    String requestType; // Sober App or hand-waving
     String leadCustomerName;
 }
 
-class RideSharing extends TaxiService {
-    Date pickupTime;
-    Date dropoffTime;
-    String pickupLocation;
-    String dropoffLocation;
+class RideShareService {
+    DateTime pickUpTime;
+    DateTime dropOffTime;
+    String pickUpLocation;
+    String dropOffLocation;
     Duration rideDuration;
     double distance;
-    List<String> customerNames;
+    int numberOfPassengers;
     double negotiatedFee;
+    List<String> customerNames;
 }
 
-class Car {
-    String ownerName;
-    String licensePlate;
-}
+class CarOwner {}
 
 class Accident {
     Date accidentDate;
@@ -50,16 +40,11 @@ class Accident {
     double damageAmount;
 }
 
-class SelfDrivingCab extends Car {}
 
-class RegisteredCab extends Car {}
-
-// Associations
-association [1] SoberApp <-> TaxiService [0..*];
-association [1] TaxiService <-> RideHailing [0..*];
-association [1] TaxiService <-> RideSharing [0..*];
-association [1] Car <-> Accident [0..*];
-association [1] RegisteredCab <-> Car [0..1]; // Registered cab is a type of Car
-association [1] SelfDrivingCab <-> Car [0..1]; // Self-driving cab is a type of Car
+association [1] TaxiCompany <-> SelfDrivingCab [0..*];
+association [1] TaxiCompany <-> CarOwner [0..*];
+association [0..*] RideHailService <-> Customer [1..6];
+association [0..*] RideShareService <-> Customer [1..10];
+association [1] SelfDrivingCab <-> Accident [0..*];
 
 }

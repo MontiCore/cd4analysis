@@ -1,6 +1,5 @@
 
-// CD4A Class Diagram for Pizza Delivery with Entertainment app
-classdiagram PizzaDeliveryApp {
+classdiagram PizzaDeliveryWithEntertainment {
 
 enum DayOfWeek {
     Monday,
@@ -13,10 +12,10 @@ enum DayOfWeek {
 }
 
 class User {
+    String userId;
     String name;
+    Date birthday;
     String address;
-    String birthday;
-    String userId; // Unique identifier for every user
 }
 
 class BusinessOwner extends User {
@@ -32,40 +31,36 @@ class PizzaRestaurant {
 }
 
 class Pizza {
-    String name; // Pizza name (e.g., margarita)
-    String crustStructure; // Crust type (e.g., classic Italian crust)
+    String name;
+    String crustStructure;
     double price;
 }
 
-class HungryCustomer extends User {
-    String deliveryAddress;
-}
-
 class Order {
-    int orderId; // Unique identifier for each order
-    Date orderDate;
-    Time orderTime;
-    Time latestDeliveryTime;
+    int orderId;
+    Date orderDateTime;
+    Date latestDeliveryTime;
     int numberOfPeople;
 }
 
 class EntertainmentOrder extends Order {
-    String entertainmentType; // Type of entertainment requested
-    int duration; // Duration in minutes
+    String entertainmentType;
+    int duration; // in minutes
 }
 
 class Entertainer extends User {
     String stageName;
     String bio;
-    double pricePer30Minutes; // Price for 30 minutes of entertainment
+    double pricePer30Minutes;
 }
 
-association [1] BusinessOwner <-> (owns) PizzaRestaurant [*];
-association [1] PizzaRestaurant <-> (offers) Pizza [*];
-association [1] HungryCustomer <-> (makes) Order [*];
-association [1] Order <-> (includes) Pizza [*];
-association [1] EntertainmentOrder <-> (entertainedBy) Entertainer [1];
-association [1] Entertainer <-> (worksAt) PizzaRestaurant [*];
-association [1] Entertainer <-> (availability) DayOfWeek [0..7]; // Days of availability can be zero or more
+association [1] User <-> BusinessOwner [0..1];
+association [1] BusinessOwner <-> PizzaRestaurant [*];
+association [1] PizzaRestaurant <-> Pizza [*];
+association [1] User <-> Order [*];
+association [1] Order <-> Pizza [*];
+association [1] EntertainmentOrder <-> Entertainer [1];
+association [1] Entertainer <-> PizzaRestaurant [*];
+association [1] Entertainer <-> DayOfWeek [*];
 
 }

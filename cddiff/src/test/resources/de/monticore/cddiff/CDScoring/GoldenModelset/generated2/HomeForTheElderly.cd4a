@@ -1,22 +1,30 @@
 
-// Class Diagram for Home for the Elderly
-classdiagram HomeForElderly {
+classdiagram ElderlyHome {
+
+class Inhabitant {
+    int id;
+    String name;
+}
+
+class Stay {
+    Date startDate;
+    Date endDate;
+    double amountDue;
+    String status;  // e.g., "active", "suspended", "ended"
+}
 
 enum StayType {
-    RestHome,
-    RestAndNursingHome,
-    ServiceFlat;
+    RH,    // Rest Home
+    RNH,   // Rest & Nursing Home
+    SF;     // Service Flat
 }
 
-class Person {
-    String name;
-    String identificationData;
+class RegistrationProcess {
     Date registrationDate;
-    StayType assessedStayType;
 }
 
-class Inhabitant extends Person {
-    // An inhabitant can have multiple stays
+class Assessment {
+    String needs;  // e.g., Eating, Dressing, Personal Care
 }
 
 class Room {
@@ -24,42 +32,27 @@ class Room {
 }
 
 class Bed {
-    String category;  // corresponds to a category with a price
+    int bedNumber;
+    Category category;
 }
 
 class Category {
-    String name;  // e.g., Rest Home, Rest & Nursing Home, Service Flat
     double price;
 }
 
-class Department {
-    String name;
-    Room[] rooms;  // Each department consists of multiple rooms
-}
-
-class WaitingList {
-    List<Person> persons;  // Persons queued for assessment and stay
-}
-
-class Stay {
-    StayType type;
-    Date intakeDate;
-    boolean isValid;  // Indicates if the proposal is accepted
-    double outstandingAmount;
-}
-
 class Invoice {
-    double totalAmount;
-    double remainingAmount;
-    boolean isPaid;  // If the invoice has been paid or not
+    double outstandingAmount;
+    String paymentStatus;  // e.g., "paid", "unpaid"
 }
 
-association [*] Department <-> Room [1..*]; // Departments have multiple rooms
-association [1] Room <-> Bed [1..*]; // Each room has multiple beds
-association [1] Bed <-> Category [1];  // Each bed belongs to a specific category
-association [*] Person <-> Inhabitant [1]; // A person can become an inhabitant
-association [1] Inhabitant <-> Stay [*]; // An inhabitant can have multiple stays
-association [1] Person <-> WaitingList [0..1]; // Assessed persons are on a waiting list
-association [1] Inhabitant <-> Invoice [0..*]; // Inhabitants can have multiple invoices
+association [1] Inhabitant <-> Stay [*];
+association [1] Stay <-> RegistrationProcess [1];
+association [1] Inhabitant <-> Assessment [1];
+association [1] Department <-> Room [*];
+association [1] Room <-> Bed [*];
+association [1] Bed <-> Category [1];
+association [*] Stay <-> Invoice [*];
+
+class Department {}
 
 }

@@ -1,12 +1,5 @@
 
-// Class diagram representing cities and their attractions with guided tours
-
-classdiagram CityAttractions {
-
-class City {
-    String name;
-    int inhabitants;
-}
+classdiagram City {
 
 class Attraction {
     String name;
@@ -14,30 +7,28 @@ class Attraction {
 }
 
 class GuidedTour {
-    String name;
-    int duration; // duration in minutes
-    int maxVisitors = 20; // maximum number of visitors
+    int duration;
+    int numberOfVisitors;
+    double discountAmount; // applicable for certain visitors
 }
 
 class Visitor {
     String name;
-    double discount; // discount amount for certain tours
 }
 
 class Guide {
     String name;
 }
 
-// Association between City and Attraction
-association [1] City <-> Attraction [*];
+class City {
+    String name;
+    int inhabitants;
+}
 
-// Association between Attraction and GuidedTour
-association [1] Attraction <-> GuidedTour [*];
 
-// Association between GuidedTour and Visitor
-association [0..*] GuidedTour <-> Visitor [0..*];
-
-// Association between GuidedTour and Guide
-association [1] GuidedTour <-> Guide [1];
+association [*] City -> Attraction [*];
+association [*] Attraction -> GuidedTour [*];
+association [*] GuidedTour -> Guide [1];
+association [*] GuidedTour <-> Visitor [0..20];
 
 }

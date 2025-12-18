@@ -1,7 +1,5 @@
 
-// CD4A Class Diagram for Location Management System
 classdiagram LocationManagement {
-
     class Driver {
         String firstName;
         String lastName;
@@ -19,20 +17,22 @@ classdiagram LocationManagement {
         int numberOfSeats;
     }
 
-    class Van extends Vehicle {}
+    class Van extends Vehicle {
+        // Van-specific attributes can be added here if needed.
+    }
 
     class Location {
         String address;
     }
 
     class Order {
-        Date executionDate;
         Location origin;
         Location destination;
+        Date executionDate;
     }
 
-    association [1] Location <-> Driver [0..*]; // A location can have multiple drivers.
-    association [1] Driver -> Vehicle [0..1]; // A driver can drive at most one vehicle at a time.
-    association [1] Driver <-> Order [0..1]; // A driver can carry out at most one order at a time.
-    association [1] Order -> Location [2]; // An order has one origin and one destination location.
+    association [1] Location -> (driver) Driver [*];
+    association [1] Driver -> (assignedOrder) Order [0..1];
+    association [1] Order -> Driver [1];
+    association [1] Vehicle -> Driver [0..1];
 }

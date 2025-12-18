@@ -1,68 +1,62 @@
 
-// CD4A Class Diagram for the Tile-O application
 classdiagram TileO {
 
     class Game {
-        Board board;
-        Player[] players; // up to 4 players
+        BoardGame boardGame;
+        Player[] players;
         Player currentPlayer;
         void rollDie();
-        void movePiece(Player player, Tile targetTile);
-        boolean checkWin(Player player);
+        void movePiece();
     }
 
-    class Board {
+    class BoardGame {
         Tile[][] tiles;
-        ConnectionPiece[] spareConnectionPieces;
+        ActionTile actionTile;
         Tile hiddenTile;
-    }
-
-    class Color {
-     //Comment: LLM did not generate the class, add to avoid errors
+        void connectTiles(Tile tileA, Tile tileB);
     }
 
     class Tile {
-        Color color; // assume Color is a predefined type
-        boolean isActionTile;
-        int turnsAsRegular;
-        Tile rightConnection;
-        Tile leftConnection;
-        Tile topConnection;
-        Tile bottomConnection;
-        void changeColorToBlack();
+        String color; // values can be "white" or "black"
+        boolean isConnected; // 0: right, 1: left, 2: top, 3: bottom
+    }
+
+    class ActionTile extends Tile {
+        int turnsActive;
     }
 
     class ConnectionPiece {}
 
     class Player {
-        String name;
-        Color pieceColor; // piece color for the player
-        Tile currentTile;
+        String color;
+        PlayingPiece piece;
         void takeTurn();
     }
 
+    class PlayingPiece {
+        String color;
+        void move();
+    }
+
     class ActionCard {
-        ActionType actionType; // predefined enumeration
-        void execute(Player player);
+        String actionType; // can be "extraTurn", "connectTiles", "removeConnection", "moveToTile", "loseTurn";
     }
 
     class Designer {
-        void defineGame(Board board, Player[] players);
-        void defineActionCardDeck(ActionCard[] deck);
+        void defineGame();
+        void defineBoard();
+        void defineHiddenTile(Tile tile);
+        void defineStartingPositions();
+        void defineActionCards(ActionCard[] actionCards);
     }
 
-    enum ActionType {
-        EXTRA_TURN,
-        CONNECT_TWO_TILES,
-        REMOVE_CONNECTION,
-        MOVE_TO_ARBITRARY_TILE,
-        LOSE_NEXT_TURN;
-    }
+    class Die {}
 
-    association [1] Game -> Board [1];
-    association [1] Game -> Player [2..4];
-    association [1] Board -> Tile [*];
-    association [0..32] Board -> ActionCard [0..32];
-    association [1] Designer -> Game [1];
-    association [1] Player -> Tile [1];
+    association [1] Game -> (boardGame) BoardGame [1];
+    association [2..4] Game -> (players) Player [1];
+    association [1] Player -> (piece) PlayingPiece [1];
+    association [1] BoardGame -> (tiles) Tile [*];
+    association [1] BoardGame -> (hiddenTile) Tile [1];
+    association [1] BoardGame -> (actionTile) ActionTile [1];
+    association [*] Designer -> (actionCards) ActionCard [32];
 }

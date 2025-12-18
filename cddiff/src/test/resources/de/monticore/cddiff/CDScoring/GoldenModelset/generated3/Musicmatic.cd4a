@@ -1,23 +1,21 @@
 
-// Class diagram for Musicmatic streaming platform
-
 classdiagram Musicmatic {
-
-class Artist {
-    String name; // unique identifier for artist
-    DateTime dateOfBirth;
-    String websiteUrl;
-}
 
 class Song {
     String title;
     int year;
-    double length;
+    int length;
     String genre;
 }
 
+class Artist {
+    String name;
+    String dateOfBirth;
+    String websiteURL;
+}
+
 class User {
-    String id; // unique identifier for user
+    String id;
     String name;
     String address;
 }
@@ -31,17 +29,17 @@ class BusinessUser extends User {
 class Single extends Song {}
 
 class Hit extends Song {
-    int trackNumber; // position in the album
+    int trackNumber;
 }
 
 class Album {
-    String title; // title of the album
+    String title;
 }
 
-association [1] Artist <-> Song [0..*]; // Each song belongs to one artist
-association [1] User <-> Song [0..*]; // Users can buy multiple songs
-association [1] BusinessUser <-> Single [0..*]; // Business users can upload singles
-association [1] Album <-> Hit [0..*]; // An album consists of multiple hits
-association [0..1] RegularUser <-> Album [0..*]; // Regular users can suggest albums
+association [1] Song <-> Artist [1];
+association [*] User <-> Single [0..*];
+association [*] User <-> Hit [0..*];
+association [1] Album <-> Hit [0..*];
+association [0..*] RegularUser <-> BusinessUser [0..*];
 
 }

@@ -1,26 +1,17 @@
 
-// CD4A Class Diagram for Film Set Management System
-classdiagram FilmSetManagement {
-
-enum Genre {
-    THRILLER,
-    ACTION,
-    HORROR,
-    COMEDY;
-}
+classdiagram FilmSet {
 
 class Employee {
     String name;
     String socialSecurityNumber;
-}
-
-class CreativeEmployee extends Employee {
     boolean hasOscar;
 }
 
-class Director extends CreativeEmployee {
+class CreativeEmployee extends Employee {
     String assistantName;
 }
+
+class Director extends CreativeEmployee {}
 
 class Actor extends CreativeEmployee {
     String education;
@@ -31,7 +22,7 @@ class Technician extends Employee {
 }
 
 class FilmSet {
-    String location;
+    Location location;
 }
 
 class Film {
@@ -39,8 +30,20 @@ class Film {
     int yearOfRelease;
 }
 
-class Screenwriter extends Employee {
-    String mostSuccessfulFilm;
+class Genre {
+    Type type;
+}
+
+enum Type {
+        THRILLER,
+        ACTION,
+        HORROR,
+        COMEDY;
+    }
+
+class Screenwriter {
+    String name;
+    Film mostSuccessfulFilm;
 }
 
 class Screenplay {
@@ -56,11 +59,11 @@ class Novel {
     String author;
 }
 
-association [1] FilmSet <-> Film [*];
-association [*] Film <-> Screenplay [1];
-association [1] Screenwriter <-> Screenplay [*];
-association [1] Novel <-> Screenplay [0..1];
-association [*] Film <-> Actor [*]; // Actors must prepare for their roles
-association [1] Film <-> Director [1]; // Each film has one director
-association [1] Screenplay -> (implementsScreenplay) Director [1]; // Director implements the screenplay
+association [0..*] FilmSet <-> Film [0..*];
+association [1] Film <-> Screenplay [1];
+association [1] Screenwriter <-> Screenplay [0..*];
+association [1] Screenplay <-> Novel [0..1];
+association [0..*] Film <-> Actor [0..*];
+association [1] Film <-> Director [0..1];
 }
+

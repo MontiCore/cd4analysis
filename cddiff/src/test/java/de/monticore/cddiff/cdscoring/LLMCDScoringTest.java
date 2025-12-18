@@ -106,7 +106,7 @@ public class LLMCDScoringTest extends SynDiffTestBasis {
     }
     File out = new File(dir + "LLMScores.txt");
 
-    Files.writeString(out.toPath(), scores.stream().map(Object::toString).collect(Collectors.joining("\t")) + "\n", out.exists() ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
+    Files.writeString(out.toPath(), scores.stream().map(Object::toString).map(s -> s.replace(".", ",")).collect(Collectors.joining("\t")) + "\n", out.exists() ? StandardOpenOption.APPEND : StandardOpenOption.CREATE);
   }
 
   @ParameterizedTest

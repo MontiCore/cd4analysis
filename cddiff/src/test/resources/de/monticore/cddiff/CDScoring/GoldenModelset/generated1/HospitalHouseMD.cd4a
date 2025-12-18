@@ -1,39 +1,42 @@
 
-// Class diagram for HospitalHouseMD
 classdiagram HospitalHouseMD {
 
-    class Patient {
-        boolean consentGiven; // Indicates if the patient has signed consent
-    }
+class Patient {
+  String name;
+  String consentStatus;
+}
 
-    class Doctor {
-        String name; // Name of the doctor
-    }
+class Doctor {
+  String name;
+}
 
-    class HeadDoctor extends Doctor {
-        // Specialization for head doctor, if needed
-    }
+class Diagnosis {
+  String description;
+}
 
-    class Treatment {
-        int stage; // Current stage of the treatment
-    }
+class Treatment {
+  String name;
+  int stage;
+}
 
-    class Illness {
-        String name;
-        PriorityScore priorityScore; // The priority score of the illness
-    }
+class Illness {
+  String name;
+  String priorityScore;
+}
 
-    enum PriorityScore {
-        HIGH,
-        LOW;
-    }
+class Nurse {
+  String name;
+}
 
-    association [1..*] Patient -> (assignedTo) Doctor [*]; // Patients assigned to one or more doctors
-    association [1] Doctor -> (approvedBy) HeadDoctor [*]; // Doctor's diagnosis approved by head doctor
-    association [1] Illness -> (managedBy) Treatment [*]; // Illness can have one or more treatments
-    association [0..*] Treatment -> (appliesTo) Patient [*]; // Treatments applied to patients
-    
-    // Upgrading treatment stages based on consent
-    association [1..*] Treatment -> (requiresConsent) Patient [0..1]; // Upgrades require patient consent
+class ConsentForm {
+  boolean signed;
+}
+
+association [1..*] Patient <-> (assigned) Doctor [1..*];
+association [1] Doctor <-> (makes) Diagnosis [1];
+association [1] Diagnosis <-> (has) Treatment [0..*];
+association [1] Illness <-> (causes) Treatment [0..*];
+association [1..*] Treatment <-> (appliedFor) Illness [1];
+association [1..*] Patient <-> (requires) Nurse [1..*];
 
 }

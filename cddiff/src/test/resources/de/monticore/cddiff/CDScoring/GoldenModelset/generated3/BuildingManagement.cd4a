@@ -1,59 +1,45 @@
 
-// Class diagram for the Web Portal System
-classdiagram WebPortalSystem {
-
-enum EnergyClass {
-    A,
-    B,
-    C,
-    D;
-}
+classdiagram WebPortal {
 
 class WebPortal {
-    String version;
-    String url;
+    String versionNumber;
+    String urlAddress;
 }
 
 class Building {
-    String uniqueID; // Unique identifier for the building
+    String uniqueID;
     String name;
-    EnergyClass energyClass; // Using the EnergyClass enum
+    String energyClass;
     String address;
     int yearOfConstruction;
 }
 
 class User {
-    String userName; // Unique user name
+    String userName;
     String emailAddress;
     String password;
 }
 
 class Entry {
     String name;
-    String textInfo; // Optional textual information
-    float numericValue; // Optional floating point number
-    String unit; // Additional unit as freely definable text
+    String additionalInfo;
 }
 
 class Image {
-    String fileName; // File name of the image
-}
-
-class Comment {
-    String content; // Content of the comment
+    String fileName;
+    boolean isProfilePhoto;
 }
 
 class Administrator extends User {
-    String idCardNumber; // ID card number for administrators
+    String idCardNumber;
 }
 
-// Association definitions
-association [1] WebPortal <-> Building [*]; // A web portal has many buildings
-association [1] User <-> Building [*]; // A user can own multiple buildings
-association [0..*] Building <-> Entry [*]; // A building can have multiple entries
-association [1] Building <-> Image [*]; // A building can have multiple images
-association [1..*] User <-> Comment [*]; // Users can comment on buildings
-association [1] Building <-> Comment [*]; // Comments are related to buildings
-association [1] Administrator <-> User [0..*]; // Administrators manage users
+association [1] WebPortal <-> Building [*];
+association [1] Building <-> User [1];
+association [*] Building <-> Entry [*];
+association [*] Building <-> Image [*];
+association [*] User <-> User [*]; // for comments and interactions
 
+association [1] WebPortal <-> User [*];
+association [1] User <-> Administrator [0..1];
 }

@@ -1,9 +1,7 @@
 
-// CD4A model for Kinepolis Cinema Management System
-classdiagram KinepolisCinema {
+classdiagram KinepolisCinemas {
 
 class Cinema {
-    String name;
     String location;
 }
 
@@ -13,41 +11,38 @@ class Theatre {
 
 class Movie {
     String title;
-    String duration;
 }
 
-class MovieCopy {
-    String copyId;
+class Copy {
+    String id;
 }
 
 class Show {
     Date startTime;
-    Date endTime;
+    boolean isCancelled;
 }
 
 class Reservation {
-    String reservationId;
-    Date reservationTime;
+    CreditCard creditCard;
+    boolean isCancelled;
 }
 
 class Ticket {
-    String ticketId;
-    String seatNumber;
+    int seatNumber;
 }
 
-class Customer {
-    String customerId;
-    String name;
-    String creditCardDetails;
+class Offer {
+    boolean isAccepted;
 }
 
-association [1] Cinema <-> Theatre [*];
-association [1] Cinema <-> MovieCopy [*];
-association [1] Movie <-> MovieCopy [*];
-association [1] Theatre <-> Show [*];
-association [1] Show <-> Reservation [*];
-association [1] Show <-> Ticket [*];
-association [1] Customer <-> Reservation [*];
-association [1] Customer <-> Ticket [*];
+class CreditCard {
+    String cardNumber;
+}
 
+association [1] Cinema <-> Theatre [0..*];
+association [1] Cinema <-> Copy [0..*];
+association [1] Copy <-> Show [1..*];
+association [1] Show <-> Reservation [0..*];
+association [1] Show <-> Ticket [0..*];
+association [1] Show <-> Offer [0..*];
 }

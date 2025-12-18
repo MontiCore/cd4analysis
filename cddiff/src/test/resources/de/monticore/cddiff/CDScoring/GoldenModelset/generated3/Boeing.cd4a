@@ -1,18 +1,11 @@
 
-// CD4A Class Diagram for Boeing Aircraft Sales
-
-classdiagram BoeingAircraftSales {
+classdiagram Boeing {
 
 class Aircraft {
     String model;
-    double price;
-    String deliveryDate;
-    String options;
-    String customizations;
-}
-
-class SalesAgreement {
-    Date agreementDate;
+    double negotiatedPrice;
+    String optionsAndCustomizations;
+    Date deliveryDate;
 }
 
 class Contract {
@@ -20,21 +13,20 @@ class Contract {
     String legalAspects;
 }
 
-class Employee {
-    String name;
-    String employeeId;
+class Acquisition {
+    Aircraft aircraft;
 }
 
-class Salesperson extends Employee {}
-
-class AirlineCompany {
+class Salesperson {
     String name;
-    AirlineCompany parentCompany; // reference to parent company
 }
 
-association [1] SalesAgreement -> Contract [1..*]; // A Sales Agreement can have multiple Contracts
-association [1] Contract <-> Aircraft [0..*]; // A Contract can consist of multiple Aircraft acquisitions
-association [1] Salesperson <-> Contract [0..*]; // A Salesperson can manage multiple Contracts
-association [1] AirlineCompany <-> AirlineCompany [0..*]; // Relationship between main and daughter airlines
+class Airline {
+    String name;
+}
+
+association [1] Salesperson <-> Contract [*];
+association [1] Contract <-> Acquisition [*];
+association [*] Airline <-> (parent) Airline [*];
 
 }

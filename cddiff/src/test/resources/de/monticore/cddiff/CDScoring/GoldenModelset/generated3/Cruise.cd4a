@@ -1,69 +1,68 @@
 
-classdiagram CruiseManagement {
+// CD4A Class Diagram
+classdiagram CruiseBookingSystem {
 
-class Provider {
-    String name;
-    String location;
-}
+    class Provider {
+        String name;
+        String location;
+    }
 
-class Cruise {
-    int number;
-    String name;
-    Date startDate;
-    Date endDate;
-}
+    class Cruise {
+        String number;
+        String name;
+        Date startDate;
+        Date endDate;
+    }
 
-class Employee {
-    String name;
-    String socialSecurityNumber;
-}
+    class Employee {
+        String name;
+        String socialSecurityNumber;
+    }
 
-class Guest {
-    String name;
-    boolean isVIP;
-}
+    class Guest {
+        String name;
+        boolean isVIP;
+    }
 
-class Ship {
-    String name;
-    int numberOfDecks;
-    float length;
-    int numberOfPassengers;
-}
+    class Ship {
+        String name;
+        int numberOfDecks;
+        double length;
+        int numberOfPassengers;
+    }
 
-class TravelAgency {
-    String name;
-    String address;
-}
+    class Booking {
+        String bookingNumber;
+        Date bookingDate;
+    }
 
-class Booking {
-    int bookingNumber;
-    Date bookingDate;
-}
+    class TravelAgency {
+        String name;
+        String address;
+    }
 
-class DestinationArea {
-    String name;
-    String seaName;
-}
+    class DestinationArea {
+        String name;
+        String seaName;
+    }
 
-class Show {
-    String title;
-    float duration;
-}
+    class Show {
+        String title;
+        Duration duration;
+    }
 
-class Ticket {
-    // No specific attributes mentioned
-}
+    class Ticket {
+        // Ticket properties can be defined here if necessary
+    }
 
-// Associations
-association [1] Provider <-> Cruise [0..*];
-association [1] Cruise <-> Employee [1..*];
-association [0..*] Guest <-> Cruise [0..*];
-association [1] Ship <-> Cruise [0..*];
-association [1] TravelAgency <-> Booking [0..*];
-association [1] Booking <-> Guest [1];
-association [1] Cruise -> DestinationArea [1];
-association [0..*] Cruise <-> Show [0..*];
-association [1] Ticket <-> Cruise [1];
-association [0..*] Ticket <-> Guest [0..*];
+    association [1] Provider <-> Cruise [0..*];
+    association [1] Cruise <-> Employee [0..*];
+    association [0..*] Guest <-> Cruise [0..*];
+    association [1] Ship <-> Cruise [0..*];
+    association [1] Booking <-> TravelAgency [1];
+    association [1] Cruise <-> DestinationArea [1];
+    association [1] Cruise <-> Show [0..*];
+    association [1] Cruise <-> Ticket [0..*];
+    association [0..*] Guest <-> Ticket [0..*];
 
 }

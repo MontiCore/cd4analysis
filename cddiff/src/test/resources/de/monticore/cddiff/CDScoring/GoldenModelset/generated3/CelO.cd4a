@@ -1,11 +1,10 @@
 
-// Class Diagram for Celebrations Organization System
 classdiagram CelebrationsOrganizationSystem {
 
     class Organizer {
         String firstName;
         String lastName;
-        String email; // Used as username
+        String email;
         String postalAddress;
         String phoneNumber;
         String password;
@@ -15,8 +14,6 @@ classdiagram CelebrationsOrganizationSystem {
         DateTime startDateTime;
         DateTime endDateTime;
         String occasion;
-        Location location; // Association with Location class
-        String eventType; // Could be selected from a list or created new
     }
 
     class Location {
@@ -27,24 +24,32 @@ classdiagram CelebrationsOrganizationSystem {
     class Attendee {
         String firstName;
         String lastName;
-        String email; // Used as username
-        boolean willAttend; // True, Maybe, or False
+        String email;
+        String password;
+        AttendanceStatus status;
     }
 
     class Task {
         String description;
-        String status; // e.g., needs to be done, done, not applicable
+        TaskStatus status;
     }
 
-    class Invitation {
-        boolean status; // Attending, Maybe, Not Attending
+    enum AttendanceStatus {
+        ATTENDING,
+        MAYBE,
+        NOT_ATTENDING;
     }
 
-    association [1] Organizer -> (organizes) Event [*];
-    association [*] Event -> (includes) Attendee [*];
-    association [*] Event -> (heldAt) Location [1];
-    association [*] Event -> (has) Task [*];
-    association [*] Attendee <-> (receives) Invitation [1];
-    association [1] Organizer -> (manages) Task [*];
-    association [1] Task -> (assignedTo) Attendee [*];
+    enum TaskStatus {
+        NOT_DONE,
+        DONE,
+        NOT_APPLICABLE;
+    }
+
+    association [1] Organizer -> (manages) Event [*];
+    association [*] Organizer -> (invites) Attendee [*];
+    association [1] Event -> (takesPlaceAt) Location [1];
+    association [1] Event -> (has) Task [*];
+    association [*] Attendee -> (brings) Task [*];
+
 }

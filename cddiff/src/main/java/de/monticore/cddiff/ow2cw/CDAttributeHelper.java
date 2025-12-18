@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
 import de.monticore.types.mcarraytypes._ast.ASTMCArrayType;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -121,7 +122,13 @@ public class CDAttributeHelper {
       return null;
     }
     ASTMCQualifiedType qualifiedType = (ASTMCQualifiedType) type;
-    Optional<TypeSymbol> typeSymbol = scope.resolveType(qualifiedType.getMCQualifiedName().getBaseName());
+    Optional<TypeSymbol> typeSymbol = Optional.empty();
+    try {
+      typeSymbol = scope.resolveType(qualifiedType.getMCQualifiedName().getBaseName());
+    } catch (ResolvedSeveralEntriesForSymbolException e) {
+      // resolve by full name
+      typeSymbol = scope.resolveType(qualifiedType.getMCQualifiedName().getQName());
+    }
     if (typeSymbol.isPresent() && typeSymbol.get().isPresentAstNode() && typeSymbol.get()
         .getAstNode() instanceof ASTCDType) {
       return (ASTCDType) typeSymbol.get().getAstNode();

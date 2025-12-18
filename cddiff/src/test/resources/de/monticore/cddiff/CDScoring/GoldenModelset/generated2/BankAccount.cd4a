@@ -1,13 +1,17 @@
 
-classdiagram Bank {
+classdiagram BankManagement {
 
     class Customer {
         String firstName;
         String lastName;
     }
 
-    class BankBranch {
-        // Represents a branch of the bank
+    class Bank {
+        // class body
+    }
+
+    class Branch {
+        // class body
     }
 
     class Account {
@@ -15,14 +19,13 @@ classdiagram Bank {
         double balance;
     }
 
-    class CurrentAccount extends Account {
+    class CheckingAccount extends Account {
         double overdraftLimit;
     }
 
     class SavingsAccount extends Account {}
 
-    association [1..*] BankBranch -> Customer [*]; // A branch can have many customers
-    association [1..5] Customer -> Account [*]; // A customer can have between 1 to 5 accounts
-    association [1] Account -> Customer [1]; // Each account has one owner who is a customer
-
+    association [0..*] Bank -> Branch [*];
+    association [1] Account -> (owner) Customer [1];
+    association [1..5] Customer -> Account [*];
 }

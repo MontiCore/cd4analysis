@@ -1,58 +1,66 @@
 
-// CD4A class diagram for the E-Home-2020 system
+// CD4A Class Diagram for E-Home-2020
 classdiagram EHome2020 {
 
-class Sensor {
-    String vendorId;
-    String description;
-    String unit;
+enum SensorUnit {
+    CELSIUS,
+    WATT;
 }
 
-class TemperatureSensor extends Sensor {
-    float minValue;
-    float maxValue;
-    float getLastValue();
-}
-
-class PowerSensor extends Sensor {
-    float totalPowerConsumption;
-    float getLastValue();
-}
-
-class Room {
-    String description;
-}
-
-class SensorController {
-    void querySensorValues();
-    void configureSensor();
+class User {
+    String username;
+    String password;
 }
 
 class Apartment {
     String address;
 }
 
-class Inhabitant {
-    String username;
-    String password;
-    boolean hasAdminRights; 
+class Room {
+    String description;
+}
+
+class Sensor {
+    String vendorId;
+    String description;
+    SensorUnit unit;
+}
+
+class TemperatureSensor extends Sensor {
+    float minValue;
+    float maxValue;
+}
+
+class PowerSensor extends Sensor {
+    float totalConsumption;
+}
+
+class SensorValue {
+    Date timestamp;
+    float value;
+}
+
+class SensorController {
+    Apartment apartment;
 }
 
 class EMonitor {
     void checkThresholds();
-    void sendAlert();
 }
 
-class SensorValue {
-    float value;
-    Date timestamp;
+class Alert {
+    String emailAddress;
 }
+
+class AdministrativeUser extends User {}
 
 association [1] Apartment -- Room [2..*];
-association [1] Room <-> Sensor [1..*];
-association [1] Inhabitant <-> Apartment [1];
-association [1] SensorController <-> Apartment [1];
-association [1] EMonitor <-> Sensor [*];
-association [1..*] Sensor <-> (measures) SensorValue [*];
+association [1] User -- Alert [0..1];
+association [1] User -- (adminRights) AdministrativeUser [0..1];
+association [1] SensorController -- Sensor [1..*];
+association [1] Room -- Sensor [1..*];
+association [1] Sensor -- (measuredValues) SensorValue [*];
+association [1] SensorController -- (inhabitants) User [1..*];
+association [1] EMonitor -- Sensor [*];
 
 }

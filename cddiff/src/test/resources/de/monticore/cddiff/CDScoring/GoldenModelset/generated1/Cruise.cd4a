@@ -1,6 +1,4 @@
-
-// CD4A model for a cruise booking system
-classdiagram CruiseBookingSystem {
+classdiagram CruiseBooking {
 
 class Provider {
     String name;
@@ -8,7 +6,7 @@ class Provider {
 }
 
 class Cruise {
-    int cruiseNumber;
+    String number;
     String name;
     Date startDate;
     Date endDate;
@@ -21,13 +19,13 @@ class Employee {
 
 class Guest {
     String name;
-    boolean isVIP; // true if VIP, false otherwise
+    boolean isVIP;
 }
 
 class Ship {
     String name;
     int numberOfDecks;
-    double length; // in meters
+    double length;
     int numberOfPassengers;
 }
 
@@ -37,33 +35,31 @@ class TravelAgency {
 }
 
 class Booking {
-    int bookingNumber; // unique identifier
+    String bookingNumber;
     Date bookingDate;
 }
 
 class DestinationArea {
     String name;
-    String seaName; // name of the sea
+    String seaName;
 }
 
 class Show {
     String title;
-    int duration; // in minutes
+    Duration duration;
 }
 
-class Ticket {
-    // Ticket does not need specific attributes; its association is sufficient
-}
+class Ticket {}
 
-association [*] Provider <-> Cruise [*];
-association [*] Cruise -- (requires) Employee [*];
-association [*] Cruise -- (attends) Guest [*];
-association [*] Cruise <-> Ship [*];
-association [1] TravelAgency <-> Booking [*];
-association [1] Booking -> Cruise [1];
-association [1] Cruise -> DestinationArea [1];
-association [*] Cruise -- (offers) Show [*];
-association [*] Ticket <-> Cruise [1];
-association [1] Guest <-> Ticket [*];
+association [1] Provider <-> Cruise [0..*];
+association [1..*] Cruise <-> Employee [1..*];
+association [1..*] Cruise <-> Guest [0..*];
+association [1] Cruise <-> Ship [0..*];
+association [1] Booking <-> TravelAgency [1];
+association [1] Booking <-> Cruise [1];
+association [1] Cruise <-> DestinationArea [1];
+association [1..*] Cruise <-> Show [0..*];
+association [1] Cruise <-> Ticket [0..*];
+association [0..*] Guest <-> Ticket [0..*];
 
 }

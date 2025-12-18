@@ -1,38 +1,37 @@
 
 classdiagram HospitalHouseMD {
 
-    class Patient {
-        boolean consent; // Indicates if the patient has signed consent
-    }
+class Patient {
+    String name;
+    String consentForm;
+}
 
-    class Doctor {
-        // Attributes and methods for Doctor can be defined here
-    }
+class Doctor {
+    String name;
+}
 
-    class HeadDoctor extends Doctor {
-        // HeadDoctor specific attributes and methods can be defined here
-    }
+class Treatment {
+    int stage;
+    String description;
+}
 
-    class Illness {
-        PriorityScore priorityScore; // high or low
-    }
+class Illness {
+    String name;
+    String priorityScore; // Possible values: "high", "low"
+}
 
-    enum PriorityScore {
-        HIGH,
-        LOW;
-    }
+class Nurse {
+    String name;
+}
 
-    class Treatment {
-        int stage; // 1, 2, or 3
-    }
+class Diagnosis {
+    // The LLM did not generate this class, adding it to avoid errors
+}
 
-    class FollowUp {
-        // Attributes for FollowUp can be defined here, relating to frequency
-    }
-
-    association [1..*] Patient <-> Doctor [1..*]; // Patients can have multiple doctors
-    association [1..*] Illness <-> Treatment [1..*]; // Illnesses can have multiple treatments
-    association [1] HeadDoctor <-> Treatment [0..*]; // HeadDoctor approves treatments
-    association [1..*] Treatment <-> FollowUp [0..*]; // Treatments can have follow-ups
+association [1..*] Patient <-> (assignedTo) Doctor [1..*];
+association [1] Doctor <-> (approves) Diagnosis [1..*];
+association [1..*] Diagnosis <-> Treatment [1..*];
+association [1] Illness -- Treatment [0..*];
+association [1..*] Treatment <-> (checkedBy) Nurse [0..*];
 
 }

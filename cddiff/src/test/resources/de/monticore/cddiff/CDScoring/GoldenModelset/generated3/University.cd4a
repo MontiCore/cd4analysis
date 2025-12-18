@@ -1,9 +1,8 @@
 
-// Class Diagram for University Structure
-classdiagram UniversitySystem {
+classdiagram UniversityStructure {
 
 class University {
-    int totalEmployees;
+    int totalNumberOfEmployees;
 }
 
 class Faculty {
@@ -18,7 +17,7 @@ class Institute {
 class Employee {
     String socialSecurityNumber;
     String name;
-    String emailAddress;
+    String email;
 }
 
 class ResearchAssistant extends Employee {
@@ -31,26 +30,18 @@ class Project {
     Date endDate;
 }
 
-class Lecturer extends ResearchAssistant {
-    // Lecturers can teach courses
-}
-
 class Course {
-    String uniqueID;
+    int id;
     String name;
-    int weeklyDurationHours;
+    int weeklyDuration;
 }
 
-class Dean extends Employee {
-    // A Dean heads a Faculty
-}
+class Lecturer extends ResearchAssistant {}
 
-// Associations
 association [1] University <-> Faculty [*];
 association [1] Faculty <-> Institute [*];
-association [1] Faculty <-> Dean [1];
-association [*] Institute <-> ResearchAssistant [*];
+association [1] Faculty <-> Employee [1];
+association [1] Institute <-> ResearchAssistant [*];
 association [*] ResearchAssistant <-> Project [*];
 association [*] ResearchAssistant <-> Course [*];
-association [1] Course <-> Lecturer [*];
 }

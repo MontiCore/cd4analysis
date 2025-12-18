@@ -1,72 +1,78 @@
 
-// Class diagram for LabTracker software
-classdiagram LabTracker {
+// CD4A Model for LabTracker System
+
+classdiagram LabTrackerApp {
 
 class Doctor {
-    int practitionerNumber;
-    String fullName;
-    String address;
-    String phoneNumber;
-    Image signature; // digital signature
-    Date validFrom;
+  int practitionerNumber;
+  String fullName;
+  String address;
+  String phoneNumber;
+  Image signature;
+  Date validFrom;
 }
 
 class Patient {
-    String healthNumber; // alphanumeric
-    String firstName;
-    String lastName;
-    Date dateOfBirth;
-    String address;
-    String phoneNumber;
+  String healthNumber;
+  String firstName;
+  String lastName;
+  Date dateOfBirth;
+  String address;
+  String phoneNumber;
 }
 
 class Requisition {
-    int id;
-    Date creationDate;
-    Doctor doctor; // cannot prescribe for themselves
-    Patient patient;
-    List<Test> tests; // tests of the same group
-    Repetition repetition; // may indicate repetition
+  int id;
+  Date date;
+  Doctor doctor;
+  Patient patient;
+  List<Test> tests;
+  int repeatCount;
+  Interval interval;
+  Report report;
 }
 
 class Test {
-    String testName;
-    int duration;
-    boolean requiresAppointment;
-    boolean allowsWalkIn;
+  int id;
+  String name;
+  Duration duration;
+  boolean requiresAppointment;
+  boolean isWalkInOnly;
+  boolean requiresSampleDropOff;
 }
 
 class Appointment {
-    int confirmationNumber;
-    Date appointmentDate;
-    Time startTime;
-    Time endTime;
-    Lab lab; // selected lab for the appointment
+  int confirmationNumber;
+  Date date;
+  Time startTime;
+  Time endTime;
+  Lab lab;
 }
 
 class Lab {
-    String address;
-    String registrationNumber;
-    String businessHours; // does not change weekly
-    double cancellationFee; // set by the lab
+  String name;
+  String registrationNumber;
+  String address;
+  BusinessHours businessHours;
+  Fee cancellationFee;
 }
 
-class Repetition {
-    int numberOfRepetitions;
-    Interval interval; // weekly, monthly, halfYear, yearly
+class Report {
+  String results; // negative or positive
 }
 
 enum Interval {
     Weekly,
     Monthly,
-    HalfYear,
+    SemiAnnually,
     Yearly;
 }
 
-association [1] Doctor <-> Requisition [*]; // doctor creates requisition
-association [1] Patient <-> Requisition [*]; // patient is linked to requisition
-association [*] Requisition <-> Test [*]; // requisition can have multiple tests
-association [*] Patient <-> Appointment [1]; // patient can have one appointment at a time
-association [1] Lab <-> Appointment [*]; // lab can have multiple appointments
+association [1] Requisition -> Doctor [1];
+association [1] Requisition -> Patient [1];
+association [0..*] Requisition -> Test [1..*];
+association [1] Appointment -> Requisition [1];
+association [1] Appointment -> Lab [1];
+association [1] Lab -> Report [*];
 
 }

@@ -1,68 +1,51 @@
 
-// CD4A Class Diagram for the Online Tutoring System (OTS)
-
 classdiagram OTS {
+    class Tutor {
+        String name;
+        String email;
+        String bankAccount;
+        Availability availability;
+    }
 
-class User {
-    String name;
-    String email;
-}
+    class Student {
+        String name;
+        String email;
+    }
 
-class Tutor extends User {
-    String bankAccount;
-    List<TutoringOffer> offers; // A tutor can have multiple offers
-}
+    class TutoringOffer {
+        String subject;
+        String levelOfExpertise;
+        float hourlyPrice;
+    }
 
-class Student extends User {
-    List<TutoringRequest> requests; // A student can make multiple requests
-}
+    class TutoringRequest {
+        Date targetDateTime;
+        String levelOfTutoring;
+    }
 
-class TutoringOffer {
-    String subject;
-    String expertiseLevel; // e.g., primary school, high school, university
-    double hourlyPrice;
-    String availability; // e.g., "Thursdays from 10:00 to 11:30"
-    Tutor tutor; // Offer is provided by a specific tutor
-}
+    class TutoringSession {
+        Date dateTime;
+        boolean cancelled;
+        float price;
+    }
 
-class TutoringRequest {
-    String requestedLevel; // Level of tutoring requested
-    Date targetDateTime; // Suggested date and time for the session
-    Tutor tutor; // Request directed to a specific tutor
-    Student student; // Request made by a specific student
-}
+    class Payment {
+        String method; // e.g., credit card or wire transfer
+        float amount;
+    }
 
-class TutoringSession {
-    Date dateTime; // Scheduled date and time
-    Tutor tutor; // Tutor in the session
-    Student student; // Student in the session
-    boolean isCancelled; // Indicates if the session was cancelled
-    double price; // Price of the session
-}
+    class Award {
+        String subject;
+        Tutor bestTutor;
+    }
 
-class Payment {
-    Tutor tutor; // Tutor receiving the payment
-    double amount; // Amount paid
-    String paymentMethod; // e.g., credit card or wire transfer
-}
+    class Availability {
+        String details; // e.g., "Thursdays from 10:00 to 11:30"
+    }
 
-class CancellationPolicy {
-    double cancellationFee; // e.g., 75% for student and 25% discount for tutor
-}
-
-class TutorOfTheMonth {
-    Tutor tutor;
-    String subject; // Subject for which they are awarded
-}
-
-// Associations
-association [0..*] Tutor <-> (offers) TutoringOffer [*];
-association [0..*] Student <-> (requests) TutoringRequest [*];
-association [0..*] TutoringRequest <-> (isFor) TutoringOffer [1];
-association [0..*] TutoringSession <-> (involves) Tutor [1];
-association [0..*] TutoringSession <-> (involves) Student [1];
-association [1] Payment <-> Tutor [1];
-association [1] Payment <-> TutoringSession [1];
-association [1] TutoringSession <-> (policy) CancellationPolicy [1];
-
+    association [0..*] Tutor <-> TutoringOffer [0..*];
+    association [0..*] Student <-> TutoringRequest [0..*];
+    association [1..1] TutoringOffer <-> TutoringSession [0..*];
+    association [1..1] TutoringSession <-> Payment [1..1];
+    association [1..1] Tutor <-> Award [0..*];
 }

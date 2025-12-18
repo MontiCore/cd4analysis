@@ -1,5 +1,4 @@
 
-// Class diagram for Smart Home Automation System (SHAS)
 classdiagram SmartHomeAutomationSystem {
 
 class SmartHome {
@@ -10,42 +9,48 @@ class Room {
     String name;
 }
 
-class Device {
-    String deviceId;
+class SensorDevice {
+    String deviceIdentifier;
+    String type;
 }
 
-class Sensor extends Device {
-    float readingValue;
+class ActuatorDevice {
+    String deviceIdentifier;
+    String type;
+}
+
+class SensorReading {
+    double measuredValue;
     Date timestamp;
-}
-
-class Actuator extends Device {
-    String status; // e.g., requested, completed, failed
-    Date commandTimestamp;
-}
-
-class ActivityLog {
-    String logEntry; // Description of the activity
-    Date timestamp;
-}
-
-class AutomationRule {
-    String precondition; // Boolean expression
-    String action; // Sequence of control commands
-    boolean isActive;
-    Date triggeredTimestamp;
 }
 
 class ControlCommand {
-    String commandType; // e.g., lockDoor, turnOnHeating
-    Date commandTimestamp;
+    String commandType;
+    Date timestamp;
+    String status;
 }
 
-association [1] SmartHome <-> Room [*];
-association [*] Room <-> Sensor [*];
-association [*] Room <-> Actuator [*];
-association [0..*] Device <-> ActivityLog [*];
-association [0..*] AutomationRule <-> ActivityLog [*];
-association [0..*] AutomationRule <-> AutomationRule [0..*]; // for rule dependencies and conflicts
+class ActivityLog {}
+
+class AutomationRule {
+    String precondition;
+    String action;
+    boolean isActive;
+}
+
+class Owner {}
+
+class RuleTrigger {
+    Date timestamp;
+}
+
+association [1] SmartHome <-> Room [0..*];
+association [1] Room <-> SensorDevice [0..*];
+association [1] Room <-> ActuatorDevice [0..*];
+association [1] SensorDevice <-> SensorReading [0..*];
+association [1] ActuatorDevice <-> ControlCommand [0..*];
+association [1] SmartHome <-> ActivityLog [0..*];
+association [1] Owner <-> AutomationRule [0..*];
+association [1] AutomationRule <-> RuleTrigger [0..*];
 
 }

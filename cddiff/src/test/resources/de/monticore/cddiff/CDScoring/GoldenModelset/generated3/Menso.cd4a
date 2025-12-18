@@ -1,71 +1,44 @@
 
-// CD4A Class Diagram for De Lijn Bus Company
-
 classdiagram DeLijnBusCompany {
 
-enum ApprovalStatus {
-    Approved,
-    Refused,
-    RevisionRequested;
-}
-
-class Trajectory {
-    String id;
-    ApprovalStatus approvalStatus;
-    boolean isOperational;
-    boolean isSuspended;
-    boolean isCancelled;
-}
-
-class Line {
+class Bus {
     String lineNumber;
 }
 
-class Bus {
-    String busId;
-    String lineNumber; // can be associated with multiple lines
+class Trajectory {
+    boolean approved;
+    boolean suspended;
+    boolean cancelled;
+}
+
+class Line {
+    String name;
 }
 
 class MENSO {
-    double price;
-    int discount;
-    String validity; // Limit to one year
+    int validityPeriod; // in months, valid for 12 months
+    double discountRate; // up to 20%
+}
+
+class Trip {
+    Date dateTime;
 }
 
 class Invoice {
-    Date date;
-    double totalAmount;
+    double amount;
 }
 
 class Customer {
-    String name;
     String homeAddress;
     String officeAddress;
     String workingHours;
 }
 
-class MENSOCard {
-    String cardId;
-}
+association [0..*] Bus <-> Trajectory [0..*];
+association [1] Line <-> Trajectory [0..*];
 
-class Trip {
-    Date time;
-    String line;
-}
-
-class Category {
-    String categoryName;
-    double pricePerTrip; // Price depends on the category
-}
-
-// Association between classes
-
-association [1] Bus <-> Line [0..*]; 
-association [1] Trajectory <-> Line [0..*]; // A line groups multiple trajectories
-association [1] MENSOCard <-> Customer [1];
-association [*] Customer <-> Trip [0..*]; // Customers register trips 
-association [*] Trip <-> Invoice [0..*]; // Trips are used to generate invoices
-association [*] Line <-> Category [1]; // Lines have a category
-association [1] MENSOCard <-> (user) Customer [1]; // MENSO cards are issued to customers
+association [1] MENSO <-> Customer [1];
+association [0..*] Trip <-> MENSO [1];
+association [0..*] Invoice <-> Customer [0..*];
 
 }

@@ -1,51 +1,44 @@
 
-// CD4A class diagram for Musicmatic music streaming website
 classdiagram Musicmatic {
 
-    class Song {
-        String title;
-        int year;
-        float length; // length in minutes
-        String genre;
-    }
+class Song {
+    String title;
+    int year;
+    int length;
+    String genre;
+}
 
-    class Artist {
-        String name; // unique identifier
-        DateTime dateOfBirth;
-        String websiteUrl;
-    }
+class Artist {
+    String name;
+    String dateOfBirth;
+    String website;
+}
 
-    class User {
-        int id; // unique identifier
-        String name;
-        String address;
-    }
+class User {
+    String id;
+    String name;
+    String address;
+}
 
-    class RegularUser extends User {
-        // Regular user specific attributes can be added
-    }
+class RegularUser extends User {}
 
-    class BusinessUser extends User {
-        String vatNumber;
-    }
+class BusinessUser extends User {
+    String vatNumber;
+}
 
-    class Album {
-        String title;
-    }
+class Single extends Song {}
 
-    class Hit {
-        int trackNumber; // position in album
-    }
+class Hit extends Song {
+    int trackNumber;
+}
 
-    enum SongType {
-        SINGLE,
-        HIT;
-    }
+class Album {
+    // Album information goes here
+}
 
-    association [1] Artist <-> Song [0..*]; // Each Song has exactly one Artist
-    association [0..*] RegularUser <-> Song [0..*]; // Regular users can buy Songs
-    association [0..*] BusinessUser <-> Song [0..1]; // Business users can upload Songs
-    association [0..*] RegularUser <-> Album [0..*]; // Regular users can have Albums
-    association [1] Album <-> Hit [1..*]; // An Album consists of multiple Hits
+association [1] Song -> Artist [1];
+association [*] RegularUser -> Single [0..*];
+association [*] User <-> Album [0..*];
+association [0..*] Album <-> Hit [0..*];
 
 }

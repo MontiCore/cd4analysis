@@ -1,10 +1,5 @@
 
-// CD4A Class Diagram for a University System
-classdiagram UniversitySystem {
-
-class University {
-    int totalEmployees;
-}
+classdiagram University {
 
 class Faculty {
     String name;
@@ -25,27 +20,27 @@ class ResearchAssistant extends Employee {
     String fieldOfResearch;
 }
 
+class Lecturer extends ResearchAssistant {}
+
 class Project {
     String name;
     Date startDate;
     Date endDate;
 }
 
-class Lecturer extends ResearchAssistant {}
-
 class Course {
-    String courseId; // unique number
+    int id;
     String name;
-    int weeklyDuration; // in hours
+    int weeklyDurationHours;
 }
 
 class Dean extends Employee {}
 
-// Associations
-association [1] University -- Faculty [*];
-association [1] Faculty -- Institute [*];
-association [1] Faculty -- Dean [1];
+
+association [1] Faculty <-> Institute [*];
+association [1] Faculty -> Dean [1];
 association [1] Institute <-> ResearchAssistant [*];
 association [*] ResearchAssistant <-> Project [*];
-association [0..*] ResearchAssistant <-> Course [*];
+association [*] Lecturer <-> Course [*];
+
 }

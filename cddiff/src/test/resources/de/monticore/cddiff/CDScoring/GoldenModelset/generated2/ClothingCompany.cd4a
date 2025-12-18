@@ -1,18 +1,17 @@
 
-// CD4A class diagram for clothing company application
-classdiagram ClothingCompany {
-
-class Product {
-    String uniqueName;
-    String description;
-    double netPrice;
-}
+classdiagram ClothingStore {
 
 class Country {
     String name;
     double vatRate;
     String currency;
     double conversionRateToEuro;
+}
+
+class Product {
+    String uniqueName;
+    String description;
+    double netPrice;
 }
 
 class Representative {
@@ -31,16 +30,17 @@ class Customer {
 }
 
 class Order {
-    int orderId; // unique identifier for an order
+    String orderId;
     int quantity;
     Date orderDate;
     Date deliveryDate;
 }
 
-association [1] Country <-> (manufacturedProducts) Product [*];
-association [1] Representative <-> (responsibleCountry) Country [1];
-association [1] Representative <-> (orders) Order [*];
-association [1] Customer <-> (ordersPlaced) Order [*];
-association [1] Order -> (product) Product [1];
+association [1] Country -- (products) Product [*];
+association [1] Country -- (representatives) Representative [*];
+association [1] Representative -- (customers) Customer [*];
+association [1] Representative -- (orders) Order [*];
+association [1] Order -- (product) Product [1];
+association [1] Order -> (customer) Customer [1];
 
 }

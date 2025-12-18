@@ -1,19 +1,20 @@
 
 classdiagram ElderlyHome {
 
-enum StayType {
-    RestHome,
-    RestAndNursingHome,
-    ServiceFlat;
+class Inhabitant {
+    String name;
+    int registrationDate;
 }
 
-class Category {
-    String name;
-    double price;
+class Stay {
+    String type;
+    Date intakeDate;
+    boolean isSuspended;
 }
 
 class Bed {
-    int bedNumber;
+    String category;
+    double price;
 }
 
 class Room {
@@ -21,48 +22,33 @@ class Room {
 }
 
 class Department {
-    String name;
+    String departmentName;
 }
 
-class Inhabitant {
-    String name;
-    String registrationDate;
-}
-
-class Stay {
-    StayType type;
-    String startDate;
-    String endDate;
+class WaitingList {
+    int position;
 }
 
 class Assessment {
-    String abilities;
-}
-
-class Proposal {
-    boolean isValid;
-    String dateProposed;
+    String needsForHelp;
 }
 
 class Invoice {
-    double totalAmount;
     double outstandingAmount;
     boolean isPaid;
 }
 
 class PaymentEvent {
-    double amount;
+    double amountPaid;
 }
 
-association [1] Department -> Room [*];
-association [1] Room -> Bed [*];
+association [*] Department <-> Room [*];
+association [*] Room <-> Bed [*];
 association [*] Inhabitant <-> Bed [1];
-association [*] Inhabitant -> Stay [*];
-association [*] Inhabitant -> Assessment [0..1];
-association [*] Inhabitant -> Proposal [0..1];
-association [*] Stay -> Category [1];
-association [1] Stay -> Invoice [0..*];
-association [*] Invoice <-> PaymentEvent [0..*];
-association [*] Category <-> Stay [0..*];
+association [1] Inhabitant <-> Stay [*];
+association [1] Inhabitant <-> WaitingList [1];
+association [1] Inhabitant <-> Assessment [1];
+association [1] Stay <-> Invoice [1];
+association [*] PaymentEvent <-> Invoice [1];
 
 }

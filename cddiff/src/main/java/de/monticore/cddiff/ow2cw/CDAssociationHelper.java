@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
@@ -275,8 +276,12 @@ public class CDAssociationHelper {
     // Depending on the symbol table completion a single type for both cds may exist, in which case the type can be resolved by "name"
     // or one type for each cd, in which case the full name "packageName.name" must be used.
     if (assoc.isPresentSymbol() && assoc.getSymbol().getType().getTypeInfo() != null) {
-      typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope()).resolveType(assoc.getSymbol()
+      try {
+        typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope()).resolveType(assoc.getSymbol()
           .getType().getTypeInfo().getName());
+      } catch (ResolvedSeveralEntriesForSymbolException e){
+        // Try resolving by full name
+      }
       if (typeSymbol.isEmpty()) {
         typeSymbol = getCD4CodeArtifactScope(assoc.getEnclosingScope()).resolveType(assoc
             .getSymbol().getType().getTypeInfo().getFullName());

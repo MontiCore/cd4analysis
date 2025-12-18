@@ -1,60 +1,59 @@
 
-// Class Diagram for Sober Taxi Company using self-driving cars
-classdiagram SoberTaxi {
+classdiagram SoberTaxiService {
 
 class SoberApp {
-    // Represents the application used to hail taxis
+    String estimatedWaitTime;
+    String notification;
 }
 
-class TaxiService {
-    // Base class for different taxi services
-}
-
-class RideHailing extends TaxiService {
-    Date pickupTime;
-    Date dropoffTime;
-    String pickupLocation;
-    String dropoffLocation;
-    int rideDuration; // in minutes
-    double distance; // in kilometers
-    int passengerCount;
-    double fee;
-    String requestType; // "Sober App" or "Hand-waving"
-    String leadCustomerName;
-}
-
-class RideSharing extends TaxiService {
-    Date pickupTime;
-    Date dropoffTime;
-    String pickupLocation;
-    String dropoffLocation;
-    int rideDuration; // in minutes
-    double distance; // in kilometers
-    int passengerCount;
-    List<String> customerNames; // Names of all customers
-    double negotiatedFee;
-}
-
-class SelfDrivingCab {
+class SelfDrivingCar {
     String licensePlate;
     String model;
 }
 
-class RegisteredCar {
-    String ownerName;
-    String licensePlate;
+class CarOwner {
+    String name;
+    String contactInfo;
+}
+
+class RideHailService {
+    DateTime pickupTime;
+    DateTime dropoffTime;
+    String pickupLocation;
+    String dropoffLocation;
+    Duration rideDuration;
+    double distance;
+    int numberOfPassengers;
+    double fee;
+    String requestType; // App or hand-waving
+    String leadCustomerName;
+}
+
+class RideShareService {
+    DateTime pickupTime;
+    DateTime dropoffTime;
+    String pickupLocation;
+    String dropoffLocation;
+    Duration rideDuration;
+    double distance;
+    List<String> customerNames;
+    double negotiatedFee;
 }
 
 class Accident {
-    Date date;
-    String location;
+    Date accidentDate;
+    String accidentLocation;
     double damageAmount;
 }
 
-association [1] SelfDrivingCab <-> RideHailing [0..*];
-association [1] SelfDrivingCab <-> RideSharing [0..*];
-association [0..*] RegisteredCar <-> RideHailing [0..*];
-association [0..*] RegisteredCar <-> RideSharing [0..*];
-association [1] SelfDrivingCab <-> Accident [0..*];
+class Fleet {
+    List<SelfDrivingCar> cars;
+}
+
+association [1] SoberApp <-> RideHailService [0..*];
+association [1] SoberApp <-> RideShareService [0..*];
+association [1] SelfDrivingCar <-> CarOwner [1];
+association [1] SelfDrivingCar <-> Accident [0..*];
+association [1] Fleet <-> SelfDrivingCar [0..*];
 
 }

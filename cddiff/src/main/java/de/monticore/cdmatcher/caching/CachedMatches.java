@@ -20,18 +20,15 @@ public class CachedMatches {
   }
 
   public void putMatch(ASTCDAttribute srcElem, ASTCDAttribute tgtElem, Double value) {
-    Double oldValue = attributeMatches.putMatch(srcElem, tgtElem, value);
-    updateBiggestChange(oldValue, value);
+    attributeMatches.putMatch(srcElem, tgtElem, value);
   }
 
   public void putMatch(ASTCDAssociation srcElem, ASTCDAssociation tgtElem, Double value) {
-    Double oldValue = assocMatches.putMatch(srcElem, tgtElem, value);
-    updateBiggestChange(oldValue, value);
+    assocMatches.putMatch(srcElem, tgtElem, value);
   }
 
   public void  putMatch(ASTCDMethod srcElem, ASTCDMethod tgtElem, Double value) {
-    Double oldValue = methodMatches.putMatch(srcElem, tgtElem, value);
-    updateBiggestChange(oldValue, value);
+    methodMatches.putMatch(srcElem, tgtElem, value);
   }
 
   public Double getMatch(ASTCDType srcElem, ASTCDType tgtElem) {

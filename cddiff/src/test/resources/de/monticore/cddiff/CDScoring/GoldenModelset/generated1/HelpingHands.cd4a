@@ -1,101 +1,88 @@
 
-// Class diagram for Helping Hands Store (H2S)
 classdiagram HelpingHandsStore {
 
     class H2S {
-        String name;
-        String location;
+        Location location;
+        PickupService pickupService;
+        DistributionCenter distributionCenter;
+    }
+
+    class Location {
+        String cityName;
+    }
+
+    class PickupService {
+        Resident resident;
+        Vehicle vehicle;
+        void schedulePickup(String dayOfWeek, Time pickupTime);
     }
 
     class Resident {
         String name;
         String streetAddress;
         String phoneNumber;
-        String emailAddress; // optional
-        String itemDescription;
+        String emailAddress;
+        String descriptionOfItems;
     }
 
-    class PickupRequest {
-        Resident resident;
-        Date pickupDate;
-        Time pickupTime; // between 8:00 and 14:00
-    }
-
-    class PickupVehicle {
+    class Vehicle {
         String vehicleID;
-        float storageSpace; // in cubic meters
+        int storageSpace;
+        void determineRoute();
     }
 
     class VolunteerDriver {
-        String name;
-        String availableDays;
+        List<String> availableDays;
     }
 
     class DistributionCenter {
-        H2SEmployee employee;
-        List<Article> receivedArticles;
-        
-        void examineArticle(Article article);
-        void assignCategory(Article article, Category category);
-    }
-
-    class H2SEmployee {
-        String name;
+        Employee employee;
+        List<Article> articlesReceived;
+        void evaluateArticleQuality(Article article);
     }
 
     class Article {
         String description;
-        RFID rfidTag;
+        RFIDDevice rfidDevice;
         Category category;
-        boolean isUsable;
     }
 
-    class RFID {
-        String tagID;
+    class RFIDDevice {}
+
+    class Employee {
+        void checkArticleDescription(Article article);
+        void assignCategory(Article article);
+        void callClient(Client client);
+        void arrangeDelivery(Article article, Client client);
     }
 
     class Category {
         String name;
     }
 
-    class FoodBank {
-        void receiveFoodItems(FoodItem foodItem);
-    }
-
-    class FoodItem {
-        String description;
-    }
-
     class Client {
-        String name;
+        List<Category> preferredCategories;
         String homeAddress;
-        List<Category> requestedCategories;
     }
 
-    class Delivery {
-        Article article;
-        VolunteerDriver driver;
-        Client client;
-    }
+    association [1] H2S -> (location) Location [1];
+    association [1] H2S -> (pickupService) PickupService [1];
+    association [1] H2S -> (distributionCenter) DistributionCenter [1];
 
-    class PickupRoute {
-        List<PickupRequest> requests;
-        PickupVehicle vehicle;
-    }
+    association [1] PickupService -> (resident) Resident [1];
+    association [1] PickupService -> (vehicle) Vehicle [*];
 
-    association [*] H2S -> (locations) Location [*];
-    association [*] Resident -> (pickupRequests) PickupRequest [*];
-    association [1] PickupRequest -> (vehicle) PickupVehicle [1];
-    association [1] PickupRequest -> (resident) Resident [1];
-    association [*] PickupVehicle -> (drivers) VolunteerDriver [*];
-    association [*] PickupVehicle -> (routes) PickupRoute [*];
-    association [*] DistributionCenter -> (receivedArticles) Article [*];
-    association [1] H2S -> (foodBank) FoodBank [1];
-    association [*] DistributionCenter -> (employees) H2SEmployee [1];
-    association [1] FoodBank -> (foodItems) FoodItem [*];
-    association [*] DistributionCenter -> (deliveries) Delivery [*];
-    association [1] Delivery -> (article) Article [1];
-    association [1] Delivery -> (client) Client [1];
+    association [*] Vehicle -> (driver) VolunteerDriver [*];
 
-    // Note: Include additional details where needed (e.g. constraints or business logic)
+    association [1] DistributionCenter -> (employee) Employee [1];
+    association [*] DistributionCenter -> (articlesReceived) Article [*];
+
+    association [1] Article -> (rfidDevice) RFIDDevice [1];
+    association [1] Article -> (category) Category [1];
+
+    association [1] Employee -> (checkArticleDescription) Article [*];
+    association [1] Employee -> (arrangeDelivery) Article [*];
+    association [*] Employee -> (callClient) Client [*];
+
+    association [*] Client -> (preferredCategories) Category [*];
 }

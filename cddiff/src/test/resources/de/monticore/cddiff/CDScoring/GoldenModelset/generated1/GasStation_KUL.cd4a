@@ -1,69 +1,67 @@
 
-// Class Diagram for Oil Company Gas Stations
-classdiagram OilCompanyGasStations {
+classdiagram OilCompany {
 
 class Customer {
-    String name;
-    String contactInfo;
-    boolean isSuspended;
-}
+    int custId;
+    String custName;
+    String refuelCardStatus;
 
-class RefuelCard {
-    String cardNumber;
-    Customer customer; // card is associated with a specific customer
+    int getCustId();
+    void setCustId(int newCustId);
+    void suspend();
+    void reinstate();
 }
 
 class Invoice {
-    int invoiceNumber;
-    Date invoiceDate;
+    int invoiceId;
+    DateTime invoiceDate;
     double totalAmount;
-    boolean isPaid;
+    double discount;
+
+    int getInvoiceId();
+    void setInvoiceId(int newInvoiceId);
+    void addRefuelTurn(RefuelTurn turn);
 }
 
 class Payment {
     int paymentId;
-    Date paymentDate;
-    double amount;
+    double paymentAmount;
+    DateTime paymentDate;
+
+    int getPaymentId();
+    void setPaymentId(int newPaymentId);
 }
 
 class GasStation {
-    String name;
+    int stationId;
     String location;
+
+    int getStationId();
 }
 
 class Pump {
     int pumpId;
     double gasolineLevel;
     boolean isBlocked;
-}
 
-class GasolineType {
-    String typeName;
+    int getPumpId();
+    void setPumpId(int newPumpId);
+    void refill(double quantity);
 }
 
 class RefuelTurn {
+    int turnId;
+    DateTime turnDate;
     double amount;
-    Date refuelDate;
+
+    int getTurnId();
+    void setTurnId(int newTurnId);
 }
 
-class Report {
-    String reportDate;
-    List<PumpStatus> pumpStatus; // list of pump statuses for the report
-}
-
-class PumpStatus {
-    Pump pump;
-    double currentLevel;
-    double quantityToOrder;
-}
-
-association [1] Customer <-> RefuelCard [0..1]; // customer can have one card
-association [1] RefuelCard <-> Invoice [*]; // card can generate multiple invoices
-association [1] Invoice <-> Payment [*]; // invoice can have multiple payments
-association [1] GasStation <-> Pump [*]; // gas station has multiple pumps
-association [1] Pump <-> GasolineType [0..*]; // pump can contain different gasoline types
-association [0..*] Pump <-> RefuelTurn [*]; // pumps can have multiple refuel turns
-association [1] GasStation <-> Report [*]; // each gas station can produce multiple reports
-association [0..1] Report <-> PumpStatus [*]; // report can include multiple pump statuses
+association [1] Invoice -- (sentTo) Customer [1];
+association [1] Payment -- (for) Invoice [1];
+association [*] RefuelTurn -- (includedIn) Invoice [1];
+association [*] GasStation -- (has) Pump [*];
+association [1] Pump -- (usedBy) Customer [*];
 
 }

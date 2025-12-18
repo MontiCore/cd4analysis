@@ -1,10 +1,5 @@
 
-// Class Diagram for a Bank Management System
 classdiagram BankManagement {
-
-    class Bank {
-        // A bank consists of multiple branches
-    }
 
     class Customer {
         String firstName;
@@ -16,18 +11,17 @@ classdiagram BankManagement {
         double balance;
     }
 
-    class CurrentAccount extends Account {
+    class CheckingAccount extends Account {
         double overdraftLimit;
     }
 
     class SavingsAccount extends Account {}
 
-    class Branch {
-        //comment: The LLM did not generated the class, added to avoid errors
-    }
+    class Branch {}
 
-    association [1..*] Bank -> Branch [*];
+    class Bank {}
+
+    association [1..*] Bank -> (has) Branch [*];
+    association [1..5] Customer -> (owns) Account [*];
     association [1] Account -> (owner) Customer [1];
-    association [1..5] Customer -> Account [*];
-
 }

@@ -1,7 +1,5 @@
 
-// CD4A class diagram for Gas Station Management System
-
-classdiagram GasStationManagementSystem {
+classdiagram GasStationChain {
 
 class GasStation {
     String id;
@@ -10,29 +8,29 @@ class GasStation {
 
 class FuelPump {
     int number;
-    boolean isSelfService;
+    boolean selfService;
 }
 
 class Fuel {
     String name;
-    double octaneRating;
+    float octaneRating;
 }
 
 class DailyPrice {
     Date date;
-    double pricePerLiter;
+    float pricePerLiter;
 }
 
 class FuelPurchase {
-    String purchaseId;
-    double litersDispensed;
+    String id;
+    int litersDispensed;
 }
 
-association [1] GasStation -> FuelPump [0..12]; // A gas station has up to 12 fuel pumps
-association [1] FuelPump -> Fuel [0..*]; // Each fuel pump offers multiple fuels
-association [1] DailyPrice -> Fuel [1..1]; // Daily price applies to one specific fuel
-association [1] DailyPrice -> GasStation [1..1]; // Daily price is related to one specific gas station
-association [1] FuelPurchase -> FuelPump [1..1]; // A fuel purchase is made at one fuel pump
-association [1] FuelPurchase -> DailyPrice [1..1]; // A fuel purchase refers to a specific daily price
+association [1] GasStation <-> FuelPump [0..12];
+association [1] FuelPump <-> Fuel [1..*];
+association [1] GasStation <-> DailyPrice [0..*];
+association [1] DailyPrice <-> Fuel [1..*];
+association [1] FuelPump <-> FuelPurchase [0..*];
+association [1] DailyPrice <-> FuelPurchase [1..*];
 
 }
