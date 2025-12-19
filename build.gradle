@@ -24,6 +24,7 @@ ext {
   jupiter_version = "5.6.0"
   junit_platform_version = "1.14.1"
   commons_lang_version = "3.20.0"
+  commons_text_version = "1.15.0"
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
   mockito_version = "3.11.1"
