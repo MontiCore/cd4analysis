@@ -62,7 +62,7 @@ configurations {
 dependencies {
   grammar("$var_path:monticore-grammar:$mc_version")
   implementation "$var_path:monticore-grammar:$mc_version" // Dependency for the compat publication - otherwise not necessary
-  implementation "$var_path:class2mc:${project.properties['mc_version']}"
+  implementation "$var_path:class2mc:$mc_version"
   implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
 
@@ -71,11 +71,11 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
+  testImplementation ("de.monticore:monticore-runtime:$mc_version") capabilities {
     requireCapability("de.monticore:monticore-runtime-tests")
   }
   testImplementation "org.mockito:mockito-core:$mockito_version"
-  testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
+  testImplementation "com.google.code.findbugs:jsr305:$findbugs_version"
   testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
 
   //dependencies for trafo
