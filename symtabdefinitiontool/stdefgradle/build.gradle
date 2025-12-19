@@ -11,7 +11,7 @@ configurations {
 }
 
 dependencies {
-  implementation group:'de.se_rwth.commons', name:'se-commons-gradle', version:mc_version
+  implementation "de.se_rwth.commons:se-commons-gradle:$commons_version"
   stdefTool project(":cdlang")
   compileOnly(project(":cdlang"))
 

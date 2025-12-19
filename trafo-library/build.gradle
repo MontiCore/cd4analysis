@@ -55,8 +55,7 @@ dependencies {
   // add the compiled trafo java classes of the subproject to the classpath
   implementation files(project(":cdlang").sourceSets.trafo.output.classesDirs)
 
-
-  implementation group: 'de.se_rwth.commons', name: 'se-commons-groovy', version: commons_version
+  implementation "de.se_rwth.commons:se-commons-groovy:$commons_version"
 
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"

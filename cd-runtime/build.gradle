@@ -6,10 +6,10 @@ plugins {
 
 
 dependencies {
-  api 'de.se_rwth.commons:se-commons-logging:' + mc_version
+  api "de.se_rwth.commons:se-commons-logging:$mc_version"
 
-  implementation 'de.se_rwth.commons:se-commons-utilities:' + mc_version
   implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+  implementation "de.se_rwth.commons:se-commons-utilities:$mc_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
