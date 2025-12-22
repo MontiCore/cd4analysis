@@ -13,6 +13,8 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -113,23 +115,28 @@ public class TestCasesExtractSuperclass {
         .getCDAttributeList().size());
     assertEquals("attributeA", utility.getAst().getCDDefinition().getCDClassesList().get(2)
         .getCDAttributeList().get(0).getName());
-    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(2)
-        .printSuperclasses());
+    
+    // allow all permutations of the three classes [ClassB, ClassC, ClassD]
+    // as the actual order depends on the pattern matching
+    List<String> allowedSuperClassNames = List.of("ClassBClassCClassD", "ClassBClassDClassC",
+        "ClassCClassBClassD", "ClassCClassDClassB", "ClassDClassBClassC", "ClassDClassCClassB");
+    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
+        .get(2).printSuperclasses()));
     
     assertEquals("ClassC", utility.getAst().getCDDefinition().getCDClassesList().get(3).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(3)
         .getCDAttributeList().size());
-    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(3)
-        .printSuperclasses());
+    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
+        .get(3).printSuperclasses()));
     
     assertEquals("ClassD", utility.getAst().getCDDefinition().getCDClassesList().get(4).getName());
     assertEquals(0, utility.getAst().getCDDefinition().getCDClassesList().get(4)
         .getCDAttributeList().size());
-    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(4)
-        .printSuperclasses());
+    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
+        .get(4).printSuperclasses()));
     
-    assertEquals("ClassDClassCClassB", utility.getAst().getCDDefinition().getCDClassesList().get(5)
-        .getName());
+    assertTrue(allowedSuperClassNames.contains(utility.getAst().getCDDefinition().getCDClassesList()
+        .get(5).getName()));
     assertEquals(1, utility.getAst().getCDDefinition().getCDClassesList().get(5)
         .getCDAttributeList().size());
     assertEquals("attributeB", utility.getAst().getCDDefinition().getCDClassesList().get(5)
